@@ -4,8 +4,7 @@ CURRENT
 awards
   assigned based on wins added, like hof
     store EWA in database, update when PER is updated in advStats
-      show in player page
-      show in leaders page
+      use in player.madeHof - problem is, EWA isn't stored for seasons prior to this change..
     formulas:
       overall: linear combination of EWA and team wins
       defensive: basically same stupid shit as now, but make sure to account for games played
@@ -79,6 +78,7 @@ DB CHANGES SINCE 3.1.0
 imgURL in player root (although lacking this doesn't cause an error now, better add it to be sure)
 if not present add team*Cache things to gameAttributes
   after this is handled, delete the hack in util.viewHelpers.beforeLeague
+ewa in player.stats - doesn't really matter, right?
 
 EVENTUALLY
 ----------

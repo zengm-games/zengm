@@ -684,7 +684,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
     function addStatsRow(p, playoffs) {
         playoffs = playoffs !== undefined ? playoffs : false;
 
-        p.stats.push({season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0});
+        p.stats.push({season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0});
         p.statsTids.push(p.tid);
         p.statsTids = _.uniq(p.statsTids);
 
@@ -1126,6 +1126,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                         row.abbrev = helpers.getAbbrev(s.tid);
                     } else if (stats[j] === "per") {
                         row.per = s.per;
+                    } else if (stats[j] === "ewa") {
+                        row.ewa = s.ewa;
                     } else {
                         if (options.totals) {
                             row[stats[j]] = s[stats[j]];
@@ -1177,10 +1179,12 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     fp.careerStats = filterStatsPartial(p, ps.cr, options.stats);
                     fp.careerStats.per = _.reduce(ps.r, function (memo, psr) { return memo + psr.per * psr.min; }, 0) / (fp.careerStats.min * fp.careerStats.gp); // Special case for PER - weight by minutes per season
                     if (isNaN(fp.careerStats.per)) { fp.careerStats.per = 0; }
+                    fp.careerStats.ewa = _.reduce(ps.r, function (memo, psr) { if (!isNaN(psr.ewa)) { return memo + psr.ewa; } return memo; }, 0); // Special case for EWA - sum
                     if (options.playoffs) {
                         fp.careerStatsPlayoffs = filterStatsPartial(p, ps.cp, options.stats);
                         fp.careerStatsPlayoffs.per = _.reduce(ps.p, function (memo, psp) { return memo + psp.per * psp.min; }, 0) / (fp.careerStatsPlayoffs.min * fp.careerStatsPlayoffs.gp); // Special case for PER - weight by minutes per season
                         if (isNaN(fp.careerStatsPlayoffs.per)) { fp.careerStatsPlayoffs.per = 0; }
+                        fp.careerStatsPlayoffs.ewa = _.reduce(ps.p, function (memo, psp) { if (!isNaN(psp.ewa)) { return memo + psp.ewa; } return memo; }, 0); // Special case for EWA - sum
                     }
                 } else if (options.stats.length > 0) { // Return 0 stats if no entry and a single year was requested, unless no stats were explicitly requested
                     // Single seasons
@@ -1253,6 +1257,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             va = mins[i] * (pers[i] - prls[p.pos]) / 67;
             ewas.push(va / 30 * 0.8); // 0.8 is a fudge factor to approximate the difference between (in-game) EWA and (real) win shares
         }
+//console.log(ewas)
+//console.log(_.pluck(p.stats, "ewa"))
 
         // Calculate career EWA and "dominance factor" DF (top 5 years EWA - 50)
         ewas.sort(function (a, b) { return b - a; }); // Descending order

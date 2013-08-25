@@ -49,10 +49,10 @@ define(["globals", "core/player", "core/team", "lib/underscore"], function (g, p
             // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
             // Active players have tid >= 0
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                var aPER, drbp, factor, i, PER, players, tid, uPER, vop, tx;
+                var aPER, drbp, EWA, factor, i, mins, PER, players, tid, uPER, vop, tx;
 
                 players = player.filter(event.target.result, {
-                    attrs: ["pid", "tid"],
+                    attrs: ["pid", "tid", "pos"],
                     stats: ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"],
                     season: g.season,
                     totals: true,
@@ -60,6 +60,7 @@ define(["globals", "core/player", "core/team", "lib/underscore"], function (g, p
                 });
 
                 aPER = [];
+                mins = [];
                 league.aPER = 0;
                 for (i = 0; i < players.length; i++) {
                     tid = players[i].tid;
@@ -99,6 +100,8 @@ define(["globals", "core/player", "core/team", "lib/underscore"], function (g, p
 
                         aPER[i] = teams[tid].pace * uPER;
                         league.aPER = league.aPER + aPER[i] * players[i].stats.min;
+
+                        mins[i] = players[i].stats.min; // Save for EWA calculation
                     }
                 }
 
@@ -106,10 +109,37 @@ define(["globals", "core/player", "core/team", "lib/underscore"], function (g, p
 
                 PER = _.map(aPER, function (num) { return num * (15 / league.aPER); });
 
+                // Estimated Wins Added http://insider.espn.go.com/nba/hollinger/statistics
+                EWA = [];
+                (function () {
+                    var i, prls, va;
+
+                    // Position Replacement Levels
+                    prls = {
+                        PG: 11,
+                        G: 10.75,
+                        SG: 10.5,
+                        GF: 10.5,
+                        SF: 10.5,
+                        F: 11,
+                        PF: 11.5,
+                        FC: 11.05,
+                        C: 10.6
+                    };
+
+                    for (i = 0; i < players.length; i++) {
+                        if (players[i].active) {
+                            va = players[i].stats.min * (PER[i] - prls[players[i].pos]) / 67;
+
+                            EWA[i] = va / 30 * 0.8; // 0.8 is a fudge factor to approximate the difference between (BBGM) EWA and (real) win shares
+                        }
+                    }
+                }());
+
                 // Save to database. Active players have tid >= 0
                 tx = g.dbl.transaction("players", "readwrite");
                 tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                    var cursor, i, p;
+                    var cursor, i, p, s;
 
                     cursor = event.target.result;
                     if (cursor) {
@@ -117,7 +147,10 @@ define(["globals", "core/player", "core/team", "lib/underscore"], function (g, p
 
                         for (i = 0; i < players.length; i++) {
                             if (PER[i] !== undefined && !isNaN(PER[i]) && players[i].pid === p.pid) {
-                                _.last(p.stats).per = PER[i];  // This will be either playoffs or regular season, as appropriate
+                                s = p.stats.length - 1;
+                                // This will be either playoffs or regular season, as appropriate
+                                p.stats[s].per = PER[i];
+                                p.stats[s].ewa = EWA[i];
 
                                 cursor.update(p);
 

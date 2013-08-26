@@ -72,7 +72,11 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
                     deferred.resolve({
                         abbrev: inputs.abbrev,
                         history: history,
-                        players: players
+                        players: players,
+                        team: {
+                            name: userTeam.name,
+                            region: userTeam.region
+                        }
                     });
                 };
             };

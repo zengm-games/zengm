@@ -1,19 +1,17 @@
 CURRENT
 -------
 
-Condense awards list http://www.reddit.com/r/BasketballGM/comments/1kuj01/request_condensed_player_resume/
+skip until resign should be skip until after draft, otherwise you don't get the next year's draft picks generated
 player contract amounts http://www.reddit.com/r/BasketballGM/comments/1kj0p0/can_i_turn_off_firing/cbpxjyj?context=3
 less weird player rating combos
   different ratings should have different potential for growth - easier to improve jumpshot than quickness
   revamp position assignment algorithm
+    until a player is ~28 (whenever ratings decline starts), recalculate every year
 make it less likely that players refuse to resign with winning teams
 show annual ratings changes in roster page
   green (up) or red (down) with the number ovr and pot changed, in parentheses
   then, on switch to preseason, redirect to current roster
 add function to delete old box scores (older than, say 5 years) to debug menu, to save space
-draft messed up with age of players http://www.reddit.com/r/BasketballGM/comments/1k6qlf/interesting_draft_selections_by_cpu/
-  trades should have a fudge factor to make it less likely?
-  player.value should be exponential... so high potential matters more
 gameSim
   balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbfzr43?context=3 http://www.reddit.com/r/BasketballGM/comments/1k1881/pf_stands_for_powerful/
@@ -25,6 +23,7 @@ gameSim
   increase fouls if perimFactor (or similar) is low
   better foul logic - shouldn't just have big slow shot blockers fouling out
     also, other players shouldn't get 0 fouls. make it a bit more evenly distributed
+  assists should be function of speed, since those players have the ball more
 team names from db
   g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache
     update this when appropriate
@@ -154,8 +153,10 @@ trades
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?
-awards assigned based on wins added, like hof
-  at a minimum, make sure to take minutes played into account
+awards
+  assigned based on wins added, like hof
+    at a minimum, make sure to take minutes played into account
+  show awards count in hall of fame
 when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
   this happens because inputs.season gets set even though it's not present in the URL. elegant solution?
 only show retired players in season summary if they actually played some

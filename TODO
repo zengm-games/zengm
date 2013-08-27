@@ -57,7 +57,6 @@ player development
 MINOR FIXES
 -----------
 
-skip until resign should be skip until after draft, otherwise you don't get the next year's draft picks generated
 awards
   assigned based on wins added, like hof
     store EWA in database, update when PER is updated in advStats
@@ -94,6 +93,7 @@ AI teams playing with under 5 players http://www.reddit.com/r/BasketballGM/comme
 AI teams in rebuilding mode should fill out their rosters with cheap guys
 contracts should take ratings into more account, since stats on a good team are inflated and stats on a bad team are depressed
 show four factors somewhere
+show attendance in box score
 
 LOW PRIORITY
 ------------
@@ -128,7 +128,6 @@ rookies are too good
 fire GM before draft?
 harsher, more realistic luxury tax
 midlevel exception
-show attendance in box score
 playerNameLabels should also put a little hover box over the player link with key stats/ratings
 more refined control of playing time: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaegpq
 signing draft picks should be optional

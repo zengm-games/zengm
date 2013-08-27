@@ -1,25 +1,38 @@
-CURRENT
--------
+DB CHANGES SINCE 3.1.0
+----------------------
 
-awards
-  assigned based on wins added, like hof
-    store EWA in database, update when PER is updated in advStats
-      use in player.madeHof - problem is, EWA isn't stored for seasons prior to this change..
-    formulas:
-      overall: linear combination of EWA and team wins
-      defensive: basically same stupid shit as now, but make sure to account for games played
-  show awards count in hall of fame
-skip until resign should be skip until after draft, otherwise you don't get the next year's draft picks generated
-player contract amounts http://www.reddit.com/r/BasketballGM/comments/1kj0p0/can_i_turn_off_firing/cbpxjyj?context=3
+imgURL in player root (although lacking this doesn't cause an error now, better add it to be sure)
+if not present add team*Cache things to gameAttributes
+  after this is handled, delete the hack in util.viewHelpers.beforeLeague
+ewa in player.stats - doesn't really matter, right?
+
+BIG NEW FEATURES
+----------------
+
+team switching after being fired
+  2 year grace period in message.js, like with a new league?
+achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
+  Moneyball
+    bronze: win a title with a payroll under $40 million
+    silver: win a title with a payroll under $30 million
+    gold: win three consecutive titles without your payroll ever exceeding $30 million
+trading block
+more starting options
+  UI
+    Add checkboxes: Randomize Rosters (only show for custom rosters), Fantasy Draft
+  leaguewide draft
+  randomize players on custom rosters
+localization
+  http://requirejs.org/docs/api.html#i18n
+
+BIG NEW GAMEPLAY CHANGES
+------------------------
+
+remove "buy out"
 less weird player rating combos
   different ratings should have different potential for growth - easier to improve jumpshot than quickness
   revamp position assignment algorithm
     until a player is ~28 (whenever ratings decline starts), recalculate every year
-make it less likely that players refuse to resign with winning teams
-show annual ratings changes in roster page
-  green (up) or red (down) with the number ovr and pot changed, in parentheses
-  then, on switch to preseason, redirect to current roster
-add function to delete old box scores (older than, say 5 years) to debug menu, to save space
 gameSim
   balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbfzr43?context=3 http://www.reddit.com/r/BasketballGM/comments/1k1881/pf_stands_for_powerful/
@@ -32,27 +45,60 @@ gameSim
   better foul logic - shouldn't just have big slow shot blockers fouling out
     also, other players shouldn't get 0 fouls. make it a bit more evenly distributed
   assists should be function of speed, since those players have the ball more
+  substitutions should be based on "value", not ovr
+    but player.value includes potential.. so just come up with new formula
+somehow, don't let the user's team sign any/all free agents they want
+  http://www.reddit.com/r/BasketballGM/comments/1jrv3a/have_we_discussed_the_draft_pick_exploit_yet/
+  randomize "won't negotiate with you" more?
+    make genBaseMoods lower?
+player development
+  should be less players who go from totally raw to superstar in one year http://www.reddit.com/r/BasketballGM/comments/1l2iiy/play_development_should_be_revisited/cbv73rd
+
+MINOR FIXES
+-----------
+
+skip until resign should be skip until after draft, otherwise you don't get the next year's draft picks generated
+awards
+  assigned based on wins added, like hof
+    store EWA in database, update when PER is updated in advStats
+      use in player.madeHof - problem is, EWA isn't stored for seasons prior to this change..
+    formulas:
+      overall: linear combination of EWA and team wins
+      defensive: basically same stupid shit as now, but make sure to account for games played
+  show awards count in hall of fame
+player contract amounts http://www.reddit.com/r/BasketballGM/comments/1kj0p0/can_i_turn_off_firing/cbpxjyj?context=3
+make it less likely that players refuse to resign with winning teams
+show annual ratings changes in roster page
+  green (up) or red (down) with the number ovr and pot changed, in parentheses
+  then, on switch to preseason, redirect to current roster
+    when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
+      this happens because inputs.season gets set even though it's not present in the URL. elegant solution?
+add function to delete old box scores (older than, say 5 years) to debug menu, to save space
 team names from db
-  g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache
-    update this when appropriate
+  g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache - update this when appropriate
   store region and name in meta so it can be shown on dashboard
     update this when changed on customize screen
   "customize" screen
+    option to load from JSON file
   export rosters should include teams
+    option to include just team names or just players
   when is popRank updated? make sure to do it on new league start.
     can i get rid of hardcoded popRank?
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
-more starting options
-  UI
-    Add checkboxes: Randomize Rosters (only show for custom rosters), Fantasy Draft
-  leaguewide draft
-  randomize players on custom rosters
-gameSim substitutions should be based on "value", not ovr
-  but value includes potential.. that a problem? just come up with new formula
-better ovr
-  regression
-http://www.reddit.com/r/BasketballGM/comments/1jrv3a/have_we_discussed_the_draft_pick_exploit_yet/
-transaction log
+better ovr formula
+  regression, see what is important?
+document things that affect player mood
+AI teams playing with under 5 players http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/
+  AI teams should never drop below 5 in regular season http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/cbvzngs
+    no min roster limit in trades?
+AI teams in rebuilding mode should fill out their rosters with cheap guys
+contracts should take ratings into more account, since stats on a good team are inflated and stats on a bad team are depressed
+show four factors somewhere
+
+LOW PRIORITY
+------------
+
+different owner personalities, with different priorities
 trades
   "undo" button for accidental trades
     transaction log first. put "Undo" button after message from other GM only right after a trade finishes. make sure it doesn't show up at other time
@@ -62,27 +108,8 @@ trades
   draft pick value needs to be reassessed: http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3 http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q http://www.reddit.com/r/BasketballGM/comments/1j4evq/new_version_311_uploaded/cbbbc0p?context=3
   "When signing free agents, if you offer then a contract 2 years longer/shorter than the one they want, they'll counter offer one with 1 more/less year. If you offer the same amount of money you previously offered, and change the year to what they want, they'll automatically offer the lowest $ for that amount of years."
   shouldn't be able to immediately trade away players you just acquired
-somehow, don't let the user's team sign any/all free agents they want
-  randomize "won't negotiate with you" more?
-    make genBaseMoods lower?
-localization
-  http://requirejs.org/docs/api.html#i18n
-http://www.reddit.com/r/BasketballGM/comments/1jf3qw/bug_i_loaded_a_saved_roster_and_now_the_game/
-document things that affect player mood
-player development
-  should be less players who go from totally raw to superstar in one year http://www.reddit.com/r/BasketballGM/comments/1l2iiy/play_development_should_be_revisited/cbv73rd
-
-DB CHANGES SINCE 3.1.0
-----------------------
-
-imgURL in player root (although lacking this doesn't cause an error now, better add it to be sure)
-if not present add team*Cache things to gameAttributes
-  after this is handled, delete the hack in util.viewHelpers.beforeLeague
-ewa in player.stats - doesn't really matter, right?
-
-EVENTUALLY
-----------
-
+transaction log
+  put index on pids involved, so then events involving a player can be shown on player page
 Finals MVP
 more detailed player moods - http://www.reddit.com/r/BasketballGM/comments/1k4val/players_refusing_to_sign_bug/cbln1oo?context=3
 more detailed draft - slower picks, trades, etc.
@@ -95,8 +122,7 @@ player search page
   show stats, ratings, contract, etc. (customizable); allow filters to be applied. also filter by skill icon
 finances - too easy to make big $$$
 player morale - punishment for tanking
-milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
-player personality
+player personality, team chemistry
 team colors, and uniforms in player icons
 rookies are too good
 fire GM before draft?
@@ -105,12 +131,10 @@ midlevel exception
 show attendance in box score
 playerNameLabels should also put a little hover box over the player link with key stats/ratings
 more refined control of playing time: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaegpq
-reassess buy outs. should they even be possible? probably not
 signing draft picks should be optional
   maybe sign them in the "resign players" phase
 you should be able to drop below 5 players (and above 15) but only temporarily (no game simulation in that time)
 fake feet/inches heights should be taller
-allow GM to switch teams after being fired
 some players want to resign for infinite money?
 draft
   randomness in picks should factor in relative ratings http://www.reddit.com/r/BasketballGM/comments/1l1713/the_draft_still_needs_some_work_it_seems_my/cbutw7v?context=1
@@ -163,8 +187,6 @@ trades
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?
-when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
-  this happens because inputs.season gets set even though it's not present in the URL. elegant solution?
 only show retired players in season summary if they actually played some
 Look at ratings distributions - should there really be so many bigs who are great passers, for instance?
 components.dropdown tests are very slow in chrome
@@ -252,6 +274,7 @@ gameSim
     do i need all the player composite ratings?
     do i need all the team composite ratings?
     how does performance change/degrade as the years go on?
+  bench players should get minutes in blowouts
 in lock functions, update g from database before using any potentially sensitive values
   or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?
 move to new window button, like gmail, that will open a view in a new window with a minimal UI
@@ -366,7 +389,6 @@ stat views
     add a dropdown (maybe make the dropdown handling code more general?)
 bootstrap 2.3
 https://github.com/nprapps/app-template
-trading block
 race conditions associated with callbacks when passing around transactions
   any put/add/update does not guarantee it's finished until the transaction finishes. but letting transactions finish is slow.
 contract negotiation

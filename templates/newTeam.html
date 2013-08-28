@@ -1,9 +1,0 @@
-<h1>Select a new team</h1>
-<br>
-<form method="POST" data-bind="attrLeagueUrl: {action: ['new_team']}">
-	<select name="tid" class="team form-inline" data-bind="foreach: teams">
-		<option data-bind="attr: {value: tid, selected: selected}, text: region() + ' ' + name()"></option>
-	</select>
-	<br>
-	<button type="submit" class="btn" id="new-team">Switch Teams</button>
-</form>

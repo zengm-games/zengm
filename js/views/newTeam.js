@@ -7,7 +7,7 @@ define(["db", "globals", "ui", "core/season", "core/team", "lib/jquery", "util/b
     "use strict";
     
     function get(req) {
-        if (!(g.gameOver)) {
+        if (!g.gameOver) {
             return {
                 errorMessage: "You may only select another team when you have been fired."
             };
@@ -17,7 +17,7 @@ define(["db", "globals", "ui", "core/season", "core/team", "lib/jquery", "util/b
     function post(req) {
         var tid;
         $("#new-team").attr("disabled", "disabled");
-        tid=Math.floor(req.params.tid);
+        tid = Math.floor(req.params.tid);
         ui.updateStatus("Idle");
         ui.updatePlayMenu();
         db.setGameAttributes({
@@ -28,32 +28,31 @@ define(["db", "globals", "ui", "core/season", "core/team", "lib/jquery", "util/b
                 playoffs: 0,
                 money: 0
             }
-        },
-        function (lid) {
+        }, function (lid) {
             ui.realtimeUpdate([], helpers.leagueUrl([]));
         });
     }
+    
     function updateTeamSelect() {
         var deferred;
         deferred = $.Deferred();
-        
-        var bottomTeams, i;
         
         team.filter({
             attrs: ["tid", "abbrev", "region", "name", "cid"],
             seasonAttrs: ["winp", "playoffRoundsWon"],
             season: g.season-1
         }, function (teams) {
+            var bottomTeams, i;
             teams.sort(function (a, b) {
                 return a.winp - b.winp;
             });
-            bottomTeams=teams.slice(0,5);
+            
+            bottomTeams = teams.slice(0,5);
+            for(var i=0;i<30;i++) {
+                teams[i].tid=i;
+            }
             deferred.resolve({
-                teams: bottomTeams,
-                tid: bottomTeams.tid,
-                abbrev: bottomTeams.abbrev,
-                region: bottomTeams.region,
-                name: bottomTeams.name
+                teams: bottomTeams
             });
         });
         return deferred.promise();

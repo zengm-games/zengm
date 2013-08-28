@@ -1,10 +1,9 @@
-<p><h1>Select a new team</h1>
-You may change your current team to one of the following teams.
-</p><br>
+<h1>Pick A New Team</h1>
+<p>After you were fired, your agent tried to get you job offers from other teams. Unfortunately, he was only able to secure offers from some of the worst teams in the league. Are you interested in running any of these teams?</p>
 <form method="POST" data-bind="attrLeagueUrl: {action: ['new_team']}">
 	<select name="tid" class="team form-inline" data-bind="foreach: teams">
 		<option data-bind="attr: {value: tid}, text: region() + ' ' + name()"></option>
 	</select>
 	<br>
-	<button type="submit" class="btn" id="new-team">Switch Teams</button>
+	<button type="submit" class="btn" id="new-team">Accept New Job</button>
 </form>

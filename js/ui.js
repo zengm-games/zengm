@@ -306,7 +306,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                       {id: "play-menu-contract-negotiation-list", url: helpers.leagueUrl(["negotiation"]), label: "Continue resigning players"},
                       {id: "play-menu-message", url: helpers.leagueUrl(["message"]), label: "Read new message"},
                       {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"},
-                      {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Select another team"}];
+                      {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"}];
 
         if (g.phase === g.PHASE.PRESEASON) {
             // Preseason

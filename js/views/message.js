@@ -34,7 +34,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "u
                     tx.oncomplete = function () {
                         db.setGameAttributes({lastDbChange: Date.now()}, function () {
                             if (g.gameOver) {
-                                ui.updateStatus("You're fired! Game over!");
+                                ui.updateStatus("You're fired!");
                             }
 
                             ui.updatePlayMenu(null, function () {

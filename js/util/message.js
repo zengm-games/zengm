@@ -2,7 +2,7 @@
  * @name util.message
  * @namespace Messages from the owner of the team to the GM.
  */
-define(["db", "globals", "ui", "util/random"], function (db, g, ui, random) {
+define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, ui, helpers, random) {
     "use strict";
 
     var activities, playoffs, intro, first, money, ovr, wins;
@@ -224,6 +224,7 @@ define(["db", "globals", "ui", "util/random"], function (db, g, ui, random) {
                 } else {
                     m = "<p>You're fired.</p>";
                 }
+                m += '<p>I hear a few other teams are looking for a new GM. <a href="' + helpers.leagueUrl(["new_team"]) + '">Take a look.</a> Please, go run one of those teams into the ground.</p>';
             }
         }
 

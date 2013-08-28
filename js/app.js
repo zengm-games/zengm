@@ -98,8 +98,6 @@ requirejs(["db", "views", "ui", "lib/davis", "util/helpers", "lib/bootstrap-aler
 
             // League views
             this.get("/l/:lid", views.leagueDashboard.get);
-            this.get("/l/:lid/new_team", views.newTeam.get);
-            this.post("/l/:lid/new_team", views.newTeam.post);
             this.get("/l/:lid/inbox", views.inbox.get);
             this.get("/l/:lid/message", views.message.get);
             this.get("/l/:lid/message/:mid", views.message.get);

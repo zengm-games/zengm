@@ -13,6 +13,7 @@ team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?
   rename g.gameOver
+  keep track of what team the user controlled, so stats for the user (not the team) can be shown
 achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   Moneyball
     bronze: win a title with a payroll under $40 million

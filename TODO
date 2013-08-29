@@ -76,6 +76,10 @@ player development
 MINOR FIXES
 -----------
 
+AI teams playing with under 5 players http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/
+  AI teams should never drop below 5 in regular season http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/cbvzngs
+    no min roster limit in trades?
+AI teams in rebuilding mode should fill out their rosters with cheap guys
 awards
   assigned based on wins added, like hof
     store EWA in database, update when PER is updated in advStats
@@ -106,10 +110,6 @@ make trade counter-offer faster by checking if no trade is possible first http:/
 better ovr formula
   regression, see what is important?
 document things that affect player mood
-AI teams playing with under 5 players http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/
-  AI teams should never drop below 5 in regular season http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/cbvzngs
-    no min roster limit in trades?
-AI teams in rebuilding mode should fill out their rosters with cheap guys
 contracts should take ratings into more account, since stats on a good team are inflated and stats on a bad team are depressed
 show four factors somewhere
 show attendance in box score

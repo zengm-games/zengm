@@ -7,7 +7,7 @@ define(["lib/knockout"], function (ko) {
 
     // The way this works is... any "global" variables that need to be widely available are stored in g. Some of these are constants, like the ones defined below. Some others are dynamic, like the year of the current season, and are stored in the gameAttributes object store. The dynamic components of g are retrieved/updated/synced elsewhere. Yes, it's kind of confusing and arbitrary.
 
-    var g, i;
+    var g;
 
     g = {};
 
@@ -21,6 +21,7 @@ define(["lib/knockout"], function (ko) {
     g.luxuryTax = 0.5;
     g.minContract = 500;  // [thousands of dollars]
     g.maxContract = 20000;  // [thousands of dollars]
+    g.minRosterSize = 10;
 
     // Constants in all caps
     g.PHASE = {
@@ -62,7 +63,7 @@ define(["lib/knockout"], function (ko) {
     g.enableLogging = window.enableLogging;
 
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "numTeams", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "PHASE", "PLAYER", "gameSimWorkers", "vm", "enableLogging", "notInDb"];
+    g.notInDb = ["dbm", "dbl", "lid", "numTeams", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "gameSimWorkers", "vm", "enableLogging", "notInDb"];
 
     return g;
 });

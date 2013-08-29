@@ -37,20 +37,15 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
         deferred = $.Deferred();
 
         team.filter({
-            attrs: ["tid", "abbrev", "region", "name", "cid"],
-            seasonAttrs: ["winp", "playoffRoundsWon"],
+            attrs: ["tid", "region", "name"],
+            seasonAttrs: ["winp"],
             season: g.season - 1
         }, function (teams) {
-            var i;
-
-            teams.sort(function (a, b) { return a.winp - b.winp; });
-
-            for (i = 0; i < teams.length; i++) {
-                teams[i].tid = i;
-            }
-
-            // Remove user's team
+            // Remove user's team (no re-hiring immediately after firing)
             teams.splice(g.userTid, 1);
+
+            // Order by worst record
+            teams.sort(function (a, b) { return a.winp - b.winp; });
 
             deferred.resolve({
                 teams: teams.slice(0, 5) // Show top 5 worst teams

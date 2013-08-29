@@ -528,14 +528,15 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                             };
                         }
                     }
-                } else if (numPlayersOnRoster < 5) {
+                } else if (numPlayersOnRoster < g.minRosterSize) {
                     if (tid === g.userTid) {
-                        helpers.error("Your team currently has less than the minimum number of players (5). You must add players (through free agency or trades) before the season starts.");
+                        helpers.error("Your team currently has less than the minimum number of players (" + g.minRosterSize + "). You must add players (through free agency or trades) before the season starts.");
                         userTeamSizeError = true;
                         ui.updatePlayMenu();  // Otherwise the play menu will be blank
                     } else {
                         // Auto-add players
-                        while (numPlayersOnRoster < 5) {
+//console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
+                        while (numPlayersOnRoster < g.minRosterSize) {
                             p = minFreeAgents.shift();
                             p.tid = tid;
                             p = player.addStatsRow(p);
@@ -544,6 +545,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
                             numPlayersOnRoster += 1;
                         }
+//console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
                     }
                 }
 

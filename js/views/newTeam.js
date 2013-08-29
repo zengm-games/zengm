@@ -41,16 +41,19 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
             seasonAttrs: ["winp", "playoffRoundsWon"],
             season: g.season - 1
         }, function (teams) {
-            var bottomTeams, i;
+            var i;
+
             teams.sort(function (a, b) { return a.winp - b.winp; });
 
             for (i = 0; i < teams.length; i++) {
                 teams[i].tid = i;
             }
 
-            bottomTeams = teams.slice(0, 5);
+            // Remove user's team
+            teams.splice(g.userTid, 1);
+
             deferred.resolve({
-                teams: bottomTeams
+                teams: teams.slice(0, 5) // Show top 5 worst teams
             });
         });
 

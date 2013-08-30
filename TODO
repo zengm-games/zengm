@@ -13,6 +13,7 @@ team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?
   rename g.gameOver
+  keep track of what team the user controlled, so stats for the user (not the team) can be shown
 achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   Moneyball
     bronze: win a title with a payroll under $40 million
@@ -75,6 +76,9 @@ player development
 MINOR FIXES
 -----------
 
+AI teams playing with under 5 players http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/
+  AI teams should never drop below 5 in regular season http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/cbvzngs
+    no min roster limit in trades?
 awards
   assigned based on wins added, like hof
     store EWA in database, update when PER is updated in advStats
@@ -91,31 +95,30 @@ show annual ratings changes in roster page
     when viewing a url like /l/1/roster, playing until new season shouldn't move it to roster for previous year
       this happens because inputs.season gets set even though it's not present in the URL. elegant solution?
 add function to delete old box scores (older than, say 5 years) to debug menu, to save space
-team names from db
-  g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache - update this when appropriate
-  store region and name in meta so it can be shown on dashboard
-    update this when changed on customize screen
-  "customize" screen
-    option to load from JSON file
-  export rosters should include teams
-    option to include just team names or just players
-  when is popRank updated? make sure to do it on new league start.
-    can i get rid of hardcoded popRank?
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 better ovr formula
   regression, see what is important?
 document things that affect player mood
-AI teams playing with under 5 players http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/
-  AI teams should never drop below 5 in regular season http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/cbvzngs
-    no min roster limit in trades?
-AI teams in rebuilding mode should fill out their rosters with cheap guys
 contracts should take ratings into more account, since stats on a good team are inflated and stats on a bad team are depressed
 show four factors somewhere
 show attendance in box score
+security
+  validate any user-added content, like custom team names (both in file and through form), custom players, and league names
 
 LOW PRIORITY
 ------------
 
+team names from db
+  g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache - update this when appropriate
+  store region and name in meta so it can be shown on dashboard
+    update this when changed on customize screen
+  option to load from JSON file on "Edit Team Info"
+  export rosters should include teams
+    option to include just team names or just players
+    should update popRank when custom teams are supplied
+  not so simple to allow abbrevs to be changed, since they are used elsewhere for convenience - damn indexeddb and denormalization!
+  make edit_team_info prettier
+popRank never updates, but I don't think it matters.
 different owner personalities, with different priorities
 trades
   "undo" button for accidental trades

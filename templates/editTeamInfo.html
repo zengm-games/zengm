@@ -1,6 +1,6 @@
 <p><h1>Edit Team Info</h1></p>
 <br>
-<form method="POST" data-bind="attrLeagueUrl: {action: ['edit_team_names']}">
+<form method="POST" data-bind="attrLeagueUrl: {action: ['edit_team_info']}">
 	<table>
 		<thead>
 			<tr>
@@ -13,9 +13,9 @@
 			<tr>
 				<td><input type="text" class="form-inline" name="region[]" data-bind="attr: {value: region}"></td>
 				<td><input type="text" class="form-inline" name="name[]" data-bind="attr: {value: name}"></td>
-				<td><input type="text" class="form-inline" name="population[]" data-bind="attr: {value: pop}"></td>
+				<td><input type="text" class="form-inline" name="pop[]" data-bind="attr: {value: pop}"></td>
 			</tr>
 		</tbody>
 	</table>
-	<button type="submit" class="btn" id="edit-team-name">Update Team Info</button>
+	<button type="submit" class="btn" id="edit-team-info">Update Team Info</button>
 </form>

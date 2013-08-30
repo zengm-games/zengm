@@ -132,7 +132,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         // Scale proportional to (ovr*2 + pot)*0.5 120-210
         //amount = ((3 * value(p)) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
         //amount = amount * (maxAmount - minAmount) + minAmount;
-        amount = (value(p) / 100 - 0.45) * 4 * (maxAmount - minAmount) + minAmount;
+        amount = (value(p) / 100 - 0.45) * 3.5 * (maxAmount - minAmount) + minAmount;
         amount *= random.gauss(1, 0.1);  // Randomize
 
         // Expiration
@@ -1342,7 +1342,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         potential = pr.pot;
 
         // If performance is already exceeding predicted potential, just use that
-        if (current >= potential && age < 31) {
+        if (current >= potential && age < 29) {
             return current;
         }
 
@@ -1369,20 +1369,26 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         if (age === 25) {
             return 0.05 * potential + 0.95 * current;
         }
-        if (age > 25 && age < 31) {
+        if (age > 25 && age < 29) {
             return current;
         }
-        if (age === 31) {
+        if (age === 29) {
             return 0.975 * current;
         }
-        if (age === 32) {
+        if (age === 30) {
             return 0.95 * current;
         }
+        if (age === 31) {
+            return 0.9 * current;
+        }
+        if (age === 32) {
+            return 0.85 * current;
+        }
         if (age === 33) {
-            return 0.925 * current;
+            return 0.8 * current;
         }
         if (age > 33) {
-            return 0.9 * current;
+            return 0.7 * current;
         }
     }
 

@@ -1,0 +1,21 @@
+<p><h1>Edit Team Info</h1></p>
+<br>
+<form method="POST" data-bind="attrLeagueUrl: {action: ['edit_team_names']}">
+	<table>
+		<thead>
+			<tr>
+				<th>Region</th>
+				<th>Name</th>
+				<th>Population (in millions)</th>
+			</tr>
+		</thead>
+		<tbody data-bind="foreach: teams">
+			<tr>
+				<td><input type="text" class="form-inline" name="region[]" data-bind="attr: {value: region}"></td>
+				<td><input type="text" class="form-inline" name="name[]" data-bind="attr: {value: name}"></td>
+				<td><input type="text" class="form-inline" name="population[]" data-bind="attr: {value: pop}"></td>
+			</tr>
+		</tbody>
+	</table>
+	<button type="submit" class="btn" id="edit-team-name">Update Team Info</button>
+</form>

@@ -15,7 +15,7 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
                 t = cursor.value;
                 t.region = req.params.region[t.tid];
                 t.name = req.params.name[t.tid];
-                t.seasons[t.seasons.length - 1].pop = req.params.population[t.tid];
+                t.seasons[t.seasons.length - 1].pop = parseFloat(req.params.pop[t.tid]);
                 cursor.update(t);
                 cursor.continue();
             } else {

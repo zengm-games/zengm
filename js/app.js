@@ -112,8 +112,8 @@ requirejs(["db", "views", "ui", "lib/davis", "util/helpers", "lib/bootstrap-aler
             this.get("/l/:lid/history", views.history.get);
             this.get("/l/:lid/history/:season", views.history.get);
             this.get("/l/:lid/hall_of_fame", views.hallOfFame.get);
-            this.get("/l/:lid/edit_team_names", views.editTeamNames.get);
-            this.post("/l/:lid/edit_team_names", views.editTeamNames.post);
+            this.get("/l/:lid/edit_team_info", views.editTeamInfo.get);
+            this.post("/l/:lid/edit_team_info", views.editTeamInfo.post);
             this.get("/l/:lid/roster", views.roster.get);
             this.get("/l/:lid/roster/:abbrev", views.roster.get);
             this.get("/l/:lid/roster/:abbrev/:season", views.roster.get);

@@ -19,13 +19,15 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
                 cursor.update(t);
                 cursor.continue();
             } else {
-                ui.realtimeUpdate([], helpers.leagueUrl([]));
+                //Updating cached values for team regions and team names for easy access.
+                db.setGameAttributes({
+                    teamRegionsCache: req.params.region,
+                    teamNamesCache: req.params.name
+                }, function () {
+                    ui.realtimeUpdate([], helpers.leagueUrl([]));
+                });
             }
         };
-
-        //Updating cached values for team regions and team names for easy access.
-        db.setGameAttributes({teamRegionsCache: req.params.region});
-        db.setGameAttributes({teamNamesCache: req.params.name});
     }
 
     function updateTeamInfo() {

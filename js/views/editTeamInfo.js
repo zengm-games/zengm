@@ -4,10 +4,12 @@
  */
 define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util/helpers"], function (db, g, ui, team, $, bbgmView, helpers) {
     "use strict";
-    
+
     function post(req) {
+        $("#edit-team-info").attr("disabled", "disabled");
         g.dbl.transaction("teams", "readwrite").objectStore("teams").openCursor().onsuccess = function (event) {
             var cursor, t;
+
             cursor = event.target.result;
             if (cursor) {
                 t = cursor.value;
@@ -19,12 +21,13 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
             } else {
                 ui.realtimeUpdate([], helpers.leagueUrl([]));
             }
-        }
+        };
+
         //Updating cached values for team regions and team names for easy access.
         db.setGameAttributes({teamRegionsCache: req.params.region});
         db.setGameAttributes({teamNamesCache: req.params.name});
     }
-    
+
     function updateTeamInfo() {
         var deferred;
         deferred = $.Deferred();
@@ -38,7 +41,7 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
                 teams: teams
             });
         });
-        
+
         return deferred.promise();
     }
 

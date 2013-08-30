@@ -8,6 +8,7 @@ This is a list of **only the major changes** in each version.
 - Fewer high-rated big men are generated
 - Support for customized team names
 - Support for player images in custom rosters
+- After being fired, you can get hired by another team
 
 # 3.1.1 (2013-07-26)
 

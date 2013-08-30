@@ -1,5 +1,5 @@
 <p><h1>Edit Team Names</h1></p>
-<p>To change team names, enter their new name in the corresponding textbox. Leaving a textbox blank will keep the original team name.</p>
+<p>To change team names, enter their new name in the corresponding textbox.</p>
 <br>
 <form method="POST" data-bind="attrLeagueUrl: {action: ['edit_team_names']}">
 	<table>
@@ -12,9 +12,9 @@
 		</thead>
 		<tbody data-bind="foreach: teams">
 			<tr>
-				<td><input type="text" class="team form-inline" name="region[]" data-bind="attr: {value: region}"></td>
-				<td><input type="text" class="team form-inline" name="name[]" data-bind="attr: {value: name}"></td>
-				<td><input type="text" class="team form-inline" name="population[]" data-bind="attr: {value: pop}"></td>
+				<td><input type="text" class="form-inline" name="region[]" data-bind="attr: {value: region}"></td>
+				<td><input type="text" class="form-inline" name="name[]" data-bind="attr: {value: name}"></td>
+				<td><input type="text" class="form-inline" name="population[]" data-bind="attr: {value: pop}"></td>
 			</tr>
 		</tbody>
 	</table>

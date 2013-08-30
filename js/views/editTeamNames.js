@@ -20,6 +20,7 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
                 ui.realtimeUpdate([], helpers.leagueUrl([]));
             }
         }
+        //Updating cached values for team regions and team names for easy access.
         db.setGameAttributes({teamRegionsCache: req.params.region});
         db.setGameAttributes({teamNamesCache: req.params.name});
     }
@@ -29,15 +30,12 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
         deferred = $.Deferred();
 
         team.filter({
-            attrs: ["tid", "region", "name", "seasons"],
+            attrs: ["tid", "region", "name"],
             seasonAttrs: ["pop"],
             season: g.season
         }, function (teams) {
             deferred.resolve({
-                teams: teams,
-                region: teams.region,
-                name: teams.name,
-                pop: _.last(teams).seasons[0].pop
+                teams: teams
             });
         });
         

@@ -7,13 +7,13 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
     
     function post(req) {
         g.dbl.transaction("teams", "readwrite").objectStore("teams").openCursor().onsuccess = function (event) {
-            var cursor, i, t;
+            var cursor, t;
             cursor = event.target.result;
             if (cursor) {
                 t = cursor.value;
                 t.region = req.params.region[t.tid];
                 t.name = req.params.name[t.tid];
-                t.seasons[0].pop = req.params.population[t.tid];
+                t.seasons[t.seasons.length - 1].pop = req.params.population[t.tid];
                 cursor.update(t);
                 cursor.continue();
             } else {

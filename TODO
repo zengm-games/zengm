@@ -99,12 +99,11 @@ team names from db
   g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache - update this when appropriate
   store region and name in meta so it can be shown on dashboard
     update this when changed on customize screen
-  "customize" screen
-    option to load from JSON file
+  option to load from JSON file on "Edit Team Info"
   export rosters should include teams
     option to include just team names or just players
-  when is popRank updated? make sure to do it on new league start.
-    can i get rid of hardcoded popRank?
+    should update popRank when custom teams are supplied
+  not so simple to allow abbrevs to be changed, since they are used elsewhere for convenience - damn indexeddb and denormalization!
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 better ovr formula
   regression, see what is important?
@@ -112,10 +111,13 @@ document things that affect player mood
 contracts should take ratings into more account, since stats on a good team are inflated and stats on a bad team are depressed
 show four factors somewhere
 show attendance in box score
+security
+  validate any user-added content, like custom team names (both in file and through form), custom players, and league names
 
 LOW PRIORITY
 ------------
 
+popRank never updates, but I don't think it matters.
 different owner personalities, with different priorities
 trades
   "undo" button for accidental trades

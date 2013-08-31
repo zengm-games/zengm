@@ -97,7 +97,8 @@ show annual ratings changes in roster page
 add function to delete old box scores (older than, say 5 years) to debug menu, to save space
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 better ovr formula
-  regression, see what is important?
+  regression: player = require('core/player'); x = player.regressRatingsPer();
+    weight by minutes played
 document things that affect player mood
 contracts should take ratings into more account, since stats on a good team are inflated and stats on a bad team are depressed
 show four factors somewhere

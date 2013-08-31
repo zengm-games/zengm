@@ -498,11 +498,11 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
     function genRatings(profile, baseRating, pot, season, scoutingRank) {
         var i, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
 
-        if (profile === 'Point') {
+        if (profile === "Point") {
             profileId = 1;
-        } else if (profile === 'Wing') {
+        } else if (profile === "Wing") {
             profileId = 2;
-        } else if (profile === 'Big') {
+        } else if (profile === "Big") {
             profileId = 3;
         } else {
             profileId = 0;
@@ -523,7 +523,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         }
 
         ratings = {};
-        ratingKeys = ['hgt', 'stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
+        ratingKeys = ["hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
         for (i = 0; i < ratingKeys.length; i++) {
             key = ratingKeys[i];
             ratings[key] = rawRatings[i];
@@ -1392,6 +1392,209 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         }
     }
 
+    function regressRatingsPer() {
+        // http://rosettacode.org/wiki/Multiple_regression#JavaScript
+        function Matrix(ary) {
+            this.mtx = ary;
+            this.height = ary.length;
+            this.width = ary[0].length;
+        }
+
+        Matrix.prototype.toString = function () {
+            var i, s;
+
+            s = [];
+            for (i = 0; i < this.mtx.length; i++) {
+                s.push(this.mtx[i].join(","));
+            }
+            return s.join("\n");
+        };
+
+        // returns a new matrix
+        Matrix.prototype.transpose = function () {
+            var i, j, transposed;
+
+            transposed = [];
+            for (i = 0; i < this.width; i++) {
+                transposed[i] = [];
+                for (j = 0; j < this.height; j++) {
+                    transposed[i][j] = this.mtx[j][i];
+                }
+            }
+            return new Matrix(transposed);
+        };
+
+        // returns a new matrix
+        Matrix.prototype.mult = function (other) {
+            var i, j, k, result, sum;
+
+            if (this.width !== other.height) {
+                throw "error: incompatible sizes";
+            }
+
+            result = [];
+            for (i = 0; i < this.height; i++) {
+                result[i] = [];
+                for (j = 0; j < other.width; j++) {
+                    sum = 0;
+                    for (k = 0; k < this.width; k++) {
+                        sum += this.mtx[i][k] * other.mtx[k][j];
+                    }
+                    result[i][j] = sum;
+                }
+            }
+            return new Matrix(result);
+        };
+
+        // modifies the matrix in-place
+        Matrix.prototype.toReducedRowEchelonForm = function () {
+            var i, j, lead, r, tmp, val;
+
+            lead = 0;
+            for (r = 0; r < this.height; r++) {
+                if (this.width <= lead) {
+                    return;
+                }
+                i = r;
+                while (this.mtx[i][lead] === 0) {
+                    i++;
+                    if (this.height === i) {
+                        i = r;
+                        lead++;
+                        if (this.width === lead) {
+                            return;
+                        }
+                    }
+                }
+
+                tmp = this.mtx[i];
+                this.mtx[i] = this.mtx[r];
+                this.mtx[r] = tmp;
+
+                val = this.mtx[r][lead];
+                for (j = 0; j < this.width; j++) {
+                    this.mtx[r][j] /= val;
+                }
+
+                for (i = 0; i < this.height; i++) {
+                    if (i !== r) {
+                        val = this.mtx[i][lead];
+                        for (j = 0; j < this.width; j++) {
+                            this.mtx[i][j] -= val * this.mtx[r][j];
+                        }
+                    }
+                }
+                lead++;
+            }
+            return this;
+        };
+
+        function IdentityMatrix(n) {
+            var i, j;
+
+            this.height = n;
+            this.width = n;
+            this.mtx = [];
+            for (i = 0; i < n; i++) {
+                this.mtx[i] = [];
+                for (j = 0; j < n; j++) {
+                    this.mtx[i][j] = (i === j ? 1 : 0);
+                }
+            }
+        }
+        IdentityMatrix.prototype = Matrix.prototype;
+
+        // modifies the matrix "in place"
+        Matrix.prototype.inverse = function () {
+            var i, I;
+
+            if (this.height !== this.width) {
+                throw "can't invert a non-square matrix";
+            }
+
+            I = new IdentityMatrix(this.height);
+            for (i = 0; i < this.height; i++) {
+                this.mtx[i] = this.mtx[i].concat(I.mtx[i]);
+            }
+            this.width *= 2;
+
+            this.toReducedRowEchelonForm();
+
+            for (i = 0; i < this.height; i++) {
+                this.mtx[i].splice(0, this.height);
+            }
+            this.width /= 2;
+
+            return this;
+        };
+
+        function ColumnVector(ary) {
+            return new Matrix(ary.map(function (v) { return [v]; }));
+        }
+        ColumnVector.prototype = Matrix.prototype;
+
+        Matrix.prototype.regression_coefficients = function (x) {
+            var x_t;
+
+            x_t = x.transpose();
+
+            return x_t.mult(x).inverse().mult(x_t).mult(this);
+        }
+
+        // the Tcl example
+        var y = new ColumnVector([
+            52.21, 53.12, 54.48, 55.84, 57.20, 58.57, 59.93, 61.29, 
+            63.11, 64.47, 66.28, 68.10, 69.92, 72.19, 74.46
+        ]);
+        var x = new Matrix(
+            [1.47,1.50,1.52,1.55,1.57,1.60,1.63,1.65,1.68,1.70,1.73,1.75,1.78,1.80,1.83].map(
+                function(v) {return [Math.pow(v,0), Math.pow(v,1), Math.pow(v,2)]}
+            )
+        );
+        console.log(y.regression_coefficients(x).toString());
+
+        g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
+            var c, i, j, k, p, pers, players, ratings, ratingLabels, x, y;
+
+            pers = [];
+            ratings = [];
+
+            players = player.filter(event.target.result, {
+                ratings: ["season", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
+                stats: ["season", "per", "min"],
+                totals: true
+            });
+
+            for (i = 0; i < players.length; i++) {
+                p = players[i];
+
+                // Loop through seasons
+                for (j = 0; j < p.ratings.length; j++) {
+                    // Find stats entry to match ratings
+                    for (k = 0; k < p.stats.length; k++) {
+                        if (p.ratings[j].season === p.stats[k].season && !p.stats[k].playoffs) {
+                            // Ignore anything under 500 minutes
+                            if (p.stats[k].min > 500) {
+                                pers.push(p.stats[k].per);
+                                ratings.push([p.ratings[j].hgt, p.ratings[j].stre, p.ratings[j].spd, p.ratings[j].jmp, p.ratings[j].endu, p.ratings[j].ins, p.ratings[j].dnk, p.ratings[j].ft, p.ratings[j].fg, p.ratings[j].tp, p.ratings[j].blk, p.ratings[j].stl, p.ratings[j].drb, p.ratings[j].pss, p.ratings[j].reb]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            x = new Matrix(ratings);
+            y = new ColumnVector(pers);
+
+            c = y.regression_coefficients(x);
+
+            ratingLabels = ["hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
+            for (i = 0; i < ratingLabels.length; i++) {
+                console.log(ratingLabels[i] + ": " + c.mtx[i][0] * 100);
+            }
+        };
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1408,6 +1611,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         skills: skills,
         filter: filter,
         madeHof: madeHof,
-        value: value
+        value: value,
+        regressRatingsPer: regressRatingsPer
     };
 });

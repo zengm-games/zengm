@@ -21,23 +21,30 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                     reader = new window.FileReader();
                     reader.readAsText(file);
                     reader.onload = function (event) {
-                        var roster;
+                        var roster, randomizeRoster;
 
                         roster = JSON.parse(event.target.result);
 
-                        startingSeason = roster.startingSeason !== undefined ? roster.startingSeason : startingSeason;
+                        randomizeRoster = $("#randomize-roster");
 
-                        league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, function (lid) {
-                            ui.realtimeUpdate([], "/l/" + lid);
-                        });
+                        startingSeason = roster.startingSeason !== undefined ? roster.startingSeason : startingSeason;
+                        if (randomizeRoster[0].checked) {
+                            league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, true, function (lid) {
+                                ui.realtimeUpdate([], "/l/" + lid);
+                            });
+                        } else {
+                            league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, false, function (lid) {
+                                ui.realtimeUpdate([], "/l/" + lid);
+                            });
+                        }
                     };
                 } else {
-                    league.create(req.params.name, tid, undefined, undefined, startingSeason, function (lid) {
+                    league.create(req.params.name, tid, undefined, undefined, startingSeason, false, function (lid) {
                         ui.realtimeUpdate([], "/l/" + lid);
                     });
                 }
             } else {
-                league.create(req.params.name, tid, undefined, undefined, startingSeason, function (lid) {
+                league.create(req.params.name, tid, undefined, undefined, startingSeason, false, function (lid) {
                     ui.realtimeUpdate([], "/l/" + lid);
                 });
             }
@@ -104,8 +111,10 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         updateShowUploadForm = function () {
             if (selectRosters.val() === "custom-rosters") {
                 $("#custom-rosters").show();
+                $("#randomize-rostersLabel").show();
             } else {
                 $("#custom-rosters").hide();
+                $("#randomize-rostersLabel").hide();
             }
         };
 

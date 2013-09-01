@@ -108,6 +108,10 @@ in playoffs, replace "play week" with "play until end of round"
 LOW PRIORITY
 ------------
 
+jslint errors
+  currently just "Don't make functions within a loop." which should all be fixed eventually
+  can I get rid of all the "is OK" lines?
+  jshint?
 A year-to-date comparison of team finances with the previous year.
 better core.player.ovr formula
   regression: player = require('core/player'); player.regressRatingsPer();
@@ -365,8 +369,6 @@ IE10 support
     hacky solution used now (see js/lib/README.md) but maybe this will lead to a real answer: http://stackoverflow.com/q/17641380/786644
   http://www.reddit.com/r/BasketballGM/comments/1kj8nv/i_have_updated_firefox_but_the_game_wont_load_in/
 hire/fire different coaches with different strategies
-jslint errors
-  currently just "Don't make functions within a loop." which should all be fixed eventually
 Web workers
   don't seem to actually help performance. maybe help responsiveness
   benchmark?

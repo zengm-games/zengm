@@ -26,18 +26,23 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                         roster = JSON.parse(event.target.result);
 
                         startingSeason = roster.startingSeason !== undefined ? roster.startingSeason : startingSeason;
-
-                        league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, function (lid) {
-                            ui.realtimeUpdate([], "/l/" + lid);
-                        });
+                        if (req.params.hasOwnProperty("randomizeRoster")) {
+                            league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, true, function (lid) {
+                                ui.realtimeUpdate([], "/l/" + lid);
+                            });
+                        } else {
+                            league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, false, function (lid) {
+                                ui.realtimeUpdate([], "/l/" + lid);
+                            });
+                        }
                     };
                 } else {
-                    league.create(req.params.name, tid, undefined, undefined, startingSeason, function (lid) {
+                    league.create(req.params.name, tid, undefined, undefined, startingSeason, false, function (lid) {
                         ui.realtimeUpdate([], "/l/" + lid);
                     });
                 }
             } else {
-                league.create(req.params.name, tid, undefined, undefined, startingSeason, function (lid) {
+                league.create(req.params.name, tid, undefined, undefined, startingSeason, false, function (lid) {
                     ui.realtimeUpdate([], "/l/" + lid);
                 });
             }
@@ -104,8 +109,10 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         updateShowUploadForm = function () {
             if (selectRosters.val() === "custom-rosters") {
                 $("#custom-rosters").show();
+                $("#randomize-rostersLabel").show();
             } else {
                 $("#custom-rosters").hide();
+                $("#randomize-rostersLabel").hide();
             }
         };
 

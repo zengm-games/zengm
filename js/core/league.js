@@ -13,7 +13,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
      * @param {number} tid The team ID for the team the user wants to manage.
      * @param {Array.<Object>?} players Either an array of pre-generated player objects to use in the new league or undefined. If undefined, then random players will be generated.
      */
-    function create(name, tid, players, teams, startingSeason, cb) {
+    function create(name, tid, players, teams, startingSeason, randomize, cb) {
         var l, leagueStore;
 
         l = {name: name, tid: tid, phaseText: ""};
@@ -145,8 +145,26 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                         };
 
                         if (players !== undefined) {
+                            
                             // Use pre-generated players, filling in attributes as needed
                             playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
+
+                            //Does the player want the rosters randomized?
+                            if (randomize) {
+                                var playerTids, cnt;
+                                playerTids = [];
+                                cnt = 0;
+                                for (i = 0; i < players.length; i++) {
+                                    p = players[i];
+                                    playerTids.push(p.tid);
+                                }
+                                //Shuffle the teams that players are assigned to.
+                                random.shuffle(playerTids);
+                                for (i = 0; i < players.length; i++) {
+                                    p = players[i];
+                                    p.tid = playerTids[i];
+                                }
+                            }
 
                             numLeft = players.length;
                             for (i = 0; i < players.length; i++) {

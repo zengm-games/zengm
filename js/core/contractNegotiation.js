@@ -47,7 +47,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                 }
 
                 playerStore.get(pid).onsuccess = function (event) {
-                    var maxOffers, negotiation, p, playerAmount, playerYears;
+                    var negotiation, p, playerAmount, playerYears;
 
                     p = event.target.result;
                     if (p.tid !== g.PLAYER.FREE_AGENT) {
@@ -65,8 +65,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                     if (freeAgents.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
                         return cb(p.name + " refuses to sign with you, no matter what you offer.");
                     }
-
-                    maxOffers = random.randInt(1, 5);
 
                     negotiation = {
                         pid: pid,
@@ -180,7 +178,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                 } else {
                     if (teamYears === negotiation.player.years) {
                         // Team and player agree on years, so just update amount
-                        if (teamAmount > negotiation.player.amount) {
+                        if (teamAmount >= negotiation.player.amount) {
                             negotiation.player.amount = teamAmount;
                         } else if (teamAmount > 0.7 * negotiation.player.amount) {
                             negotiation.player.amount = (0.5 * (1 + mood)) * negotiation.orig.amount + (0.5 * (1 - mood)) * teamAmount;

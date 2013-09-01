@@ -149,14 +149,14 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                             // Use pre-generated players, filling in attributes as needed
                             playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
 
-                            //Does the player want the rosters randomized?
+                            // Does the player want the rosters randomized?
                             if (randomize) {
                                 playerTids = [];
                                 for (i = 0; i < players.length; i++) {
                                     p = players[i];
                                     playerTids.push(p.tid);
                                 }
-                                //Shuffle the teams that players are assigned to.
+                                // Shuffle the teams that players are assigned to.
                                 random.shuffle(playerTids);
                                 for (i = 0; i < players.length; i++) {
                                     p = players[i];

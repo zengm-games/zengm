@@ -1545,18 +1545,6 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             return x_t.mult(x).inverse().mult(x_t).mult(this);
         }
 
-        // the Tcl example
-        var y = new ColumnVector([
-            52.21, 53.12, 54.48, 55.84, 57.20, 58.57, 59.93, 61.29, 
-            63.11, 64.47, 66.28, 68.10, 69.92, 72.19, 74.46
-        ]);
-        var x = new Matrix(
-            [1.47,1.50,1.52,1.55,1.57,1.60,1.63,1.65,1.68,1.70,1.73,1.75,1.78,1.80,1.83].map(
-                function(v) {return [Math.pow(v,0), Math.pow(v,1), Math.pow(v,2)]}
-            )
-        );
-        console.log(y.regression_coefficients(x).toString());
-
         g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
             var c, i, j, k, p, pers, players, ratings, ratingLabels, x, y;
 

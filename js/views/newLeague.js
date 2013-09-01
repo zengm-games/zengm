@@ -21,14 +21,12 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                     reader = new window.FileReader();
                     reader.readAsText(file);
                     reader.onload = function (event) {
-                        var roster, randomizeRoster;
+                        var roster;
 
                         roster = JSON.parse(event.target.result);
 
-                        randomizeRoster = $("#randomize-roster");
-
                         startingSeason = roster.startingSeason !== undefined ? roster.startingSeason : startingSeason;
-                        if (randomizeRoster[0].checked) {
+                        if (req.params.hasOwnProperty("randomizeRoster")) {
                             league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, true, function (lid) {
                                 ui.realtimeUpdate([], "/l/" + lid);
                             });

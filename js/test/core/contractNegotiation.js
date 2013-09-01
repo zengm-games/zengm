@@ -206,5 +206,53 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
                 };
             });
         });
+        describe("#offer()", function () {
+            it("should never counter with an offer below what has already been proposed", function (done) {
+                var i, tx;
+
+                tx = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
+                contractNegotiation.create(tx, 9, false);
+
+                tx.oncomplete = function () {
+
+                    g.dbl.transaction("negotiations").objectStore("negotiations").openCursor(9).onsuccess = function (event) {
+                        var negotiation, originalYears;
+
+                        negotiation = event.target.result.value;
+                        originalYears = negotiation.player.years;
+
+                        // offer a max contract for however many years the player wants
+                        contractNegotiation.offer(9, 20000, originalYears, function () {
+
+                            g.dbl.transaction("negotiations").objectStore("negotiations").openCursor(9).onsuccess = function (event) {
+                                var negotiation;
+
+                                negotiation = event.target.result.value;
+
+                                // player should be happy to accept the $20,000,000 for the years they specified
+                                negotiation.player.amount.should.equal(20000);
+                                negotiation.player.years.should.equal(originalYears);
+
+                                // Try to skimp the player by offering slightly less
+                                contractNegotiation.offer(9, 19999, originalYears, function () {
+
+                                    g.dbl.transaction("negotiations").objectStore("negotiations").openCursor(9).onsuccess = function (event) {
+                                        var negotiation;
+
+                                        negotiation = event.target.result.value;
+
+                                        // Player should not fall for the bait and switch
+                                        negotiation.player.amount.should.equal(20000);
+                                        negotiation.player.years.should.equal(originalYears);
+
+                                        done();
+                                    };
+                                });
+                            };
+                        });
+                    };
+                };
+            });
+        });
     });
 });

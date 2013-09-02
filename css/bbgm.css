@@ -216,6 +216,7 @@ select.past-x {
 .player_picture {
   height: 150px;
   float: left;
+  margin-right: 10px;
   width: 100px;
 }
 

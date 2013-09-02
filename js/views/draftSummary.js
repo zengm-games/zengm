@@ -63,7 +63,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
                 if (pa.draft.round === 1 || pa.draft.round === 2) {
                     // Attributes
-                    p = {pid: pa.pid, name: pa.name, pos: pa.pos, draft: pa.draft, currentAge: pa.age, currentAbbrev: pa.abbrev};
+                    p = {pid: pa.pid, name: pa.name, pos: pa.pos, draft: pa.draft, currentAge: pa.age};
 
                     // Ratings
                     currentPr = _.last(pa.ratings);
@@ -71,10 +71,12 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                         p.currentOvr = currentPr.ovr;
                         p.currentPot = currentPr.pot;
                         p.currentSkills = currentPr.skills;
+                        p.currentAbbrev = pa.abbrev;
                     } else {
                         p.currentOvr = "";
                         p.currentPot = "";
                         p.currentSkills = "";
+                        p.currentAbbrev = "";
                     }
 
                     // Stats

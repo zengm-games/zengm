@@ -18,7 +18,7 @@ define(["lib/knockout"], function (ko) {
     g.salaryCap = 60000;  // [thousands of dollars]
     g.minPayroll = 40000;  // [thousands of dollars]
     g.luxuryPayroll = 65000;  // [thousands of dollars]
-    g.luxuryTax = 0.5;
+    g.luxuryTax = 1.5;
     g.minContract = 500;  // [thousands of dollars]
     g.maxContract = 20000;  // [thousands of dollars]
     g.minRosterSize = 10;

@@ -48,6 +48,7 @@ BIG NEW GAMEPLAY CHANGES
 ------------------------
 
 remove "buy out"
+  done, but the backend code is still there
 less weird player rating combos
   different ratings should have different potential for growth - easier to improve jumpshot than quickness
   revamp position assignment algorithm

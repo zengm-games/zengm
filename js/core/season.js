@@ -524,7 +524,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         players.sort(function (a, b) {  return a.pot - b.pot; });
                         for (i = 0; i < (numPlayersOnRoster - 15); i++) {
                             playerStore.get(players[i].pid).onsuccess = function (event) {
-                                player.release(tx, event.target.result);
+                                player.release(tx, false, event.target.result);
                             };
                         }
                     }

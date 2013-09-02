@@ -59,7 +59,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         };
     }
 
-    function doRelease(pid, cb) {
+    function doRelease(pid, justDrafted, cb) {
         var playerStore, transaction;
 
         transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
@@ -81,7 +81,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 p = event.target.result;
                 // Don't let the user update CPU-controlled rosters
                 if (p.tid === g.userTid) {
-                    player.release(transaction, p, function () {
+                    player.release(transaction, p, justDrafted, function () {
                         db.setGameAttributes({lastDbChange: Date.now()}, function () {
                             cb();
                         });
@@ -291,7 +291,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                 vars.team = t;
 
-                attrs = ["pid", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier"];
+                attrs = ["pid", "tid", "draft", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier"];  // tid and draft are used for checking if a player can be released without paying his salary
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["gp", "min", "pts", "trb", "ast", "per"];
 
@@ -384,7 +384,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         // Release and Buy Out buttons, which will only appear if the roster is editable
         // Trade For button is handled by POST
         $("#roster").on("click", "button", function (event) {
-            var i, pid, players, tr;
+            var justDrafted, i, pid, players, releaseMessage, tr;
 
             pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
             players = vm.players();
@@ -395,9 +395,16 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             }
 
             if (this.dataset.action === "release") {
-                if (window.confirm("Are you sure you want to release " + players[i].name() + "?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in " + players[i].contract.exp() + ".")) {
+                // If a player was just drafted by his current team and the regular season hasn't started, then he can be released without paying anything
+                justDrafted = players[i].tid() === players[i].draft.tid() && ((players[i].draft.year() === g.season && g.phase >= g.PHASE.DRAFT) || (players[i].draft.year() === g.season - 1 && g.phase < g.PHASE.REGULAR_SEASON));
+                if (justDrafted) {
+                    releaseMessage = "Are you sure you want to release " + players[i].name() + "?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.";
+                } else {
+                    releaseMessage = "Are you sure you want to release " + players[i].name() + "?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in " + players[i].contract.exp() + ".";
+                }
+                if (window.confirm(releaseMessage)) {
                     tr = this.parentNode.parentNode;
-                    doRelease(pid, function (error) {
+                    doRelease(pid, justDrafted, function (error) {
                         if (error) {
                             alert("Error: " + error);
                         } else {
@@ -498,6 +505,12 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 '<span style="background-color: #ccc">&nbsp;&nbsp;&nbsp; Let Coach Decide</span><br>' +
                 '<span style="background-color: #0f0">+ More Playing Time</span><br>' +
                 '<span style="background-color: #070; color: #fff">++ Even More Playing Time</span>'
+        });
+
+        $("#help-roster-release").clickover({
+            title: "Release Player",
+            html: true,
+            content: "<p>To free up a roster spot, you can release a player from your team. You will still have to pay his salary (and have it count against the salary cap) until his contract expires (you can view your released players' contracts in your <a href=\"" + helpers.leagueUrl(["team_finances"]) + "\">Team Finances</a>).</p>However, if you just drafted a player and the regular season has not started yet, his contract is not guaranteed and you can release him for free."
         });
     }
 

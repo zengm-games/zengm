@@ -449,15 +449,19 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @memberOf core.player
      * @param {IDBTransaction} transaction An IndexedDB transaction on players, releasedPlayers, and teams, readwrite.
      * @param {Object} p Player object.
+     * @param {boolean} justDrafted True if the player was just drafted by his current team and the regular season hasn't started yet. False otherwise. If True, then the player can be released without paying his salary.
      * @param {function()} cb Callback function.
      */
-    function release(transaction, p, cb) {
-        // Keep track of player salary even when he's off the team
-        transaction.objectStore("releasedPlayers").add({
-            pid: p.pid,
-            tid: p.tid,
-            contract: p.contract
-        });
+    function release(transaction, p, justDrafted, cb) {
+        // Keep track of player salary even when he's off the team, but make an exception for players who were just drafted
+        // Was the player just drafted?
+        if (!justDrafted) {
+            transaction.objectStore("releasedPlayers").add({
+                pid: p.pid,
+                tid: p.tid,
+                contract: p.contract
+            });
+        }
 
         genBaseMoods(transaction, function (baseMoods) {
             addToFreeAgents(transaction, p, g.phase, baseMoods, cb);

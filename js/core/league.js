@@ -13,7 +13,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
      * @param {number} tid The team ID for the team the user wants to manage.
      * @param {Array.<Object>?} players Either an array of pre-generated player objects to use in the new league or undefined. If undefined, then random players will be generated.
      */
-    function create(name, tid, players, teams, startingSeason, cb) {
+    function create(name, tid, players, teams, startingSeason, randomize, cb) {
         var l, leagueStore;
 
         l = {name: name, tid: tid, phaseText: ""};

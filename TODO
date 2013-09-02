@@ -77,6 +77,14 @@ player development
 MINOR FIXES
 -----------
 
+player.value
+  player value shouldn't rely only on raw stats, because teammates heavily influence stats
+    add some fudge factor to discout PER on good teams and inflate it on bad teams
+  too easy to trade for young prospects with no stats http://www.reddit.com/r/BasketballGM/comments/1lkv5m/utah_jugglers/
+    options:
+      1. add fudge factor to make teams less willing to trade away young players without much game experience
+      2. just increase the value for ovr in player.value (try this now)
+        is there a better function than 4 * PER to map between PER and ovr? plot.
 AI teams playing with under 5 players http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/
   AI teams should never drop below 5 in regular season http://www.reddit.com/r/BasketballGM/comments/1l3od6/glitch_just_had_a_cpu_team_play_a_whole_season_w/cbvzngs
     no min roster limit in trades?

@@ -21,20 +21,17 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                     reader = new window.FileReader();
                     reader.readAsText(file);
                     reader.onload = function (event) {
-                        var roster;
+                        var roster, randomizeRoster;
 
                         roster = JSON.parse(event.target.result);
 
                         startingSeason = roster.startingSeason !== undefined ? roster.startingSeason : startingSeason;
-                        if (req.params.hasOwnProperty("randomizeRoster")) {
-                            league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, true, function (lid) {
-                                ui.realtimeUpdate([], "/l/" + lid);
-                            });
-                        } else {
-                            league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, false, function (lid) {
-                                ui.realtimeUpdate([], "/l/" + lid);
-                            });
-                        }
+
+                        randomizeRoster = req.params.hasOwnProperty("randomizeRoster");
+
+                        league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, randomizeRoster, function (lid) {
+                            ui.realtimeUpdate([], "/l/" + lid);
+                        });
                     };
                 } else {
                     league.create(req.params.name, tid, undefined, undefined, startingSeason, false, function (lid) {

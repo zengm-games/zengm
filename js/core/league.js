@@ -151,11 +151,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
 
                             // Does the player want the rosters randomized?
                             if (randomize) {
-                                playerTids = [];
-                                for (i = 0; i < players.length; i++) {
-                                    p = players[i];
-                                    playerTids.push(p.tid);
-                                }
+                                // Assign the team ID of all players to the 'playerTids' array.
+                                playerTids = _.pluck(players, "tid");
                                 // Shuffle the teams that players are assigned to.
                                 random.shuffle(playerTids);
                                 for (i = 0; i < players.length; i++) {

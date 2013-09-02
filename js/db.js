@@ -74,10 +74,11 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
         request.onsuccess = function (event) {
             g.dbm = request.result;
             g.dbm.onerror = function (event) {
+console.log(event);
                 if (event.target.webkitErrorMessage) {
                     throw new Error("Meta database error: " + event.target.webkitErrorMessage);
                 } else {
-                    throw new Error("Meta database error: " + event.target.errorCode);
+                    throw new Error("Meta database error: " + event.target.error.name + " - " + event.target.error.message);
                 }
             };
             cb();
@@ -517,11 +518,11 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
         request.onsuccess = function (event) {
             g.dbl = request.result;
             g.dbl.onerror = function (event) {
-//console.log(event);
+console.log(event);
                 if (event.target.webkitErrorMessage) {
                     throw new Error("League database error: " + event.target.webkitErrorMessage);
                 } else {
-                    throw new Error("League database error: " + event.target.errorCode);
+                    throw new Error("League database error: " + event.target.error.name + " - " + event.target.error.message);
                 }
             };
             cb();

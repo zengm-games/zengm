@@ -13,7 +13,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
      * @param {number} tid The team ID for the team the user wants to manage.
      * @param {Array.<Object>?} players Either an array of pre-generated player objects to use in the new league or undefined. If undefined, then random players will be generated.
      */
-    function create(name, tid, players, teams, startingSeason, randomize, cb) {
+    function create(name, tid, players, teams, startingSeason, randomizeRosters, cb) {
         var l, leagueStore;
 
         l = {name: name, tid: tid, phaseText: ""};
@@ -149,7 +149,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                             playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
 
                             // Does the player want the rosters randomized?
-                            if (randomize) {
+                            if (randomizeRosters) {
                                 // Assign the team ID of all players to the 'playerTids' array.
                                 playerTids = _.pluck(players, "tid");
                                 // Shuffle the teams that players are assigned to.

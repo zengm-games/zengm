@@ -21,15 +21,15 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                     reader = new window.FileReader();
                     reader.readAsText(file);
                     reader.onload = function (event) {
-                        var roster, randomizeRoster;
+                        var roster, randomizeRosters;
 
                         roster = JSON.parse(event.target.result);
 
                         startingSeason = roster.startingSeason !== undefined ? roster.startingSeason : startingSeason;
 
-                        randomizeRoster = req.params.hasOwnProperty("randomizeRoster");
+                        randomizeRosters = req.params.hasOwnProperty("randomize-rosters");
 
-                        league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, randomizeRoster, function (lid) {
+                        league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, randomizeRosters, function (lid) {
                             ui.realtimeUpdate([], "/l/" + lid);
                         });
                     };
@@ -106,10 +106,10 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         updateShowUploadForm = function () {
             if (selectRosters.val() === "custom-rosters") {
                 $("#custom-rosters").show();
-                $("#randomize-rostersLabel").show();
+                $("#randomize-rosters").show();
             } else {
                 $("#custom-rosters").hide();
-                $("#randomize-rostersLabel").hide();
+                $("#randomize-rosters").hide();
             }
         };
 

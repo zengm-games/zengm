@@ -77,6 +77,8 @@ player development
 MINOR FIXES
 -----------
 
+team.valueChange
+  contending teams shouldn't always see every player as a positive value. needs to be some balanced formula where a bad contract is a negative.
 player.value
   player value shouldn't rely only on raw stats, because teammates heavily influence stats
     add some fudge factor to discout PER on good teams and inflate it on bad teams
@@ -117,6 +119,7 @@ in playoffs, replace "play week" with "play until end of round"
 LOW PRIORITY
 ------------
 
+luxury tax money should be redistributed to non-taxpaying teams (or teams under the cap?)
 jslint errors
   currently just "Don't make functions within a loop." which should all be fixed eventually
   can I get rid of all the "is OK" lines?

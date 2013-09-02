@@ -66,6 +66,10 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
         if (tid === g.PLAYER.FREE_AGENT) {
             return "FA";
         }
+        if (tid < 0) {
+            // Draft prospect or retired
+            return "";
+        }
         result = validateTid(tid);
         tid = result[0];
         abbrev = result[1];

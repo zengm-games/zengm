@@ -43,6 +43,10 @@ more starting options
   randomize players on custom rosters
 localization
   http://requirejs.org/docs/api.html#i18n
+league settings
+  enable buy out button or not
+  set salary cap, luxury tax, etc
+  enable/disable trading rules
 
 BIG NEW GAMEPLAY CHANGES
 ------------------------

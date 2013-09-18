@@ -10,6 +10,7 @@ This is a list of **only the major changes** in each version.
 - Support for player images in custom rosters
 - After being fired, you can get hired by another team
 - Removed the ability to "buy out" players to get rid of bad contracts
+- Trading block
 
 # 3.1.1 (2013-07-26)
 

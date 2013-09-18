@@ -9,6 +9,8 @@ ewa in player.stats - doesn't really matter, right?
 BIG NEW FEATURES
 ----------------
 
+trading block
+  pass userDpids and userPids from form to vm, somehow
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?
@@ -35,7 +37,6 @@ achievements that span leagues, or milestones: http://www.reddit.com/r/Basketbal
     bronze: win a title with a player averaging a triple double
     silver: win two consecutive titles with a player averaging a triple double
     gold: win three consecutive titles with a player averaging a triple double
-trading block
 more starting options
   UI
     Add checkboxes: Randomize Rosters (only show for custom rosters), Fantasy Draft

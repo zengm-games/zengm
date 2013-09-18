@@ -127,6 +127,8 @@ requirejs(["db", "views", "ui", "lib/davis", "util/helpers", "lib/bootstrap-aler
             this.get("/l/:lid/free_agents", views.freeAgents.get);
             this.get("/l/:lid/trade", views.trade.get);
             this.post("/l/:lid/trade", views.trade.post);
+            this.get("/l/:lid/trading_block", views.tradingBlock.get);
+            this.post("/l/:lid/trading_block", views.tradingBlock.post);
             this.get("/l/:lid/draft", views.draft.get);
             this.get("/l/:lid/draft_summary", views.draftSummary.get);
             this.get("/l/:lid/draft_summary/:season", views.draftSummary.get);

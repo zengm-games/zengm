@@ -11,6 +11,12 @@ BIG NEW FEATURES
 
 trading block
   pass userDpids and userPids from form to vm, somehow
+  generalize core.trade.makeItWork
+    allow adding from either team
+      when "What would make this deal work" is clicked in trade, should add players from either team in one list, since assets can be positive or negative from either team
+    allow functioning independent of trade database (for use in trading block)
+    allow to specify one team as constant (for use in trading block)
+switch to date version numbers, add some kind of log of changes
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?
@@ -214,9 +220,6 @@ trades
     otherCash and userCash containing the amount
     estimate value of cash - different for different teams? depending on cash, net profit recently, and market size
     upper limit? what is NBA rule?
-  ask button
-    should there be another one to see what the team will give up for a player? like in civ4, and then only have one active at a time?
-    be more careful about UI, such as when to make button visible - make it like civ4?
   more feedback from AI
     if trade is close/far from working, return different messages
     display some indication of what a team wants to do on the trade view, e.g.

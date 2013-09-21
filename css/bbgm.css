@@ -350,6 +350,19 @@ select.past-x {
   vertical-align: 20%;
 }
 
+.trading-block-offer {
+  margin-bottom: 2em;
+}
+
+.trading-block-offer h2 {
+  float: left;
+  margin-right: 0.5em;
+}
+.trading-block-offer form {
+  margin-bottom: 0;
+  padding-top: 0.2em;
+}
+
 #messages {
   table-layout: fixed;
   width: 100%;

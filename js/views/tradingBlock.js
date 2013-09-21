@@ -102,10 +102,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
                     userPicks = event.target.result;
                     for (i = 0; i < userPicks.length; i++) {
-                        userPicks[i].desc = userPicks[i].season + " " + (userPicks[i].round === 1 ? "first" : "second") + " round pick";
-                        if (userPicks[i].tid !== userPicks[i].originalTid) {
-                            userPicks[i].desc += " (from " + userPicks[i].originalAbbrev + ")";
-                        }
+                        userPicks[i].desc = helpers.pickDesc(userPicks[i]);
                     }
 
                     deferred.resolve({

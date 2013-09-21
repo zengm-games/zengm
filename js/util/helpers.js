@@ -535,6 +535,17 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
         return '<a href="' + leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a> (from <a href="' + leagueUrl(["roster", originalAbbrev, season]) + '">' + originalAbbrev + '</a>)';
     }
 
+    function pickDesc(pick) {
+        var desc;
+
+        desc = pick.season + " " + (pick.round === 1 ? "first" : "second") + " round pick";
+        if (pick.tid !== pick.originalTid) {
+            desc += " (from " + pick.originalAbbrev + ")";
+        }
+
+        return desc;
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -555,6 +566,7 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
         numberWithCommas: numberWithCommas,
         bound: bound,
         leagueUrl: leagueUrl,
-        draftAbbrev: draftAbbrev
+        draftAbbrev: draftAbbrev,
+        pickDesc: pickDesc
     };
 });

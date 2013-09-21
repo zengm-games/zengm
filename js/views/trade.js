@@ -200,10 +200,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
 
                             userPicks = event.target.result;
                             for (i = 0; i < userPicks.length; i++) {
-                                userPicks[i].desc = userPicks[i].season + " " + (userPicks[i].round === 1 ? "first" : "second") + " round pick";
-                                if (userPicks[i].tid !== userPicks[i].originalTid) {
-                                    userPicks[i].desc += " (from " + userPicks[i].originalAbbrev + ")";
-                                }
+                                userPicks[i].desc = helpers.pickDesc(userPicks[i]);
                             }
 
                             draftPickStore.index("tid").getAll(otherTid).onsuccess = function (event) {
@@ -211,10 +208,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
 
                                 otherPicks = event.target.result;
                                 for (i = 0; i < otherPicks.length; i++) {
-                                    otherPicks[i].desc = otherPicks[i].season + " " + (otherPicks[i].round === 1 ? "first" : "second") + " round pick";
-                                    if (otherPicks[i].tid !== otherPicks[i].originalTid) {
-                                        otherPicks[i].desc += " (from " + otherPicks[i].originalAbbrev + ")";
-                                    }
+                                    otherPicks[i].desc = helpers.pickDesc(otherPicks[i]);
                                 }
 
                                 g.dbl.transaction("teams").objectStore("teams").get(otherTid).onsuccess = function (event) {

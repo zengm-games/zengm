@@ -2,25 +2,45 @@
  * @name views.tradingBlock
  * @namespace Trading block.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (g, ui, player, $, ko, _, bbgmView, helpers) {
+define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/random"], function (g, ui, player, trade, $, ko, _, bbgmView, helpers, random) {
     "use strict";
 
     var mapping;
 
-    function getOffers(userPids, userDpids) {
-        var offers;
+    function getOffers(userPids, userDpids, cb) {
+        var afterOffers, i, numAfter, offers, tids;
 
-        offers = [{
-            tid: 1,
-            pids: [70, 65, 67],
-            dpids: [3]
-        }, {
-            tid: 2,
-            pids: [84],
-            dpids: [5, 6]
-        }];
+        offers = [];
 
-        return offers;
+        tids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
+        random.shuffle(tids);
+
+
+        // Run callback after all teams have made an offer (ignoring the user's team)
+        numAfter = tids.length;
+        if (tids.indexOf(g.userTid) >= 0) {
+            numAfter -= 1;
+        }
+        afterOffers = _.after(numAfter, function () {
+            cb(offers);
+        });
+
+        for (i = 0; i < tids.length; i++) {
+            (function (tid) {
+                if (tid !== g.userTid) {
+                    trade.makeItWork(i, userPids, [], userDpids, [], true, function (found, userPids, otherPids, userDpids, otherDpids) {
+                        if (found) {
+                            offers.push({
+                                tid: tid,
+                                pids: otherPids,
+                                dpids: otherDpids
+                            });
+                        }
+                        afterOffers();
+                    });
+                }
+            }(tids[i]));
+        }
     }
 
     function get(req) {
@@ -41,15 +61,15 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         userPids = _.map(req.params.pids, function (x) { return parseInt(x, 10); });
         userDpids = _.map(req.params.dpids, function (x) { return parseInt(x, 10); });
 
-        offers = getOffers(userPids, userDpids);
-
-        ui.realtimeUpdate(["tradingBlockAsk"], helpers.leagueUrl(["trading_block"]), function () {
-            buttonEl.textContent = "Ask For Trade Proposals";
-            buttonEl.disabled = false;
-        }, {
-            userPids: userPids,
-            userDpids: userDpids,
-            offers: offers
+        getOffers(userPids, userDpids, function (offers) {
+            ui.realtimeUpdate(["tradingBlockAsk"], helpers.leagueUrl(["trading_block"]), function () {
+                buttonEl.textContent = "Ask For Trade Proposals";
+                buttonEl.disabled = false;
+            }, {
+                userPids: userPids,
+                userDpids: userDpids,
+                offers: offers
+            });
         });
     }
 

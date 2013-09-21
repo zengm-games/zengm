@@ -481,9 +481,10 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * Have the AI add players/picks until they like the deal. Uses forward selection to try to find the first deal the AI likes.
      *
      * @memberOf core.trade
+     * @param {boolean} holdUserConstant If true, then players/picks will only be added from the other team. This is useful for the trading block feature.
      * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
-    function makeItWork(otherTid, userPids, otherPids, userDpids, otherDpids, cb) {
+    function makeItWork(otherTid, userPids, otherPids, userDpids, otherDpids, holdUserConstant, cb) {
         var added, initialSign, tryAddAsset, testTrade;
 
         added = 0;
@@ -496,25 +497,27 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
             tx = g.dbl.transaction(["draftPicks", "players"]);
 
-            // Get all players not in userPids
-            tx.objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
-                var cursor, p;
+            if (!holdUserConstant) {
+                // Get all players not in userPids
+                tx.objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, p;
 
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
 
-                    if (userPids.indexOf(p.pid) < 0) {
-                        assets.push({
-                            type: "player",
-                            pid: p.pid,
-                            tid: g.userTid
-                        });
+                        if (userPids.indexOf(p.pid) < 0) {
+                            assets.push({
+                                type: "player",
+                                pid: p.pid,
+                                tid: g.userTid
+                            });
+                        }
+
+                        cursor.continue();
                     }
-
-                    cursor.continue();
-                }
-            };
+                };
+            }
 
             // Get all players not in otherPids
             tx.objectStore("players").index("tid").openCursor(otherTid).onsuccess = function (event) {
@@ -536,25 +539,27 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                 }
             };
 
-            // Get all draft picks not in userDpids
-            tx.objectStore("draftPicks").index("tid").openCursor(g.userTid).onsuccess = function (event) {
-                var cursor, dp;
+            if (!holdUserConstant) {
+                // Get all draft picks not in userDpids
+                tx.objectStore("draftPicks").index("tid").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, dp;
 
-                cursor = event.target.result;
-                if (cursor) {
-                    dp = cursor.value;
+                    cursor = event.target.result;
+                    if (cursor) {
+                        dp = cursor.value;
 
-                    if (userDpids.indexOf(dp.dpid) < 0) {
-                        assets.push({
-                            type: "draftPick",
-                            dpid: dp.dpid,
-                            tid: g.userTid
-                        });
+                        if (userDpids.indexOf(dp.dpid) < 0) {
+                            assets.push({
+                                type: "draftPick",
+                                dpid: dp.dpid,
+                                tid: g.userTid
+                            });
+                        }
+
+                        cursor.continue();
                     }
-
-                    cursor.continue();
-                }
-            };
+                };
+            }
 
             // Get all draft picks not in otherDpids
             tx.objectStore("draftPicks").index("tid").openCursor(otherTid).onsuccess = function (event) {
@@ -686,7 +691,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
     function makeItWorkTrade(cb) {
         getPlayers(function (userPids, otherPids, userDpids, otherDpids) {
             getOtherTid(function (otherTid) {
-                makeItWork(otherTid, userPids, otherPids, userDpids, otherDpids, function (found, userPids, otherPids, userDpids, otherDpids) {
+                makeItWork(otherTid, userPids, otherPids, userDpids, otherDpids, false, function (found, userPids, otherPids, userDpids, otherDpids) {
                     if (!found) {
                         cb(g.teamRegionsCache[otherTid] + ' GM: "I can\'t afford to give up so much."');
                     } else {

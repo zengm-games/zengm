@@ -12,9 +12,6 @@ BIG NEW FEATURES
 trading block
   pass userDpids and userPids from form to vm, somehow
   generalize core.trade.makeItWork
-    allow adding from either team
-      when "What would make this deal work" is clicked in trade, should add players from either team in one list, since assets can be positive or negative from either team
-    allow functioning independent of trade database (for use in trading block)
     allow to specify one team as constant (for use in trading block)
 switch to date version numbers, add some kind of log of changes
 team switching after being fired

@@ -7,16 +7,32 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
     var mapping;
 
+    function getOffers(userPids, userDpids) {
+        var offers;
+
+        offers = [{
+            tid: 1,
+            pids: [5, 2, 17],
+            dpids: [7, 12]
+        }, {
+            tid: 17,
+            pids: [50, 22, 11],
+            dpids: [42, 1]
+        }];
+
+        return offers;
+    }
 
     function get(req) {
         return {
             userPids: req.raw.userPids !== undefined ? req.raw.userPids : [],
-            userDpids: req.raw.userDpids !== undefined ? req.raw.userDpids : []
+            userDpids: req.raw.userDpids !== undefined ? req.raw.userDpids : [],
+            offers: req.raw.offers !== undefined ? req.raw.offers : []
         };
     }
 
     function post(req) {
-        var buttonEl, userDpids, userPids;
+        var buttonEl, offers, userDpids, userPids;
 
         buttonEl = document.getElementById("ask-button");
         buttonEl.textContent = "Waiting for answer...";
@@ -25,12 +41,15 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         userPids = _.map(req.params.pids, function (x) { return parseInt(x, 10); });
         userDpids = _.map(req.params.dpids, function (x) { return parseInt(x, 10); });
 
-        ui.realtimeUpdate([], helpers.leagueUrl(["trading_block"]), function () {
+        offers = getOffers(userPids, userDpids);
+
+        ui.realtimeUpdate(["tradingBlockAsk"], helpers.leagueUrl(["trading_block"]), function () {
             buttonEl.textContent = "Ask For Trade Proposals";
             buttonEl.disabled = false;
         }, {
             userPids: userPids,
-            userDpids: userDpids
+            userDpids: userDpids,
+            offers: offers
         });
     }
 
@@ -101,6 +120,34 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         }
     }
 
+    function updateOffers(inputs, updateEvents, vm) {
+        var deferred, i, offer, offers;
+
+        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0) {
+            deferred = $.Deferred();
+
+            offers = [];
+
+            if (inputs.offers.length === 0) {
+                deferred.resolve({
+                    offers: offers
+                });
+            } else {
+                for (i = 0; i < inputs.offers.length; i++) {
+                    offer = {
+                        region: g.teamRegionsCache[inputs.offers[i].tid],
+                        name: g.teamNamesCache[inputs.offers[i].tid]
+                    };
+                    offers.push(offer);
+                }
+console.log(inputs.offers);
+console.log(offers);
+            }
+
+            return deferred.promise();
+        }
+    }
+
     function uiFirst(vm) {
         var tradeable;
 
@@ -132,7 +179,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         get: get,
         post: post,
         mapping: mapping,
-        runBefore: [updateUserRoster],
+        runBefore: [updateUserRoster, updateOffers],
         uiFirst: uiFirst
     });
 });

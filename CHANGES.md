@@ -11,7 +11,7 @@ This is a list of **only the major changes** in each version.
 - After being fired, you can get hired by another team
 - Removed the ability to "buy out" players to get rid of bad contracts
 - Trading block
-- "What would make this deal work?" button can add assets from either team, to make the trade better or worse for the AI
+- "What would make this deal work?" button can add assets from either team, to make the trade better or worse for the AI. Previously, it would only add assets from the user's team to make the trade better for the AI.
 
 # 3.1.1 (2013-07-26)
 

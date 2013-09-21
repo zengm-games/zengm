@@ -630,9 +630,6 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                     j -= 1;
                                 }
                                 asset = assets[j];
-console.log(userPids);
-console.log(otherPids);
-console.log(asset);
                                 if (asset.type === "player") {
                                     if (asset.tid === g.userTid) {
                                         userPids.push(asset.pid);

@@ -27,7 +27,15 @@
 
 <!--ko foreach: offers-->
   <div class="trading-block-offer">
-    <h2>Offer <span data-bind="text: $index() + 1"></span>: <span data-bind="text: region"></span> <span data-bind="text: name"></span></h2> <form><button type="submit" class="btn btn-primary" style="vertical-align: text-top;">Negotiate</button></form>
+    <h2>Offer <span data-bind="text: $index() + 1"></span>: <span data-bind="text: region"></span> <span data-bind="text: name"></span></h2>
+    <form method="POST" data-bind="attrLeagueUrl: {action: ['trade']}">
+      <input type="hidden" name="tid" data-bind="attr: {value: tid}">
+      <input type="hidden" name="userPids" data-bind="attr: {value: $root.userPids().join(',')}">
+      <input type="hidden" name="otherPids" data-bind="attr: {value: pids().join(',')}">
+      <input type="hidden" name="userDpids" data-bind="attr: {value: $root.userDpids().join(',')}">
+      <input type="hidden" name="otherDpids" data-bind="attr: {value: dpids().join(',')}">
+      <button type="submit" class="btn btn-primary" style="vertical-align: text-top;">Negotiate</button>
+    </form>
     <div class="row-fluid" style="clear: both">
       <div class="span7">
         <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed">

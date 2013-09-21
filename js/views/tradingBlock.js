@@ -69,7 +69,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     function updateUserRoster(inputs, updateEvents, vm) {
         var deferred;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
+        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
             deferred = $.Deferred();
 
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.userTid).onsuccess = function (event) {
@@ -102,6 +102,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     }
 
                     deferred.resolve({
+                        userPids: inputs.userPids,
                         userDpids: inputs.userDpids,
                         userPicks: userPicks,
                         userRoster: userRoster
@@ -136,8 +137,11 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                         tid = inputs.offers[i].tid;
 
                         offers[i] = {
+                            tid: tid,
                             region: g.teamRegionsCache[tid],
-                            name: g.teamNamesCache[tid]
+                            name: g.teamNamesCache[tid],
+                            pids: inputs.offers[i].pids,
+                            dpids: inputs.offers[i].dpids
                         };
 
                         tx.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
@@ -174,8 +178,6 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     deferred.resolve({
                         offers: offers
                     });
-console.log(inputs.offers);
-console.log(offers);
                 };
             }
 

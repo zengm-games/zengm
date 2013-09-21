@@ -489,7 +489,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
     function makeItWork(otherTid, userPids, otherPids, userDpids, otherDpids, cb) {
-        var added, tryAddAsset, testTrade;
+        var added, initialSign, tryAddAsset, testTrade;
 
         added = 0;
 
@@ -512,38 +512,80 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                     if (userPids.indexOf(p.pid) < 0) {
                         assets.push({
                             type: "player",
-                            pid: p.pid
+                            pid: p.pid,
+                            tid: g.userTid
                         });
                     }
 
                     cursor.continue();
-                } else {
-                    // Get all draft picks not in userDpids
-                    tx.objectStore("draftPicks").index("tid").openCursor(g.userTid).onsuccess = function (event) {
-                        var cursor, dp;
+                }
+            };
 
-                        cursor = event.target.result;
-                        if (cursor) {
-                            dp = cursor.value;
+            // Get all players not in otherPids
+            tx.objectStore("players").index("tid").openCursor(otherTid).onsuccess = function (event) {
+                var cursor, p;
 
-                            if (userDpids.indexOf(dp.dpid) < 0) {
-                                assets.push({
-                                    type: "draftPick",
-                                    dpid: dp.dpid
-                                });
-                            }
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
 
-                            cursor.continue();
-                        }
-                    };
+                    if (otherPids.indexOf(p.pid) < 0) {
+                        assets.push({
+                            type: "player",
+                            pid: p.pid,
+                            tid: otherTid
+                        });
+                    }
+
+                    cursor.continue();
+                }
+            };
+
+            // Get all draft picks not in userDpids
+            tx.objectStore("draftPicks").index("tid").openCursor(g.userTid).onsuccess = function (event) {
+                var cursor, dp;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    dp = cursor.value;
+
+                    if (userDpids.indexOf(dp.dpid) < 0) {
+                        assets.push({
+                            type: "draftPick",
+                            dpid: dp.dpid,
+                            tid: g.userTid
+                        });
+                    }
+
+                    cursor.continue();
+                }
+            };
+
+            // Get all draft picks not in otherDpids
+            tx.objectStore("draftPicks").index("tid").openCursor(otherTid).onsuccess = function (event) {
+                var cursor, dp;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    dp = cursor.value;
+
+                    if (otherDpids.indexOf(dp.dpid) < 0) {
+                        assets.push({
+                            type: "draftPick",
+                            dpid: dp.dpid,
+                            tid: otherTid
+                        });
+                    }
+
+                    cursor.continue();
                 }
             };
 
             tx.oncomplete = function () {
-                var done, i, newUserPids, newUserDpids;
+                var done, i, newOtherDpids, newOtherPids, newUserPids, newUserDpids;
 
                 // If we've already added 5 assets or there are no more to try, stop
-                if (assets.length === 0 || added >= 5) {
+                if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
                     cb(false);
                     return;
                 }
@@ -552,24 +594,33 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                 done = 0;
                 for (i = 0; i < assets.length; i++) {
                     newUserPids = userPids.slice();
+                    newOtherPids = otherPids.slice();
                     newUserDpids = userDpids.slice();
+                    newOtherDpids = otherDpids.slice();
 
                     if (assets[i].type === "player") {
-                        newUserPids.push(assets[i].pid);
+                        if (assets[i].tid === g.userTid) {
+                            newUserPids.push(assets[i].pid);
+                        } else {
+                            newOtherPids.push(assets[i].pid);
+                        }
                     } else {
-                        newUserDpids.push(assets[i].dpid);
+                        if (assets[i].tid === g.userTid) {
+                            newUserDpids.push(assets[i].dpid);
+                        } else {
+                            newOtherDpids.push(assets[i].dpid);
+                        }
                     }
                     (function (i) {
-                        team.valueChange(otherTid, newUserPids, otherPids, newUserDpids, otherDpids, function (dv) {
+                        team.valueChange(otherTid, newUserPids, newOtherPids, newUserDpids, newOtherDpids, function (dv) {
                             var asset, j;
 
                             assets[i].dv = dv;
                             done += 1;
                             if (done === assets.length) {
-                                // Add the best asset to the trade
                                 assets.sort(function (a, b) { return b.dv - a.dv; });
 
-                                // Find minimum value that is greater than 0
+                                // Find the asset that will push the trade value the smallest amount above 0
                                 for (j = 0; j < assets.length; j++) {
                                     if (assets[j].dv < 0) {
                                         break;
@@ -579,10 +630,21 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                     j -= 1;
                                 }
                                 asset = assets[j];
+console.log(userPids);
+console.log(otherPids);
+console.log(asset);
                                 if (asset.type === "player") {
-                                    userPids.push(asset.pid);
+                                    if (asset.tid === g.userTid) {
+                                        userPids.push(asset.pid);
+                                    } else {
+                                        otherPids.push(asset.pid);
+                                    }
                                 } else {
-                                    userDpids.push(asset.dpid);
+                                    if (asset.tid === g.userTid) {
+                                        userDpids.push(asset.dpid);
+                                    } else {
+                                        otherDpids.push(asset.dpid);
+                                    }
                                 }
 
                                 added += 1;
@@ -598,7 +660,9 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         // See if the AI team likes the current trade. If not, try adding something to it.
         testTrade = function () {
             team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
-                if (dv > 0) {
+                if (dv > 0 && initialSign === -1) {
+                    cb(true, userPids, otherPids, userDpids, otherDpids);
+                } else if (added >= 2 && initialSign === 1) {
                     cb(true, userPids, otherPids, userDpids, otherDpids);
                 } else {
                     tryAddAsset();
@@ -606,7 +670,17 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             });
         };
 
-        testTrade();
+        team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
+            if (dv > 0) {
+                // Try to make trade better for user's team
+                initialSign = 1;
+            } else {
+                // Try to make trade better for AI team
+                initialSign = -1;
+            }
+
+            testTrade();
+        });
     }
 
     /**
@@ -641,8 +715,16 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                                     tr.userPids = userPids;
                                     updated = true;
                                 }
+                                if (otherPids.toString() !== tr.otherPids.toString()) {
+                                    tr.otherPids = otherPids;
+                                    updated = true;
+                                }
                                 if (userDpids.toString() !== tr.userDpids.toString()) {
                                     tr.userDpids = userDpids;
+                                    updated = true;
+                                }
+                                if (otherDpids.toString() !== tr.otherDpids.toString()) {
+                                    tr.otherDpids = otherDpids;
                                     updated = true;
                                 }
 

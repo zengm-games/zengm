@@ -87,7 +87,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             askButtonEl = document.getElementById("ask-button");
             askButtonEl.textContent = "Waiting for answer...";
             askButtonEl.disabled = true;
-            trade.makeItWork(function (message) {
+            trade.makeItWorkTrade(function (message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
                 askButtonEl.textContent = "What would make this deal work?";
                 askButtonEl.disabled = false;

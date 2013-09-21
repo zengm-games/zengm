@@ -486,162 +486,180 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * Have the AI add players/picks until they like the deal. Uses forward selection to try to find the first deal the AI likes.
      *
      * @memberOf core.trade
-     * @param {function(boolean, string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
+     * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
-    function makeItWork(cb) {
-        getPlayers(function (userPids, otherPids, userDpids, otherDpids) {
-            getOtherTid(function (otherTid) {
-                var added, tryAddAsset, testTrade;
+    function makeItWork(otherTid, userPids, otherPids, userDpids, otherDpids, cb) {
+        var added, tryAddAsset, testTrade;
 
-                added = 0;
+        added = 0;
 
-                // Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
-                tryAddAsset = function () {
-                    var assets, tx;
+        // Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
+        tryAddAsset = function () {
+            var assets, tx;
 
-                    assets = [];
+            assets = [];
 
-                    tx = g.dbl.transaction(["draftPicks", "players"]);
+            tx = g.dbl.transaction(["draftPicks", "players"]);
 
-                    // Get all players not in userPids
-                    tx.objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
-                        var cursor, p;
+            // Get all players not in userPids
+            tx.objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
+                var cursor, p;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+
+                    if (userPids.indexOf(p.pid) < 0) {
+                        assets.push({
+                            type: "player",
+                            pid: p.pid
+                        });
+                    }
+
+                    cursor.continue();
+                } else {
+                    // Get all draft picks not in userDpids
+                    tx.objectStore("draftPicks").index("tid").openCursor(g.userTid).onsuccess = function (event) {
+                        var cursor, dp;
 
                         cursor = event.target.result;
                         if (cursor) {
-                            p = cursor.value;
+                            dp = cursor.value;
 
-                            if (userPids.indexOf(p.pid) < 0) {
+                            if (userDpids.indexOf(dp.dpid) < 0) {
                                 assets.push({
-                                    type: "player",
-                                    pid: p.pid
+                                    type: "draftPick",
+                                    dpid: dp.dpid
                                 });
                             }
 
                             cursor.continue();
-                        } else {
-                            // Get all draft picks not in userDpids
-                            tx.objectStore("draftPicks").index("tid").openCursor(g.userTid).onsuccess = function (event) {
-                                var cursor, dp;
+                        }
+                    };
+                }
+            };
+
+            tx.oncomplete = function () {
+                var done, i, newUserPids, newUserDpids;
+
+                // If we've already added 5 assets or there are no more to try, stop
+                if (assets.length === 0 || added >= 5) {
+                    cb(false);
+                    return;
+                }
+
+                // Calculate the value for each asset added to the trade, for use in forward selection
+                done = 0;
+                for (i = 0; i < assets.length; i++) {
+                    newUserPids = userPids.slice();
+                    newUserDpids = userDpids.slice();
+
+                    if (assets[i].type === "player") {
+                        newUserPids.push(assets[i].pid);
+                    } else {
+                        newUserDpids.push(assets[i].dpid);
+                    }
+                    (function (i) {
+                        team.valueChange(otherTid, newUserPids, otherPids, newUserDpids, otherDpids, function (dv) {
+                            var asset, j;
+
+                            assets[i].dv = dv;
+                            done += 1;
+                            if (done === assets.length) {
+                                // Add the best asset to the trade
+                                assets.sort(function (a, b) { return b.dv - a.dv; });
+
+                                // Find minimum value that is greater than 0
+                                for (j = 0; j < assets.length; j++) {
+                                    if (assets[j].dv < 0) {
+                                        break;
+                                    }
+                                }
+                                if (j > 0) {
+                                    j -= 1;
+                                }
+                                asset = assets[j];
+                                if (asset.type === "player") {
+                                    userPids.push(asset.pid);
+                                } else {
+                                    userDpids.push(asset.dpid);
+                                }
+
+                                added += 1;
+
+                                testTrade();
+                            }
+                        });
+                    }(i));
+                }
+            };
+        };
+
+        // See if the AI team likes the current trade. If not, try adding something to it.
+        testTrade = function () {
+            team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
+                if (dv > 0) {
+                    cb(true, userPids, otherPids, userDpids, otherDpids);
+                } else {
+                    tryAddAsset();
+                }
+            });
+        };
+
+        testTrade();
+    }
+
+    /**
+     * Make a trade work
+     *
+     * This should be called for a trade negotiation, as it will update the trade objectStore.
+     *
+     * @memberOf core.trade
+     * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
+     */
+    function makeItWorkTrade(cb) {
+        getPlayers(function (userPids, otherPids, userDpids, otherDpids) {
+            getOtherTid(function (otherTid) {
+                makeItWork(otherTid, userPids, otherPids, userDpids, otherDpids, function (found, userPids, otherPids, userDpids, otherDpids) {
+                    if (!found) {
+                        cb(g.teamRegionsCache[otherTid] + ' GM: "I can\'t afford to give up so much."');
+                    } else {
+                        summary(otherTid, userPids, otherPids, userDpids, otherDpids, function (s) {
+                            var tx;
+
+                            // Store AI's proposed trade in database
+                            tx = g.dbl.transaction("trade", "readwrite");
+                            tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
+                                var cursor, tr, updated;
 
                                 cursor = event.target.result;
-                                if (cursor) {
-                                    dp = cursor.value;
+                                tr = cursor.value;
 
-                                    if (userDpids.indexOf(dp.dpid) < 0) {
-                                        assets.push({
-                                            type: "draftPick",
-                                            dpid: dp.dpid
-                                        });
-                                    }
+                                updated = false;
 
-                                    cursor.continue();
+                                if (userPids.toString() !== tr.userPids.toString()) {
+                                    tr.userPids = userPids;
+                                    updated = true;
+                                }
+                                if (userDpids.toString() !== tr.userDpids.toString()) {
+                                    tr.userDpids = userDpids;
+                                    updated = true;
+                                }
+
+                                if (updated) {
+                                    cursor.update(tr);
                                 }
                             };
-                        }
-                    };
-
-                    tx.oncomplete = function () {
-                        var done, i, newUserPids, newUserDpids;
-
-                        // If we've already added 5 assets or there are no more to try, stop
-                        if (assets.length === 0 || added >= 5) {
-                            cb(g.teamRegionsCache[otherTid] + ' GM: "I can\'t afford to give up so much."');
-                            return;
-                        }
-
-                        // Calculate the value for each asset added to the trade, for use in forward selection
-                        done = 0;
-                        for (i = 0; i < assets.length; i++) {
-                            newUserPids = userPids.slice();
-                            newUserDpids = userDpids.slice();
-
-                            if (assets[i].type === "player") {
-                                newUserPids.push(assets[i].pid);
-                            } else {
-                                newUserDpids.push(assets[i].dpid);
-                            }
-                            (function (i) {
-                                team.valueChange(otherTid, newUserPids, otherPids, newUserDpids, otherDpids, function (dv) {
-                                    var asset, j;
-
-                                    assets[i].dv = dv;
-                                    done += 1;
-                                    if (done === assets.length) {
-                                        // Add the best asset to the trade
-                                        assets.sort(function (a, b) { return b.dv - a.dv; });
-
-                                        // Find minimum value that is greater than 0
-                                        for (j = 0; j < assets.length; j++) {
-                                            if (assets[j].dv < 0) {
-                                                break;
-                                            }
-                                        }
-                                        if (j > 0) {
-                                            j -= 1;
-                                        }
-                                        asset = assets[j];
-                                        if (asset.type === "player") {
-                                            userPids.push(asset.pid);
-                                        } else {
-                                            userDpids.push(asset.dpid);
-                                        }
-
-                                        added += 1;
-
-                                        testTrade();
-                                    }
-                                });
-                            }(i));
-                        }
-                    };
-                };
-
-                // See if the AI team likes the current trade. If not, try adding something to it.
-                testTrade = function () {
-                    team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
-                        if (dv > 0) {
-                            summary(otherTid, userPids, otherPids, userDpids, otherDpids, function (s) {
-                                var tx;
-
-                                // Store AI's proposed trade in database
-                                tx = g.dbl.transaction("trade", "readwrite");
-                                tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
-                                    var cursor, tr, updated;
-
-                                    cursor = event.target.result;
-                                    tr = cursor.value;
-
-                                    updated = false;
-
-                                    if (userPids.toString() !== tr.userPids.toString()) {
-                                        tr.userPids = userPids;
-                                        updated = true;
-                                    }
-                                    if (userDpids.toString() !== tr.userDpids.toString()) {
-                                        tr.userDpids = userDpids;
-                                        updated = true;
-                                    }
-
-                                    if (updated) {
-                                        cursor.update(tr);
-                                    }
-                                };
-                                tx.oncomplete = function () {
-                                    if (s.warning) {
-                                        cb(g.teamRegionsCache[otherTid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking any rules."');
-                                    } else {
-                                        cb(g.teamRegionsCache[otherTid] + ' GM: "How does this sound?"');
-                                    }
-                                };
-                            });
-                        } else {
-                            tryAddAsset();
-                        }
-                    });
-                };
-
-                testTrade();
+                            tx.oncomplete = function () {
+                                if (s.warning) {
+                                    cb(g.teamRegionsCache[otherTid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking any rules."');
+                                } else {
+                                    cb(g.teamRegionsCache[otherTid] + ' GM: "How does this sound?"');
+                                }
+                            };
+                        });
+                    }
+                });
             });
         });
     }
@@ -654,6 +672,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         summary: summary,
         clear: clear,
         propose: propose,
-        makeItWork: makeItWork
+        makeItWork: makeItWork,
+        makeItWorkTrade: makeItWorkTrade
     };
 });

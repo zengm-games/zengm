@@ -12,12 +12,12 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
         offers = [{
             tid: 1,
-            pids: [5, 2, 17],
-            dpids: [7, 12]
+            pids: [70, 65, 67],
+            dpids: [3]
         }, {
-            tid: 17,
-            pids: [50, 22, 11],
-            dpids: [42, 1]
+            tid: 2,
+            pids: [84],
+            dpids: [5, 6]
         }];
 
         return offers;
@@ -73,16 +73,12 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             deferred = $.Deferred();
 
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.userTid).onsuccess = function (event) {
-                var attrs, i, ratings, stats, userRoster;
-
-                attrs = ["pid", "name", "pos", "age", "contract", "injury"];
-                ratings = ["ovr", "pot", "skills"];
-                stats = ["min", "pts", "trb", "ast", "per"];
+                var i, userRoster;
 
                 userRoster = player.filter(event.target.result, {
-                    attrs: attrs,
-                    ratings: ratings,
-                    stats: stats,
+                    attrs: ["pid", "name", "pos", "age", "contract", "injury"],
+                    ratings: ["ovr", "pot", "skills"],
+                    stats: ["min", "pts", "trb", "ast", "per"],
                     season: g.season,
                     tid: g.userTid,
                     showNoStats: true,
@@ -118,7 +114,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     }
 
     function updateOffers(inputs, updateEvents, vm) {
-        var deferred, i, offer, offers;
+        var deferred, i, offers, tx;
 
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0) {
             deferred = $.Deferred();
@@ -130,15 +126,57 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     offers: offers
                 });
             } else {
+                tx = g.dbl.transaction(["players", "draftPicks"]);
+
+                // Take the pids and dpids in each offer and get the info needed to display the offer
                 for (i = 0; i < inputs.offers.length; i++) {
-                    offer = {
-                        region: g.teamRegionsCache[inputs.offers[i].tid],
-                        name: g.teamNamesCache[inputs.offers[i].tid]
-                    };
-                    offers.push(offer);
+                    (function (i) {
+                        var tid;
+
+                        tid = inputs.offers[i].tid;
+
+                        offers[i] = {
+                            region: g.teamRegionsCache[tid],
+                            name: g.teamNamesCache[tid]
+                        };
+
+                        tx.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
+                            var players;
+
+                            players = _.filter(event.target.result, function (p) { return inputs.offers[i].pids.indexOf(p.pid) >= 0; });
+
+                            offers[i].players = player.filter(players, {
+                                attrs: ["pid", "name", "pos", "age", "contract", "injury"],
+                                ratings: ["ovr", "pot", "skills"],
+                                stats: ["min", "pts", "trb", "ast", "per"],
+                                season: g.season,
+                                tid: tid,
+                                showNoStats: true,
+                                showRookies: true,
+                                fuzz: true
+                            });
+                        };
+
+                        tx.objectStore("draftPicks").index("tid").getAll(tid).onsuccess = function (event) {
+                            var j, picks;
+
+                            picks = _.filter(event.target.result, function (dp) { return inputs.offers[i].dpids.indexOf(dp.dpid) >= 0; });
+                            for (j = 0; j < picks.length; j++) {
+                                picks[j].desc = helpers.pickDesc(picks[j]);
+                            }
+
+                            offers[i].picks = picks;
+                        };
+                    }(i));
                 }
+
+                tx.oncomplete = function () {
+                    deferred.resolve({
+                        offers: offers
+                    });
 console.log(inputs.offers);
 console.log(offers);
+                };
             }
 
             return deferred.promise();

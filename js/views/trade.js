@@ -62,15 +62,22 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
     }
 
     function post(req) {
-        var askButtonEl, newOtherTid, out, pid;
+        var askButtonEl, newOtherTid, otherDpids, otherPids, out, pid, userDpids, userPids;
 
         pid = req.params.pid !== undefined ? parseInt(req.params.pid, 10) : null;
         if (req.raw.abbrev !== undefined) {
             out = helpers.validateAbbrev(req.raw.abbrev);
             newOtherTid = out[0];
+        } else if (req.params.tid !== undefined) {
+            newOtherTid = parseInt(req.params.tid, 10);
         } else {
             newOtherTid = null;
         }
+
+        userPids = req.params.userPids !== undefined ? _.map(req.params.userPids.split(","), function (x) { return parseInt(x, 10); }) : [];
+        otherPids = req.params.otherPids !== undefined ? _.map(req.params.otherPids.split(","), function (x) { return parseInt(x, 10); }) : [];
+        userDpids = req.params.userDpids !== undefined ? _.map(req.params.userDpids.split(","), function (x) { return parseInt(x, 10); }) : [];
+        otherDpids = req.params.otherDpids !== undefined ? _.map(req.params.otherDpids.split(","), function (x) { return parseInt(x, 10); }) : [];
 
         if (req.params.clear !== undefined) {
             // Clear trade
@@ -92,9 +99,14 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                 askButtonEl.textContent = "What would make this deal work?";
                 askButtonEl.disabled = false;
             });
-        } else if (newOtherTid !== null || pid !== null) {
-            // Start new trade with team or for player
-            trade.create(newOtherTid, pid, function () {
+        } else if (pid !== null) {
+            // Start new trade for a single player
+            trade.create(newOtherTid, [], [pid], [], [], function () {
+                ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
+            });
+        } else if (newOtherTid !== null || userPids.length > 0 || otherPids.length > 0 || userDpids.length > 0 || otherDpids.length > 0) {
+            // Start a new trade based on a list of pids and dpids, like from the trading block
+            trade.create(newOtherTid, userPids, otherPids, userDpids, otherDpids, function () {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
             });
         }

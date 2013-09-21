@@ -11,23 +11,15 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * One of tid or pid can be set. If both are set, then tid is ignored. If neither are set, a tid of 0 is used.
      * 
      * @memberOf core.trade
-     * @param {?number} tid An integer representing the team ID of the team the user wants to trade with, or null if pid is set.
-     * @param {?number} pid An integer representing the ID of a player to be automatically added to the trade, or null if no player should be added immediately. If not null, a trade will be initiated with that player's team, regardless of what tid is set to.
+     * @param {?number} otherTid An integer representing the team ID of the team the user wants to trade with, or null if pids or dpids is set.
+     * @param {Array.<number>} userPids An array of player ID's representing the players on the user's team in the trade.
+     * @param {Array.<number>} otherPids An array of player ID's representing the players on the other team in the trade.
      * @param {function()} cb Callback function.
      */
-    function create(tid, pid, cb) {
-        var cbStartTrade, otherPids;
+    function create(otherTid, userPids, otherPids, userDpids, otherDpids, cb) {
+        var cbStartTrade;
 
-        // Convert pid to tid;
-        if (pid === undefined || pid === null) {
-            pid = null;
-            otherPids = [];
-        } else {
-            pid = Math.floor(pid);
-            otherPids = [pid];
-        }
-
-        cbStartTrade = function (tid) {
+        cbStartTrade = function (otherTid) {
             var tx;
 
             tx = g.dbl.transaction("trade", "readwrite");
@@ -37,8 +29,11 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
                 cursor = event.target.result;
                 tr = cursor.value;
-                tr.otherTid = tid;
+                tr.otherTid = otherTid;
+                tr.userPids = userPids;
                 tr.otherPids = otherPids;
+                tr.userDpids = userDpids;
+                tr.otherDpids = otherDpids;
                 cursor.update(tr);
             };
 
@@ -50,15 +45,15 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         };
 
         // Make sure tid is set and corresponds to pid, if set
-        if (tid === undefined || tid === null || otherPids.length > 0) {
-            g.dbl.transaction("players").objectStore("players").get(pid).onsuccess = function (event) {
+        if (otherTid === undefined || otherTid === null || otherPids.length > 0) {
+            g.dbl.transaction("players").objectStore("players").get(otherPids[0]).onsuccess = function (event) {
                 var p;
 
                 p = event.target.result;
                 cbStartTrade(p.tid);
             };
         } else {
-            cbStartTrade(Math.floor(tid));
+            cbStartTrade(otherTid);
         }
     }
 

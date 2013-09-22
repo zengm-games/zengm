@@ -1,6 +1,6 @@
 <h1>Trade <span data-bind="newWindow: []"></span></h1>
 
-<div class="row-fluid">
+<div class="row">
   <div class="span7">
     <form id="rosters">
       <p><select id="trade-select-team" name="team" class="team form-inline" data-bind="foreach: teams">
@@ -42,7 +42,7 @@
   </div>
   <div class="span5" id="trade-summary">
     <h3>Trade Summary</h3>
-    <div class="row-fluid" data-bind="foreach: summary.teams">
+    <div class="row" data-bind="foreach: summary.teams">
       <div class="span6">
         <h4 data-bind="text: name"></h4>
         <h5>Trade Away:</h5>

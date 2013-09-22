@@ -1,13 +1,21 @@
 <h1><span data-bind="text: region"></span> <span data-bind="text: name"></span> Dashboard <span data-bind="newWindow: []"></span></h1>
 
 <div class="row">
-  <div class="span4">
+  <div class="col-md-3 col-sm-4 col-xs-6">
+    <h3>Inbox</h3>
+    <p>
+      List of recent messages
+      <a data-bind="attrLeagueUrl: {href: ['inbox']}">» Inbox</a>
+    </p>
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Current Record</h3>
     <p>
       <span data-bind="text: won"></span>-<span data-bind="text: lost"></span><!-- ko if: !playoffsStarted() && streakLong() -->, <span data-bind="text: streakLong"></span><!-- /ko --><br>
       <a data-bind="attrLeagueUrl: {href: ['standings']}">» Standings</a>
     </p>
-
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Playoffs</h3>
     <p>
       <!-- ko if: showPlayoffSeries -->
@@ -25,7 +33,8 @@
         <a data-bind="attrLeagueUrl: {href: ['playoffs']}">» Playoffs Projections</a>
       <!-- /ko -->
     </p>
-
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Recent Games</h3>
     <p>
       <span data-bind="visible: nextGameAbbrev">
@@ -38,7 +47,8 @@
       <a data-bind="attrLeagueUrl: {href: ['game_log']}">» Game Log</a><br>
       <a data-bind="attrLeagueUrl: {href: ['standings']}">» Schedule</a>
     </p>
-
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Recent History</h3>
     <p>
       <span data-bind="visible: recentHistory().length === 0">None yet.<br></span>
@@ -48,9 +58,8 @@
       <a data-bind="attrLeagueUrl: {href: ['team_history']}">» Team History</a><br>
       <a data-bind="attrLeagueUrl: {href: ['history']}">» League History</a>
     </p>
-
   </div>
-  <div class="span4">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Team Stats</h3>
     <p>
       Points: <span data-bind="round: [pts, 1]"></span> (<span data-bind="ordinal: ptsRank"></span>)<br>
@@ -59,7 +68,8 @@
       Assists: <span data-bind="round: [ast, 1]"></span> (<span data-bind="ordinal: astRank"></span>)<br>
       <a data-bind="attrLeagueUrl: {href: ['team_stats']}">» Team Stats</a>
     </p>
-
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Team Leaders</h3>
     <p>
       <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.pts.pid]}, text: teamLeaders.pts.name"></a>: <span data-bind="round: [teamLeaders.pts.stat, 1]"></span> pts<br>
@@ -67,7 +77,8 @@
       <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.ast.pid]}, text: teamLeaders.ast.name"></a>: <span data-bind="round: [teamLeaders.ast.stat, 1]"></span> ast<br>
       <a data-bind="attrLeagueUrl: {href: ['roster']}">» Full Roster</a>
     </p>
-
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>League Leaders</h3>
     <p>
       <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.pts.pid]}, text: leagueLeaders.pts.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.pts.abbrev]}, text: leagueLeaders.pts.abbrev"></a>: <span data-bind="round: [leagueLeaders.pts.stat, 1]"></span> pts<br>
@@ -77,7 +88,7 @@
       <a data-bind="attrLeagueUrl: {href: ['player_stats']}">» Player Stats</a>
     </p>
   </div>
-  <div class="span4">
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Finances</h3>
     <p>
       Avg Attendance: <span data-bind="numberWithCommas: att"></span><br>
@@ -88,7 +99,8 @@
       Salary Cap: <span data-bind="currency: [salaryCap, 'M']"></span><br>
       <a data-bind="attrLeagueUrl: {href: ['league_finances']}">» League Finances</a>
     </p>
-
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Top Free Agents</h3>
     <p>
       <span data-bind="visible: freeAgents().length === 0">None.<br></span>
@@ -98,7 +110,8 @@
       (You have <span data-bind="text: numRosterSpots"></span> open roster spots)<br>
       <a data-bind="attrLeagueUrl: {href: ['free_agents']}">» Free Agents</a>
     </p>
-
+  </div>
+  <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Expiring Contracts</h3>
     <p>
       <span data-bind="visible: expiring().length === 0">None.<br></span>

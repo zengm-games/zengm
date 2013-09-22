@@ -194,7 +194,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @return {boolean} true if a substitution occurred, false otherwise.
      */
     GameSim.prototype.updatePlayersOnCourt = function () {
-        var b, dt, i, ovrs, p, pp, substitutions, t;
+        var b, i, ovrs, p, pp, substitutions, t;
 
         substitutions = false;
 
@@ -256,7 +256,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @memberOf core.gameSim
      */
     GameSim.prototype.updateSynergy = function () {
-        var allSkills, i, p, perimFactor, rating, t, skillsCount;
+        var allSkills, i, p, perimFactor, t, skillsCount;
 
         for (t = 0; t < 2; t++) {
             // Make a list with all the skills of the active players on a team (including duplicates)
@@ -587,8 +587,6 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probBlk = function () {
-        var p;
-
         return 0.1 * this.team[this.d].compositeRating.blocking;
     };
 

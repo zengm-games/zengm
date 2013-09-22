@@ -44,6 +44,8 @@ define(["globals", "ui", "core/game", "core/gameSim", "core/player", "lib/jquery
         var csv, i, injuries, injury, j, p, r, t, deferred;
 
         if (updateEvents.indexOf("singleGameSim") >= 0) {
+            deferred = $.Deferred();
+
             csv = "";
             injuries = [];
             r = inputs.result;
@@ -58,18 +60,18 @@ define(["globals", "ui", "core/game", "core/gameSim", "core/player", "lib/jquery
                 t = r.team[i];
 
                 csv += g.teamRegionsCache[t.id] + "\n";
-                csv += ["Name", "Pos", "Min", "FG", "3Pt", "FT", "Off", "Reb", "Ast", "TO", "Stl", "Blk", "PF", "Pts"].join(",") + "\n";
+                csv += ["Name", "Pos", "Min", "FGM", "FGA", "3PtM", "3PtA", "FTM", "FTA", "Off", "Reb", "Ast", "TO", "Stl", "Blk", "PF", "Pts"].join(",") + "\n";
 
                 for (j = 0; j < t.player.length; j++) {
                     p = t.player[j];
-                    csv += [p.name, p.pos, helpers.round(p.stat.min, 1), p.stat.fg + "-" + p.stat.fga, p.stat.tp + "-" + p.stat.tpa, p.stat.ft + "-" + p.stat.fta, p.stat.orb, p.stat.orb + p.stat.drb, p.stat.ast, p.stat.tov, p.stat.stl, p.stat.blk, p.stat.pf, p.stat.pts].join(",") + "\n";
+                    csv += [p.name, p.pos, helpers.round(p.stat.min, 1), p.stat.fg, + p.stat.fga, p.stat.tp, + p.stat.tpa, p.stat.ft, + p.stat.fta, p.stat.orb, p.stat.orb + p.stat.drb, p.stat.ast, p.stat.tov, p.stat.stl, p.stat.blk, p.stat.pf, p.stat.pts].join(",") + "\n";
                     if (p.injured) {
                         injury = player.injury(15);
                         injuries.push(p.name + " was injured (" + injury.type + ") and will miss " + injury.gamesRemaining + " games.");
                     }
                 }
 
-                csv += ["Total", "", helpers.round(t.stat.min), t.stat.fg + "-" + t.stat.fga, t.stat.tp + "-" + t.stat.tpa, t.stat.ft + "-" + t.stat.fta, t.stat.orb, t.stat.orb + t.stat.drb, t.stat.ast, t.stat.tov, t.stat.stl, t.stat.blk, t.stat.pf, t.stat.pts].join(",") + "\n";
+                csv += ["Total", "", helpers.round(t.stat.min), t.stat.fg, t.stat.fga, t.stat.tp, t.stat.tpa, t.stat.ft, t.stat.fta, t.stat.orb, t.stat.orb + t.stat.drb, t.stat.ast, t.stat.tov, t.stat.stl, t.stat.blk, t.stat.pf, t.stat.pts].join(",") + "\n";
 
                 csv += "\n";
             }
@@ -79,10 +81,12 @@ define(["globals", "ui", "core/game", "core/gameSim", "core/player", "lib/jquery
                 csv += injuries.join("\n");
             }
 
-            deferred = $.Deferred();
+            $("#download-link").html('<a href="data:application/json;base64,' + window.btoa(csv) + '" download="boxscore-' + r.team[0].id + '-' + r.team[1].id + '.csv">Download CSV</a>');
+
             deferred.resolve({
                 csv: csv
             });
+
             return deferred.promise();
         }
     }

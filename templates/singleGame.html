@@ -8,4 +8,6 @@
   </form>
 </p>
 
+<p data-bind="visible: csv().length > 0" id="download-link"></p>
+
 <textarea rows="30" data-bind="visible: csv().length > 0, text: csv" style="width: 100%"></textarea>

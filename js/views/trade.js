@@ -74,8 +74,6 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             newOtherTid = null;
         }
 
-console.log(req.params);
-
         userPids = req.params.userPids !== undefined && req.params.userPids.length > 0 ? _.map(req.params.userPids.split(","), function (x) { return parseInt(x, 10); }) : [];
         otherPids = req.params.otherPids !== undefined && req.params.otherPids.length > 0 ? _.map(req.params.otherPids.split(","), function (x) { return parseInt(x, 10); }) : [];
         userDpids = req.params.userDpids !== undefined && req.params.userDpids.length > 0 ? _.map(req.params.userDpids.split(","), function (x) { return parseInt(x, 10); }) : [];

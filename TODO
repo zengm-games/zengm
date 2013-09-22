@@ -9,11 +9,6 @@ ewa in player.stats - doesn't really matter, right?
 BIG NEW FEATURES
 ----------------
 
-trading block
-  generalize core.trade.makeItWork
-    allow to specify one team as constant (for use in trading block)
-  error when phase is wrong, like trade
-  actually generate offers
 switch to date version numbers, add some kind of log of changes
 team switching after being fired
   2 year grace period in message.js, like with a new league?

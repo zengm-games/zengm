@@ -14,7 +14,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
 
         tids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
         random.shuffle(tids);
-
+        tids.splice(11, 19);
 
         // Run callback after all teams have made an offer (ignoring the user's team)
         numAfter = tids.length;
@@ -28,7 +28,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
         for (i = 0; i < tids.length; i++) {
             (function (tid) {
                 if (tid !== g.userTid) {
-                    trade.makeItWork(i, userPids, [], userDpids, [], true, function (found, userPids, otherPids, userDpids, otherDpids) {
+                    trade.makeItWork(tid, userPids, [], userDpids, [], true, function (found, userPids, otherPids, userDpids, otherDpids) {
                         if (found) {
                             offers.push({
                                 tid: tid,
@@ -44,6 +44,12 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
     }
 
     function get(req) {
+        if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
+            return {
+                errorMessage: "You're not allowed to make trades now."
+            };
+        }
+
         return {
             userPids: req.raw.userPids !== undefined ? req.raw.userPids : [],
             userDpids: req.raw.userDpids !== undefined ? req.raw.userDpids : [],
@@ -55,7 +61,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
         var buttonEl, offers, userDpids, userPids;
 
         buttonEl = document.getElementById("ask-button");
-        buttonEl.textContent = "Waiting for answer...";
+        buttonEl.textContent = "Waiting for offers...";
         buttonEl.disabled = true;
 
         userPids = _.map(req.params.pids, function (x) { return parseInt(x, 10); });
@@ -195,6 +201,8 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
                 }
 
                 tx.oncomplete = function () {
+                    random.shuffle(offers);
+
                     deferred.resolve({
                         offers: offers
                     });

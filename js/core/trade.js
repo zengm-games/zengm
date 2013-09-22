@@ -659,8 +659,12 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
                 if (dv > 0 && initialSign === -1) {
                     cb(true, userPids, otherPids, userDpids, otherDpids);
-                } else if (added >= 2 && initialSign === 1) {
-                    cb(true, userPids, otherPids, userDpids, otherDpids);
+                } else if ((added > 2 || Math.random() > 0.5) && initialSign === 1) {
+                    if (dv > 0) {
+                        cb(true, userPids, otherPids, userDpids, otherDpids);
+                    } else {
+                        cb(false);
+                    }
                 } else {
                     tryAddAsset();
                 }

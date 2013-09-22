@@ -17,6 +17,7 @@ mobile UI, bootstrap 3
     "Depending on the content in your navbar, you might need to change the point at which your navbar switches between collapsed and horizontal mode. Customize the @grid-float-breakpoint variable or add your own media query."
   get rid of league menu highlighting code
   get rid of leagueLayout.html
+  get rid of all -fluid stuff
   everything except brand in navbar should be hidden until load is complete, then show if appropriate
   minor
     get rid of inline CSS in index.html... not easy!

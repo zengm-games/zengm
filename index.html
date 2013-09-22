@@ -7,7 +7,6 @@
 
     <!--<link href="/gen/bbgm.css" rel="stylesheet">-->
     <link href="/css/bootstrap.css" rel="stylesheet">
-    <link href="/css/bbgm-responsive.css" rel="stylesheet">
     <link href="/css/bbgm.css" rel="stylesheet">
     <link href="/css/DT_bootstrap.css" rel="stylesheet">
 
@@ -57,99 +56,101 @@
   <body>
 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="top-menu">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/"><img src="/ico/logo.png" width="18" height="18"> Basketball GM</a>
-      </div>
-      <div class="collapse navbar-collapse navbar-ex1-collapse">
-        <ul class="nav navbar-nav" id="play-menu" data-bind="visible: lid() !== undefined" style="display: none">
-          <li class="dropdown active">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="play-button-link">Play <b class="caret"></b></a>
-            <ul class="dropdown-menu" data-bind="foreach: options">
-              <li><a data-bind="attr: {href: url, id: id}, text: label"></a></li>
-            </ul>
-          </li>
-        </ul>
-        <p class="navbar-text navbar-text-twoline" data-bind="visible: lid() !== undefined" style="display: none">
-          <span data-bind="text: phaseText"></span><br />
-          <span data-bind="text: statusText"></span>
-        </p>
-        <ul class="nav navbar-nav navbar-right" id="league-menu">
-          <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: []}">Dashboard</a></li>
-          <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">League <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a data-bind="attrLeagueUrl: {href: ['standings']}">Standings</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['playoffs']}">Playoffs</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['league_finances']}">Finances</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['history']}">History</a></li>
-            </ul>
-          </li>
-          <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Team <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a data-bind="attrLeagueUrl: {href: ['roster']}">Roster</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['schedule']}">Schedule</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['team_finances']}">Finances</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['team_history']}">History</a></li>
-            </ul>
-          </li>
-          <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Players <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a data-bind="attrLeagueUrl: {href: ['free_agents']}">Free Agents</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['trade']}">Trade</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['trading_block']}">Trading Block</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['draft']}">Draft</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['hall_of_fame']}">Hall of Fame</a></li>
-            </ul>
-          </li>
-          <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Stats <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a data-bind="attrLeagueUrl: {href: ['game_log']}">Game Log</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['leaders']}">League Leaders</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['player_ratings']}">Player Ratings</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['player_stats']}">Player Stats</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['team_stats']}">Team Stats</a></li>
-            </ul>
-          </li>
-          <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utilities <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a data-bind="attrLeagueUrl: {href: ['edit_team_info']}">Edit Team Info</a></li>
-              <li><a data-bind="attrLeagueUrl: {href: ['export_rosters']}">Export Rosters</a></li>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dev <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PLAYOFFS); }())">Skip To Playoffs</a></li>
-              <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.BEFORE_DRAFT); }())">Skip To Before Draft</a></li>
-              <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.AFTER_DRAFT); }())">Skip To After Draft</a></li>
-              <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PRESEASON); }())">Skip To Preseason</a></li>
-              <li class="divider"></li>
-              <li><a href="javascript:(function () { if (window.confirm('Are you sure you want to reset the database? This will delete all your current saved games.')) { db = require('db'); db.reset(); } }())">Reset DB</a></li>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manual <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="/manual">Overview</a></li>
-              <li><a href="/manual/custom_rosters">Custom Rosters</a></li>
-              <li><a href="javascript:manualDebugging()">Debugging</a></li>
-            </ul>
-          </li>
-        </ul>
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/"><img src="/ico/logo.png" width="18" height="18"> Basketball GM</a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+          <ul class="nav navbar-nav" id="play-menu" data-bind="visible: lid() !== undefined" style="display: none">
+            <li class="dropdown active">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="play-button-link">Play <b class="caret"></b></a>
+              <ul class="dropdown-menu" data-bind="foreach: options">
+                <li><a data-bind="attr: {href: url, id: id}, text: label"></a></li>
+              </ul>
+            </li>
+          </ul>
+          <p class="navbar-text navbar-text-twoline" data-bind="visible: lid() !== undefined" style="display: none">
+            <span data-bind="text: phaseText"></span><br />
+            <span data-bind="text: statusText"></span>
+          </p>
+          <ul class="nav navbar-nav navbar-right" id="league-menu">
+            <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: []}">Dashboard</a></li>
+            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">League <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a data-bind="attrLeagueUrl: {href: ['standings']}">Standings</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['playoffs']}">Playoffs</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['league_finances']}">Finances</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['history']}">History</a></li>
+              </ul>
+            </li>
+            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Team <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a data-bind="attrLeagueUrl: {href: ['roster']}">Roster</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['schedule']}">Schedule</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['team_finances']}">Finances</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['team_history']}">History</a></li>
+              </ul>
+            </li>
+            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Players <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a data-bind="attrLeagueUrl: {href: ['free_agents']}">Free Agents</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['trade']}">Trade</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['trading_block']}">Trading Block</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['draft']}">Draft</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['hall_of_fame']}">Hall of Fame</a></li>
+              </ul>
+            </li>
+            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Stats <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a data-bind="attrLeagueUrl: {href: ['game_log']}">Game Log</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['leaders']}">League Leaders</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['player_ratings']}">Player Ratings</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['player_stats']}">Player Stats</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['team_stats']}">Team Stats</a></li>
+              </ul>
+            </li>
+            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Utilities <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a data-bind="attrLeagueUrl: {href: ['edit_team_info']}">Edit Team Info</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['export_rosters']}">Export Rosters</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dev <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PLAYOFFS); }())">Skip To Playoffs</a></li>
+                <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.BEFORE_DRAFT); }())">Skip To Before Draft</a></li>
+                <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.AFTER_DRAFT); }())">Skip To After Draft</a></li>
+                <li><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PRESEASON); }())">Skip To Preseason</a></li>
+                <li class="divider"></li>
+                <li><a href="javascript:(function () { if (window.confirm('Are you sure you want to reset the database? This will delete all your current saved games.')) { db = require('db'); db.reset(); } }())">Reset DB</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manual <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/manual">Overview</a></li>
+                <li><a href="/manual/custom_rosters">Custom Rosters</a></li>
+                <li><a href="javascript:manualDebugging()">Debugging</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
 
-    <div class="container-fluid">
+    <div class="container">
       <div id="content" data-id-loading="" data-id-loaded="">Loading... (should take just a couple seconds)</div>
 
       <p style="clear: both;"></p>

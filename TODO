@@ -10,16 +10,16 @@ ptsQtrs stored for games - but this will just be ignored if it's not there
 BIG NEW FEATURES
 ----------------
 
-mobile UI
-  bootstrap 3
-    http://getbootstrap.com/examples/offcanvas/
+mobile UI, bootstrap 3
   move league menu to dropdowns at top
     somehow link to inbox from dashboard
-    merge dev into utilities
+    merge dev into utilities?
     "Depending on the content in your navbar, you might need to change the point at which your navbar switches between collapsed and horizontal mode. Customize the @grid-float-breakpoint variable or add your own media query."
   get rid of league menu highlighting code
   get rid of leagueLayout.html
   everything except brand in navbar should be hidden until load is complete, then show if appropriate
+  minor
+    get rid of inline CSS in index.html... not easy!
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

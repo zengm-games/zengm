@@ -4,6 +4,9 @@ requirejs.config({
         "lib/bootstrap-alert": {
             deps: ["lib/jquery"]
         },
+        "lib/bootstrap-collapse": {
+            deps: ["lib/bootstrap-transition", "lib/jquery"]
+        },
         "lib/bootstrap-dropdown": {
             deps: ["lib/jquery"]
         },
@@ -11,6 +14,9 @@ requirejs.config({
             deps: ["lib/bootstrap-tooltip", "lib/jquery"]
         },
         "lib/bootstrap-tooltip": {
+            deps: ["lib/jquery"]
+        },
+        "lib/bootstrap-transition": {
             deps: ["lib/jquery"]
         },
         "lib/bootstrapx-clickover": {
@@ -62,7 +68,7 @@ requirejs.config({
     }
 });
 
-requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "lib/bootstrap-alert", "lib/bootstrap-dropdown", "lib/bootstrap-popover", "lib/bootstrapx-clickover", "lib/davis.google_analytics", "lib/html5-dataset", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut", "util/templateHelpers", "api"], function (db, views, ui, changes, Davis, helpers) {
+requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "lib/bootstrap-alert", "lib/bootstrap-collapse", "lib/bootstrap-dropdown", "lib/bootstrap-popover", "lib/bootstrapx-clickover", "lib/davis.google_analytics", "lib/html5-dataset", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut", "util/templateHelpers", "api"], function (db, views, ui, changes, Davis, helpers) {
     "use strict";
 
     ui.init();

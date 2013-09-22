@@ -3,26 +3,12 @@ body {
   padding-bottom: 20px;
 }
 
-/* This header stuff is basically setting the old defaults from Bootstrap 2.0 to override the new defaults from Bootstrap 2.1. */
-h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-}
-h1 { font-size: 30px; line-height: 36px; }
-h2 { font-size: 24px; line-height: 36px; }
-h3 { font-size: 18px; line-height: 27px; }
-h4 { font-size: 14px; line-height: 18px; }
-h5 { font-size: 12px; line-height: 18px; }
-h6 { font-size: 11px; line-height: 18px; }
-h1 small { font-size: 18px; }
-h2 small { font-size: 18px; }
-h3 small { font-size: 14px; }
-h4 small { font-size: 12px; }
-
-.navbar-inverse a.brand {
-  color: #fff;
-}
-a.brand img {
+.navbar-brand img {
   vertical-align: top;
+}
+.navbar-text-twoline {
+  margin-top: 6px;
+  margin-bottom: 7px;
 }
 
 footer {
@@ -76,68 +62,12 @@ ul.dashboard_league li.dashboard_league_new h2 {
   padding: 9px 0;
 }
 
-#contentwrapper {
-  float: left;
-  width: 100%;
-}
-#league_content {
- margin-left: 145px;
-}
-#league-menu {
-  float: left;
-  width: 125px;
-  margin-left: -100%;
-}
 .league-alert {
  margin-left: 145px;
 }
 
 table {
   white-space: nowrap;
-}
-
-div#play-menu {
-  color: #dddddd;
-  visibility: hidden;
-}
-div#play-menu ul.btn {
-  -webkit-border-top-right-radius: 0;
-  -moz-border-radius-topright: 0;
-  border-top-right-radius: 0;
-  -webkit-border-bottom-right-radius: 0;
-  -moz-border-radius-bottomright: 0;
-  border-bottom-right-radius: 0;
-  -webkit-border-top-left-radius: 0;
-  -moz-border-radius-topleft: 0;
-  border-top-left-radius: 0;
-  -webkit-border-bottom-left-radius: 0;
-  -moz-border-radius-bottomleft: 0;
-  border-bottom-left-radius: 0;
-  
-  border: 0;
-  padding: 0;
-  text-align: left;
-}
-div#play-menu ul li a {
-  text-shadow: none;
-}
-div#play-menu ul li a.dropdown-toggle {
-  background: transparent;
-  border-bottom-color: #fff;
-  border-top-color: #fff;
-  color: #FFFFFF;
-  line-height: 19px;
-  padding: 10px 10px 11px 10px;
-  text-shadow: none;
-}
-div#play-menu ul li a.dropdown-toggle:hover {
-  color: #FFFFFF;
-  text-shadow: none;
-}
-div#play-menu ul li a.dropdown-toggle .caret {
-  border-bottom-color: #fff;
-  border-top-color: #fff;
-  opacity: 0.75;
 }
 
 .table-bordered tbody tr.separator td {

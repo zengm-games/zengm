@@ -47,8 +47,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         reqCb = req.raw.cb !== undefined ? req.raw.cb : function () {};
 
         // Make sure league template FOR THE CURRENT LEAGUE is showing
-        leagueMenu = document.getElementById("league-menu");
-        if (leagueMenu === null || g.vm.leagueMenu.lid() !== g.lid) {
+        if (g.vm.topMenu.lid() !== g.lid) {
             // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
             helpers.resetG();
 
@@ -65,21 +64,14 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                         g.teamNamesCache = _.pluck(teams, "name");
                     }
 
-                    g.vm.leagueMenu.lid(g.lid);
-
                     ui.update({
                         container: "content",
                         template: "leagueLayout"
                     });
 
-                    leagueMenu = document.getElementById("league-menu");
-                    ko.applyBindings(g.vm.leagueMenu, leagueMenu);
-
                     // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
                     if (popup) {
-                        $("#top_menu").hide();
-                        leagueMenu.style.display = "none";
-                        $("#league_content").css("margin-left", 0);
+                        $("#top-menu").hide();
                         $("body").css("padding-top", "4px");
 
                         css = document.createElement("style");
@@ -92,7 +84,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                     ui.updateStatus();
                     ui.updatePhase();
                     ui.updatePlayMenu(null, function () {
-                        document.getElementById("play-menu").style.visibility = "visible";
+                        g.vm.topMenu.lid(g.lid);
                         cb(updateEvents, reqCb);
                         checkDbChange(g.lid);
                     });
@@ -107,8 +99,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
         var playButtonElement, playPhaseElement, playStatusElement, reqCb, updateEvents;
 
         g.lid = null;
-
-        document.getElementById("play-menu").style.visibility = "hidden";
+        g.vm.topMenu.lid(undefined);
 
         if (cb !== undefined) {
             updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];

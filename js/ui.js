@@ -7,7 +7,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
 
     // Things to do on initial page load
     function init() {
-        var api, slideOut;
+        var api, playMenu, slideOut;
 
         // "Feedback" slider
         slideOut = $(".slide-out");
@@ -20,64 +20,65 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             });
         }
 
-        ko.applyBindings(g.vm.playMenu, document.getElementById("play-menu"));
+        ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
 
         // Handle clicks from play menu
         api = require("api");
-        $("#play-menu").on("click", "#play-menu-stop", function () {
+        playMenu = $("#play-menu");
+        playMenu.on("click", "#play-menu-stop", function () {
             api.play("stop");
             return false;
         });
-        $("#play-menu").on("click", "#play-menu-day", function () {
+        playMenu.on("click", "#play-menu-day", function () {
             api.play("day");
             return false;
         });
-        $("#play-menu").on("click", "#play-menu-week", function () {
+        playMenu.on("click", "#play-menu-week", function () {
             api.play("week");
             return false;
         });
-        $("#play-menu").on("click", "#play-menu-month", function () {
+        playMenu.on("click", "#play-menu-month", function () {
             api.play("month");
             return false;
         });
-        $("#play-menu").on("click", "#play-menu-until-playoffs", function () {
+        playMenu.on("click", "#play-menu-until-playoffs", function () {
             api.play("untilPlayoffs");
             return false;
         });
-        $("#play-menu").on("click", "#play-menu-through-playoffs", function () {
+        playMenu.on("click", "#play-menu-through-playoffs", function () {
             api.play("throughPlayoffs");
             return false;
         });
-        $("#play-menu").on("click", "#play-menu-until-draft", function () {
+        playMenu.on("click", "#play-menu-until-draft", function () {
             api.play("untilDraft");
             return false;
         });
-        $("#play-menu").on("click", "#play-menu-until-resign-players", function () {
+        playMenu.on("click", "#play-menu-until-resign-players", function () {
             api.play("untilResignPlayers");
             return false;
         });
-        $("#play-menu").on("click", "#play-menu-until-free-agency", function () {
+        playMenu.on("click", "#play-menu-until-free-agency", function () {
             api.play("untilFreeAgency");
             return false;
         });
-        $("#play-menu").on("click", "#play-menu-until-preseason", function () {
+        playMenu.on("click", "#play-menu-until-preseason", function () {
             api.play("untilPreseason");
             return false;
         });
-        $("#play-menu").on("click", "#play-menu-until-regular-season", function () {
+        playMenu.on("click", "#play-menu-until-regular-season", function () {
             api.play("untilRegularSeason");
             return false;
         });
     }
 
     function highlightNav(leaguePage) {
-        if (leaguePage === "") {
+/*        if (leaguePage === "") {
             leaguePage = "league_dashboard";
         } else if (leaguePage === "draft_summary") {
             leaguePage = "draft";
         }
         $("#league-menu li").removeClass("active");
-        $("#nav_" + leaguePage).addClass("active");
+        $("#nav_" + leaguePage).addClass("active");*/
     }
 
     function parseLeagueUrl(url) {
@@ -375,7 +376,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                         }
                     }
 
-                    g.vm.playMenu.options(someOptions);
+                    g.vm.topMenu.options(someOptions);
 
                     if (cb !== undefined) {
                         cb();
@@ -399,10 +400,10 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
 
         oldStatus = g.statusText;
         if (statusText === undefined) {
-            g.vm.playMenu.statusText(oldStatus);
+            g.vm.topMenu.statusText(oldStatus);
         } else if (statusText !== oldStatus) {
             db.setGameAttributes({statusText: statusText}, function () {
-                g.vm.playMenu.statusText(statusText);
+                g.vm.topMenu.statusText(statusText);
 //                console.log("Set status: " + statusText);
             });
         }
@@ -422,10 +423,10 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
 
         oldPhaseText = g.phaseText;
         if (phaseText === undefined) {
-            g.vm.playMenu.phaseText(oldPhaseText);
+            g.vm.topMenu.phaseText(oldPhaseText);
         } else if (phaseText !== oldPhaseText) {
             db.setGameAttributes({phaseText: phaseText}, function () {
-                g.vm.playMenu.phaseText(phaseText);
+                g.vm.topMenu.phaseText(phaseText);
 //                console.log("Set phase: " + phaseText);
             });
 

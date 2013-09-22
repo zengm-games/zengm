@@ -386,14 +386,16 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
      * This will also maintain any query string on the end of the URL, for instance for popup windows, unless options.noQueryString is set. Ignoring the query string can be important for forms in Davis.js until this is fixed: https://github.com/olivernn/davis.js/issues/75
      * 
      * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
+     * @param {object|number?} lid League ID number, either a number or a knockout observable. If not passed, then g.lid is used. This is needed to make some observables (navbar) depend on the lid.
      * @return {string} URL
      */
-    function leagueUrl(components, options) {
+    function leagueUrl(components, options, lid) {
         var i, url;
 
         options = options !== undefined ? options : {};
+        lid = lid !== undefined ? ko.utils.unwrapObservable(lid) : g.lid;
 
-        url = "/l/" + g.lid;
+        url = "/l/" + lid;
         for (i = 0; i < components.length; i++) {
             if (components[i] !== undefined) {
                 url += "/" + ko.utils.unwrapObservable(components[i]);

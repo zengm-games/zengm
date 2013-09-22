@@ -1018,7 +1018,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         }
 
         // Prevent new phase from being clicked twice by deleting all options from the play menu. The options will be restored after the new phase is set or if there is an error by calling ui.updatePlayMenu.
-        g.vm.playMenu.options([]);
+        g.vm.topMenu.options([]);
 
         if (phase === g.PHASE.PRESEASON) {
             newPhasePreseason(cb);

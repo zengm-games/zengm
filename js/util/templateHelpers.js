@@ -128,7 +128,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
     };
 
     ko.bindingHandlers.attrLeagueUrl = {
-        update: function (element, valueAccessor) {
+        update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
             var args, attr, i, options, toAttr, url;
 
             args = valueAccessor();
@@ -143,7 +143,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
                         options = {};
                     }
 
-                    toAttr[attr] = helpers.leagueUrl(args[attr], options);
+                    toAttr[attr] = helpers.leagueUrl(args[attr], options, viewModel.lid);
                 }
             }
 

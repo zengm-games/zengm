@@ -10,6 +10,20 @@ ptsQtrs stored for games - but this will just be ignored if it's not there
 BIG NEW FEATURES
 ----------------
 
+mobile UI
+  bootstrap 3
+    http://getbootstrap.com/examples/offcanvas/
+  move league menu to dropdowns at top
+    Play (different color)
+    Dashboard
+    Inbox (highlighted when message)
+    League
+    Team
+    Players
+    Stats
+    Utilities
+    Dev (grayed out)
+    Manual (different color)
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

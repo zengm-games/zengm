@@ -5,10 +5,13 @@ imgURL in player root (although lacking this doesn't cause an error now, better 
 if not present add team*Cache things to gameAttributes
   after this is handled, delete the hack in util.viewHelpers.beforeLeague
 ewa in player.stats - doesn't really matter, right?
+ptsQtrs stored for games - but this will just be ignored if it's not there
 
 BIG NEW FEATURES
 ----------------
 
+points by quarter
+  show in box score
 changes
   don't show on first visit
 team switching after being fired

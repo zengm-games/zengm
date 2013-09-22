@@ -37,6 +37,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.id = gid;
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
         this.numPossessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.uniform(0.9, 1.1));
+        this.dt = 48 / (2 * this.numPossessions); // Time elapsed per possession
 
         // Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
         this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
@@ -118,8 +119,11 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         while (this.team[0].stat.pts === this.team[1].stat.pts) {
             if (this.overtimes === 0) {
                 this.numPossessions = Math.round(this.numPossessions * 5 / 48);  // 5 minutes of possessions
+                this.dt = 5 / (2 * this.numPossessions);
             }
             this.overtimes += 1;
+            p.team[0].stat.ptsQtrs.push(0);
+            p.team[1].stat.ptsQtrs.push(0);
             this.simPossessions();
         }
 
@@ -156,6 +160,16 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
         i = 0;
         while (i < this.numPossessions * 2) {
+            // Keep track of quarters
+            if ((i * this.dt > 12 && this.team[0].stat.ptsQtrs.length === 1) ||
+                (i * this.dt > 24 && this.team[0].stat.ptsQtrs.length === 2) ||
+                (i * this.dt > 36 && this.team[0].stat.ptsQtrs.length === 3)) {
+console.log(i * this.dt)
+console.log(this.team[0].stat.ptsQtrs)
+                this.team[0].stat.ptsQtrs.push(0);
+                this.team[1].stat.ptsQtrs.push(0);
+            }
+
             // Possession change
             this.o = (this.o === 1) ? 0 : 1;
             this.d = (this.o === 1) ? 0 : 1;
@@ -350,24 +364,21 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @memberOf core.gameSim
      */
     GameSim.prototype.updatePlayingTime = function () {
-        var dt, p, t;
-
-        // Time elapsed
-        dt = (this.overtimes > 0 ? 5 : 48) / (2 * this.numPossessions);
+        var p, t;
 
         for (t = 0; t < 2; t++) {
             // Update minutes (ovr, court, and bench)
             for (p = 0; p < this.team[t].player.length; p++) {
                 if (this.playersOnCourt[t].indexOf(p) >= 0) {
-                    this.recordStat(t, p, "min", dt);
-                    this.recordStat(t, p, "courtTime", dt);
-                    this.recordStat(t, p, "energy", -dt * 0.04 * (1 - this.team[t].player[p].compositeRating.endurance));
+                    this.recordStat(t, p, "min", this.dt);
+                    this.recordStat(t, p, "courtTime", this.dt);
+                    this.recordStat(t, p, "energy", -this.dt * 0.04 * (1 - this.team[t].player[p].compositeRating.endurance));
                     if (this.team[t].player[p].stat.energy < 0) {
                         this.team[t].player[p].stat.energy = 0;
                     }
                 } else {
-                    this.recordStat(t, p, "benchTime", dt);
-                    this.recordStat(t, p, "energy", dt * 0.1);
+                    this.recordStat(t, p, "benchTime", this.dt);
+                    this.recordStat(t, p, "energy", this.dt * 0.1);
                     if (this.team[t].player[p].stat.energy > 1) {
                         this.team[t].player[p].stat.energy = 1;
                     }
@@ -806,9 +817,13 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      */
     GameSim.prototype.recordStat = function (t, p, s, amount) {
         amount = amount !== undefined ? amount : 1;
-        this.team[t].player[p].stat[s] = this.team[t].player[p].stat[s] + amount;
+        this.team[t].player[p].stat[s] += amount;
         if (s !== "gs" && s !== "courtTime" && s !== "benchTime" && s !== "energy") {
-            this.team[t].stat[s] = this.team[t].stat[s] + amount;
+            this.team[t].stat[s] += amount;
+            // Record quarter-by-quarter scoring too
+            if (s === "pts") {
+                this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] += amount;
+            }
         }
     };
 

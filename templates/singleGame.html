@@ -1,9 +1,11 @@
 <h1>Single Game Simulation <span data-bind="newWindow: []"></span></h1>
 
 <p>
-  <form class="form-inline">
-    <input type="text" class="input-small" placeholder="Home Team ID">
-    <input type="text" class="input-small" placeholder="Away Team ID">
-    <button type="submit" class="btn">Simulate Game</button>
+  <form class="form-inline" method="POST" data-bind="attrLeagueUrl: {action: ['single_game']}">
+    <input type="text" class="input-small" placeholder="Home Team ID" name="tid-home">
+    <input type="text" class="input-small" placeholder="Away Team ID" name="tid-away">
+    <button type="submit" class="btn" id="simulate-game">Simulate Game</button>
   </form>
 </p>
+
+<textarea rows="30" data-bind="visible: csv().length > 0, text: csv" style="width: 100%"></textarea>

@@ -756,6 +756,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
     }
 
     return {
+        loadTeams: loadTeams,
         play: play
     };
 });

@@ -9,7 +9,6 @@ ewa in player.stats - doesn't really matter, right?
 BIG NEW FEATURES
 ----------------
 
-switch to date version numbers, add some kind of log of changes
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

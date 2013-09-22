@@ -62,7 +62,7 @@ requirejs.config({
     }
 });
 
-requirejs(["db", "views", "ui", "lib/davis", "util/helpers", "lib/bootstrap-alert", "lib/bootstrap-dropdown", "lib/bootstrap-popover", "lib/bootstrapx-clickover", "lib/davis.google_analytics", "lib/html5-dataset", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut", "util/templateHelpers", "api"], function (db, views, ui, Davis, helpers) {
+requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "lib/bootstrap-alert", "lib/bootstrap-dropdown", "lib/bootstrap-popover", "lib/bootstrapx-clickover", "lib/davis.google_analytics", "lib/html5-dataset", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut", "util/templateHelpers", "api"], function (db, views, ui, changes, Davis, helpers) {
     "use strict";
 
     ui.init();
@@ -72,6 +72,9 @@ requirejs(["db", "views", "ui", "lib/davis", "util/helpers", "lib/bootstrap-aler
         helpers.error('<p>Your browser is not modern enough to run Basketball GM.</p><p>Currently, <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best with Basketball GM.</p>');
         return;
     }
+
+    // Any news?
+    changes.check();
 
     db.connectMeta(function () {
         var app = new Davis(function () {

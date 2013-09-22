@@ -13,12 +13,20 @@ define(["lib/jquery"], function ($) {
     }, {
         date: "2013-09-21",
         msg: "Added a \"Trading Block\" page where you can ask all the AI teams to make offers for selected players or draft picks you control."
+    }, {
+        date: "2013-09-22",
+        msg: "For any games simulated from now on, box scores will show quarter-by-quarter point totals."
     }];
 
     function check() {
         var date, i, text, unread;
 
-        if (localStorage.changesRead === undefined || localStorage.changesRead < c.length) {
+        // Don't show anything on first visit
+        if (localStorage.changesRead === undefined) {
+            localStorage.changesRead = c.length;
+        }
+
+        if (localStorage.changesRead < c.length) {
             unread = c.slice(localStorage.changesRead);
 
             date = null;

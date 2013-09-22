@@ -122,8 +122,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 this.dt = 5 / (2 * this.numPossessions);
             }
             this.overtimes += 1;
-            p.team[0].stat.ptsQtrs.push(0);
-            p.team[1].stat.ptsQtrs.push(0);
+            this.team[0].stat.ptsQtrs.push(0);
+            this.team[1].stat.ptsQtrs.push(0);
             this.simPossessions();
         }
 
@@ -162,10 +162,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         while (i < this.numPossessions * 2) {
             // Keep track of quarters
             if ((i * this.dt > 12 && this.team[0].stat.ptsQtrs.length === 1) ||
-                (i * this.dt > 24 && this.team[0].stat.ptsQtrs.length === 2) ||
-                (i * this.dt > 36 && this.team[0].stat.ptsQtrs.length === 3)) {
-console.log(i * this.dt)
-console.log(this.team[0].stat.ptsQtrs)
+                    (i * this.dt > 24 && this.team[0].stat.ptsQtrs.length === 2) ||
+                    (i * this.dt > 36 && this.team[0].stat.ptsQtrs.length === 3)) {
                 this.team[0].stat.ptsQtrs.push(0);
                 this.team[1].stat.ptsQtrs.push(0);
             }

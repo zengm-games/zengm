@@ -88,7 +88,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
     function boxScore(gid, cb) {
         if (gid >= 0) {
             g.dbl.transaction(["games"]).objectStore("games").get(gid).onsuccess = function (event) {
-                var content, i, game, overtime;
+                var content, i, j, game, overtime;
 
                 game = event.target.result;
                 for (i = 0; i < game.teams.length; i++) {
@@ -101,6 +101,14 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                         // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed third, since .injury.gamesRemaining is 0 for healthy and -1 for injured.
                         return (b.gs * 1000 + b.min + b.injury.gamesRemaining * 1000) - (a.gs * 1000 + a.min + a.injury.gamesRemaining * 1000);
                     });
+
+                    // Fix ptsQtrs for old games where this wasn't stored
+                    if (game.teams[i].ptsQtrs === undefined) {
+                        game.teams[i].ptsQtrs = ["-", "-", "-", "-"];
+                        for (j = 0; j < game.overtimes; j++) {
+                            game.teams[i].ptsQtrs.push("-");
+                        }
+                    }
                 }
 
 

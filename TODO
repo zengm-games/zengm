@@ -9,6 +9,8 @@ ewa in player.stats - doesn't really matter, right?
 BIG NEW FEATURES
 ----------------
 
+changes
+  don't show on first visit
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?
@@ -80,6 +82,8 @@ player development
 MINOR FIXES
 -----------
 
+trade
+  changing teams shouldn't reset the user's offer
 team.valueChange
   contending teams shouldn't always see every player as a positive value. needs to be some balanced formula where a bad contract is a negative.
 player.value

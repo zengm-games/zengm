@@ -4,32 +4,30 @@
 
 <p data-bind="visible: !finalMatchups()">This is what the playoff matchups would be if the season ended right now.</p>
 
-<p>
-<table cellpadding="0" cellspacing="0" border="0" class="table-condensed" width="100%">
-<tbody>
-  <tr>
-    <td width="14.28%" data-bind="matchup: [0, 0]"></td>
-    <td rowspan="2" width="14.28%" data-bind="matchup: [1, 0]"></td>
-    <td rowspan="4" width="14.28%" data-bind="matchup: [2, 0]"></td>
-    <td rowspan="4" width="14.28%" data-bind="matchup: [3, 0]"></td>
-    <td rowspan="4" width="14.28%" data-bind="matchup: [2, 1]"></td>
-    <td rowspan="2" width="14.28%" data-bind="matchup: [1, 2]"></td>
-    <td width="14.28%" data-bind="matchup: [0, 4]"></td>
-  </tr>
-  <tr>
-    <td data-bind="matchup: [0, 1]"></td>
-    <td data-bind="matchup: [0, 5]"></td>
-  </tr>
-  <tr>
-    <td data-bind="matchup: [0, 2]"></td>
-    <td rowspan="2" data-bind="matchup: [1, 1]"></td>
-    <td rowspan="2" data-bind="matchup: [1, 3]"></td>
-    <td data-bind="matchup: [0, 6]"></td>
-  </tr>
-  <tr>
-    <td data-bind="matchup: [0, 3]"></td>
-    <td data-bind="matchup: [0, 7]"></td>
-  </tr>
-</tbody>
+<table class="table-condensed" width="100%">
+  <tbody>
+    <tr>
+      <td width="14.28%" data-bind="matchup: [0, 0]"></td>
+      <td rowspan="2" width="14.28%" data-bind="matchup: [1, 0]"></td>
+      <td rowspan="4" width="14.28%" data-bind="matchup: [2, 0]"></td>
+      <td rowspan="4" width="14.28%" data-bind="matchup: [3, 0]"></td>
+      <td rowspan="4" width="14.28%" data-bind="matchup: [2, 1]"></td>
+      <td rowspan="2" width="14.28%" data-bind="matchup: [1, 2]"></td>
+      <td width="14.28%" data-bind="matchup: [0, 4]"></td>
+    </tr>
+    <tr>
+      <td data-bind="matchup: [0, 1]"></td>
+      <td data-bind="matchup: [0, 5]"></td>
+    </tr>
+    <tr>
+      <td data-bind="matchup: [0, 2]"></td>
+      <td rowspan="2" data-bind="matchup: [1, 1]"></td>
+      <td rowspan="2" data-bind="matchup: [1, 3]"></td>
+      <td data-bind="matchup: [0, 6]"></td>
+    </tr>
+    <tr>
+      <td data-bind="matchup: [0, 3]"></td>
+      <td data-bind="matchup: [0, 7]"></td>
+    </tr>
+  </tbody>
 </table>
-</p>

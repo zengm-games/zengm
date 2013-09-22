@@ -72,7 +72,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                     // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
                     if (popup) {
                         $("#top-menu").hide();
-                        $("body").css("padding-top", "4px");
+                        $("body").css("padding-top", "0");
 
                         css = document.createElement("style");
                         css.type = "text/css";

@@ -6,6 +6,10 @@ body {
 .navbar-brand img {
   vertical-align: top;
 }
+.navbar-brand span {
+  padding-left: 5px;
+  float: right;
+}
 .navbar-text-twoline {
   margin-top: 6px;
   margin-bottom: 7px;

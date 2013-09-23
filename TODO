@@ -101,6 +101,7 @@ player development
 MINOR FIXES
 -----------
 
+http://requirejs.org/docs/api.html#config-waitSeconds
 current season shouldn't show in league history page dropdown
 trade
   changing teams shouldn't reset the user's offer

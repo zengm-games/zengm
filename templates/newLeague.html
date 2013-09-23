@@ -1,26 +1,47 @@
 <h1>Create New League</h1>
-<p>
-<form action="/new_league" method="POST">
-  <fieldset>
-    <label>League name</label>
-    <input type="text" name="name" data-bind="attr: {value: name}"><br><br>
 
-    <label>Which team do you want to manage?</label>
-    <select name="tid" data-bind="foreach: teams">
-      <option data-bind="attr: {value: tid}, text: region() + ' ' + name()"></option>
-    </select>
-    <span class="help-block" id="pop-text"></span><br>
+<form action="/new_league" method="POST" role="form">
+  <div class="row">
+    <div class="form-group col-md-4 col-sm-5">
+      <label for="new-league-name">League name</label>
+      <input class="form-control" id="new-league-name" type="text" name="name" data-bind="attr: {value: name}">
+    </div>
 
-    <label>Players <i class="icon-question-sign" id="help-rosters" data-placement="right"></i></label>
-    <select name="rosters">
-      <option value="random" selected="selected">Random Players</option>
-      <option value="custom-rosters">Upload Custom Rosters</option>
-    </select><br>
-    <span id="custom-rosters" style="display: none"><input type="file" name="custom-rosters"><br><br></span>
-    <label id="randomize-rosters" style="display: none"><input name="randomize-rosters" style="margin-top: 0px" value="1" type="checkbox"> Shuffle Rosters</input></label>
-    <br>
+    <div class="clearfix visible-xs"></div>
 
-    <button type="submit" class="btn" id="create-new-league">Create New League</button>
-  </fieldset>
+    <div class="form-group col-md-4 col-sm-5">
+      <label for="new-league-tid">Which team do you want to manage?</label>
+      <select class="form-control" id="new-league-tid" name="tid" data-bind="foreach: teams">
+        <option data-bind="attr: {value: tid}, text: region() + ' ' + name()"></option>
+      </select>
+      <span class="help-block" id="pop-text"></span>
+    </div>
+
+    <div class="clearfix visible-sm"></div>
+
+    <div class="col-md-4 col-sm-5">
+      <div class="form-group">
+        <label for="new-league-rosters">Players <i class="icon-question-sign" id="help-rosters" data-placement="right"></i></label>
+        <select class="form-control" id="new-league-rosters" name="rosters">
+          <option value="random" selected="selected">Random Players</option>
+          <option value="custom-rosters">Upload Custom Rosters</option>
+        </select>
+      </div>
+      <div id="custom-rosters" style="display: none">
+        <input type="file" name="custom-rosters">
+      </div>
+      <div id="randomize-rosters" class="checkbox" style="display: none">
+        <label>
+          <input name="randomize-rosters" value="1" type="checkbox"> Shuffle Rosters
+        </label>
+      </div>
+    </div>
+
+    <div class="clearfix visible-xs"></div>
+
+    <div class="col-md-12 col-sm-5 text-center">
+      <div class="visible-sm invisible-xs"><br></div>
+      <button type="submit" class="btn btn-lg btn-primary" id="create-new-league">Create New League</button>
+    </div>
+  </div>
 </form>
-</p>

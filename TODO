@@ -20,6 +20,7 @@ mobile UI, bootstrap 3
   get rid of all -fluid stuff
   everything except brand in navbar should be hidden until load is complete, then show if appropriate
   fix status text when navbar collapses
+  roster reorder with click, not drag
   minor
     get rid of inline CSS in index.html... not easy!
 team switching after being fired

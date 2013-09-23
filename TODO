@@ -26,7 +26,10 @@ mobile UI, bootstrap 3
     get rid of inline CSS in index.html... not easy!
   skills tooltips for mobile?
   help icons not showing anywhere
-  datatables - .form-control, next/prev, anything else?
+  datatables
+    .form-control
+    next/prev http://getbootstrap.com/components/#pagination
+    anything else?
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

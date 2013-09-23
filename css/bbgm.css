@@ -247,24 +247,22 @@ select.past-x {
 }
 
 .finances-settings-label {
-  line-height: 26px;
+  line-height: 32px;
   padding-right: 1em;
   text-align: right;
   width: 100px;
 }
 .finances-settings-text {
-  line-height: 26px;
+  line-height: 32px;
   padding-left: 1em;
 }
 .finances-settings-text-small {
-  font-size: 11px;
-  line-height: 14px;
+  font-size: 12px;
+  line-height: 15px;
   padding-left: 1em;
 }
 .finances-settings-field {
-}
-.ticket-price {
-  width: 36px;
+  width: 115px;
 }
 .finances-settings button {
   display: none;

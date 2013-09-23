@@ -6,7 +6,7 @@
 <p class="clearfix">The current payroll (<strong data-bind="currency: [team.payroll, 'M']"></strong>) is <span data-bind="text: aboveBelow.minPayroll"></span> the minimum payroll limit (<strong data-bind="currency: [minPayroll, 'M']"></strong>), <span data-bind="text: aboveBelow.salaryCap"></span> the salary cap (<strong data-bind="currency: [salaryCap, 'M']"></strong>), and <span data-bind="text: aboveBelow.luxuryPayroll"></span> the luxury tax limit (<strong data-bind="currency: [luxuryPayroll, 'M']"></strong>). <i class="icon-question-sign" id="help-payroll-limits" data-placement="bottom"></i></p>
 
 <div class="row">
-  <div class="span2">
+  <div class="col-lg-3 col-md-3 col-sm-2">
     <h4>Wins</h4>
     <div id="bar-graph-won" class="bar-graph-small"></div><br><br>
     <span class="clickover"><h4>Hype <i class="icon-question-sign" id="help-hype" data-placement="right"></i></h4></span>
@@ -16,60 +16,63 @@
     <h4>Average Attendance</h4>
     <div id="bar-graph-att" class="bar-graph-small"></div>
   </div>
-  <div class="span4">
-    <div class="row">
-      <h4>Revenue</h4>
-      <div id="bar-graph-revenue" class="bar-graph-large"></div><br><br>
-      <h4>Expenses</h4>
-      <div id="bar-graph-expenses" class="bar-graph-large"></div><br><br>
-      <h4>Cash</h4>
-      <div id="bar-graph-cash" class="bar-graph-medium"></div>
-    </div>
+  <div class="col-lg-5 col-md-4 col-sm-4">
+    <h4>Revenue</h4>
+    <div id="bar-graph-revenue" class="bar-graph-large"></div><br><br>
+    <h4>Expenses</h4>
+    <div id="bar-graph-expenses" class="bar-graph-large"></div><br><br>
+    <h4>Cash</h4>
+    <div id="bar-graph-cash" class="bar-graph-medium"></div>
   </div>
-  <div class="span6">
+  <div class="col-lg-4 col-md-5 col-sm-6">
     <form method="POST" id="finances-settings" data-bind="attrLeagueUrl: {action: ['team_finances']}">
       <h4>Revenue Settings <i class="icon-question-sign" id="help-revenue-settings" data-placement="bottom"></i></h4>
       <p class="text-error"></p>
       <div class="row">
         <div class="pull-left finances-settings-label">Ticket Price</div>
-        <div class="input-prepend pull-left finances-settings-field">
-          <span class="add-on">$</span><input type="text" name="budget[ticketPrice]" class="ticket-price" disabled="disabled" data-bind="value: team.budget.ticketPrice.amount">
+        <div class="input-group input-group-sm pull-left finances-settings-field">
+          <span class="input-group-addon">$</span><input type="text" name="budget[ticketPrice]" class="form-control" disabled="disabled" data-bind="value: team.budget.ticketPrice.amount">
         </div>
-        <div class="pull-left finances-settings-text">(#<span data-bind="text: team.budget.ticketPrice.rank"></span> leaguewide)</div>
+        <div class="pull-left finances-settings-text">Leaguewide rank: #<span data-bind="text: team.budget.ticketPrice.rank"></span></div>
       </div>
       <p></p>
       <h4>Expense Settings <i class="icon-question-sign" id="help-expense-settings" data-placement="bottom"></i></h4>
       <p class="text-error"></p>
       <div class="row">
         <div class="pull-left finances-settings-label">Scouting</div>
-        <div class="input-prepend input-append pull-left finances-settings-field">
-          <span class="add-on">$</span><input type="text" name="budget[scouting]" class="ticket-price" disabled="disabled" data-bind="value: team.budget.scouting.amount"><span class="add-on">M</span>
+        <div class="input-group input-group-sm pull-left finances-settings-field">
+          <span class="input-group-addon">$</span><input type="text" name="budget[scouting]" class="form-control" disabled="disabled" data-bind="value: team.budget.scouting.amount"><span class="input-group-addon">M</span>
         </div>
         <div class="pull-left finances-settings-text-small">Current spending rate: #<span data-bind="text: team.budget.scouting.rank"></span><br>Spent this season: #<span data-bind="text: team.expenses.scouting.rank"></span></div>
       </div>
       <div class="row">
         <div class="pull-left finances-settings-label">Coaching</div>
-        <div class="input-prepend input-append pull-left finances-settings-field">
-          <span class="add-on">$</span><input type="text" name="budget[coaching]" class="ticket-price" disabled="disabled" data-bind="value: team.budget.coaching.amount"><span class="add-on">M</span>
+        <div class="input-group input-group-sm pull-left finances-settings-field">
+          <span class="input-group-addon">$</span><input type="text" name="budget[coaching]" class="form-control" disabled="disabled" data-bind="value: team.budget.coaching.amount"><span class="input-group-addon">M</span>
         </div>
         <div class="pull-left finances-settings-text-small">Current spending rate: #<span data-bind="text: team.budget.coaching.rank"></span><br>Spent this season: #<span data-bind="text: team.expenses.coaching.rank"></span></div>
       </div>
       <div class="row">
         <div class="pull-left finances-settings-label">Health</div>
-        <div class="input-prepend input-append pull-left finances-settings-field">
-          <span class="add-on">$</span><input type="text" name="budget[health]" class="ticket-price" disabled="disabled" data-bind="value: team.budget.health.amount"><span class="add-on">M</span>
+        <div class="input-group input-group-sm pull-left finances-settings-field">
+          <span class="input-group-addon">$</span><input type="text" name="budget[health]" class="form-control" disabled="disabled" data-bind="value: team.budget.health.amount"><span class="input-group-addon">M</span>
         </div>
         <div class="pull-left finances-settings-text-small">Current spending rate: #<span data-bind="text: team.budget.health.rank"></span><br>Spent this season: #<span data-bind="text: team.expenses.health.rank"></span></div>
       </div>
       <div class="row">
         <div class="pull-left finances-settings-label">Facilities</div>
-        <div class="input-prepend input-append pull-left finances-settings-field">
-          <span class="add-on">$</span><input type="text" name="budget[facilities]" class="ticket-price" disabled="disabled" data-bind="value: team.budget.facilities.amount"><span class="add-on">M</span>
+        <div class="input-group input-group-sm pull-left finances-settings-field">
+          <span class="input-group-addon">$</span><input type="text" name="budget[facilities]" class="form-control" disabled="disabled" data-bind="value: team.budget.facilities.amount"><span class="input-group-addon">M</span>
         </div>
         <div class="pull-left finances-settings-text-small">Current spending rate: #<span data-bind="text: team.budget.facilities.rank"></span><br>Spent this season: #<span data-bind="text: team.expenses.facilities.rank"></span></div>
       </div>
       <br>
-      <p align="center"><button class="btn btn-large btn-primary" style="line-height: 1.5em"></button></p>
+      <div class="row">
+        <div class="pull-left finances-settings-label">&nbsp;</div>
+        <div class="input-group input-group-sm pull-left finances-settings-field">
+          <button class="btn btn-large btn-primary" style="line-height: 1.5em">
+        </div>
+      </div>
     </form>
   </div>
 </div>

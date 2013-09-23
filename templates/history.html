@@ -52,9 +52,9 @@
   <div class="col-md-3 col-sm-12">
     <h4>Retired Players</h4>
     <p style="-moz-column-width: 15em; -moz-columns: 15em; -webkit-columns: 15em; columns: 15em;">
-    <!-- ko foreach: retiredPlayers -->
-      <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (age: <span data-bind="text: age"></span><span data-bind="visible: hof">; <a data-bind="attrLeagueUrl: {href: ['hall_of_fame']}">Hall of Fame</a></span>)<br>
-    <!-- /ko -->
+      <!-- ko foreach: retiredPlayers -->
+        <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (age: <span data-bind="text: age"></span><span data-bind="visible: hof">; <a data-bind="attrLeagueUrl: {href: ['hall_of_fame']}">Hall of Fame</a></span>)<br>
+      <!-- /ko -->
     </p>
   </div>
 </div>

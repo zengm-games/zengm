@@ -93,6 +93,7 @@ player development
 MINOR FIXES
 -----------
 
+current season shouldn't show in league history page dropdown
 trade
   changing teams shouldn't reset the user's offer
 team.valueChange

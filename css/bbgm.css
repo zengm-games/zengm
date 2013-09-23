@@ -10,9 +10,84 @@ body {
   padding-left: 5px;
   float: right;
 }
-.navbar-text-twoline {
-  margin-top: 6px;
-  margin-bottom: 7px;
+/* This is like navbar-text, but with different margins so two lines of text can fit, and with no responsive stuff so it always shows in the navbar. */
+.navbar-text-two-line-no-collapse {
+  color: #777777;
+  float: left;
+  margin: 6px 15px 7px 15px;
+}
+
+/* This is a copy of the navbar-nav styles, with no responsive stuff. */
+.navbar-collapse .navbar-nav-no-collapse.navbar-left:first-child {
+  margin-left: -15px;
+}
+.navbar-collapse .navbar-nav-no-collapse.navbar-right:last-child {
+  margin-right: -15px;
+}
+.navbar-nav-no-collapse {
+  margin: 8px -15px;
+}
+.navbar-nav-no-collapse > li > a {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  line-height: 18px;
+}
+.navbar-nav-no-collapse > li > .dropdown-menu {
+  margin-top: 0;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+.navbar-nav-no-collapse {
+  float: left;
+  margin: 0;
+}
+.navbar-nav-no-collapse > li {
+  float: left;
+}
+.navbar-nav-no-collapse > li > a {
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+.navbar-default .navbar-nav-no-collapse > li > a {
+  color: #777777;
+}
+.navbar-default .navbar-nav-no-collapse > li > a:hover,
+.navbar-default .navbar-nav-no-collapse > li > a:focus {
+  color: #333333;
+  background-color: transparent;
+}
+.navbar-default .navbar-nav-no-collapse > .active > a,
+.navbar-default .navbar-nav-no-collapse > .active > a:hover,
+.navbar-default .navbar-nav-no-collapse > .active > a:focus {
+  color: #555555;
+  background-color: #e7e7e7;
+}
+.navbar-default .navbar-nav-no-collapse > .disabled > a,
+.navbar-default .navbar-nav-no-collapse > .disabled > a:hover,
+.navbar-default .navbar-nav-no-collapse > .disabled > a:focus {
+  color: #cccccc;
+  background-color: transparent;
+}
+.navbar-default .navbar-nav-no-collapse > .dropdown > a:hover .caret,
+.navbar-default .navbar-nav-no-collapse > .dropdown > a:focus .caret {
+  border-top-color: #333333;
+  border-bottom-color: #333333;
+}
+.navbar-default .navbar-nav-no-collapse > .open > a,
+.navbar-default .navbar-nav-no-collapse > .open > a:hover,
+.navbar-default .navbar-nav-no-collapse > .open > a:focus {
+  background-color: #e7e7e7;
+  color: #555555;
+}
+.navbar-default .navbar-nav-no-collapse > .open > a .caret,
+.navbar-default .navbar-nav-no-collapse > .open > a:hover .caret,
+.navbar-default .navbar-nav-no-collapse > .open > a:focus .caret {
+  border-top-color: #555555;
+  border-bottom-color: #555555;
+}
+.navbar-default .navbar-nav-no-collapse > .dropdown > a .caret {
+  border-top-color: #777777;
+  border-bottom-color: #777777;
 }
 
 footer {

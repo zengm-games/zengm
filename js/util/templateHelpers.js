@@ -165,8 +165,10 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             return ko.bindingHandlers.html.update(element, function () {
                 return '<form id="' + arg + '-dropdown" class="form-inline pull-right" role="form">' +
                        '<!-- ko foreach: fields -->' +
+                         '<div class="form-group" style="margin-left: 4px">' +
                          '<select data-bind="attr: {id: id, class: \'form-control \' + name}, options: options, optionsText: \'val\', optionsValue: \'key\', value: selected">' +
                          '</select>' +
+                         '</div>' +
                        '<!-- /ko -->' +
                        '</form>';
             });

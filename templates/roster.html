@@ -39,15 +39,15 @@
     <td data-bind="round: [stats.ast, 1]"></td>
     <td data-bind="round: [stats.per, 1]"></td>
     <td data-bind="if: $parent.editable">
-      <select data-bind="options: $root.ptModifiers, optionsText: 'text', optionsValue: 'ptModifier', value: ptModifier"></select>
+      <select class="form-control" data-bind="options: $root.ptModifiers, optionsText: 'text', optionsValue: 'ptModifier', value: ptModifier"></select>
     </td>
     <td data-bind="visible: $parent.editable">
-      <button class="btn btn-mini" data-action="release" data-bind="enable: canRelease">Release</button>
+      <button class="btn btn-xs" data-action="release" data-bind="enable: canRelease">Release</button>
     </td>
     <td data-bind="visible: $parent.showTradeFor">
       <form method="POST" style="margin: 0" data-bind="attrLeagueUrl: {action: ['trade']}">
         <input type="hidden" name="pid" data-bind="attr: {value: pid}">
-        <button type="submit" class="btn btn-mini">Trade For</button>
+        <button type="submit" class="btn btn-xs">Trade For</button>
       </form>
     </td>
   </tr>

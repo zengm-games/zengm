@@ -16,46 +16,46 @@ footer {
   text-align: center;
 }
 
-ul.dashboard_league {
+ul.dashboard-boxes {
   list-style: none;
-  margin: -1em -1em 0 0;
+  margin: 0 -1em 0 0;
   padding: 0;
 }
-ul.dashboard_league li {
+ul.dashboard-boxes li {
   float: left;
   margin: 1em 1em 0 0;
   position: relative;
   overflow: hidden;
 }
-ul.dashboard_league li strong {
+ul.dashboard-boxes li strong {
   white-space: nowrap;
 }
-ul.dashboard_league li a.league {
+ul.dashboard-boxes li a.league {
   display: block;
-  height: 56px;
-  padding: 6px 8px 6px 8px;
+  height: 60px;
+  padding: 2px 8px 6px 8px;
   text-align: left;
-  width: 138px;
+  width: 151px;
 }
-ul.dashboard_league li a.league:hover {
+ul.dashboard-boxes li a.league:hover {
   color: #000;
 }
-ul.dashboard_league li form.delete .btn {
+ul.dashboard-boxes li form.delete button {
   border-radius: 0 4px 0 4px;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 0px;
+  right: 5px;
 }
-ul.dashboard_league li.dashboard_league_new a {
+ul.dashboard-boxes li.dashboard-box-new a {
   color: #fff;
 }
-ul.dashboard_league li.dashboard_league_new a:hover {
+ul.dashboard-boxes li.dashboard-box-new a:hover {
   color: #fff;
 }
-ul.dashboard_league li.dashboard_league_new h2 {
+ul.dashboard-boxes li.dashboard-box-new h2 {
   font-size: 20px;
-  line-height: 30px;
-  margin-top: -2px;
+  line-height: 26px;
+  margin-top: 1px;
 }
 
 .sidebar-nav {

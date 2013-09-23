@@ -16,9 +16,12 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
             tr = $(this);
             if (i <= 5) {
-                tr.find("td:first").removeClass("btn-info").addClass("btn-primary");
+                // Because of CSS specificity issues, hard code color
+                //tr.find("td:first").removeClass("btn-info").addClass("btn-primary");
+                tr.find("td:first").css("background-color", "#428bca");
             } else {
-                tr.find("td:first").removeClass("btn-primary").addClass("btn-info");
+                //tr.find("td:first").removeClass("btn-primary").addClass("btn-info");
+                tr.find("td:first").css("background-color", "#5bc0de");
             }
             if (i === 5) {
                 tr.addClass("separator");
@@ -194,7 +197,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                         highlightHandles();
                     });
                 },
-                handle: ".roster_handle",
+                handle: ".roster-handle",
                 disabled: true
             });
         }

@@ -21,9 +21,10 @@ mobile UI, bootstrap 3
   everything except brand in navbar should be hidden until load is complete, then show if appropriate
   fix status text when navbar collapses
   roster
-    reorder with click, not drag?
+    reorder with click, not drag? or maybe http://touchpunch.furf.com/
   minor
     get rid of inline CSS in index.html... not easy!
+  skills tooltips for mobile?
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

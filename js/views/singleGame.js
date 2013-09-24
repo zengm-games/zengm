@@ -77,8 +77,10 @@ define(["globals", "ui", "core/game", "core/gameSim", "core/player", "lib/jquery
             }
 
             if (injuries.length > 0) {
-                csv += "Injuries\n";
-                csv += injuries.join("\n");
+                csv += injuries.join("\n") + "\n";
+            }
+            for (i = injuries.length; i < 4; i++) {
+                csv += "No injury this game\n";
             }
 
             $("#download-link").html('<a href="data:application/json;base64,' + window.btoa(csv) + '" download="boxscore-' + r.team[0].id + '-' + r.team[1].id + '.csv">Download CSV</a>');

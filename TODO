@@ -11,6 +11,7 @@ BIG NEW FEATURES
 ----------------
 
 mobile UI, bootstrap 3
+  free agents table is too wide at md and lg
   somehow link to inbox from dashboard
   get rid of league menu highlighting code
   get rid of leagueLayout.html

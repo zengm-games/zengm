@@ -7,7 +7,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
 
     // Things to do on initial page load
     function init() {
-        var api, playMenu, slideOut;
+        var api, playMenu, slideOut, topMenuCollapse;
 
         // "Feedback" slider
         slideOut = $(".slide-out");
@@ -68,6 +68,17 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         playMenu.on("click", "#play-menu-until-regular-season", function () {
             api.play("untilRegularSeason");
             return false;
+        });
+
+        // Bootstrap's collapsable nav doesn't play nice with single page apps
+        // unless you manually close it when a link is clicked. However, I need
+        // this to run only on real links, not "dropdown" links (#).
+        topMenuCollapse = $("#top-menu-collapse");
+        topMenuCollapse.on("click", "a:not([href='#'])", function () {
+            // Only run when collapsable is open
+            if (topMenuCollapse.hasClass("in")) {
+                topMenuCollapse.collapse("hide");
+            }
         });
     }
 

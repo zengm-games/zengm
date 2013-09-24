@@ -81,7 +81,7 @@
           <ul class="nav navbar-nav navbar-right" id="league-menu">
             <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: []}">Dashboard</a></li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">League <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">League <b class="caret"></b></span><span class="visible-sm">L <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li><a data-bind="attrLeagueUrl: {href: ['standings']}">Standings</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['playoffs']}">Playoffs</a></li>
@@ -90,7 +90,7 @@
               </ul>
             </li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Team <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Team <b class="caret"></b></span><span class="visible-sm">T <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li><a data-bind="attrLeagueUrl: {href: ['roster']}">Roster</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['schedule']}">Schedule</a></li>
@@ -99,7 +99,7 @@
               </ul>
             </li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Players <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Players <b class="caret"></b></span><span class="visible-sm">P <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li><a data-bind="attrLeagueUrl: {href: ['free_agents']}">Free Agents</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['trade']}">Trade</a></li>
@@ -109,7 +109,7 @@
               </ul>
             </li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Stats <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Stats <b class="caret"></b></span><span class="visible-sm">S <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li><a data-bind="attrLeagueUrl: {href: ['game_log']}">Game Log</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['leaders']}">League Leaders</a></li>
@@ -119,7 +119,7 @@
               </ul>
             </li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Tools <b class="caret"></b></span><span class="visible-sm">X <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['edit_team_info']}">Edit Team Info</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['export_rosters']}">Export Rosters</a></li>
@@ -133,8 +133,9 @@
               </ul>
             </li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manual <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Help <b class="caret"></b></span><span class="visible-sm">? <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
+                <li role="presentation" class="dropdown-header">Manual</li>
                 <li><a href="/manual">Overview</a></li>
                 <li><a href="/manual/custom_rosters">Custom Rosters</a></li>
                 <li><a href="javascript:manualDebugging()">Debugging</a></li>

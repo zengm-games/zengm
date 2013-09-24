@@ -30,6 +30,7 @@ mobile UI, bootstrap 3
     .form-control
     next/prev http://getbootstrap.com/components/#pagination
     anything else?
+  add back hidden roster columns? is there a way to have the left column (names) constant under scroll?
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?
@@ -101,6 +102,7 @@ player development
 MINOR FIXES
 -----------
 
+trade deadline
 http://requirejs.org/docs/api.html#config-waitSeconds
 current season shouldn't show in league history page dropdown
 trade

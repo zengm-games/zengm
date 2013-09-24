@@ -79,7 +79,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                         if (ot !== null) {
                             // This function doesn't have its own transaction, so we need to call the callback now even though the update and add might not have been processed yet (this will keep the transaction alive).
                             if (cb !== undefined) {
-                                ui.updateStatus("Contract negotiation in progress...");
+                                ui.updateStatus("Contract negotiation");
                                 ui.updatePlayMenu(tx, cb);
                             }
                         }
@@ -93,7 +93,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
             tx.oncomplete = function () {
                 if (success) {
                     db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                        ui.updateStatus("Contract negotiation in progress...");
+                        ui.updateStatus("Contract negotiation");
                         ui.updatePlayMenu(null, cb);
                     });
                 }

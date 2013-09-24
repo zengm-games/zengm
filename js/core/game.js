@@ -669,7 +669,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
         cbPlayGames = function () {
             var tx;
 
-            ui.updateStatus("Playing games (" + numDays + " days remaining)...");
+            ui.updateStatus("Playing games (" + numDays + " days left)");
 
             tx = g.dbl.transaction(["players", "schedule", "teams"]);
 

@@ -82,16 +82,6 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         });
     }
 
-    function highlightNav(leaguePage) {
-/*        if (leaguePage === "") {
-            leaguePage = "league_dashboard";
-        } else if (leaguePage === "draft_summary") {
-            leaguePage = "draft";
-        }
-        $("#league-menu li").removeClass("active");
-        $("#nav_" + leaguePage).addClass("active");*/
-    }
-
     function parseLeagueUrl(url) {
         var league_id, league_page, league_root_url, split_url;
         // Returns a list containing the integer league ID (0 if none), the
@@ -141,15 +131,11 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
      * @param  {Object} data An object with several properties: "template" the name of the HTML template file in the templates folder; "container" is the id of the container div (probably content or league_content).
      */
     function update(data) {
-        var containerEl, contentEl, leaguePage, rendered, result;
+        var containerEl, contentEl, rendered;
 
         rendered = templates[data.template];
         containerEl = document.getElementById(data.container);
         containerEl.innerHTML = rendered;
-
-        result = parseLeagueUrl(document.URL);
-        leaguePage = result[2];
-        highlightNav(leaguePage);
 
         if (data.container === "league_content") {
             contentEl = document.getElementById("content");

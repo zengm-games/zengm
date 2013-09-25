@@ -90,6 +90,18 @@ body {
   border-bottom-color: #777777;
 }
 
+/* These colors are copied from the default "success" button. */
+#play-button-link {
+  color: #fff;
+  background-color: #5cb85c;
+}
+#play-button-link:hover, #play-button-link:focus {
+  background-color: #47a447;
+}
+#play-button-link b.caret {
+  border-top-color: #fff;
+}
+
 footer {
   color: #777;
   text-align: center;

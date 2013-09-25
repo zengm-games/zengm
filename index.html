@@ -65,8 +65,8 @@
           </button>
           <a class="navbar-brand" href="/"><img src="/ico/logo.png" width="18" height="18"><span class="hidden-md hidden-sm hidden-xs">Basketball GM</span><span class="visible-md visible-sm visible-xs" data-bind="if: lid() === undefined">Basketball GM</span></a>
           <ul class="nav navbar-nav-no-collapse" id="play-menu" data-no-collapse="true" data-bind="visible: lid() !== undefined" style="display: none">
-            <li class="dropdown active">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="play-button-link">Play <b class="caret"></b></a>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="play-button-link" class="play-button">Play <b class="caret"></b></a>
               <ul class="dropdown-menu" data-bind="foreach: options">
                 <li><a data-bind="attr: {href: url, id: id}, text: label"></a></li>
               </ul>
@@ -168,28 +168,23 @@
     </div>
 
     <script>
-// This is so the "Debugging" manual entry can be read even if IndexedDB loads
-function manualDebugging() {
-  document.getElementById("content").innerHTML = '<h1>Debugging</h1>' + 
-    '<h2>Reporting a bug</h2>' +
-    '<p>If you found a bug and you want to help fix it, click "Feedback" in the bottom right corner of your screen and follow the instructions there to get in contact with developer. Please include as much detail as possible, including specific steps one can take to reproduce your problem.</p>' +
-    '<p>Additionally, if you want to be extra helpful, try to report the specific error message that occurs. To do this, <a href="http://webmasters.stackexchange.com/q/8525">open the JavaScript console of your web browser</a> and see if any error message gets displayed there when you observe a bug. For example, if the draft won\'t start when you press the "Start Draft" button, open the JavaScript console and try pressing it again. You will probably see an error message that will be very helpful to a developer trying to fix the bug.</p>' +
-    '<h2>Hard Reset</h2>' +
-    '<p>Sometimes things just get stuck and you never get past the "Loading..." screen. If this happens, you can completely reset the game (and lose all your previous data) by doing this:</p>' +
-    '<ol>' +
-    '<li>Close your browser</li>' +
-    '<li>Open your browser profile folder (Google for how to do this in Firefox and Chrome for your OS)</li>' +
-    '<li>Within your profile folder, there is another folder called "indexedDB" or "IndexedDB". Open that</li>' +
-    '<li>Within that folder, there will be some other folder with "basketball-gm" in the name. Delete that folder</li>' +
-    '<li>Open your browser again. The game should now work (although any previous game data will be gone)</li>' +
-    '</ol>';
-}
-    </script>
+      // This is so the "Debugging" manual entry can be read even if IndexedDB loads
+      function manualDebugging() {
+        document.getElementById("content").innerHTML = '<h1>Debugging</h1>' + 
+          '<h2>Reporting a bug</h2>' +
+          '<p>If you found a bug and you want to help fix it, click "Feedback" in the bottom right corner of your screen and follow the instructions there to get in contact with developer. Please include as much detail as possible, including specific steps one can take to reproduce your problem.</p>' +
+          '<p>Additionally, if you want to be extra helpful, try to report the specific error message that occurs. To do this, first switch to "debug mode" by clicking "Tools > Enable Debug Mode" in the menu at the top of this page. Then, <a href="http://webmasters.stackexchange.com/q/8525">open the JavaScript console of your web browser</a> and see if any error message gets displayed there when you observe a bug. For example, if the draft won\'t start when you press the "Start Draft" button, then enable debug mode, open the JavaScript console, and try pressing it again. You will probably see an error message that will be very helpful to a developer trying to fix the bug.</p>' +
+          '<h2>Hard Reset</h2>' +
+          '<p>Sometimes things just get stuck and you never get past the "Loading..." screen. If this happens, you can completely reset the game (and lose all your previous data) by doing this:</p>' +
+          '<ol>' +
+          '<li>Close your browser</li>' +
+          '<li>Open your browser profile folder (Google for how to do this in Firefox and Chrome for your OS)</li>' +
+          '<li>Within your profile folder, there is another folder called "indexedDB" or "IndexedDB". Open that</li>' +
+          '<li>Within that folder, there will be some other folder with "basketball-gm" in the name. Delete that folder</li>' +
+          '<li>Open your browser again. The game should now work (although any previous game data will be gone)</li>' +
+          '</ol>';
+      }
 
-    <!--Uncomment one of these two lines. First line: minified, single file. Second line: unminified, separate files. See HACKING.md for details.-->
-    <!--<script src="/gen/app.js"></script>-->
-    <!--<script data-main="/js/app.js" src="/js/lib/require.js"></script>-->
-    <script>
       // Tools > Reset DB
       function resetDb() {
         var db;

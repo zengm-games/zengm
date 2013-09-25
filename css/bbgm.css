@@ -215,7 +215,7 @@ table#game_log_list tbody tr:hover td, table#messages tbody tr:hover td {
    width: auto;
 }
 
-
+/* Auto width seems to work well..
 select.season {
   width: 125px;
 }
@@ -225,6 +225,9 @@ select.seasons {
 select.past-x {
   width: 135px;
 }
+select.teams {
+  width: 203px;
+}*/
 
 #trade-select_team {
   margin: 9px 0 0 0;

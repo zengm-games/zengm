@@ -129,7 +129,8 @@
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.BEFORE_DRAFT); }())">Skip To Before Draft</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.AFTER_DRAFT); }())">Skip To After Draft</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PRESEASON); }())">Skip To Preseason</a></li>
-                <li><a href="javascript:(function () { if (window.confirm('Are you sure you want to reset the database? This will delete all your current saved games.')) { db = require('db'); db.reset(); } }())">Reset DB</a></li>
+                <li><a href="javascript:toggleDebugMode()" id="toggle-debug-mode">Toggle Debug Mode</a></li>
+                <li><a href="javascript:resetDb()">Reset DB</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -187,6 +188,46 @@ function manualDebugging() {
 
     <!--Uncomment one of these two lines. First line: minified, single file. Second line: unminified, separate files. See HACKING.md for details.-->
     <!--<script src="/gen/app.js"></script>-->
-    <script data-main="/js/app.js" src="/js/lib/require.js"></script>
+    <!--<script data-main="/js/app.js" src="/js/lib/require.js"></script>-->
+    <script>
+      // Tools > Reset DB
+      function resetDb() {
+        var db;
+
+        if (window.confirm("Are you sure you want to reset the database? This will delete all your current saved games.")) {
+          db = require("db");
+          db.reset();
+        }
+      }
+
+      // Tools > Toggle Debug Mode
+      if (localStorage.debug === "debug") {
+        document.getElementById("toggle-debug-mode").innerHTML = "Disable Debug Mode";
+      } else {
+        document.getElementById("toggle-debug-mode").innerHTML = "Enable Debug Mode";
+      }
+      function toggleDebugMode() {
+        if (localStorage.debug === "debug") {
+          localStorage.debug = "";
+        } else {
+          localStorage.debug = "debug";
+        }
+        location.reload();
+      }
+
+      // Load either compiled script or RequireJS loader
+      var body = document.getElementsByTagName('body').item(0);
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      if (localStorage.debug === "debug") {
+        console.log("If you want better performance, click Tools > Disable Debug Mode.");
+        script.src = "/js/lib/require.js";
+        script.dataset.main = "/js/app.js";
+      } else {
+        console.log("If you want to see accurate error messages, click Tools > Enable Debug Mode.");
+        script.src = "/gen/app.js";
+      }
+      body.appendChild(script);
+    </script>
   </body>
 </html>

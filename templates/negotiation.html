@@ -4,26 +4,26 @@
 <p data-bind="visible: !negotiation.resigning()">You are not allowed to go over the salary cap to make this deal because <a data-bind="attrLeagueUrl: {href: ['player', player.pid]}, text: player.name"></a> is a free agent.</p>
 
 <div class="row">
-  <div class="span6">
+  <div class="col-sm-6">
     <h2 data-bind="test: team.region + ' ' + team.name"></h2>
     <p>Current Payroll: <span data-bind="currency: [payroll, 'M']"></span></p>
     <p>Salary Cap: <span data-bind="currency: [salaryCap, 'M']"></span></p>
     <h2>Your Proposal</h2>
-    <form data-bind="attrLeagueUrl: {action: ['negotiation', player.pid]}" class="form-horizontal" method="POST">
-      <input type="text" name="teamYears" id="teamYears" class="span1" data-bind="attr: {value: negotiation.team.years}"> years
-      <p><div class="input-prepend input-append">
-        <span class="add-on">$</span><input type="text" name="teamAmount" id="teamAmount" class="span5" data-bind="attr: {value: negotiation.team.amount}"><span class="add-on">M</span> per year
-      </div></p>
-      <button type="submit" class="btn btn-large btn-primary">Submit Proposal</button>  
-    </form>
-
-    <form data-bind="attrLeagueUrl: {action: ['negotiation', player.pid]}" class="form-horizontal" method="POST">
-      <input type="hidden" name="cancel" value="1">
-      <button type="submit" class="btn btn-danger">Can't reach a deal? End negotiation</button>
+    <form data-bind="attrLeagueUrl: {action: ['negotiation', player.pid]}" method="POST">
+      <div class="form-group input-group negotiation-team-years">
+        <input type="text" class="form-control" name="teamYears" data-bind="attr: {value: negotiation.team.years}">
+        <span class="input-group-addon">years</span>
+      </div>
+      <div class="form-group input-group negotiation-team-amount">
+        <span class="input-group-addon">$</span>
+        <input type="text" class="form-control" name="teamAmount" data-bind="attr: {value: negotiation.team.amount}">
+        <span class="input-group-addon">M per year</span>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit Proposal</button>  
     </form>
 
   </div>
-  <div class="span6">
+  <div class="col-sm-6">
     <h2><a data-bind="attrLeagueUrl: {href: ['player', player.pid]}, text: player.name"></a> <span data-bind="newWindow: ['player', player.pid]"></span></h2>
     <p>Mood: <span data-bind="html: player.mood"></span></p>
     <p>Overall: <span data-bind="text: player.ratings.ovr"></span>; Potential: <span data-bind="text: player.ratings.pot"></span></p>
@@ -32,7 +32,14 @@
     <p>$<span data-bind="round: [negotiation.player.amount, 3]"></span>M per year</p>
     <form data-bind="attrLeagueUrl: {action: ['negotiation', player.pid]}" class="form-horizontal" method="POST">
       <input type="hidden" name="accept" value="1">
-      <button type="submit" class="btn btn-large btn-primary" id="accept">Accept Player Proposal</button>
+      <button type="submit" class="btn btn-primary" id="accept">Accept Player Proposal</button>
+    </form>
+
+    <p></p>
+
+    <form data-bind="attrLeagueUrl: {action: ['negotiation', player.pid]}" class="form-horizontal" method="POST">
+      <input type="hidden" name="cancel" value="1">
+      <button type="submit" class="btn btn-danger">Can't reach a deal? End negotiation</button>
     </form>
   </div>
 </div>

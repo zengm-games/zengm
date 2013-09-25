@@ -260,8 +260,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
      * @param {function()} cb Callback.
      */
     function cancel(pid, cb) {
-        var i, negotiations;
-
         console.log("User canceled contract negotiations with " + pid);
 
         // Delete negotiation
@@ -289,8 +287,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
      * @param {function()=} cb Optional callback.
      */
     function cancelAll(cb) {
-        var i, negotiations;
-
         console.log("Canceling all ongoing contract negotiations...");
 
         g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").clear().onsuccess = function (event) {

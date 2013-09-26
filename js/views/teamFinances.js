@@ -221,22 +221,22 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
             ui.title(vm.team.region() + " " + vm.team.name() + " Finances");
         }).extend({throttle: 1});
 
-        $("#help-payroll-limits").clickover({
+        $("#help-payroll-limits").popover({
             title: "Payroll Limits",
             content: "The salary cap is a soft cap, meaning that you can exceed it to resign your own players or to sign free agents to minimum contracts ($" + g.minContract + "k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season."
         });
 
-        $("#help-hype").clickover({
+        $("#help-hype").popover({
             title: "Hype",
             content: "\"Hype\" refers to fans' interest in your team. If your team is winning or improving, then hype increases; if your team is losing or stagnating, then hype decreases. Hype influences attendance, various revenue sources such as mercahndising, and the attitude players have towards your organization."
         });
 
-        $("#help-revenue-settings").clickover({
+        $("#help-revenue-settings").popover({
             title: "Revenue Settings",
             content: "Set your ticket price too high, and attendance will decrease and some fans will resent you for it. Set it too low, and you're not maximizing your profit."
         });
 
-        $("#help-expense-settings").clickover({
+        $("#help-expense-settings").popover({
             title: "Expense Settings",
             html: true,
             content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p>Facilities: Better training facilities make your players happier and other players envious; stadium renovations increase attendance."

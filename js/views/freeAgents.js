@@ -76,7 +76,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
     function uiFirst(vm) {
         ui.title("Free Agents");
 
-        $("#help-salary-cap").clickover({
+        $("#help-salary-cap").popover({
             title: "Cap Space",
             html: true,
             content: "<p>\"Cap space\" is the difference between your current payroll and the salary cap. You can sign a free agent to any valid contract as long as you don't go over the cap.</p>You can only exceed the salary cap to sign free agents to minimum contracts ($" + g.minContract + "k/year)."

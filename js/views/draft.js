@@ -161,6 +161,10 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
                 draftUntilUserOrEnd();
             });
         });
+
+        $("[data-toggle=offcanvas]").click(function () {
+            $(".row-offcanvas").toggleClass("active");
+        });
     }
 
     return bbgmView.init({

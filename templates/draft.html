@@ -2,12 +2,16 @@
 
 <p>When your turn in the draft comes up, select from the list of available players on the left.</p>
 
-<p data-bind="visible: !started()"><button class="btn btn-large btn-primary" id="start-draft">Start draft</button></p>
+<p data-bind="visible: !started()"><button class="btn btn-large btn-success" id="start-draft">Start draft</button></p>
 
-<div class="row">
-  <div class="span6">
-    <h2>Undrafted Players</h2>
-    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="undrafted">
+<div class="row row-offcanvas row-offcanvas-right">
+  <div class="col-sm-6">
+    <h2>
+      Undrafted Players
+      <span class="pull-right"><button type="button" class="btn btn-success btn-xs visible-xs" data-toggle="offcanvas">View Drafted</button></span>
+    </h2>
+
+    <table class="table table-striped table-bordered table-condensed" id="undrafted">
     <thead>
       <tr><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th>Draft</th></tr>
     </thead>
@@ -23,9 +27,12 @@
     </tbody>
     </table>
   </div>
-  <div class="span6">
-    <h2>Draft Results</h2>
-    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="drafted">
+  <div class="col-sm-6 sidebar-offcanvas">
+    <h2>
+      Draft Results
+      <span class="pull-right"><button type="button" class="btn btn-success btn-xs visible-xs" data-toggle="offcanvas">View Undrafted</button></span>
+    </h2>
+    <table class="table table-striped table-bordered table-condensed" id="drafted">
     <thead>
       <tr><th>Pick</th><th>Team</th><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th></tr>
     </thead>

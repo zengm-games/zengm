@@ -22,9 +22,8 @@ mobile UI, bootstrap 3
   minor
     get rid of inline CSS in index.html... not easy!
   skills tooltips for mobile?
-  help icons not showing anywhere
-    grep -r '<i ' templates
-    move to new glyphicons, and apply help-icon class to keep size the same
+  help tooltip for new league form is broken
+    replace with helper text below?
   datatables
     .form-control
     next/prev http://getbootstrap.com/components/#pagination

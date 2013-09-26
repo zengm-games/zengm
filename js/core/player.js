@@ -785,7 +785,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
     function injury(healthRank) {
         var gamesRemaining, i, rand, type;
 
-        rand = random.uniform(0, 10882);
+        rand = random.uniform(0, 5090);
         for (i = 0; i < injuries.cumSum.length; i++) {
             if (injuries.cumSum[i] >= rand) {
                 break;

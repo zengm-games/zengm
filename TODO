@@ -23,10 +23,8 @@ mobile UI, bootstrap 3
     get rid of inline CSS in index.html... not easy!
   skills tooltips for mobile?
   help icons not showing anywhere
-    <i 
+    grep -r '<i ' templates
     move to new glyphicons, and apply help-icon class to keep size the same
-    can't use bootstrapx-clickover - how can i close these on click outside then?
-      do something like http://stackoverflow.com/questions/17842121/hiding-bootstrap-popover-on-click-outside-popover or what i did in jquery.tabSlideOut.js
   datatables
     .form-control
     next/prev http://getbootstrap.com/components/#pagination

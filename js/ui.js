@@ -80,6 +80,14 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                 topMenuCollapse.collapse("hide");
             }
         });
+
+        // HACK: close bootstrap popovers on click outside of help box
+        $(document).on("click", ".help-icon, .popover", function (event) {
+            event.stopPropagation();
+        });
+        $(document).on("click", function () {
+            $(".help-icon").popover("hide");
+        });
     }
 
     function parseLeagueUrl(url) {

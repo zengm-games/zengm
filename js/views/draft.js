@@ -162,8 +162,12 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
             });
         });
 
-        $("[data-toggle=offcanvas]").click(function () {
-            $(".row-offcanvas").toggleClass("active");
+        $("#view-drafted").click(function () {
+            $("body, html").animate({scrollLeft: $(document).outerWidth() - $(window).width()}, 250);
+        });
+
+        $("#view-undrafted").click(function () {
+            $("body, html").animate({scrollLeft: 0}, 250);
         });
     }
 

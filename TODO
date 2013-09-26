@@ -28,7 +28,10 @@ mobile UI, bootstrap 3
     next/prev http://getbootstrap.com/components/#pagination
     anything else?
   add back hidden roster columns? is there a way to have the left column (names) constant under scroll?
+    One design decision I'm not sure about - should I hide information in the mobile version to save space? Like I could delete some of the statistics from the roster table to make it easier to see without scrolling. Would that make sense?
   for trade, use offscreen menu like in demo
+  reorder negotiate columns in small screen
+  grep -r cellpadding templates
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

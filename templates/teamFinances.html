@@ -3,7 +3,7 @@
 <h1><span data-bind="text: team.region"></span> <span data-bind="text: team.name"></span> Finances <span data-bind="newWindow: []"></span></h1>
 <p>More: <a data-bind="attrLeagueUrl: {href: ['roster', abbrev]}">Roster</a> | <a data-bind="attrLeagueUrl: {href: ['game_log', abbrev]}">Game Log</a> | <a data-bind="attrLeagueUrl: {href: ['team_history', abbrev]}">History</a></p>
 
-<p class="clearfix">The current payroll (<strong data-bind="currency: [team.payroll, 'M']"></strong>) is <span data-bind="text: aboveBelow.minPayroll"></span> the minimum payroll limit (<strong data-bind="currency: [minPayroll, 'M']"></strong>), <span data-bind="text: aboveBelow.salaryCap"></span> the salary cap (<strong data-bind="currency: [salaryCap, 'M']"></strong>), and <span data-bind="text: aboveBelow.luxuryPayroll"></span> the luxury tax limit (<strong data-bind="currency: [luxuryPayroll, 'M']"></strong>). <span class="glyphicon glyphicon-question-sign" id="help-payroll-limits" data-placement="bottom"></span></p>
+<p class="clearfix">The current payroll (<strong data-bind="currency: [team.payroll, 'M']"></strong>) is <span data-bind="text: aboveBelow.minPayroll"></span> the minimum payroll limit (<strong data-bind="currency: [minPayroll, 'M']"></strong>), <span data-bind="text: aboveBelow.salaryCap"></span> the salary cap (<strong data-bind="currency: [salaryCap, 'M']"></strong>), and <span data-bind="text: aboveBelow.luxuryPayroll"></span> the luxury tax limit (<strong data-bind="currency: [luxuryPayroll, 'M']"></strong>). <span class="glyphicon glyphicon-question-sign help-icon" id="help-payroll-limits" data-placement="bottom"></span></p>
 
 <div class="row">
   <div class="col-lg-3 col-md-3 col-sm-2">
@@ -26,7 +26,7 @@
   </div>
   <div class="col-lg-4 col-md-5 col-sm-6">
     <form method="POST" id="finances-settings" data-bind="attrLeagueUrl: {action: ['team_finances']}">
-      <h4>Revenue Settings <i class="icon-question-sign" id="help-revenue-settings" data-placement="bottom"></i></h4>
+      <h4>Revenue Settings <span class="glyphicon glyphicon-question-sign help-icon" id="help-revenue-settings" data-placement="bottom"></span></h4>
       <p class="text-error"></p>
       <div class="row">
         <div class="pull-left finances-settings-label">Ticket Price</div>
@@ -36,7 +36,7 @@
         <div class="pull-left finances-settings-text">Leaguewide rank: #<span data-bind="text: team.budget.ticketPrice.rank"></span></div>
       </div>
       <p></p>
-      <h4>Expense Settings <i class="icon-question-sign" id="help-expense-settings" data-placement="bottom"></i></h4>
+      <h4>Expense Settings <span class="glyphicon glyphicon-question-sign help-icon" id="help-expense-settings" data-placement="bottom"></span></h4>
       <p class="text-error"></p>
       <div class="row">
         <div class="pull-left finances-settings-label">Scouting</div>

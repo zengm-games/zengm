@@ -191,6 +191,7 @@ ul.dashboard-boxes li.dashboard-box-new h2 {
 }
 
 .help-icon {
+  cursor: pointer;
   font-size: 13px;
 }
 

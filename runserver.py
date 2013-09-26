@@ -8,6 +8,7 @@ urls = (
     '/(css/.*)', 'static',
     '/(data/.*)', 'static',
     '/(docs.*)', 'static',
+    '/(fonts/.*)', 'static',
     '/(gen/.*)', 'static',
     '/(ico/.*)', 'static',
     '/(img/.*)', 'static',

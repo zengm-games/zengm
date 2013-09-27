@@ -33,20 +33,22 @@
   <div class="col-md-3 col-sm-4 col-xs-6">
     <h4>All-League Teams</h4>
     <!-- ko foreach: awards.allLeague -->
-      <b data-bind="text: title"></b><br>
+      <h5 data-bind="text: title"></h5>
       <!-- ko foreach: players -->
         <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev"></a>)<br>
       <!-- /ko -->
     <!-- /ko -->
+    <br>
   </div>
   <div class="col-md-3 col-sm-4 col-xs-6">
     <h4>All-Defensive Teams</h4>
     <!-- ko foreach: awards.allDefensive -->
-      <b data-bind="text: title"></b><br>
+      <h5 data-bind="text: title"></h5>
       <!-- ko foreach: players -->
         <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev"></a>)<br>
       <!-- /ko -->
     <!-- /ko -->
+    <br>
   </div>
   <div class="clearfix visible-sm"></div>
   <div class="col-md-3 col-sm-12">

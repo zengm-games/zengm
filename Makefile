@@ -20,7 +20,7 @@ lint:
 
 # target: build-css - Concatenate main CSS files and run YUI compressor.
 build-css:
-	cat css/bootstrap.css css/bbgm-responsive.css css/bbgm.css css/DT_bootstrap.css | yui-compressor --type css -o gen/bbgm.css
+	cat css/bootstrap.css css/bbgm.css css/DT_bootstrap.css | yui-compressor --type css -o gen/bbgm.css
 
 # target: build-js - Run the RequireJS optimizer to concatenate and minify all JavaScript files.
 build-js:

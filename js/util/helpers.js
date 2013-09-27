@@ -423,10 +423,10 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
 
         html = '<a href="' + leagueUrl(["player", pid]) + '">' + name + '</a>';
         if (injury.gamesRemaining > 0) {
-            html += '<span class="label label-important label-injury" title="' + injury.type + ' (out ' + injury.gamesRemaining + ' more games)">' + injury.gamesRemaining + '</span>';
+            html += '<span class="label label-danger label-injury" title="' + injury.type + ' (out ' + injury.gamesRemaining + ' more games)">' + injury.gamesRemaining + '</span>';
         } else if (injury.gamesRemaining === -1) {
             // This is used in box scores, where it would be confusing to display "out X more games" in old box scores
-            html += '<span class="label label-important label-injury" title="' + injury.type + '">&nbsp;</span>';
+            html += '<span class="label label-danger label-injury" title="' + injury.type + '">&nbsp;</span>';
         }
         html += skillsBlock(skills);
 

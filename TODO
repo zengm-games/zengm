@@ -35,6 +35,11 @@ mobile UI, bootstrap 3
   grep -r cellpadding templates
   old bootstrap JS files?
   any columns: *em css - can't i make columns use bootstrap?
+  do something about hover tooltips
+    injury
+    skills
+    table headers
+    others?
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

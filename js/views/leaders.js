@@ -129,12 +129,6 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knock
                             }
                         }
 
-                        if (i % 3 === 0 && i > 0) {
-                            categories[i].newRow = true;
-                        } else {
-                            categories[i].newRow = false;
-                        }
-
                         delete categories[i].minStats;
                         delete categories[i].minValue;
                     }

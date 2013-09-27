@@ -34,6 +34,7 @@ mobile UI, bootstrap 3
   reorder negotiate columns in small screen
   grep -r cellpadding templates
   old bootstrap JS files?
+  any columns: *em css - can't i make columns use bootstrap?
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

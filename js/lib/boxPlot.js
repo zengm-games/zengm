@@ -101,7 +101,7 @@ var boxPlot = (function () {
 
         // Lines/boxes
         containerDiv = document.getElementById(plot.container);
-        containerDiv.style.height = "34px";
+        containerDiv.style.height = "64px";
         containerDiv.style.paddingBottom = "30px";
         containerDiv.style.position = "relative";
         containerDiv.innerHTML = "";

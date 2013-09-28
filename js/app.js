@@ -35,9 +35,6 @@ requirejs.config({
         },
         "lib/html5-dataset": {},
         "lib/IndexedDB-getAll-shim": {},
-        "lib/jquery-ui": {
-            deps: ["lib/jquery"]
-        },
         "lib/jquery": {
             exports: "$"
         },
@@ -56,6 +53,12 @@ requirejs.config({
         "lib/jquery.tabSlideOut": {
             deps: ["lib/jquery"]
         },
+        "lib/jquery-ui": {
+            deps: ["lib/jquery"]
+        },
+        "lib/jquery-ui.touch-punch": {
+            deps: ["lib/jquery-ui"]
+        },
         "lib/raphael": {
             exports: "Raphael"
         },
@@ -65,7 +68,7 @@ requirejs.config({
     }
 });
 
-requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "lib/bootstrap-alert", "lib/bootstrap-collapse", "lib/bootstrap-dropdown", "lib/bootstrap-popover", "lib/davis.google_analytics", "lib/html5-dataset", "lib/IndexedDB-getAll-shim", "lib/jquery-ui", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut", "util/templateHelpers", "api"], function (db, views, ui, changes, Davis, helpers) {
+requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "lib/bootstrap-alert", "lib/bootstrap-collapse", "lib/bootstrap-dropdown", "lib/bootstrap-popover", "lib/davis.google_analytics", "lib/html5-dataset", "lib/IndexedDB-getAll-shim", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut", "lib/jquery-ui", "lib/jquery-ui.touch-punch", "util/templateHelpers", "api"], function (db, views, ui, changes, Davis, helpers) {
     "use strict";
 
     ui.init();

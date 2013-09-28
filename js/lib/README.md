@@ -4,7 +4,10 @@ standard, except for the following exceptions:
 jQuery UI is a custom download including only "sortable" support as the rest
 isn't used.
 
-jqeury.dataTables.bootstrap.js (and DT_bootstrap.css) has been tweaked to play
+Upgrading jquery.dataTables to 1.9.4 produces errors in the minified version.
+Not sure why.
+
+jquery.dataTables.bootstrap.js (and DT_bootstrap.css) has been tweaked to play
 nice with Davis.js and Bootstrap 3.
 
 I'm using bootstrap-dropdown.js 2.0.2 because 2.1.0+ interferes with Davis.js

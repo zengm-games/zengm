@@ -10,7 +10,7 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
     function disableFinanceSettings(tid) {
         $("#finances-settings input, #finances-settings button").attr("disabled", "disabled");
         if (tid === g.userTid) {
-            $("#finances-settings .text-error").html("Stop game simulation to edit.");
+            $("#finances-settings .text-danger").html("Stop game simulation to edit.");
         } else {
             $("#finances-settings button").hide();
         }
@@ -25,7 +25,7 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
             $("#finances-settings input, #finances-settings button").attr("disabled", "disabled");
             $("#finances-settings button").hide();
         }
-        $("#finances-settings .text-error").html("");
+        $("#finances-settings .text-danger").html("");
     }
 
     function get(req) {

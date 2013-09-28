@@ -11,15 +11,12 @@ BIG NEW FEATURES
 ----------------
 
 mobile UI, bootstrap 3
-  on lg, league menu on left?
+  navbar dropdowns: like menubar or ubuntu systray, open on click and switch between on hover
+    http://stackoverflow.com/questions/10569075/bootstrap-css-js-bootstrap-file-menubar-hover-after-click
   get rid of leagueLayout.html
   roster: reorder with click, not drag? or maybe http://touchpunch.furf.com/
-  datatables
-    .form-control
-    next/prev http://getbootstrap.com/components/#pagination
-    anything else?
   One design decision I'm not sure about - should I hide information in the mobile version to save space? Like I could delete some of the statistics from the roster table to make it easier to see without scrolling. Would that make sense?
-    .table-responsive
+    .table-responsive, or some datatables thing?
   for trade, use offscreen menu like in demo?
   reorder negotiate columns in small screen
   grep -r cellpadding templates

@@ -1,5 +1,6 @@
 
 div.dataTables_length label {
+	font-weight: normal;
 	float: left;
 	text-align: left;
 }

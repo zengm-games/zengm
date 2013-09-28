@@ -1,21 +1,30 @@
-<p><h1>Edit Team Info</h1></p>
-<br>
+<h1>Edit Team Info</h1>
+
+<div class="row" style="margin-top: -9px">
+  <div class="col-xs-4">
+    <h3>Region</h3>
+  </div>
+  <div class="col-xs-4">
+    <h3>Name</h3>
+  </div>
+  <div class="col-xs-4">
+    <h4>Population<br>(in millions)</h4>
+  </div>
+</div>
+
 <form method="POST" data-bind="attrLeagueUrl: {action: ['edit_team_info']}">
-	<table>
-		<thead>
-			<tr>
-				<th>Region</th>
-				<th>Name</th>
-				<th>Population (in millions)</th>
-			</tr>
-		</thead>
-		<tbody data-bind="foreach: teams">
-			<tr>
-				<td><input type="text" class="form-inline" name="region[]" data-bind="attr: {value: region}"></td>
-				<td><input type="text" class="form-inline" name="name[]" data-bind="attr: {value: name}"></td>
-				<td><input type="text" class="form-inline" name="pop[]" data-bind="attr: {value: pop}"></td>
-			</tr>
-		</tbody>
-	</table>
-	<button type="submit" class="btn" id="edit-team-info">Update Team Info</button>
+  <div class="row" data-bind="foreach: teams">
+    <div class="col-xs-4" style="margin-bottom: 1em">
+      <input type="text" class="form-control" name="region[]" data-bind="attr: {value: region}">
+    </div>
+    <div class="col-xs-4" style="margin-bottom: 1em">
+      <input type="text" class="form-control" name="name[]" data-bind="attr: {value: name}">
+    </div>
+    <div class="col-xs-4" style="margin-bottom: 1em">
+      <input type="text" class="form-control" name="pop[]" data-bind="attr: {value: pop}">
+    </div>
+  </div>
+  <center>
+    <button type="submit" class="btn btn-primary" id="edit-team-info">Update Team Info</button>
+  </center>
 </form>

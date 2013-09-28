@@ -12,7 +12,7 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], fun
         vars = {};
 
         g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) {
-            var anyUnread, data, i, messages;
+            var anyUnread, i, messages;
 
             messages = event.target.result;
             messages.reverse();

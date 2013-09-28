@@ -5,6 +5,36 @@
 define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, player, season, team, $, ko, mapping, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
+    function updateInbox(inputs, updateEvents) {
+        var deferred, vars;
+
+        deferred = $.Deferred();
+        vars = {};
+
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
+            g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) {
+                var i, messages;
+
+                messages = event.target.result;
+                messages.reverse();
+
+                for (i = 0; i < messages.length; i++) {
+                    delete messages[i].text;
+                }
+                messages = messages.slice(0, 2);
+console.log(messages);
+
+                vars = {
+                    messages: messages
+                };
+
+                deferred.resolve(vars);
+            };
+
+            return deferred.promise();
+        }
+    }
+
     function updateTeam(inputs, updateEvents) {
         var deferred, vars;
 
@@ -348,7 +378,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
 
     return bbgmView.init({
         id: "leagueDashboard",
-        runBefore: [updateTeam, updatePayroll, updateTeams, updateGames, updateSchedule, updatePlayers, updatePlayoffs],
+        runBefore: [updateInbox, updateTeam, updatePayroll, updateTeams, updateGames, updateSchedule, updatePlayers, updatePlayoffs],
         uiFirst: uiFirst
     });
 });

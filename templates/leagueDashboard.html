@@ -2,13 +2,6 @@
 
 <div class="row">
   <div class="col-md-3 col-sm-4 col-xs-6">
-    <h3>Inbox</h3>
-    <p>
-      List of recent messages<br>
-      <a data-bind="attrLeagueUrl: {href: ['inbox']}">» Inbox</a>
-    </p>
-  </div>
-  <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Current Record</h3>
     <p>
       <span data-bind="text: won"></span>-<span data-bind="text: lost"></span><!-- ko if: !playoffsStarted() && streakLong() -->, <span data-bind="text: streakLong"></span><!-- /ko --><br>
@@ -34,6 +27,19 @@
       <!-- /ko -->
     </p>
   </div>
+  <div class="visible-xs clearfix"></div>
+  <div class="col-md-3 col-sm-4 col-xs-6">
+    <h3>Inbox</h3>
+    <table class="table table-striped table-bordered table-condensed" id="messages">
+      <tbody data-bind="foreach: messages">
+          <tr data-bind="css: {unread: !read()}"><td class="year"><a data-bind="text: year, attrLeagueUrl: {href: ['message', mid]}"></td><td class="from"><a data-bind="text: from, attrLeagueUrl: {href: ['message', mid]}"></a></td></tr>
+      </tbody>
+    </table>
+    <p>
+      <a data-bind="attrLeagueUrl: {href: ['inbox']}">» All Messages</a>
+    </p>
+  </div>
+  <div class="visible-sm clearfix"></div>
   <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Recent Games</h3>
     <p>
@@ -48,6 +54,7 @@
       <a data-bind="attrLeagueUrl: {href: ['standings']}">» Schedule</a>
     </p>
   </div>
+  <div class="visible-lg visible-md visible-xs clearfix"></div>
   <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Recent History</h3>
     <p>
@@ -69,6 +76,7 @@
       <a data-bind="attrLeagueUrl: {href: ['team_stats']}">» Team Stats</a>
     </p>
   </div>
+  <div class="visible-sm visible-xs clearfix"></div>
   <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Team Leaders</h3>
     <p>
@@ -88,6 +96,7 @@
       <a data-bind="attrLeagueUrl: {href: ['player_stats']}">» Player Stats</a>
     </p>
   </div>
+  <div class="visible-lg visible-md visible-xs clearfix"></div>
   <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Finances</h3>
     <p>
@@ -100,6 +109,7 @@
       <a data-bind="attrLeagueUrl: {href: ['league_finances']}">» League Finances</a>
     </p>
   </div>
+  <div class="visible-sm clearfix"></div>
   <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Top Free Agents</h3>
     <p>
@@ -111,6 +121,7 @@
       <a data-bind="attrLeagueUrl: {href: ['free_agents']}">» Free Agents</a>
     </p>
   </div>
+  <div class="visible-xs clearfix"></div>
   <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Expiring Contracts</h3>
     <p>

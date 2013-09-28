@@ -88,7 +88,7 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/kn
                     negotiateButton = "Refuses!";
                 } else {
                     // This can be a plain link because the negotiation has already been started at this point.
-                    negotiateButton = '<a href="' + helpers.leagueUrl(["negotiation", p.pid]) + '" class="btn btn-mini btn-primary">Negotiate</a>';
+                    negotiateButton = '<a href="' + helpers.leagueUrl(["negotiation", p.pid]) + '" class="btn btn-xs btn-primary">Negotiate</a>';
                 }
                 return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, negotiateButton];
             }));

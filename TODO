@@ -12,7 +12,6 @@ BIG NEW FEATURES
 
 mobile UI, bootstrap 3
   box plots
-  player.html
   somehow link to inbox from dashboard
   get rid of leagueLayout.html
   get rid of all -fluid stuff
@@ -42,6 +41,7 @@ mobile UI, bootstrap 3
   click row to highlight in table, to make it easier to view wide tables on small screens
     like .table-hover
   reevaluate tr.alert stuff
+  _ class names in bbgm.css
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

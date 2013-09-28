@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="span6">
+  <div class="col-sm-6">
     <h1><span data-bind="text: player.name"></span> <span data-bind="newWindow: []"></span></h1>
     <div id="picture" class="player_picture"></div>
     <div style="float: left;">
@@ -24,11 +24,20 @@
       <!-- /ko -->
     </div>
   </div>
-  <div class="span6" data-bind="visible: !retired()">
-    <h2 class="pull-left">Overall: <span data-bind="text: currentRatings.ovr"></span></h2>
-    <h2 class="pull-right">Potential: <span data-bind="text: currentRatings.pot"></span></h2><br><br><br>
+
+  <div class="visible-xs clearfix"></div>
+
+  <div class="col-sm-6" data-bind="visible: !retired()" style="white-space: nowrap">
     <div class="row">
-      <div class="span4">
+      <div class="col-xs-6">
+        <h2>Overall: <span data-bind="text: currentRatings.ovr"></span></h2>
+      </div>
+      <div class="col-xs-6">
+        <h2 class="pull-right">Potential: <span data-bind="text: currentRatings.pot"></span></h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-4">
         <strong>Physical</strong><br/ >
         Height: <span data-bind="text: currentRatings.hgt"></span><br>
         Strength: <span data-bind="text: currentRatings.stre"></span><br>
@@ -36,7 +45,7 @@
         Jumping: <span data-bind="text: currentRatings.jmp"></span><br>
         Endurance: <span data-bind="text: currentRatings.endu"></span>
       </div>
-      <div class="span4">
+      <div class="col-xs-4">
         <strong>Shooting</strong><br/ >
         Inside: <span data-bind="text: currentRatings.ins"></span><br>
         Dunks/Layups: <span data-bind="text: currentRatings.dnk"></span><br>
@@ -44,7 +53,7 @@
         Two pointers: <span data-bind="text: currentRatings.fg"></span><br>
         Three pointers: <span data-bind="text: currentRatings.tp"></span>
       </div>
-      <div class="span4">
+      <div class="col-xs-4">
         <strong>Skill</strong><br/ >
         Blocks: <span data-bind="text: currentRatings.blk"></span><br>
         Steals: <span data-bind="text: currentRatings.stl"></span><br>
@@ -58,14 +67,14 @@
 
 <p></p>
 
-<form method="POST" data-bind="visible: showTradeFor, attrLeagueUrl: {action: ['trade']}"><input type="hidden" name="pid" data-bind="attr: {value: player.pid}"><button type="submit" class="btn btn-small">Trade For</button></form>
-<form method="POST" data-bind="visible: freeAgent, attrLeagueUrl: {action: ['negotiation', player.pid]}"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-small">Sign free agent</button></form>
+<form method="POST" data-bind="visible: showTradeFor, attrLeagueUrl: {action: ['trade']}"><input type="hidden" name="pid" data-bind="attr: {value: player.pid}"><button type="submit" class="btn btn-default">Trade For</button></form>
+<form method="POST" data-bind="visible: freeAgent, attrLeagueUrl: {action: ['negotiation', player.pid]}"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-default">Sign free agent</button></form>
 
 <h2>Regular Season</h2>
 <h3>Stats</h3>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">
+<table class="table table-striped table-bordered table-condensed" id="player_stats">
   <thead>
-    <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="6"></th></tr>
+    <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="8"></th></tr>
     <tr><th>Year</th><th>Team</th><th>Age</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Offensive">Off</th><th title="Defensive">Def</th><th title="Total">Tot</th><th title="Assists">Ast</th><th title="Turnovers">TO</th><th title="Steals">Stl</th><th title="Blocks">Blk</th><th title="Personal Fouls">PF</th><th title="Points">Pts</th><th title="Player Efficiency Rating">PER</th><th title="Estimated Wins Added">EWA</th></tr>
   </thead>
   <tbody data-bind="foreach: player.stats">
@@ -77,7 +86,7 @@
 </table>
 
 <h3>Shot Locations</h3>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">
+<table class="table table-striped table-bordered table-condensed" id="player_stats">
   <thead>
     <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="At Rim">At Rim</th><th colspan="3" style="text-align: center" title="Low Post">Low Post</th><th colspan="3" style="text-align: center" title="Mid-Range">Mid-Range</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th></tr>
     <tr><th>Year</th><th>Team</th><th>Age</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th></tr>
@@ -92,9 +101,9 @@
 
 <h2>Playoffs</h2>
 <h3>Stats</h3>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">
+<table class="table table-striped table-bordered table-condensed" id="player_stats">
   <thead>
-    <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="6"></th></tr>
+    <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="Field Goals">FG</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th><th colspan="3" style="text-align: center" title="Free Throws">FT</th><th colspan="3" style="text-align: center" title="Rebounds">Reb</th><th colspan="8"></th></tr>
     <tr><th>Year</th><th>Team</th><th>Age</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Offensive">Off</th><th title="Defensive">Def</th><th title="Total">Tot</th><th title="Assists">Ast</th><th title="Turnovers">TO</th><th title="Steals">Stl</th><th title="Blocks">Blk</th><th title="Personal Fouls">PF</th><th title="Points">Pts</th><th title="Player Efficiency Rating">PER</th><th title="Estimated Wins Added">EWA</th></tr>
   </thead>
   <tbody data-bind="foreach: player.statsPlayoffs">
@@ -106,7 +115,7 @@
 </table>
 
 <h3>Shot Locations</h3>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_stats">
+<table class="table table-striped table-bordered table-condensed" id="player_stats">
   <thead>
     <tr><th colspan="6"></th><th colspan="3" style="text-align: center" title="At Rim">At Rim</th><th colspan="3" style="text-align: center" title="Low Post">Low Post</th><th colspan="3" style="text-align: center" title="Mid-Range">Mid-Range</th><th colspan="3" style="text-align: center" title="Three-Pointers">3PT</th></tr>
     <tr><th>Year</th><th>Team</th><th>Age</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th></tr>
@@ -120,7 +129,7 @@
 </table>
 
 <h2>Ratings</h2>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered table-condensed" id="player_ratings">
+<table class="table table-striped table-bordered table-condensed" id="player_ratings">
   <thead>
     <tr><th>Year</th><th>Team</th><th>Age</th><th title="Overall">Ovr</th><th title="Potential">Pot</th><th title="Height">Hgt</th><th title="Strength">Str</th><th title="Speed">Spd</th><th title="Jumping">Jmp</th><th title="Endurance">End</th><th title="Inside Scoring">Ins</th><th title="Dunks/Layups">Dnk</th><th title="Free Throw Shooting">FT</th><th title="Two-Point Shooting">2Pt</th><th title="Three-Point Shooting">3Pt</th><th title="Blocks">Blk</th><th title="Steals">Stl</th><th title="Dribbling">Drb</th><th title="Passing">Pss</th><th title="Rebounding">Reb</th><th>Skills</th></tr>
   </thead>
@@ -130,7 +139,7 @@
 </table>
 
 <h2>Awards</h2>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-nonfluid table-striped table-bordered table-condensed" id="player-awards" data-bind="visible: player.awardsGrouped().length > 0">
+<table class="table table-nonfluid table-striped table-bordered table-condensed" id="player-awards" data-bind="visible: player.awardsGrouped().length > 0">
   <tbody data-bind="foreach: player.awardsGrouped">
     <tr><td><span data-bind="visible: count() > 1, text: count() + 'x '"></span><span data-bind="text: type"></span> (<span data-bind="text: seasons().join(', ')"></span>)</td></tr>
   </tbody>
@@ -138,7 +147,7 @@
 <p data-bind="visible: player.awardsGrouped().length === 0">None.</p>
 
 <h2>Salaries</h2>
-<table cellpadding="0" cellspacing="0" border="0" class="table table-nonfluid table-striped table-bordered table-condensed" id="player-salaries">
+<table class="table table-nonfluid table-striped table-bordered table-condensed" id="player-salaries">
   <thead>
     <tr><th>Season</th><th>Amount</th></tr>
   </thead>

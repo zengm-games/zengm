@@ -1,14 +1,18 @@
 <h1>Export Rosters</h1>
+
 <p>Here you can export the rosters from any season to a file. Then, you can either use this file to start another league with these exact rosters, or you can tweak the rosters however you like. <a href="/manual/custom_rosters">Read the manual for more info.</a></p>
+
 <p>To avoid creating huge files, no stats are exported.</p>
-<p>
-<form method="POST" data-bind="attrLeagueUrl: {action: ['export_rosters']}">
-  <fieldset>
-    <select name="season" data-bind="foreach: seasons">
+
+<form class="" method="POST" data-bind="attrLeagueUrl: {action: ['export_rosters']}" style="display: inline-block;">
+  <div class="form-group">
+    <select class="form-control" name="season" data-bind="foreach: seasons">
       <option data-bind="attr: {value: season}, text: season() + ' rosters'"></option>
-    </select><br>
-    <button type="submit" class="btn" id="create-new-league">Export Rosters</button>
-  </fieldset>
+    </select>
+  </div>
+  <div class="form-group">
+    <button type="submit" class="btn btn-primary" id="create-new-league">Export Rosters</button>
+  </div>
 </form>
-</p>
+
 <p id="download-link"></p>

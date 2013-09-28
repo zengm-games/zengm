@@ -15,9 +15,7 @@ mobile UI, bootstrap 3
   somehow link to inbox from dashboard
   get rid of leagueLayout.html
   get rid of all -fluid stuff
-  fix status text when navbar collapses
-  roster
-    reorder with click, not drag? or maybe http://touchpunch.furf.com/
+  roster: reorder with click, not drag? or maybe http://touchpunch.furf.com/
   minor
     get rid of inline CSS in index.html... not easy!
   skills tooltips for mobile?
@@ -326,7 +324,6 @@ how to deal with a team that drops below 5 active players, factoring in injuries
   if fouling out drops team below 5, play fouled out players but add a FT each foul (technical)
 check effects of extreme ticket prices
 show old contracts on old roster view
-force roster reorder handles to stay big even if window is small
 reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
   what is the difference between util.viewHelpers, views.components, and ui?
 can i get rid of js/api.js?

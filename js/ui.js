@@ -87,6 +87,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         });
         $(document).on("click", function () {
             $(".help-icon").popover("hide");
+            topMenuCollapse.collapse("hide");
         });
     }
 

@@ -87,7 +87,11 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         });
         $(document).on("click", function () {
             $(".help-icon").popover("hide");
-            topMenuCollapse.collapse("hide");
+
+            // Only run when collapsable is open
+            if (topMenuCollapse.hasClass("in")) {
+                topMenuCollapse.collapse("hide");
+            }
         });
     }
 

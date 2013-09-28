@@ -22,6 +22,10 @@ div.dataTables_paginate {
 	margin: 0;
 }
 
+ul.pagination {
+	margin: 0;
+}
+
 table.table {
 	clear: both;
 	margin-bottom: 6px !important;

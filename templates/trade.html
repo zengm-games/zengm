@@ -43,7 +43,7 @@
       <div class="col-lg-6 col-md-12 col-xs-6">
         <h4 data-bind="text: name"></h4>
         <h5>Trade Away:</h5>
-        <ul>
+        <ul class="list-unstyled">
           <!-- ko foreach: trade -->
             <li><a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
           <!-- /ko -->
@@ -53,7 +53,7 @@
           <li><span data-bind="currency: [total, 'M']"></span> Total</li>
         </ul>
         <h5>Receive:</h5>
-        <ul>
+        <ul class="list-unstyled">
           <!-- ko foreach: $root.summary.teams()[other].trade -->
             <li><a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<span data-bind="currency: [contract.amount, 'M']"></span>)</li>
           <!-- /ko -->

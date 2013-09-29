@@ -280,10 +280,6 @@ select.teams {
 #trade-summary form {
   margin-bottom: 5px;
 }
-#trade-summary ul {
-  list-style-type: none;
-  padding:0; margin:0;
-}
 
 #trade-select-team {
   width: 203px

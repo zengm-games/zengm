@@ -120,7 +120,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
                 } else if (p.freeAgentMood[g.userTid] < 0.75) {
                     p.mood = '<span class="text-warning"><b>Annoyed at you.</b></span>';
                 } else {
-                    p.mood = '<span class="text-error"><b>Insulted by your presence.</b></span>';
+                    p.mood = '<span class="text-danger"><b>Insulted by your presence.</b></span>';
                 }
                 delete p.freeAgentMood;
 

@@ -11,7 +11,7 @@ BIG NEW FEATURES
 ----------------
 
 mobile UI, bootstrap 3
-  sidebar-nav and league-alert needed?
+  sidebar-nav needed?
   navbar dropdowns: like menubar or ubuntu systray, open on click and switch between on hover
     http://stackoverflow.com/questions/10569075/bootstrap-css-js-bootstrap-file-menubar-hover-after-click
   get rid of leagueLayout.html

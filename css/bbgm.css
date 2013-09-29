@@ -195,16 +195,6 @@ ul.dashboard-boxes li.dashboard-box-new h2 {
   font-size: 13px;
 }
 
-
-
-
-
-
-
-
-
-
-
 .sidebar-nav {
   padding: 9px 0;
 }
@@ -287,12 +277,20 @@ select.teams {
   width: 203px;
 }*/
 
-#trade-select_team {
-  margin: 9px 0 0 0;
-}
-
 #trade-summary {
   background-color: #fff;
+}
+
+#trade-summary form {
+  margin-bottom: 5px;
+}
+#trade-summary ul {
+  list-style-type: none;
+  padding:0; margin:0;
+}
+
+#trade-select-team {
+  width: 203px
 }
 
 .player_picture {

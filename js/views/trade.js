@@ -64,7 +64,6 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
     function post(req) {
         var askButtonEl, newOtherTid, otherDpids, otherPids, out, pid, userDpids, userPids;
 
-console.dir(req.params);
         pid = req.params.pid !== undefined ? parseInt(req.params.pid, 10) : null;
         if (req.raw.abbrev !== undefined) {
             out = helpers.validateAbbrev(req.raw.abbrev);

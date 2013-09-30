@@ -93,6 +93,38 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                 topMenuCollapse.collapse("hide");
             }
         });
+
+        // When a dropdown at the top is open, use hover to move between items,
+        // like in a normal menubar.
+        $("#nav-primary .dropdown-toggle").on("mouseenter", function () {
+            var i, lis, liHover, liOpen, foundOpen;
+
+            if (!topMenuCollapse.hasClass("in")) {
+                liHover = this.parentNode;
+
+                // Is any dropdown open?
+                foundOpen = false;
+                lis = document.getElementById("nav-primary").children;
+                for (i = 0; i < lis.length; i++) {
+                    if (document.getElementById("nav-primary").children[i].classList.contains("open")) {
+                        foundOpen = true;
+                        liOpen = document.getElementById("nav-primary").children[i];
+                        if (liOpen == liHover) {
+                            // The hovered menu is already open
+                            return;
+                        }
+                    }
+                }
+
+                // If no dropdown is open, do nothing
+                if (!foundOpen) {
+                    return;
+                }
+
+                // If a dropdown is open and another one is hovered over, open the hovered one and close the other
+                $(liHover.children[0]).dropdown("toggle");
+            }
+        });
     }
 
     function parseLeagueUrl(url) {

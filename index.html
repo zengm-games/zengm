@@ -78,11 +78,12 @@
           </p>
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse" id="top-menu-collapse">
-          <ul class="nav navbar-nav navbar-right" id="league-menu">
+          <ul class="nav navbar-nav navbar-right" id="nav-primary">
             <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: []}">Dashboard</a></li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">League <b class="caret"></b></span><span class="visible-sm">L <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
+                <li class="dropdown-header visible-sm">League</li>
                 <li><a data-bind="attrLeagueUrl: {href: ['standings']}">Standings</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['playoffs']}">Playoffs</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['league_finances']}">Finances</a></li>
@@ -92,6 +93,7 @@
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Team <b class="caret"></b></span><span class="visible-sm">T <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
+                <li class="dropdown-header visible-sm">Team</li>
                 <li><a data-bind="attrLeagueUrl: {href: ['roster']}">Roster</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['schedule']}">Schedule</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['team_finances']}">Finances</a></li>
@@ -101,6 +103,7 @@
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Players <b class="caret"></b></span><span class="visible-sm">P <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
+                <li class="dropdown-header visible-sm">Players</li>
                 <li><a data-bind="attrLeagueUrl: {href: ['free_agents']}">Free Agents</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['trade']}">Trade</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['trading_block']}">Trading Block</a></li>
@@ -111,6 +114,7 @@
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Stats <b class="caret"></b></span><span class="visible-sm">S <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
+                <li class="dropdown-header visible-sm">Stats</li>
                 <li><a data-bind="attrLeagueUrl: {href: ['game_log']}">Game Log</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['leaders']}">League Leaders</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['player_ratings']}">Player Ratings</a></li>
@@ -121,6 +125,7 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Tools <b class="caret"></b></span><span class="visible-sm">X <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
+                <li class="dropdown-header visible-sm">Tools</li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['edit_team_info']}">Edit Team Info</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['export_rosters']}">Export Rosters</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none" role="presentation" class="divider"></li>
@@ -136,7 +141,7 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Help <b class="caret"></b></span><span class="visible-sm">? <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
-                <li role="presentation" class="dropdown-header">Manual</li>
+                <li class="dropdown-header visible-sm">Help</li>
                 <li><a href="/manual">Overview</a></li>
                 <li><a href="/manual/custom_rosters">Custom Rosters</a></li>
                 <li><a href="javascript:manualDebugging()">Debugging</a></li>

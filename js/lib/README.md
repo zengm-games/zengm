@@ -16,6 +16,8 @@ https://github.com/olivernn/davis.js/issues/61
 
 raphael.js has this very minor patch applied to make it play nice with
 Require.js: https://github.com/robcolburn/raphael/commit/e81cbaa03898f4da6e705e7a9f6947cccb8e27e7
+I also deleted the VML module to save space, since that is only for ancient
+browsers which aren't supported anyway.
 
 knockout.mapping.js is changed to depend on lib/knockout, not knockout.
 

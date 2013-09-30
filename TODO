@@ -101,6 +101,7 @@ player development
 MINOR FIXES
 -----------
 
+raphael is big - can i rewrite faces.js to not use it?
 hall of fame - add career totals columns?
 trade deadline
 http://requirejs.org/docs/api.html#config-waitSeconds

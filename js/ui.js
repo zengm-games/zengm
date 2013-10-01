@@ -250,10 +250,10 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             },
             sPaginationType: "bootstrap",
             oLanguage: {
-                sLengthMenu: "_MENU_ players per page",
-                sInfo: "Showing _START_ to _END_ of _TOTAL_ players",
-                sInfoEmpty: "Showing 0 to 0 of 0 players",
-                sInfoFiltered: "(filtered from _MAX_ total players)"
+                sLengthMenu: "_MENU_ per page",
+                sInfo: "_START_ to _END_ of _TOTAL_",
+                sInfoEmpty: "",
+                sInfoFiltered: "(filtered from _MAX_)"
             }
         }, extraOptions);
 

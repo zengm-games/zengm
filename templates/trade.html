@@ -3,7 +3,7 @@
 <div class="row">
   <div class="col-lg-7 col-md-9">
     <form id="rosters" class="form-inline">
-      <p><select id="trade-select-team" name="team" class="form-control" data-bind="foreach: teams">
+      <p><select id="trade-select-team" name="team" class="form-control select-team" data-bind="foreach: teams">
         <option data-bind="attr: {value: abbrev, selected: selected}, text: region + ' ' + name"></option>
       </select><br>
       Strategy: <span data-bind="text: strategy"></span></p>

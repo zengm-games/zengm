@@ -515,6 +515,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             html: true,
             content: "<p>To free up a roster spot, you can release a player from your team. You will still have to pay his salary (and have it count against the salary cap) until his contract expires (you can view your released players' contracts in your <a href=\"" + helpers.leagueUrl(["team_finances"]) + "\">Team Finances</a>).</p>However, if you just drafted a player and the regular season has not started yet, his contract is not guaranteed and you can release him for free."
         });
+
+        ui.tableClickableRows($("#roster"));
     }
 
     function uiEvery(updateEvents, vm) {

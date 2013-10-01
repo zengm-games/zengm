@@ -114,6 +114,8 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
         ko.computed(function () {
             ui.title("Standings - " + vm.season());
         }).extend({throttle: 1});
+
+        ui.tableClickableRows($(".standings-division"));
     }
 
     function uiEvery(updateEvents, vm) {

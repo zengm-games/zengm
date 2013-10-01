@@ -95,6 +95,8 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 }
             });
         }).extend({throttle: 1});
+
+        ui.tableClickableRows($("#hall-of-fame"));
     }
 
     return bbgmView.init({

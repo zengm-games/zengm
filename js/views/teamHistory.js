@@ -102,6 +102,8 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
                 }
             });
         }).extend({throttle: 1});
+
+        ui.tableClickableRows($("#team-history-players"));
     }
 
     function uiEvery(updateEvents, vm) {

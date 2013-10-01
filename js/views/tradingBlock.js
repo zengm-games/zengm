@@ -71,6 +71,16 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
             ui.realtimeUpdate(["tradingBlockAsk"], helpers.leagueUrl(["trading_block"]), function () {
                 buttonEl.textContent = "Ask For Trade Proposals";
                 buttonEl.disabled = false;
+
+                window.setTimeout(function () {
+                    var tableEls;
+
+                    // Ugly hack, since there is no good way to do this (bbgmView needs better signals.. curse of rolling your own)
+                    tableEls = $(".offer-players");
+                    if (tableEls.length > 0 && !tableEls[0].classList.contains("table-hover")) {
+                        ui.tableClickableRows(tableEls);
+                    }
+                }, 500);
             }, {
                 userPids: userPids,
                 userDpids: userDpids,
@@ -237,6 +247,8 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
             ui.datatableSinglePage($("#roster-user"), 5, tradeable(vm.userRoster()),
                                    {aoColumnDefs: [{bSortable: false, aTargets: [0]}]});
         }).extend({throttle: 1});
+
+        ui.tableClickableRows($("#roster-user"));
     }
 
     return bbgmView.init({

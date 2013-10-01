@@ -12,7 +12,9 @@ BIG NEW FEATURES
 
 mobile UI, bootstrap 3
   click row to highlight in table, to make it easier to view wide tables on small screens
-    only done playerStats and thru gameLog so far, by adding ui.tableClickableRows("player-stats"); to uiFirst. evaluate every table - is it needed? typically yes if it has table-responsive
+    add ui.tableClickableRows("player-stats"); to uiFirst
+      play nice with highlighting in team history, hall of fame
+        reevaluate highlighting in team history, hall of fame
   get rid of leagueLayout.html
   can i make datatables controls prettier on small screen?
     use scrolling rather than pagination?
@@ -31,27 +33,6 @@ team switching after being fired
   intro message from new owner, like a new league?
   rename g.gameOver
   keep track of what team the user controlled, so stats for the user (not the team) can be shown
-achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
-  Moneyball
-    bronze: win a title with a payroll under $40 million
-    silver: win a title with a payroll under $30 million
-    gold: win three consecutive titles a payroll under $30 million
-  Fo Fo Fo
-    bronze: go 16-0 in the playoffs
-    silver: go 16-0 in the playoffs three times in a row
-    gold: go 16-0 in the playoffs five times in a row
-  98 Degrees
-    bronze: go 98-0 in the playoffs and regular season
-    silver: go 98-0 in the playoffs and regular season three times in a row
-    gold: go 98-0 in the playoffs and regular season five times in a row
-  Dynasty
-    bronze: win 6 championships in 8 years
-    silver: win 10 championships in a row
-    gold: win 30 championships in a row
-  Messed Around
-    bronze: win a title with a player averaging a triple double
-    silver: win two consecutive titles with a player averaging a triple double
-    gold: win three consecutive titles with a player averaging a triple double
 more starting options
   UI
     Add checkboxes: Randomize Rosters (only show for custom rosters), Fantasy Draft
@@ -146,6 +127,27 @@ in playoffs, replace "play week" with "play until end of round"
 LOW PRIORITY
 ------------
 
+achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
+  Moneyball
+    bronze: win a title with a payroll under $40 million
+    silver: win a title with a payroll under $30 million
+    gold: win three consecutive titles a payroll under $30 million
+  Fo Fo Fo
+    bronze: go 16-0 in the playoffs
+    silver: go 16-0 in the playoffs three times in a row
+    gold: go 16-0 in the playoffs five times in a row
+  98 Degrees
+    bronze: go 98-0 in the playoffs and regular season
+    silver: go 98-0 in the playoffs and regular season three times in a row
+    gold: go 98-0 in the playoffs and regular season five times in a row
+  Dynasty
+    bronze: win 6 championships in 8 years
+    silver: win 10 championships in a row
+    gold: win 30 championships in a row
+  Messed Around
+    bronze: win a title with a player averaging a triple double
+    silver: win two consecutive titles with a player averaging a triple double
+    gold: win three consecutive titles with a player averaging a triple double
 some kind of playoff series overview page, including box scores for easy access
 luxury tax money should be redistributed to non-taxpaying teams (or teams under the cap?)
 jslint errors

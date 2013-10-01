@@ -275,14 +275,14 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
     }
 
     function uiEvery(updateEvents, vm) {
-        var tableEls;
-
         components.dropdown("game-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents, vm.boxScore.gid() >= 0 ? vm.boxScore.gid() : undefined);
 
         // UGLY HACK for two reasons:
         // 1. Box score might be hidden if none is loaded, so in that case there is no table to make clickable
         // 2. When box scores are shown, it might happen after uiEvery is called because vm.showBoxScore is throttled
         window.setTimeout(function () {
+            var tableEls;
+
             tableEls = $(".box-score-team");
             if (tableEls.length > 0 && !tableEls[0].classList.contains("table-hover")) {
                 ui.tableClickableRows(tableEls);

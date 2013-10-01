@@ -94,7 +94,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
             }));
         }).extend({throttle: 1});
 
-
         ui.tableClickableRows($("#free-agents"));
     }
 

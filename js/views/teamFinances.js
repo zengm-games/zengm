@@ -271,6 +271,8 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
             }));
         }).extend({throttle: 1});
 
+        ui.tableClickableRows($("#player-salaries"));
+
         ko.computed(function () {
             var barData, barSeasons;
 

@@ -92,6 +92,8 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jqu
                 faces.display("picture", vm.player.face());
             }
         }).extend({throttle: 1});
+
+        ui.tableClickableRows($(".table-clickable-rows"));
     }
 
     return bbgmView.init({

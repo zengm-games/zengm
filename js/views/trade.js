@@ -367,6 +367,9 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             ui.datatableSinglePage($("#roster-other"), 5, tradeable("other", vm.otherRoster()),
                                    {aoColumnDefs: [{bSortable: false, aTargets: [0]}]});
         }).extend({throttle: 1});
+
+        ui.tableClickableRows($("#roster-user"));
+        ui.tableClickableRows($("#roster-other"));
     }
 
     return bbgmView.init({

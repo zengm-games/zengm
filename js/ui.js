@@ -281,6 +281,22 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         table.dataTable(options);
     }
 
+    function tableClickableRows(id) {
+        var tableEl;
+
+        tableEl = $("#" + id);
+
+        tableEl.addClass("table-hover");
+        tableEl.on("click", "tr", function () {
+            // Toggle highlight
+            if (this.classList.contains("warning")) {
+                this.classList.remove("warning");
+            } else {
+                this.classList.add("warning");
+            }
+        });
+    }
+
     // For dropdown menus to change team/season/whatever
     // This should be cleaned up, but it works for now.
     function dropdown(select1, select2) {
@@ -490,6 +506,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         init: init,
         datatable: datatable,
         datatableSinglePage: datatableSinglePage,
+        tableClickableRows: tableClickableRows,
         dropdown: dropdown,
         realtimeUpdate: realtimeUpdate,
         title: title,

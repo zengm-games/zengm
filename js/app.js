@@ -71,11 +71,20 @@ requirejs.config({
 requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "lib/bootstrap-alert", "lib/bootstrap-collapse", "lib/bootstrap-dropdown", "lib/bootstrap-popover", "lib/davis.google_analytics", "lib/html5-dataset", "lib/IndexedDB-getAll-shim", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery.tabSlideOut", "lib/jquery-ui", "lib/jquery-ui.touch-punch", "util/templateHelpers", "api"], function (db, views, ui, changes, Davis, helpers) {
     "use strict";
 
+    var errorMsg;
+
     ui.init();
 
     // Can't proceed any further without IndexedDB support
     if (typeof indexedDB === "undefined") { // Some browsers don't like just plain "indexedDB === undefined"
-        helpers.error('<p>Your browser is not modern enough to run Basketball GM.</p><p>Currently, <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best with Basketball GM.</p>');
+        errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
+
+        // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
+        if (/(iPad|iPhone|iPod)/g.test(navigator.userAgent)) {
+            errorMsg += '<p>If you\'re on an iPhone/iPad/iPod, there is currently no way to run Basketball GM. Please come back on a desktop/laptop or a non-Apple mobile device!</p>';
+        }
+
+        helpers.error(errorMsg);
         return;
     }
 

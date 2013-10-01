@@ -22,7 +22,6 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                     delete messages[i].text;
                 }
                 messages = messages.slice(0, 2);
-console.log(messages);
 
                 vars = {
                     messages: messages

@@ -11,7 +11,7 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
         deferred = $.Deferred();
 
         g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
-            var data, i, leagues, teams;
+            var i, leagues, teams;
 
             leagues = event.target.result;
             teams = helpers.getTeamsDefault();

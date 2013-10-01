@@ -1,15 +1,21 @@
-This is a list of **only the major changes** in each version. However, this currently is not updated. Instead, more recent changes are listed in js/data/changes.js so they can be easily displayed to users.
-
 # Since 3.1.1
 
 ## Gameplay and UI
 
+- New mobile-friendly design
+- Trading Block
+- "What would make this deal work?" button can add assets from either team
+- Removed the ability to "buy out" players to get rid of bad contracts
 - AI teams will not trade away more than two draft picks in a single trade
 - Fewer high-rated big men are generated
 - Support for customized team names
 - Support for player images in custom rosters
 - After being fired, you can get hired by another team
-- Removed the ability to "buy out" players to get rid of bad contracts
+- Quarter-by-quarter scoring in box scores
+
+## Technical details
+
+- Upgraded to Bootstrap 3
 
 # 3.1.1 (2013-07-26)
 

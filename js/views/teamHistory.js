@@ -95,9 +95,9 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
                 fnRowCallback: function (nRow, aData) {
                     // Highlight active players
                     if (aData[aData.length - 1]) {
-                        nRow.classList.add("alert-success"); // On user's team
+                        nRow.classList.add("success"); // On user's team
                     } else if (aData[aData.length - 2]) {
-                        nRow.classList.add("alert-info"); // On other team
+                        nRow.classList.add("info"); // On other team
                     }
                 }
             });

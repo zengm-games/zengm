@@ -11,10 +11,7 @@ BIG NEW FEATURES
 ----------------
 
 mobile UI, bootstrap 3
-  click row to highlight in table, to make it easier to view wide tables on small screens
-    add ui.tableClickableRows("player-stats"); to uiFirst
-      play nice with highlighting in team history, hall of fame
-        reevaluate highlighting in team history, hall of fame
+  highlight hall of fame players in team history
   get rid of leagueLayout.html
   can i make datatables controls prettier on small screen?
     use scrolling rather than pagination?
@@ -27,6 +24,7 @@ mobile UI, bootstrap 3
     table headers
     others?
   reevaluate tr.alert stuff
+    should be more like .info in teamHistory?
   _ class names in bbgm.css
 team switching after being fired
   2 year grace period in message.js, like with a new league?

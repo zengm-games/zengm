@@ -90,7 +90,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 fnRowCallback: function (nRow, aData) {
                     // Highlight players from the user's team
                     if (aData[aData.length - 1]) {
-                        nRow.classList.add("alert-info");
+                        nRow.classList.add("info");
                     }
                 }
             });

@@ -284,7 +284,6 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
     function tableClickableRows(tableEl) {
         tableEl.addClass("table-hover");
         tableEl.on("click", "tbody tr", function () {
-console.log("click")
             // Toggle highlight
             if (this.classList.contains("warning")) {
                 this.classList.remove("warning");

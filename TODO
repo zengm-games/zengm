@@ -12,9 +12,7 @@ BIG NEW FEATURES
 
 mobile UI, bootstrap 3
   get rid of leagueLayout.html
-  .table-responsive
-    go through all, continue after playerRatings
-    can i make datatables controls prettier on small screen?
+  .table-responsive: can i make datatables controls prettier on small screen?
   newTeam.html
   for trade, use offscreen menu like in demo?
   old bootstrap JS files?

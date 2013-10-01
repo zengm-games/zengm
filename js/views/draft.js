@@ -144,7 +144,7 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
     }
 
     function uiFirst() {
-        var startDraft;
+        var startDraft, undraftedContainer;
 
         ui.title("Draft");
 
@@ -165,10 +165,13 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
         $("#view-drafted").click(function () {
             $("body, html").animate({scrollLeft: $(document).outerWidth() - $(window).width()}, 250);
         });
-
         $("#view-undrafted").click(function () {
             $("body, html").animate({scrollLeft: 0}, 250);
         });
+
+        // Scroll undrafted to the right, so "Draft" button is never cut off
+        undraftedContainer = document.getElementById("undrafted").parentNode;
+        undraftedContainer.scrollLeft = undraftedContainer.scrollWidth;
     }
 
     return bbgmView.init({

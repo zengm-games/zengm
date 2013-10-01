@@ -12,8 +12,10 @@ BIG NEW FEATURES
 
 mobile UI, bootstrap 3
   get rid of leagueLayout.html
-  One design decision I'm not sure about - should I hide information in the mobile version to save space? Like I could delete some of the statistics from the roster table to make it easier to see without scrolling. Would that make sense?
-    .table-responsive, or some datatables thing?
+  .table-responsive
+    go through all, continue after playerRatings
+    can i make datatables controls prettier on small screen?
+  newTeam.html
   for trade, use offscreen menu like in demo?
   old bootstrap JS files?
   any columns: *em css - can't i make columns use bootstrap?

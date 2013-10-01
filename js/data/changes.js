@@ -38,13 +38,13 @@ define(["lib/jquery"], function ($) {
                     if (text.length > 0) {
                         text += "</ul>";
                     }
-                    text += "<h4>" + date + "</h4><ul>";
+                    text += "<h5>" + date + "</h5><ul>";
                 }
 
                 text += "<li>" + unread[i].msg + "</li>";
             }
 
-            $("#content").before('<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert">&times;</button><h3>New since your last visit:</h3>' + text + '</div>');
+            $("#content").before('<div class="alert alert-info alert-top alert-changes"><button type="button" class="close" data-dismiss="alert">&times;</button><h4>New since your last visit:</h4>' + text + '</div>');
 
             localStorage.changesRead = c.length;
         }

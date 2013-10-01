@@ -52,7 +52,7 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
             migrateMessage = '<p><strong>New in version 3.1.0:</strong> better AI from opposing managers and more trade functionality, including trading draft picks and asking for counter-proposals from the team you\'re trading with.</p>' + migrateMessage;
         }
 
-        $("#content").before('<div class="alert alert-info"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
+        $("#content").before('<div class="alert alert-info alert-top"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
     }
 
     function connectMeta(cb) {

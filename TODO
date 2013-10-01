@@ -12,8 +12,7 @@ BIG NEW FEATURES
 
 mobile UI, bootstrap 3
   get rid of leagueLayout.html
-  .table-responsive: can i make datatables controls prettier on small screen?
-  old bootstrap JS files?
+  can i make datatables controls prettier on small screen?
   any columns: *em css - can't i make columns use bootstrap?
   do something about hover tooltips
     injury

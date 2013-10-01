@@ -453,3 +453,14 @@ select.teams {
 .alert p:last-child {
   margin-bottom: 0;
 }
+
+.alert-top {
+  margin-top: 20px;
+}
+.alert-changes h4 {
+  margin-top: 0;
+}
+.alert-changes ul {
+  margin-bottom: 9px;
+  padding-left: 18px;
+}

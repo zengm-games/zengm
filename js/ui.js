@@ -281,13 +281,10 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         table.dataTable(options);
     }
 
-    function tableClickableRows(id) {
-        var tableEl;
-
-        tableEl = $("#" + id);
-
+    function tableClickableRows(tableEl) {
         tableEl.addClass("table-hover");
-        tableEl.on("click", "tr", function () {
+        tableEl.on("click", "tbody tr", function () {
+console.log("click")
             // Toggle highlight
             if (this.classList.contains("warning")) {
                 this.classList.remove("warning");

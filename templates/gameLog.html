@@ -22,7 +22,7 @@
       <!-- ko foreach: boxScore.teams -->
         <h3><a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.boxScore.season]}, text: region() + ' ' + name()"></a></h2>
         <div class="table-responsive">
-          <table class="table table-striped table-bordered table-condensed">
+          <table class="table table-striped table-bordered table-condensed box-score-team">
             <thead>
               <tr><th>Name</th><th>Pos</th><th>Min</th><th>FG</th><th>3Pt</th><th>FT</th><th>Off</th><th>Reb</th><th>Ast</th><th>TO</th><th>Stl</th><th>Blk</th><th>PF</th><th>Pts</th></tr>
             </thead>

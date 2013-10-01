@@ -88,7 +88,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
     function boxScore(gid, cb) {
         if (gid >= 0) {
             g.dbl.transaction(["games"]).objectStore("games").get(gid).onsuccess = function (event) {
-                var content, i, j, game, overtime;
+                var i, j, game;
 
                 game = event.target.result;
                 for (i = 0; i < game.teams.length; i++) {
@@ -110,7 +110,6 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                         }
                     }
                 }
-
 
                 if (game.overtimes === 1) {
                     game.overtime = " (OT)";
@@ -152,6 +151,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         };
 
         // This computed is used so the box score won't be rendered until after it is fully loaded (due to the throttle). Otherwise, the mapping plugin sometimes sets the gid before the rest of the box score.
+        // But because it's throttled, ui.tableClickableRows can't be called directly in uiFirst or uiEvery.
         this.showBoxScore = ko.computed(function () {
             return this.boxScore.gid() >= 0;
         }, this).extend({throttle: 1});
@@ -275,7 +275,19 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
     }
 
     function uiEvery(updateEvents, vm) {
+        var tableEls;
+
         components.dropdown("game-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents, vm.boxScore.gid() >= 0 ? vm.boxScore.gid() : undefined);
+
+        // UGLY HACK for two reasons:
+        // 1. Box score might be hidden if none is loaded, so in that case there is no table to make clickable
+        // 2. When box scores are shown, it might happen after uiEvery is called because vm.showBoxScore is throttled
+        window.setTimeout(function () {
+            tableEls = $(".box-score-team");
+            if (tableEls.length > 0 && !tableEls[0].classList.contains("table-hover")) {
+                ui.tableClickableRows(tableEls);
+            }
+        }, 100);
     }
 
     return bbgmView.init({

@@ -63,7 +63,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             }));
         }).extend({throttle: 1});
 
-        ui.tableClickableRows("player-stats");
+        ui.tableClickableRows($("#player-stats"));
     }
 
     function uiEvery(updateEvents, vm) {

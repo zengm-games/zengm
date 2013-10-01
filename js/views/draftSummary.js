@@ -107,6 +107,8 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 return [p.draft.round + '-' + p.draft.pick, '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>', p.pos, helpers.draftAbbrev(p.draft.abbrev, p.draft.originalAbbrev, season), String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), '<span class="skills_alone">' + helpers.skillsBlock(p.draft.skills) + '</span>', '<a href="' + helpers.leagueUrl(["roster", p.currentAbbrev]) + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills_alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1)];
             }));
         }).extend({throttle: 1});
+
+        ui.tableClickableRows("draft-results");
     }
 
     function uiEvery(updateEvents, vm) {

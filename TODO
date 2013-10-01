@@ -12,7 +12,7 @@ BIG NEW FEATURES
 
 mobile UI, bootstrap 3
   click row to highlight in table, to make it easier to view wide tables on small screens
-    only done player_stats so far, by adding ui.tableClickableRows("player-stats"); to uiFirst. evaluate every table - is it needed? typically yes if it has table-responsive
+    only done playerStats and thru gameLog so far, by adding ui.tableClickableRows("player-stats"); to uiFirst. evaluate every table - is it needed? typically yes if it has table-responsive
   get rid of leagueLayout.html
   can i make datatables controls prettier on small screen?
     use scrolling rather than pagination?

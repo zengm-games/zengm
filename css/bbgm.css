@@ -489,6 +489,6 @@ select.teams {
 }
 /* HACK so that the .info class defined above can be overriden in teamHistory (and possibly elsewhere). */
 tr.warning > td {
-  background-color: #fcf8e3 !important;
-  border-color: #fbeed5 !important;
+  background-color: #fcf8e3;
+  border-color: #fbeed5;
 }

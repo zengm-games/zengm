@@ -59,7 +59,7 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
                     var i, players;
 
                     players = player.filter(event.target.result, {
-                        attrs: ["pid", "name", "pos", "injury", "tid"],
+                        attrs: ["pid", "name", "pos", "injury", "tid", "hof"],
                         stats: ["gp", "min", "pts", "trb", "ast", "per"],
                         tid: inputs.tid
                     });
@@ -75,7 +75,8 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
                         players: players,
                         team: {
                             name: userTeam.name,
-                            region: userTeam.region
+                            region: userTeam.region,
+                            tid: inputs.tid
                         }
                     });
                 };
@@ -90,14 +91,16 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
 
         ko.computed(function () {
             ui.datatable($("#team-history-players"), 2, _.map(vm.players(), function (p) {
-                return [helpers.playerNameLabels(p.pid, p.name, p.injury, []), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), p.tid > g.PLAYER.RETIRED, p.tid === g.userTid];
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, []), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== vm.team.tid(), p.tid === vm.team.tid()];
             }), {
                 fnRowCallback: function (nRow, aData) {
                     // Highlight active players
                     if (aData[aData.length - 1]) {
-                        nRow.classList.add("success"); // On user's team
+                        nRow.classList.add("success"); // On this team
                     } else if (aData[aData.length - 2]) {
                         nRow.classList.add("info"); // On other team
+                    } else if (aData[aData.length - 3]) {
+                        nRow.classList.add("danger"); // Hall of Fame
                     }
                 }
             });

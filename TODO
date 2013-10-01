@@ -11,7 +11,6 @@ BIG NEW FEATURES
 ----------------
 
 mobile UI, bootstrap 3
-  highlight hall of fame players in team history
   get rid of leagueLayout.html
   can i make datatables controls prettier on small screen?
     use scrolling rather than pagination?
@@ -76,6 +75,9 @@ player development
 MINOR FIXES
 -----------
 
+show EWA more places
+  team history
+  hall of fame
 raphael is big - can i rewrite faces.js to not use it?
 hall of fame - add career totals columns?
 trade deadline

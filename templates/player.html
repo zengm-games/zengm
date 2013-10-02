@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-sm-6">
     <h1><span data-bind="text: player.name"></span> <span data-bind="newWindow: []"></span></h1>
-    <div id="picture" class="player_picture"></div>
+    <div id="picture" class="player-picture"></div>
     <div style="float: left;">
       <strong><span data-bind="text: player.pos"></span>, <span data-bind="text: player.teamRegion"></span> <span data-bind="text: player.teamName"></span></strong><br>
       Height: <span data-bind="text: player.hgtFt"></span>'<span data-bind="text: player.hgtIn"></span>"<br>
@@ -18,8 +18,8 @@
         <span data-bind="visible: freeAgent">Asking for</span><span data-bind="visible: !freeAgent()">Contract</span>: <span data-bind="currency: [player.contract.amount, 'M']"></span>/yr thru <span data-bind="text: player.contract.exp"></span><br>
       <!-- /ko -->
       <!-- ko if: !retired() -->
-        <span class="label label-danger label-injury" style="margin-left: 0" data-bind="visible: injured, text: player.injury.gamesRemaining, attr: {title: player.injury.type() + ' (out ' + player.injury.gamesRemaining() + ' more games)'}"></span><span class="skills_block" data-bind="visible: injured, skillsBlock: currentRatings.skills"></span>
-        <span class="skills_alone" data-bind="visible: !injured(), skillsBlock: currentRatings.skills"></span>
+        <span class="label label-danger label-injury" style="margin-left: 0" data-bind="visible: injured, text: player.injury.gamesRemaining, attr: {title: player.injury.type() + ' (out ' + player.injury.gamesRemaining() + ' more games)'}"></span><span data-bind="visible: injured, skillsBlock: currentRatings.skills"></span>
+        <span class="skills-alone" data-bind="visible: !injured(), skillsBlock: currentRatings.skills"></span>
         <br>
       <!-- /ko -->
     </div>
@@ -143,7 +143,7 @@
       <tr><th>Year</th><th>Team</th><th>Age</th><th title="Overall">Ovr</th><th title="Potential">Pot</th><th title="Height">Hgt</th><th title="Strength">Str</th><th title="Speed">Spd</th><th title="Jumping">Jmp</th><th title="Endurance">End</th><th title="Inside Scoring">Ins</th><th title="Dunks/Layups">Dnk</th><th title="Free Throw Shooting">FT</th><th title="Two-Point Shooting">2Pt</th><th title="Three-Point Shooting">3Pt</th><th title="Blocks">Blk</th><th title="Steals">Stl</th><th title="Dribbling">Drb</th><th title="Passing">Pss</th><th title="Rebounding">Reb</th><th>Skills</th></tr>
     </thead>
     <tbody data-bind="foreach: player.ratings">
-      <tr><td data-bind="text: season"></td><td><!-- ko if: abbrev() --><a data-bind="text: abbrev, attrLeagueUrl: {href: ['roster', abbrev, season]}"></a><!-- /ko --></td><td data-bind="text: age"></td><td data-bind="text: ovr"></td><td data-bind="text: pot"></td><td data-bind="text: hgt"></td><td data-bind="text: stre"></td><td data-bind="text: spd"></td><td data-bind="text: jmp"></td><td data-bind="text: endu"></td><td data-bind="text: ins"></td><td data-bind="text: dnk"></td><td data-bind="text: ft"></td><td data-bind="text: fg"></td><td data-bind="text: tp"></td><td data-bind="text: blk"></td><td data-bind="text: stl"></td><td data-bind="text: drb"></td><td data-bind="text: pss"></td><td data-bind="text: reb"></td><td><span class="skills_alone" data-bind="skillsBlock: skills"></span></td></tr>
+      <tr><td data-bind="text: season"></td><td><!-- ko if: abbrev() --><a data-bind="text: abbrev, attrLeagueUrl: {href: ['roster', abbrev, season]}"></a><!-- /ko --></td><td data-bind="text: age"></td><td data-bind="text: ovr"></td><td data-bind="text: pot"></td><td data-bind="text: hgt"></td><td data-bind="text: stre"></td><td data-bind="text: spd"></td><td data-bind="text: jmp"></td><td data-bind="text: endu"></td><td data-bind="text: ins"></td><td data-bind="text: dnk"></td><td data-bind="text: ft"></td><td data-bind="text: fg"></td><td data-bind="text: tp"></td><td data-bind="text: blk"></td><td data-bind="text: stl"></td><td data-bind="text: drb"></td><td data-bind="text: pss"></td><td data-bind="text: reb"></td><td><span class="skills-alone" data-bind="skillsBlock: skills"></span></td></tr>
     </tbody>
   </table>
 </div>

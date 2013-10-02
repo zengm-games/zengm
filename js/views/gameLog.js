@@ -270,7 +270,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
         // Game log list dynamic highlighting
         $("#game-log-list").on("click", "tbody tr", function (event) {
-            $(this).addClass("alert-info").siblings().removeClass("alert-info");
+            $(this).addClass("info").siblings().removeClass("info");
         });
     }
 

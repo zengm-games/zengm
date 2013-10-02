@@ -11,9 +11,8 @@ BIG NEW FEATURES
 ----------------
 
 mobile UI, bootstrap 3
-  reevaluate tr.alert stuff
-    should be more like .info in teamHistory?
-  _ class names in bbgm.css
+  scroll to top like https://github.com/defunkt/jquery-pjax
+    game log already implemented?
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

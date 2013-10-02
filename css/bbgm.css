@@ -223,30 +223,18 @@ table {
   color: #5bc0de;
 }
 
-table#game_log_list tbody tr.alert-info td, table.leaders tbody tr.alert-info td, table#hall-of-fame tbody tr.alert-info td, table#team-history-players tbody tr.alert-info td {
-  background-color: #d9edf7;
-  border-color: #bce8f1;
-  color: #3a87ad;
-}
-
-table#team-history-players tbody tr.alert-success td {
-  background-color: #DFF0D8;
-  border-color: #D6E9C6;
-  color: #468847;
-}
-
-table#game_log_list tbody td {
+#game-log-list tbody td {
   padding: 0;
 }
 
-table#game_log_list td a {
+#game-log-list td a {
   color: #3a87ad;
   display: block;
   padding: 4px 5px 4px 5px;  /* Expand to encompass normal td padding, which was set to 0 here above. */
   text-decoration: none;
 }
 
-table#game_log_list tbody tr:hover td, table#messages tbody tr:hover td {
+#game-log-list tbody tr:hover td, #messages tbody tr:hover td {
   background-color: #d9edf7;
   border-color: #bce8f1;
   text-decoration: none;
@@ -282,7 +270,7 @@ select.teams {
   width: 203px
 }
 
-.player_picture {
+.player-picture {
   height: 150px;
   float: left;
   margin-right: 10px;
@@ -296,7 +284,7 @@ select.teams {
   margin-left: 5px;
   vertical-align: 2%;
 }
-.skills_alone {
+.skills-alone {
   margin-left: -5px;
   vertical-align: 2%;
 }
@@ -478,14 +466,14 @@ select.teams {
 .table > thead > tr.info > th,
 .table > tbody > tr.info > th,
 .table > tfoot > tr.info > th {
-  background-color: rgb(217, 237, 247);
-  border-color: rgb(188, 232, 241);
+  background-color: #d9edf7;
+  border-color: #bce8f1;
 }
 .table-hover > tbody > tr > td.info:hover,
 .table-hover > tbody > tr > th.info:hover,
 .table-hover > tbody > tr.info:hover > td {
-  background-color: rgb(203, 232, 247); /* +6 saturation in GIMP */
-  border-color: rgb(174, 230, 241); /* +6 saturation in GIMP */
+  background-color: #cbe8f7; /* +6 saturation in GIMP */
+  border-color: #aee6f1; /* +6 saturation in GIMP */
 }
 /* HACK so that the .info class defined above can be overriden in teamHistory (and possibly elsewhere). */
 tr.warning > td {

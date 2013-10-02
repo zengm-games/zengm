@@ -75,7 +75,7 @@
       <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>
     </thead>
     <tbody data-bind="foreach: gamesList.games">
-      <tr data-bind="attr: {class: selected ? 'alert-info' : ''}">
+      <tr data-bind="attr: {class: selected ? 'info' : ''}">
         <td><a data-bind="attrLeagueUrl: {href: ['game_log', $root.abbrev, $root.season, gid]}, text: (home ? '' : '@') + oppAbbrev"></a></td>
         <td><a data-bind="attrLeagueUrl: {href: ['game_log', $root.abbrev, $root.season, gid]}, text: won ? 'W' : 'L'"></a></td>
         <td><a data-bind="attrLeagueUrl: {href: ['game_log', $root.abbrev, $root.season, gid]}, text: pts + '-' + oppPts + overtime"></a></td>

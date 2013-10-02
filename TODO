@@ -68,8 +68,6 @@ hall of fame - add career totals columns?
 trade deadline
 http://requirejs.org/docs/api.html#config-waitSeconds
 current season shouldn't show in league history page dropdown
-trade
-  changing teams shouldn't reset the user's offer
 team.valueChange
   contending teams shouldn't always see every player as a positive value. needs to be some balanced formula where a bad contract is a negative.
 player.value

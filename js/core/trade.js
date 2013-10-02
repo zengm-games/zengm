@@ -30,9 +30,11 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
                 cursor = event.target.result;
                 tr = cursor.value;
                 tr.otherTid = otherTid;
-                tr.userPids = userPids;
+                if (userPids.length > 0 || otherPids.length > 0 || userDpids > 0 || otherDpids > 0) {
+                    tr.userPids = userPids;
+                    tr.userDpids = userDpids;
+                }
                 tr.otherPids = otherPids;
-                tr.userDpids = userDpids;
                 tr.otherDpids = otherDpids;
                 cursor.update(tr);
             };

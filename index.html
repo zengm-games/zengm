@@ -5,10 +5,10 @@
     <title>Basketball GM</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!--<link href="/gen/bbgm.css" rel="stylesheet">-->
-    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/gen/bbgm.css" rel="stylesheet">
+    <!--<link href="/css/bootstrap.css" rel="stylesheet">
     <link href="/css/bbgm.css" rel="stylesheet">
-    <link href="/css/DT_bootstrap.css" rel="stylesheet">
+    <link href="/css/DT_bootstrap.css" rel="stylesheet">-->
 
     <link rel="shortcut icon" href="/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
@@ -17,6 +17,7 @@
 
     <script type="text/javascript">
       window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
+
       if (enableLogging) {
         // Errorception
         /*(function(_,e,rr,s){_errs=[s];var c=_.onerror;_.onerror=function(){var a=arguments;_errs.push(a);
@@ -173,7 +174,7 @@
     </div>
 
     <script>
-      // This is so the "Debugging" manual entry can be read even if IndexedDB loads
+      // This is so the "Debugging" manual entry can be read even if IndexedDB doesn't load
       function manualDebugging() {
         document.getElementById("content").innerHTML = '<h1>Debugging</h1>' + 
           '<h2>Reporting a bug</h2>' +

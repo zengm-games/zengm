@@ -108,7 +108,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             }));
         }).extend({throttle: 1});
 
-        ui.tableClickableRows("draft-results");
+        ui.tableClickableRows($("#draft-results"));
     }
 
     function uiEvery(updateEvents, vm) {

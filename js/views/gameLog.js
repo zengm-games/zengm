@@ -205,8 +205,6 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                 vars.boxScore = game;
                 vars.boxScore.gid = inputs.gid;
 
-                $(window).scrollTop(100);
-
                 deferred.resolve(vars);
             });
             return deferred.promise();

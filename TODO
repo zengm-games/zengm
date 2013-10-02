@@ -10,9 +10,6 @@ ptsQtrs stored for games - but this will just be ignored if it's not there
 BIG NEW FEATURES
 ----------------
 
-mobile UI, bootstrap 3
-  scroll to top like https://github.com/defunkt/jquery-pjax
-    game log already implemented?
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

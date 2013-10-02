@@ -14,15 +14,6 @@ mobile UI, bootstrap 3
   reevaluate tr.alert stuff
     should be more like .info in teamHistory?
   _ class names in bbgm.css
-  do something about hover tooltips
-    injury
-    skills
-      for injury and skills, maybe make the whole block a hyperlink that opens a popover
-        make sure to use on player page too.. can i use helpers.playerName.. there too?
-    table headers
-    others?
-  get rid of leagueLayout.html
-  any columns: *em css - can't i make columns use bootstrap?
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?
@@ -125,6 +116,16 @@ in playoffs, replace "play week" with "play until end of round"
 LOW PRIORITY
 ------------
 
+mobile UI, bootstrap 3
+  do something about hover tooltips
+    injury
+    skills
+      for injury and skills, maybe make the whole block a hyperlink that opens a popover
+        make sure to use on player page too.. can i use helpers.playerName.. there too?
+    table headers
+    others?
+  get rid of leagueLayout.html
+  any columns: *em css - can't i make columns use bootstrap?
 achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   Moneyball
     bronze: win a title with a payroll under $40 million

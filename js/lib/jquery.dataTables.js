@@ -1640,6 +1640,13 @@
 					{
 						oSettings.aanFeatures[cOption] = [];
 					}
+					// HACK FOR BBGM: Move table-responsive inside controls - swap it off surrounding div and put it on a new internal one
+					if (cOption === "t" && nTmp.parentNode.classList.contains("table-responsive")) {
+						nTmp.parentNode.classList.remove("table-responsive")
+						var nTmpOld = nTmp;
+						nTmp = $('<div class="table-responsive"></div>')[0];
+						nTmp.appendChild(nTmpOld);
+					}
 					oSettings.aanFeatures[cOption].push( nTmp );
 					nInsertNode.appendChild( nTmp );
 				}

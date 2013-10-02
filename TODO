@@ -11,10 +11,9 @@ BIG NEW FEATURES
 ----------------
 
 mobile UI, bootstrap 3
-  get rid of leagueLayout.html
-  can i make datatables controls prettier on small screen?
-    use scrolling rather than pagination?
-  any columns: *em css - can't i make columns use bootstrap?
+  reevaluate tr.alert stuff
+    should be more like .info in teamHistory?
+  _ class names in bbgm.css
   do something about hover tooltips
     injury
     skills
@@ -22,9 +21,8 @@ mobile UI, bootstrap 3
         make sure to use on player page too.. can i use helpers.playerName.. there too?
     table headers
     others?
-  reevaluate tr.alert stuff
-    should be more like .info in teamHistory?
-  _ class names in bbgm.css
+  get rid of leagueLayout.html
+  any columns: *em css - can't i make columns use bootstrap?
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

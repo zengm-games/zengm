@@ -101,6 +101,7 @@ $.extend(true, $.fn.dataTable.defaults, {
         	.attr('placeholder', 'Search');
         $('.dataTables_length select').addClass('form-control input-sm')
         	.css('width', '75px');
+        $('.dataTables_info').addClass('hidden-xs'); // Keep the bottom one row when the pagination is wide
     },
     oLanguage: {
         sSearch: "",

@@ -5,7 +5,8 @@ jQuery UI is a custom download including only "sortable" support as the rest
 isn't used.
 
 Upgrading jquery.dataTables to 1.9.4 produces errors in the minified version.
-Not sure why.
+Not sure why. I also hacked jquery.dataTables to do some custom stuff when it's
+wrapped in a .table-responsive div.
 
 jquery.dataTables.bootstrap.js (and DT_bootstrap.css) has been tweaked to play
 nice with Davis.js and Bootstrap 3.

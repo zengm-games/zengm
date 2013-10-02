@@ -52,3 +52,7 @@ table.table thead .sorting_desc_disabled { background: url('/img/datatables/sort
 table.dataTable th:active {
 	outline: none;
 }
+
+div.dataTables_wrapper .table-responsive {
+	margin-bottom: 4px;
+}

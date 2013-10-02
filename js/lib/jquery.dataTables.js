@@ -1644,7 +1644,7 @@
 					if (cOption === "t" && nTmp.parentNode.classList.contains("table-responsive")) {
 						nTmp.parentNode.classList.remove("table-responsive")
 						var nTmpOld = nTmp;
-						nTmp = $('<div class="table-responsive"></div>')[0];
+						nTmp = $('<div class="table-responsive" style="clear: both"></div>')[0];
 						nTmp.appendChild(nTmpOld);
 					}
 					oSettings.aanFeatures[cOption].push( nTmp );

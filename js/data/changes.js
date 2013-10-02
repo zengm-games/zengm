@@ -16,6 +16,9 @@ define(["lib/jquery"], function ($) {
     }, {
         date: "2013-09-22",
         msg: "For any games simulated from now on, box scores will show quarter-by-quarter point totals."
+    }, {
+        date: "2013-10-01",
+        msg: "New mobile-friendly UI - try playing in Chrome or Firefox on your Android device!"
     }];
 
     function check() {

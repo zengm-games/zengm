@@ -444,6 +444,11 @@ select.teams {
 
 .alert-top {
   margin-top: 20px;
+  padding-bottom: 2px;
+  padding-top: 12px;
+}
+.alert-top button {
+  margin-top: -4px;
 }
 .alert-changes h4 {
   margin-top: 0;

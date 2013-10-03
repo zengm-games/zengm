@@ -19,6 +19,9 @@ define(["lib/jquery"], function ($) {
     }, {
         date: "2013-10-01",
         msg: "New mobile-friendly UI - try playing in Chrome or Firefox on your Android device!"
+    }, {
+        date: "2013-10-02",
+        msg: '<a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a> to keep up with the latest news, updates, and discussion:<br><a href="https://twitter.com/basketball_gm" class="twitter-follow-button" data-show-count="false" data-lang="en">Follow @basketball_GM</a><script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>'
     }];
 
     function check() {

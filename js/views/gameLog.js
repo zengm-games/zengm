@@ -205,6 +205,9 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                 vars.boxScore = game;
                 vars.boxScore.gid = inputs.gid;
 
+                // Force scroll to top, which otherwise wouldn't happen because this is an internal link
+                window.scrollTo(window.pageXOffset, 0);
+
                 deferred.resolve(vars);
             });
             return deferred.promise();

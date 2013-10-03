@@ -57,7 +57,12 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
             // This will be called after every runBefore and runWhenever function is finished.
             afterEverything = _.after(args.runWhenever.length + 1, function () {
                 containerEl.dataset.idLoading = ""; // Done loading
-                window.scrollTo(window.pageXOffset, 0);// Scroll to top
+
+                // Scroll to top
+                if (_.isEqual(updateEvents, ["firstRun"])) {
+                    window.scrollTo(window.pageXOffset, 0);
+                }
+
                 cb();
             });
 

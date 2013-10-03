@@ -10,6 +10,7 @@ ptsQtrs stored for games - but this will just be ignored if it's not there
 BIG NEW FEATURES
 ----------------
 
+http://www.reddit.com/r/BasketballGM/comments/1nk34h/new_ui_prettier_less_glitchy_and_mobilefriendly/ccjnki5?context=3
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?
@@ -30,12 +31,14 @@ league settings
 BIG NEW GAMEPLAY CHANGES
 ------------------------
 
-remove "buy out"
-  done, but the backend code is still there
+player development
+  should be less players who go from totally raw to superstar in one year http://www.reddit.com/r/BasketballGM/comments/1l2iiy/play_development_should_be_revisited/cbv73rd
 less weird player rating combos
   different ratings should have different potential for growth - easier to improve jumpshot than quickness
   revamp position assignment algorithm
     until a player is ~28 (whenever ratings decline starts), recalculate every year
+remove "buy out"
+  done, but the backend code is still there
 gameSim
   balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbfzr43?context=3 http://www.reddit.com/r/BasketballGM/comments/1k1881/pf_stands_for_powerful/
@@ -54,8 +57,6 @@ somehow, don't let the user's team sign any/all free agents they want
   http://www.reddit.com/r/BasketballGM/comments/1jrv3a/have_we_discussed_the_draft_pick_exploit_yet/
   randomize "won't negotiate with you" more?
     make genBaseMoods lower?
-player development
-  should be less players who go from totally raw to superstar in one year http://www.reddit.com/r/BasketballGM/comments/1l2iiy/play_development_should_be_revisited/cbv73rd
 
 MINOR FIXES
 -----------
@@ -110,6 +111,7 @@ in playoffs, replace "play week" with "play until end of round"
 LOW PRIORITY
 ------------
 
+cross-league play
 mobile UI, bootstrap 3
   do something about hover tooltips
     injury

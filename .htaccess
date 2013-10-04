@@ -1,4 +1,4 @@
-# This should be kept in sync with runserver.py so either can be used
+# This should be kept in sync with mongoose.conf and runserver.py
 
 #Action php54-cgi /php54.cgi
 #<FilesMatch \.php$>

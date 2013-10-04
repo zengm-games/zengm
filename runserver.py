@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# This should be kept in sync with .htaccess so either can be used
+# This should be kept in sync with .htaccess and mongoose.conf
 
 import web
 

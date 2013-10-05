@@ -433,110 +433,112 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
      * @param {function(Array)} cb Callback function that takes the array of team objects as its only argument.
      */
     function loadTeams(transaction, cb) {
-        var teams, tid;
+        var afterLoaded, teams, tid;
 
         teams = [];
 
+        afterLoaded = _.after(30, function () {
+            cb(teams);
+        });
+
         for (tid = 0; tid < 30; tid++) {
-            transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-                var players, realTid, t;
+            (function (tid) {
+                transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
+                    var players, realTid, t;
 
-                players = event.target.result;
-                players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
-                if (players.length > 0) {
-                    realTid = players[0].tid;
-                } else {
-                    teams.push({id: tid});
-                    if (teams.length === 30) {
-                        cb(teams);
+                    players = event.target.result;
+                    players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
+                    if (players.length > 0) {
+                        realTid = players[0].tid;
+                    } else {
+                        teams[tid] = {id: tid};
+                        afterLoaded();
+                        return;
                     }
-                    return;
-                }
-                t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
-                transaction.objectStore("teams").get(realTid).onsuccess = function (event) {
-                    var i, j, numPlayers, p, player, rating, team, teamSeason;
+                    t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
+                    transaction.objectStore("teams").get(realTid).onsuccess = function (event) {
+                        var i, j, numPlayers, p, player, rating, team, teamSeason;
 
-                    team = event.target.result;
-                    for (j = 0; j < team.seasons.length; j++) {
-                        if (team.seasons[j].season === g.season) {
-                            teamSeason = team.seasons[j];
-                            break;
-                        }
-                    }
-                    t.won = teamSeason.won;
-                    t.lost = teamSeason.lost;
-                    t.cid = team.cid;
-                    t.did = team.did;
-                    t.healthRank = teamSeason.expenses.health.rank;
-
-                    for (i = 0; i < players.length; i++) {
-                        player = players[i];
-                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}, skills: [], injured: player.injury.type !== "Healthy", ptModifier: player.ptModifier};
-
-                        for (j = 0; j < player.ratings.length; j++) {
-                            if (player.ratings[j].season === g.season) {
-                                rating = player.ratings[j];
+                        team = event.target.result;
+                        for (j = 0; j < team.seasons.length; j++) {
+                            if (team.seasons[j].season === g.season) {
+                                teamSeason = team.seasons[j];
                                 break;
                             }
                         }
+                        t.won = teamSeason.won;
+                        t.lost = teamSeason.lost;
+                        t.cid = team.cid;
+                        t.did = team.did;
+                        t.healthRank = teamSeason.expenses.health.rank;
 
-                        p.skills = rating.skills;
+                        for (i = 0; i < players.length; i++) {
+                            player = players[i];
+                            p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}, skills: [], injured: player.injury.type !== "Healthy", ptModifier: player.ptModifier};
 
-                        p.ovr = rating.ovr;
+                            for (j = 0; j < player.ratings.length; j++) {
+                                if (player.ratings[j].season === g.season) {
+                                    rating = player.ratings[j];
+                                    break;
+                                }
+                            }
 
-                        p.compositeRating.pace = _composite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
-                        p.compositeRating.usage = _composite(rating, ['ins', 'dnk', 'fg', 'tp']);
-                        p.compositeRating.dribbling = _composite(rating, ['drb', 'spd']);
-                        p.compositeRating.passing = _composite(rating, ['drb', 'pss'], [0.4, 1]);
-                        p.compositeRating.turnovers = _composite(rating, ['drb', 'pss', 'spd', 'hgt', 'ins'], [1, 1, -1, 1, 1]);  // This should not influence whether a turnover occurs, it should just be used to assign players
-                        p.compositeRating.shootingAtRim = _composite(rating, ['hgt', 'spd', 'jmp', 'dnk'], [1, 0.2, 0.6, 0.4]);  // Dunk or layup, fast break or half court
-                        p.compositeRating.shootingLowPost = _composite(rating, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1]);  // Post scoring
-                        p.compositeRating.shootingMidRange = _composite(rating, ['hgt', 'fg'], [0.2, 1]);  // Two point jump shot
-                        p.compositeRating.shootingThreePointer = _composite(rating, ['hgt', 'tp'], [0.2, 1]);  // Three point jump shot
-                        p.compositeRating.shootingFT = _composite(rating, ['ft']);  // Free throw
-                        p.compositeRating.rebounding = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1.5, 0.1, 0.1, 0.7]);
-                        p.compositeRating.stealing = _composite(rating, ['spd', 'stl']);
-                        p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk'], [1.5, 0.5, 0.5]);
-                        p.compositeRating.fouling = _composite(rating, ['hgt', 'blk', 'spd'], [1, 1, -1]);
-                        p.compositeRating.defense = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);
-                        p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1]);
-                        p.compositeRating.defensePerimeter = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'stl'], [1, 1, 2, 0.5, 1]);
-                        p.compositeRating.endurance = _composite(rating, ['endu', 'hgt'], [1, -0.1]);
+                            p.skills = rating.skills;
 
-                        p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
+                            p.ovr = rating.ovr;
 
-                        t.player.push(p);
-                    }
+                            p.compositeRating.pace = _composite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
+                            p.compositeRating.usage = _composite(rating, ['ins', 'dnk', 'fg', 'tp']);
+                            p.compositeRating.dribbling = _composite(rating, ['drb', 'spd']);
+                            p.compositeRating.passing = _composite(rating, ['drb', 'pss'], [0.4, 1]);
+                            p.compositeRating.turnovers = _composite(rating, ['drb', 'pss', 'spd', 'hgt', 'ins'], [1, 1, -1, 1, 1]);  // This should not influence whether a turnover occurs, it should just be used to assign players
+                            p.compositeRating.shootingAtRim = _composite(rating, ['hgt', 'spd', 'jmp', 'dnk'], [1, 0.2, 0.6, 0.4]);  // Dunk or layup, fast break or half court
+                            p.compositeRating.shootingLowPost = _composite(rating, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1]);  // Post scoring
+                            p.compositeRating.shootingMidRange = _composite(rating, ['hgt', 'fg'], [0.2, 1]);  // Two point jump shot
+                            p.compositeRating.shootingThreePointer = _composite(rating, ['hgt', 'tp'], [0.2, 1]);  // Three point jump shot
+                            p.compositeRating.shootingFT = _composite(rating, ['ft']);  // Free throw
+                            p.compositeRating.rebounding = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1.5, 0.1, 0.1, 0.7]);
+                            p.compositeRating.stealing = _composite(rating, ['spd', 'stl']);
+                            p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk'], [1.5, 0.5, 0.5]);
+                            p.compositeRating.fouling = _composite(rating, ['hgt', 'blk', 'spd'], [1, 1, -1]);
+                            p.compositeRating.defense = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);
+                            p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1]);
+                            p.compositeRating.defensePerimeter = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'stl'], [1, 1, 2, 0.5, 1]);
+                            p.compositeRating.endurance = _composite(rating, ['endu', 'hgt'], [1, -0.1]);
 
-                    // Number of players to factor into pace and defense rating calculation
-                    numPlayers = t.player.length;
-                    if (numPlayers > 7) {
-                        numPlayers = 7;
-                    }
+                            p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
 
-                    // Would be better if these were scaled by average min played and endurancence
-                    t.pace = 0;
-                    for (i = 0; i < numPlayers; i++) {
-                        t.pace += t.player[i].compositeRating.pace;
-                    }
-                    t.pace /= numPlayers;
-                    t.pace = t.pace * 15 + 100;  // Scale between 100 and 115
-
-                    // Initialize team composite rating object
-                    t.compositeRating = {};
-                    for (rating in p.compositeRating) {
-                        if (p.compositeRating.hasOwnProperty(rating)) {
-                            t.compositeRating[rating] = 0;
+                            t.player.push(p);
                         }
-                    }
 
-                    t.stat = {min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, ptsQtrs: [0]};
-                    teams.push(t);
-                    if (teams.length === 30) {
-                        cb(teams);
-                    }
+                        // Number of players to factor into pace and defense rating calculation
+                        numPlayers = t.player.length;
+                        if (numPlayers > 7) {
+                            numPlayers = 7;
+                        }
+
+                        // Would be better if these were scaled by average min played and endurancence
+                        t.pace = 0;
+                        for (i = 0; i < numPlayers; i++) {
+                            t.pace += t.player[i].compositeRating.pace;
+                        }
+                        t.pace /= numPlayers;
+                        t.pace = t.pace * 15 + 100;  // Scale between 100 and 115
+
+                        // Initialize team composite rating object
+                        t.compositeRating = {};
+                        for (rating in p.compositeRating) {
+                            if (p.compositeRating.hasOwnProperty(rating)) {
+                                t.compositeRating[rating] = 0;
+                            }
+                        }
+
+                        t.stat = {min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, ptsQtrs: [0]};
+                        teams[tid] = t;
+                        afterLoaded();
+                    };
                 };
-            };
+            }(tid));
         }
     }
 

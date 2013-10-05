@@ -47,6 +47,11 @@
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
 
+        // Stupid error logging
+        window.onerror = function(message, file, line, column) {
+           _gaq.push(['_trackEvent', 'JS Error', file + ':' + line + ':' + column + ' ' + message]);
+        };
+
         // Muscula
         /*window.Muscula = { settings:{
             logId:"aa381ce5-fafe-4fc8-a215-9e353c569e35", suppressErrors: false, branding: 'none'

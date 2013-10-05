@@ -576,14 +576,14 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             minFreeAgents.sort(function (a, b) { return player.value(b) - player.value(a); });
 
             // Make sure teams are all within the roster limits
-            tx.objectStore("teams").getAll().onsuccess = function (event) {
+/*            tx.objectStore("teams").getAll().onsuccess = function (event) {
                 var i, teams;
 
                 teams = event.target.result;
                 for (i = 0; i < teams.length; i++) {
                     checkRosterSize(teams[i].tid);
                 }
-            };
+            };*/
         };
 
         tx.oncomplete = function () {

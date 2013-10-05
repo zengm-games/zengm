@@ -88,7 +88,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
     function boxScore(gid, cb) {
         if (gid >= 0) {
             g.dbl.transaction("games").objectStore("games").get(gid).onsuccess = function (event) {
-                var i, j, game;
+                var i, game;
 
                 game = event.target.result;
                 for (i = 0; i < game.teams.length; i++) {

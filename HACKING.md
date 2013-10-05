@@ -105,7 +105,8 @@ For instance, "defensive rebounds" is "drb".
 # To do on new version
 
 - Make sure unit tests all pass
-- (if necessary) Write database upgrade code and notification message in db.js
+- (if necessary) Write database upgrade code in db.js
+- (if not already done piecemeal) Write key changes in js/data/changes.js
 - Set version in index.html, CHANGES.md, and README.md, like http://semver.org/
 - Tag it in git:
 

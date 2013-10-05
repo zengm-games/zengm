@@ -1,4 +1,4 @@
-# 3.2.0 (???)
+# 3.2.0 (2013-10-05)
 
 ## Gameplay and UI
 
@@ -16,6 +16,7 @@
 ## Technical details
 
 - Upgraded to Bootstrap 3
+- Added ability to alert users to new features without relying on an IndexedDB upgrade
 
 # 3.1.1 (2013-07-26)
 

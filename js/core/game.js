@@ -443,7 +443,15 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
                 players = event.target.result;
                 players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
-                realTid = players[0].tid;
+                if (players.length > 0) {
+                    realTid = players[0].tid;
+                } else {
+                    teams.push({id: tid});
+                    if (teams.length === 30) {
+                        cb(teams);
+                    }
+                    return;
+                }
                 t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
                 transaction.objectStore("teams").get(realTid).onsuccess = function (event) {
                     var i, j, numPlayers, p, player, rating, team, teamSeason;

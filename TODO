@@ -33,6 +33,11 @@ BIG NEW GAMEPLAY CHANGES
 
 player development
   should be less players who go from totally raw to superstar in one year http://www.reddit.com/r/BasketballGM/comments/1l2iiy/play_development_should_be_revisited/cbv73rd
+  cap ratings improvement
+    rating 0: max improvement 40
+    rating 70: max improvement 10
+    linear between those
+  add chance for increase in potential for young players
 less weird player rating combos
   different ratings should have different potential for growth - easier to improve jumpshot than quickness
   revamp position assignment algorithm
@@ -61,6 +66,7 @@ somehow, don't let the user's team sign any/all free agents they want
 MINOR FIXES
 -----------
 
+update HACKING.md
 show EWA more places
   team history
   hall of fame

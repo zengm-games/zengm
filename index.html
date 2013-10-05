@@ -5,17 +5,27 @@
     <title>Basketball GM</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="/gen/bbgm.css" rel="stylesheet">
-    <!--<link href="/css/bootstrap.css" rel="stylesheet">
-    <link href="/css/bbgm.css" rel="stylesheet">
-    <link href="/css/DT_bootstrap.css" rel="stylesheet">-->
-
     <link rel="shortcut icon" href="/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
 
     <script type="text/javascript">
+      function loadCSS(filename){
+        var el = document.createElement("link");
+        el.setAttribute("rel", "stylesheet");
+        el.setAttribute("href", filename);
+        document.getElementsByTagName("head")[0].appendChild(el);
+      }
+
+      if (localStorage.debug === "debug") {
+        loadCSS("/css/bootstrap.css");
+        loadCSS("/css/bbgm.css");
+        loadCSS("/css/DT_bootstrap.css");
+      } else {
+        loadCSS("/gen/bbgm.css");
+      }
+
       window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
 
       if (enableLogging) {

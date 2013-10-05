@@ -1,12 +1,3 @@
-DB CHANGES SINCE 3.1.0
-----------------------
-
-imgURL in player root (although lacking this doesn't cause an error now, better add it to be sure)
-if not present add team*Cache things to gameAttributes
-  after this is handled, delete the hack in util.viewHelpers.beforeLeague
-ewa in player.stats - doesn't really matter, right?
-ptsQtrs stored for games - but this will just be ignored if it's not there
-
 BIG NEW FEATURES
 ----------------
 
@@ -92,7 +83,7 @@ AI teams playing with under 5 players http://www.reddit.com/r/BasketballGM/comme
 awards
   assigned based on wins added, like hof
     store EWA in database, update when PER is updated in advStats
-      use in player.madeHof - problem is, EWA isn't stored for seasons prior to this change..
+      use in player.madeHof
     formulas:
       overall: linear combination of EWA and team wins
       defensive: basically same stupid shit as now, but make sure to account for games played

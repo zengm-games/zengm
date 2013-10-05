@@ -56,14 +56,6 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                 db.loadGameAttributes(null, function () {
                     var css, teams;
 
-                    // Hack that should be replaced with DB upgrade
-                    if (!g.hasOwnProperty("teamAbbrevsCache")) {
-                        teams = helpers.getTeamsDefault();
-                        g.teamAbbrevsCache = _.pluck(teams, "abbrev");
-                        g.teamRegionsCache = _.pluck(teams, "region");
-                        g.teamNamesCache = _.pluck(teams, "name");
-                    }
-
                     ui.update({
                         container: "content",
                         template: "leagueLayout"

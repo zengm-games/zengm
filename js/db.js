@@ -52,6 +52,8 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
             migrateMessage = '<p><strong>New in version 3.1.0:</strong> better AI from opposing managers and more trade functionality, including trading draft picks and asking for counter-proposals from the team you\'re trading with.</p>' + migrateMessage;
         }
 
+        // This is no longer being used for update messages! See util/changes.js
+
         $("#content").before('<div class="alert alert-info alert-top"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
     }
 
@@ -496,6 +498,75 @@ console.log(event);
                     }
                 }());
             }
+            if (event.oldVersion <= 5) {
+                tx.objectStore("players").openCursor().onsuccess = function (event) {
+                    var cursor, i, p;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
+
+                        if (!p.hasOwnProperty("imgURL")) {
+                            p.imgURL = "";
+                        }
+
+                        for (i = 0; i < p.stats.length; i++) {
+                            if (!p.stats[i].hasOwnProperty("ewa")) {
+                                p.stats[i].ewa = p.stats[i].min * (p.stats[i].per - 11) / 67 / 30 * 0.8;
+                            }
+                        }
+
+                        cursor.update(p);
+                        cursor.continue();
+                    }
+                };
+
+                tx.objectStore("teams").getAll().onsuccess = function (event) {
+                    var teams;
+
+                    teams = event.target.result;
+
+                    tx.objectStore("gameAttributes").put({
+                        key: "teamAbbrevsCache",
+                        value: _.pluck(teams, "abbrev")
+                    });
+                    tx.objectStore("gameAttributes").put({
+                        key: "teamRegionsCache",
+                        value: _.pluck(teams, "region")
+                    });
+                    tx.objectStore("gameAttributes").put({
+                        key: "teamNamesCache",
+                        value: _.pluck(teams, "name")
+                    });
+                };
+
+                tx.objectStore("games").openCursor().onsuccess = function (event) {
+                    var cursor, i, j, game, update;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        game = cursor.value;
+                        update = false;
+
+                        for (i = 0; i < game.teams.length; i++) {
+                            // Fix ptsQtrs for old games where this wasn't stored
+                            if (game.teams[i].ptsQtrs === undefined) {
+                                game.teams[i].ptsQtrs = ["-", "-", "-", "-"];
+                                for (j = 0; j < game.overtimes; j++) {
+                                    game.teams[i].ptsQtrs.push("-");
+                                }
+                                update = true;
+                            }
+                        }
+
+                        if (update) {
+                            cursor.update(game);
+                        }
+
+                        cursor.continue();
+                    }
+                };
+            }
         });
     }
 
@@ -503,7 +574,7 @@ console.log(event);
         var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 5);
+        request = indexedDB.open("league" + lid, 6);
         request.onerror = function (event) {
             throw new Error("League connection error");
         };

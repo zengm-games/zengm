@@ -1187,12 +1187,12 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     fp.careerStats = filterStatsPartial(p, ps.cr, options.stats);
                     fp.careerStats.per = _.reduce(ps.r, function (memo, psr) { return memo + psr.per * psr.min; }, 0) / (fp.careerStats.min * fp.careerStats.gp); // Special case for PER - weight by minutes per season
                     if (isNaN(fp.careerStats.per)) { fp.careerStats.per = 0; }
-                    fp.careerStats.ewa = _.reduce(ps.r, function (memo, psr) { if (!isNaN(psr.ewa)) { return memo + psr.ewa; } return memo; }, 0); // Special case for EWA - sum
+                    fp.careerStats.ewa = _.reduce(ps.r, function (memo, psr) { return memo + psr.ewa; }, 0); // Special case for EWA - sum
                     if (options.playoffs) {
                         fp.careerStatsPlayoffs = filterStatsPartial(p, ps.cp, options.stats);
                         fp.careerStatsPlayoffs.per = _.reduce(ps.p, function (memo, psp) { return memo + psp.per * psp.min; }, 0) / (fp.careerStatsPlayoffs.min * fp.careerStatsPlayoffs.gp); // Special case for PER - weight by minutes per season
                         if (isNaN(fp.careerStatsPlayoffs.per)) { fp.careerStatsPlayoffs.per = 0; }
-                        fp.careerStatsPlayoffs.ewa = _.reduce(ps.p, function (memo, psp) { if (!isNaN(psp.ewa)) { return memo + psp.ewa; } return memo; }, 0); // Special case for EWA - sum
+                        fp.careerStatsPlayoffs.ewa = _.reduce(ps.p, function (memo, psp) { return memo + psp.ewa; }, 0); // Special case for EWA - sum
                     }
                 } else if (options.stats.length > 0) { // Return 0 stats if no entry and a single year was requested, unless no stats were explicitly requested
                     // Single seasons

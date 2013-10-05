@@ -80,8 +80,8 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jqu
         ko.computed(function () {
             var pic;
 
-            // If playerImgURL exists and is not an empty string, use it instead of the generated face
-            if (vm.player.imgURL && vm.player.imgURL()) {
+            // If playerImgURL is not an empty string, use it instead of the generated face
+            if (vm.player.imgURL()) {
                 pic = document.getElementById("picture");
                 pic.style.backgroundImage = "url('" + vm.player.imgURL() + "')";
                 pic.style.backgroundRepeat = "no-repeat";

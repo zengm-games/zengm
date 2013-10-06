@@ -218,7 +218,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @return {Object} Updated player object.
      */
     function develop(p, years, generate, coachingRank) {
-        var age, baseChange, i, j, ratingKeys, r, sigma, sign;
+        var age, baseChange, i, j, maxBaseChange, ratingKeys, r, sigma, sign;
 
         years = years !== undefined ? years : 1;
         generate = generate !== undefined ? generate : false;
@@ -237,20 +237,10 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             }
 
             // Variance of ratings change is proportional to the potential difference
-            sigma = (p.ratings[r].pot - p.ratings[r].ovr) / 10;
+            sigma = (p.ratings[r].pot - p.ratings[r].ovr) / 15;
 
             // 60% of the time, improve. 20%, regress. 20%, stay the same
-            baseChange = random.gauss(random.randInt(-1, 3), sigma);
-
-            // Bound possible changes
-            if (baseChange > 30) {
-                baseChange = 30;
-            } else if (baseChange < -5) {
-                baseChange = -5;
-            }
-            if (baseChange + p.ratings[r].pot > 95) {
-                baseChange = 95 - p.ratings[r].pot;
-            }
+            baseChange = random.realGauss(random.randInt(-1, 3), sigma);
 
             // Modulate by potential difference, but only for growth, not regression
             if (baseChange > 0) {
@@ -279,6 +269,18 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 baseChange *= ((coachingRank - 1) * (0.5) / 29 + 0.75);
             }
 
+            // Bound possible changes
+            maxBaseChange = 40 - 30 * (p.ratings[r].ovr / 70); // 40 when ovr is 0, 10 when ovr is 70
+            if (baseChange > maxBaseChange) {
+                // Randomly make a big jump
+                if (age < 22) {
+                    p.ratings[r].pot += maxBaseChange - baseChange > 10 ? 10 : maxBaseChange - baseChange;
+                }
+                baseChange = maxBaseChange;
+            } else if (baseChange < -5) {
+                baseChange = -5;
+            }
+
             ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {
                 //increase = plusMinus
@@ -291,6 +293,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
                 p.ratings[r].pot = p.ratings[r].ovr;
             }
+            p.ratings[r].pot = limitRating(p.ratings[r].pot);
 
             // Skills
             p.ratings[r].skills = skills(p.ratings[r]);

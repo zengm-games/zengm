@@ -56,6 +56,9 @@ somehow, don't let the user's team sign any/all free agents they want
 MINOR FIXES
 -----------
 
+make sure the changes alert and the "refuses to negotiate" alert both look good
+  link to player in "refuses to negotiate" alert
+replace random.gauss with random.realGauss
 update HACKING.md
 show EWA more places
   team history

@@ -63,7 +63,7 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
             profiles = ["Point", "Wing", "Big", "Big", ""];
             for (i = 0; i < 70; i++) {
                 baseRating = random.randInt(8, 33);
-                pot = parseInt(random.gauss(50, 20), 10);
+                pot = parseInt(random.gauss(50, 10), 10);
                 if (pot < baseRating) {
                     pot = baseRating;
                 }
@@ -322,7 +322,7 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                             return;
                         }
 
-                        selection = Math.floor(Math.abs(random.gauss(0, 2)));  // 0=best prospect, 1=next best prospect, etc.
+                        selection = Math.floor(Math.abs(random.gauss(0, 1.3)));  // 0=best prospect, 1=next best prospect, etc.
                         pid = playersAll[selection].pid;
                         selectPlayer(pick, pid, function () {
                             pids.push(pid);

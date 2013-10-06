@@ -237,15 +237,10 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             }
 
             // Variance of ratings change is proportional to the potential difference
-            sigma = (p.ratings[r].pot - p.ratings[r].ovr) / 15;
+            sigma = (p.ratings[r].pot - p.ratings[r].ovr) / 12;
 
             // 60% of the time, improve. 20%, regress. 20%, stay the same
-            baseChange = random.realGauss(random.randInt(-1, 3), sigma);
-
-            // Modulate by potential difference, but only for growth, not regression
-            if (baseChange > 0) {
-                baseChange *= 1 + (p.ratings[r].pot - p.ratings[r].ovr) / 8;
-            }
+            baseChange = 2 * random.realGauss(random.randInt(-1, 3), sigma);
 
             // Modulate by age
             if (age > 23) {
@@ -281,15 +276,25 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 baseChange = -5;
             }
 
-            ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
+            // Easy to improve
+            ratingKeys = ['stre', 'endu', 'ins', 'ft', 'fg', 'tp', 'blk', 'stl'];
             for (j = 0; j < ratingKeys.length; j++) {
-                //increase = plusMinus
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + random.gauss(1, 2) * baseChange);
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + random.realGauss(1, 1) * baseChange);
+            }
+            // Hard to improve
+            ratingKeys = ['spd', 'jmp', 'dnk'];
+            for (j = 0; j < ratingKeys.length; j++) {
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.realGauss(1, 1) * baseChange, -100, 20));
+            }
+            // In between
+            ratingKeys = ['drb', 'pss', 'reb'];
+            for (j = 0; j < ratingKeys.length; j++) {
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.realGauss(1, 1) * baseChange, -10, 10));
             }
 
             // Update overall and potential
             p.ratings[r].ovr = ovr(p.ratings[r]);
-            p.ratings[r].pot += -2 + Math.round(random.gauss(0, 2));
+            p.ratings[r].pot += -1 + Math.round(random.realGauss(0, 1));
             if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
                 p.ratings[r].pot = p.ratings[r].ovr;
             }

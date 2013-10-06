@@ -1,8 +1,6 @@
 BIG NEW FEATURES
 ----------------
 
-Do 3.2.0
-http://www.reddit.com/r/BasketballGM/comments/1nk34h/new_ui_prettier_less_glitchy_and_mobilefriendly/ccjnki5?context=3
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?
@@ -109,6 +107,7 @@ in playoffs, replace "play week" with "play until end of round"
 LOW PRIORITY
 ------------
 
+some kind of more detailed UI/menu exposed in the lg view, maybe a sidebar like the old layout
 cross-league play
 mobile UI, bootstrap 3
   do something about hover tooltips

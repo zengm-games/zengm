@@ -1,3 +1,8 @@
+appcache
+  is it going to cache every page as index.html? How can I avoid that?
+  update things besides apache to work still
+  make easy to disable in dev
+
 BIG NEW FEATURES
 ----------------
 

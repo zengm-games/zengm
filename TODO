@@ -111,7 +111,7 @@ LOW PRIORITY
 ------------
 
 appcache
-  in ffx, it will try to download everything every time except when it's offline. in chrome, it always uses cache first, as expected.
+  loads from network unless network is not available, because fallback only runs when the network is not available. so the cached versions of files are only used when it is offline. would be better/faster to use them even when online, but that's not possible until the appcache standard is updated unless i either (1) cache every page (way too much) or (2) use hash # urls instead of real URLs (ugly).
 some kind of more detailed UI/menu exposed in the lg view, maybe a sidebar like the old layout
 cross-league play
 mobile UI, bootstrap 3

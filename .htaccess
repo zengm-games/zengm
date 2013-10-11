@@ -16,6 +16,7 @@ Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /
 
+RewriteRule ^manifest_hack$ manifest_hack.html
 RewriteRule ^test$ test.html
 RewriteRule ^test_case$ test_case.html
 RewriteRule ^docs$ docs/

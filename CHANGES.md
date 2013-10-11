@@ -1,3 +1,7 @@
+# Since 3.2.0
+
+- AppCache used to allow offline play
+
 # 3.2.0 (2013-10-05)
 
 ## Gameplay and UI

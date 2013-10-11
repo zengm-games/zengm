@@ -1,8 +1,3 @@
-appcache
-  is it going to cache every page as index.html? How can I avoid that?
-  update things besides apache to work still
-  make easy to disable in dev
-
 BIG NEW FEATURES
 ----------------
 
@@ -115,6 +110,8 @@ in playoffs, replace "play week" with "play until end of round"
 LOW PRIORITY
 ------------
 
+appcache
+  in ffx, it will try to download everything every time except when it's offline. in chrome, it always uses cache first, as expected.
 some kind of more detailed UI/menu exposed in the lg view, maybe a sidebar like the old layout
 cross-league play
 mobile UI, bootstrap 3

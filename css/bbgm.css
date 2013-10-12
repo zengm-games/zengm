@@ -326,9 +326,6 @@ select.teams {
 }
 /* http://twitterbootstrap3buttons.w3masters.nl/ */
 .slide-out-handle {
-  background-color: #563D7C;
-  border-color: #563D7C;
-  color: #fff;
   -webkit-border-bottom-left-radius: 0;
      -moz-border-bottom-left-radius: 0;
           border-bottom-left-radius: 0;
@@ -336,11 +333,20 @@ select.teams {
      -moz-border-bottom-right-radius: 0;
           border-bottom-right-radius: 0;
 }
-.slide-out-handle:hover,
-.slide-out-handle:focus,
-.slide-out-handle:active {
+#feedback .slide-out-handle {
+  background-color: #563D7C;
+  border-color: #563D7C;
+  color: #fff;
+}
+#feedback .slide-out-handle:hover,
+#feedback .slide-out-handle:focus,
+#feedback .slide-out-handle:active {
   background-color: #4a356b;
   border-color: #3e2c5a;
+}
+#share {
+  width: 275px;
+  height: 235px;
 }
 
 .bar-graph-small {

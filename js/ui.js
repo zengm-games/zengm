@@ -9,14 +9,23 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
     function init() {
         var api, playMenu, slideOut, topMenuCollapse;
 
-        // "Feedback" slider
-        slideOut = $(".slide-out");
+        // Slide out tabs
+        slideOut = $("#feedback");
         if (slideOut.length > 0) {
             slideOut.css({
                 visibility: "visible"
             }).tabSlideOut({
-                tabHandle: ".slide-out-handle",
+                tabHandle: "#feedback .slide-out-handle",
                 rightPos: "20px"
+            });
+        }
+        slideOut = $("#share");
+        if (slideOut.length > 0) {
+            slideOut.css({
+                visibility: "visible"
+            }).tabSlideOut({
+                tabHandle: "#share .slide-out-handle",
+                rightPos: "120px"
             });
         }
 

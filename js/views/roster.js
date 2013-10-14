@@ -96,79 +96,6 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         };
     }
 
-    function doBuyOut(pid, cb) {
-        var playerStore, transaction;
-
-        transaction = g.dbl.transaction(["players", "schedule", "teams"], "readwrite");
-        playerStore = transaction.objectStore("players");
-
-        playerStore.index("tid").count(g.userTid).onsuccess = function (event) {
-            var numPlayersOnRoster;
-
-            numPlayersOnRoster = event.target.result;
-
-            if (numPlayersOnRoster <= 5) {
-                return cb("You must keep at least 5 players on your roster.");
-            }
-
-            pid = parseInt(pid, 10);
-            playerStore.get(pid).onsuccess = function (event) {
-                var p;
-
-                p = event.target.result;
-                // Don't let the user update CPU-controlled rosters
-                if (p.tid === g.userTid) {
-                    transaction.objectStore("schedule").getAll().onsuccess = function (event) {
-                        var cashOwed, i, numGamesRemaining, schedule;
-
-                        // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
-                        schedule = event.target.result;
-                        numGamesRemaining = 0;
-                        for (i = 0; i < schedule.length; i++) {
-                            if (g.userTid === schedule[i].homeTid || g.userTid === schedule[i].awayTid) {
-                                numGamesRemaining += 1;
-                            }
-                        }
-
-                        cashOwed = ((1 + p.contract.exp - g.season) * p.contract.amount - (1 - numGamesRemaining / 82) * p.contract.amount);  // [thousands of dollars]
-
-                        transaction.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
-                            var cash, cursor, s, t;
-
-                            cursor = event.target.result;
-                            t = cursor.value;
-
-                            s = t.seasons.length - 1;
-                            cash = t.seasons[s].cash;  // [thousands of dollars]
-
-                            if (cashOwed < cash) {
-                                // Pay the cash
-                                t.seasons[s].cash -= cashOwed;
-                                t.seasons[s].expenses.buyOuts.amount += cashOwed;
-                                cursor.update(t);
-
-                                finances.updateRanks(transaction, "expenses", function () {
-                                    // Set to FA in database
-                                    player.genBaseMoods(transaction, function (baseMoods) {
-                                        player.addToFreeAgents(transaction, p, null, baseMoods, function () {
-                                            db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                                                cb();
-                                            });
-                                        });
-                                    });
-                                });
-                            } else {
-                                return cb("Not enough cash.");
-                            }
-                        };
-                    };
-                } else {
-                    return cb("You aren't allowed to do this.");
-                }
-            };
-        };
-    }
-
     function editableChanged(editable, vm) {
         var rosterTbody;
 
@@ -331,13 +258,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                             for (i = 0; i < players.length; i++) {
                                 if (inputs.tid === g.userTid && players.length > 5) {
                                     players[i].canRelease = true;
-                                    if (inputs.tid === g.userTid && players[i].cashOwed <= vars.team.cash) {
-                                        players[i].canBuyOut = true;
-                                    } else {
-                                        players[i].canBuyOut = false;
-                                    }
                                 } else {
-                                    players[i].canBuyOut = false;
                                     players[i].canRelease = false;
                                 }
                             }
@@ -368,7 +289,6 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                         for (i = 0; i < players.length; i++) {
                             players[i].age = players[i].age - (g.season - inputs.season);
-                            players[i].canBuyOut = false;
                             players[i].canRelease = false;
                         }
 
@@ -414,21 +334,6 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                             ui.realtimeUpdate(["playerMovement"]);
                         }
                     });
-                }
-            } else if (this.dataset.action === "buyOut") {
-                if (vm.team.cash() > players[i].cashOwed()) {
-                    if (window.confirm("Are you sure you want to buy out " + players[i].name() + "? You will have to pay him the " + helpers.formatCurrency(players[i].cashOwed(), "M") + " remaining on his contract from your current cash reserves of " + helpers.formatCurrency(vm.team.cash(), "M") + ". He will then become a free agent and his contract will no longer count towards your salary cap.")) {
-                        tr = this.parentNode.parentNode;
-                        doBuyOut(pid, function (error) {
-                            if (error) {
-                                alert("Error: " + error);
-                            } else {
-                                ui.realtimeUpdate(["playerMovement"]);
-                            }
-                        });
-                    }
-                } else {
-                    alert("Error: You only have " + helpers.formatCurrency(vm.team.cash(), "M") + " in cash, but it would take $" + this.dataset.cashOwed + "M to buy out " + this.dataset.playerName + ".");
                 }
             }
         });

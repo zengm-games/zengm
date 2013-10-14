@@ -13,27 +13,12 @@ more starting options
   randomize players on custom rosters
 localization
   http://requirejs.org/docs/api.html#i18n
-league settings
-  enable buy out button or not
-  set salary cap, luxury tax, etc
-  enable/disable trading rules
 
 BIG NEW GAMEPLAY CHANGES
 ------------------------
 
-player development
-  should be less players who go from totally raw to superstar in one year http://www.reddit.com/r/BasketballGM/comments/1l2iiy/play_development_should_be_revisited/cbv73rd
-  cap ratings improvement
-    rating 0: max improvement 40
-    rating 70: max improvement 10
-    linear between those
-  add chance for increase in potential for young players
-less weird player rating combos
-  different ratings should have different potential for growth - easier to improve jumpshot than quickness
-  revamp position assignment algorithm
-    until a player is ~28 (whenever ratings decline starts), recalculate every year
-remove "buy out"
-  done, but the backend code is still there
+revamp position assignment algorithm
+  until a player is ~28 (whenever ratings decline starts), recalculate every year
 gameSim
   balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbfzr43?context=3 http://www.reddit.com/r/BasketballGM/comments/1k1881/pf_stands_for_powerful/
@@ -110,6 +95,10 @@ in playoffs, replace "play week" with "play until end of round"
 LOW PRIORITY
 ------------
 
+league settings
+  enable buy out button or not
+  set salary cap, luxury tax, etc
+  enable/disable trading rules
 appcache
   loads from network unless network is not available, because fallback only runs when the network is not available. so the cached versions of files are only used when it is offline. would be better/faster to use them even when online, but that's not possible until the appcache standard is updated unless i either (1) cache every page (way too much) or (2) use hash # urls instead of real URLs (ugly).
 some kind of more detailed UI/menu exposed in the lg view, maybe a sidebar like the old layout

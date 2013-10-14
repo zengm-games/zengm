@@ -49,6 +49,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                     season: startingSeason,
                     startingSeason: startingSeason,
                     phase: 0,
+                    nextPhase: null, // Used only for fantasy draft
                     gamesInProgress: false,
                     stopGames: false,
                     lastDbChange: 0,

@@ -25,6 +25,7 @@ define(["lib/knockout"], function (ko) {
 
     // Constants in all caps
     g.PHASE = {
+        FANTASY_DRAFT: -1,
         PRESEASON: 0,
         REGULAR_SEASON: 1,
         AFTER_TRADE_DEADLINE: 2,

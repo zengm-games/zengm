@@ -70,7 +70,7 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
     }
 
     function get(req) {
-        if (g.phase !== g.PHASE.DRAFT) {
+        if (g.phase !== g.PHASE.DRAFT && g.phase !== g.PHASE.FANTASY_DRAFT) {
             return {
                 redirectUrl: helpers.leagueUrl(["draft_summary"])
             };

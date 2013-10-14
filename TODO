@@ -1,18 +1,25 @@
+DB CHANGES SINCE 3.2.0
+----------------------
+g.nextPhase
+
 BIG NEW FEATURES
 ----------------
 
 fantasy draft
-  start from the tools menu at any time
+  start from the tools menu at any time EXCEPT during a draft or fantasy draft
+      link to /l/#/fantasy_draft
+      In a "fantasy draft", all non-retired players are put into one big pool and teams take turns drafting players, similar to a fantasy basketball draft. At the beginning of the draft, the order of picks is randomized. During the draft, the order of picks snakes (reverses every other round). For example, the team that picks first in the first round picks last in the second round.
   flow
     start from the tools menu at any time
-      warning message describing all the stuff below
-    set all non-retired players to g.PLAYER.UNDRAFTED
-    empty releasedPlayers
     randomize order for picks, then snake
       use draftPicks like core.draft
     set phase to.. something. -1 maybe. but then need a way to restore correct phase after draft
   share as much code with core.draft as possible
     make sure to add stats row for new team as appropriate
+    templates?
+      need to show contract and stats in fantasy draft, right?
+      needs to be sortable
+    add entry for fantasy draft summary to draft history dropdown?
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?
@@ -51,6 +58,7 @@ somehow, don't let the user's team sign any/all free agents they want
 MINOR FIXES
 -----------
 
+g+ button flashes before it's hidden
 make sure the changes alert and the "refuses to negotiate" alert both look good
   link to player in "refuses to negotiate" alert
 replace random.gauss with random.realGauss

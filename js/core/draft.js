@@ -81,7 +81,9 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                 playerStore.put(p);
             }
 
-            tx.oncomplete = cb;
+            tx.oncomplete = function () {
+                cb();
+            };
         };
     }
 
@@ -205,6 +207,44 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                 setOrder(draftOrder, cb);
             };
         });
+    }
+
+    /**
+     * Sets fantasy draft order and save it to the draftOrder object store.
+     *
+     * Randomize team order and then snake for 12 rounds.
+     *
+     * @memberOf core.draft
+     * @param {function()=} cb Optional callback function.
+     */
+    function genOrderFantasy(cb) {
+        var draftOrder, i, round, tids;
+
+        // Randomly-ordered list of tids
+        tids = [];
+        for (i = 0; i < g.numTeams; i++) {
+            tids.push(i);
+        }
+        random.shuffle(tids);
+
+        // Set total draft order: 12 rounds, snake
+        draftOrder = [];
+        for (round = 1; round <= 12; round++) {
+            for (i = 0; i < tids.length; i++) {
+                draftOrder.push({
+                    round: round,
+                    pick: i + 1,
+                    tid: tids[i],
+                    abbrev: g.teamAbbrevsCache[tids[i]],
+                    originalTid: tids[i],
+                    originalAbbrev: g.teamAbbrevsCache[tids[i]]
+                });
+            }
+
+            tids.reverse(); // Snake
+        }
+
+        setOrder(draftOrder, cb);
     }
 
     /**
@@ -345,6 +385,7 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
         setOrder: setOrder,
         genPlayers: genPlayers,
         genOrder: genOrder,
+        genOrderFantasy: genOrderFantasy,
         untilUserOrEnd: untilUserOrEnd,
         selectPlayer: selectPlayer
     };

@@ -387,7 +387,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         } else if (g.phase === g.PHASE.BEFORE_DRAFT) {
             // Offseason - pre draft
             keys = ["play-menu-until-draft"];
-        } else if (g.phase === g.PHASE.DRAFT) {
+        } else if (g.phase === g.PHASE.DRAFT || g.phase === g.PHASE.FANTASY_DRAFT) {
             // Draft
             keys = ["play-menu-view-draft"];
         } else if (g.phase === g.PHASE.AFTER_DRAFT) {

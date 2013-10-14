@@ -883,7 +883,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
         phaseText = g.season + " after draft";
 
-
         // Add a new set of draft picks
         tx = g.dbl.transaction("draftPicks", "readwrite");
         draftPickStore = tx.objectStore("draftPicks");
@@ -1002,6 +1001,50 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         });
     }
 
+    function newPhaseFantasyDraft(cb) {
+        var phaseText;
+
+        phaseText = g.season + " fantasy draft";
+
+        draft.genOrderFantasy(function () {
+            db.setGameAttributes({nextPhase: g.phase}, function () {
+                var tx;
+
+                tx = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
+
+                // Make all players free agents
+                tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
+
+                        p.tid = g.PLAYER.UNDRAFTED;
+
+                        cursor.update(p);
+                        cursor.continue();
+                    } else {
+                        // Delete all records of released players
+                        tx.objectStore("releasedPlayers").openCursor().onsuccess = function (event) {
+                            var cursor;
+
+                            cursor = event.target.result;
+                            if (cursor) {
+                                cursor.delete();
+                                cursor.continue();
+                            }
+                        };
+                    }
+                };
+
+                tx.oncomplete = function () {
+                    newPhaseCb(g.PHASE.FANTASY_DRAFT, phaseText, cb, helpers.leagueUrl(["draft"]), ["playerMovement"]);
+                };
+            });
+        });
+    }
+
     /**
      * Set a new phase of the game.
      *
@@ -1038,6 +1081,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             newPhaseResignPlayers(cb);
         } else if (phase === g.PHASE.FREE_AGENCY) {
             newPhaseFreeAgency(cb);
+        } else if (phase === g.PHASE.FANTASY_DRAFT) {
+            newPhaseFantasyDraft(cb);
         }
     }
 

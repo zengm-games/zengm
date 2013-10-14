@@ -179,6 +179,8 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
             this.get("/l/:lid/team_shot_locations/:season", views.teamShotLocations.get);
             this.get("/l/:lid/export_rosters", views.exportRosters.get);
             this.post("/l/:lid/export_rosters", views.exportRosters.post);
+            this.get("/l/:lid/fantasy_draft", views.fantasyDraft.get);
+            this.post("/l/:lid/fantasy_draft", views.fantasyDraft.post);
         });
 
         app.start();

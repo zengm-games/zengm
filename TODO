@@ -8,18 +8,21 @@ BIG NEW FEATURES
 fantasy draft
   start from the tools menu at any time EXCEPT during a draft or fantasy draft
       link to /l/#/fantasy_draft
-      In a "fantasy draft", all non-retired players are put into one big pool and teams take turns drafting players, similar to a fantasy basketball draft. At the beginning of the draft, the order of picks is randomized. During the draft, the order of picks snakes (reverses every other round). For example, the team that picks first in the first round picks last in the second round.
   flow
     start from the tools menu at any time
     randomize order for picks, then snake
       use draftPicks like core.draft
     set phase to.. something. -1 maybe. but then need a way to restore correct phase after draft
+    when fantasy draft is over
+      set phase to g.nextPhase and set g.nextPhase to null
+      go to summary of the draft
   share as much code with core.draft as possible
     make sure to add stats row for new team as appropriate
     templates?
       need to show contract and stats in fantasy draft, right?
       needs to be sortable
     add entry for fantasy draft summary to draft history dropdown?
+  make sure player draft history is preserved
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?

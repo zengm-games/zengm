@@ -1,0 +1,9 @@
+<h1>Fantasy Draft <span data-bind="newWindow: []"></span></h1>
+
+<p>In a "fantasy draft", all non-retired players are put into one big pool and teams take turns drafting players, similar to a fantasy basketball draft. At the beginning of the draft, the order of picks is randomized. During the draft, the order of picks snakes (reverses every other round). For example, the team that picks first in the first round picks last in the second round.</p>
+
+<p class="text-danger"><b>Warning:</b> Once you start a fantasy draft, there is no going back!</p>
+
+<form method="POST" role="form" data-bind="attrLeagueUrl: {action: ['fantasy_draft']}">
+  <button class="btn btn-large btn-success" id="start-fantasy-draft">Start Fantasy Draft</button>
+</form>

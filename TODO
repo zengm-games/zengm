@@ -1,16 +1,26 @@
 BIG NEW FEATURES
 ----------------
 
+fantasy draft
+  start from the tools menu at any time
+  flow
+    start from the tools menu at any time
+      warning message describing all the stuff below
+    set all non-retired players to g.PLAYER.UNDRAFTED
+    empty releasedPlayers
+    randomize order for picks, then snake
+      use draftPicks like core.draft
+    set phase to.. something. -1 maybe. but then need a way to restore correct phase after draft
+  share as much code with core.draft as possible
+    make sure to add stats row for new team as appropriate
 team switching after being fired
   2 year grace period in message.js, like with a new league?
   intro message from new owner, like a new league?
   rename g.gameOver
   keep track of what team the user controlled, so stats for the user (not the team) can be shown
 more starting options
-  UI
-    Add checkboxes: Randomize Rosters (only show for custom rosters), Fantasy Draft
-  leaguewide draft
-  randomize players on custom rosters
+  "equalize cities" under teams - set all to same population
+    implications for popRank?
 localization
   http://requirejs.org/docs/api.html#i18n
 

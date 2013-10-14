@@ -2,15 +2,23 @@
  * @name views.fantasyDraft
  * @namespace Fantasy draft confirmation.
  */
-define(["globals", "ui", "core/season", "util/bbgmView"], function (g, ui, season, bbgmView) {
+define(["globals", "ui", "core/season", "util/bbgmView", "util/helpers"], function (g, ui, season, bbgmView, helpers) {
     "use strict";
 
-    function get(req) {
-
+    function get() {
+        if (g.phase === g.PHASE.DRAFT) {
+            return {
+                errorMessage: "You can't start a fantasy draft while a regular draft is already in progress."
+            };
+        }
+        if (g.phase === g.PHASE.FANTASY_DRAFT) {
+            return {
+                redirectUrl: helpers.leagueUrl(["draft"])
+            };
+        }
     }
 
-    function post(req) {
-console.log(req);
+    function post() {
         document.getElementById("start-fantasy-draft").disabled = true;
 
         season.newPhase(g.PHASE.FANTASY_DRAFT);

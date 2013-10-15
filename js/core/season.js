@@ -5,6 +5,8 @@
 define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/jquery", "lib/underscore", "util/helpers", "util/message", "util/random"], function (db, g, ui, contractNegotiation, draft, finances, freeAgents, player, team, $, _, helpers, message, random) {
     "use strict";
 
+    var phaseText;
+
     /**
      * Update g.ownerMood based on performance this season.
      *
@@ -401,6 +403,19 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         };
     }
 
+    phaseText = {
+        "-1": " fantasy draft",
+        "0": " preseason",
+        "1": " regular season",
+        "2": " regular season",
+        "3": " playoffs",
+        "4": " before draft",
+        "5": " draft",
+        "6": " after draft",
+        "7": " resign players",
+        "8": " free agency"
+    };
+
     /**
      * Common tasks run after a new phrase is set.
      *
@@ -408,17 +423,16 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
      * 
      * @memberOf core.season
      * @param {number} phase Integer representing the new phase of the game (see other functions in this module).
-     * @param {string} phaseText Textual representation of the new phase, which will be displayed in the UI.
      * @param {function()=} cb Optional callback run after the phase is set and the play menu is updated.
      * @param {string=} url Optional URL to pass to ui.realtimeUpdate for redirecting on new phase. If undefined, then the current page will just be refreshed.
      * @param {Array.<string>=} updateEvents Optional array of strings.
      */
-    function newPhaseCb(phase, phaseText, cb, url, updateEvents) {
+    function newPhaseCb(phase, cb, url, updateEvents) {
         updateEvents = updateEvents !== undefined ? updateEvents : [];
 
         // Set phase before updating play menu
         db.setGameAttributes({phase: phase}, function () {
-            ui.updatePhase(phaseText);
+            ui.updatePhase(g.season + phaseText[phase]);
             ui.updatePlayMenu(null, function () {
                 // Set lastDbChange last so there is no race condition
                 db.setGameAttributes({lastDbChange: Date.now()}, function () {
@@ -435,9 +449,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
     function newPhasePreseason(cb) {
         db.setGameAttributes({season: g.season + 1}, function () {
-            var coachingRanks, phaseText, scoutingRank, tx;
-
-            phaseText = g.season + " preseason";
+            var coachingRanks, scoutingRank, tx;
 
             coachingRanks = [];
 
@@ -493,16 +505,14 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             tx.oncomplete = function () {
                 // AI teams sign free agents
                 freeAgents.autoSign(function () {
-                    newPhaseCb(g.PHASE.PRESEASON, phaseText, cb, undefined, ["playerMovement"]);
+                    newPhaseCb(g.PHASE.PRESEASON, cb, undefined, ["playerMovement"]);
                 });
             };
         });
     }
 
     function newPhaseRegularSeason(cb) {
-        var checkRosterSize, minFreeAgents, phaseText, playerStore, players, tx, userTeamSizeError;
-
-        phaseText = g.season + " regular season";
+        var checkRosterSize, minFreeAgents, playerStore, players, tx, userTeamSizeError;
 
         checkRosterSize = function (tid) {
             playerStore.index("tid").getAll(tid).onsuccess = function (event) {
@@ -594,7 +604,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
                         tids = newSchedule();
                         setSchedule(tids, function () {
-                            newPhaseCb(g.PHASE.REGULAR_SEASON, phaseText, cb);
+                            newPhaseCb(g.PHASE.REGULAR_SEASON, cb);
                         });
                     });
                 });
@@ -603,17 +613,10 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseAfterTradeDeadline(cb) {
-        var phaseText;
-
-        phaseText = g.season + " regular season, after trade deadline";
-        newPhaseCb(g.PHASE.AFTER_TRADE_DEADLINE, phaseText, cb);
+        newPhaseCb(g.PHASE.AFTER_TRADE_DEADLINE, cb);
     }
 
     function newPhasePlayoffs(cb) {
-        var phaseText;
-
-        phaseText = g.season + " playoffs";
-
         // Set playoff matchups
         team.filter({
             attrs: ["tid", "abbrev", "name", "cid"],
@@ -707,7 +710,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                 };
                 tx.oncomplete = function () {
                     finances.assesPayrollMinLuxury(function () {
-                        newPhaseCb(g.PHASE.PLAYOFFS, phaseText, cb, helpers.leagueUrl(["playoffs"]), ["teamFinances"]);
+                        newPhaseCb(g.PHASE.PLAYOFFS, cb, helpers.leagueUrl(["playoffs"]), ["teamFinances"]);
                     });
                 };
             };
@@ -715,9 +718,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseBeforeDraft(cb) {
-        var phaseText, tx;
-
-        phaseText = g.season + " before draft";
+        var tx;
 
         tx = g.dbl.transaction(["messages", "players", "teams"], "readwrite");
 
@@ -853,7 +854,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                 awards(function () {
                     // Update strategies of AI teams (contending or rebuilding)
                     team.updateStrategies(function () {
-                        newPhaseCb(g.PHASE.BEFORE_DRAFT, phaseText, function () {
+                        newPhaseCb(g.PHASE.BEFORE_DRAFT, function () {
                             if (cb !== undefined) {
                                 cb();
                             }
@@ -867,21 +868,15 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseDraft(cb) {
-        var phaseText;
-
-        phaseText = g.season + " draft";
-
         draft.genPlayers(function () {
             draft.genOrder(function () {
-                newPhaseCb(g.PHASE.DRAFT, phaseText, cb, helpers.leagueUrl(["draft"]));
+                newPhaseCb(g.PHASE.DRAFT, cb, helpers.leagueUrl(["draft"]));
             });
         });
     }
 
     function newPhaseAfterDraft(cb) {
-        var draftPickStore, phaseText, round, t, tx;
-
-        phaseText = g.season + " after draft";
+        var draftPickStore, round, t, tx;
 
         // Add a new set of draft picks
         tx = g.dbl.transaction("draftPicks", "readwrite");
@@ -900,15 +895,11 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         }
 
         tx.oncomplete = function () {
-            newPhaseCb(g.PHASE.AFTER_DRAFT, phaseText, cb, undefined, ["playerMovement"]);
+            newPhaseCb(g.PHASE.AFTER_DRAFT, cb, undefined, ["playerMovement"]);
         };
     }
 
     function newPhaseResignPlayers(cb) {
-        var phaseText;
-
-        phaseText = g.season + " resign players";
-
         team.filter({
             attrs: ["strategy"],
             season: g.season
@@ -961,7 +952,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         }
                         cursor.continue();
                     } else {
-                        newPhaseCb(g.PHASE.RESIGN_PLAYERS, phaseText, cb, helpers.leagueUrl(["negotiation"]), ["playerMovement"]);
+                        newPhaseCb(g.PHASE.RESIGN_PLAYERS, cb, helpers.leagueUrl(["negotiation"]), ["playerMovement"]);
                     }
                 };
             });
@@ -969,10 +960,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseFreeAgency(cb) {
-        var phaseText;
-
-        phaseText = g.season + " free agency";
-
         // Delete all current negotiations to resign players
         contractNegotiation.cancelAll(function () {
             var playerStore, tx;
@@ -995,17 +982,13 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     }
                 };
                 tx.oncomplete = function () {
-                    newPhaseCb(g.PHASE.FREE_AGENCY, phaseText, cb, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
+                    newPhaseCb(g.PHASE.FREE_AGENCY, cb, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
                 };
             });
         });
     }
 
     function newPhaseFantasyDraft(cb) {
-        var phaseText;
-
-        phaseText = g.season + " fantasy draft";
-
         contractNegotiation.cancelAll(function () {
             draft.genOrderFantasy(function () {
                 db.setGameAttributes({nextPhase: g.phase}, function () {
@@ -1040,7 +1023,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     };
 
                     tx.oncomplete = function () {
-                        newPhaseCb(g.PHASE.FANTASY_DRAFT, phaseText, cb, helpers.leagueUrl(["draft"]), ["playerMovement"]);
+                        newPhaseCb(g.PHASE.FANTASY_DRAFT, cb, helpers.leagueUrl(["draft"]), ["playerMovement"]);
                     };
                 });
             });
@@ -1256,6 +1239,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         newSchedule: newSchedule,
         newSchedulePlayoffsDay: newSchedulePlayoffsDay,
         setSchedule: setSchedule,
-        getSchedule: getSchedule
+        getSchedule: getSchedule,
+        phaseText: phaseText
     };
 });

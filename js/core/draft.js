@@ -360,7 +360,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                     phase: g.nextPhase,
                                     nextPhase: null
                                 }, function () {
-                                    ui.updatePhase("FUCK");
+                                    ui.updatePhase(g.season + season.phaseText[g.phase]);
                                     ui.updatePlayMenu(null, function () {
                                         cb(pids);
                                     });

@@ -50,7 +50,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
     }
 
     function get(req) {
-        if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
+        if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) || g.phase === g.PHASE.FANTASY_DRAFT) {
             return {
                 errorMessage: "You're not allowed to make trades now."
             };

@@ -7,7 +7,6 @@ BIG NEW FEATURES
 
 fantasy draft
   flow
-    stop any contract negotiations or trade negotiations
     when fantasy draft is over
       how to restore phaseText? Need to abstract these rather than having them in each separate season.newPhase* function
       go to summary of the draft

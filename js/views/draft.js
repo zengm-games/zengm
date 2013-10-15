@@ -33,12 +33,10 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
     }
 
     function draftUser(pid, cb) {
-        var transaction;
-
         pid = parseInt(pid, 10);
 
         draft.getOrder(function (draftOrder) {
-            var pick, playerStore;
+            var pick;
 
             pick = draftOrder.shift();
             if (pick.tid === g.userTid) {
@@ -54,18 +52,24 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
     }
 
     function draftUntilUserOrEnd() {
-        ui.updateStatus('Draft in progress...');
-        var pids = draft.untilUserOrEnd(function (pids) {
-            var done = false;
-            if (g.phase === g.PHASE.AFTER_DRAFT) {
-                done = true;
-                ui.updateStatus('Idle');
-            }
+        ui.updateStatus("Draft in progress...");
+        draft.untilUserOrEnd(function (pids) {
+            draft.getOrder(function (draftOrder) {
+                var done;
 
-            updateDraftTables(pids);
-            if (!done) {
-                $("#undrafted button").removeAttr("disabled");
-            }
+                done = false;
+                if (draftOrder.length === 0) {
+                    done = true;
+                    ui.updateStatus("Idle");
+
+                    $("#undrafted th:last-child, #undrafted td:last-child").remove();
+                }
+
+                updateDraftTables(pids);
+                if (!done) {
+                    $("#undrafted button").removeAttr("disabled");
+                }
+            });
         });
     }
 

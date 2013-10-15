@@ -2,7 +2,7 @@
  * @name core.draft
  * @namespace The annual draft of new prospects.
  */
-define(["db", "globals", "core/finances", "core/player", "core/season", "core/team", "util/helpers", "util/random"], function (db, g, finances, player, season, team, helpers, random) {
+define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "core/team", "util/helpers", "util/random"], function (db, g, ui, finances, player, season, team, helpers, random) {
     "use strict";
 
     /**
@@ -276,30 +276,39 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
 
             // Draft player
             p.tid = pick.tid;
-            p.draft = {
-                round: pick.round,
-                pick: pick.pick,
-                tid: pick.tid,
-                year: g.season,
-                abbrev: g.teamAbbrevsCache[pick.tid],
-                originalTid: pick.originalTid,
-                originalAbbrev: pick.originalAbbrev,
-                // draftTeamName and draftTeamRegion are currently not used, but they don't do much harm
-                teamName: g.teamNamesCache[pick.tid],
-                teamRegion: g.teamRegionsCache[pick.tid],
-                pot: p.ratings[0].pot,
-                ovr: p.ratings[0].ovr,
-                skills: p.ratings[0].skills
-            };
+            if (g.phase !== g.PHASE.FANTASY_DRAFT) {
+                p.draft = {
+                    round: pick.round,
+                    pick: pick.pick,
+                    tid: pick.tid,
+                    year: g.season,
+                    abbrev: g.teamAbbrevsCache[pick.tid],
+                    originalTid: pick.originalTid,
+                    originalAbbrev: pick.originalAbbrev,
+                    // draftTeamName and draftTeamRegion are currently not used, but they don't do much harm
+                    teamName: g.teamNamesCache[pick.tid],
+                    teamRegion: g.teamRegionsCache[pick.tid],
+                    pot: p.ratings[0].pot,
+                    ovr: p.ratings[0].ovr,
+                    skills: p.ratings[0].skills
+                };
+            }
 
             // Contract
-            rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500]; // Keep in sync with core.team
-            i = pick.pick - 1 + 30 * (pick.round - 1);
-            years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
-            p = player.setContract(p, {
-                amount: rookieSalaries[i],
-                exp: g.season + years
-            }, true);
+            if (g.phase !== g.PHASE.FANTASY_DRAFT) {
+                rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500]; // Keep in sync with core.team
+                i = pick.pick - 1 + 30 * (pick.round - 1);
+                years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
+                p = player.setContract(p, {
+                    amount: rookieSalaries[i],
+                    exp: g.season + years
+                }, true);
+            }
+
+            // Add stats row if necessary (fantasy draft in ongoing season)
+            if (g.phase === g.PHASE.FANTASY_DRAFT && g.phase <= g.PHASE.PLAYOFFS) {
+                p = player.addStatsRow(p);
+            }
 
             cursor.update(p);
         };
@@ -341,9 +350,22 @@ define(["db", "globals", "core/finances", "core/player", "core/season", "core/te
                         // Is draft over?;
                         if (draftOrder.length === 0) {
                             season = require("core/season"); // Circular reference
-                            season.newPhase(g.PHASE.AFTER_DRAFT, function () {
-                                cb(pids);
-                            });
+                            if (g.phase === g.PHASE.DRAFT) {
+                                season.newPhase(g.PHASE.AFTER_DRAFT, function () {
+                                    cb(pids);
+                                });
+                            } else if (g.phase === g.PHASE.FANTASY_DRAFT) {
+                                db.setGameAttributes({
+                                    lastDbChange: Date.now(),
+                                    phase: g.nextPhase,
+                                    nextPhase: null
+                                }, function () {
+                                    ui.updatePhase("FUCK");
+                                    ui.updatePlayMenu(null, function () {
+                                        cb(pids);
+                                    });
+                                });
+                            }
                         } else {
                             db.setGameAttributes({lastDbChange: Date.now()}, function () {
                                 cb(pids);

@@ -12,6 +12,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
 
         popup = req.params.w === "popup";
 
+        // Check for some other window making changes to the database
         checkDbChange = function (lid) {
             var oldLastDbChange;
 

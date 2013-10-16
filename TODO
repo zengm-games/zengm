@@ -6,6 +6,7 @@ BIG NEW FEATURES
 ----------------
 
 fantasy draft
+  CHANGES (both)
   when fantasy draft is over, go to summary of the draft
     do this in core.draft.untilUserOrEnd
   make tables sortable

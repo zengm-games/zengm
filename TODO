@@ -6,16 +6,10 @@ BIG NEW FEATURES
 ----------------
 
 fantasy draft
-  flow
-    when fantasy draft is over
-      go to summary of the draft
-        do this in core.draft.untilUserOrEnd
-  share as much code with core.draft as possible
-    templates?
-      need to show contract and stats in fantasy draft, right?
-      needs to be sortable
-    add entry for fantasy draft summary to draft history dropdown?
-  make sure player draft history is preserved
+  when fantasy draft is over, go to summary of the draft
+    do this in core.draft.untilUserOrEnd
+  make tables sortable
+  add entry for fantasy draft summary to draft history dropdown?
   right after starting a fantasy draft, dashboard gives an error since there are no players on team
     any other errors?
 team switching after being fired

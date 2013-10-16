@@ -6,13 +6,14 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
     "use strict";
 
     function updateDraftTables(pids) {
-        var draftedPlayer, draftedRows, i, j, undraftedTds;
+        var draftedPlayer, draftedRows, i, j, jMax, undraftedTds;
 
         for (i = 0; i < pids.length; i++) {
-            draftedPlayer = new Array(5);
+            draftedPlayer = [];
             // Find row in undrafted players table, get metadata, delete row
             undraftedTds = $("#undrafted-" + pids[i] + " td");
-            for (j = 0; j < 5; j++) {
+            jMax = g.phase === g.PHASE.FANTASY_DRAFT ? 8 : 5;
+            for (j = 0; j < jMax; j++) {
                 draftedPlayer[j] = undraftedTds[j].innerHTML;
             }
 
@@ -26,6 +27,11 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
                     draftedRows[j].children[4].innerHTML = draftedPlayer[2];
                     draftedRows[j].children[5].innerHTML = draftedPlayer[3];
                     draftedRows[j].children[6].innerHTML = draftedPlayer[4];
+                    if (g.phase === g.PHASE.FANTASY_DRAFT) {
+                        draftedRows[j].children[7].innerHTML = draftedPlayer[5];
+                        draftedRows[j].children[8].innerHTML = draftedPlayer[6];
+                        draftedRows[j].children[9].innerHTML = draftedPlayer[7];
+                    }
                     break;
                 }
             }
@@ -94,22 +100,26 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
             undraftedAll = event.target.result;
             undraftedAll.sort(function (a, b) { return player.value(b) - player.value(a); });
             undrafted = player.filter(undraftedAll, {
-                attrs: ["pid", "name", "pos", "age", "injury"],
+                attrs: ["pid", "name", "pos", "age", "injury", "contract"],
                 ratings: ["ovr", "pot", "skills"],
+                stats: ["per", "ewa"],
                 season: g.season,
                 showRookies: true,
-                fuzz: true
+                fuzz: true,
+                oldStats: true
             });
 
             playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
                 var drafted, i, players, started;
 
                 players = player.filter(event.target.result, {
-                    attrs: ["pid", "tid", "name", "pos", "age", "draft", "injury"],
+                    attrs: ["pid", "tid", "name", "pos", "age", "draft", "injury", "contract"],
                     ratings: ["ovr", "pot", "skills"],
+                    stats: ["per", "ewa"],
                     season: g.season,
                     showRookies: true,
-                    fuzz: true
+                    fuzz: true,
+                    oldStats: true
                 });
 
                 drafted = [];
@@ -138,7 +148,7 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
                         });
                     }
 
-                    vars = {undrafted: undrafted, drafted: drafted, started: started};
+                    vars = {undrafted: undrafted, drafted: drafted, started: started, fantasyDraft: g.phase === g.PHASE.FANTASY_DRAFT};
                     deferred.resolve(vars);
                 });
             };
@@ -176,6 +186,22 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
         // Scroll undrafted to the right, so "Draft" button is never cut off
         undraftedContainer = document.getElementById("undrafted").parentNode;
         undraftedContainer.scrollLeft = undraftedContainer.scrollWidth;
+
+        ui.tableClickableRows($("#undrafted"));
+        ui.tableClickableRows($("#drafted"));
+
+        // If this is a fantasy draft, make everybody use two screens to save space
+        if (g.phase === g.PHASE.FANTASY_DRAFT) {
+            $("#undrafted-col").removeClass("col-sm-6").addClass("col-xs-12");
+            $("#drafted-col").removeClass("col-sm-6").addClass("col-xs-12");
+
+            $(".row-offcanvas").addClass("row-offcanvas-force");
+            $(".row-offcanvas-right").addClass("row-offcanvas-right-force");
+            $(".sidebar-offcanvas").addClass("sidebar-offcanvas-force");
+
+            $("#view-drafted").removeClass("visible-xs");
+            $("#view-undrafted").removeClass("visible-xs");
+        }
     }
 
     return bbgmView.init({

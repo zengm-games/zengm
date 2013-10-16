@@ -1,6 +1,6 @@
 DB CHANGES SINCE 3.2.0
 ----------------------
-g.nextPhase
+g.nextPhase, but this doesn't matter because it's initialized when it's needed
 
 BIG NEW FEATURES
 ----------------

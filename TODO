@@ -6,6 +6,7 @@ BIG NEW FEATURES
 ----------------
 
 fantasy draft
+  let user pick spot in draft
   CHANGES (both)
   when fantasy draft is over, go to summary of the draft
     do this in core.draft.untilUserOrEnd

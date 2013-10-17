@@ -988,9 +988,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         });
     }
 
-    function newPhaseFantasyDraft(cb) {
+    function newPhaseFantasyDraft(cb, position) {
         contractNegotiation.cancelAll(function () {
-            draft.genOrderFantasy(function () {
+            draft.genOrderFantasy(position, function () {
                 db.setGameAttributes({nextPhase: g.phase}, function () {
                     var tx;
 
@@ -1039,7 +1039,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
      * @param {number} phase Numeric phase ID. This should always be one of the g.PHASE.* variables defined in globals.js.
      * @param {function()=} cb Optional callback run after the phase change is completed.
      */
-    function newPhase(phase, cb) {
+    function newPhase(phase, cb, extra) {
         // Prevent code running twice
         if (phase === g.phase) {
             return;
@@ -1067,7 +1067,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         } else if (phase === g.PHASE.FREE_AGENCY) {
             newPhaseFreeAgency(cb);
         } else if (phase === g.PHASE.FANTASY_DRAFT) {
-            newPhaseFantasyDraft(cb);
+            newPhaseFantasyDraft(cb, extra);
         }
     }
 

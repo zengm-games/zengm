@@ -18,10 +18,15 @@ define(["globals", "ui", "core/season", "util/bbgmView", "util/helpers"], functi
         }
     }
 
-    function post() {
+    function post(req) {
+        var position;
+
+        position = req.params.position === "Random" ? "random" : parseInt(req.params.position, 10); 
+
+console.log("FUCK");
         document.getElementById("start-fantasy-draft").disabled = true;
 
-        season.newPhase(g.PHASE.FANTASY_DRAFT);
+        season.newPhase(g.PHASE.FANTASY_DRAFT, function () {}, position);
     }
 
     function uiFirst() {

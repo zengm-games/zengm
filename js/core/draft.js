@@ -217,7 +217,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
      * @memberOf core.draft
      * @param {function()=} cb Optional callback function.
      */
-    function genOrderFantasy(cb) {
+    function genOrderFantasy(position, cb) {
         var draftOrder, i, round, tids;
 
         // Randomly-ordered list of tids
@@ -226,6 +226,13 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
             tids.push(i);
         }
         random.shuffle(tids);
+        if (position >= 1 && position <= g.numTeams) {
+            i = 0;
+            while (tids[position - 1] !== g.userTid && i < 1000) {
+                random.shuffle(tids);
+                i += 1;
+            }
+        }
 
         // Set total draft order: 12 rounds, snake
         draftOrder = [];

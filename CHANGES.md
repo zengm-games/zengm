@@ -1,13 +1,14 @@
 # Since 3.2.0
 
 - AppCache used to allow offline play
+- Fantasy Draft feature
 
 # 3.2.0 (2013-10-05)
 
 ## Gameplay and UI
 
 - New mobile-friendly design
-- Trading Block
+- Trading Block feature
 - "What would make this deal work?" button can add assets from either team
 - Removed the ability to "buy out" players to get rid of bad contracts
 - AI teams will not trade away more than two draft picks in a single trade

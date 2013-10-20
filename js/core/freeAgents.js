@@ -2,7 +2,7 @@
  * @name core.freeAgents
  * @namespace Functions related to free agents that didn't make sense to put anywhere else.
  */
-define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/helpers", "util/random"], function (db, g, player, team, _, helpers, random) {
+define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "util/helpers", "util/lock", "util/random"], function (db, g, ui, player, team, _, helpers, lock, random) {
     "use strict";
 
     /**
@@ -200,10 +200,93 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
         return false;
     }
 
+    /**
+     * Simulates one or more days of free agency.
+     * 
+     * @memberOf core.freeAgents
+     * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all of free agency will be simulated up until the preseason starts.
+     * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed.
+     */
+    function play(numDays, start) {
+        var cbNoDays, cbRunDay, season;
+
+        start = start !== undefined ? start : false;
+        season = require("core/season");
+
+        // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
+        cbNoDays = function () {
+            db.setGameAttributes({gamesInProgress: false}, function () {
+                ui.updatePlayMenu(null, function () {
+                    // Check to see if free agency is over
+                    if (g.daysLeft === 0) {
+                        season.newPhase(g.PHASE.PRESEASON, function () {
+                            ui.updateStatus("Idle");
+                        });
+                    }
+                });
+            });
+        };
+
+        // This simulates a day, including game simulation and any other bookkeeping that needs to be done
+        cbRunDay = function () {
+            var cbYetAnother;
+
+            // This is called if there are remaining days to simulate
+            cbYetAnother = function () {
+                decreaseDemands(function () {
+                    autoSign(function () {
+                        db.setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}, function () {
+                            if (g.daysLeft > 0 && numDays > 0) {
+                                ui.realtimeUpdate(["playerMovement"], undefined, function () {
+                                    ui.updateStatus(g.daysLeft + " days left");
+                                    play(numDays - 1);
+                                });
+                            } else if (g.daysLeft === 0) {
+                                cbNoDays();
+                            }
+                        });
+                    });
+                });
+            };
+
+            if (numDays > 0) {
+                // If we didn't just stop games, let's play
+                // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
+                if (start || !g.stopGames) {
+                    if (g.stopGames) {
+                        db.setGameAttributes({stopGames: false}, cbYetAnother);
+                    } else {
+                        cbYetAnother();
+                    }
+                }
+            } else if (numDays === 0) {
+                // If this is the last day, update play menu
+                cbNoDays();
+            }
+        };
+
+        // If this is a request to start a new simulation... are we allowed to do
+        // that? If so, set the lock and update the play menu
+        if (start) {
+            lock.canStartGames(null, function (canStartGames) {
+                if (canStartGames) {
+                    db.setGameAttributes({gamesInProgress: true}, function () {
+                        ui.updatePlayMenu(null, function () {
+                            cbRunDay();
+                        });
+                    });
+                }
+            });
+        } else {
+            cbRunDay();
+        }
+    }
+
     return {
         autoSign: autoSign,
         decreaseDemands: decreaseDemands,
         amountWithMood: amountWithMood,
-        refuseToNegotiate: refuseToNegotiate
+        refuseToNegotiate: refuseToNegotiate,
+        play: play
     };
 });

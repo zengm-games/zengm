@@ -268,7 +268,11 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                 // If no negotiations are in progress, update status
                 lock.negotiationInProgress(null, function (negotiationInProgress) {
                     if (!negotiationInProgress) {
-                        ui.updateStatus("Idle");
+                        if (g.phase === g.PHASE.FREE_AGENCY) {
+                            ui.updateStatus(g.daysLeft + " days left");
+                        } else {
+                            ui.updateStatus("Idle");
+                        }
                         ui.updatePlayMenu();
                     }
 

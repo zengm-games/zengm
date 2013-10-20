@@ -50,6 +50,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                     startingSeason: startingSeason,
                     phase: 0,
                     nextPhase: null, // Used only for fantasy draft
+                    daysLeft: 0, // Used only for free agency
                     gamesInProgress: false,
                     stopGames: false,
                     lastDbChange: 0,

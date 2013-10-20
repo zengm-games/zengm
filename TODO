@@ -1,6 +1,7 @@
 DB CHANGES SINCE 3.2.0
 ----------------------
 g.nextPhase, but this doesn't matter because it's initialized when it's needed
+g.daysLeft, but this doesn't matter because it's initialized when it's needed
 
 BIG NEW FEATURES
 ----------------
@@ -27,6 +28,8 @@ somehow, don't let the user's team sign any/all free agents they want
   extended free agency
     30 days. play menu options: day, week, month, until blah
       need some indicator of length of free agency, probably on free agents page
+    make statuses more like gameSim (Idle when doing nothing)??
+    initialize g.daysLeft if not set when used
     randomize "won't negotiate with you" more and have it decay throughout free agency, so that at some point a player will be willing to sign
       show mood in more detail than binary refuses or not
       make genBaseMoods lower?
@@ -55,6 +58,7 @@ gameSim
 MINOR FIXES
 -----------
 
+merge game.play and freeAgents.play
 HOF working consistently?
   http://www.reddit.com/r/BasketballGM/comments/1osxg3/free_agents_who_arent_signed_to_a_team_dont_make/
 per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/

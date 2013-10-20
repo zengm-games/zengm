@@ -398,7 +398,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             keys = ["play-menu-contract-negotiation-list", "play-menu-until-free-agency"];
         } else if (g.phase === g.PHASE.FREE_AGENCY) {
             // Offseason - free agency
-            keys = ["play-menu-until-preseason"];
+            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-preseason"];
         }
 
         lock.unreadMessage(ot, function (unreadMessage) {

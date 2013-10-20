@@ -982,7 +982,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     }
                 };
                 tx.oncomplete = function () {
-                    newPhaseCb(g.PHASE.FREE_AGENCY, cb, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
+                    db.setGameAttributes({daysLeft: 30}, function () {
+                        newPhaseCb(g.PHASE.FREE_AGENCY, cb, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
+                    });
                 };
             });
         });

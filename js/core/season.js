@@ -1234,12 +1234,45 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         };
     }
 
+    /**
+     * Get the number of days left in the regular season schedule.
+     * 
+     * @memberOf core.season
+     * @param {function(Array)} cb Callback function that takes the number of games left in the schedule as its only argument.
+     */
+    function getDaysLeftSchedule(cb) {
+        g.dbl.transaction("schedule").objectStore("schedule").getAll().onsuccess = function (event) {
+            var i, numDays, schedule, tids;
+
+            schedule = event.target.result;
+            numDays = 0;
+
+            while (schedule.length > 0) {
+                // Only take the games up until right before a team plays for the second time that day
+                tids = [];
+                for (i = 0; i < schedule.length; i++) {
+                    if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
+                        tids.push(schedule[i].homeTid);
+                        tids.push(schedule[i].awayTid);
+                    } else {
+                        break;
+                    }
+                }
+                numDays += 1;
+                schedule = schedule.slice(i);
+            }
+
+            cb(numDays);
+        };
+    }
+
     return {
         newPhase: newPhase,
         newSchedule: newSchedule,
         newSchedulePlayoffsDay: newSchedulePlayoffsDay,
         setSchedule: setSchedule,
         getSchedule: getSchedule,
+        getDaysLeftSchedule: getDaysLeftSchedule,
         phaseText: phaseText
     };
 });

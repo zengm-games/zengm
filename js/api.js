@@ -23,11 +23,9 @@ define(["db", "globals", "views", "ui", "core/finances", "core/game", "core/play
             game.play(numDays, true);
         } else if (amount === "untilPlayoffs") {
             if (g.phase < g.PHASE.PLAYOFFS) {
-/*                season.getSchedule(null, 0, function (schedule) {
-                    numDays = Math.floor(2 * schedule.length / (g.numTeams));
+                season.getDaysLeftSchedule(function (numDays) {
                     game.play(numDays, true);
-                });*/
-                game.play(100, true);
+                });
             }
         } else if (amount === "stop") {
             db.setGameAttributes({stopGames: true}, function () {

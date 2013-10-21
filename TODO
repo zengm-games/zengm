@@ -58,6 +58,8 @@ gameSim
 MINOR FIXES
 -----------
 
+twitter/facebook/g+ interfere with dropdown when loading
+  only show when Share is clicked?
 merge game.play and freeAgents.play
 HOF working consistently?
   http://www.reddit.com/r/BasketballGM/comments/1osxg3/free_agents_who_arent_signed_to_a_team_dont_make/

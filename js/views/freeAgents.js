@@ -7,6 +7,16 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
 
     var mapping;
 
+    function disableButtons() {
+        $("#free-agents button").attr("disabled", "disabled");
+        $("#game-sim-warning").show();
+    }
+
+    function enableButtons() {
+        $("#free-agents button").removeAttr("disabled");
+        $("#game-sim-warning").hide();
+    }
+
     function get(req) {
         if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) {
             if (g.phase === g.PHASE.RESIGN_PLAYERS) {
@@ -95,6 +105,25 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
         }).extend({throttle: 1});
 
         ui.tableClickableRows($("#free-agents"));
+
+        // Form enabling/disabling
+        $("#free-agents").on("gameSimulationStart", function () {
+            disableButtons();
+        });
+        $("#free-agents").on("gameSimulationStop", function () {
+            enableButtons();
+        });
+    }
+
+    function uiEvery() {
+        // Wait for datatable
+        setTimeout(function () {
+            if (g.gamesInProgress) {
+                disableButtons();
+            } else {
+                enableButtons();
+            }
+        }, 10);
     }
 
     return bbgmView.init({
@@ -102,6 +131,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
         get: get,
         mapping: mapping,
         runBefore: [updateFreeAgents],
-        uiFirst: uiFirst
+        uiFirst: uiFirst,
+        uiEvery: uiEvery
     });
 });

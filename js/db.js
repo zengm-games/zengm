@@ -848,9 +848,9 @@ console.log(event);
                 // Trigger a signal for the team finances view. This is stupid.
                 if (key === "gamesInProgress") {
                     if (gameAttributes[key]) {
-                        $("#finances-settings").trigger("gameSimulationStart");
+                        $("#finances-settings, #free-agents").trigger("gameSimulationStart");
                     } else {
-                        $("#finances-settings").trigger("gameSimulationStop");
+                        $("#finances-settings, #free-agents").trigger("gameSimulationStop");
                     }
                 }
             }(key));
@@ -859,9 +859,9 @@ console.log(event);
         tx.oncomplete = function () {
             // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
             if (gameAttributes.hasOwnProperty("gamesInProgress") && gameAttributes.gamesInProgress) {
-                $("#finances-settings").trigger("gameSimulationStart");
+                $("#finances-settings, #free-agents").trigger("gameSimulationStart");
             } else if (gameAttributes.hasOwnProperty("gamesInProgress") && !gameAttributes.gamesInProgress) {
-                $("#finances-settings").trigger("gameSimulationStop");
+                $("#finances-settings, #free-agents").trigger("gameSimulationStop");
             }
 
             if (cb !== undefined) {

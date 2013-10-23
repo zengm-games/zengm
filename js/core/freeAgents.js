@@ -60,10 +60,21 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
                         return;
                     }
 
+                    // Only 25% chance of actually trying to sign someone
+                    if (Math.random() < 0.25) {
+                        signTeam(ti + 1);
+                        return;
+                    }
+
                     // Skip rebuilding teams sometimes
                     if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
                         signTeam(ti + 1);
                         return;
+                    }
+
+                    // Randomly don't try to sign some players this day
+                    while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
+                        players.shift();
                     }
 
                     transaction.objectStore("players").index("tid").count(tid).onsuccess = function (event) {
@@ -194,7 +205,7 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
      * @return {boolean} Answer to the question.
      */
     function refuseToNegotiate(amount, mood) {
-        if (amount * mood > 12000) {
+        if (amount * mood > 10000) {
             return true;
         }
         return false;

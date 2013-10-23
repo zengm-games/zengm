@@ -6,9 +6,8 @@ g.daysLeft, but this doesn't matter because it's initialized when it's needed
 BIG NEW FEATURES
 ----------------
 
-fantasy draft
-  right after starting a fantasy draft, dashboard gives an error since there are no players on team
-    any other errors?
+right after starting a fantasy draft, dashboard gives an error since there are no players on team
+  any other errors?
 all time leaders page
 team switching after being fired
   2 year grace period in message.js, like with a new league?
@@ -24,17 +23,8 @@ localization
 BIG NEW GAMEPLAY CHANGES
 ------------------------
 
-somehow, don't let the user's team sign any/all free agents they want
-  extended free agency
-    30 days. play menu options: day, week, month, until blah
-      need some indicator of length of free agency, probably on free agents page
-    make statuses more like gameSim (Idle when doing nothing)??
-    initialize g.daysLeft if not set when used
-    randomize "won't negotiate with you" more and have it decay throughout free agency, so that at some point a player will be willing to sign
-      show mood in more detail than binary refuses or not
-      make genBaseMoods lower?
-    randomize team signings more in free agency
-  http://www.reddit.com/r/BasketballGM/comments/1jrv3a/have_we_discussed_the_draft_pick_exploit_yet/
+AI teams can release players to sign a better free agent
+  or maybe they should leave 1-2 roster spots open without signing min players?
 fix contracts, signing
   goal: reasonable total payrolls, no good free agents left every season
   if WS distribution matches NBA, then look at $ vs WS. even better, build a multivariate model with age

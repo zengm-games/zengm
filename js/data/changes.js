@@ -25,6 +25,9 @@ define(["lib/jquery"], function ($) {
     }, {
         date: "2013-10-16",
         msg: "Added fantasy draft feature - try it out by clicking Tools > Fantasy Draft!"
+    }, {
+        date: "2013-10-22",
+        msg: "More realistic free agency. Free agency now lasts 30 days. The longer you wait to sign someone, the better deal you can get - but if you wait to long, he might sign with an other team. Also, you are now much less likely to get the first shot at signing every free agent."
     }];
 
     function check() {

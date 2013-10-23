@@ -395,13 +395,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 baseMoods[i] += 0.2 * (1 - teams[i].seasons[s].pop / 10);
 
                 // Randomness
-                baseMoods[i] += random.gauss(-0.2, 0.3);
+                baseMoods[i] += random.uniform(-0.2, 0.2);
 
-                if (baseMoods[i] > 1) {
-                    baseMoods[i] = 1;
-                } else if (baseMoods[i] < 0) {
-                    baseMoods[i] = 0;
-                }
+                baseMoods[i] = helpers.bound(baseMoods[i], 0, 1);
             }
 
             cb(baseMoods);
@@ -422,7 +418,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @param {function()=} cb Optional callback.
      */
     function addToFreeAgents(ot, p, phase, baseMoods, cb) {
-        var expiration, pr;
+        var pr;
 
         phase = phase !== null ? phase : g.phase;
 
@@ -436,7 +432,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 return 0;
             }
             // The better a player is, the more moody he is
-            return mood * (pr.ovr + pr.pot) / 100;
+            return helpers.bound(mood * (pr.ovr + pr.pot) / 100 + random.uniform(-0.3, 1), 0, 1000);
         });
 
         // During regular season, or before season starts, allow contracts for

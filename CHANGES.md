@@ -2,6 +2,7 @@
 
 - AppCache used to allow offline play
 - Fantasy Draft feature
+- Extended free agency
 
 # 3.2.0 (2013-10-05)
 

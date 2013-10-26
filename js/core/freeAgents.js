@@ -60,8 +60,8 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
                         return;
                     }
 
-                    // Only a small chance of actually trying to sign someone
-                    if (Math.random() < 0.11 && g.phase === g.PHASE.FREE_AGENCY) {
+                    // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
+                    if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
                         signTeam(ti + 1);
                         return;
                     }

@@ -24,10 +24,9 @@ BIG NEW GAMEPLAY CHANGES
 ------------------------
 
 Extended free agency
+  order of AI team signings shouldn't be linear
   0 year contracts http://www.reddit.com/r/BasketballGM/comments/1p0sa8/new_feature_extended_free_agency/ccy4gvp
-  AI teams prioritize top free agents somehow?
-  AI teams can release players to sign a better free agent
-    or maybe they should leave 1-2 roster spots open without signing min players?
+  AI teams can release players to sign a better free agent?
 fix contracts, signing
   goal: reasonable total payrolls, no good free agents left every season
   if WS distribution matches NBA, then look at $ vs WS. even better, build a multivariate model with age
@@ -250,6 +249,7 @@ core.team.valueChange should be used to pick which free agents to sign in core.f
   also for resigning players in core.season
 revamp core.team.valueChange
   simpler formulas for rebuilding/contending team values
+  use for signing free agents? would make rebuilding more meaningful
 trades
   fancy scrolling of summary box, or some better UI
   refactor core.trade. it's an utter mess.

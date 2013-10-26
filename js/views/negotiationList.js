@@ -57,7 +57,6 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/kn
                     showNoStats: true,
                     fuzz: true
                 });
-console.log(players);
 
                 for (i = 0; i < players.length; i++) {
                     for (j = 0; j < negotiations.length; j++) {

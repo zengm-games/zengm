@@ -433,10 +433,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             }
             if (phase === g.PHASE.RESIGN_PLAYERS) {
                 // More likely to resign your own players
-                return helpers.bound(mood * (pr.ovr + pr.pot) / 100 + random.uniform(-1, 0.3), 0, 1000);
+                return helpers.bound(mood + random.uniform(-1, 0.5), 0, 1000);
             }
-            // The better a player is, the more moody he is
-            return helpers.bound(mood * (pr.ovr + pr.pot) / 100 + random.uniform(-0.3, 1), 0, 1000);
+            return helpers.bound(mood + random.uniform(-1, 1.5), 0, 1000);
         });
 
         // During regular season, or before season starts, allow contracts for

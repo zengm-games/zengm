@@ -157,7 +157,7 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
 
                 // Free agents' resistance to signing decays after every regular season game
                 for (i = 0; i < p.freeAgentMood.length; i++) {
-                    p.freeAgentMood[i] -= 0.035;
+                    p.freeAgentMood[i] -= 0.075;
                     if (p.freeAgentMood[i] < 0) {
                         p.freeAgentMood[i] = 0;
                     }

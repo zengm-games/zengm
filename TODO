@@ -25,8 +25,6 @@ BIG NEW GAMEPLAY CHANGES
 
 Extended free agency
   0 year contracts http://www.reddit.com/r/BasketballGM/comments/1p0sa8/new_feature_extended_free_agency/ccy4gvp
-  use separate formula for calculating mood for resigning players - shouldn't all opt for free agency if they're good http://www.reddit.com/r/BasketballGM/comments/1p0sa8/new_feature_extended_free_agency/ccxp91r?context=3
-  don't decrase contract length in freeAgents.decreaseDemands until the regular season http://www.reddit.com/r/BasketballGM/comments/1p0sa8/new_feature_extended_free_agency/ccxp91r?context=3
   AI teams prioritize top free agents somehow?
   AI teams can release players to sign a better free agent
     or maybe they should leave 1-2 roster spots open without signing min players?

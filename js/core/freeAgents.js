@@ -145,11 +145,14 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
                 if (p.contract.amount < 500) {
                     p.contract.amount = 500;
                 }
-                // Since this is called after the season has already started, ask for a short contract
-                if (p.contract.amount < 1000) {
-                    p.contract.exp = g.season;
-                } else {
-                    p.contract.exp = g.season + 1;
+
+                if (g.phase !== g.PHASE.FREE_AGENCY) {
+                    // Since this is after the season has already started, ask for a short contract
+                    if (p.contract.amount < 1000) {
+                        p.contract.exp = g.season;
+                    } else {
+                        p.contract.exp = g.season + 1;
+                    }
                 }
 
                 // Free agents' resistance to signing decays after every regular season game

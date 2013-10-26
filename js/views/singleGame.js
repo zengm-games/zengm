@@ -38,19 +38,21 @@ define(["globals", "ui", "core/game", "core/gameSim", "core/player", "lib/jquery
         this.csv = ko.observable("");
     }
 
-    function updateForm() {
+    function updateForm(inputs, updateEvents) {
         var i, teams;
 
-        teams = [];
-        for (i = 0; i < 24; i++) {
-            teams.push({
-                tid: i,
-                name: g.teamRegionsCache[i] + " " + g.teamNamesCache[i]
-            });
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
+            teams = [];
+            for (i = 0; i < 24; i++) {
+                teams.push({
+                    tid: i,
+                    name: g.teamRegionsCache[i] + " " + g.teamNamesCache[i]
+                });
+            }
+            return {
+                teams: teams
+            };
         }
-        return {
-            teams: teams
-        };
     }
 
     function updateResults(inputs, updateEvents, vm) {

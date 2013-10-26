@@ -6,6 +6,13 @@ g.daysLeft, but this doesn't matter because it's initialized when it's needed
 BIG NEW FEATURES
 ----------------
 
+trade improvements
+  refactor trade module with all the below in mind
+  trade suggestions (and trading block) should know salary rules
+  trades can go over roster size limit
+    so before simulating any games, need to check roster sizes. how slow is that?
+    AI teams need to factor this into the trade value if they have to drop someone after
+  trades between AI teams
 right after starting a fantasy draft, dashboard gives an error since there are no players on team
   any other errors?
 all time leaders page
@@ -224,7 +231,6 @@ signing draft picks should be optional
   maybe sign them in the "resign players" phase
 you should be able to drop below 5 players (and above 15) but only temporarily (no game simulation in that time)
 fake feet/inches heights should be taller
-some players want to resign for infinite money?
 draft
   randomness in picks should factor in relative ratings http://www.reddit.com/r/BasketballGM/comments/1l1713/the_draft_still_needs_some_work_it_seems_my/cbutw7v?context=1
   there should be some indication about the quality of upcoming drafts, which would influence how players/AI value draft picks
@@ -363,8 +369,6 @@ gameSim
   bench players should get minutes in blowouts
 in lock functions, update g from database before using any potentially sensitive values
   or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?
-move to new window button, like gmail, that will open a view in a new window with a minimal UI
-  only the icon should be clickable, not the area above and below
 AI modules that contain functions which are called to determine actions
   things to regulate...
     draft picks

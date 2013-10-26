@@ -25,7 +25,7 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
             transaction = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
 
             transaction.objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                var i, numPlayersOnRoster, players, signTeam, tids;
+                var i, players, signTeam, tids;
 
                 // List of free agents, sorted by value
                 players = event.target.result;
@@ -60,8 +60,8 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
                         return;
                     }
 
-                    // Only 25% chance of actually trying to sign someone
-                    if (Math.random() < 0.25) {
+                    // Only a small chance of actually trying to sign someone
+                    if (Math.random() < 0.11 && g.phase === g.PHASE.FREE_AGENCY) {
                         signTeam(ti + 1);
                         return;
                     }
@@ -72,10 +72,10 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
                         return;
                     }
 
-                    // Randomly don't try to sign some players this day
+/*                    // Randomly don't try to sign some players this day
                     while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
                         players.shift();
-                    }
+                    }*/
 
                     transaction.objectStore("players").index("tid").count(tid).onsuccess = function (event) {
                         var numPlayersOnRoster;
@@ -87,7 +87,8 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
 
                             if (numPlayersOnRoster < 15) {
                                 for (i = 0; i < players.length; i++) {
-                                    if (players[0].contract.amount + payroll <= g.salaryCap || players[0].contract.amount === g.minContract) {
+                                    // Don't sign minimum contract players to fill out the roster
+                                    if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
                                         p = players.shift();
                                         p.tid = tid;
                                         p = player.addStatsRow(p);

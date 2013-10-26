@@ -38,7 +38,20 @@ define(["globals", "ui", "core/game", "core/gameSim", "core/player", "lib/jquery
         this.csv = ko.observable("");
     }
 
-    function updateForm() {}
+    function updateForm() {
+        var i, teams;
+
+        teams = [];
+        for (i = 0; i < 24; i++) {
+            teams.push({
+                tid: i,
+                name: g.teamRegionsCache[i] + " " + g.teamNamesCache[i]
+            });
+        }
+        return {
+            teams: teams
+        };
+    }
 
     function updateResults(inputs, updateEvents, vm) {
         var csv, i, injuries, injury, j, p, r, t, deferred;

@@ -1,12 +1,29 @@
 <h1>Single Game Simulation <span data-bind="newWindow: []"></span></h1>
 
-<p>
-  <form class="form-inline" method="POST" data-bind="attrLeagueUrl: {action: ['single_game']}">
-    <input type="text" class="input-small" placeholder="Home Team ID" name="tid-home">
-    <input type="text" class="input-small" placeholder="Away Team ID" name="tid-away">
-    <button type="submit" class="btn" id="simulate-game">Simulate Game</button>
-  </form>
-</p>
+<form method="POST" data-bind="attrLeagueUrl: {action: ['single_game']}">
+  <div class="control-group">
+    <label class="control-label" for="inputEmail">Home</label>
+    <div class="controls">
+        <select name="tid-home" data-bind="foreach: teams">
+            <option data-bind="value: tid, text: name"></option>
+        </select>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="inputPassword">Away</label>
+    <div class="controls">
+        <select name="tid-away" data-bind="foreach: teams">
+            <option data-bind="value: tid, text: name"></option>
+        </select>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" class="btn" id="simulate-game">Simulate Game</button>
+    </div>
+  </div>
+</form>
+
 
 <p data-bind="visible: csv().length > 0" id="download-link"></p>
 

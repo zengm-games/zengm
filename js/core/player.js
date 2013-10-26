@@ -292,12 +292,12 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             // In between
             ratingKeys = ['spd', 'jmp', 'dnk'];
             for (j = 0; j < ratingKeys.length; j++) {
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.gauss(1, 2) * baseChange, -100, 20));
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.gauss(1, 2) * baseChange, -100, 25));
             }
             // Hard to improve
             ratingKeys = ['drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.gauss(1, 2) * baseChange, -10, 10));
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.gauss(1, 2) * baseChange, -10, 15));
             }
 
             // Update overall and potential

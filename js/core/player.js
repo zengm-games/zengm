@@ -431,13 +431,17 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 // Bad players don't have the luxury to be choosy about teams
                 return 0;
             }
+            if (phase === g.PHASE.RESIGN_PLAYERS) {
+                // More likely to resign your own players
+                return helpers.bound(mood * (pr.ovr + pr.pot) / 100 + random.uniform(-1, 0.3), 0, 1000);
+            }
             // The better a player is, the more moody he is
             return helpers.bound(mood * (pr.ovr + pr.pot) / 100 + random.uniform(-0.3, 1), 0, 1000);
         });
 
         // During regular season, or before season starts, allow contracts for
         // just this year.
-        if (g.phase > g.PHASE.AFTER_TRADE_DEADLINE) {
+        if (phase > g.PHASE.AFTER_TRADE_DEADLINE) {
             p.contract.exp += 1;
         }
 

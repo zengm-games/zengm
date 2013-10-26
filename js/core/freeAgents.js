@@ -208,6 +208,7 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
         if (amount * mood > 10000) {
             return true;
         }
+
         return false;
     }
 

@@ -357,11 +357,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                         // Is draft over?;
                         if (draftOrder.length === 0) {
                             season = require("core/season"); // Circular reference
-                            if (g.phase === g.PHASE.DRAFT) {
-                                season.newPhase(g.PHASE.AFTER_DRAFT, function () {
-                                    cb(pids);
-                                });
-                            } else if (g.phase === g.PHASE.FANTASY_DRAFT) {
+                            if (g.phase === g.PHASE.FANTASY_DRAFT) {
                                 db.setGameAttributes({
                                     lastDbChange: Date.now(),
                                     phase: g.nextPhase,
@@ -371,6 +367,11 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                                     ui.updatePlayMenu(null, function () {
                                         cb(pids);
                                     });
+                                });
+                            } else {
+                                // Normal
+                                season.newPhase(g.PHASE.AFTER_DRAFT, function () {
+                                    cb(pids);
                                 });
                             }
                         } else {

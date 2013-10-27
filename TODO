@@ -9,7 +9,6 @@ BIG NEW FEATURES
 
 trade improvements
   refactor trade module with all the below in mind
-    fix unit tests
     clean up even more?
       should create and updatePlayers be merged? updatePlayers already updates tids too
     fix AI stuff (counter offers)
@@ -44,6 +43,8 @@ Extended free agency
 fix contracts, signing
   goal: reasonable total payrolls, no good free agents left every season
   if WS distribution matches NBA, then look at $ vs WS. even better, build a multivariate model with age
+  contracts should take ratings into more account, since stats on a good team are inflated and stats on a bad team are depressed
+  player contract amounts http://www.reddit.com/r/BasketballGM/comments/1kj0p0/can_i_turn_off_firing/cbpxjyj?context=3
 revamp position assignment algorithm
   until a player is ~28 (whenever ratings decline starts), recalculate every year
 gameSim
@@ -104,7 +105,6 @@ awards
       overall: linear combination of EWA and team wins
       defensive: basically same stupid shit as now, but make sure to account for games played
   show awards count in hall of fame
-player contract amounts http://www.reddit.com/r/BasketballGM/comments/1kj0p0/can_i_turn_off_firing/cbpxjyj?context=3
 make it less likely that players refuse to resign with winning teams
 show annual ratings changes in roster page
   green (up) or red (down) with the number ovr and pot changed, in parentheses
@@ -114,7 +114,6 @@ show annual ratings changes in roster page
 add function to delete old box scores (older than, say 5 years) to debug menu, to save space
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 document things that affect player mood
-contracts should take ratings into more account, since stats on a good team are inflated and stats on a bad team are depressed
 show four factors somewhere
 show attendance in box score
 security

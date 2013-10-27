@@ -56,6 +56,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                     gTest.stopGames.should.equal(false);
                     gTest.userTid.should.equal(0);
                     gTest.gameOver.should.equal(false);
+                    gTest.daysLeft.should.equal(0);
 
                     count = 0;
                     for (key in gTest) {
@@ -64,7 +65,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                         }
                     }
 
-                    count.should.equal(15);
+                    count.should.equal(17);
 
                     done();
                 };
@@ -107,9 +108,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                 g.dbl.transaction("trade").objectStore("trade").getAll().onsuccess = function (event) {
                     event.target.result.should.have.length(1);
                     event.target.result[0].rid.should.equal(0);
-                    event.target.result[0].otherTid.should.equal(1);
-                    event.target.result[0].otherPids.should.have.length(0);
-                    event.target.result[0].userPids.should.have.length(0);
+                    event.target.result[0].teams.should.have.length(2);
                     done();
                 };
             });

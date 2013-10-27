@@ -2,61 +2,57 @@
  * @name core.trade
  * @namespace Trades between the user's team and other teams.
  */
-define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/helpers"], function (db, g, player, team, _, helpers) {
+define(["db", "globals", "core/player", "core/team", "lib/underscore"], function (db, g, player, team, _) {
     "use strict";
 
     /**
      * Start a new trade with a team.
      * 
-     * One of tid or pid can be set. If both are set, then tid is ignored. If neither are set, a tid of 0 is used.
-     * 
      * @memberOf core.trade
-     * @param {?number} otherTid An integer representing the team ID of the team the user wants to trade with, or null if pids or dpids is set.
-     * @param {Array.<number>} userPids An array of player ID's representing the players on the user's team in the trade.
-     * @param {Array.<number>} otherPids An array of player ID's representing the players on the other team in the trade.
+     * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs). If the other team's tid is null, it will automatically be determined from the pids.
      * @param {function()} cb Callback function.
      */
-    function create(otherTid, userPids, otherPids, userDpids, otherDpids, cb) {
-        var cbStartTrade;
+    function create(teams, cb) {
+        var tx;
 
-        cbStartTrade = function (otherTid) {
-            var tx;
+        tx = g.dbl.transaction("trade", "readwrite");
+        tx.objectStore("trade").get(0).onsuccess = function (event) { // Same key always, as there is only one trade allowed at a time
+            var cbStartTrade, oldTr;
 
-            tx = g.dbl.transaction("trade", "readwrite");
+            oldTr = event.target.result;
 
-            tx.objectStore("trade").openCursor(0).onsuccess = function (event) { // Same key always, as there is only one trade allowed at a time
-                var cursor, tr;
+            // If nothing is in this trade, it's just a team switch, so keep the old stuff from the user's team
+            if (teams[0].pids.length === 0 && teams[1].pids.length === 0 && teams[0].dpids.length === 0 && teams[1].dpids.length === 0) {
+                teams[0].pids = oldTr.teams[0].pids;
+                teams[0].dpids = oldTr.teams[0].dpids;
+            }
 
-                cursor = event.target.result;
-                tr = cursor.value;
-                tr.otherTid = otherTid;
-                if (userPids.length > 0 || otherPids.length > 0 || userDpids > 0 || otherDpids > 0) {
-                    tr.userPids = userPids;
-                    tr.userDpids = userDpids;
-                }
-                tr.otherPids = otherPids;
-                tr.otherDpids = otherDpids;
-                cursor.update(tr);
-            };
-
-            tx.oncomplete = function () {
-                db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                    cb();
+            cbStartTrade = function () {
+                tx.objectStore("trade").put({
+                    rid: 0,
+                    teams: teams
                 });
+
+                tx.oncomplete = function () {
+                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        cb();
+                    });
+                };
             };
+
+            // Make sure tid is set
+            if (teams[1].tid === undefined || teams[1].tid === null) {
+                g.dbl.transaction("players").objectStore("players").get(teams[1].pids[0]).onsuccess = function (event) {
+                    var p;
+
+                    p = event.target.result;
+                    teams[1].tid = p.tid;
+                    cbStartTrade();
+                };
+            } else {
+                cbStartTrade();
+            }
         };
-
-        // Make sure tid is set and corresponds to pid, if set
-        if (otherTid === undefined || otherTid === null || otherPids.length > 0) {
-            g.dbl.transaction("players").objectStore("players").get(otherPids[0]).onsuccess = function (event) {
-                var p;
-
-                p = event.target.result;
-                cbStartTrade(p.tid);
-            };
-        } else {
-            cbStartTrade(otherTid);
-        }
     }
 
     /**
@@ -70,7 +66,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             var tr;
 
             tr = event.target.result;
-            cb(tr.otherTid);
+            cb(tr.teams[1].tid);
         };
     }
 
@@ -80,138 +76,111 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * If any of the player IDs submitted do not correspond with the two teams that are trading, they will be ignored.
      * 
      * @memberOf core.trade
-     * @param {Array.<number>} userPids An array of player ID's representing the players on the user's team in the trade.
-     * @param {Array.<number>} otherPids An array of player ID's representing the players on the other team in the trade.
-     * @param {function(Array.<number>, Array.<number>)} cb Callback function. Arguments are the same as the inputs, but with invalid entries removed.
+     * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
+     * @param {function(Array.<Object>)} cb Callback function. Arguments are the same as the inputs, but with invalid entries removed.
      */
-    function updatePlayers(userPids, otherPids, userDpids, otherDpids, cb) {
-        getOtherTid(function (otherTid) {
-            var playerStore;
+    function updatePlayers(teams, cb) {
+        var afterCheck, i, tx;
 
-            playerStore = g.dbl.transaction("players").objectStore("players");
+        tx = g.dbl.transaction(["draftPicks", "players"]);
 
-            team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
-                console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
-            });
+console.log(teams);
+        // This is just for debugging
+        team.valueChange(teams[1].tid, teams[0].dpids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
+            console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
+        });
 
-            playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-                var i, j, players, userPidsGood;
+        // This will get called after all the pids and dpids are checked to make sure they are accurate
+        afterCheck = _.after(teams.length * 2, function () {
+            var tx, updated;
 
-                userPidsGood = [];
-                players = event.target.result;
-                for (i = 0; i < players.length; i++) {
-                    for (j = 0; j < userPids.length; j++) {
-                        if (players[i].pid === userPids[j]) {
-                            userPidsGood.push(userPids[j]);
-                            break;
-                        }
+            updated = false; // Has the trade actually changed?
+
+            tx = g.dbl.transaction("trade", "readwrite");
+            tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
+                var cursor, tr;
+
+                cursor = event.target.result;
+                tr = cursor.value;
+
+                for (i = 0; i < 2; i++) {
+                    if (teams[i].tid !== tr.teams[i].tid) {
+                        updated = true;
+                    }
+                    if (teams[i].pids.toString() !== tr.teams[i].pids.toString()) {
+                        updated = true;
+                    }
+                    if (teams[i].dpids.toString() !== tr.teams[i].dpids.toString()) {
+                        updated = true;
                     }
                 }
-                userPids = userPidsGood;
-                playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
-                    var draftPickStore, i, j, players, otherPidsGood;
 
-                    otherPidsGood = [];
-                    players = event.target.result;
-                    for (i = 0; i < players.length; i++) {
-                        for (j = 0; j < otherPids.length; j++) {
-                            if (players[i].pid === otherPids[j]) {
-                                otherPidsGood.push(otherPids[j]);
-                                break;
-                            }
-                        }
-                    }
-                    otherPids = otherPidsGood;
-
-                    draftPickStore = g.dbl.transaction("draftPicks").objectStore("draftPicks");
-                    draftPickStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-                        var i, j, picks, userDpidsGood;
-
-                        userDpidsGood = [];
-                        picks = event.target.result;
-                        for (i = 0; i < picks.length; i++) {
-                            for (j = 0; j < userDpids.length; j++) {
-                                if (picks[i].dpid === userDpids[j]) {
-                                    userDpidsGood.push(userDpids[j]);
-                                    break;
-                                }
-                            }
-                        }
-                        userDpids = userDpidsGood;
-
-                        draftPickStore.index("tid").getAll(otherTid).onsuccess = function (event) {
-                            var i, j, picks, otherDpidsGood, tx, updated;
-
-                            updated = false; // Has the trade actually changed?
-
-                            otherDpidsGood = [];
-                            picks = event.target.result;
-                            for (i = 0; i < picks.length; i++) {
-                                for (j = 0; j < otherDpids.length; j++) {
-                                    if (picks[i].dpid === otherDpids[j]) {
-                                        otherDpidsGood.push(otherDpids[j]);
-                                        break;
-                                    }
-                                }
-                            }
-                            otherDpids = otherDpidsGood;
-
-                            tx = g.dbl.transaction("trade", "readwrite");
-                            tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
-                                var cursor, tr;
-
-                                cursor = event.target.result;
-                                tr = cursor.value;
-
-                                if (userPids.toString() !== tr.userPids.toString()) {
-                                    tr.userPids = userPids;
-                                    updated = true;
-                                }
-                                if (otherPids.toString() !== tr.otherPids.toString()) {
-                                    tr.otherPids = otherPids;
-                                    updated = true;
-                                }
-                                if (userDpids.toString() !== tr.userDpids.toString()) {
-                                    tr.userDpids = userDpids;
-                                    updated = true;
-                                }
-                                if (otherDpids.toString() !== tr.otherDpids.toString()) {
-                                    tr.otherDpids = otherDpids;
-                                    updated = true;
-                                }
-
-                                if (updated) {
-                                    cursor.update(tr);
-                                }
-                            };
-                            tx.oncomplete = function () {
-                                if (updated) {
-                                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                                        cb(userPids, otherPids, userDpids, otherDpids);
-                                    });
-                                } else {
-                                    cb(userPids, otherPids, userDpids, otherDpids);
-                                }
-                            };
-                        };
-                    };
-                };
+                if (updated) {
+                    tr.teams = teams;
+                    cursor.update(tr);
+                }
+            };
+            tx.oncomplete = function () {
+                if (updated) {
+                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        cb(teams);
+                    });
+                } else {
+                    cb(teams);
+                }
             };
         });
+
+        // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
+        for (i = 0; i < teams.length; i++) {
+            (function (i) {
+                // Check players
+                tx.objectStore("players").index("tid").getAll(teams[i].tid).onsuccess = function (event) {
+                    var j, pidsGood, players;
+
+                    pidsGood = [];
+                    players = event.target.result;
+                    for (j = 0; j < players.length; j++) {
+                        if (teams[i].pids.indexOf(players[j].pid) >= 0) {
+                            pidsGood.push(players[j].pid);
+                        }
+                    }
+                    teams[i].pids = pidsGood;
+
+                    afterCheck();
+                };
+
+                // Check draft picks
+                tx.objectStore("draftPicks").index("tid").getAll(teams[i].tid).onsuccess = function (event) {
+                    var dps, dpidsGood, j;
+
+                    dpidsGood = [];
+                    dps = event.target.result;
+                    for (j = 0; j < dps.length; j++) {
+                        if (teams[i].dpids.indexOf(dps[j].dpid) >= 0) {
+                            dpidsGood.push(dps[j].dpid);
+                        }
+                    }
+                    teams[i].dpids = dpidsGood;
+
+                    afterCheck();
+                };
+            }(i));
+        }
     }
 
     /**
-     * Get the arrays containing the player IDs in the trade for both teams.
+     * Get the contents of the current trade from the database.
      * 
      * @memberOf core.trade
-     * @param {function(Array.<number>, Array.<number>)} cb Callback function. Arguments are arrays containing the player IDs for the user's team and the other team, respectively.
+     * @param {function(Array.<Object>)} cb Callback function. Argument is an array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
      */
-    function getPlayers(cb) {
+    function get(cb) {
         g.dbl.transaction("trade").objectStore("trade").get(0).onsuccess = function (event) {
             var tr;
 
             tr = event.target.result;
-            cb(tr.userPids, tr.otherPids, tr.userDpids, tr.otherDpids);
+            cb(tr.teams);
         };
     }
 
@@ -220,17 +189,15 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
      * Create a summary of the trade, for eventual display to the user.
      * 
      * @memberOf core.trade
-     * @param {number} otherTid Team ID for the team that the user is trading with.
-     * @param {Array.<number>} userPids An array of player ID's representing the players on the user's team in the trade.
-     * @param {Array.<number>} otherPids An array of player ID's representing the players on the other team in the trade.
+     * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
      * @param {function(Object)} cb Callback function. The argument is an object containing the trade summary.
      */
-    function summary(otherTid, userPids, otherPids, userDpids, otherDpids, cb) {
+    function summary(teams, cb) {
         var i, done, dpids, pids, players, s, tids, transaction;
 
-        tids = [g.userTid, otherTid];
-        pids = [userPids, otherPids];
-        dpids = [userDpids, otherDpids];
+        tids = [teams[0].tid, teams[1].tid];
+        pids = [teams[0].pids, teams[1].pids];
+        dpids = [teams[0].dpids, teams[1].dpids];
 
         s = {teams: [], warning: null};
         for (i = 0; i < 2; i++) {
@@ -353,14 +320,14 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
         tx = g.dbl.transaction("trade", "readwrite");
         tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
-            var cursor, tr;
+            var cursor, i, tr;
 
             cursor = event.target.result;
             tr = cursor.value;
-            tr.userPids = [];
-            tr.otherPids = [];
-            tr.userDpids = [];
-            tr.otherDpids = [];
+            for (i = 0; i < tr.teams.length; i++) {
+                tr.teams[i].pids = [];
+                tr.teams[i].dpids = [];
+            }
             cursor.update(tr);
         };
         tx.oncomplete = function () {
@@ -384,94 +351,92 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
             return;
         }
 
-        getPlayers(function (userPids, otherPids, userDpids, otherDpids) {
-            getOtherTid(function (otherTid) {
-                var dpids, pids, tids;
+        get(function (teams) {
+            var dpids, pids, tids;
 
-                tids = [g.userTid, otherTid];
-                pids = [userPids, otherPids];
-                dpids = [userDpids, otherDpids];
+            tids = [teams[0].tid, teams[1].tid];
+            pids = [teams[0].pids, teams[1].pids];
+            dpids = [teams[0].dpids, teams[1].dpids];
 
-                // The summary will return a warning if (there is a problem. In that case,
-                // that warning will already be pushed to the user so there is no need to
-                // return a redundant message here.
-                summary(otherTid, userPids, otherPids, userDpids, otherDpids, function (s) {
-                    var i, outcome;
+            // The summary will return a warning if (there is a problem. In that case,
+            // that warning will already be pushed to the user so there is no need to
+            // return a redundant message here.
+            summary(teams, function (s) {
+                var outcome;
 
-                    if (s.warning) {
-                        cb(false, null);
-                        return;
+                if (s.warning) {
+                    cb(false, null);
+                    return;
+                }
+
+                outcome = "rejected"; // Default
+
+                team.valueChange(teams[1].tid, teams[0].dpids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
+                    var draftPickStore, j, playerStore, tx;
+
+                    tx = g.dbl.transaction(["draftPicks", "players"], "readwrite");
+                    draftPickStore = tx.objectStore("draftPicks");
+                    playerStore = tx.objectStore("players");
+
+                    if (dv > 0) {
+                        // Trade players
+                        outcome = "accepted";
+                        for (j = 0; j < 2; j++) {
+                            (function (j) {
+                                var k, l;
+
+                                if (j === 0) {
+                                    k = 1;
+                                } else if (j === 1) {
+                                    k = 0;
+                                }
+
+                                for (l = 0; l < pids[j].length; l++) {
+                                    (function (l) {
+                                        playerStore.openCursor(pids[j][l]).onsuccess = function (event) {
+                                            var cursor, p;
+
+                                            cursor = event.target.result;
+                                            p = cursor.value;
+                                            p.tid = tids[k];
+                                            p.ptModifier = 1; // Reset
+                                            if (g.phase <= g.PHASE.PLAYOFFS) {
+                                                p = player.addStatsRow(p);
+                                            }
+                                            cursor.update(p);
+                                        };
+                                    }(l));
+                                }
+
+                                for (l = 0; l < dpids[j].length; l++) {
+                                    (function (l) {
+                                        draftPickStore.openCursor(dpids[j][l]).onsuccess = function (event) {
+                                            var cursor, dp;
+
+                                            cursor = event.target.result;
+                                            dp = cursor.value;
+                                            dp.tid = tids[k];
+                                            dp.abbrev = g.teamAbbrevsCache[tids[k]];
+                                            cursor.update(dp);
+                                        };
+                                    }(l));
+                                }
+                            }(j));
+                        }
                     }
 
-                    outcome = "rejected"; // Default
-
-                    team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
-                        var draftPickStore, j, playerStore, tx;
-
-                        tx = g.dbl.transaction(["draftPicks", "players"], "readwrite");
-                        draftPickStore = tx.objectStore("draftPicks");
-                        playerStore = tx.objectStore("players");
-
-                        if (dv > 0) {
-                            // Trade players
-                            outcome = "accepted";
-                            for (j = 0; j < 2; j++) {
-                                (function (j) {
-                                    var k, l;
-
-                                    if (j === 0) {
-                                        k = 1;
-                                    } else if (j === 1) {
-                                        k = 0;
-                                    }
-
-                                    for (l = 0; l < pids[j].length; l++) {
-                                        (function (l) {
-                                            playerStore.openCursor(pids[j][l]).onsuccess = function (event) {
-                                                var cursor, p;
-
-                                                cursor = event.target.result;
-                                                p = cursor.value;
-                                                p.tid = tids[k];
-                                                p.ptModifier = 1; // Reset
-                                                if (g.phase <= g.PHASE.PLAYOFFS) {
-                                                    p = player.addStatsRow(p);
-                                                }
-                                                cursor.update(p);
-                                            };
-                                        }(l));
-                                    }
-
-                                    for (l = 0; l < dpids[j].length; l++) {
-                                        (function (l) {
-                                            draftPickStore.openCursor(dpids[j][l]).onsuccess = function (event) {
-                                                var cursor, dp;
-
-                                                cursor = event.target.result;
-                                                dp = cursor.value;
-                                                dp.tid = tids[k];
-                                                dp.abbrev = g.teamAbbrevsCache[tids[k]];
-                                                cursor.update(dp);
-                                            };
-                                        }(l));
-                                    }
-                                }(j));
-                            }
-                        }
-
-                        tx.oncomplete = function () {
-                            if (outcome === "accepted") {
-                                // Auto-sort CPU team roster
-                                team.rosterAutoSort(null, tids[1], function () {
-                                    clear(function () { // This includes dbChange
-                                        cb(true, 'Trade accepted! "Nice doing business with you!"');
-                                    });
+                    tx.oncomplete = function () {
+                        if (outcome === "accepted") {
+                            // Auto-sort CPU team roster
+                            team.rosterAutoSort(null, tids[1], function () {
+                                clear(function () { // This includes dbChange
+                                    cb(true, 'Trade accepted! "Nice doing business with you!"');
                                 });
-                            } else {
-                                cb(false, 'Trade rejected! "What, are you crazy?"');
-                            }
-                        };
-                    });
+                            });
+                        } else {
+                            cb(false, 'Trade rejected! "What, are you crazy?"');
+                        }
+                    };
                 });
             });
         });
@@ -751,9 +716,9 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore", "util/hel
 
     return {
         create: create,
-        getOtherTid: getOtherTid,
         updatePlayers: updatePlayers,
-        getPlayers: getPlayers,
+        get: get,
+        getOtherTid: getOtherTid,
         summary: summary,
         clear: clear,
         propose: propose,

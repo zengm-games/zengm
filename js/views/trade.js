@@ -9,17 +9,26 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
 
     // This relies on vars being populated, so it can't be called in parallel with updateTrade
     function updateSummary(vars, cb) {
-        var otherPids, userPids;
-
-        otherPids = vars.otherPids;
-        userPids = vars.userPids;
-
         trade.getOtherTid(function (otherTid) {
-            trade.summary(otherTid, userPids, otherPids, vars.userDpids, vars.otherDpids, function (summary) {
+            var teams;
+
+            teams = [
+                {
+                    tid: g.userTid,
+                    pids: vars.userPids,
+                    dpids: vars.userDpids
+                },
+                {
+                    tid: otherTid,
+                    pids: vars.otherPids,
+                    dpids: vars.otherDpids
+                }
+            ];
+            trade.summary(teams, function (summary) {
                 var i;
 
                 vars.summary = {
-                    enablePropose: !summary.warning && (userPids.length > 0 || otherPids.length > 0 || vars.userDpids.length > 0 || vars.otherDpids.length > 0),
+                    enablePropose: !summary.warning && (teams[0].pids.length > 0 || teams[0].dpids.length > 0 || teams[0].dpids.length > 0 || teams[1].dpids.length > 0),
                     warning: summary.warning
                 };
 
@@ -42,9 +51,9 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
 
     // Validate that the stored player IDs correspond with the active team ID
     function validateSavedPids(cb) {
-        trade.getPlayers(function (userPids, otherPids, userDpids, otherDpids) {
-            trade.updatePlayers(userPids, otherPids, userDpids, otherDpids, function (userPids, otherPids, userDpids, otherDpids) {
-                cb(userPids, otherPids, userDpids, otherDpids);
+        trade.get(function (teams) {
+            trade.updatePlayers(teams, function (teams) {
+                cb(teams);
             });
         });
     }
@@ -62,7 +71,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
     }
 
     function post(req) {
-        var askButtonEl, newOtherTid, otherDpids, otherPids, out, pid, userDpids, userPids;
+        var askButtonEl, newOtherTid, otherDpids, otherPids, out, pid, userDpids, userPids, teams;
 
         pid = req.params.pid !== undefined ? parseInt(req.params.pid, 10) : null;
         if (req.raw.abbrev !== undefined) {
@@ -78,6 +87,19 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
         otherPids = req.params.otherPids !== undefined && req.params.otherPids.length > 0 ? _.map(req.params.otherPids.split(","), function (x) { return parseInt(x, 10); }) : [];
         userDpids = req.params.userDpids !== undefined && req.params.userDpids.length > 0 ? _.map(req.params.userDpids.split(","), function (x) { return parseInt(x, 10); }) : [];
         otherDpids = req.params.otherDpids !== undefined && req.params.otherDpids.length > 0 ? _.map(req.params.otherDpids.split(","), function (x) { return parseInt(x, 10); }) : [];
+
+        teams = [
+            {
+                tid: g.userTid,
+                pids: userPids,
+                dpids: userDpids
+            },
+            {
+                tid: newOtherTid,
+                pids: otherPids,
+                dpids: otherDpids
+            }
+        ];
 
         if (req.params.clear !== undefined) {
             // Clear trade
@@ -101,12 +123,13 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             });
         } else if (pid !== null) {
             // Start new trade for a single player
-            trade.create(newOtherTid, [], [pid], [], [], function () {
+            teams[1].pids = [pid];
+            trade.create(teams, function () {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
             });
         } else if (newOtherTid !== null || userPids.length > 0 || otherPids.length > 0 || userDpids.length > 0 || otherDpids.length > 0) {
             // Start a new trade based on a list of pids and dpids, like from the trading block
-            trade.create(newOtherTid, userPids, otherPids, userDpids, otherDpids, function () {
+            trade.create(teams, function () {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
             });
         }
@@ -153,112 +176,108 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
 
         deferred = $.Deferred();
 
-        validateSavedPids(function (userPids, otherPids, userDpids, otherDpids) {
-            trade.getOtherTid(function (otherTid) {
-                var playerStore;
+        validateSavedPids(function (teams) {
+            var playerStore;
 
-                playerStore = g.dbl.transaction("players").objectStore("players");
+            playerStore = g.dbl.transaction("players").objectStore("players");
 
-                playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-                    var attrs, i, ratings, stats, userRoster;
+            playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
+                var attrs, i, ratings, stats, userRoster;
 
-                    attrs = ["pid", "name", "pos", "age", "contract", "injury"];
-                    ratings = ["ovr", "pot", "skills"];
-                    stats = ["min", "pts", "trb", "ast", "per"];
+                attrs = ["pid", "name", "pos", "age", "contract", "injury"];
+                ratings = ["ovr", "pot", "skills"];
+                stats = ["min", "pts", "trb", "ast", "per"];
 
-                    userRoster = player.filter(event.target.result, {
+                userRoster = player.filter(event.target.result, {
+                    attrs: attrs,
+                    ratings: ratings,
+                    stats: stats,
+                    season: g.season,
+                    tid: g.userTid,
+                    showNoStats: true,
+                    showRookies: true,
+                    fuzz: true
+                });
+                for (i = 0; i < userRoster.length; i++) {
+                    if (teams[0].pids.indexOf(userRoster[i].pid) >= 0) {
+                        userRoster[i].selected = true;
+                    } else {
+                        userRoster[i].selected = false;
+                    }
+                }
+
+                playerStore.index("tid").getAll(teams[1].tid).onsuccess = function (event) {
+                    var draftPickStore, i, otherRoster;
+
+                    otherRoster = player.filter(event.target.result, {
                         attrs: attrs,
                         ratings: ratings,
                         stats: stats,
                         season: g.season,
-                        tid: g.userTid,
+                        tid: teams[1].tid,
                         showNoStats: true,
                         showRookies: true,
                         fuzz: true
                     });
-                    for (i = 0; i < userRoster.length; i++) {
-                        if (userPids.indexOf(userRoster[i].pid) >= 0) {
-                            userRoster[i].selected = true;
+                    for (i = 0; i < otherRoster.length; i++) {
+                        if (teams[1].pids.indexOf(otherRoster[i].pid) >= 0) {
+                            otherRoster[i].selected = true;
                         } else {
-                            userRoster[i].selected = false;
+                            otherRoster[i].selected = false;
                         }
                     }
 
-                    playerStore.index("tid").getAll(otherTid).onsuccess = function (event) {
-                        var draftPickStore, i, otherRoster, teams;
+                    draftPickStore = g.dbl.transaction("draftPicks").objectStore("draftPicks");
 
-                        otherRoster = player.filter(event.target.result, {
-                            attrs: attrs,
-                            ratings: ratings,
-                            stats: stats,
-                            season: g.season,
-                            tid: otherTid,
-                            showNoStats: true,
-                            showRookies: true,
-                            fuzz: true
-                        });
-                        for (i = 0; i < otherRoster.length; i++) {
-                            if (otherPids.indexOf(otherRoster[i].pid) >= 0) {
-                                otherRoster[i].selected = true;
-                            } else {
-                                otherRoster[i].selected = false;
-                            }
+                    draftPickStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
+                        var i, userPicks;
+
+                        userPicks = event.target.result;
+                        for (i = 0; i < userPicks.length; i++) {
+                            userPicks[i].desc = helpers.pickDesc(userPicks[i]);
                         }
 
-                        draftPickStore = g.dbl.transaction("draftPicks").objectStore("draftPicks");
+                        draftPickStore.index("tid").getAll(teams[1].tid).onsuccess = function (event) {
+                            var i, otherPicks;
 
-                        draftPickStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-                            var i, userPicks;
-
-                            userPicks = event.target.result;
-                            for (i = 0; i < userPicks.length; i++) {
-                                userPicks[i].desc = helpers.pickDesc(userPicks[i]);
+                            otherPicks = event.target.result;
+                            for (i = 0; i < otherPicks.length; i++) {
+                                otherPicks[i].desc = helpers.pickDesc(otherPicks[i]);
                             }
 
-                            draftPickStore.index("tid").getAll(otherTid).onsuccess = function (event) {
-                                var i, otherPicks;
+                            g.dbl.transaction("teams").objectStore("teams").get(teams[1].tid).onsuccess = function (event) {
+                                var strategy;
 
-                                otherPicks = event.target.result;
-                                for (i = 0; i < otherPicks.length; i++) {
-                                    otherPicks[i].desc = helpers.pickDesc(otherPicks[i]);
-                                }
+                                strategy = event.target.result.strategy;
 
-                                g.dbl.transaction("teams").objectStore("teams").get(otherTid).onsuccess = function (event) {
-                                    var strategy;
-
-                                    strategy = event.target.result.strategy;
-
-                                    vars = {
-                                        salaryCap: g.salaryCap / 1000,
-                                        userDpids: userDpids,
-                                        userPicks: userPicks,
-                                        userPids: userPids,
-                                        userRoster: userRoster,
-                                        otherDpids: otherDpids,
-                                        otherPicks: otherPicks,
-                                        otherPids: otherPids,
-                                        otherRoster: otherRoster,
-                                        message: inputs.message,
-                                        strategy: strategy
-                                    };
-
-                                    updateSummary(vars, function (vars) {
-                                        if (vm.teams.length === 0) {
-                                            teams = helpers.getTeams(otherTid);
-
-                                            vars.userTeamName = teams[g.userTid].region + " " + teams[g.userTid].name;
-                                            teams.splice(g.userTid, 1);  // Can't trade with yourself
-                                            vars.teams = teams;
-                                        }
-
-                                        deferred.resolve(vars);
-                                    });
+                                vars = {
+                                    salaryCap: g.salaryCap / 1000,
+                                    userDpids: teams[0].dpids,
+                                    userPicks: userPicks,
+                                    userPids: teams[0].pids,
+                                    userRoster: userRoster,
+                                    otherDpids: teams[1].dpids,
+                                    otherPicks: otherPicks,
+                                    otherPids: teams[1].pids,
+                                    otherRoster: otherRoster,
+                                    message: inputs.message,
+                                    strategy: strategy
                                 };
+
+                                updateSummary(vars, function (vars) {
+                                    if (vm.teams.length === 0) {
+                                        vars.teams = helpers.getTeams(teams[1].tid);
+                                        vars.teams.splice(g.userTid, 1); // Can't trade with yourself
+                                        vars.userTeamName = g.teamRegionsCache[g.userTid] + " " + g.teamNamesCache[g.userTid];
+                                    }
+
+                                    deferred.resolve(vars);
+                                });
                             };
                         };
                     };
                 };
-            });
+            };
         });
 
         return deferred.promise();
@@ -288,57 +307,70 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
         rosterCheckboxesOther = $("#roster-other input");
 
         $("#rosters").on("click", "input", function (event) {
-            var otherDpids, otherPids, serialized, userDpids, userPids;
+            var serialized, teams;
 
             vm.summary.enablePropose(false); // Will be reenabled in updateSummary, if appropriate
             vm.message("");
 
-            serialized = $("#rosters").serializeArray();
-            userPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "user-pids"; }), "value"), Math.floor);
-            otherPids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-pids"; }), "value"), Math.floor);
-            userDpids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "user-dpids"; }), "value"), Math.floor);
-            otherDpids = _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-dpids"; }), "value"), Math.floor);
+            trade.getOtherTid(function (otherTid) {
+                var serialized, teams;
 
-            trade.updatePlayers(userPids, otherPids, userDpids, otherDpids, function (userPids, otherPids, userDpids, otherDpids) {
-                var vars;
+                serialized = $("#rosters").serializeArray();
 
-                vars = {};
-                vars.userPids = userPids;
-                vars.otherPids = otherPids;
-                vars.userDpids = userDpids;
-                vars.otherDpids = otherDpids;
+                teams = [
+                    {
+                        tid: g.userTid,
+                        pids: _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "user-pids"; }), "value"), Math.floor),
+                        dpids: _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "user-dpids"; }), "value"), Math.floor)
+                    },
+                    {
+                        tid: otherTid,
+                        pids: _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-pids"; }), "value"), Math.floor),
+                        dpids: _.map(_.pluck(_.filter(serialized, function (o) { return o.name === "other-dpids"; }), "value"), Math.floor)
+                    }
+                ];
 
-                updateSummary(vars, function (vars) {
-                    var found, i, j;
+                trade.updatePlayers(teams, function (teams) {
+                    var vars;
 
-                    komapping.fromJS(vars, mapping, vm);
+                    vars = {};
+                    vars.userPids = teams[0].pids;
+                    vars.otherPids = teams[1].pids;
+                    vars.userDpids = teams[0].dpids;
+                    vars.otherDpids = teams[1].dpids;
 
-                    for (i = 0; i < rosterCheckboxesUser.length; i++) {
-                        found = false;
-                        for (j = 0; j < userPids.length; j++) {
-                            if (Math.floor(rosterCheckboxesUser[i].value) === userPids[j]) {
-                                rosterCheckboxesUser[i].checked = true;
-                                found = true;
-                                break;
+                    updateSummary(vars, function (vars) {
+                        var found, i, j;
+
+                        komapping.fromJS(vars, mapping, vm);
+
+                        for (i = 0; i < rosterCheckboxesUser.length; i++) {
+                            found = false;
+                            for (j = 0; j < teams[0].pids.length; j++) {
+                                if (Math.floor(rosterCheckboxesUser[i].value) === teams[0].pids[j]) {
+                                    rosterCheckboxesUser[i].checked = true;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) {
+                                rosterCheckboxesUser[i].checked = false;
                             }
                         }
-                        if (!found) {
-                            rosterCheckboxesUser[i].checked = false;
-                        }
-                    }
-                    for (i = 0; i < rosterCheckboxesOther.length; i++) {
-                        found = false;
-                        for (j = 0; j < otherPids.length; j++) {
-                            if (Math.floor(rosterCheckboxesOther[i].value) === otherPids[j]) {
-                                rosterCheckboxesOther[i].checked = true;
-                                found = true;
-                                break;
+                        for (i = 0; i < rosterCheckboxesOther.length; i++) {
+                            found = false;
+                            for (j = 0; j < teams[1].pids.length; j++) {
+                                if (Math.floor(rosterCheckboxesOther[i].value) === teams[1].pids[j]) {
+                                    rosterCheckboxesOther[i].checked = true;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) {
+                                rosterCheckboxesOther[i].checked = false;
                             }
                         }
-                        if (!found) {
-                            rosterCheckboxesOther[i].checked = false;
-                        }
-                    }
+                    });
                 });
             });
         });

@@ -112,11 +112,18 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
 
                     transaction.objectStore("trade").add({
                         rid: 0,
-                        otherTid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1)
-                        otherPids: [],
-                        userPids: [],
-                        otherDpids: [],
-                        userDpids: []
+                        teams: [
+                            {
+                                tid: tid,
+                                pids: [],
+                                dpids: []
+                            },
+                            {
+                                tid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1),
+                                pids: [],
+                                dpids: []
+                            }
+                        ]
                     });
 
                     player.genBaseMoods(transaction, function (baseMoods) {

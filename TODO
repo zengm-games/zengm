@@ -10,6 +10,8 @@ BIG NEW FEATURES
 trade improvements
   refactor trade module with all the below in mind
     fix unit tests
+    clean up even more?
+      should create and updatePlayers be merged? updatePlayers already updates tids too
     fix AI stuff (counter offers)
     fix trading block
   trade suggestions (and trading block) should know salary rules

@@ -13,10 +13,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
      * @param {function()} cb Callback function.
      */
     function create(teams, cb) {
-        var tx;
-
-        tx = g.dbl.transaction("trade", "readwrite");
-        tx.objectStore("trade").get(0).onsuccess = function (event) { // Same key always, as there is only one trade allowed at a time
+        g.dbl.transaction("trade").objectStore("trade").get(0).onsuccess = function (event) { // Same key always, as there is only one trade allowed at a time
             var cbStartTrade, oldTr;
 
             oldTr = event.target.result;
@@ -28,11 +25,13 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
             }
 
             cbStartTrade = function () {
+                var tx;
+
+                tx = g.dbl.transaction("trade", "readwrite");
                 tx.objectStore("trade").put({
                     rid: 0,
                     teams: teams
                 });
-
                 tx.oncomplete = function () {
                     db.setGameAttributes({lastDbChange: Date.now()}, function () {
                         cb();
@@ -84,7 +83,6 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
 
         tx = g.dbl.transaction(["draftPicks", "players"]);
 
-console.log(teams);
         // This is just for debugging
         team.valueChange(teams[1].tid, teams[0].dpids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
             console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
@@ -249,6 +247,7 @@ console.log(teams);
 
                                 s.teams[j].name = g.teamRegionsCache[tids[j]] + " " + g.teamNamesCache[tids[j]];
 
+console.log([players[j].length, pids[j].length, pids[k].length]);
                                 if (players[j].length - pids[j].length + pids[k].length > 15) {
                                     overRosterLimit[j] = true;
                                 }

@@ -11,6 +11,7 @@ trade improvements
   refactor trade module with all the below in mind
     clean up even more?
       should create and updatePlayers be merged? updatePlayers already updates tids too
+      either way, they should take partial objects and fill in the default/existing values
     fix AI stuff (counter offers)
     fix trading block
   trade suggestions (and trading block) should know salary rules
@@ -19,6 +20,14 @@ trade improvements
     AI teams need to factor this into the trade value if they have to drop someone after
   trades between AI teams
   DON'T UPLOAD WITHOUT MIGRATION CODE
+play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/suggestion_playbyplay_games/
+  generate for each game, but don't write to db yet
+  add new page "live". when this is viewed, send the play-by-play data there for the selected team
+    make pretty
+    error if no game from that team today
+    warning if try to click away during game
+    somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect)
+      if redirect is blocked, show link at the bottom of play by play
 right after starting a fantasy draft, dashboard gives an error since there are no players on team
   any other errors?
 all time leaders page
@@ -61,10 +70,12 @@ gameSim
   assists should be function of speed, since those players have the ball more
   substitutions should be based on "value", not ovr
     but player.value includes potential.. so just come up with new formula
+do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rookie_players_with_lots_100_skill_ratings/
 
 MINOR FIXES
 -----------
 
+some kind of firstrun tutorial highlighting the functionality of the play button
 twitter/facebook/g+ interfere with dropdown when loading
   only show when Share is clicked?
 merge game.play and freeAgents.play
@@ -287,7 +298,6 @@ profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?
 only show retired players in season summary if they actually played some
-Look at ratings distributions - should there really be so many bigs who are great passers, for instance?
 components.dropdown tests are very slow in chrome
 export/import roster
   some way to specify startingSeason
@@ -570,7 +580,7 @@ dist
 gameLog
   set more stuff through mapping
 reassess dropdown - should it really be called like it is in uiEvery? can i use a computed? problem is, some things need to listen to updateEvents too, not just observables
-
+git log -- js/core/gameSimNew.js
 
 ---
 

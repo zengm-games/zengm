@@ -28,6 +28,7 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
     warning if try to click away during game
     somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect)
       if redirect is blocked, show link at the bottom of play by play
+    could fake where the shots are to display graphically
 right after starting a fantasy draft, dashboard gives an error since there are no players on team
   any other errors?
 all time leaders page

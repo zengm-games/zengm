@@ -1,3 +1,7 @@
+Don't read much into the release dates. Changes are pushed live as often as
+possible, regardless of whether I make an official release with a new version
+number or not.
+
 # Since 3.2.0
 
 - AppCache used to allow offline play

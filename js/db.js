@@ -567,6 +567,23 @@ console.log(event);
                     }
                 };
             }
+            if (event.oldVersion <= 6) {
+                tx.objectStore("trade").put({
+                    rid: 0,
+                    teams: [
+                        {
+                            tid: g.userTid,
+                            pids: [],
+                            dpids: []
+                        },
+                        {
+                            tid: g.userTid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1).
+                            pids: [],
+                            dpids: []
+                        }
+                    ]
+                });
+            }
         });
     }
 
@@ -574,7 +591,7 @@ console.log(event);
         var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 6);
+        request = indexedDB.open("league" + lid, 7);
         request.onerror = function (event) {
             throw new Error("League connection error");
         };

@@ -1,8 +1,5 @@
 DB CHANGES SINCE 3.2.0
 ----------------------
-g.nextPhase, but this doesn't matter because it's initialized when it's needed
-g.daysLeft, but this doesn't matter because it's initialized when it's needed
-!!!!!!!!trade!!!!!!!!
 
 BIG NEW FEATURES
 ----------------
@@ -17,7 +14,6 @@ trade improvements
     so before simulating any games, need to check roster sizes. how slow is that?
     AI teams need to factor this into the trade value if they have to drop someone after
   trades between AI teams
-  DON'T UPLOAD WITHOUT MIGRATION CODE
 play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/suggestion_playbyplay_games/
   generate for each game, but don't write to db yet
   add new page "live". when this is viewed, send the play-by-play data there for the selected team

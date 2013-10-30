@@ -1,6 +1,11 @@
 DB CHANGES SINCE 3.2.0
 ----------------------
 
+muscula
+  source maps don't seem to work
+    are they working in chrome in the first place?
+get rid of share tab?
+
 BIG NEW FEATURES
 ----------------
 
@@ -36,6 +41,7 @@ more starting options
     implications for popRank?
 localization
   http://requirejs.org/docs/api.html#i18n
+team and league records (highest scoring game, etc)
 
 BIG NEW GAMEPLAY CHANGES
 ------------------------
@@ -281,7 +287,6 @@ trades
       "I need to cut my payroll and start making more money."
       "I could really use a good rebounder."
 all star game
-team and league records (highest scoring game, etc)
 switch teams after you're fired
 trades
   allow trades to go over the roster limit, but show a warning. also factor into AI logic that they would have to drop a player

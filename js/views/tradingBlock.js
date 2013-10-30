@@ -27,14 +27,26 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
 
         for (i = 0; i < tids.length; i++) {
             (function (tid) {
+                var teams;
+
+                teams = [
+                    {
+                        tid: g.userTid,
+                        pids: userPids,
+                        dpids: userDpids
+                    },
+                    {
+                        tid: tid,
+                        pids: [],
+                        dpids: []
+                    }
+                ];
+
                 if (tid !== g.userTid) {
-                    trade.makeItWork(tid, userPids, [], userDpids, [], true, function (found, userPids, otherPids, userDpids, otherDpids) {
+                    trade.makeItWork(teams, true, function (found, teams) {
+console.log(found);
                         if (found) {
-                            offers.push({
-                                tid: tid,
-                                pids: otherPids,
-                                dpids: otherDpids
-                            });
+                            offers.push(teams[1]);
                         }
                         afterOffers();
                     });
@@ -58,7 +70,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
     }
 
     function post(req) {
-        var buttonEl, offers, userDpids, userPids;
+        var buttonEl, userDpids, userPids;
 
         buttonEl = document.getElementById("ask-button");
         buttonEl.textContent = "Waiting for offers...";

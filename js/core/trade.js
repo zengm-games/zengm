@@ -84,7 +84,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
         tx = g.dbl.transaction(["draftPicks", "players"]);
 
         // This is just for debugging
-        team.valueChange(teams[1].tid, teams[0].dpids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
+        team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
             console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
         });
 
@@ -247,7 +247,6 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
 
                                 s.teams[j].name = g.teamRegionsCache[tids[j]] + " " + g.teamNamesCache[tids[j]];
 
-console.log([players[j].length, pids[j].length, pids[k].length]);
                                 if (players[j].length - pids[j].length + pids[k].length > 15) {
                                     overRosterLimit[j] = true;
                                 }
@@ -370,7 +369,7 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
 
                 outcome = "rejected"; // Default
 
-                team.valueChange(teams[1].tid, teams[0].dpids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
+                team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
                     var draftPickStore, j, playerStore, tx;
 
                     tx = g.dbl.transaction(["draftPicks", "players"], "readwrite");
@@ -447,10 +446,11 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
      * Have the AI add players/picks until they like the deal. Uses forward selection to try to find the first deal the AI likes.
      *
      * @memberOf core.trade
+     * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
      * @param {boolean} holdUserConstant If true, then players/picks will only be added from the other team. This is useful for the trading block feature.
      * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
-    function makeItWork(otherTid, userPids, otherPids, userDpids, otherDpids, holdUserConstant, cb) {
+    function makeItWork(teams, holdUserConstant, cb) {
         var added, initialSign, tryAddAsset, testTrade;
 
         added = 0;
@@ -465,18 +465,18 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
 
             if (!holdUserConstant) {
                 // Get all players not in userPids
-                tx.objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
+                tx.objectStore("players").index("tid").openCursor(teams[0].tid).onsuccess = function (event) {
                     var cursor, p;
 
                     cursor = event.target.result;
                     if (cursor) {
                         p = cursor.value;
 
-                        if (userPids.indexOf(p.pid) < 0) {
+                        if (teams[0].pids.indexOf(p.pid) < 0) {
                             assets.push({
                                 type: "player",
                                 pid: p.pid,
-                                tid: g.userTid
+                                tid: teams[0].tid
                             });
                         }
 
@@ -486,18 +486,18 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
             }
 
             // Get all players not in otherPids
-            tx.objectStore("players").index("tid").openCursor(otherTid).onsuccess = function (event) {
+            tx.objectStore("players").index("tid").openCursor(teams[1].tid).onsuccess = function (event) {
                 var cursor, p;
 
                 cursor = event.target.result;
                 if (cursor) {
                     p = cursor.value;
 
-                    if (otherPids.indexOf(p.pid) < 0) {
+                    if (teams[1].pids.indexOf(p.pid) < 0) {
                         assets.push({
                             type: "player",
                             pid: p.pid,
-                            tid: otherTid
+                            tid: teams[1].tid
                         });
                     }
 
@@ -507,18 +507,18 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
 
             if (!holdUserConstant) {
                 // Get all draft picks not in userDpids
-                tx.objectStore("draftPicks").index("tid").openCursor(g.userTid).onsuccess = function (event) {
+                tx.objectStore("draftPicks").index("tid").openCursor(teams[0].tid).onsuccess = function (event) {
                     var cursor, dp;
 
                     cursor = event.target.result;
                     if (cursor) {
                         dp = cursor.value;
 
-                        if (userDpids.indexOf(dp.dpid) < 0) {
+                        if (teams[0].dpids.indexOf(dp.dpid) < 0) {
                             assets.push({
                                 type: "draftPick",
                                 dpid: dp.dpid,
-                                tid: g.userTid
+                                tid: teams[0].tid
                             });
                         }
 
@@ -528,18 +528,18 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
             }
 
             // Get all draft picks not in otherDpids
-            tx.objectStore("draftPicks").index("tid").openCursor(otherTid).onsuccess = function (event) {
+            tx.objectStore("draftPicks").index("tid").openCursor(teams[1].tid).onsuccess = function (event) {
                 var cursor, dp;
 
                 cursor = event.target.result;
                 if (cursor) {
                     dp = cursor.value;
 
-                    if (otherDpids.indexOf(dp.dpid) < 0) {
+                    if (teams[1].dpids.indexOf(dp.dpid) < 0) {
                         assets.push({
                             type: "draftPick",
                             dpid: dp.dpid,
-                            tid: otherTid
+                            tid: teams[1].tid
                         });
                     }
 
@@ -548,7 +548,7 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
             };
 
             tx.oncomplete = function () {
-                var done, i, newOtherDpids, newOtherPids, newUserPids, newUserDpids;
+                var done, i, otherDpids, otherPids, userPids, userDpids;
 
                 // If we've already added 5 assets or there are no more to try, stop
                 if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
@@ -559,26 +559,26 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
                 // Calculate the value for each asset added to the trade, for use in forward selection
                 done = 0;
                 for (i = 0; i < assets.length; i++) {
-                    newUserPids = userPids.slice();
-                    newOtherPids = otherPids.slice();
-                    newUserDpids = userDpids.slice();
-                    newOtherDpids = otherDpids.slice();
+                    userPids = teams[0].pids.slice();
+                    otherPids = teams[1].pids.slice();
+                    userDpids = teams[0].dpids.slice();
+                    otherDpids = teams[1].dpids.slice();
 
                     if (assets[i].type === "player") {
                         if (assets[i].tid === g.userTid) {
-                            newUserPids.push(assets[i].pid);
+                            userPids.push(assets[i].pid);
                         } else {
-                            newOtherPids.push(assets[i].pid);
+                            otherPids.push(assets[i].pid);
                         }
                     } else {
                         if (assets[i].tid === g.userTid) {
-                            newUserDpids.push(assets[i].dpid);
+                            userDpids.push(assets[i].dpid);
                         } else {
-                            newOtherDpids.push(assets[i].dpid);
+                            otherDpids.push(assets[i].dpid);
                         }
                     }
                     (function (i) {
-                        team.valueChange(otherTid, newUserPids, newOtherPids, newUserDpids, newOtherDpids, function (dv) {
+                        team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, function (dv) {
                             var asset, j;
 
                             assets[i].dv = dv;
@@ -598,15 +598,15 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
                                 asset = assets[j];
                                 if (asset.type === "player") {
                                     if (asset.tid === g.userTid) {
-                                        userPids.push(asset.pid);
+                                        teams[0].pids.push(asset.pid);
                                     } else {
-                                        otherPids.push(asset.pid);
+                                        teams[1].pids.push(asset.pid);
                                     }
                                 } else {
                                     if (asset.tid === g.userTid) {
-                                        userDpids.push(asset.dpid);
+                                        teams[0].dpids.push(asset.dpid);
                                     } else {
-                                        otherDpids.push(asset.dpid);
+                                        teams[1].dpids.push(asset.dpid);
                                     }
                                 }
 
@@ -622,12 +622,12 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
 
         // See if the AI team likes the current trade. If not, try adding something to it.
         testTrade = function () {
-            team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
+            team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
                 if (dv > 0 && initialSign === -1) {
-                    cb(true, userPids, otherPids, userDpids, otherDpids);
+                    cb(true, teams);
                 } else if ((added > 2 || (added > 0 && Math.random() > 0.5)) && initialSign === 1) {
                     if (dv > 0) {
-                        cb(true, userPids, otherPids, userDpids, otherDpids);
+                        cb(true, teams);
                     } else {
                         cb(false);
                     }
@@ -637,7 +637,7 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
             });
         };
 
-        team.valueChange(otherTid, userPids, otherPids, userDpids, otherDpids, function (dv) {
+        team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
             if (dv > 0) {
                 // Try to make trade better for user's team
                 initialSign = 1;
@@ -659,56 +659,54 @@ console.log([players[j].length, pids[j].length, pids[k].length]);
      * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
     function makeItWorkTrade(cb) {
-        getPlayers(function (userPids, otherPids, userDpids, otherDpids) {
-            getOtherTid(function (otherTid) {
-                makeItWork(otherTid, userPids, otherPids, userDpids, otherDpids, false, function (found, userPids, otherPids, userDpids, otherDpids) {
-                    if (!found) {
-                        cb(g.teamRegionsCache[otherTid] + ' GM: "I can\'t afford to give up so much."');
-                    } else {
-                        summary(otherTid, userPids, otherPids, userDpids, otherDpids, function (s) {
-                            var tx;
+        get(function (teams) {
+            makeItWork(teams, false, function (found, teams) {
+                if (!found) {
+                    cb(g.teamRegionsCache[otherTid] + ' GM: "I can\'t afford to give up so much."');
+                } else {
+                    summary(otherTid, userPids, otherPids, userDpids, otherDpids, function (s) {
+                        var tx;
 
-                            // Store AI's proposed trade in database
-                            tx = g.dbl.transaction("trade", "readwrite");
-                            tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
-                                var cursor, tr, updated;
+                        // Store AI's proposed trade in database
+                        tx = g.dbl.transaction("trade", "readwrite");
+                        tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
+                            var cursor, tr, updated;
 
-                                cursor = event.target.result;
-                                tr = cursor.value;
+                            cursor = event.target.result;
+                            tr = cursor.value;
 
-                                updated = false;
+                            updated = false;
 
-                                if (userPids.toString() !== tr.userPids.toString()) {
-                                    tr.userPids = userPids;
-                                    updated = true;
-                                }
-                                if (otherPids.toString() !== tr.otherPids.toString()) {
-                                    tr.otherPids = otherPids;
-                                    updated = true;
-                                }
-                                if (userDpids.toString() !== tr.userDpids.toString()) {
-                                    tr.userDpids = userDpids;
-                                    updated = true;
-                                }
-                                if (otherDpids.toString() !== tr.otherDpids.toString()) {
-                                    tr.otherDpids = otherDpids;
-                                    updated = true;
-                                }
+                            if (userPids.toString() !== tr.userPids.toString()) {
+                                tr.userPids = userPids;
+                                updated = true;
+                            }
+                            if (otherPids.toString() !== tr.otherPids.toString()) {
+                                tr.otherPids = otherPids;
+                                updated = true;
+                            }
+                            if (userDpids.toString() !== tr.userDpids.toString()) {
+                                tr.userDpids = userDpids;
+                                updated = true;
+                            }
+                            if (otherDpids.toString() !== tr.otherDpids.toString()) {
+                                tr.otherDpids = otherDpids;
+                                updated = true;
+                            }
 
-                                if (updated) {
-                                    cursor.update(tr);
-                                }
-                            };
-                            tx.oncomplete = function () {
-                                if (s.warning) {
-                                    cb(g.teamRegionsCache[otherTid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking any rules."');
-                                } else {
-                                    cb(g.teamRegionsCache[otherTid] + ' GM: "How does this sound?"');
-                                }
-                            };
-                        });
-                    }
-                });
+                            if (updated) {
+                                cursor.update(tr);
+                            }
+                        };
+                        tx.oncomplete = function () {
+                            if (s.warning) {
+                                cb(g.teamRegionsCache[otherTid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking any rules."');
+                            } else {
+                                cb(g.teamRegionsCache[otherTid] + ' GM: "How does this sound?"');
+                            }
+                        };
+                    });
+                }
             });
         });
     }

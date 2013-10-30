@@ -96,7 +96,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
 
             tx = g.dbl.transaction("trade", "readwrite");
             tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
-                var cursor, tr;
+                var cursor, i, tr;
 
                 cursor = event.target.result;
                 tr = cursor.value;
@@ -662,47 +662,43 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
         get(function (teams) {
             makeItWork(teams, false, function (found, teams) {
                 if (!found) {
-                    cb(g.teamRegionsCache[otherTid] + ' GM: "I can\'t afford to give up so much."');
+                    cb(g.teamRegionsCache[teams[1].tid] + ' GM: "I can\'t afford to give up so much."');
                 } else {
-                    summary(otherTid, userPids, otherPids, userDpids, otherDpids, function (s) {
+                    summary(teams, function (s) {
                         var tx;
 
                         // Store AI's proposed trade in database
                         tx = g.dbl.transaction("trade", "readwrite");
                         tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
-                            var cursor, tr, updated;
+                            var cursor, i, updated, tr;
 
                             cursor = event.target.result;
                             tr = cursor.value;
 
                             updated = false;
 
-                            if (userPids.toString() !== tr.userPids.toString()) {
-                                tr.userPids = userPids;
-                                updated = true;
-                            }
-                            if (otherPids.toString() !== tr.otherPids.toString()) {
-                                tr.otherPids = otherPids;
-                                updated = true;
-                            }
-                            if (userDpids.toString() !== tr.userDpids.toString()) {
-                                tr.userDpids = userDpids;
-                                updated = true;
-                            }
-                            if (otherDpids.toString() !== tr.otherDpids.toString()) {
-                                tr.otherDpids = otherDpids;
-                                updated = true;
+                            for (i = 0; i < 2; i++) {
+                                if (teams[i].tid !== tr.teams[i].tid) {
+                                    updated = true;
+                                }
+                                if (teams[i].pids.toString() !== tr.teams[i].pids.toString()) {
+                                    updated = true;
+                                }
+                                if (teams[i].dpids.toString() !== tr.teams[i].dpids.toString()) {
+                                    updated = true;
+                                }
                             }
 
                             if (updated) {
+                                tr.teams = teams;
                                 cursor.update(tr);
                             }
                         };
                         tx.oncomplete = function () {
                             if (s.warning) {
-                                cb(g.teamRegionsCache[otherTid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking any rules."');
+                                cb(g.teamRegionsCache[teams[1].tid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking any rules."');
                             } else {
-                                cb(g.teamRegionsCache[otherTid] + ' GM: "How does this sound?"');
+                                cb(g.teamRegionsCache[teams[1].tid] + ' GM: "How does this sound?"');
                             }
                         };
                     });

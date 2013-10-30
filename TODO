@@ -12,8 +12,6 @@ trade improvements
     clean up even more?
       should create and updatePlayers be merged? updatePlayers already updates tids too
       either way, they should take partial objects and fill in the default/existing values
-    fix AI stuff (counter offers)
-    fix trading block
   trade suggestions (and trading block) should know salary rules
   trades can go over roster size limit
     so before simulating any games, need to check roster sizes. how slow is that?

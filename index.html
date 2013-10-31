@@ -70,6 +70,25 @@
   </head>
 
   <body>
+    <script type="text/javascript">
+      if (enableLogging) {
+        var TriggerPrompt = function(articleUrl, contentId) {
+          var ARTICLE_URL = articleUrl;
+          var CONTENT_ID = contentId || '';
+          var el = document.createElement('script');
+          var url = 'http://survey.g.doubleclick.net/survey?site=5945171946504192' +
+                    '&url=' + encodeURIComponent(ARTICLE_URL) +
+                    (CONTENT_ID ? '&cid=' + encodeURIComponent(CONTENT_ID) : '') +
+                    '&random=' + (new Date).getTime() +
+                    '&after=1';
+          el.setAttribute('src', url);
+          var head = document.getElementsByTagName('head')[0] ||
+              document.getElementsByTagName('body')[0];
+          head.appendChild(el);
+        };
+      }
+    </script>
+    
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="top-menu">
       <div class="container">
         <div class="navbar-header">
@@ -170,9 +189,11 @@
     </nav>
 
     <div class="container">
-      <div id="content" data-id-loading="" data-id-loaded="">
-        <h1>Loading...</h1>
-        <p>This should only take a couple seconds on a fast connection.</p>
+      <div class="p402_premium">
+        <div id="content" data-id-loading="" data-id-loaded="">
+          <h1>Loading...</h1>
+          <p>This should only take a couple seconds on a fast connection.</p>
+        </div>
       </div>
 
       <p style="clear: both;"></p>

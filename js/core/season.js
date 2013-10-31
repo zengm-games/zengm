@@ -506,6 +506,10 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                 // AI teams sign free agents
                 freeAgents.autoSign(function () {
                     newPhaseCb(g.PHASE.PRESEASON, cb, undefined, ["playerMovement"]);
+
+                    if (g.enableLogging) {
+                        TriggerPrompt("http://www.basketball-gm.com/", (new Date()).getTime());
+                    }
                 });
             };
         });

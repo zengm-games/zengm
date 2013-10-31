@@ -731,8 +731,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
-                text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com), <a href="https://github.com/jdscheff/basketball-gm/issues">submit an issue on GitHub</a>, or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.' +
-                      '<p>Also, in case you didn\'t know, this game is all completely free and created by volunteers. If you\'d like to help out, please get in touch through one of the links above. If you\'re a programmer, great! If not, we still need artists, designers, basketball nerds, and basically anyone who cares enough to give regular feedback.</p>'
+                text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.'
             });
             localStorage.nagged = true;
         }

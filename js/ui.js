@@ -19,15 +19,6 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                 rightPos: "20px"
             });
         }
-        slideOut = $("#share");
-        if (slideOut.length > 0) {
-            slideOut.css({
-                visibility: "visible"
-            }).tabSlideOut({
-                tabHandle: "#share .slide-out-handle",
-                rightPos: "120px"
-            });
-        }
 
         ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
 

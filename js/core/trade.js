@@ -659,10 +659,10 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
      * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
     function makeItWorkTrade(cb) {
-        get(function (teams) {
-            makeItWork(teams, false, function (found, teams) {
+        get(function (teams0) {
+            makeItWork(teams0, false, function (found, teams) {
                 if (!found) {
-                    cb(g.teamRegionsCache[teams[1].tid] + ' GM: "I can\'t afford to give up so much."');
+                    cb(g.teamRegionsCache[teams0[1].tid] + ' GM: "I can\'t afford to give up so much."');
                 } else {
                     summary(teams, function (s) {
                         var tx;

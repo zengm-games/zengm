@@ -89,7 +89,7 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
                                 for (i = 0; i < players.length; i++) {
                                     // Don't sign minimum contract players to fill out the roster
                                     if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
-                                        p = players.shift();
+                                        p = players[i];
                                         p.tid = tid;
                                         p = player.addStatsRow(p);
                                         p = player.setContract(p, p.contract, true);
@@ -102,6 +102,7 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
                                         numPlayersOnRoster += 1;
                                         payroll += p.contract.amount;
                                         foundPlayer = true;
+                                        players.splice(i, 1); // Remove from list of free agents
                                         break;  // Only add one free agent
                                     }
                                 }

@@ -3,7 +3,6 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-http://www.reddit.com/r/BasketballGM/comments/1plukz/stuck_on_waiting_for_answer_for_trades/
 muscula
   source maps don't seem to work
     are they working in chrome in the first place?
@@ -48,6 +47,7 @@ team and league records (highest scoring game, etc)
 BIG NEW GAMEPLAY CHANGES
 ------------------------
 
+make low ovr high pot players more likely to improve
 Extended free agency
   order of AI team signings shouldn't be linear
   0 year contracts http://www.reddit.com/r/BasketballGM/comments/1p0sa8/new_feature_extended_free_agency/ccy4gvp

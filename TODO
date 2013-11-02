@@ -12,9 +12,14 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
     show list of games. click -> POST -> play by play in same window
     how to handle clicks to toher pages, gamesim from after play by play is loaded, etc
     playByPlay format
+      RIP IT ALL OUT manually build text in gameSim
       send objects with "type" param
       type "init" - rosters, starters
       type "update" - any new stat
+      NEED TO RECORD MORE THAN JUST STATS
+        change of possession with no rebound/turnover
+        when a player fouls out
+        substitutions
     show live box score
     make pretty
     speed slider

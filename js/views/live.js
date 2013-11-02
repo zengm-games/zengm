@@ -66,34 +66,140 @@ console.log(gid);
     function updatePlayByPlay(inputs, updateEvents, vm) {
         var events;
 
-        function processToNext() {
+        function processToNextPause() {
             var e, stop, text;
 
             stop = false;
             while (!stop && events.length > 0) {
                 e = events.shift();
-                if (e.s === "min") {
+                if (e.s === "min" || e.s === "pts") {
                     continue;
-                } else if (e.s === "ft") {
-                    text = "Made ft";
-                    events.shift(); // The next one is fta
+                } else if (e.s === "fg" || e.s === "fga") {
+                    continue;
+                } else if (e.s === "drb") {
+                    text = "Defensive rebound";
+                    stop = true;
+                } else if (e.s === "orb") {
+                    text = "Offensive rebound";
+                    stop = true;
+                } else if (e.s === "fta") {
+                    if (events[0].s === "ft") {
+                        text = "Made ft";
+                        events.shift();
+                        stop = true;
+                    } else {
+                        text = "Missed ft";
+                        if (events[0].s !== "drb" && events[0].s !== "orb") {
+                            stop = true;
+                        }
+                    }
+                } else if (e.s === "fgaAtRim") {
+                    if (events[0].s === "fgAtRim") {
+                        text = "Made dunk/layup";
+                        events.shift();
+                        stop = true;
+                        if (events[0].s === "ast") {
+                            text += " (ast)";
+                            events.shift();
+                        }
+                    } else if (events[0].s === "pf") {
+                        text = "Foul";
+                        events.shift();
+                        stop = true;
+                    } else {
+                        if (events[0].s === "blk") {
+                            text = "Player's dunk/layup blocked by player";
+                            events.shift();
+                        } else {
+                            text = "Missed dunk/layup";
+                        }
+                        if (events[0].s !== "drb" && events[0].s !== "orb") {
+                            stop = true;
+                        }
+                    }
+                } else if (e.s === "fgaLowPost") {
+                    if (events[0].s === "fgLowPost") {
+                        text = "Made low post shot";
+                        events.shift();
+                        stop = true;
+                        if (events[0].s === "ast") {
+                            text += " (ast)";
+                            events.shift();
+                        }
+                    } else {
+                        if (events[0].s === "blk") {
+                            text = "Player's low post shot blocked by player";
+                            events.shift();
+                        } else {
+                            text = "Missed low post shot";
+                        }
+                        if (events[0].s !== "drb" && events[0].s !== "orb") {
+                            stop = true;
+                        }
+                    }
+                } else if (e.s === "fgaMidRange") {
+                    if (events[0].s === "fgMidRange") {
+                        text = "Made mid-range shot";
+                        events.shift();
+                        stop = true;
+                        if (events[0].s === "ast") {
+                            text += " (ast)";
+                            events.shift();
+                        }
+                    } else {
+                        if (events[0].s === "blk") {
+                            text = "Player's mid-range shot blocked by player";
+                            events.shift();
+                        } else {
+                            text = "Missed mid-range shot";
+                        }
+                        if (events[0].s !== "drb" && events[0].s !== "orb") {
+                            stop = true;
+                        }
+                    }
+                } else if (e.s === "tpa") {
+                    if (events[0].s === "tp") {
+                        text = "Made three pointer";
+                        events.shift();
+                        stop = true;
+                        if (events[0].s === "ast") {
+                            text += " (ast)";
+                            events.shift();
+                        }
+                    } else {
+                        if (events[0].s === "blk") {
+                            text = "Player's three pointer blocked by player";
+                            events.shift();
+                        } else {
+                            text = "Missed three pointer";
+                        }
+                        if (events[0].s !== "drb" && events[0].s !== "orb") {
+                            stop = true;
+                        }
+                    }
+                } else if (e.s === "tov") {
+                    if (events[0].s === "stl") {
+                        text = "Player steals the ball from player";
+                        events.shift();
+                    } else {
+                        text = "Player turns the ball over";
+                    }
                     stop = true;
                 } else {
                     console.log(e);
                 }
             }
 
-            vm.playByPlay.push(text);
+            vm.playByPlay.unshift(text);
 
             if (events.length > 0) {
-                setTimeout(processToNext, 500);
+                setTimeout(processToNextPause, 50);
             }
         }
 
         if (vm.inProgress() && inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
-console.log("AAAAAAAAA");
             events = inputs.playByPlay;
-            processToNext();
+            processToNextPause();
             // Update box score observable with each stat
             // Update playByPlay with text strings
         }

@@ -563,7 +563,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         }
 
         if (this.probBlk() > Math.random()) {
-            return this.doBlk(shooter);  // orb or drb
+            return this.doBlk(shooter, type);  // orb or drb
         }
 
         // Make
@@ -616,15 +616,24 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
      * @return {string} Output of this.doReb.
      */
-    GameSim.prototype.doBlk = function (shooter) {
+    GameSim.prototype.doBlk = function (shooter, type) {
         var p, ratios;
+
+        p = this.playersOnCourt[this.o][shooter];
+        this.recordStat(this.o, p, "fga");
+        if (type === "atRim") {
+            this.recordStat(this.o, p, "fgaAtRim");
+        } else if (type === "lowPost") {
+            this.recordStat(this.o, p, "fgaLowPost");
+        } else if (type === "midRange") {
+            this.recordStat(this.o, p, "fgaMidRange");
+        } else if (type === "threePointer") {
+            this.recordStat(this.o, p, "tpa");
+        }
 
         ratios = this.ratingArray("blocking", this.d, 4);
         p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "blk");
-
-        p = this.playersOnCourt[this.o][shooter];
-        this.recordStat(this.o, p, "fga");
 
         return this.doReb();  // orb or drb
     };
@@ -648,18 +657,18 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.recordStat(this.o, p, "fg");
         this.recordStat(this.o, p, "pts", 2);  // 2 points for 2's
         if (type === "atRim") {
-            this.recordStat(this.o, p, "fgAtRim");
             this.recordStat(this.o, p, "fgaAtRim");
+            this.recordStat(this.o, p, "fgAtRim");
         } else if (type === "lowPost") {
-            this.recordStat(this.o, p, "fgLowPost");
             this.recordStat(this.o, p, "fgaLowPost");
+            this.recordStat(this.o, p, "fgLowPost");
         } else if (type === "midRange") {
-            this.recordStat(this.o, p, "fgMidRange");
             this.recordStat(this.o, p, "fgaMidRange");
+            this.recordStat(this.o, p, "fgMidRange");
         } else if (type === "threePointer") {
-            this.recordStat(this.o, p, "tp");
-            this.recordStat(this.o, p, "tpa");
             this.recordStat(this.o, p, "pts");  // Extra point for 3's
+            this.recordStat(this.o, p, "tpa");
+            this.recordStat(this.o, p, "tp");
         }
 
         if (passer >= 0) {

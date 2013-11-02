@@ -12,7 +12,6 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
     how to handle clicks to toher pages, gamesim from after play by play is loaded, etc
     playByPlay format
       send objects with "type" param
-      type "init" - rosters, starters - info for box score
       type "stat" - any new stat to update box score
       type "text" - text log
         fouls
@@ -27,14 +26,14 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
     timestamps for plays?
     show live box score
       how to show injuries?
-        if i get it from box score, then need to filter out injuries that happened *that game*
+        need to filter out injuries that happened *that game* bc data comes from after the game
           players with injury and minutes played -> no injury
           then, when an injury happens, update
-      can i just get it from the db and 0 out stats? this would solve a lot. just need to link to live stats by pid
-        or can i use p? would be easier. is the row always right in the box score?
       clickable rows, like in gameLog.js
       order of columns when collapsed to single column (my SO answer)
       overtime
+      sort to show current active players
+      clock
     speed slider
     should disable buttons when other gamesim in progress
     warning if try to click away during game

@@ -84,6 +84,29 @@ console.log('GET');
                 if (e.type === "text") {
                     text = e.text;
                     stop = true;
+                } else if (e.type === "stat") {
+                    // Quarter-by-quarter score
+                    if (e.s === "pts") {
+                        // This is a hack because array elements are not made observable by default in the Knockout mapping plugin and I didn't want to write a really ugly mapping function.
+                        vm.boxScore.teams()[e.t].ptsQtrs()[e.qtr] += e.amt;
+                        vm.boxScore.teams()[e.t].ptsQtrs(vm.boxScore.teams()[e.t].ptsQtrs());
+                    }
+
+                    // Everything else
+                    if (e.s === "drb") {
+                        vm.boxScore.teams()[e.t].players()[e.p].trb(vm.boxScore.teams()[e.t].players()[e.p].trb() + e.amt);
+                        vm.boxScore.teams()[e.t].trb(vm.boxScore.teams()[e.t].trb() + e.amt);
+                    } else if (e.s === "orb") {
+                        vm.boxScore.teams()[e.t].players()[e.p].trb(vm.boxScore.teams()[e.t].players()[e.p].trb() + e.amt);
+                        vm.boxScore.teams()[e.t].trb(vm.boxScore.teams()[e.t].trb() + e.amt);
+                        vm.boxScore.teams()[e.t].players()[e.p][e.s](vm.boxScore.teams()[e.t].players()[e.p][e.s]() + e.amt);
+                        vm.boxScore.teams()[e.t][e.s](vm.boxScore.teams()[e.t][e.s]() + e.amt);
+                    } else if (e.s === "min" || e.s === "fg" || e.s === "fga" || e.s === "tp" || e.s === "tpa" || e.s === "ft" || e.s === "fta" || e.s === "ast" || e.s === "tov" || e.s === "stl" || e.s === "blk" || e.s === "pf" || e.s === "pts") {
+                        vm.boxScore.teams()[e.t].players()[e.p][e.s](vm.boxScore.teams()[e.t].players()[e.p][e.s]() + e.amt);
+                        vm.boxScore.teams()[e.t][e.s](vm.boxScore.teams()[e.t][e.s]() + e.amt);
+                    } else {
+console.log(e.s)
+                    }
                 }
             }
 
@@ -118,12 +141,12 @@ console.log('GET');
                     }
                 }
 
-                // Start showing play-by-play
-                processToNextPause();
-
                 deferred.resolve({
                     boxScore: boxScore
                 });
+
+                // Start showing play-by-play
+                processToNextPause();
             };
 
             return deferred.promise();

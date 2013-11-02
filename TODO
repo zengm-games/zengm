@@ -10,10 +10,16 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
   generate for each game, but don't write to db yet
   add new page "live". when this is viewed, send the play-by-play data there for the selected team
     show list of games. click -> POST -> play by play in same window
+    how to handle clicks to toher pages, gamesim from after play by play is loaded, etc
+    playByPlay format
+      send objects with "type" param
+      type "init" - rosters, starters
+      type "update" - any new stat
+    show live box score
     make pretty
-    error if no game from that team today
+    speed slider
     warning if try to click away during game
-    somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect)
+    somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect, or maybe just look for gid passed to game.play)
       if redirect is blocked, show link at the bottom of play by play
     could fake where the shots are to display graphically
 

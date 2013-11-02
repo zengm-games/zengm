@@ -2,15 +2,17 @@
 
 <p data-bind="visible: playByPlay().length === 0">To view a live play-by-play summary of a game, select one of tomorrow's games below.</p>
 
-<div data-bind="visible: playByPlay().length === 0" id="games-list">
-  <!-- ko foreach: games -->
-    <form style="margin: 0 1em 1em 0; float: left;" method="post" data-bind="attrLeagueUrl: {action: ['live']}">
-      <input type="hidden" name="gid" data-bind="value: gid">
-      <button class="btn btn-default" data-bind="css: {'btn-success': highlight}">
-        <span data-bind="text: awayRegion"></span> <span data-bind="text: awayName"></span>
-        at<br>
-        <span data-bind="text: homeRegion"></span> <span data-bind="text: homeName"></span>
-      </button>
-    </form>
-  <!-- /ko -->
+<div data-bind="visible: playByPlay().length === 0, foreach: games" id="games-list">
+  <form style="margin: 0 1em 1em 0; float: left;" method="post" data-bind="attrLeagueUrl: {action: ['live']}">
+    <input type="hidden" name="gid" data-bind="value: gid">
+    <button class="btn btn-default" data-bind="css: {'btn-success': highlight}">
+      <span data-bind="text: awayRegion"></span> <span data-bind="text: awayName"></span>
+      at<br>
+      <span data-bind="text: homeRegion"></span> <span data-bind="text: homeName"></span>
+    </button>
+  </form>
+</div>
+
+<div data-bind="visible: playByPlay().length > 0, foreach: playByPlay">
+  <p data-bind="text: $data"></p>
 </div>

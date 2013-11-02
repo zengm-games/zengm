@@ -33,7 +33,11 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      *     }
      * @param {Object} team2 Same as team1, but for the away team.
      */
-    function GameSim(gid, team1, team2) {
+    function GameSim(gid, team1, team2, doPlayByPlay) {
+        if (doPlayByPlay) {
+            this.playByPlay = [];
+        }
+
         this.id = gid;
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
         this.numPossessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.uniform(0.9, 1.1));
@@ -110,7 +114,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      *     }
      */
     GameSim.prototype.run = function () {
-        var p, t;
+        var out, p, t;
 
         // Simulate the game up to the end of regulation
         this.simPossessions();
@@ -138,11 +142,17 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             }
         }
 
-        return {
+        out = {
             gid: this.id,
             overtimes: this.overtimes,
             team: this.team
         };
+
+        if (this.playByPlay !== undefined) {
+            out.playByPlay = this.playByPlay;
+        }
+
+        return out;
     };
 
     /**
@@ -633,14 +643,9 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
     GameSim.prototype.doFg = function (shooter, passer, type) {
         var p;
 
-        if (passer >= 0) {
-            p = this.playersOnCourt[this.o][passer];
-            this.recordStat(this.o, p, "ast");
-        }
-
         p = this.playersOnCourt[this.o][shooter];
-        this.recordStat(this.o, p, "fg");
         this.recordStat(this.o, p, "fga");
+        this.recordStat(this.o, p, "fg");
         this.recordStat(this.o, p, "pts", 2);  // 2 points for 2's
         if (type === "atRim") {
             this.recordStat(this.o, p, "fgAtRim");
@@ -655,6 +660,11 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             this.recordStat(this.o, p, "tp");
             this.recordStat(this.o, p, "tpa");
             this.recordStat(this.o, p, "pts");  // Extra point for 3's
+        }
+
+        if (passer >= 0) {
+            p = this.playersOnCourt[this.o][passer];
+            this.recordStat(this.o, p, "ast");
         }
 
         return "fg";
@@ -811,16 +821,26 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @param {number} t Team (0 or 1, this.or or this.d).
      * @param {number} p Integer index of this.team[t].player for the player of interest.
      * @param {string} s Key for the property of this.team[t].player[p].stat to increment.
-     * @param {number} amount Amount to increment (default is 1).
+     * @param {number} amt Amount to increment (default is 1).
      */
-    GameSim.prototype.recordStat = function (t, p, s, amount) {
-        amount = amount !== undefined ? amount : 1;
-        this.team[t].player[p].stat[s] += amount;
+    GameSim.prototype.recordStat = function (t, p, s, amt) {
+        amt = amt !== undefined ? amt : 1;
+        this.team[t].player[p].stat[s] += amt;
         if (s !== "gs" && s !== "courtTime" && s !== "benchTime" && s !== "energy") {
-            this.team[t].stat[s] += amount;
+            this.team[t].stat[s] += amt;
             // Record quarter-by-quarter scoring too
             if (s === "pts") {
-                this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] += amount;
+                this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] += amt;
+            }
+            if (this.playByPlay !== undefined) {
+                this.playByPlay.push({
+                    type: "update",
+                    qtr: this.team[t].stat.ptsQtrs.length - 1,
+                    t: t,
+                    p: p,
+                    s: s,
+                    amt: amt
+                });
             }
         }
     };

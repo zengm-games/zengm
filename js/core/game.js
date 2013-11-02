@@ -540,8 +540,9 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
      * @memberOf core.game
      * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all games will be simulated up until either the end of the regular season or the end of the playoffs, whichever happens first.
      * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed.
+     * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the ui.realtimeUpdate raw call.
      */
-    function play(numDays, start) {
+    function play(numDays, start, gidPlayByPlay) {
         var cbNoGames, cbPlayGames, cbSaveResults, cbSimGames, cbRunDay, playoffsContinue;
 
         start = start !== undefined ? start : false;
@@ -568,7 +569,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
         // Saves a vector of results objects for a day, as is output from cbSimGames
         cbSaveResults = function (results) {
-            var cbSaveResult, gidsFinished, gm, i, playoffs, tx;
+            var cbSaveResult, gidsFinished, gm, i, playByPlay, playoffs, tx;
 
             gidsFinished = [];
             playoffs = g.phase === g.PHASE.PLAYOFFS;
@@ -604,20 +605,32 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
             cbSaveResult(results.length - 1);
 
             tx.oncomplete = function () {
-//console.log('oncomplete')
+                var i, raw;
+
+                // If there was a play by play done for one of these games, get it
+                if (gidPlayByPlay !== undefined) {
+                    for (i = 0; i < results.length; i++) {
+                        if (results[i].playByPlay !== undefined) {
+                            raw = {
+                                playByPlay: results[i].playByPlay
+                            }
+                        }
+                    }
+                }
+
                 advStats.calculateAll(function () {  // Update all advanced stats every day
                     ui.realtimeUpdate(["gameSim"], undefined, function () {
                         db.setGameAttributes({lastDbChange: Date.now()}, function () {
                             play(numDays - 1);
                         });
-                    });
+                    }, raw);
                 });
             };
         };
 
         // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
         cbSimGames = function (schedule, teams) {
-            var gs, i, results;
+            var doPlayByPlay, gs, i, results;
 /*            var cbWorker, data, numWorkersFinished, i, gs, numWorkers, results, schedules;
 
             numWorkers = g.gameSimWorkers.length;
@@ -659,7 +672,8 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
             results = [];
             for (i = 0; i < schedule.length; i++) {
-                gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid]);
+                doPlayByPlay = gidPlayByPlay === schedule[i].gid;
+                gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid], doPlayByPlay);
                 results.push(gs.run());
             }
             cbSaveResults(results);

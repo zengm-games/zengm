@@ -1,8 +1,8 @@
 <h1>Live Game Simulation <span data-bind="newWindow: []"></span></h1>
 
-<p data-bind="visible: !inProgress()">To view a live play-by-play summary of a game, select one of tomorrow's games below.</p>
+<p data-bind="visible: playByPlay().length === 0">To view a live play-by-play summary of a game, select one of tomorrow's games below.</p>
 
-<!-- ko if: !inProgress() -->
+<div data-bind="visible: playByPlay().length === 0" id="games-list">
   <!-- ko foreach: games -->
     <form style="margin: 0 1em 1em 0; float: left;" method="post" data-bind="attrLeagueUrl: {action: ['live']}">
       <input type="hidden" name="gid" data-bind="value: gid">
@@ -13,4 +13,4 @@
       </button>
     </form>
   <!-- /ko -->
-<!-- /ko -->
+</div>

@@ -325,9 +325,9 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
             }
             gameStats.teams[t].trb = this.team[t].stat.orb + this.team[t].stat.drb;
 
+            keys.unshift("gs"); // Also record starters, in addition to other stats
             for (p = 0; p < this.team[t].player.length; p++) {
                 gameStats.teams[t].players[p] = {name: this.team[t].player[p].name, pos: this.team[t].player[p].pos};
-                keys.unshift("gs");  // Also record starters, in addition to other stats
                 for (i = 0; i < keys.length; i++) {
                     gameStats.teams[t].players[p][keys[i]] = this.team[t].player[p].stat[keys[i]];
                 }

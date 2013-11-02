@@ -87,6 +87,7 @@ console.log(gid);
 
         if (vm.inProgress() && inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
             events = inputs.playByPlay;
+console.log(events[0])
             processToNextPause();
             // Update box score observable with each stat
             // Update playByPlay with text strings

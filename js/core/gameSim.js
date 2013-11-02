@@ -138,7 +138,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             for (p = 0; p < this.team[t].player.length; p++) {
                 delete this.team[t].player[p].ovr;
                 delete this.team[t].player[p].compositeRating;
-                delete this.team[t].player[p].ptMultiplier;
+                delete this.team[t].player[p].ptModifier;
             }
         }
 
@@ -150,6 +150,10 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
         if (this.playByPlay !== undefined) {
             out.playByPlay = this.playByPlay;
+            this.playByPlay.unshift({
+                type: "init",
+                boxScore: this.team
+            });
         }
 
         return out;
@@ -871,10 +875,9 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             }
             if (this.playByPlay !== undefined) {
                 this.playByPlay.push({
-                    type: "update",
+                    type: "stat",
                     qtr: this.team[t].stat.ptsQtrs.length - 1,
-                    t: t,
-                    p: p,
+                    pid: this.team[t].player[p].id,
                     s: s,
                     amt: amt
                 });

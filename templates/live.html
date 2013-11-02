@@ -13,6 +13,11 @@
   </form>
 </div>
 
-<div data-bind="visible: playByPlay().length > 0, foreach: playByPlay">
-  <p data-bind="text: $data"></p>
-</div>
+<div class="row" data-bind="if: playByPlay().length > 0">
+  <div class="col-md-3" data-bind="foreach: playByPlay">
+    <p data-bind="text: $data"></p>
+  </div>
+  <div class="col-md-9">
+
+  </div>
+</row>

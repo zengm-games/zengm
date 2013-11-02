@@ -13,16 +13,21 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
     playByPlay format
       send objects with "type" param
       type "init" - rosters, starters - info for box score
-      type "update" - any new stat to update box score
+      type "stat" - any new stat to update box score
       type "text" - text log
-        fouls?
+        fouls
+        free throws
         only include stats that are used in box score
         change of possession with no rebound/turnover
         when a player fouls out
         substitutions
+        quarters
     add more alternative text options in GameSim.recordPlay
     show time remaining, somehow
+    timestamps for plays?
     show live box score
+      how to show injuries?
+      can i just get it from the db and 0 out stats? this would solve a lot. just need to link to live stats by pid
     speed slider
     should disable buttons when other gamesim in progress
     warning if try to click away during game

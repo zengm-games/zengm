@@ -415,6 +415,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                     if (Math.random() < 0.000125) {
                         this.team[t].player[p].injured = true;
                         newInjury = true;
+                        this.recordPlay("injury", [this.team[t].player[p].name]);
                     }
                 }
             }
@@ -470,7 +471,9 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         p = this.playersOnCourt[this.o][this.pickPlayer(ratios)];
         this.recordStat(this.o, p, "tov");
         if (this.probStl() > Math.random()) {
-            return this.doStl();  // "stl"
+            return this.doStl(p);  // "stl"
+        } else {
+            this.recordPlay("tov", [this.team[this.o].player[p].name]);
         }
 
         return "tov";
@@ -492,12 +495,13 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @memberOf core.gameSim
      * @return {string} Currently always returns "stl".
      */
-    GameSim.prototype.doStl = function () {
+    GameSim.prototype.doStl = function (pStoleFrom) {
         var p, ratios;
 
         ratios = this.ratingArray("stealing", this.d);
         p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "stl");
+        this.recordPlay("stl", [this.team[this.d].player[p].name, this.team[this.o].player[pStoleFrom].name]);
 
         return "stl";
     };
@@ -570,8 +574,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         if (probMake > Math.random()) {
             // And 1
             if (probAndOne > Math.random()) {
-                this.doFg(shooter, passer, type);
-                return this.doFt(shooter, 1);  // fg, orb, or drb
+                return this.doFg(shooter, passer, type, true);  // fg, orb, or drb
             }
             return this.doFg(shooter, passer, type);  // fg
         }
@@ -589,12 +592,16 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.recordStat(this.o, p, "fga");
         if (type === "atRim") {
             this.recordStat(this.o, p, "fgaAtRim");
+            this.recordPlay("missAtRim", [this.team[this.o].player[p].name]);
         } else if (type === "lowPost") {
             this.recordStat(this.o, p, "fgaLowPost");
+            this.recordPlay("missLowPost", [this.team[this.o].player[p].name]);
         } else if (type === "midRange") {
             this.recordStat(this.o, p, "fgaMidRange");
+            this.recordPlay("missMidRange", [this.team[this.o].player[p].name]);
         } else if (type === "threePointer") {
             this.recordStat(this.o, p, "tpa");
+            this.recordPlay("missLowPost", [this.team[this.o].player[p].name]);
         }
         return this.doReb();  // orb or drb
     };
@@ -617,7 +624,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @return {string} Output of this.doReb.
      */
     GameSim.prototype.doBlk = function (shooter, type) {
-        var p, ratios;
+        var p, p2, ratios;
 
         p = this.playersOnCourt[this.o][shooter];
         this.recordStat(this.o, p, "fga");
@@ -632,8 +639,19 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         }
 
         ratios = this.ratingArray("blocking", this.d, 4);
-        p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
-        this.recordStat(this.d, p, "blk");
+        p2 = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
+        this.recordStat(this.d, p2, "blk");
+
+
+        if (type === "atRim") {
+            this.recordPlay("blkAtRim", [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+        } else if (type === "lowPost") {
+            this.recordPlay("blkLowPost", [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+        } else if (type === "midRange") {
+            this.recordPlay("blkMidRange", [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+        } else if (type === "threePointer") {
+            this.recordPlay("blkTp", [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+        }
 
         return this.doReb();  // orb or drb
     };
@@ -647,9 +665,9 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the passing player, who will get an assist. -1 if no assist.
      * @param {number} type 2 for a two pointer, 3 for a three pointer.
-     * @return {string} Currently always returns "fg".
+     * @return {string} fg, orb, or drb (latter two are for and ones)
      */
-    GameSim.prototype.doFg = function (shooter, passer, type) {
+    GameSim.prototype.doFg = function (shooter, passer, type, andOne) {
         var p;
 
         p = this.playersOnCourt[this.o][shooter];
@@ -659,23 +677,31 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         if (type === "atRim") {
             this.recordStat(this.o, p, "fgaAtRim");
             this.recordStat(this.o, p, "fgAtRim");
+            this.recordPlay("fgAtRim" + (andOne ? "AndOne" : ""), [this.team[this.o].player[p].name]);
         } else if (type === "lowPost") {
             this.recordStat(this.o, p, "fgaLowPost");
             this.recordStat(this.o, p, "fgLowPost");
+            this.recordPlay("fgLowPost" + (andOne ? "AndOne" : ""), [this.team[this.o].player[p].name]);
         } else if (type === "midRange") {
             this.recordStat(this.o, p, "fgaMidRange");
             this.recordStat(this.o, p, "fgMidRange");
+            this.recordPlay("fgMidRange" + (andOne ? "AndOne" : ""), [this.team[this.o].player[p].name]);
         } else if (type === "threePointer") {
             this.recordStat(this.o, p, "pts");  // Extra point for 3's
             this.recordStat(this.o, p, "tpa");
             this.recordStat(this.o, p, "tp");
+            this.recordPlay("tp" + (andOne ? "AndOne" : ""), [this.team[this.o].player[p].name]);
         }
 
         if (passer >= 0) {
             p = this.playersOnCourt[this.o][passer];
             this.recordStat(this.o, p, "ast");
+            this.recordPlay("ast", [this.team[this.o].player[p].name]);
         }
 
+        if (andOne) {
+            return this.doFt(shooter, 1);  // fg, orb, or drb
+        }
         return "fg";
     };
 
@@ -759,6 +785,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             ratios = this.ratingArray("rebounding", this.d);
             p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
             this.recordStat(this.d, p, "drb");
+            this.recordPlay("drb", [this.team[this.d].player[p].name]);
 
             return "drb";
         }
@@ -766,6 +793,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         ratios = this.ratingArray("rebounding", this.o);
         p = this.playersOnCourt[this.o][this.pickPlayer(ratios)];
         this.recordStat(this.o, p, "orb");
+        this.recordPlay("orb", [this.team[this.o].player[p].name]);
 
         return "orb";
     };
@@ -850,6 +878,82 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                     s: s,
                     amt: amt
                 });
+            }
+        }
+    };
+
+    GameSim.prototype.recordPlay = function (type, names) {
+        var i, text, texts;
+
+        if (this.playByPlay !== undefined) {
+            if (type === "injury") {
+                texts = ["{0} was injured!"];
+            } else if (type === "tov") {
+                texts = ["{0} turned the ball over"];
+            } else if (type === "stl") {
+                texts = ["{0} stole the ball from {1}"];
+            } else if (type === "fgAtRim") {
+                texts = ["{0} made a dunk/layup"];
+            } else if (type === "fgAtRimAndOne") {
+                texts = ["{0} made a dunk/layup and got fouled!"];
+            } else if (type === "fgLowPost") {
+                texts = ["{0} made a low post shot"];
+            } else if (type === "fgLowPostAndOne") {
+                texts = ["{0} made a low post shot and got fouled!"];
+            } else if (type === "fgMidRange") {
+                texts = ["{0} made a mid-range shot"];
+            } else if (type === "fgMidRangeAndOne") {
+                texts = ["{0} made a mid-range shot and got fouled!"];
+            } else if (type === "tp") {
+                texts = ["{0} made a three pointer shot"];
+            } else if (type === "tpAndOne") {
+                texts = ["{0} made a three pointer and got fouled!"];
+            } else if (type === "blkAtRim") {
+                texts = ["{0} blocked {1}'s dunk/layup"];
+            } else if (type === "blkLowPost") {
+                texts = ["{0} blocked {1}'s low post shot"];
+            } else if (type === "blkMidRange") {
+                texts = ["{0} blocked {1}'s mid-range shot"];
+            } else if (type === "blkTp") {
+                texts = ["{0} blocked {1}'s three pointer"];
+            } else if (type === "missAtRim") {
+                texts = ["{0} missed a dunk/layup"];
+            } else if (type === "missLowPost") {
+                texts = ["{0} missed a low post shot"];
+            } else if (type === "missMidRange") {
+                texts = ["{0} missed a mid-range shot"];
+            } else if (type === "missTp") {
+                texts = ["{0} missed a three pointer"];
+            } else if (type === "orb") {
+                texts = ["{0} grabbed the offensive rebound"];
+            } else if (type === "drb") {
+                texts = ["{0} grabbed the defensive rebound"];
+            } else if (type === "ast") {
+                texts = ["(assist: {0})"];
+            }
+
+            if (texts) {
+                text = random.choice(texts);
+                for (i = 0; i < names.length; i++) {
+                    text = text.replace("{" + i + "}", names[i]);
+                }
+
+                if (type === "ast") {
+                    // Find most recent made shot, count assist for it
+                    for (i = this.playByPlay.length - 1; i >= 0; i--) {
+                        if (this.playByPlay[i].type === "text") {
+                            this.playByPlay[i].text += " " + text;
+                            break;
+                        }
+                    }
+                } else {
+                    this.playByPlay.push({
+                        type: "text",
+                        text: text
+                    });
+                }
+            } else {
+                console.log("No text for " + type);
             }
         }
     };

@@ -21,13 +21,20 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
         change of possession with no rebound/turnover
         when a player fouls out
         substitutions
-        quarters
+        quarters (and overtime)
     add more alternative text options in GameSim.recordPlay
     show time remaining, somehow
     timestamps for plays?
     show live box score
       how to show injuries?
+        if i get it from box score, then need to filter out injuries that happened *that game*
+          players with injury and minutes played -> no injury
+          then, when an injury happens, update
       can i just get it from the db and 0 out stats? this would solve a lot. just need to link to live stats by pid
+        or can i use p? would be easier. is the row always right in the box score?
+      clickable rows, like in gameLog.js
+      order of columns when collapsed to single column (my SO answer)
+      overtime
     speed slider
     should disable buttons when other gamesim in progress
     warning if try to click away during game
@@ -35,6 +42,8 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
       if redirect is blocked, show link at the bottom of play by play
     make pretty
     could fake where the shots are to display graphically
+    Play > One Day (Live) should lead to the team selection page if an old log is open
+      delete old crap in the viewmodel, should reset things
 
 BIG NEW FEATURES
 ----------------

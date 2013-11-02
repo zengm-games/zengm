@@ -612,6 +612,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                     for (i = 0; i < results.length; i++) {
                         if (results[i].playByPlay !== undefined) {
                             raw = {
+                                gidPlayByPlay: gidPlayByPlay,
                                 playByPlay: results[i].playByPlay
                             }
                         }

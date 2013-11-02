@@ -7,7 +7,9 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
 
     function get(req) {
         if (req.raw.playByPlay !== undefined) {
+console.log('GET');
             return {
+                gidPlayByPlay: req.raw.gidPlayByPlay,
                 playByPlay: req.raw.playByPlay
             };
         }
@@ -17,7 +19,6 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
         var gid;
 
         gid = parseInt(req.params.gid, 10);
-console.log(gid);
 
         $("#games-list button").attr("disabled", "disabled");
 
@@ -35,6 +36,14 @@ console.log(gid);
         this.inProgress = ko.observable(false);
         this.games = ko.observable();
         this.playByPlay = ko.observableArray();
+
+        // See views.gameLog for explanation
+        this.boxScore = {
+            gid: ko.observable(-1)
+        };
+        this.showBoxScore = ko.computed(function () {
+            return this.boxScore.gid() >= 0;
+        }, this).extend({throttle: 1});
     }
 
     function updateGamesList(inputs, updateEvents, vm) {
@@ -64,7 +73,7 @@ console.log(gid);
     }
 
     function updatePlayByPlay(inputs, updateEvents, vm) {
-        var events;
+        var deferred, events;
 
         function processToNextPause() {
             var e, stop, text;
@@ -86,11 +95,38 @@ console.log(gid);
         }
 
         if (vm.inProgress() && inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
+            deferred = $.Deferred();
+
             events = inputs.playByPlay;
-console.log(events[0])
-            processToNextPause();
-            // Update box score observable with each stat
-            // Update playByPlay with text strings
+
+            g.dbl.transaction("games").objectStore("games").get(inputs.gidPlayByPlay).onsuccess = function (event) {
+                var boxScore, i, j, resetStats, s;
+
+                // Stats to set to 0
+                resetStats = ["min", "fg", "fga", "tp", "tpa", "ft", "fta", "orb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
+
+                boxScore = event.target.result;
+                for (i = 0; i < boxScore.teams.length; i++) {
+                    boxScore.teams[i].ptsQtrs = [0, 0, 0, 0];
+                    for (s = 0; s < resetStats.length; s++) {
+                        boxScore.teams[i][resetStats[s]] = 0;
+                    }
+                    for (j = 0; j < boxScore.teams[i].players.length; j++) {
+                        for (s = 0; s < resetStats.length; s++) {
+                            boxScore.teams[i].players[j][resetStats[s]] = 0;
+                        }
+                    }
+                }
+
+                // Start showing play-by-play
+                processToNextPause();
+
+                deferred.resolve({
+                    boxScore: boxScore
+                });
+            };
+
+            return deferred.promise();
         }
     }
 

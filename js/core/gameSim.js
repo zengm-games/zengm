@@ -877,6 +877,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 this.playByPlay.push({
                     type: "stat",
                     qtr: this.team[t].stat.ptsQtrs.length - 1,
+                    t: t,
+                    p: p,
                     pid: this.team[t].player[p].id,
                     s: s,
                     amt: amt

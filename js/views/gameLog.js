@@ -33,7 +33,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         games = [];
         // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
         g.dbl.transaction("games").objectStore("games").index("season").openCursor(season, "prev").onsuccess = function (event) {
-            var content, cursor, game, i, overtime;
+            var cursor, game, i, overtime;
 
             cursor = event.target.result;
             if (cursor && cursor.value.gid > maxGid) {

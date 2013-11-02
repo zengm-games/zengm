@@ -73,10 +73,10 @@ console.log('GET');
     }
 
     function updatePlayByPlay(inputs, updateEvents, vm) {
-        var deferred, events;
+        var deferred, events, overtimes;
 
         function processToNextPause() {
-            var e, stop, text;
+            var e, ptsQtrs, stop, text;
 
             stop = false;
             while (!stop && events.length > 0) {
@@ -88,8 +88,21 @@ console.log('GET');
                     // Quarter-by-quarter score
                     if (e.s === "pts") {
                         // This is a hack because array elements are not made observable by default in the Knockout mapping plugin and I didn't want to write a really ugly mapping function.
-                        vm.boxScore.teams()[e.t].ptsQtrs()[e.qtr] += e.amt;
-                        vm.boxScore.teams()[e.t].ptsQtrs(vm.boxScore.teams()[e.t].ptsQtrs());
+                        ptsQtrs = vm.boxScore.teams()[e.t].ptsQtrs();
+                        if (ptsQtrs.length <= e.qtr) {
+                            // Must be overtime! This updates ptsQtrs too.
+                            vm.boxScore.teams()[0].ptsQtrs.push(0);
+                            vm.boxScore.teams()[1].ptsQtrs.push(0);
+
+                            overtimes += 1;
+                            if (overtimes === 1) {
+                                vm.boxScore.overtime(" (OT)");
+                            } else if (overtimes > 1) {
+                                vm.boxScore.overtime(" (" + overtimes + "OT)");
+                            }
+                        }
+                        ptsQtrs[e.qtr] += e.amt;
+                        vm.boxScore.teams()[e.t].ptsQtrs(ptsQtrs);
                     }
 
                     // Everything else
@@ -104,8 +117,6 @@ console.log('GET');
                     } else if (e.s === "min" || e.s === "fg" || e.s === "fga" || e.s === "tp" || e.s === "tpa" || e.s === "ft" || e.s === "fta" || e.s === "ast" || e.s === "tov" || e.s === "stl" || e.s === "blk" || e.s === "pf" || e.s === "pts") {
                         vm.boxScore.teams()[e.t].players()[e.p][e.s](vm.boxScore.teams()[e.t].players()[e.p][e.s]() + e.amt);
                         vm.boxScore.teams()[e.t][e.s](vm.boxScore.teams()[e.t][e.s]() + e.amt);
-                    } else {
-console.log(e.s)
                     }
                 }
             }
@@ -113,7 +124,7 @@ console.log(e.s)
             vm.playByPlay.unshift(text);
 
             if (events.length > 0) {
-                setTimeout(processToNextPause, 1000 * Math.random());
+                setTimeout(processToNextPause, 0);//1000 * Math.random());
             }
         }
 
@@ -121,6 +132,7 @@ console.log(e.s)
             deferred = $.Deferred();
 
             events = inputs.playByPlay;
+            overtimes = 0;
 
             g.dbl.transaction("games").objectStore("games").get(inputs.gidPlayByPlay).onsuccess = function (event) {
                 var boxScore, i, j, resetStats, s;
@@ -129,6 +141,7 @@ console.log(e.s)
                 resetStats = ["min", "fg", "fga", "tp", "tpa", "ft", "fta", "orb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
 
                 boxScore = event.target.result;
+                boxScore.overtime = "";
                 for (i = 0; i < boxScore.teams.length; i++) {
                     boxScore.teams[i].ptsQtrs = [0, 0, 0, 0];
                     for (s = 0; s < resetStats.length; s++) {

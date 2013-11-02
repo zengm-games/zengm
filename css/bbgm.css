@@ -371,6 +371,14 @@ select.teams {
   font-weight: normal;
 }
 
+/* Stupid fix for popover on first run */
+.popover-play {
+  width: 276px;
+}
+.popover-play .popover-title {
+  background-color: #d0e9c6;
+}
+
 .finances-settings-label {
   line-height: 32px;
   padding-right: 1em;

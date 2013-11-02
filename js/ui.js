@@ -498,6 +498,34 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         }
     }
 
+    function highlightPlayButton() {
+        var playButtonLink;
+
+        playButtonLink = $("#play-button-link");
+
+        playButtonLink.popover({
+            trigger: "manual",
+            placement: "bottom",
+            title: "Welcome to Basketball GM!",
+            content: "To progress through the game, use the Play button at the top.",
+            template: '<div class="popover popover-play"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+        });
+
+        // If the user finds the play button first, don't show the popover
+        playButtonLink.on("click", function() {
+            playButtonLink.popover("hide");
+        });
+
+        setTimeout(function () {
+            playButtonLink.popover("show");
+
+            // Only do this after showing button, so a quick click doesn't close it early
+            $(document).on("click", function () {
+                playButtonLink.popover("hide");
+            });
+        }, 1000);
+    }
+
     return {
         init: init,
         datatable: datatable,
@@ -509,6 +537,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         update: update,
         updatePhase: updatePhase,
         updatePlayMenu: updatePlayMenu,
-        updateStatus: updateStatus
+        updateStatus: updateStatus,
+        highlightPlayButton: highlightPlayButton
     };
 });

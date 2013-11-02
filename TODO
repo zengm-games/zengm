@@ -3,6 +3,7 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+bitbucket? or webfaction git?
 muscula
   source maps don't seem to work
     are they working in chrome in the first place?
@@ -21,6 +22,8 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
         when a player fouls out
         substitutions
         quarters (and overtime)
+      show score for scoring play
+      show team abbrev
     add more alternative text options in GameSim.recordPlay
     timestamps for plays?
     show live box score
@@ -39,8 +42,6 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
       if redirect is blocked, show link at the bottom of play by play
     make pretty
     could fake where the shots are to display graphically
-    Play > One Day (Live) should lead to the team selection page if an old log is open
-      delete old crap in the viewmodel, should reset things
 
 BIG NEW FEATURES
 ----------------

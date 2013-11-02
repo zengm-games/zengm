@@ -49,7 +49,7 @@ console.log('GET');
     function updateGamesList(inputs, updateEvents, vm) {
         var deferred;
 
-        if (!vm.inProgress() && (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0)) {
+        if (!vm.inProgress()) {
             deferred = $.Deferred();
 
             season.getSchedule(null, 1, function (games) {
@@ -64,7 +64,9 @@ console.log('GET');
                 }
 
                 deferred.resolve({
-                    games: games
+                    games: games,
+                    boxScore: {gid: -1},
+                    playByPlay: []
                 });
             });
 
@@ -155,6 +157,7 @@ console.log('GET');
                 }
 
                 deferred.resolve({
+                    inProgress: false, // Game sim is no longer running
                     boxScore: boxScore
                 });
 

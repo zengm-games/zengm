@@ -6,6 +6,16 @@ CURRENT
 muscula
   source maps don't seem to work
     are they working in chrome in the first place?
+play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/suggestion_playbyplay_games/
+  generate for each game, but don't write to db yet
+  add new page "live". when this is viewed, send the play-by-play data there for the selected team
+    show list of games. click -> POST -> play by play in same window
+    make pretty
+    error if no game from that team today
+    warning if try to click away during game
+    somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect)
+      if redirect is blocked, show link at the bottom of play by play
+    could fake where the shots are to display graphically
 
 BIG NEW FEATURES
 ----------------
@@ -20,15 +30,6 @@ trade improvements
     so before simulating any games, need to check roster sizes. how slow is that?
     AI teams need to factor this into the trade value if they have to drop someone after
   trades between AI teams
-play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/suggestion_playbyplay_games/
-  generate for each game, but don't write to db yet
-  add new page "live". when this is viewed, send the play-by-play data there for the selected team
-    make pretty
-    error if no game from that team today
-    warning if try to click away during game
-    somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect)
-      if redirect is blocked, show link at the bottom of play by play
-    could fake where the shots are to display graphically
 right after starting a fantasy draft, dashboard gives an error since there are no players on team
   any other errors?
 all time leaders page
@@ -78,13 +79,10 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
-twitter/facebook/g+ interfere with dropdown when loading
-  only show when Share is clicked?
 merge game.play and freeAgents.play
 HOF working consistently?
   http://www.reddit.com/r/BasketballGM/comments/1osxg3/free_agents_who_arent_signed_to_a_team_dont_make/
 per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/
-g+ button flashes before it's hidden
 make sure the changes alert and the "refuses to negotiate" alert both look good
   link to player in "refuses to negotiate" alert
 replace random.gauss with random.realGauss
@@ -95,7 +93,6 @@ show EWA more places
 raphael is big - can i rewrite faces.js to not use it?
 hall of fame - add career totals columns?
 trade deadline
-http://requirejs.org/docs/api.html#config-waitSeconds
 current season shouldn't show in league history page dropdown
 team.valueChange
   contending teams shouldn't always see every player as a positive value. needs to be some balanced formula where a bad contract is a negative.

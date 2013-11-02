@@ -351,6 +351,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                       {id: "play-menu-month", url: "", label: "One month"},
                       {id: "play-menu-until-playoffs", url: "", label: "Until playoffs"},
                       {id: "play-menu-through-playoffs", url: "", label: "Through playoffs"},
+                      {id: "play-menu-day-live", url: helpers.leagueUrl(["live"]), label: "One day (live)"},
                       {id: "play-menu-until-draft", url: "", label: "Until draft"},
                       {id: "play-menu-view-draft", url: helpers.leagueUrl(["draft"]), label: "View draft"},
                       {id: "play-menu-until-resign-players", url: "", label: "Resign players with expiring contracts"},
@@ -368,13 +369,13 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             keys = ["play-menu-until-regular-season"];
         } else if (g.phase === g.PHASE.REGULAR_SEASON) {
             // Regular season - pre trading deadline
-            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-playoffs"];
+            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-playoffs", "play-menu-day-live"];
         } else if (g.phase === g.PHASE.AFTER_TRADE_DEADLINE) {
             // Regular season - post trading deadline
-            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-playoffs"];
+            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-playoffs", "play-menu-day-live"];
         } else if (g.phase === g.PHASE.PLAYOFFS) {
             // Playoffs
-            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-through-playoffs"];
+            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-through-playoffs", "play-menu-day-live"];
         } else if (g.phase === g.PHASE.BEFORE_DRAFT) {
             // Offseason - pre draft
             keys = ["play-menu-until-draft"];

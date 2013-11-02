@@ -181,6 +181,7 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
             this.post("/l/:lid/export_rosters", views.exportRosters.post);
             this.get("/l/:lid/fantasy_draft", views.fantasyDraft.get);
             this.post("/l/:lid/fantasy_draft", views.fantasyDraft.post);
+            this.get("/l/:lid/live", views.live.get);
         });
 
         app.start();

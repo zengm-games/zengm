@@ -464,6 +464,10 @@ select.teams {
   padding-left: 18px;
 }
 
+.strong {
+  font-weight: bold;
+}
+
 /* Meant to be equivalent to .warning, .danger, .success from Bootstrap, mainly for table rows. But with decreased specificity so that it won't override .warning. */
 .table > thead > tr > td.info,
 .table > tbody > tr > td.info,

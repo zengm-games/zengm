@@ -6,10 +6,9 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], fun
     "use strict";
 
     function updateInbox() {
-        var deferred, vars;
+        var deferred;
 
         deferred = $.Deferred();
-        vars = {};
 
         g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) {
             var anyUnread, i, messages;
@@ -25,12 +24,10 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], fun
                 }
             }
 
-            vars = {
+            deferred.resolve({
                 anyUnread: anyUnread,
                 messages: messages
-            };
-
-            deferred.resolve(vars);
+            });
         };
 
         return deferred.promise();

@@ -8,6 +8,7 @@ muscula
   source maps don't seem to work
     are they working in chrome in the first place?
 play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/suggestion_playbyplay_games/
+  put plays in scrollable div
   change of possession with no rebound/turnover?
   live box score
     update injury icon when player is hurt - would be easy if injury.type was observable, but it's not and I have no idea why. force update with fake name update?
@@ -77,6 +78,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+Capitalize play menu entries
 merge game.play and freeAgents.play
 HOF working consistently?
   http://www.reddit.com/r/BasketballGM/comments/1osxg3/free_agents_who_arent_signed_to_a_team_dont_make/
@@ -371,6 +373,7 @@ database changes
 gameSim
   use real clock (this.t) rather than number of possessions
   teams should play quicker as the clock runs out
+    more generally, teams should have situational awareness
   more penalty for really unbalanced rosters: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cba743c?context=3
   rename compositeRating to compositeRatings (or something better)
     other plural issues in gameSim

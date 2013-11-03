@@ -28,6 +28,9 @@ define(["lib/jquery"], function ($) {
     }, {
         date: "2013-10-22",
         msg: "More realistic free agency. Free agency now lasts 30 days. The longer you wait to sign someone, the better deal you can get - but if you wait to long, he might sign with an other team. Also, you are now much less likely to get the first shot at signing every free agent."
+    }, {
+        date: "2013-11-03",
+        msg: "Live play-by-play game simulation. Click \"Play > One day (live)\" to check it out."
     }];
 
     function check() {

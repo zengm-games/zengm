@@ -7,6 +7,7 @@ number or not.
 - AppCache used to allow offline play
 - Fantasy Draft feature
 - Extended free agency phase
+- Live play-by-play game simulation
 
 # 3.2.0 (2013-10-05)
 

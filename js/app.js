@@ -182,7 +182,8 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
             this.get("/l/:lid/fantasy_draft", views.fantasyDraft.get);
             this.post("/l/:lid/fantasy_draft", views.fantasyDraft.post);
             this.get("/l/:lid/live", views.live.get);
-            this.post("/l/:lid/live", views.live.post);
+            this.get("/l/:lid/live_game", views.liveGame.get);
+            this.post("/l/:lid/live_game", views.liveGame.post);
         });
 
         app.start();

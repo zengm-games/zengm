@@ -14,8 +14,8 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
     game clock using min - more accurate, but more complicated - does this even work?
   could fake where the shots are to display graphically
   CURRENT:
-    somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect, or maybe just look for gid passed to game.play)
-      if redirect is blocked, show link at the bottom of play by play
+    no redirect from live_game for playoffs starting/ending phases
+    games list in playoffs
 
 BIG NEW FEATURES
 ----------------

@@ -605,7 +605,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
             cbSaveResult(results.length - 1);
 
             tx.oncomplete = function () {
-                var i, raw;
+                var i, raw, url;
 
                 // If there was a play by play done for one of these games, get it
                 if (gidPlayByPlay !== undefined) {
@@ -614,13 +614,16 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                             raw = {
                                 gidPlayByPlay: gidPlayByPlay,
                                 playByPlay: results[i].playByPlay
-                            }
+                            };
+                            url = helpers.leagueUrl(["live_game"]);
                         }
                     }
+                } else {
+                    url = undefined;
                 }
 
                 advStats.calculateAll(function () {  // Update all advanced stats every day
-                    ui.realtimeUpdate(["gameSim"], undefined, function () {
+                    ui.realtimeUpdate(["gameSim"], url, function () {
                         db.setGameAttributes({lastDbChange: Date.now()}, function () {
                             play(numDays - 1);
                         });

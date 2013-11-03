@@ -123,7 +123,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.simPossessions();
 
         // Play overtime periods if necessary
-        while (this.team[0].stat.pts === this.team[1].stat.pts) {
+        while (this.team[0].stat.pts === this.team[1].stat.pts || this.overtimes < 3) {
             if (this.overtimes === 0) {
                 this.numPossessions = Math.round(this.numPossessions * 5 / 48);  // 5 minutes of possessions
                 this.dt = 5 / (2 * this.numPossessions);
@@ -956,25 +956,9 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             } else if (type === "ast") {
                 texts = ["(assist: {0})"];
             } else if (type === "quarter") {
-                if (this.team[0].stat.ptsQtrs.length === 2) {
-                    qtr = "2nd";
-                } else if (this.team[0].stat.ptsQtrs.length === 3) {
-                    qtr = "3rd";
-                } else if (this.team[0].stat.ptsQtrs.length === 4) {
-                    qtr = "4th";
-                }
-                texts = ["<b>Start of " + qtr + " quarter</b>"];
+                texts = ["<b>Start of " + helpers.ordinal(this.team[0].stat.ptsQtrs.length) + " quarter</b>"];
             } else if (type === "overtime") {
-                if (this.team[0].stat.ptsQtrs.length === 5) {
-                    qtr = "1st";
-                } else if (this.team[0].stat.ptsQtrs.length === 6) {
-                    qtr = "2nd";
-                } else if (this.team[0].stat.ptsQtrs.length === 7) {
-                    qtr = "3rd";
-                } else if (this.team[0].stat.ptsQtrs.length === 4) {
-                    qtr = (this.team[0].stat.ptsQtrs.length - 4) + "th";
-                }
-                texts = ["<b>Start of " + qtr + " overtime period</b>"];
+                texts = ["<b>Start of " + helpers.ordinal(this.team[0].stat.ptsQtrs.length - 4) + " overtime period</b>"];
             } else if (type === "ft") {
                 texts = ["{0} made a free throw"];
             } else if (type === "missFt") {

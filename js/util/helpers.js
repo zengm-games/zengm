@@ -548,6 +548,24 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
         return desc;
     }
 
+    function ordinal(x) {
+        var suffix;
+
+        if (x >= 11 && x <= 13) {
+            suffix = "th";
+        } else if (x % 10 === 1) {
+            suffix = "st";
+        } else if (x % 10 === 2) {
+            suffix = "nd";
+        } else if (x % 10 === 3) {
+            suffix = "rd";
+        } else {
+            suffix = "th";
+        }
+
+        return x.toString() + suffix;
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -569,6 +587,7 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
         bound: bound,
         leagueUrl: leagueUrl,
         draftAbbrev: draftAbbrev,
-        pickDesc: pickDesc
+        pickDesc: pickDesc,
+        ordinal: ordinal
     };
 });

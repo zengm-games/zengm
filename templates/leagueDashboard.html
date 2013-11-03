@@ -16,7 +16,7 @@
         <span data-bind="matchup: [0, 0]"></span><br>
       <!-- /ko -->
       <!-- ko if: !showPlayoffSeries() -->
-        <span data-bind="text: rank"></span>th place in conference<br>
+        <span data-bind="ordinal: rank"></span> place in conference<br>
         (Top 8 teams make the playoffs)<br>
       <!-- /ko -->
       <!-- ko if: playoffsStarted -->

@@ -8,23 +8,20 @@ muscula
   source maps don't seem to work
     are they working in chrome in the first place?
 play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/suggestion_playbyplay_games/
-  generate for each game, but don't write to db yet
-  add new page "live". when this is viewed, send the play-by-play data there for the selected team
-    how to handle clicks to toher pages, gamesim from after play by play is loaded, etc
-    change of possession with no rebound/turnover?
-    show live box score
-      how to show injuries?
-        need to filter out injuries that happened *that game* bc data comes from after the game
-          players with injury and minutes played -> no injury
-          then, when an injury happens, update
-      clickable rows, like in gameLog.js
-      order of columns when collapsed to single column (my SO answer)
-      sort to show current active players (or maybe just highlight)
-      game clock using min - more accurate, but more complicated
-    should disable buttons when other gamesim in progress
-    somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect, or maybe just look for gid passed to game.play)
-      if redirect is blocked, show link at the bottom of play by play
-    could fake where the shots are to display graphically
+  change of possession with no rebound/turnover?
+  show live box score
+    how to show injuries?
+      need to filter out injuries that happened *that game* bc data comes from after the game
+        players with injury and minutes played -> no injury
+        then, when an injury happens, update
+    clickable rows, like in gameLog.js
+    sort to show current active players (or maybe just highlight)
+    show quarter next to clock
+    game clock using min - more accurate, but more complicated
+  should disable buttons when other gamesim in progress
+  somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect, or maybe just look for gid passed to game.play)
+    if redirect is blocked, show link at the bottom of play by play
+  could fake where the shots are to display graphically
 
 BIG NEW FEATURES
 ----------------

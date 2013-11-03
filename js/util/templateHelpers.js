@@ -229,23 +229,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var arg = valueAccessor();
             return ko.bindingHandlers.html.update(element, function () {
-                var suffix, x;
-
-                x = parseInt(ko.utils.unwrapObservable(arg), 10);
-
-                if (x >= 11 && x <= 13) {
-                    suffix = "th";
-                } else if (x % 10 === 1) {
-                    suffix = "st";
-                } else if (x % 10 === 2) {
-                    suffix = "nd";
-                } else if (x % 10 === 3) {
-                    suffix = "rd";
-                } else {
-                    suffix = "th";
-                }
-
-                return x.toString() + suffix;
+                return helpers.ordinal(parseInt(ko.utils.unwrapObservable(arg), 10));
             });
         }
     };

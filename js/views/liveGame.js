@@ -175,6 +175,13 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
 
             return deferred.promise();
         }
+
+        // If no game is loaded by this point (either by this GET or a prior one), leave
+        if (vm.boxScore.gid() < 0) {
+            return {
+                redirectUrl: helpers.leagueUrl(["live"])
+            };
+        }
     }
 
     function uiFirst(vm) {

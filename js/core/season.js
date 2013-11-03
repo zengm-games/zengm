@@ -1089,9 +1089,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
         tx = g.dbl.transaction(["playoffSeries", "teams"], "readwrite");
 
-        // Make today's  playoff schedule
+        // Make today's playoff schedule
         tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
-            var cursor, i, matchup, nextRound, numGames, playoffSeries, rnd, series, team1, team2, tids, tidsWon;
+            var cursor, i, matchup, numGames, playoffSeries, rnd, series, team1, team2, tids, tidsWon;
 
             cursor = event.target.result;
             playoffSeries = cursor.value;

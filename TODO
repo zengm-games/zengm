@@ -14,9 +14,8 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
     game clock using min - more accurate, but more complicated - does this even work?
   could fake where the shots are to display graphically
   CURRENT:
-    no redirect from live_game for playoff ending phase change
-    redirect from runEvery in live_game to live if no data in system
     games list in playoffs
+    no redirect from live_game for playoff ending phase change (do it same way as start of playoffs)
 
 BIG NEW FEATURES
 ----------------

@@ -199,13 +199,6 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             this.o = (this.o === 1) ? 0 : 1;
             this.d = (this.o === 1) ? 0 : 1;
 
-            if (i % this.subsEveryN === 0) {
-                substitutions = this.updatePlayersOnCourt();
-                if (substitutions) {
-                    this.updateSynergy();
-                }
-            }
-
             this.updateTeamCompositeRatings();
 
             outcome = this.simPossession();
@@ -219,6 +212,13 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             this.updatePlayingTime();
 
             this.injuries();
+
+            if (i % this.subsEveryN === 0) {
+                substitutions = this.updatePlayersOnCourt();
+                if (substitutions) {
+                    this.updateSynergy();
+                }
+            }
 
             i += 1;
         }
@@ -267,7 +267,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                         this.team[t].player[p].stat.courtTime = random.uniform(-2, 2);
                         this.team[t].player[p].stat.benchTime = random.uniform(-2, 2);
                         if (this.startersRecorded) {
-                            this.recordPlay("sub", t, [this.team[t].player[p].name, this.team[t].player[b].name]);
+                            this.recordPlay("sub", t, [this.team[t].player[b].name, this.team[t].player[p].name]);
                         }
                         break;
                     }

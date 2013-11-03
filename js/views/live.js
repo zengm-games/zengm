@@ -32,9 +32,11 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
     function InitViewModel() {
         // inProgress is true: game simulation is running, but not done. disable form.
         // playByPlay length > 0: game simulation result is here, hide form and show play by play
+        // stopPlayByPlay: when true, don't add on to play by play results
         this.inProgress = ko.observable(false);
         this.games = ko.observable();
         this.playByPlay = ko.observableArray();
+        this.stopPlayByPlay = ko.observable(false);
         this.speed = ko.observable(1);
 
         // See views.gameLog for explanation
@@ -66,7 +68,8 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
                 deferred.resolve({
                     games: games,
                     boxScore: {gid: -1},
-                    playByPlay: []
+                    playByPlay: [],
+                    stopPlayByPlay: true
                 });
             });
 
@@ -134,12 +137,14 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
                 }
             }
 
-            if (text !== null) {
+            if (text !== null && !vm.stopPlayByPlay()) {
                 vm.playByPlay.unshift(text);
             }
 
             if (events.length > 0) {
-                setTimeout(processToNextPause, 2000 / Math.pow(vm.speed(), 1.5));
+                if (!vm.stopPlayByPlay()) {
+                    setTimeout(processToNextPause, 2000 / Math.pow(vm.speed(), 1.5));
+                }
             } else {
                 vm.boxScore.time("Final Score");
             }
@@ -174,7 +179,8 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
 
                 deferred.resolve({
                     inProgress: false, // Game sim is no longer running
-                    boxScore: boxScore
+                    boxScore: boxScore,
+                    stopPlayByPlay: false
                 });
 
                 // Start showing play-by-play

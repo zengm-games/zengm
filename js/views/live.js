@@ -2,7 +2,7 @@
  * @name views.live
  * @namespace Live play-by-play game simulation.
  */
-define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/viewHelpers"], function (g, ui, game, season, $, ko, bbgmView, viewHelpers) {
+define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers"], function (g, ui, game, season, $, ko, bbgmView, helpers) {
     "use strict";
 
     function get(req) {
@@ -34,9 +34,10 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
         // playByPlay length > 0: game simulation result is here, hide form and show play by play
         // stopPlayByPlay: when true, don't add on to play by play results
         this.inProgress = ko.observable(false);
-        this.games = ko.observable();
         this.playByPlay = ko.observableArray();
         this.stopPlayByPlay = ko.observable(false);
+
+        this.games = ko.observable();
         this.speed = ko.observable(1);
 
         // See views.gameLog for explanation
@@ -110,11 +111,16 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
                             vm.boxScore.teams()[0].ptsQtrs.push(0);
                             vm.boxScore.teams()[1].ptsQtrs.push(0);
 
-                            overtimes += 1;
-                            if (overtimes === 1) {
-                                vm.boxScore.overtime(" (OT)");
-                            } else if (overtimes > 1) {
-                                vm.boxScore.overtime(" (" + overtimes + "OT)");
+                            if (ptsQtrs.length > 4) {
+                                overtimes += 1;
+                                if (overtimes === 1) {
+                                    vm.boxScore.overtime(" (OT)");
+                                } else if (overtimes > 1) {
+                                    vm.boxScore.overtime(" (" + overtimes + "OT)");
+                                }
+                                vm.boxScore.quarter(helpers.ordinal(overtimes) + " overtime");
+                            } else {
+                                vm.boxScore.quarter(helpers.ordinal(ptsQtrs.length) + " quarter");
                             }
                         }
                         ptsQtrs[e.qtr] += e.amt;
@@ -164,9 +170,10 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
 
                 boxScore = event.target.result;
                 boxScore.overtime = "";
+                boxScore.quarter = "1st quarter";
                 boxScore.time = "12:00";
                 for (i = 0; i < boxScore.teams.length; i++) {
-                    boxScore.teams[i].ptsQtrs = [0, 0, 0, 0];
+                    boxScore.teams[i].ptsQtrs = [0];
                     for (s = 0; s < resetStats.length; s++) {
                         boxScore.teams[i][resetStats[s]] = 0;
                     }

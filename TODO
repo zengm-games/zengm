@@ -16,7 +16,6 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
         then, when an injury happens, update
     clickable rows, like in gameLog.js
     sort to show current active players (or maybe just highlight)
-    show quarter next to clock
     game clock using min - more accurate, but more complicated
   should disable buttons when other gamesim in progress
   somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect, or maybe just look for gid passed to game.play)

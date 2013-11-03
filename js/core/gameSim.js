@@ -123,7 +123,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.simPossessions();
 
         // Play overtime periods if necessary
-        while (this.team[0].stat.pts === this.team[1].stat.pts || this.overtimes < 3) {
+        while (this.team[0].stat.pts === this.team[1].stat.pts) {
             if (this.overtimes === 0) {
                 this.numPossessions = Math.round(this.numPossessions * 5 / 48);  // 5 minutes of possessions
                 this.dt = 5 / (2 * this.numPossessions);

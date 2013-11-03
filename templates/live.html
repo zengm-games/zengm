@@ -30,6 +30,7 @@
             <th data-bind="text: pts"></th>
           </tbody>
         </table>
+        <span data-bind="text: boxScore.time"></span>
       </center>
       <!-- ko foreach: boxScore.teams -->
         <h3><a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.boxScore.season]}, text: region() + ' ' + name()"></a></h2>

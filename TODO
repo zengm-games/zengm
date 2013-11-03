@@ -22,7 +22,6 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
         when a player fouls out
         substitutions
         quarters (and overtime)
-        show timestamps
     add more alternative text options in GameSim.recordPlay
     show live box score
       how to show injuries?
@@ -32,7 +31,6 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
       clickable rows, like in gameLog.js
       order of columns when collapsed to single column (my SO answer)
       sort to show current active players (or maybe just highlight)
-      clock
     speed slider
     should disable buttons when other gamesim in progress
     warning if try to click away during game

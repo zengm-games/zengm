@@ -51,6 +51,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
         this.overtimes = 0;  // Number of overtime periods that have taken place
 
+        this.t = 12; // Game clock, in minutes
+
         // Parameters
         this.synergyFactor = 0.1;  // How important is synergy?
 
@@ -124,6 +126,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             if (this.overtimes === 0) {
                 this.numPossessions = Math.round(this.numPossessions * 5 / 48);  // 5 minutes of possessions
                 this.dt = 5 / (2 * this.numPossessions);
+                this.t = 5;
             }
             this.overtimes += 1;
             this.team[0].stat.ptsQtrs.push(0);
@@ -174,12 +177,18 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
         i = 0;
         while (i < this.numPossessions * 2) {
+            this.t -= this.dt;
+            if (this.t < 0) {
+                this.t = 0;
+            }
+
             // Keep track of quarters
             if ((i * this.dt > 12 && this.team[0].stat.ptsQtrs.length === 1) ||
                     (i * this.dt > 24 && this.team[0].stat.ptsQtrs.length === 2) ||
                     (i * this.dt > 36 && this.team[0].stat.ptsQtrs.length === 3)) {
                 this.team[0].stat.ptsQtrs.push(0);
                 this.team[1].stat.ptsQtrs.push(0);
+                this.t = 12;
             }
 
             // Possession change
@@ -887,7 +896,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
     };
 
     GameSim.prototype.recordPlay = function (type, t, names) {
-        var i, text, texts;
+        var i, sec, text, texts;
 
         if (this.playByPlay !== undefined) {
             if (type === "injury") {
@@ -952,10 +961,15 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                         }
                     }
                 } else {
+                    sec = Math.floor(this.t % 1 * 60);
+                    if (sec < 10) {
+                        sec = "0" + sec;
+                    }
                     this.playByPlay.push({
                         type: "text",
                         text: text,
-                        t: t
+                        t: t,
+                        time: Math.floor(this.t) + ":" + sec
                     });
                 }
             } else {

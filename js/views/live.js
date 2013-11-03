@@ -86,10 +86,11 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
                 e = events.shift();
 
                 if (e.type === "text") {
-                    text = vm.boxScore.teams()[e.t].abbrev() + " - " + e.text;
+                    text = e.time + " - " + vm.boxScore.teams()[e.t].abbrev() + " - " + e.text;
                     if (text.indexOf("made") >= 0) {
                         text += " (" + vm.boxScore.teams()[0].pts() + "-" + vm.boxScore.teams()[1].pts() + ")";
                     }
+                    vm.boxScore.time(e.time);
                     stop = true;
                 } else if (e.type === "stat") {
                     // Quarter-by-quarter score
@@ -133,7 +134,9 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
             }
 
             if (events.length > 0) {
-                setTimeout(processToNextPause, 0);//1000 * Math.random());
+                setTimeout(processToNextPause, 100);//1000 * Math.random());
+            } else {
+                vm.boxScore.time("Final Score");
             }
         }
 
@@ -151,6 +154,7 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
 
                 boxScore = event.target.result;
                 boxScore.overtime = "";
+                boxScore.time = "12:00";
                 for (i = 0; i < boxScore.teams.length; i++) {
                     boxScore.teams[i].ptsQtrs = [0, 0, 0, 0];
                     for (s = 0; s < resetStats.length; s++) {

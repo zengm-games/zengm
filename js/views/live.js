@@ -7,7 +7,6 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
 
     function get(req) {
         if (req.raw.playByPlay !== undefined) {
-console.log('GET');
             return {
                 gidPlayByPlay: req.raw.gidPlayByPlay,
                 playByPlay: req.raw.playByPlay
@@ -82,9 +81,15 @@ console.log('GET');
 
             stop = false;
             while (!stop && events.length > 0) {
+                text = null;
+
                 e = events.shift();
+
                 if (e.type === "text") {
-                    text = e.text;
+                    text = vm.boxScore.teams()[e.t].abbrev() + " - " + e.text;
+                    if (text.indexOf("made") >= 0) {
+                        text += " (" + vm.boxScore.teams()[0].pts() + "-" + vm.boxScore.teams()[1].pts() + ")";
+                    }
                     stop = true;
                 } else if (e.type === "stat") {
                     // Quarter-by-quarter score
@@ -123,7 +128,9 @@ console.log('GET');
                 }
             }
 
-            vm.playByPlay.unshift(text);
+            if (text !== null) {
+                vm.playByPlay.unshift(text);
+            }
 
             if (events.length > 0) {
                 setTimeout(processToNextPause, 0);//1000 * Math.random());

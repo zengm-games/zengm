@@ -419,7 +419,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                     if (Math.random() < 0.000125) {
                         this.team[t].player[p].injured = true;
                         newInjury = true;
-                        this.recordPlay("injury", [this.team[t].player[p].name]);
+                        this.recordPlay("injury", t, [this.team[t].player[p].name]);
                     }
                 }
             }
@@ -477,7 +477,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         if (this.probStl() > Math.random()) {
             return this.doStl(p);  // "stl"
         } else {
-            this.recordPlay("tov", [this.team[this.o].player[p].name]);
+            this.recordPlay("tov", this.o, [this.team[this.o].player[p].name]);
         }
 
         return "tov";
@@ -505,7 +505,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         ratios = this.ratingArray("stealing", this.d);
         p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "stl");
-        this.recordPlay("stl", [this.team[this.d].player[p].name, this.team[this.o].player[pStoleFrom].name]);
+        this.recordPlay("stl", this.d, [this.team[this.d].player[p].name, this.team[this.o].player[pStoleFrom].name]);
 
         return "stl";
     };
@@ -596,16 +596,16 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.recordStat(this.o, p, "fga");
         if (type === "atRim") {
             this.recordStat(this.o, p, "fgaAtRim");
-            this.recordPlay("missAtRim", [this.team[this.o].player[p].name]);
+            this.recordPlay("missAtRim", this.o, [this.team[this.o].player[p].name]);
         } else if (type === "lowPost") {
             this.recordStat(this.o, p, "fgaLowPost");
-            this.recordPlay("missLowPost", [this.team[this.o].player[p].name]);
+            this.recordPlay("missLowPost", this.o, [this.team[this.o].player[p].name]);
         } else if (type === "midRange") {
             this.recordStat(this.o, p, "fgaMidRange");
-            this.recordPlay("missMidRange", [this.team[this.o].player[p].name]);
+            this.recordPlay("missMidRange", this.o, [this.team[this.o].player[p].name]);
         } else if (type === "threePointer") {
             this.recordStat(this.o, p, "tpa");
-            this.recordPlay("missLowPost", [this.team[this.o].player[p].name]);
+            this.recordPlay("missLowPost", this.o, [this.team[this.o].player[p].name]);
         }
         return this.doReb();  // orb or drb
     };
@@ -648,13 +648,13 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
 
         if (type === "atRim") {
-            this.recordPlay("blkAtRim", [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+            this.recordPlay("blkAtRim", this.d, [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
         } else if (type === "lowPost") {
-            this.recordPlay("blkLowPost", [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+            this.recordPlay("blkLowPost", this.d, [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
         } else if (type === "midRange") {
-            this.recordPlay("blkMidRange", [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+            this.recordPlay("blkMidRange", this.d, [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
         } else if (type === "threePointer") {
-            this.recordPlay("blkTp", [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+            this.recordPlay("blkTp", this.d, [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
         }
 
         return this.doReb();  // orb or drb
@@ -681,26 +681,26 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         if (type === "atRim") {
             this.recordStat(this.o, p, "fgaAtRim");
             this.recordStat(this.o, p, "fgAtRim");
-            this.recordPlay("fgAtRim" + (andOne ? "AndOne" : ""), [this.team[this.o].player[p].name]);
+            this.recordPlay("fgAtRim" + (andOne ? "AndOne" : ""), this.o, [this.team[this.o].player[p].name]);
         } else if (type === "lowPost") {
             this.recordStat(this.o, p, "fgaLowPost");
             this.recordStat(this.o, p, "fgLowPost");
-            this.recordPlay("fgLowPost" + (andOne ? "AndOne" : ""), [this.team[this.o].player[p].name]);
+            this.recordPlay("fgLowPost" + (andOne ? "AndOne" : ""), this.o, [this.team[this.o].player[p].name]);
         } else if (type === "midRange") {
             this.recordStat(this.o, p, "fgaMidRange");
             this.recordStat(this.o, p, "fgMidRange");
-            this.recordPlay("fgMidRange" + (andOne ? "AndOne" : ""), [this.team[this.o].player[p].name]);
+            this.recordPlay("fgMidRange" + (andOne ? "AndOne" : ""), this.o, [this.team[this.o].player[p].name]);
         } else if (type === "threePointer") {
             this.recordStat(this.o, p, "pts");  // Extra point for 3's
             this.recordStat(this.o, p, "tpa");
             this.recordStat(this.o, p, "tp");
-            this.recordPlay("tp" + (andOne ? "AndOne" : ""), [this.team[this.o].player[p].name]);
+            this.recordPlay("tp" + (andOne ? "AndOne" : ""), this.o, [this.team[this.o].player[p].name]);
         }
 
         if (passer >= 0) {
             p = this.playersOnCourt[this.o][passer];
             this.recordStat(this.o, p, "ast");
-            this.recordPlay("ast", [this.team[this.o].player[p].name]);
+            this.recordPlay("ast", this.o, [this.team[this.o].player[p].name]);
         }
 
         if (andOne) {
@@ -789,7 +789,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             ratios = this.ratingArray("rebounding", this.d);
             p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
             this.recordStat(this.d, p, "drb");
-            this.recordPlay("drb", [this.team[this.d].player[p].name]);
+            this.recordPlay("drb", this.d, [this.team[this.d].player[p].name]);
 
             return "drb";
         }
@@ -797,7 +797,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         ratios = this.ratingArray("rebounding", this.o);
         p = this.playersOnCourt[this.o][this.pickPlayer(ratios)];
         this.recordStat(this.o, p, "orb");
-        this.recordPlay("orb", [this.team[this.o].player[p].name]);
+        this.recordPlay("orb", this.o, [this.team[this.o].player[p].name]);
 
         return "orb";
     };
@@ -886,7 +886,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         }
     };
 
-    GameSim.prototype.recordPlay = function (type, names) {
+    GameSim.prototype.recordPlay = function (type, t, names) {
         var i, text, texts;
 
         if (this.playByPlay !== undefined) {
@@ -937,7 +937,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             }
 
             if (texts) {
-                text = random.choice(texts);
+                //text = random.choice(texts);
+                text = texts[0];
                 for (i = 0; i < names.length; i++) {
                     text = text.replace("{" + i + "}", names[i]);
                 }
@@ -953,7 +954,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 } else {
                     this.playByPlay.push({
                         type: "text",
-                        text: text
+                        text: text,
+                        t: t
                     });
                 }
             } else {

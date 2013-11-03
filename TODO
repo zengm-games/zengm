@@ -22,10 +22,8 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
         when a player fouls out
         substitutions
         quarters (and overtime)
-      show score for scoring play
-      show team abbrev
+        show timestamps
     add more alternative text options in GameSim.recordPlay
-    timestamps for plays?
     show live box score
       how to show injuries?
         need to filter out injuries that happened *that game* bc data comes from after the game

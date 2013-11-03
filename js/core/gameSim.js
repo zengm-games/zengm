@@ -749,8 +749,10 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             if (Math.random() < this.team[this.o].player[p].compositeRating.shootingFT * 0.3 + 0.6) {  // Between 60% and 90%
                 this.recordStat(this.o, p, "ft");
                 this.recordStat(this.o, p, "pts");
+                this.recordPlay("ft", this.o, [this.team[this.o].player[p].name]);
                 outcome = "fg";
             } else {
+                this.recordPlay("missFt", this.o, [this.team[this.o].player[p].name]);
                 outcome = null;
             }
         }
@@ -966,6 +968,10 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                     qtr = (this.team[0].stat.ptsQtrs.length - 4) + "th";
                 }
                 texts = ["<b>Start of " + qtr + " overtime period</b>"];
+            } else if (type === "ft") {
+                texts = ["{0} made a free throw"];
+            } else if (type === "missFt") {
+                texts = ["{0} missed a free throw"];
             }
 
             if (texts) {

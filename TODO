@@ -16,7 +16,9 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
       type "stat" - any new stat to update box score
       type "text" - text log
         fouls
-        free throws
+          Shooting foul on {0}
+            for and 1, show this after the shot is made, if possible
+          Personal foul on {0}
         only include stats that are used in box score
         change of possession with no rebound/turnover
         when a player fouls out

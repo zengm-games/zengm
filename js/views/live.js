@@ -86,7 +86,11 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
                 e = events.shift();
 
                 if (e.type === "text") {
-                    text = e.time + " - " + vm.boxScore.teams()[e.t].abbrev() + " - " + e.text;
+                    if (e.t === 0 || e.t === 1) {
+                        text = e.time + " - " + vm.boxScore.teams()[e.t].abbrev() + " - " + e.text;
+                    } else {
+                        text = e.text;
+                    }
                     if (text.indexOf("made") >= 0) {
                         text += " (" + vm.boxScore.teams()[0].pts() + "-" + vm.boxScore.teams()[1].pts() + ")";
                     }

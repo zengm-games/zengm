@@ -15,7 +15,7 @@
 
 <div class="row" data-bind="if: playByPlay().length > 0">
   <div class="col-md-3 col-lg-4" data-bind="foreach: playByPlay">
-    <p data-bind="text: $data"></p>
+    <p data-bind="html: $data"></p>
   </div>
   <div class="col-md-9 col-lg-8">
     <!-- ko if: showBoxScore -->

@@ -21,9 +21,9 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
         change of possession with no rebound/turnover
         when a player fouls out
         substitutions
-        quarters (and overtime)
     add more alternative text options in GameSim.recordPlay
     show live box score
+      can game clock use min rather than timestamps? more accurate
       how to show injuries?
         need to filter out injuries that happened *that game* bc data comes from after the game
           players with injury and minutes played -> no injury
@@ -393,6 +393,8 @@ database changes
     stats
     ratings
 gameSim
+  use real clock (this.t) rather than number of possessions
+  teams should play quicker as the clock runs out
   more penalty for really unbalanced rosters: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cba743c?context=3
   rename compositeRating to compositeRatings (or something better)
     other plural issues in gameSim

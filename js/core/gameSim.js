@@ -126,11 +126,12 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             if (this.overtimes === 0) {
                 this.numPossessions = Math.round(this.numPossessions * 5 / 48);  // 5 minutes of possessions
                 this.dt = 5 / (2 * this.numPossessions);
-                this.t = 5;
             }
+            this.t = 5;
             this.overtimes += 1;
             this.team[0].stat.ptsQtrs.push(0);
             this.team[1].stat.ptsQtrs.push(0);
+            this.recordPlay("overtime");
             this.simPossessions();
         }
 
@@ -177,11 +178,6 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
         i = 0;
         while (i < this.numPossessions * 2) {
-            this.t -= this.dt;
-            if (this.t < 0) {
-                this.t = 0;
-            }
-
             // Keep track of quarters
             if ((i * this.dt > 12 && this.team[0].stat.ptsQtrs.length === 1) ||
                     (i * this.dt > 24 && this.team[0].stat.ptsQtrs.length === 2) ||
@@ -189,6 +185,13 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 this.team[0].stat.ptsQtrs.push(0);
                 this.team[1].stat.ptsQtrs.push(0);
                 this.t = 12;
+                this.recordPlay("quarter");
+            }
+
+            // Clock
+            this.t -= this.dt;
+            if (this.t < 0) {
+                this.t = 0;
             }
 
             // Possession change
@@ -896,7 +899,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
     };
 
     GameSim.prototype.recordPlay = function (type, t, names) {
-        var i, sec, text, texts;
+        var i, qtr, sec, text, texts;
 
         if (this.playByPlay !== undefined) {
             if (type === "injury") {
@@ -943,13 +946,35 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 texts = ["{0} grabbed the defensive rebound"];
             } else if (type === "ast") {
                 texts = ["(assist: {0})"];
+            } else if (type === "quarter") {
+                if (this.team[0].stat.ptsQtrs.length === 2) {
+                    qtr = "2nd";
+                } else if (this.team[0].stat.ptsQtrs.length === 3) {
+                    qtr = "3rd";
+                } else if (this.team[0].stat.ptsQtrs.length === 4) {
+                    qtr = "4th";
+                }
+                texts = ["<b>Start of " + qtr + " quarter</b>"];
+            } else if (type === "overtime") {
+                if (this.team[0].stat.ptsQtrs.length === 5) {
+                    qtr = "1st";
+                } else if (this.team[0].stat.ptsQtrs.length === 6) {
+                    qtr = "2nd";
+                } else if (this.team[0].stat.ptsQtrs.length === 7) {
+                    qtr = "3rd";
+                } else if (this.team[0].stat.ptsQtrs.length === 4) {
+                    qtr = (this.team[0].stat.ptsQtrs.length - 4) + "th";
+                }
+                texts = ["<b>Start of " + qtr + " overtime period</b>"];
             }
 
             if (texts) {
                 //text = random.choice(texts);
                 text = texts[0];
-                for (i = 0; i < names.length; i++) {
-                    text = text.replace("{" + i + "}", names[i]);
+                if (names) {
+                    for (i = 0; i < names.length; i++) {
+                        text = text.replace("{" + i + "}", names[i]);
+                    }
                 }
 
                 if (type === "ast") {

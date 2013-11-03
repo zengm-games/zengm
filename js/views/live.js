@@ -5,6 +5,16 @@
 define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers"], function (g, ui, game, season, $, ko, bbgmView, helpers) {
     "use strict";
 
+    function disableButtons() {
+        $("#live-games-list button").attr("disabled", "disabled");
+        $("#game-sim-warning").show();
+    }
+
+    function enableButtons() {
+        $("#live-games-list button").removeAttr("disabled");
+        $("#game-sim-warning").hide();
+    }
+
     function get(req) {
         if (req.raw.playByPlay !== undefined) {
             return {
@@ -19,7 +29,7 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
 
         gid = parseInt(req.params.gid, 10);
 
-        $("#games-list button").attr("disabled", "disabled");
+        $("#live-games-list button").attr("disabled", "disabled");
 
         // Start 1 day of game simulation
         // Prevent any redirects, somehow
@@ -36,6 +46,7 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
         this.inProgress = ko.observable(false);
         this.playByPlay = ko.observableArray();
         this.stopPlayByPlay = ko.observable(false);
+        this.disableButtons = ko.observable(false); // HACK
 
         this.games = ko.observable();
         this.speed = ko.observable(1);
@@ -220,8 +231,24 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
         ui.title("Live Game Simulation");
 
         // The rest is handled in post(). This is needed to get at vm.
-        $("#games-list").on("click", "button", function () {
+        $("#live-games-list").on("click", "button", function () {
             vm.inProgress(true);
+        });
+
+        $("#live-games-list").on("gameSimulationStart", function () {
+            if (!vm.inProgress()) {
+                vm.disableButtons(true);
+                disableButtons();
+            }
+        });
+        $("#live-games-list").on("gameSimulationStop", function () {
+            if (!vm.inProgress()) {
+                // HACK: if this enables too early, it's bad because two identical days will be simulated
+                window.setTimeout(function () {
+                    vm.disableButtons(false);
+                    enableButtons();
+                }, 1000);
+            }
         });
     }
 

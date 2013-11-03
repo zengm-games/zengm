@@ -13,9 +13,7 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
     update injury icon when player is hurt - would be easy if injury.type was observable, but it's not and I have no idea why. force update with fake name update?
     game clock using min - more accurate, but more complicated - does this even work?
   could fake where the shots are to display graphically
-  CURRENT:
-    games list in playoffs
-    no redirect from live_game for playoff ending phase change (do it same way as start of playoffs)
+  when someone wins the title, you can see the phase change at the top even while watching the live play-by-play of the last game. this leaks info about who won
 
 BIG NEW FEATURES
 ----------------

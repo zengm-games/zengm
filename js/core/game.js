@@ -543,11 +543,9 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
      * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the ui.realtimeUpdate raw call.
      */
     function play(numDays, start, gidPlayByPlay) {
-        var cbNoGames, cbPlayGames, cbSaveResults, cbSimGames, cbRunDay, playoffsContinue;
+        var cbNoGames, cbPlayGames, cbSaveResults, cbSimGames, cbRunDay;
 
         start = start !== undefined ? start : false;
-
-        playoffsContinue = false;
 
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season or the end of the playoffs.
         cbNoGames = function () {
@@ -625,7 +623,13 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                 advStats.calculateAll(function () {  // Update all advanced stats every day
                     ui.realtimeUpdate(["gameSim"], url, function () {
                         db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                            play(numDays - 1);
+                            if (g.phase === g.PHASE.PLAYOFFS) {
+                                season.newSchedulePlayoffsDay(function () {
+                                    play(numDays - 1);
+                                });
+                            } else {
+                                play(numDays - 1);
+                            }
                         });
                     }, raw);
                 });
@@ -684,7 +688,8 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
         };
 
         // Simulates a day of games. If there are no games left, it calls cbNoGames.
-        cbPlayGames = function () {
+        // Callback is called after games are run
+        cbPlayGames = function (cb) {
             var tx;
 
             ui.updateStatus("Playing games (" + numDays + " days left)");
@@ -693,9 +698,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
             // Get the schedule for today
             season.getSchedule(tx, 1, function (schedule) {
-                var tid;
-
-                if (schedule.length === 0 && !playoffsContinue) {
+                if (schedule.length === 0) {
                     cbNoGames();
                 } else {
                     // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
@@ -706,9 +709,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                         if (schedule.length > 0) {
                             // Will loop through schedule and simulate all games
                             cbSimGames(schedule, teams);
-                        } else if (playoffsContinue) {
-                            // In the playoffs, keep going even if there is no more schedule set.
-                            play(numDays - 1);
                         }
                     });
                 }
@@ -730,13 +730,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                         });
                     });
                 } else {
-                    season.newSchedulePlayoffsDay(function () {
-                        // If season.newSchedulePlayoffsDay didn't move the phase to g.PHASE.BEFORE_DRAFT, then the playoffs are still happening.
-                        if (g.phase === g.PHASE.PLAYOFFS) {
-                            playoffsContinue = true;
-                        }
-                        cbPlayGames();
-                    });
+                    cbPlayGames();
                 }
             };
 

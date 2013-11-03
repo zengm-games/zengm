@@ -721,7 +721,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                             url = helpers.leagueUrl(["playoffs"]);
                         }
 
-                        newPhaseCb(g.PHASE.PLAYOFFS, cb, url, ["teamFinances"]);
+                        newSchedulePlayoffsDay(function () {
+                            newPhaseCb(g.PHASE.PLAYOFFS, cb, url, ["teamFinances"]);
+                        });
                     });
                 };
             };
@@ -864,13 +866,20 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                 awards(function () {
                     // Update strategies of AI teams (contending or rebuilding)
                     team.updateStrategies(function () {
+                        var url;
+
+                        // Don't redirect if we're viewing a live game now
+                        if (location.pathname.indexOf("/live_game") === -1) {
+                            url = helpers.leagueUrl(["history"]);
+                        }
+
                         newPhaseCb(g.PHASE.BEFORE_DRAFT, function () {
                             if (cb !== undefined) {
                                 cb();
                             }
 
                             helpers.bbgmPing("season");
-                        }, helpers.leagueUrl(["history"]), ["playerMovement"]);
+                        }, url, ["playerMovement"]);
                     });
                 });
             };
@@ -1091,7 +1100,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
         // Make today's playoff schedule
         tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
-            var cursor, i, matchup, numGames, playoffSeries, rnd, series, team1, team2, tids, tidsWon;
+            var cursor, i, matchup, nextRound, numGames, playoffSeries, rnd, series, team1, team2, tids, tidsWon;
 
             cursor = event.target.result;
             playoffSeries = cursor.value;
@@ -1202,7 +1211,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     }
 
                     tx.oncomplete = function () {
-                        cb();
+                        // Next time, the schedule for the first day of the next round will be set
+                        newSchedulePlayoffsDay(cb);
                     };
                 }
             }

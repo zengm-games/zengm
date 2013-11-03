@@ -113,7 +113,7 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
             }
 
             if (events.length > 0) {
-                setTimeout(processToNextPause, 2000 / Math.pow(vm.speed(), 1.5));
+                setTimeout(processToNextPause, 2000 / Math.pow(vm.speed(), 1.4));
             } else {
                 vm.boxScore.time("Final Score");
             }

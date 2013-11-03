@@ -14,15 +14,8 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
     playByPlay format
       send objects with "type" param
       type "stat" - any new stat to update box score
-      type "text" - text log
-        fouls
-          Shooting foul on {0}
-            for and 1, show this after the shot is made, if possible
-          Personal foul on {0}
-        only include stats that are used in box score
-        change of possession with no rebound/turnover
-        when a player fouls out
-        substitutions
+      type "text" - text log'
+        change of possession with no rebound/turnover?
     add more alternative text options in GameSim.recordPlay
     show live box score
       can game clock use min rather than timestamps? more accurate
@@ -34,12 +27,14 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
       order of columns when collapsed to single column (my SO answer)
       sort to show current active players (or maybe just highlight)
     speed slider
+    pause button, arrows for forward/backwards?
     should disable buttons when other gamesim in progress
     warning if try to click away during game
     somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect, or maybe just look for gid passed to game.play)
       if redirect is blocked, show link at the bottom of play by play
     make pretty
     could fake where the shots are to display graphically
+    play > live behavior when playing back simulation - should somehow cancel it
 
 BIG NEW FEATURES
 ----------------

@@ -46,6 +46,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         // Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
         this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
         this.startersRecorded = false;  // Used to track whether the *real* starters have been recorded or not.
+        this.updatePlayersOnCourt();
 
         this.subsEveryN = 6;  // How many possessions to wait before doing substitutions
 
@@ -260,11 +261,15 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
                         // Substitute player
                         this.playersOnCourt[t][i] = b;
-                        p = b;
+                        //p = b;
                         this.team[t].player[b].stat.courtTime = random.uniform(-2, 2);
                         this.team[t].player[b].stat.benchTime = random.uniform(-2, 2);
                         this.team[t].player[p].stat.courtTime = random.uniform(-2, 2);
                         this.team[t].player[p].stat.benchTime = random.uniform(-2, 2);
+                        if (this.startersRecorded) {
+                            this.recordPlay("sub", t, [this.team[t].player[p].name, this.team[t].player[b].name]);
+                        }
+                        break;
                     }
                 }
                 i += 1;
@@ -280,7 +285,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                     }
                 }
             }
-            this.startersRecorded = 1;
+            this.startersRecorded = true;
         }
 
         return substitutions;
@@ -776,8 +781,10 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         ratios = this.ratingArray("fouling", t);
         p = this.playersOnCourt[t][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "pf");
+        this.recordPlay("pf", this.d, [this.team[this.d].player[p].name]);
         // Foul out
         if (this.team[this.d].player[p].stat.pf >= 6) {
+            this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]);
             // Force substitutions now
             this.updatePlayersOnCourt();
             this.updateSynergy();
@@ -972,6 +979,12 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 texts = ["{0} made a free throw"];
             } else if (type === "missFt") {
                 texts = ["{0} missed a free throw"];
+            } else if (type === "pf") {
+                texts = ["Foul on {0}"];
+            } else if (type === "foulOut") {
+                texts = ["{0} fouled out"];
+            } else if (type === "sub") {
+                texts = ["Substitution: {0} for {1}"];
             }
 
             if (texts) {

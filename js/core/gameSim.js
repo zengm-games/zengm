@@ -268,7 +268,6 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                         this.team[t].player[p].stat.benchTime = random.uniform(-2, 2);
                         if (this.startersRecorded) {
                             this.recordPlay("sub", t, [this.team[t].player[b].name, this.team[t].player[p].name]);
-                            this.recordPlay("sub", t, [ovrs[b], ovrs[p]]);
                         }
                         break;
                     }

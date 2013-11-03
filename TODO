@@ -12,7 +12,6 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
   live box score
     update injury icon when player is hurt - would be easy if injury.type was observable, but it's not and I have no idea why. force update with fake name update?
     game clock using min - more accurate, but more complicated - does this even work?
-  more extremes on the slider - increase numerator, maxrange
   should disable buttons when other gamesim in progress
   somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect, or maybe just look for gid passed to game.play)
     if redirect is blocked, show link at the bottom of play by play

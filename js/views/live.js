@@ -178,6 +178,11 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
                         boxScore.teams[i][resetStats[s]] = 0;
                     }
                     for (j = 0; j < boxScore.teams[i].players.length; j++) {
+                        // Fix for players who were hurt this game - don't show right away!
+                        if (boxScore.teams[i].players[j].injury.type !== "Healthy" && boxScore.teams[i].players[j].min > 0) {
+                            boxScore.teams[i].players[j].injury = {type: "Healthy", gamesRemaining: 0};
+                        }
+
                         for (s = 0; s < resetStats.length; s++) {
                             boxScore.teams[i].players[j][resetStats[s]] = 0;
                         }

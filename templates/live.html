@@ -13,6 +13,8 @@
   </form>
 </div>
 
+<p data-bind="visible: playByPlay().length > 0" class="text-danger">If you navigate away from this page, you won't be able to see these play-by-play results again because they are not stored anywhere.</p>
+
 <div class="row" data-bind="if: playByPlay().length > 0">
   <div class="col-md-3 col-lg-4">
     <form>

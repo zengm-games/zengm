@@ -12,7 +12,6 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
   add new page "live". when this is viewed, send the play-by-play data there for the selected team
     how to handle clicks to toher pages, gamesim from after play by play is loaded, etc
     change of possession with no rebound/turnover?
-    add more alternative text options in GameSim.recordPlay
     show live box score
       how to show injuries?
         need to filter out injuries that happened *that game* bc data comes from after the game
@@ -23,7 +22,6 @@ play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/sug
       sort to show current active players (or maybe just highlight)
       game clock using min - more accurate, but more complicated
     should disable buttons when other gamesim in progress
-    warning if try to click away during game
     somehow block redirects (like to playoff bracket or season summary) while this page is loaded (stupid hack: explicitly check URL before redirect. or maybe have g.preventRedirect, or maybe just look for gid passed to game.play)
       if redirect is blocked, show link at the bottom of play by play
     could fake where the shots are to display graphically

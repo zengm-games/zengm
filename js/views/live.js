@@ -35,6 +35,7 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
         this.inProgress = ko.observable(false);
         this.games = ko.observable();
         this.playByPlay = ko.observableArray();
+        this.speed = ko.observable(1);
 
         // See views.gameLog for explanation
         this.boxScore = {
@@ -138,7 +139,7 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
             }
 
             if (events.length > 0) {
-                setTimeout(processToNextPause, 100);//1000 * Math.random());
+                setTimeout(processToNextPause, 2000 / Math.pow(vm.speed(), 1.5));
             } else {
                 vm.boxScore.time("Final Score");
             }

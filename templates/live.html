@@ -14,8 +14,15 @@
 </div>
 
 <div class="row" data-bind="if: playByPlay().length > 0">
-  <div class="col-md-3 col-lg-4" data-bind="foreach: playByPlay">
-    <p data-bind="html: $data"></p>
+  <div class="col-md-3 col-lg-4">
+    <form>
+      <label for="playByPlaySpeed">Play-By-Play Speed:</label>
+      <input type="range" id="playByPlaySpeed" min="1" max="9" step="1" style="width: 100%" data-bind="value: speed">
+    </form>
+
+    <!-- ko foreach: playByPlay -->
+      <p data-bind="html: $data"></p>
+    <!-- /ko -->
   </div>
   <div class="col-md-9 col-lg-8">
     <!-- ko if: showBoxScore -->

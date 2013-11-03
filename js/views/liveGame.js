@@ -11,10 +11,6 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
                 gidPlayByPlay: req.raw.gidPlayByPlay,
                 playByPlay: req.raw.playByPlay
             };
-        } else {
-            return {
-                redirectUrl: helpers.leagueUrl(["live"])
-            };
         }
     }
 

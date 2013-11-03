@@ -714,7 +714,14 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                 };
                 tx.oncomplete = function () {
                     finances.assesPayrollMinLuxury(function () {
-                        newPhaseCb(g.PHASE.PLAYOFFS, cb, helpers.leagueUrl(["playoffs"]), ["teamFinances"]);
+                        var url;
+
+                        // Don't redirect if we're viewing a live game now
+                        if (location.pathname.indexOf("/live_game") === -1) {
+                            url = helpers.leagueUrl(["playoffs"]);
+                        }
+
+                        newPhaseCb(g.PHASE.PLAYOFFS, cb, url, ["teamFinances"]);
                     });
                 };
             };

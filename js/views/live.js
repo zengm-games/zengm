@@ -190,6 +190,19 @@ define(["globals", "ui", "core/game", "core/season", "lib/jquery", "lib/knockout
                     stopPlayByPlay: false
                 });
 
+                // Copied from views.gameSim                
+                // UGLY HACK for two reasons:
+                // 1. Box score might be hidden if none is loaded, so in that case there is no table to make clickable
+                // 2. When box scores are shown, it might happen after uiEvery is called because vm.showBoxScore is throttled
+                window.setTimeout(function () {
+                    var tableEls;
+
+                    tableEls = $(".box-score-team");
+                    if (tableEls.length > 0 && !tableEls[0].classList.contains("table-hover")) {
+                        ui.tableClickableRows(tableEls);
+                    }
+                }, 100);
+
                 // Start showing play-by-play
                 processToNextPause();
             };

@@ -369,13 +369,13 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             keys = ["play-menu-until-regular-season"];
         } else if (g.phase === g.PHASE.REGULAR_SEASON) {
             // Regular season - pre trading deadline
-            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-playoffs", "play-menu-day-live"];
+            keys = ["play-menu-day", "play-menu-day-live", "play-menu-week", "play-menu-month", "play-menu-until-playoffs"];
         } else if (g.phase === g.PHASE.AFTER_TRADE_DEADLINE) {
             // Regular season - post trading deadline
-            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-playoffs", "play-menu-day-live"];
+            keys = ["play-menu-day", "play-menu-day-live", "play-menu-week", "play-menu-month", "play-menu-until-playoffs"];
         } else if (g.phase === g.PHASE.PLAYOFFS) {
             // Playoffs
-            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-through-playoffs", "play-menu-day-live"];
+            keys = ["play-menu-day", "play-menu-day-live", "play-menu-week", "play-menu-month", "play-menu-through-playoffs"];
         } else if (g.phase === g.PHASE.BEFORE_DRAFT) {
             // Offseason - pre draft
             keys = ["play-menu-until-draft"];

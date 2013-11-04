@@ -98,7 +98,7 @@ define(["globals", "ui", "core/game", "core/gameSim", "core/player", "lib/jquery
                 csv += "\n";
             }
 
-            $("#download-link").html('<a href="data:application/json;base64,' + base64EncArr(strToUTF8Arr(csv)) + '" download="boxscore-' + r.team[0].id + '-' + r.team[1].id + '.csv">Download CSV</a>');
+            $("#download-link").html('<a href="data:application/json;base64,' + base64EncArr(strToUTF8Arr(csv)) + '" download="boxscore-' + r.team[1].id + '-' + r.team[0].id + '.csv">Download CSV</a>');
 
             deferred.resolve({
                 csv: csv

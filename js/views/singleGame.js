@@ -65,13 +65,13 @@ define(["globals", "ui", "core/game", "core/gameSim", "core/player", "lib/jquery
             injuries = [];
             r = inputs.result;
 
-            for (i = 0; i < r.team.length; i++) {
+            for (i = r.team.length - 1; i >= 0; i--) {
                 t = r.team[i];
                 csv += g.teamRegionsCache[t.id] + "," + t.stat.ptsQtrs.join(",") + "," + t.stat.pts + "\n";
             }
             csv += "\n";
 
-            for (i = 0; i < r.team.length; i++) {
+            for (i = r.team.length - 1; i >= 0; i--) {
                 t = r.team[i];
 
                 csv += g.teamRegionsCache[t.id] + "\n";

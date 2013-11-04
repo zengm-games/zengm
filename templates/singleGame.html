@@ -2,17 +2,17 @@
 
 <form method="POST" data-bind="attrLeagueUrl: {action: ['single_game']}">
   <div class="control-group">
-    <label class="control-label" for="inputEmail">Home</label>
+    <label class="control-label" for="inputPassword">Away</label>
     <div class="controls">
-        <select name="tid-home" data-bind="foreach: teams">
+        <select name="tid-away" data-bind="foreach: teams">
             <option data-bind="value: tid, text: name"></option>
         </select>
     </div>
   </div>
   <div class="control-group">
-    <label class="control-label" for="inputPassword">Away</label>
+    <label class="control-label" for="inputEmail">Home</label>
     <div class="controls">
-        <select name="tid-away" data-bind="foreach: teams">
+        <select name="tid-home" data-bind="foreach: teams">
             <option data-bind="value: tid, text: name"></option>
         </select>
     </div>

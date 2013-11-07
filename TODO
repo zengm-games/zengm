@@ -3,11 +3,14 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+playoff games bug http://www.reddit.com/r/BasketballGM/comments/1pzbpe/simulation_bug/
 bitbucket? or webfaction git?
 muscula
   source maps don't seem to work
     are they working in chrome in the first place?
 play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/suggestion_playbyplay_games/
+  slow it down http://www.reddit.com/r/BasketballGM/comments/1pu92x/new_feature_live_playbyplay_simulation/cd6xq54?context=3
+  shouldn't say "4th quarter, Final Score left" when the game is over. Just "Final score"
   put plays in scrollable div
   change of possession with no rebound/turnover?
   live box score
@@ -47,6 +50,7 @@ team and league records (highest scoring game, etc)
 BIG NEW GAMEPLAY CHANGES
 ------------------------
 
+skills should be based on the composite ratings, not single ratings. http://www.reddit.com/r/BasketballGM/comments/1pxu83/positionless_basketball/cd7ob6j
 make low ovr high pot players more likely to improve
 Extended free agency
   order of AI team signings shouldn't be linear
@@ -78,6 +82,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+firstrun popup should be more descriptive - make sure the user knows the Play menu is dynamic depending on the state of the game
 Capitalize play menu entries
 merge game.play and freeAgents.play
 HOF working consistently?
@@ -135,6 +140,7 @@ IE11 testing
 LOW PRIORITY
 ------------
 
+contract extensions
 salary cap exception? too complicated?
   how much?
   who gets it? only if over cap when free agency starts?

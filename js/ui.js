@@ -2,7 +2,7 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout", "util/helpers", "util/lock"], function (db, g, templates, Davis, $, ko, helpers, lock) {
+define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers", "util/lock"], function (db, g, templates, Davis, $, ko, _, helpers, lock) {
     "use strict";
 
     // Things to do on initial page load
@@ -19,6 +19,34 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                 rightPos: "20px"
             });
         }
+        slideOut = $("#share");
+        if (slideOut.length > 0) {
+            slideOut.css({
+                visibility: "visible"
+            }).tabSlideOut({
+                tabHandle: "#share .slide-out-handle",
+                rightPos: "120px"
+            });
+        }
+
+        // The first time the Share tab is clicked, load all the social buttons
+        $("#share .slide-out-handle").on("click", _.once(function () {
+            !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+            
+            (function(d, s, id) {
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) {return;}
+              js = d.createElement(s); js.id = id;
+              js.src = "http://connect.facebook.net/en_US/all.js#xfbml=1";
+              fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+
+            (function() {
+              var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+              po.src = 'https://apis.google.com/js/plusone.js';
+              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+            })();
+        }));
 
         ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
 

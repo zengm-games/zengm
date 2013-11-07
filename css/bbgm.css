@@ -340,6 +340,10 @@ select.teams {
   background-color: #4a356b;
   border-color: #3e2c5a;
 }
+#share {
+  width: 270px;
+  height: 135px;
+}
 
 .bar-graph-small {
   height: 40px;

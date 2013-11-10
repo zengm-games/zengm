@@ -755,10 +755,16 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
         if (start) {
             lock.canStartGames(null, function (canStartGames) {
                 if (canStartGames) {
-                    db.setGameAttributes({gamesInProgress: true}, function () {
-                        ui.updatePlayMenu(null, function () {
-                            cbRunDay();
-                        });
+                    team.checkRosterSizes(function (userTeamSizeError) {
+                        if (userTeamSizeError === null) {
+                            db.setGameAttributes({gamesInProgress: true}, function () {
+                                ui.updatePlayMenu(null, function () {
+                                    cbRunDay();
+                                });
+                            });
+                        } else {
+                            helpers.error(userTeamSizeError);
+                        }
                     });
                 }
             });

@@ -15,7 +15,7 @@ BIG NEW FEATURES
 trade improvements
   trades can go over roster size limit
     so before simulating any games, need to check roster sizes. how slow is that?
-      core.team.checkRosterSizes
+      core.team.checkRosterSizes should be called.. but where? i guess it should be before each day is simulated, as that will handle a future scenario where AI teams can trade between days. but how should the error be handled, then?
     AI teams need to factor this into the trade value if they have to drop someone after
   refactor trade module with all the below in mind
     clean up even more?
@@ -23,6 +23,7 @@ trade improvements
       either way, they should take partial objects and fill in the default/existing values
   trade suggestions (and trading block) should know salary rules
   trades between AI teams
+    call team.checkRosterSizes after this
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
   trade deadline
     if games remaining in schedule passes a threshold, initiate phase change

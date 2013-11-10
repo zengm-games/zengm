@@ -256,7 +256,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                             players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
 
                             for (i = 0; i < players.length; i++) {
-                                if (inputs.tid === g.userTid && players.length > 5) {
+                                if (inputs.tid === g.userTid) {
                                     players[i].canRelease = true;
                                 } else {
                                     players[i].canRelease = false;

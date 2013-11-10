@@ -31,6 +31,9 @@ define(["lib/jquery"], function ($) {
     }, {
         date: "2013-11-03",
         msg: "Live play-by-play game simulation. Click \"Play > One day (live)\" to check it out."
+    }, {
+        date: "2013-11-10",
+        msg: "Removed the roster size limit in trades. Now you (and AI teams) can go above and below the min and max roster sizes, as long as you get back within the limits before playing any more games."
     }];
 
     function check() {

@@ -19,6 +19,8 @@ trade improvements
       should create and updatePlayers be merged? updatePlayers already updates tids too
       either way, they should take partial objects and fill in the default/existing values
   trade suggestions (and trading block) should know salary rules
+    HOW?
+    team.valueChange could be made fast if I allow an extra argument to pass pre-fetched values from the database
   trades between AI teams
     call team.checkRosterSizes after this if it's in between days
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/

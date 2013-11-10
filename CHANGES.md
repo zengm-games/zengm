@@ -4,10 +4,17 @@ number or not.
 
 # Since 3.2.0
 
+## Gameplay and UI
+
 - AppCache used to allow offline play
 - Fantasy Draft feature
 - Extended free agency phase
 - Live play-by-play game simulation
+- Removed roster size limit restriction on trades
+
+## Technical details
+
+- Refactored core.trade API
 
 # 3.2.0 (2013-10-05)
 

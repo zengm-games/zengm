@@ -4,6 +4,7 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 playoff games bug http://www.reddit.com/r/BasketballGM/comments/1pzbpe/simulation_bug/
+  still happening http://www.reddit.com/r/BasketballGM/comments/1pzbpe/simulation_bug/cdb7rmz?context=3
 bitbucket? or webfaction git?
 muscula
   source maps don't seem to work
@@ -14,9 +15,8 @@ BIG NEW FEATURES
 
 trade improvements
   trades can go over roster size limit
-    so before simulating any games, need to check roster sizes. how slow is that?
-      core.team.checkRosterSizes should be called.. but where? i guess it should be before each day is simulated, as that will handle a future scenario where AI teams can trade between days. but how should the error be handled, then?
     AI teams need to factor this into the trade value if they have to drop someone after
+      sort by value. find lowest value. add his contract to the value one higher, then delete this guy. repeat.
   refactor trade module with all the below in mind
     clean up even more?
       should create and updatePlayers be merged? updatePlayers already updates tids too

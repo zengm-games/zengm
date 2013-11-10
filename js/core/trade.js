@@ -220,7 +220,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                     s.teams[i].total = _.reduce(s.teams[i].trade, function (memo, player) { return memo + player.contract.amount; }, 0);
 
                     transaction.objectStore("draftPicks").index("tid").getAll(tids[i]).onsuccess = function (event) {
-                        var j, k, overCap, overRosterLimit, picks, ratios;
+                        var j, k, overCap, picks, ratios;
 
                         picks = event.target.result;
                         s.teams[i].picks = [];
@@ -236,7 +236,6 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
 
                             // Test if any warnings need to be displayed
                             overCap = [false, false];
-                            overRosterLimit = [false, false];
                             ratios = [0, 0];
                             for (j = 0; j < 2; j++) {
                                 if (j === 0) {
@@ -246,10 +245,6 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                                 }
 
                                 s.teams[j].name = g.teamRegionsCache[tids[j]] + " " + g.teamNamesCache[tids[j]];
-
-                                if (players[j].length - pids[j].length + pids[k].length > 15) {
-                                    overRosterLimit[j] = true;
-                                }
 
                                 if (s.teams[j].total > 0) {
                                     ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
@@ -276,15 +271,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
 
                                         done += 1;
                                         if (done === 2) {
-                                            if (overRosterLimit.indexOf(true) >= 0) {
-                                                // Which team is at fault?;
-                                                if (overRosterLimit[0] === true) {
-                                                    j = 0;
-                                                } else {
-                                                    j = 1;
-                                                }
-                                                s.warning = "This trade would put the " + s.teams[j].name + " over the maximum roster size limit of 15 players.";
-                                            } else if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
+                                            if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
                                                 // Which team is at fault?;
                                                 if (ratios[0] > 125) {
                                                     j = 0;

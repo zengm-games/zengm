@@ -947,6 +947,98 @@ console.log(remove);*/
         };
     }
 
+    /**
+     * Check roster size limits
+     *
+     * If any AI team is over the maximum roster size, cut their worst players.
+     * If any AI team is under the minimum roster size, sign minimum contract
+     * players until the limit is reached. If the user's team is breaking one of
+     * these roster size limits, display a warning.
+     * 
+     * @memberOf core.team
+     * @param {function (userTeamSizeError?)} cb Callback whose argument is
+     *     undefined if there is no error, or a string with the error message
+     *     otherwise.
+     */
+    function checkRosterSizes(cb) {
+        var checkRosterSize, minFreeAgents, playerStore, tx, userTeamSizeError;
+
+        checkRosterSize = function (tid) {
+            playerStore.index("tid").getAll(tid).onsuccess = function (event) {
+                var i, numPlayersOnRoster, p, players, playersAll;
+
+                playersAll = event.target.result;
+                numPlayersOnRoster = playersAll.length;
+                if (numPlayersOnRoster > 15) {
+                    if (tid === g.userTid) {
+                        userTeamSizeError = "Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.";
+                    } else {
+                        // Automatically drop lowest potential players until we reach 15
+                        players = [];
+                        for (i = 0; i < playersAll.length; i++) {
+                            players.push({pid: playersAll[i].pid, pot: _.last(playersAll[i].ratings).pot});
+                        }
+                        players.sort(function (a, b) {  return a.pot - b.pot; });
+                        for (i = 0; i < (numPlayersOnRoster - 15); i++) {
+                            playerStore.get(players[i].pid).onsuccess = function (event) {
+                                player.release(tx, event.target.result, false);
+                            };
+                        }
+                    }
+                } else if (numPlayersOnRoster < g.minRosterSize) {
+                    if (tid === g.userTid) {
+                        userTeamSizeError = "Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.";
+                    } else {
+                        // Auto-add players
+//console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
+                        while (numPlayersOnRoster < g.minRosterSize) {
+                            p = minFreeAgents.shift();
+                            p.tid = tid;
+                            p = player.addStatsRow(p);
+                            p = player.setContract(p, p.contract, true);
+                            playerStore.put(p);
+
+                            numPlayersOnRoster += 1;
+                        }
+//console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
+                    }
+                }
+
+                // Auto sort rosters (except player's team)
+                if (tid !== g.userTid) {
+                    rosterAutoSort(playerStore, tid);
+                }
+            };
+        };
+
+        tx = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
+        playerStore = tx.objectStore("players");
+
+        playerStore.index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
+            var i, players;
+
+            players = event.target.result;
+
+            // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
+            minFreeAgents = [];
+            for (i = 0; i < players.length; i++) {
+                if (players[i].contract.amount === 500) {
+                    minFreeAgents.push(players[i]);
+                }
+            }
+            minFreeAgents.sort(function (a, b) { return player.value(b) - player.value(a); });
+
+            // Make sure teams are all within the roster limits
+            for (i = 0; i < g.numTeams; i++) {
+                checkRosterSize(i);
+            }
+        };
+
+        tx.oncomplete = function () {
+            cb(userTeamSizeError);
+        }
+    }
+
     return {
         addSeasonRow: addSeasonRow,
         addStatsRow: addStatsRow,
@@ -954,6 +1046,7 @@ console.log(remove);*/
         rosterAutoSort: rosterAutoSort,
         filter: filter,
         valueChange: valueChange,
-        updateStrategies: updateStrategies
+        updateStrategies: updateStrategies,
+        checkRosterSizes: checkRosterSizes
     };
 });

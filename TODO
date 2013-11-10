@@ -13,14 +13,17 @@ BIG NEW FEATURES
 ----------------
 
 trade improvements
+  trades can go over roster size limit
+    so before simulating any games, need to check roster sizes. how slow is that?
+    AI teams need to factor this into the trade value if they have to drop someone after
+    team.checkRosterSizes
+      implement
+      unit tests
   refactor trade module with all the below in mind
     clean up even more?
       should create and updatePlayers be merged? updatePlayers already updates tids too
       either way, they should take partial objects and fill in the default/existing values
   trade suggestions (and trading block) should know salary rules
-  trades can go over roster size limit
-    so before simulating any games, need to check roster sizes. how slow is that?
-    AI teams need to factor this into the trade value if they have to drop someone after
   trades between AI teams
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
   trade deadline

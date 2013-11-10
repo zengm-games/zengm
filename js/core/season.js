@@ -516,104 +516,21 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseRegularSeason(cb) {
-        var checkRosterSize, minFreeAgents, playerStore, players, tx, userTeamSizeError;
-
-        checkRosterSize = function (tid) {
-            playerStore.index("tid").getAll(tid).onsuccess = function (event) {
-                var i, numPlayersOnRoster, p, players, playersAll;
-
-                playersAll = event.target.result;
-                numPlayersOnRoster = playersAll.length;
-                if (numPlayersOnRoster > 15) {
-                    if (tid === g.userTid) {
-                        helpers.error("Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.");
-                        userTeamSizeError = true;
-                        ui.updatePlayMenu();  // Otherwise the play menu will be blank
-                    } else {
-                        // Automatically drop lowest potential players until we reach 15
-                        players = [];
-                        for (i = 0; i < playersAll.length; i++) {
-                            players.push({pid: playersAll[i].pid, pot: _.last(playersAll[i].ratings).pot});
-                        }
-                        players.sort(function (a, b) {  return a.pot - b.pot; });
-                        for (i = 0; i < (numPlayersOnRoster - 15); i++) {
-                            playerStore.get(players[i].pid).onsuccess = function (event) {
-                                player.release(tx, event.target.result, false);
-                            };
-                        }
-                    }
-                } else if (numPlayersOnRoster < g.minRosterSize) {
-                    if (tid === g.userTid) {
-                        helpers.error("Your team currently has less than the minimum number of players (" + g.minRosterSize + "). You must add players (through free agency or trades) before the season starts.");
-                        userTeamSizeError = true;
-                        ui.updatePlayMenu();  // Otherwise the play menu will be blank
-                    } else {
-                        // Auto-add players
-//console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
-                        while (numPlayersOnRoster < g.minRosterSize) {
-                            p = minFreeAgents.shift();
-                            p.tid = tid;
-                            p = player.addStatsRow(p);
-                            p = player.setContract(p, p.contract, true);
-                            playerStore.put(p);
-
-                            numPlayersOnRoster += 1;
-                        }
-//console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
-                    }
-                }
-
-                // Auto sort rosters (except player's team)
-                if (tid !== g.userTid) {
-                    team.rosterAutoSort(playerStore, tid);
-                }
-            };
-        };
-
-        tx = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
-        playerStore = tx.objectStore("players");
-
-        userTeamSizeError = false;
-
-        playerStore.index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-            var i, players;
-
-            players = event.target.result;
-
-            // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
-            minFreeAgents = [];
-            for (i = 0; i < players.length; i++) {
-                if (players[i].contract.amount === 500) {
-                    minFreeAgents.push(players[i]);
-                }
-            }
-            minFreeAgents.sort(function (a, b) { return player.value(b) - player.value(a); });
-
-            // Make sure teams are all within the roster limits
-            tx.objectStore("teams").getAll().onsuccess = function (event) {
-                var i, teams;
-
-                teams = event.target.result;
-                for (i = 0; i < teams.length; i++) {
-                    checkRosterSize(teams[i].tid);
-                }
-            };
-        };
-
-        tx.oncomplete = function () {
-            if (!userTeamSizeError) {
+        team.checkRosterSizes(function (userTeamSizeError) {
+            // Only move to the next phase if the user's team size is ok
+            if (userTeamSizeError === undefined) {
                 updateOwnerMood(function (deltas) {
                     message.generate(deltas, function () {
-                        var tids;
-
-                        tids = newSchedule();
-                        setSchedule(tids, function () {
+                        setSchedule(newSchedule(), function () {
                             newPhaseCb(g.PHASE.REGULAR_SEASON, cb);
                         });
                     });
                 });
+            } else {
+                helpers.error(userTeamSizeError);
+                ui.updatePlayMenu(); // Otherwise the play menu will be blank
             }
-        };
+        });
     }
 
     function newPhaseAfterTradeDeadline(cb) {

@@ -736,6 +736,38 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         }
 
         tx.oncomplete = function () {
+            var needToDrop;
+
+            // Handle situations where the team goes over the roster size limit
+            if (roster.length + remove.length > 15) {
+                // Already over roster limit, so don't worry unless this trade actually makes it worse
+                needToDrop = (roster.length + add.length) - (roster.length + remove.length);
+            } else {
+                needToDrop = (roster.length + add.length) - 15;
+            }
+            roster.sort(function (a, b) { return a.value - b.value; }); // Sort by value, ascending
+            add.sort(function (a, b) { return a.value - b.value; }); // Sort by value, ascending
+            while (needToDrop > 0) {
+                // Find lowest value player, from roster or add. Delete him and move his salary to the second lowest value player.
+                if (roster[0].value < add[0].value) {
+                    if (roster[1].value < add[0].value) {
+                        roster[1].contractAmount += roster[0].contractAmount;
+                    } else {
+                        add[0].contractAmount += roster[0].contractAmount;
+                    }
+                    roster.shift(); // Remove from value calculation
+                } else {
+                    if (add[1].value < roster[0].value) {
+                        add[1].contractAmount += add[0].contractAmount;
+                    } else {
+                        roster[0].contractAmount += add[0].contractAmount;
+                    }
+                    add.shift(); // Remove from value calculation
+                }
+
+                needToDrop -= 1;
+            }
+
             filter({
                 seasonAttrs: ["pop"],
                 season: g.season,

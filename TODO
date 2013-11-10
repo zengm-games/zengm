@@ -14,16 +14,13 @@ BIG NEW FEATURES
 ----------------
 
 trade improvements
-  trades can go over roster size limit
-    AI teams need to factor this into the trade value if they have to drop someone after
-      sort by value. find lowest value. add his contract to the value one higher, then delete this guy. repeat.
   refactor trade module with all the below in mind
     clean up even more?
       should create and updatePlayers be merged? updatePlayers already updates tids too
       either way, they should take partial objects and fill in the default/existing values
   trade suggestions (and trading block) should know salary rules
   trades between AI teams
-    call team.checkRosterSizes after this
+    call team.checkRosterSizes after this if it's in between days
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
   trade deadline
     if games remaining in schedule passes a threshold, initiate phase change

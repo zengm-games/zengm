@@ -518,7 +518,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     function newPhaseRegularSeason(cb) {
         team.checkRosterSizes(function (userTeamSizeError) {
             // Only move to the next phase if the user's team size is ok
-            if (userTeamSizeError === undefined) {
+            if (userTeamSizeError === null) {
                 updateOwnerMood(function (deltas) {
                     message.generate(deltas, function () {
                         setSchedule(newSchedule(), function () {

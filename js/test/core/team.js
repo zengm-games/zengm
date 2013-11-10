@@ -2,7 +2,7 @@
  * @name test.core.team
  * @namespace Tests for core.team.
  */
-define(["db", "globals", "core/league", "core/team"], function (db, g, league, team) {
+define(["db", "globals", "core/league", "core/player", "core/team"], function (db, g, league, player, team) {
     "use strict";
 
     describe("core/team", function () {
@@ -190,6 +190,139 @@ define(["db", "globals", "core/league", "core/team"], function (db, g, league, t
                     t.stats[0].fgp.should.equal(10);
 
                     done();
+                });
+            });
+        });
+
+        describe("#checkRosterSizes()", function () {
+            before(function (done) {
+                db.connectMeta(function () {
+                    league.create("Test", 0, undefined, undefined, 2013, false, function () {
+                        done();
+                    });
+                });
+            });
+            after(function (done) {
+                league.remove(g.lid, done);
+            });
+
+            function addTen(tid, cb) {
+                var i, tx;
+
+                tx = g.dbl.transaction("players", "readwrite");
+                i = 0;
+
+                tx.objectStore("players").index("tid").openCursor(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    p = cursor.value;
+                    p.tid = tid;
+                    cursor.update(p);
+                    i += 1;
+                    if (i < 10) {
+                        cursor.continue();
+                    }
+                };
+
+                tx.oncomplete = function () {
+                    cb();
+                };
+            }
+
+            function removeTen(tid, cb) {
+                var i, tx;
+
+                tx = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
+                i = 0;
+
+                tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    p = cursor.value;
+                    player.release(tx, p, false);
+                    i += 1;
+                    if (i < 10) {
+                        cursor.continue();
+                    }
+                };
+
+                tx.oncomplete = function () {
+                    cb();
+                };
+            }
+
+            it("should add players to AI team under roster limit without returning error message", function (done) {
+                removeTen(5, function () {
+                    // Confirm roster size under limit
+                    g.dbl.transaction("players").objectStore("players").index("tid").count(5).onsuccess = function (event) {
+                        event.target.result.should.equal(4);
+
+                        // Confirm players added up to limit
+                        team.checkRosterSizes(function (userTeamSizeError) {
+                            should.equal(userTeamSizeError, null);
+                            g.dbl.transaction("players").objectStore("players").index("tid").count(5).onsuccess = function (event) {
+                                event.target.result.should.equal(g.minRosterSize);
+                                done();
+                            };
+                        });
+                    };
+                });
+            });
+            it("should remove players to AI team over roster limit without returning error message", function (done) {
+                addTen(8, function () {
+                    // Confirm roster size over limit
+                    g.dbl.transaction("players").objectStore("players").index("tid").count(8).onsuccess = function (event) {
+                        event.target.result.should.equal(24);
+
+                        // Confirm roster size pruned to limit
+                        team.checkRosterSizes(function (userTeamSizeError) {
+                            should.equal(userTeamSizeError, null);
+                            g.dbl.transaction("players").objectStore("players").index("tid").count(8).onsuccess = function (event) {
+                                event.target.result.should.equal(15);
+                                done();
+                            };
+                        });
+                    };
+                });
+            });
+            it("should return error message when user team is under roster limit", function (done) {
+                removeTen(g.userTid, function () {
+                    // Confirm roster size over limit
+                    g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
+                        event.target.result.should.equal(4);
+
+                        // Confirm roster size pruned to limit
+                        team.checkRosterSizes(function (userTeamSizeError) {
+                            userTeamSizeError.should.be.a("string");
+                            userTeamSizeError.should.contain("less");
+                            userTeamSizeError.should.contain("minimum");
+                            g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
+                                event.target.result.should.equal(4);
+                                done();
+                            };
+                        });
+                    };
+                });
+            });
+            it("should return error message when user team is over roster limit", function (done) {
+                addTen(g.userTid, function () {
+                    // Confirm roster size over limit
+                    g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
+                        event.target.result.should.equal(20);
+
+                        // Confirm roster size pruned to limit
+                        team.checkRosterSizes(function (userTeamSizeError) {
+                            userTeamSizeError.should.be.a("string");
+                            userTeamSizeError.should.contain("more");
+                            userTeamSizeError.should.contain("maximum");
+                            g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
+                                event.target.result.should.equal(20);
+                                done();
+                            };
+                        });
+                    };
                 });
             });
         });

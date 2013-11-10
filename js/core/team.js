@@ -956,7 +956,7 @@ console.log(remove);*/
      * these roster size limits, display a warning.
      * 
      * @memberOf core.team
-     * @param {function (userTeamSizeError?)} cb Callback whose argument is
+     * @param {function (?userTeamSizeError)} cb Callback whose argument is
      *     undefined if there is no error, or a string with the error message
      *     otherwise.
      */
@@ -980,6 +980,7 @@ console.log(remove);*/
                         }
                         players.sort(function (a, b) {  return a.pot - b.pot; });
                         for (i = 0; i < (numPlayersOnRoster - 15); i++) {
+// IS THIS NECESSARY? ALREADY HAVE PLAYERS!
                             playerStore.get(players[i].pid).onsuccess = function (event) {
                                 player.release(tx, event.target.result, false);
                             };
@@ -987,7 +988,7 @@ console.log(remove);*/
                     }
                 } else if (numPlayersOnRoster < g.minRosterSize) {
                     if (tid === g.userTid) {
-                        userTeamSizeError = "Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.";
+                        userTeamSizeError = "Your team currently has less than the minimum number of players (" + g.minRosterSize + "). You must add players (through free agency or trades) before the season starts.";
                     } else {
                         // Auto-add players
 //console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
@@ -1014,6 +1015,8 @@ console.log(remove);*/
         tx = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
         playerStore = tx.objectStore("players");
 
+        userTeamSizeError = null;
+
         playerStore.index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
             var i, players;
 
@@ -1036,7 +1039,7 @@ console.log(remove);*/
 
         tx.oncomplete = function () {
             cb(userTeamSizeError);
-        }
+        };
     }
 
     return {

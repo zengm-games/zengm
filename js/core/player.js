@@ -464,7 +464,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @param {IDBTransaction} tx An IndexedDB transaction on players, releasedPlayers, and teams, readwrite.
      * @param {Object} p Player object.
      * @param {boolean} justDrafted True if the player was just drafted by his current team and the regular season hasn't started yet. False otherwise. If True, then the player can be released without paying his salary.
-     * @param {function()} cb Callback function.
+     * @param {function()=} cb Optional callback function.
      */
     function release(tx, p, justDrafted, cb) {
         // Keep track of player salary even when he's off the team, but make an exception for players who were just drafted

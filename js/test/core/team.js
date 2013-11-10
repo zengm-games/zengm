@@ -262,18 +262,15 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
                         // Confirm players added up to limit
                         team.checkRosterSizes(function (userTeamSizeError) {
                             should.equal(userTeamSizeError, null);
-                            // Without setTimeout, Chrome sometimes produces an error (16 instead of 15). I think it's a Chrome bug.
-                            setTimeout(function () {
-                                g.dbl.transaction("players").objectStore("players").index("tid").count(5).onsuccess = function (event) {
-                                    event.target.result.should.equal(g.minRosterSize);
-                                    done();
-                                };
-                            }, 100);
+                            g.dbl.transaction("players").objectStore("players").index("tid").count(5).onsuccess = function (event) {
+                                event.target.result.should.equal(g.minRosterSize);
+                                done();
+                            };
                         });
                     };
                 });
             });
-            it("should remove players to AI team over roster limit without returning error message", function (done) {
+            it("should remove players to AI team over roster limit without returning error message FAILS SOMETIMES IN CHROME, I THINK IT'S A BUG IN CHROME", function (done) {
                 addTen(8, function () {
                     // Confirm roster size over limit
                     g.dbl.transaction("players").objectStore("players").index("tid").count(8).onsuccess = function (event) {
@@ -282,10 +279,13 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
                         // Confirm roster size pruned to limit
                         team.checkRosterSizes(function (userTeamSizeError) {
                             should.equal(userTeamSizeError, null);
-                            g.dbl.transaction("players").objectStore("players").index("tid").count(8).onsuccess = function (event) {
-                                event.target.result.should.equal(15);
-                                done();
-                            };
+                            // Without setTimeout, Chrome sometimes produces an error (16 instead of 15). I think it's a Chrome bug.
+                            setTimeout(function () {
+                                g.dbl.transaction("players").objectStore("players").index("tid").count(8).onsuccess = function (event) {
+                                    event.target.result.should.equal(15);
+                                    done();
+                                };
+                            }, 1000);
                         });
                     };
                 });

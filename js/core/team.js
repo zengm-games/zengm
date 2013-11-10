@@ -965,25 +965,18 @@ console.log(remove);*/
 
         checkRosterSize = function (tid) {
             playerStore.index("tid").getAll(tid).onsuccess = function (event) {
-                var i, numPlayersOnRoster, p, players, playersAll;
+                var i, numPlayersOnRoster, p, players;
 
-                playersAll = event.target.result;
-                numPlayersOnRoster = playersAll.length;
+                players = event.target.result;
+                numPlayersOnRoster = players.length;
                 if (numPlayersOnRoster > 15) {
                     if (tid === g.userTid) {
                         userTeamSizeError = "Your team currently has more than the maximum number of players (15). You must release or buy out players (from the Roster page) before the season starts.";
                     } else {
-                        // Automatically drop lowest potential players until we reach 15
-                        players = [];
-                        for (i = 0; i < playersAll.length; i++) {
-                            players.push({pid: playersAll[i].pid, pot: _.last(playersAll[i].ratings).pot});
-                        }
-                        players.sort(function (a, b) {  return a.pot - b.pot; });
+                        // Automatically drop lowest value players until we reach 15
+                        players.sort(function (a, b) { return player.value(a) - player.value(b); }); // Lowest first
                         for (i = 0; i < (numPlayersOnRoster - 15); i++) {
-// IS THIS NECESSARY? ALREADY HAVE PLAYERS!
-                            playerStore.get(players[i].pid).onsuccess = function (event) {
-                                player.release(tx, event.target.result, false);
-                            };
+                            player.release(tx, players[i], false);
                         }
                     }
                 } else if (numPlayersOnRoster < g.minRosterSize) {

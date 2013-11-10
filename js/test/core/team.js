@@ -262,10 +262,13 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
                         // Confirm players added up to limit
                         team.checkRosterSizes(function (userTeamSizeError) {
                             should.equal(userTeamSizeError, null);
-                            g.dbl.transaction("players").objectStore("players").index("tid").count(5).onsuccess = function (event) {
-                                event.target.result.should.equal(g.minRosterSize);
-                                done();
-                            };
+                            // Without setTimeout, Chrome sometimes produces an error (16 instead of 15). I think it's a Chrome bug.
+                            setTimeout(function () {
+                                g.dbl.transaction("players").objectStore("players").index("tid").count(5).onsuccess = function (event) {
+                                    event.target.result.should.equal(g.minRosterSize);
+                                    done();
+                                };
+                            }, 100);
                         });
                     };
                 });
@@ -308,21 +311,23 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
             });
             it("should return error message when user team is over roster limit", function (done) {
                 addTen(g.userTid, function () {
-                    // Confirm roster size over limit
-                    g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
-                        event.target.result.should.equal(20);
+                    addTen(g.userTid, function () {
+                        // Confirm roster size over limit
+                        g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
+                            event.target.result.should.equal(24);
 
-                        // Confirm roster size pruned to limit
-                        team.checkRosterSizes(function (userTeamSizeError) {
-                            userTeamSizeError.should.be.a("string");
-                            userTeamSizeError.should.contain("more");
-                            userTeamSizeError.should.contain("maximum");
-                            g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
-                                event.target.result.should.equal(20);
-                                done();
-                            };
-                        });
-                    };
+                            // Confirm roster size pruned to limit
+                            team.checkRosterSizes(function (userTeamSizeError) {
+                                userTeamSizeError.should.be.a("string");
+                                userTeamSizeError.should.contain("more");
+                                userTeamSizeError.should.contain("maximum");
+                                g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
+                                    event.target.result.should.equal(24);
+                                    done();
+                                };
+                            });
+                        };
+                    });
                 });
             });
         });

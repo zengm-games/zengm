@@ -461,24 +461,24 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * This keeps track of what the player's current team owes him, and then calls player.addToFreeAgents.
      * 
      * @memberOf core.player
-     * @param {IDBTransaction} transaction An IndexedDB transaction on players, releasedPlayers, and teams, readwrite.
+     * @param {IDBTransaction} tx An IndexedDB transaction on players, releasedPlayers, and teams, readwrite.
      * @param {Object} p Player object.
      * @param {boolean} justDrafted True if the player was just drafted by his current team and the regular season hasn't started yet. False otherwise. If True, then the player can be released without paying his salary.
      * @param {function()} cb Callback function.
      */
-    function release(transaction, p, justDrafted, cb) {
+    function release(tx, p, justDrafted, cb) {
         // Keep track of player salary even when he's off the team, but make an exception for players who were just drafted
         // Was the player just drafted?
         if (!justDrafted) {
-            transaction.objectStore("releasedPlayers").add({
+            tx.objectStore("releasedPlayers").add({
                 pid: p.pid,
                 tid: p.tid,
                 contract: p.contract
             });
         }
 
-        genBaseMoods(transaction, function (baseMoods) {
-            addToFreeAgents(transaction, p, g.phase, baseMoods, cb);
+        genBaseMoods(tx, function (baseMoods) {
+            addToFreeAgents(tx, p, g.phase, baseMoods, cb);
         });
     }
 

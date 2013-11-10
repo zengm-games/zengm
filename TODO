@@ -8,16 +8,6 @@ bitbucket? or webfaction git?
 muscula
   source maps don't seem to work
     are they working in chrome in the first place?
-play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/suggestion_playbyplay_games/
-  slow it down http://www.reddit.com/r/BasketballGM/comments/1pu92x/new_feature_live_playbyplay_simulation/cd6xq54?context=3
-  shouldn't say "4th quarter, Final Score left" when the game is over. Just "Final score"
-  put plays in scrollable div
-  change of possession with no rebound/turnover?
-  live box score
-    update injury icon when player is hurt - would be easy if injury.type was observable, but it's not and I have no idea why. force update with fake name update?
-    game clock using min - more accurate, but more complicated - does this even work?
-  could fake where the shots are to display graphically
-  when someone wins the title, you can see the phase change at the top even while watching the live play-by-play of the last game. this leaks info about who won
 
 BIG NEW FEATURES
 ----------------
@@ -32,6 +22,19 @@ trade improvements
     so before simulating any games, need to check roster sizes. how slow is that?
     AI teams need to factor this into the trade value if they have to drop someone after
   trades between AI teams
+  AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
+  trade deadline
+    if games remaining in schedule passes a threshold, initiate phase change
+    show countdown on trade page
+notification system
+  new page showing all
+  some kind of live notification for important ones
+  game results from user's team
+  players retiring from user's team
+  league champions
+  trades
+  free agent signings
+  errors
 right after starting a fantasy draft, dashboard gives an error since there are no players on team
   any other errors?
 all time leaders page
@@ -46,6 +49,9 @@ more starting options
 localization
   http://requirejs.org/docs/api.html#i18n
 team and league records (highest scoring game, etc)
+random events
+  like.. player gets suspended, out X games. or player gets into fight, fan support drops. etc.
+  need a notification system first
 
 BIG NEW GAMEPLAY CHANGES
 ------------------------
@@ -97,7 +103,6 @@ show EWA more places
   hall of fame
 raphael is big - can i rewrite faces.js to not use it?
 hall of fame - add career totals columns?
-trade deadline
 current season shouldn't show in league history page dropdown
 team.valueChange
   contending teams shouldn't always see every player as a positive value. needs to be some balanced formula where a bad contract is a negative.
@@ -344,12 +349,6 @@ analytics
     analytics.pageview in lib/davis.google_analytics.js
     analytics.track to get rid of bbgmPing
     how to initialize GA with correct options?
-notifications (and log) from top right to display log of key events
-  game results from user's team
-  players retiring from user's team
-  league champions
-  trades
-  free agent signings
 how to deal with a team that drops below 5 active players, factoring in injuries?
   should minimum roster size be higher?
   should allow them to exceed roster limit while injury exists
@@ -440,6 +439,8 @@ preview strength of the draft, free agent class
 FUTURE
 ------
 
+players from different countries/nationalities
+  how to pick names?
 double season: http://www.reddit.com/r/BasketballGM/comments/1kja6e/so_my_league_decided_to_have_an_extended_season/
 IE10 support
   davisjs for knockoutjs links in IE10
@@ -588,6 +589,15 @@ gameLog
   set more stuff through mapping
 reassess dropdown - should it really be called like it is in uiEvery? can i use a computed? problem is, some things need to listen to updateEvents too, not just observables
 git log -- js/core/gameSimNew.js
+play-by-play simulation http://www.reddit.com/r/BasketballGM/comments/1peeku/suggestion_playbyplay_games/
+  slow it down http://www.reddit.com/r/BasketballGM/comments/1pu92x/new_feature_live_playbyplay_simulation/cd6xq54?context=3
+  put plays in scrollable div
+  change of possession with no rebound/turnover?
+  live box score
+    update injury icon when player is hurt - would be easy if injury.type was observable, but it's not and I have no idea why. force update with fake name update?
+    game clock using min - more accurate, but more complicated - does this even work?
+  could fake where the shots are to display graphically
+  when someone wins the title, you can see the phase change at the top even while watching the live play-by-play of the last game. this leaks info about who won
 
 ---
 

@@ -115,7 +115,8 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
             if (events.length > 0) {
                 setTimeout(processToNextPause, 3000 / Math.pow(1.2, vm.speed()));
             } else {
-                vm.boxScore.time("Final Score");
+                vm.boxScore.time("0:00");
+                vm.boxScore.gameOver(true);
             }
         }
 
@@ -135,6 +136,7 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
                 boxScore.overtime = "";
                 boxScore.quarter = "1st quarter";
                 boxScore.time = "12:00";
+                boxScore.gameOver = false;
                 for (i = 0; i < boxScore.teams.length; i++) {
                     boxScore.teams[i].ptsQtrs = [0];
                     for (s = 0; s < resetStats.length; s++) {

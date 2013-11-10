@@ -16,7 +16,8 @@
             <th data-bind="text: pts"></th>
           </tbody>
         </table>
-        <span data-bind="text: boxScore.quarter"></span>, <span data-bind="text: boxScore.time"></span> left
+        <span data-bind="visible: !boxScore.gameOver()"><span data-bind="text: boxScore.quarter"></span>, <span data-bind="text: boxScore.time"></span> left</span>
+        <span data-bind="visible: boxScore.gameOver">Final Score</span>
       </center>
       <!-- ko foreach: boxScore.teams -->
         <h3><a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.boxScore.season]}, text: region() + ' ' + name()"></a></h2>

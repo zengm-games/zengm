@@ -51,20 +51,6 @@
         window.onerror = function(message, file, line, column) {
            _gaq.push(['_trackEvent', 'JS Error', file + ':' + line + ':' + column + ' ' + message]);
         };
-
-        // Muscula
-        window.Muscula = { settings:{
-            logId:"aa381ce5-fafe-4fc8-a215-9e353c569e35", suppressErrors: false, googleAnalyticsEvents: 'none', branding: 'none'
-        }};
-        (function () {
-            var m = document.createElement('script'); m.type = 'text/javascript'; m.async = true;
-            m.src = (window.location.protocol == 'https:' ? 'https:' : 'http:') +
-                '//musculahq.appspot.com/Muscula2.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(m, s);
-            window.Muscula.run=function(c){eval(c);window.Muscula.run=function(){};};
-            window.Muscula.errors=[];window.onerror=function(){window.Muscula.errors.push(arguments);
-            return window.Muscula.settings.suppressErrors===undefined;}
-        })();
       }
     </script>
   </head>

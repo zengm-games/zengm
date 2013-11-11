@@ -89,7 +89,6 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
-firstrun popup should be more descriptive - make sure the user knows the Play menu is dynamic depending on the state of the game
 Capitalize play menu entries
 merge game.play and freeAgents.play
 HOF working consistently?

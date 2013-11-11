@@ -536,7 +536,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             trigger: "manual",
             placement: "bottom",
             title: "Welcome to Basketball GM!",
-            content: "To progress through the game, use the Play button at the top.",
+            content: "To advance through the game, use the Play button at the top. The options shown will change depending on the current state of the game.",
             template: '<div class="popover popover-play"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
         });
 

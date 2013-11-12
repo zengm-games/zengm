@@ -547,7 +547,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
         start = start !== undefined ? start : false;
 
-        // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season or the end of the playoffs.
+        // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
         cbNoGames = function () {
             ui.updateStatus("Idle");
             db.setGameAttributes({gamesInProgress: false}, function () {
@@ -698,7 +698,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
             // Get the schedule for today
             season.getSchedule(tx, 1, function (schedule) {
-                if (schedule.length === 0) {
+                if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
                     cbNoGames();
                 } else {
                     // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
@@ -706,8 +706,16 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                         teams.sort(function (a, b) {  return a.id - b.id; });  // Order teams by tid
 
                         // Play games
-                        if (schedule.length > 0) {
-                            // Will loop through schedule and simulate all games
+                        // Will loop through schedule and simulate all games
+                        if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
+                            // Sometimes the playoff schedule isn't made the day before, so make it now
+                            // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
+                            season.newSchedulePlayoffsDay(function () {
+                                season.getSchedule(null, 1, function (schedule) {
+                                    cbSimGames(schedule, teams);
+                                });
+                            });
+                        } else {
                             cbSimGames(schedule, teams);
                         }
                     });

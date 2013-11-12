@@ -622,7 +622,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             this.recordPlay("missMidRange", this.o, [this.team[this.o].player[p].name]);
         } else if (type === "threePointer") {
             this.recordStat(this.o, p, "tpa");
-            this.recordPlay("missLowPost", this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay("missTp", this.o, [this.team[this.o].player[p].name]);
         }
         return this.doReb();  // orb or drb
     };

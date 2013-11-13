@@ -187,7 +187,23 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
     }
 
     function uiFirst(vm) {
+        var playByPlayList;
+
         ui.title("Live Game Simulation");
+
+        // Keep plays list always visible
+        $("#affixPlayByPlay").affix({
+            offset: {
+                top: 80
+            }
+        });
+
+        // Keep height of plays list equal to window
+        playByPlayList = document.getElementById("playByPlayList");
+        playByPlayList.style.height = (window.innerHeight - 114) + "px";
+        window.addEventListener("resize", function () {
+            playByPlayList.style.height = (window.innerHeight - 114) + "px";
+        });
     }
 
     return bbgmView.init({

@@ -3,7 +3,7 @@
 <p class="text-danger">If you navigate away from this page, you won't be able to see these play-by-play results again because they are not stored anywhere. The results of this game are already final, though.</p>
 
 <div class="row">
-  <div class="col-lg-8 col-md-9 col-lg-push-4 col-md-push-3">
+  <div class="col-lg-8 col-md-9">
     <!-- ko if: showBoxScore -->
       <center>
         <h2><a data-bind="attrLeagueUrl: {href: ['roster', boxScore.teams()[0].abbrev, boxScore.season]}, text: boxScore.teams()[0].region() + ' ' + boxScore.teams()[0].name()"></a> <span data-bind="text: boxScore.teams()[0].pts"></span>, <a data-bind="attrLeagueUrl: {href: ['roster', boxScore.teams()[1].abbrev, boxScore.season]}, text: boxScore.teams()[1].region() + ' ' + boxScore.teams()[1].name()"></a> <span data-bind="text: boxScore.teams()[1].pts"></span><span data-bind="text: boxScore.overtime"></span></h2>
@@ -67,14 +67,18 @@
       <!-- /ko -->
     <!-- /ko -->
   </div>
-  <div class="col-lg-4 col-md-3 col-lg-pull-8 col-md-pull-9">
-    <form>
-      <label for="playByPlaySpeed">Play-By-Play Speed:</label>
-      <input type="range" id="playByPlaySpeed" min="1" max="29" step="1" style="width: 100%" data-bind="value: speed">
-    </form>
+  <div class="col-lg-4 col-md-3">
+    <div id="affixPlayByPlay">
+      <form>
+        <label for="playByPlaySpeed">Play-By-Play Speed:</label>
+        <input type="range" id="playByPlaySpeed" min="1" max="29" step="1" style="width: 100%" data-bind="value: speed">
+      </form>
 
-    <!-- ko foreach: playByPlay -->
-      <p data-bind="html: $data"></p>
-    <!-- /ko -->
+      <div id="playByPlayList" style="overflow: auto;">
+        <!-- ko foreach: playByPlay -->
+          <p data-bind="html: $data"></p>
+        <!-- /ko -->
+      </div>
+    </div>
   </div>
 </row>

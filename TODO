@@ -13,7 +13,7 @@ play-by-play simulation
       maybe the play by play column fixed?
   highlight active players
     remove highlight after game ends
-  3 pointers recorded correctly? http://www.reddit.com/r/BasketballGM/comments/1qg0xc/live_sim_feature_feedback/
+  slower min, faster max
 
 BIG NEW FEATURES
 ----------------
@@ -97,6 +97,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+bootstrap 3.0.2
 merge game.play and freeAgents.play
 HOF working consistently?
   http://www.reddit.com/r/BasketballGM/comments/1osxg3/free_agents_who_arent_signed_to_a_team_dont_make/

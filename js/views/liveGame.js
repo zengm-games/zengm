@@ -32,7 +32,7 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
         this.playByPlay = ko.observableArray();
 
         this.games = ko.observable();
-        this.speed = ko.observable(3);
+        this.speed = ko.observable(4);
 
         // See views.gameLog for explanation
         this.boxScore = {
@@ -113,7 +113,7 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
             }
 
             if (events.length > 0) {
-                setTimeout(processToNextPause, 3000 / Math.pow(1.2, vm.speed()));
+                setTimeout(processToNextPause, 4000 / Math.pow(1.2, vm.speed()));
             } else {
                 vm.boxScore.time("0:00");
                 vm.boxScore.gameOver(true);

@@ -8,12 +8,8 @@ muscula
   source maps don't seem to work
     are they working in chrome in the first place?
 play-by-play simulation
-  put plays in scrollable div
-    do it in a way that the user can view whatever part of the box score they want while seeing the latest of the play by play http://www.reddit.com/r/BasketballGM/comments/1qg0xc/live_sim_feature_feedback/cdcg2gm
-      maybe the play by play column fixed?
   highlight active players
     remove highlight after game ends
-  slower min, faster max
 
 BIG NEW FEATURES
 ----------------

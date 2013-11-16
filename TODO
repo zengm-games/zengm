@@ -4,18 +4,16 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 bitbucket? or webfaction git?
-muscula
-  source maps don't seem to work
-    are they working in chrome in the first place?
 play-by-play simulation
   highlight active players
-    remove highlight after game ends
 
 BIG NEW FEATURES
 ----------------
 
 trade improvements
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
+    part of it should be looking ahead to see what the next contract will be
+      maybe implement valueWithContract? have that be team-dependent
   refactor trade module with all the below in mind
     clean up even more?
       should create and updatePlayers be merged? updatePlayers already updates tids too
@@ -24,6 +22,7 @@ trade improvements
     HOW?
     team.valueChange could be made fast if I allow an extra argument to pass pre-fetched values from the database
     quick fix: check box to only look for teams under the cap http://www.reddit.com/r/BasketballGM/comments/1qh107/proposed_trades_question/
+    at least show salary warning on trading block
   trades between AI teams
     call team.checkRosterSizes after this if it's in between days
   trade deadline
@@ -254,7 +253,10 @@ fire GM before draft?
 harsher, more realistic luxury tax
 midlevel exception
 playerNameLabels should also put a little hover box over the player link with key stats/ratings
-more refined control of playing time: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaegpq
+more refined control of playing time
+  http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaegpq
+  http://www.reddit.com/r/BasketballGM/comments/1qaml8/playing_time_explain_to_me_like_im_8/
+  just set minutes directly?
 signing draft picks should be optional
   maybe sign them in the "resign players" phase
 you should be able to drop below 5 players (and above 15) but only temporarily (no game simulation in that time)

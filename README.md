@@ -5,27 +5,13 @@ players, and try to build the next dynasty, all from within your web browser.
 The game is implemented entirely in client-side JavaScript, backed by
 IndexedDB.
 
+Copyright (C) Jeremy Scheff. All rights reserved.
+
+* Email: jdscheff@gmail.com
+
 * Website: http://www.basketball-gm.com/
 
-* Development website: https://github.com/jdscheff/basketball-gm
-
-* Main developer: Jeremy Scheff <jdscheff@gmail.com>
-
-
-
-## License
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License version 3 as published by
-the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
-details.
-
-You should have received a copy of the GNU Affero General Public License along
-with this program.  If not, see <http://www.gnu.org/licenses/>.
+* Development website: https://bitbucket.org/dumbmatter/basketball-gm
 
 
 

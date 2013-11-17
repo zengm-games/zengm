@@ -1,20 +1,4 @@
-# Plea for help
-
-Do you like this game? Or, do you at least like the idea of what this game
-could one day be? Then PLEASE HELP US! We need people with all kinds of skill
-sets to work on (and this is not an exhaustive list):
-
-* Artwork
-* UI design and implementation
-* Database optimization
-* Game simulation
-* Opposing manager AI
-* Localization
-* New gameplay features
-
-So please, get the code on GitHub <https://github.com/jdscheff/basketball-gm>
-and start hacking. Or email me <jdscheff@gmail.com> and we can discuss how you
-want to contribute.
+This file is not guaranteed to be complete and up-to-date.
 
 
 

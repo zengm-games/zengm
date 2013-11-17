@@ -92,6 +92,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+some way to "install" app locally and create a shortcut icon, since it is playable offline
 bootstrap 3.0.2
 merge game.play and freeAgents.play
 HOF working consistently?
@@ -140,6 +141,7 @@ security
 in playoffs, replace "play week" with "play until end of round"
 "Watch list" of players the user is interested in
 IE11 testing
+don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
 
 LOW PRIORITY
 ------------
@@ -221,7 +223,6 @@ team names from db
     option to include just team names or just players
     should update popRank when custom teams are supplied
   not so simple to allow abbrevs to be changed, since they are used elsewhere for convenience - damn indexeddb and denormalization!
-  make edit_team_info prettier
 popRank never updates, but I don't think it matters.
 different owner personalities, with different priorities
 trades
@@ -248,7 +249,6 @@ finances - too easy to make big $$$
 player morale - punishment for tanking
 player personality, team chemistry
 team colors, and uniforms in player icons
-rookies are too good
 fire GM before draft?
 harsher, more realistic luxury tax
 midlevel exception
@@ -265,7 +265,6 @@ draft
   randomness in picks should factor in relative ratings http://www.reddit.com/r/BasketballGM/comments/1l1713/the_draft_still_needs_some_work_it_seems_my/cbutw7v?context=1
   there should be some indication about the quality of upcoming drafts, which would influence how players/AI value draft picks
   somehow allow uploading of custom draft classes
-more visibly promote subreddit
 auto sort roster based on value
 "rookie contracts" when a new game is started should be bounded at 5 million. so do bound at 20 million before dividing by 4.
 sourcemaps putting blank line in front of each file?
@@ -274,7 +273,6 @@ trades between AI teams
     generalize core.trade.makeItWork and other parts of core.trade
   transaction log is necessary to keep tabs on this stuff
   also propose trades to the user, somehow
-user can't just sign all the free agents before AI teams
 "coaches" should factor in synergy in gameSim substitutions
   also, base it on value, not ovr
 IE10 support
@@ -287,10 +285,7 @@ revamp core.team.valueChange
   simpler formulas for rebuilding/contending team values
   use for signing free agents? would make rebuilding more meaningful
 trades
-  fancy scrolling of summary box, or some better UI
-  refactor core.trade. it's an utter mess.
   cash
-    otherCash and userCash containing the amount
     estimate value of cash - different for different teams? depending on cash, net profit recently, and market size
     upper limit? what is NBA rule?
   more feedback from AI
@@ -301,10 +296,6 @@ trades
 all star game
 switch teams after you're fired
 trades
-  allow trades to go over the roster limit, but show a warning. also factor into AI logic that they would have to drop a player
-    warning should be in a different color than the error-like warnings
-    after trade, AI drops player immediately
-    don't allow game simulation if player's team is over limit - currently this is only checked at the beginning of the season, right?
   sign and trade (only during resigning phase)
 profits too large, too easy
   add corporate tax?
@@ -472,8 +463,6 @@ other advanced stats
 hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
 worth it to switch to closure library? http://stackoverflow.com/questions/10782612/what-is-the-sturdiest-way-to-get-the-closure-compilers-type-safety-together-wit
-roster size check on new season
-  cpu teams with < 5 players should automatically sign free agents
 moving to other cities
 expansion teams (add population growth, expand when certain conditions are met)
 team finances view
@@ -496,10 +485,6 @@ stat views
   player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
   per 36 stats in team/player stats view, league leaders
     add a dropdown (maybe make the dropdown handling code more general?)
-bootstrap 2.3
-https://github.com/nprapps/app-template
-race conditions associated with callbacks when passing around transactions
-  any put/add/update does not guarantee it's finished until the transaction finishes. but letting transactions finish is slow.
 contract negotiation
   don't have counter-offers be too drastic
   weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1 http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
@@ -511,8 +496,6 @@ core.gameSim.updateSynergy should produce continuous output
   no big difference between a 80 rating and 79 rating, or whatever
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed
 AI teams should have to deal with fuzz too
-if play menu is open when it refreshes, automatically open it again after refresh
-  not so easy.. tried it in 34927959b2b0acd08224665654343d97ffaea281 but there were issues with updatePlayMenu being called multiple times, for instance at the end of the season
 "dbChanged" updateEvent - more correct way
   store a list of times and "update events". compare last updated time against that list, and then see the update events. pass as list in "update event" to realtime update
   check everywhere dbChange or lastDbChange is set and see if it should be more refined
@@ -524,9 +507,7 @@ bbgmView
     (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
   use req.redirect from POST to manage history optimally
   make it less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
-player development should depend on playing time
 http://code.google.com/p/htmlcompressor/ or something similar
-core.player.ovr shouldn't just average ratings together. some ratings are more important than others. do regression analysis against PER to prove this and find a better formula.
 player.filter
   the special case attributes should generally be moved directly into the database?
 views.teamFinances should merge db call with team.filter to get seasonAttrs, but that will require rewriting seasonAttrs handling in team.filter to handle multiple seasons.
@@ -657,8 +638,6 @@ make validate_season work correctly
 
 include sidebar(s) showing all relevant information, plus make that stuff generated by a separate function so it can eventually be kept static as JS updates other content
 
-grep for # links: grep -R --include="*.html" '<a href="#">' .
-
 security
   csrf protection
     http://flask.pocoo.org/docs/security/#cross-site-request-forgery-csrf
@@ -676,22 +655,9 @@ warning when window is closed and game simulation is in progress
 
 # BELOW IS OLD STUFF
 
-Minor bugs:
-
-Don't allow sort from first column of trade window
-
 UI
 --
 in team stats tab, allow toggle to show opponent stats
-
-NBA
----
-real salary cap rules: http://en.wikipedia.org/wiki/NBA_Salary_Cap
-real contract rules (max/min, etc.)
-allow contracts that aren't the same $ every year
-team and player options
-releasing players - see the salary cap wiki page for complicated rule
-trading deadline
 
 AI (NON-GAMESIM)
 ----------------

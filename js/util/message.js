@@ -204,7 +204,7 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
                     "<p>" + random.choice(wins[indWins]) + " " + random.choice(playoffs[indPlayoffs]) + "</p>" +
                     "<p>" + random.choice(money[indMoney]) + "</p>" +
                     "<p>" + random.choice(ovr[indOvr]).replace("{{activity}}", activity2) + "</p>";
-            } else if ((g.season - g.startingSeason) < 3) {
+            } else if ((g.season - g.startingSeason) < 4) {
                 if (g.ownerMood.wins < 0 && g.ownerMood.playoffs < 0 && g.ownerMood.money < 0) {
                     m = "<p>What the hell did you do to my franchise?! I'd fire you, but I can't find anyone who wants to clean up your mess.</p>";
                 } else if (g.ownerMood.money < 0 && g.ownerMood.wins >= 0 && g.ownerMood.playoffs >= 0) {

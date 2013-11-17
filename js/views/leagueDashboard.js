@@ -268,12 +268,20 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                 userPlayers = _.filter(players, function (p) { return p.tid === g.userTid; });
                 vars.teamLeaders = {};
                 for (i = 0; i < stats.length; i++) {
-                    userPlayers.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
-                    vars.teamLeaders[stats[i]] = {
-                        pid: userPlayers[0].pid,
-                        name: userPlayers[0].name,
-                        stat: userPlayers[0].stats[stats[i]]
-                    };
+                    if (userPlayers.length > 0) {
+                        userPlayers.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
+                        vars.teamLeaders[stats[i]] = {
+                            pid: userPlayers[0].pid,
+                            name: userPlayers[0].name,
+                            stat: userPlayers[0].stats[stats[i]]
+                        };
+                    } else {
+                        vars.teamLeaders[stats[i]] = {
+                            pid: 0,
+                            name: "",
+                            stat: 0
+                        };
+                    }
                 }
 
                 // Expiring contracts

@@ -3,7 +3,6 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-bitbucket? or webfaction git?
 play-by-play simulation
   highlight active players
 
@@ -38,8 +37,6 @@ notification system
   trades
   free agent signings
   errors
-right after starting a fantasy draft, dashboard gives an error since there are no players on team
-  any other errors?
 all time leaders page
 team switching after being fired
   2 year grace period in message.js, like with a new league?

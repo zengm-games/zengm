@@ -5,6 +5,10 @@ CURRENT
 -------
 play-by-play simulation
   highlight active players
+core.player.valueNoPot
+  player value shouldn't rely only on raw stats, because teammates heavily influence stats
+    add some fudge factor to discout PER on good teams and inflate it on bad teams? or just always include a little ovr in formula
+play > stop in playoffs doesn't generate new day schedule?
 
 BIG NEW FEATURES
 ----------------
@@ -82,8 +86,6 @@ gameSim
   better foul logic - shouldn't just have big slow shot blockers fouling out
     also, other players shouldn't get 0 fouls. make it a bit more evenly distributed
   assists should be function of speed, since those players have the ball more
-  substitutions should be based on "value", not ovr
-    but player.value includes potential.. so just come up with new formula
 do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rookie_players_with_lots_100_skill_ratings/
 
 MINOR FIXES
@@ -108,8 +110,6 @@ current season shouldn't show in league history page dropdown
 team.valueChange
   contending teams shouldn't always see every player as a positive value. needs to be some balanced formula where a bad contract is a negative.
 player.value
-  player value shouldn't rely only on raw stats, because teammates heavily influence stats
-    add some fudge factor to discout PER on good teams and inflate it on bad teams
   too easy to trade for young prospects with no stats http://www.reddit.com/r/BasketballGM/comments/1lkv5m/utah_jugglers/
     options:
       1. add fudge factor to make teams less willing to trade away young players without much game experience
@@ -262,7 +262,6 @@ draft
   randomness in picks should factor in relative ratings http://www.reddit.com/r/BasketballGM/comments/1l1713/the_draft_still_needs_some_work_it_seems_my/cbutw7v?context=1
   there should be some indication about the quality of upcoming drafts, which would influence how players/AI value draft picks
   somehow allow uploading of custom draft classes
-auto sort roster based on value
 "rookie contracts" when a new game is started should be bounded at 5 million. so do bound at 20 million before dividing by 4.
 sourcemaps putting blank line in front of each file?
 trades between AI teams
@@ -271,7 +270,6 @@ trades between AI teams
   transaction log is necessary to keep tabs on this stuff
   also propose trades to the user, somehow
 "coaches" should factor in synergy in gameSim substitutions
-  also, base it on value, not ovr
 IE10 support
   dropdowns disappear on refresh?
     unit tests fail too, seemingly for the same reason
@@ -395,6 +393,8 @@ player finder
   trade for button, or sign button if free agent
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
   http://datatables.net/extras/colvis/
+auto sort roster based on value
+  AI teams should periodically reorder rosters throughout the season
 PER
   slow, particularly after multiple seasons?
     can i have it share a transaction with writing stats in core.game?

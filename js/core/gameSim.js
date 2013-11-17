@@ -12,7 +12,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * 
      * @memberOf core.gameSim
      * @param {number} gid Integer game ID, which must be unique as it will serve as the primary key in the database when the game is saved.
-     * @param {Object} team1 Information about the home team. Top-level properties are: id (team ID number), defense (a number representing the overall team defensive rating), pace (the mean number of possessions the team likes to have in a game), stat (an for storing team stats), and player (a list of objects, one for each player on the team, ordered by rosterOrder). Each player's object contains: id (player's unique ID number), ovr (overall rating, as stored in the DB), stat (an object for storing player stats, similar to the one for team stats), and compositeRatings (an object containing various ratings used in the game simulation), and skills (a list of discrete skills a player has, as defined in core.player.skills, which influence game simulation). In other words...
+     * @param {Object} team1 Information about the home team. Top-level properties are: id (team ID number), defense (a number representing the overall team defensive rating), pace (the mean number of possessions the team likes to have in a game), stat (an for storing team stats), and player (a list of objects, one for each player on the team, ordered by rosterOrder). Each player's object contains: id (player's unique ID number), valueNoPot (current player value, from core.player.value), stat (an object for storing player stats, similar to the one for team stats), and compositeRatings (an object containing various ratings used in the game simulation), and skills (a list of discrete skills a player has, as defined in core.player.skills, which influence game simulation). In other words...
      *     {
      *         "id": 0,
      *         "defense": 0,
@@ -21,7 +21,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      *         "player": [
      *             {
      *                 "id": 0,
-     *                 "ovr": 0,
+     *                 "valueNoPot": 0,
      *                 "stat": {},
      *                 "compositeRating": {},
      *                 "skills": [],
@@ -94,7 +94,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * Also see core.game where the outputs of this function are used.
      *  
      * @memberOf core.gameSim
-     * @return {Array.<Object>} Game result object, an array of two objects similar to the inputs to GameSim, but with both the team and player "stat" objects filled in and the extraneous data (pace, ovr, compositeRating) removed. In other words...
+     * @return {Array.<Object>} Game result object, an array of two objects similar to the inputs to GameSim, but with both the team and player "stat" objects filled in and the extraneous data (pace, valueNoPot, compositeRating) removed. In other words...
      *     {
      *         "gid": 0,
      *         "overtimes": 0,
@@ -141,7 +141,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             delete this.team[t].compositeRating;
             delete this.team[t].pace;
             for (p = 0; p < this.team[t].player.length; p++) {
-                delete this.team[t].player[p].ovr;
+                delete this.team[t].player[p].valueNoPot;
                 delete this.team[t].player[p].compositeRating;
                 delete this.team[t].player[p].ptModifier;
             }
@@ -238,14 +238,14 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         substitutions = false;
 
         for (t = 0; t < 2; t++) {
-            // Overall ratings scaled by fatigue
+            // Overall values scaled by fatigue
             ovrs = [];
             for (p = 0; p < this.team[t].player.length; p++) {
                 // Injured or foulded out players can't play
                 if (this.team[t].player[p].injured || this.team[t].player[p].stat.pf >= 6) {
                     ovrs[p] = -Infinity;
                 } else {
-                    ovrs[p] = this.team[t].player[p].ovr * this.fatigue(this.team[t].player[p].stat.energy) * this.team[t].player[p].ptModifier * random.uniform(0.9, 1.1);
+                    ovrs[p] = this.team[t].player[p].valueNoPot * this.fatigue(this.team[t].player[p].stat.energy) * this.team[t].player[p].ptModifier * random.uniform(0.9, 1.1);
                 }
             }
 
@@ -396,7 +396,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         var p, t;
 
         for (t = 0; t < 2; t++) {
-            // Update minutes (ovr, court, and bench)
+            // Update minutes (overall, court, and bench)
             for (p = 0; p < this.team[t].player.length; p++) {
                 if (this.playersOnCourt[t].indexOf(p) >= 0) {
                     this.recordStat(t, p, "min", this.dt);

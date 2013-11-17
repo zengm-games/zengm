@@ -442,11 +442,11 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                 var players, realTid, t;
 
                 players = event.target.result;
-                players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
+                players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
                 realTid = players[0].tid;
                 t = {id: realTid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
                 transaction.objectStore("teams").get(realTid).onsuccess = function (event) {
-                    var i, j, numPlayers, p, player, rating, team, teamSeason;
+                    var i, j, numPlayers, p, rating, team, teamSeason;
 
                     team = event.target.result;
                     for (j = 0; j < team.seasons.length; j++) {
@@ -462,12 +462,11 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                     t.healthRank = teamSeason.expenses.health.rank;
 
                     for (i = 0; i < players.length; i++) {
-                        player = players[i];
-                        p = {id: player.pid, name: player.name, pos: player.pos, ovr: 0, stat: {}, compositeRating: {}, skills: [], injured: player.injury.type !== "Healthy", ptModifier: player.ptModifier};
+                        p = {id: players[i].pid, name: players[i].name, pos: players[i].pos, valueNoPot: player.value(players[i], true), stat: {}, compositeRating: {}, skills: [], injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
 
-                        for (j = 0; j < player.ratings.length; j++) {
-                            if (player.ratings[j].season === g.season) {
-                                rating = player.ratings[j];
+                        for (j = 0; j < players[i].ratings.length; j++) {
+                            if (players[i].ratings[j].season === g.season) {
+                                rating = players[i].ratings[j];
                                 break;
                             }
                         }

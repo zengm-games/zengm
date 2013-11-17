@@ -916,6 +916,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     fp.salariesTotal = _.reduce(fp.salaries, function (memo, salary) { return memo + salary.amount; }, 0);
                 } else if (options.attrs[i] === "value") {
                     fp.value = value(p);
+                } else if (options.attrs[i] === "valueNoPot") {
+                    fp.valueNoPot = value(p, true);
                 } else if (options.attrs[i] === "awardsGrouped") {
                     fp.awardsGrouped = [];
                     awardsGroupedTemp = _.groupBy(p.awards, function (award) { return award.type; });
@@ -1319,11 +1321,15 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      *
      * @memberOf core.player
      * @param {Object} p Player object.
+     * @param {boolean=} noPot When true, don't include potential in the value calcuation (useful for
+     *     roster ordering and game simulation). Default false.
      * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential
      *     ratings.
      */
-    function value(p) {
+    function value(p, noPot) {
         var age, current, i, potential, pr, ps, ps1, ps2;
+
+        noPot = noPot !== undefined ? noPot : false;
 
         // Current ratings
         pr = _.last(p.ratings);
@@ -1358,6 +1364,11 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             if (ps1.min + ps2.min < 2000) {
                 current = current * (ps1.min + ps2.min) / 2000 + pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
             }
+        }
+
+        // Short circuit if we don't care about potential
+        if (noPot) {
+            return current;
         }
 
         // 2. Potential

@@ -246,7 +246,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 showRookies: true,
                 fuzz: tid === g.userTid
             });
-            players.sort(function (a, b) {  return b.ratings.ovr - a.ratings.ovr; });
+            players.sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
 
             for (i = 0; i < players.length; i++) {
                 players[i].rosterOrder = i;

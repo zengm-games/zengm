@@ -5,7 +5,6 @@ CURRENT
 -------
 play-by-play simulation
   highlight active players
-play > stop in playoffs doesn't generate new day schedule?
 https://github.com/facebook/IndexedDB-polyfill/
 free agents going unsigned?
 

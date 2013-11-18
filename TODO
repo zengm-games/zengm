@@ -5,10 +5,9 @@ CURRENT
 -------
 play-by-play simulation
   highlight active players
-core.player.valueNoPot
-  player value shouldn't rely only on raw stats, because teammates heavily influence stats
-    add some fudge factor to discout PER on good teams and inflate it on bad teams? or just always include a little ovr in formula
 play > stop in playoffs doesn't generate new day schedule?
+https://github.com/facebook/IndexedDB-polyfill/
+free agents going unsigned?
 
 BIG NEW FEATURES
 ----------------
@@ -91,6 +90,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+signing a free agent after the season shouldn't create a stats row, right?
 some way to "install" app locally and create a shortcut icon, since it is playable offline
 bootstrap 3.0.2
 merge game.play and freeAgents.play

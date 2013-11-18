@@ -90,18 +90,5 @@ define(["db", "globals", "core/league", "core/trade"], function (db, g, league, 
                 });
             });
         });
-
-        describe("#summary()", function () {
-            it("should warn when more than 15 players will be on a team after a trade", function (done) {
-                trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: 3, pids: [], dpids: []}], function () {
-                    trade.updatePlayers([{tid: g.userTid, pids: [], dpids: []}, {tid: 3, pids: [90, 92], dpids: []}], function (teams) {
-                        trade.summary(teams, function (s) {
-                            s.warning.should.contain("over the maximum roster size limit of 15 players");
-                            done();
-                        });
-                    });
-                });
-            });
-        });
     });
 });

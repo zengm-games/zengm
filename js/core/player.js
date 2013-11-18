@@ -448,10 +448,25 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         p.ptModifier = 1; // Reset
 
-        require("db").getObjectStore(ot, "players", "players").put(p);
+        // The put doesn't always work in Chrome. I have no idea why. But I need the put to create pids if those aren't set, so use it only when absolutely necessary.
+        if (p.hasOwnProperty("pid")) {
+            require("db").getObjectStore(ot, "players", "players").openCursor(p.pid).onsuccess = function (event) {
+                var cursor;
 
-        if (cb !== undefined) {
-            cb();
+                cursor = event.target.result;
+
+                cursor.update(p);
+
+                if (cb !== undefined) {
+                    cb();
+                }
+            };
+        } else {
+            require("db").getObjectStore(ot, "players", "players").put(p);
+
+            if (cb !== undefined) {
+                cb();
+            }
         }
     }
 
@@ -1344,26 +1359,26 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         ps.reverse();
 
         // 1. Account for stats (and current ratings if not enough stats)
-        current = 0;
-        if (ps.length === 0) {
-            // No stats at all? Just look at ratings more, then.
-            current = pr.ovr;
-        } else if (ps.length === 1) {
-            // Only one year of stats
-            current = 4 * ps[0].per;
-            if (ps[0].min < 2000) {
-                current = current * ps[0].min / 2000 + pr.ovr * (1 - ps[0].min / 2000);
+        current = pr.ovr; // No stats at all? Just look at ratings more, then.
+        if (ps.length > 0) {
+            if (ps.length === 1) {
+                // Only one year of stats
+                current = 4 * ps[0].per;
+                if (ps[0].min < 2000) {
+                    current = current * ps[0].min / 2000 + pr.ovr * (1 - ps[0].min / 2000);
+                }
+            } else {
+                // Two most recent seasons
+                ps1 = ps[0];
+                ps2 = ps[1];
+                if (ps1.min + ps2.min > 0) {
+                    current = 4 * (ps1.per * ps1.min + ps2.per * ps2.min) / (ps1.min + ps2.min);
+                }
+                if (ps1.min + ps2.min < 2000) {
+                    current = current * (ps1.min + ps2.min) / 2000 + pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
+                }
             }
-        } else {
-            // Two most recent seasons
-            ps1 = ps[0];
-            ps2 = ps[1];
-            if (ps1.min + ps2.min > 0) {
-                current = 4 * (ps1.per * ps1.min + ps2.per * ps2.min) / (ps1.min + ps2.min);
-            }
-            if (ps1.min + ps2.min < 2000) {
-                current = current * (ps1.min + ps2.min) / 2000 + pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
-            }
+            current = 0.1 * pr.ovr + 0.9 * current;
         }
 
         // Short circuit if we don't care about potential

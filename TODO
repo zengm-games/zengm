@@ -6,6 +6,37 @@ CURRENT
 play-by-play simulation
   highlight active players
 free agents going unsigned?
+notification system
+  new page showing all
+  some kind of live notification for important ones
+    hover like http://pinesframework.org/pnotify/
+    should pop up in bottom left above some icon to link to notifications page
+      what about for small screens? maybe just show one at a time
+    should fade away after a couple seconds
+    none should require action, but they can contain a link
+    https://github.com/CodeSeven/toastr looks quite nice
+    https://github.com/Srirangan/notifer.js does too - simpler. might as well use this if possible
+    http://fabien-d.github.io/alertify.js/ looks good also, but complicated
+  notificationsStore
+    notificationStore = dbl.createObjectStore("notifications", {keyPath: "nid", autoIncrement: true});
+    {
+      nid,
+      type,
+      text,
+      season
+    }
+  things to show
+    game results from user's team
+    players retiring from user's team
+    league champions
+    trades
+    free agent signings
+    errors - show, but don't log!
+    refuse to sign
+    changes.js - show, but don't log!
+      link to a new "changes" page that will show all of them
+    big AI moves - trades, free agent signings
+      only show big moves, not all. need some threshold
 
 BIG NEW FEATURES
 ----------------
@@ -29,15 +60,6 @@ trade improvements
     if games remaining in schedule passes a threshold, initiate phase change
     show countdown on trade page
   should be harder to trade bad contracts for nothing
-notification system
-  new page showing all
-  some kind of live notification for important ones
-  game results from user's team
-  players retiring from user's team
-  league champions
-  trades
-  free agent signings
-  errors
 all time leaders page
 team switching after being fired
   2 year grace period in message.js, like with a new league?
@@ -54,6 +76,9 @@ random events
   like.. player gets suspended, out X games. or player gets into fight, fan support drops. etc.
   need a notification system first
 more detailed draft - slower picks, trades, etc.
+  show prospects before draft
+    generate prospects after draft ends, not before it begins. so you can see them earlier. have bigger fuzz that is reset at draft day
+    for years further in the future (maybe 3 more years), just show an estimate of draft class strength
 
 BIG NEW GAMEPLAY CHANGES
 ------------------------

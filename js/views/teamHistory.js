@@ -60,7 +60,7 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
 
                     players = player.filter(event.target.result, {
                         attrs: ["pid", "name", "pos", "injury", "tid", "hof"],
-                        stats: ["gp", "min", "pts", "trb", "ast", "per"],
+                        stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
                         tid: inputs.tid
                     });
 
@@ -91,7 +91,7 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
 
         ko.computed(function () {
             ui.datatable($("#team-history-players"), 2, _.map(vm.players(), function (p) {
-                return [helpers.playerNameLabels(p.pid, p.name, p.injury, []), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== vm.team.tid(), p.tid === vm.team.tid()];
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, []), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== vm.team.tid(), p.tid === vm.team.tid()];
             }), {
                 fnRowCallback: function (nRow, aData) {
                     // Highlight active players

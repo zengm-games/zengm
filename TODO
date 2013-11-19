@@ -5,7 +5,6 @@ CURRENT
 -------
 play-by-play simulation
   highlight active players
-https://github.com/facebook/IndexedDB-polyfill/
 free agents going unsigned?
 
 BIG NEW FEATURES
@@ -99,10 +98,6 @@ per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6
 make sure the changes alert and the "refuses to negotiate" alert both look good
   link to player in "refuses to negotiate" alert
 replace random.gauss with random.realGauss
-update HACKING.md
-show EWA more places
-  team history
-  hall of fame
 raphael is big - can i rewrite faces.js to not use it?
 hall of fame - add career totals columns?
 current season shouldn't show in league history page dropdown
@@ -138,10 +133,15 @@ in playoffs, replace "play week" with "play until end of round"
 "Watch list" of players the user is interested in
 IE11 testing
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
+reorganize top menu
 
 LOW PRIORITY
 ------------
 
+add numbers for players
+  ability to retire numbers
+some players should make bad plays - not everyone should have same basketball IQ in gameSim
+  add a rating for basketball IQ?
 client-side error tracking
   see kentavious for the problems with that
 contract extensions

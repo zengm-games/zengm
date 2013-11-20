@@ -63,7 +63,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                     gameOver: false,
                     teamAbbrevsCache: _.pluck(teams, "abbrev"),
                     teamRegionsCache: _.pluck(teams, "region"),
-                    teamNamesCache: _.pluck(teams, "name")
+                    teamNamesCache: _.pluck(teams, "name"),
+                    teamLogosCache: _.pluck(teams, "logoImgURL")
                 };
 
                 // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes

@@ -213,7 +213,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             team.filter({
                 season: inputs.season,
                 tid: inputs.tid,
-                attrs: ["region", "name", "strategy"],
+                attrs: ["region", "name", "strategy", "logoImgURL"],
                 seasonAttrs: ["profit", "won", "lost", "playoffRoundsWon"],
                 ot: tx
             }, function (t) {
@@ -357,6 +357,30 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 highlightHandles();
             }
             editableChanged(vm.editable(), vm);
+        }).extend({throttle: 1});
+        
+        ko.computed(function () {
+            var pic, teamInfo, instructions;
+            pic = document.getElementById("picture");
+            teamInfo = document.getElementById("teamInfo");
+
+            // If playerImgURL is not an empty string, use it instead of the generated face
+            if (vm.team.logoImgURL()) {
+            	instructions = document.getElementById("instructions");
+                instructions.style.clear="both";
+                pic.style.backgroundImage = "url('" + vm.team.logoImgURL() + "')";
+                pic.style.backgroundPosition = "center center";
+                pic.style.backgroundRepeat = "no-repeat";
+                pic.style.backgroundSize = "contain";
+                pic.style.marginTop = "12px";
+                pic.style.width = "120px";
+                pic.style.height = "120px";
+                teamInfo.style.float = "left";
+            } else {
+                teamInfo.style.float = "none";
+                pic.style.display = "none";
+                console.log(vm.team.logoImgURL());
+            }
         }).extend({throttle: 1});
 
         $("#roster").on("change", "select", function () {

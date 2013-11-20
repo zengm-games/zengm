@@ -155,7 +155,8 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
             teams[i] = {
                 abbrev: g.teamAbbrevsCache[i],
                 region: g.teamRegionsCache[i],
-                name: g.teamNamesCache[i]
+                name: g.teamNamesCache[i],
+                logoImgURL: g.teamLogosCache[i]
             };
         }
 

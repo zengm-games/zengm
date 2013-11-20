@@ -6,6 +6,7 @@ CURRENT
 play-by-play simulation
   highlight active players
 free agents going unsigned?
+players left in draft class after fantasy draft?
 notification system
   new page showing all
   some kind of live notification for important ones
@@ -41,6 +42,7 @@ notification system
 BIG NEW FEATURES
 ----------------
 
+custom draft classes http://www.reddit.com/r/BasketballGM/comments/1r0ftx/nba_2k2/cdj769w
 trade improvements
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
     part of it should be looking ahead to see what the next contract will be
@@ -163,6 +165,7 @@ reorganize top menu
 LOW PRIORITY
 ------------
 
+NaN in EWA: http://www.reddit.com/r/BasketballGM/comments/1r1i1e/nan_on_ewa_estimated_wins_added/
 add numbers for players
   ability to retire numbers
 some players should make bad plays - not everyone should have same basketball IQ in gameSim

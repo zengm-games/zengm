@@ -56,7 +56,7 @@ define(["globals", "ui", "core/game", "core/gameSim", "core/player", "lib/jquery
     }
 
     function updateResults(inputs, updateEvents, vm) {
-        var csv, i, injuries, injury, j, p, r, t, deferred;
+        var csv, d, dateComponent, dateString, i, injuries, injury, j, p, r, t, deferred;
 
         if (updateEvents.indexOf("singleGameSim") >= 0) {
             deferred = $.Deferred();
@@ -98,7 +98,27 @@ define(["globals", "ui", "core/game", "core/gameSim", "core/player", "lib/jquery
                 csv += "\n";
             }
 
-            $("#download-link").html('<a href="data:application/json;base64,' + base64EncArr(strToUTF8Arr(csv)) + '" download="boxscore-' + r.team[1].id + '-' + r.team[0].id + '.csv">Download CSV</a>');
+            d = new Date();
+
+            dateComponent = (d.getFullYear() % 100).toString();
+            if (dateComponent.length < 2) {
+              dateComponent = "0" + dateComponent;
+            }
+            dateString = dateComponent;
+
+            dateComponent = (d.getMonth() + 1).toString();
+            if (dateComponent.length < 2) {
+              dateComponent = "0" + dateComponent;
+            }
+            dateString += dateComponent;
+
+            dateComponent = d.getDate().toString();
+            if (dateComponent.length < 2) {
+              dateComponent = "0" + dateComponent;
+            }
+            dateString += dateComponent;
+
+            $("#download-link").html('<a href="data:application/json;base64,' + base64EncArr(strToUTF8Arr(csv)) + '" download="' + dateString + '-boxscore-' + r.team[1].id + '-' + r.team[0].id + '.csv">Download CSV</a>');
 
             deferred.resolve({
                 csv: csv

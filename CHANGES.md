@@ -11,6 +11,8 @@ number or not.
 - Extended free agency phase
 - Live play-by-play game simulation
 - Removed roster size limit restriction on trades
+- Centralized notification system and event log
+- Smarter in-game coach: substitutions are based on performance, not just ratings
 
 ## Technical details
 

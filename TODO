@@ -1,13 +1,14 @@
 DB CHANGES SINCE 3.2.0
 ----------------------
 
+events objectStore!!!
+
 CURRENT
 -------
 play-by-play simulation
   highlight active players
 free agents going unsigned?
 notification system
-  new page showing all
   some kind of live notification for important ones
     hover like http://pinesframework.org/pnotify/
     should pop up in bottom left above some icon to link to notifications page
@@ -17,26 +18,26 @@ notification system
     https://github.com/CodeSeven/toastr looks quite nice
     https://github.com/Srirangan/notifer.js does too - simpler. might as well use this if possible
     http://fabien-d.github.io/alertify.js/ looks good also, but complicated
-  notificationsStore
-    notificationStore = dbl.createObjectStore("notifications", {keyPath: "nid", autoIncrement: true});
-    {
-      nid,
-      type,
-      text,
-      season
-    }
   things to show
+    gameResult, retiredPlayer, leagueChamps, trade, freeAgent, refuseToSign
+    how to handle links? another parameter in the objectStore, or hardcoded in text?
+    ---
     game results from user's team
     players retiring from user's team
     league champions
     trades
     free agent signings
-    errors - show, but don't log!
     refuse to sign
+    errors - show, but don't log!
     changes.js - show, but don't log!
       link to a new "changes" page that will show all of them
     big AI moves - trades, free agent signings
       only show big moves, not all. need some threshold
+  event log
+    pagination
+    smart updating as notifications stream in (don't reload everything from db)
+  changes log
+    /changes
 
 BIG NEW FEATURES
 ----------------

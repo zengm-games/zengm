@@ -94,7 +94,7 @@ console.log(event);
      * @param {number} lid Integer league ID number for new league.
      */
     function createLeague(event, lid) {
-        var awardsStore, dbl, draftPickStore, draftOrderStore, gameAttributesStore, gameStore, messagesStore, playerStore, playoffSeriesStore, releasedPlayersStore, scheduleStore, teamStore, tradeStore;
+        var dbl, draftPickStore, gameStore, playerStore, releasedPlayersStore;
 
         console.log("Creating league" + lid + " database");
 
@@ -102,18 +102,19 @@ console.log(event);
 
         // rid ("row id") is used as the keyPath for objects without an innate unique identifier
         playerStore = dbl.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
-        teamStore = dbl.createObjectStore("teams", {keyPath: "tid"});
+        dbl.createObjectStore("teams", {keyPath: "tid"});
         gameStore = dbl.createObjectStore("games", {keyPath: "gid"});
-        scheduleStore = dbl.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
-        playoffSeriesStore = dbl.createObjectStore("playoffSeries", {keyPath: "season"});
+        dbl.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
+        dbl.createObjectStore("playoffSeries", {keyPath: "season"});
         releasedPlayersStore = dbl.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
-        awardsStore = dbl.createObjectStore("awards", {keyPath: "season"});
-        tradeStore = dbl.createObjectStore("trade", {keyPath: "rid"});
-        draftOrderStore = dbl.createObjectStore("draftOrder", {keyPath: "rid"});
-        draftOrderStore = dbl.createObjectStore("negotiations", {keyPath: "pid"});
-        gameAttributesStore = dbl.createObjectStore("gameAttributes", {keyPath: "key"});
-        messagesStore = dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
+        dbl.createObjectStore("awards", {keyPath: "season"});
+        dbl.createObjectStore("trade", {keyPath: "rid"});
+        dbl.createObjectStore("draftOrder", {keyPath: "rid"});
+        dbl.createObjectStore("negotiations", {keyPath: "pid"});
+        dbl.createObjectStore("gameAttributes", {keyPath: "key"});
+        dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
         draftPickStore = dbl.createObjectStore("draftPicks", {keyPath: "dpid", autoIncrement: true});
+        dbl.createObjectStore("events", {keyPath: "eid", autoIncrement: true});
 
         playerStore.createIndex("tid", "tid", {unique: false});
         playerStore.createIndex("draft.year", "draft.year", {unique: false});

@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "core/team", "lib/underscore", "util/advStats", "util/lock", "util/helpers", "util/random"], function (db, g, ui, freeAgents, finances, gameSim, player, season, team, _, advStats, lock, helpers, random) {
+define(["db", "globals", "ui", "core/eventLog", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "core/team", "lib/underscore", "util/advStats", "util/lock", "util/helpers", "util/random"], function (db, g, ui, eventLog, freeAgents, finances, gameSim, player, season, team, _, advStats, lock, helpers, random) {
     "use strict";
 
     function Game() {
@@ -315,7 +315,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
     };
 
     Game.prototype.writeGameStats = function (tx, cb) {
-        var gameStats, i, keys, p, t, tl, tw;
+        var gameStats, i, keys, p, t, text, tl, tw;
 
         gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
         for (t = 0; t < 2; t++) {
@@ -371,6 +371,17 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
 //console.log('writeGameStats');
         tx.objectStore("games").add(gameStats);
+
+        // Event log
+        if (this.team[0].id === g.userTid || this.team[1].id === g.userTid) {
+            if (this.team[tw].id === g.userTid) {
+                text = "Your team defeated the " + g.teamNamesCache[this.team[tl].id];
+            } else {
+                text = "Your team lost to the " + g.teamNamesCache[this.team[tw].id];
+            }
+            text += " " + this.team[tw].stat.pts + "-" + this.team[tl].stat.pts + ".";
+            eventLog.add(tx, "gameResult", text);
+        }
 
         cb();
     };
@@ -571,7 +582,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
             gidsFinished = [];
             playoffs = g.phase === g.PHASE.PLAYOFFS;
 
-            tx = g.dbl.transaction(["games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+            tx = g.dbl.transaction(["events", "games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 //tx = g.dbl.transaction(["players", "schedule"], "readwrite");
 
             cbSaveResult = function (i) {

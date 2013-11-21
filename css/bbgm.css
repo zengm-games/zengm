@@ -456,7 +456,7 @@ select.teams {
 }
 .notification:hover {
     opacity: 1;
-    boxShadow: #000 0 0 12px;
+    box-shadow: #000 0 0 12px;
 }
 
 .alert p:last-child {

@@ -1,27 +1,7 @@
 // Originally based on https://github.com/Srirangan/notifer.js/;
 
-define(["jquery"], function ($) {
+define(function () {
     var container;
-
-    var config = {
-        defaultTimeOut: 5000,
-        position: ["bottom", "left"],
-        notificationStyles: {
-            padding: "12px 18px",
-            margin: "0 0 6px 0",
-            backgroundColor: "#000",
-            opacity: 0.8,
-            color: "#fff",
-            font: "normal 13px 'Droid Sans', sans-serif",
-            borderRadius: "3px",
-            boxShadow: "#999 0 0 12px",
-            width: "300px"
-        },
-        notificationStylesHover: {
-            opacity: 1,
-            boxShadow: "#000 0 0 12px"
-        }
-    };
 
     container = document.createElement("div");
     container.style.position = "fixed";
@@ -30,18 +10,15 @@ define(["jquery"], function ($) {
     container.style.left = "12px";
     document.body.appendChild(container);
 
-    function getNotificationElement() {
-        return $("<div class='notification'>");
-    }
-
     var Notifier = window.Notifier = {};
 
     Notifier.notify = function(message, title, iconUrl, timeOut) {
         var iconElement, notificationElement, text, textElement;
 
-        notificationElement = getNotificationElement();
+        notificationElement = document.createElement("div");
+        notificationElement.classList.add("notification");
 
-        timeOut = timeOut || config.defaultTimeOut;
+        timeOut = timeOut || 5000;
 
         if (iconUrl) {
             iconElement = document.createElement("img");
@@ -50,7 +27,7 @@ define(["jquery"], function ($) {
             iconElement.style.height = "36px";
             iconElement.style.display = "inline-block";
             iconElement.style.verticalAlign = "middle";
-            notificationElement.append(iconElement);
+            notificationElement.appendChild(iconElement);
         }
 
         textElement = document.createElement("div");
@@ -68,18 +45,18 @@ define(["jquery"], function ($) {
         textElement.innerHTML = text;
 
         setTimeout(function () {
-            notificationElement.animate({ opacity: 0 }, 400, function() {
-                notificationElement.remove();
-            });
+            //notificationElement.animate({ opacity: 0 }, 400, function() {
+            //    notificationElement.remove();
+            //});
+            container.removeChild(notificationElement);
         }, timeOut);
 
-        notificationElement.bind("click", function () {
-            notificationElement.hide();
+        notificationElement.addEventListener("click", function () {
+            container.removeChild(notificationElement);
         });
 
-        notificationElement.append(textElement);
-console.log(container);
-        container.appendChild(notificationElement.get(0));
+        notificationElement.appendChild(textElement);
+        container.appendChild(notificationElement);
     };
 
     Notifier.info = function(message, title) {

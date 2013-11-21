@@ -38,6 +38,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
         this.numPossessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.uniform(0.9, 1.1));
         this.dt = 48 / (2 * this.numPossessions); // Time elapsed per possession
+        this.t = 0;
 
         // Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
         this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
@@ -190,6 +191,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             }
 
             this.updatePlayingTime();
+
+            this.t += this.dt;
 
             this.injuries();
 
@@ -406,6 +409,12 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                         this.team[t].player[p].injured = true;
                         newInjury = true;
                     }
+                }
+
+                // Look for imposed injury
+                if (!this.team[t].player[p].injured && this.team[t].player[p].injuryMin < this.t) {
+                    this.team[t].player[p].injured = true;
+                    newInjury = true;
                 }
             }
         }

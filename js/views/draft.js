@@ -104,6 +104,7 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
                 ratings: ["ovr", "pot", "skills"],
                 stats: ["per", "ewa"],
                 season: g.season,
+                showNoStats: true,
                 showRookies: true,
                 fuzz: true,
                 oldStats: true

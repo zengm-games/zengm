@@ -352,21 +352,39 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                 // Called after either the draft is over or it's the user's pick
                 cbAfterDoneAuto = function (draftOrder, pids) {
                     setOrder(draftOrder, function () {
-                        var season;
+                        var season, tx;
 
                         // Is draft over?;
                         if (draftOrder.length === 0) {
                             season = require("core/season"); // Circular reference
                             if (g.phase === g.PHASE.FANTASY_DRAFT) {
-                                db.setGameAttributes({
-                                    lastDbChange: Date.now(),
-                                    phase: g.nextPhase,
-                                    nextPhase: null
-                                }, function () {
-                                    ui.updatePhase(g.season + season.phaseText[g.phase]);
-                                    ui.updatePlayMenu(null, function () {
-                                        cb(pids);
-                                    });
+                                // Undrafted players become free agents
+                                tx = g.dbl.transaction(["players", "teams"], "readwrite");
+                                player.genBaseMoods(tx, function (baseMoods) {
+                                    var playerStore;
+
+                                    playerStore = tx.objectStore("players");
+                                    playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
+                                        var cursor, p;
+
+                                        cursor = event.target.result;
+                                        if (cursor) {
+                                            p = cursor.value;
+                                            player.addToFreeAgents(playerStore, p, g.PHASE.FREE_AGENCY, baseMoods);
+                                            cursor.continue();
+                                        } else {
+                                            db.setGameAttributes({
+                                                lastDbChange: Date.now(),
+                                                phase: g.nextPhase,
+                                                nextPhase: null
+                                            }, function () {
+                                                ui.updatePhase(g.season + season.phaseText[g.phase]);
+                                                ui.updatePlayMenu(null, function () {
+                                                    cb(pids);
+                                                });
+                                            });
+                                        }
+                                    };
                                 });
                             } else {
                                 // Normal

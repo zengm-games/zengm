@@ -22,9 +22,8 @@ notification system
     show max of 3, fade out old ones if overflow
     click goes to URL (if set) and closes notification?
     should never close when hovered
+    clicking internal link shouldn't close
     suppress gameResult if live
-    don't depend on jquery
-      createTextNode for text
     CSS
       clean up .notification, fonts etc
       move more css out of js file
@@ -38,7 +37,9 @@ notification system
     players retiring from user's team
     league champions
     trades
+      for user, don't show notification, but log
     free agent signings
+      for user, don't show notification, but log
     refuse to sign
     injuries
     errors - show, but don't log!
@@ -128,6 +129,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+player.injury.gamesRemaining should go by day
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
 signing a free agent after the season shouldn't create a stats row, right?
 some way to "install" app locally and create a shortcut icon, since it is playable offline
@@ -528,8 +530,6 @@ contract negotiation
   weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1 http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
   add free agent to the end of roster
 eliminate jquery UI dependency? it's only used for roster reordering currently
-real calendar
-  player.injury.gamesRemaining
 core.gameSim.updateSynergy should produce continuous output
   no big difference between a 80 rating and 79 rating, or whatever
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed

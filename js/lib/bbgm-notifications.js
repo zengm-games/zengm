@@ -13,7 +13,7 @@ define(function () {
     var Notifier = window.Notifier = {};
 
     Notifier.notify = function(message, title, iconUrl, timeOut) {
-        var iconElement, notificationElement, text, textElement;
+        var iconElement, notificationElement, text, textElement, timeoutId;
 
         notificationElement = document.createElement("div");
         notificationElement.classList.add("notification");
@@ -44,14 +44,16 @@ define(function () {
         }
         textElement.innerHTML = text;
 
-        setTimeout(function () {
+        timeoutId = setTimeout(function () {
             //notificationElement.animate({ opacity: 0 }, 400, function() {
             //    notificationElement.remove();
             //});
+console.log(notificationElement);
             container.removeChild(notificationElement);
         }, timeOut);
 
         notificationElement.addEventListener("click", function () {
+            clearTimeout(timeoutId);
             container.removeChild(notificationElement);
         });
 

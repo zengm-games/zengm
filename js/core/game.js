@@ -375,11 +375,11 @@ define(["db", "globals", "ui", "core/eventLog", "core/freeAgents", "core/finance
         // Event log
         if (this.team[0].id === g.userTid || this.team[1].id === g.userTid) {
             if (this.team[tw].id === g.userTid) {
-                text = "Your team defeated the " + g.teamNamesCache[this.team[tl].id];
+                text = 'Your team defeated the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[this.team[tl].id], g.season]) + '">' + g.teamNamesCache[this.team[tl].id];
             } else {
-                text = "Your team lost to the " + g.teamNamesCache[this.team[tw].id];
+                text = 'Your team lost to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[this.team[tw].id], g.season]) + '">' + g.teamNamesCache[this.team[tw].id];
             }
-            text += " " + this.team[tw].stat.pts + "-" + this.team[tl].stat.pts + ".";
+            text += '</a> <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, this.id]) + '">' + this.team[tw].stat.pts + "-" + this.team[tl].stat.pts + "</a>.";
             eventLog.add(tx, {
                 type: this.team[tw].id === g.userTid ? "gameWon" : "gameLost",
                 text: text

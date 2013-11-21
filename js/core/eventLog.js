@@ -12,7 +12,7 @@ define(["db", "globals", "lib/bbgm-notifications"], function (db, g, bbgmNotific
             text: options.text
         });
 
-        bbgmNotifications.Notifier.notify(options.text, options.type);
+        bbgmNotifications.Notifier.info(options.text, options.type);
     }
 
     return {

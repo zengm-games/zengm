@@ -443,6 +443,22 @@ select.teams {
   text-decoration: none;
 }
 
+.notification {
+  padding: 12px 18px;
+  margin: 0 0 6px 0;
+  background-color: #000;
+  opacity: 0.8;
+  color: #fff;
+  font: normal 13px 'Droid Sans', sans-serif;
+  border-radius: 3px;
+  box-shadow: #999 0 0 12px;
+  width: 300px;
+}
+.notification:hover {
+    opacity: 1;
+    boxShadow: #000 0 0 12px;
+}
+
 .alert p:last-child {
   margin-bottom: 0;
 }

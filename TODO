@@ -23,6 +23,11 @@ notification system
     click goes to URL (if set) and closes notification?
     should never close when hovered
     suppress gameResult if live
+    don't depend on jquery
+      createTextNode for text
+    CSS
+      clean up .notification, fonts etc
+      move more css out of js file
   things to show
     gameWon, gameLost, retiredPlayer, leagueChamps, trade, freeAgent, refuseToSign
     how to handle links? another parameter in the objectStore, or hardcoded in text?

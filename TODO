@@ -26,6 +26,7 @@ notification system
     suppress gameResult if live
     CSS
       clean up .notification, fonts etc
+        link color?
       move more css out of js file
       animation to replace commented out js?
         maybe https://developer.mozilla.org/en-US/docs/Web/CSS/transition-property

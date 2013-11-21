@@ -6,13 +6,22 @@ define(["db", "globals", "lib/bbgm-notifications"], function (db, g, bbgmNotific
     "use strict";
 
     function add(ot, options) {
+        var title;
+
         db.getObjectStore(ot, "events", "events", true).add({
             season: g.season,
             type: options.type,
             text: options.text
         });
 
-        bbgmNotifications.Notifier.info(options.text, options.type);
+        title = null;
+        /*if (options.type === "") {
+            title = "";
+        } else if (options.type === "") {
+            title = "";
+        }*/
+
+        bbgmNotifications.Notifier.notify(options.text, title);
     }
 
     return {

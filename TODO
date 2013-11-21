@@ -18,8 +18,13 @@ notification system
     https://github.com/CodeSeven/toastr looks quite nice
     https://github.com/Srirangan/notifer.js does too - simpler. might as well use this if possible
     http://fabien-d.github.io/alertify.js/ looks good also, but complicated
+  IDEAL BEHAVIOR
+    show max of 3, fade out old ones if overflow
+    click goes to URL (if set) and closes notification?
+    should never close when hovered
+    suppress gameResult if live
   things to show
-    gameResult, retiredPlayer, leagueChamps, trade, freeAgent, refuseToSign
+    gameWon, gameLost, retiredPlayer, leagueChamps, trade, freeAgent, refuseToSign
     how to handle links? another parameter in the objectStore, or hardcoded in text?
     ---
     game results from user's team
@@ -28,6 +33,7 @@ notification system
     trades
     free agent signings
     refuse to sign
+    injuries
     errors - show, but don't log!
     changes.js - show, but don't log!
       link to a new "changes" page that will show all of them
@@ -115,6 +121,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
 signing a free agent after the season shouldn't create a stats row, right?
 some way to "install" app locally and create a shortcut icon, since it is playable offline
 bootstrap 3.0.2

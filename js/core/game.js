@@ -380,7 +380,10 @@ define(["db", "globals", "ui", "core/eventLog", "core/freeAgents", "core/finance
                 text = "Your team lost to the " + g.teamNamesCache[this.team[tw].id];
             }
             text += " " + this.team[tw].stat.pts + "-" + this.team[tl].stat.pts + ".";
-            eventLog.add(tx, "gameResult", text);
+            eventLog.add(tx, {
+                type: this.team[tw].id === g.userTid ? "gameWon" : "gameLost",
+                text: text
+            });
         }
 
         cb();

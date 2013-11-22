@@ -458,6 +458,12 @@ select.teams {
     opacity: 1;
     box-shadow: #000 0 0 12px;
 }
+.notification a {
+  color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
+}
+.notification a:hover {
+  color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
+}
 
 .alert p:last-child {
   margin-bottom: 0;

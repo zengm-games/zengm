@@ -26,7 +26,6 @@ notification system
     suppress gameResult if live
     CSS
       clean up .notification, fonts etc
-        link color?
       move more css out of js file
       animation to replace commented out js?
         maybe https://developer.mozilla.org/en-US/docs/Web/CSS/transition-property
@@ -42,6 +41,9 @@ notification system
     free agent signings
       for user, don't show notification, but log
     refuse to sign
+    fired
+    new league
+    new team
     injuries
     errors - show, but don't log!
     changes.js - show, but don't log!
@@ -50,6 +52,7 @@ notification system
       only show big moves, not all. need some threshold
   event log
     pagination
+      by season?
     smart updating as notifications stream in (don't reload everything from db)
   changes log
     /changes
@@ -57,7 +60,6 @@ notification system
 BIG NEW FEATURES
 ----------------
 
-custom draft classes http://www.reddit.com/r/BasketballGM/comments/1r0ftx/nba_2k2/cdj769w
 trade improvements
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
     part of it should be looking ahead to see what the next contract will be
@@ -96,6 +98,8 @@ more detailed draft - slower picks, trades, etc.
   show prospects before draft
     generate prospects after draft ends, not before it begins. so you can see them earlier. have bigger fuzz that is reset at draft day
     for years further in the future (maybe 3 more years), just show an estimate of draft class strength
+  custom draft classes http://www.reddit.com/r/BasketballGM/comments/1r0ftx/nba_2k2/cdj769w
+  slower picks http://www.reddit.com/r/BasketballGM/comments/1r70dv/trade_picks_during_draft
 
 BIG NEW GAMEPLAY CHANGES
 ------------------------

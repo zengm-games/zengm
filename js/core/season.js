@@ -608,6 +608,19 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             tx.objectStore("playoffSeries").add(row);
             tx.oncomplete = function () {
                 var tx;
+
+                if (tidPlayoffs.indexOf(g.userTid) >= 0) {
+                    eventLog.add(null, {
+                        type: "playoffs",
+                        text: 'Your team made <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
+                    });
+                } else {
+                    eventLog.add(null, {
+                        type: "playoffs",
+                        text: 'Your team didn\'t make <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
+                    });
+                }
+
                 // Add row to team stats and team season attributes
                 tx = g.dbl.transaction(["players", "teams"], "readwrite");
                 tx.objectStore("teams").openCursor().onsuccess = function (event) {

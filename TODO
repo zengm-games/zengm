@@ -21,21 +21,19 @@ notification system
         maybe https://developer.mozilla.org/en-US/docs/Web/CSS/transition-property
   things to show
     log
-      DONE: gameWon, gameLost, injured, healed, retired, hallOfFame
+      DONE: gameWon, gameLost, injured, healed, retired, hallOfFame, award
       TODO: retiredPlayer, leagueChamps, trade, freeAgent, refuseToSign
     ---
-    league champions
     trades
       for user, don't show notification, but log
     signings
       for user, don't show notification, but log
     refuse to sign
     fired - log, but don't show
-    new league
     new team
-    user's team makes the playoffs (or not)
-    user's team wins a playoff round (except last one)
-    user's team is eliminated from the playoffs
+    user's team wins/loses a playoff round
+      send when any win total hits 4 in core.game
+      league champions - do like MVP, display special if it's not user's team
     changes.js - show, but don't log!
       link to a new "changes" page that will show all of them
     big AI moves - trades, free agent signings

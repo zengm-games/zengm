@@ -1,7 +1,9 @@
 // Originally based on https://github.com/Srirangan/notifer.js/;
 
 define(function () {
-    var container;
+    "use strict";
+
+    var container, Notifier;
 
     container = document.createElement("div");
     container.style.position = "fixed";
@@ -10,9 +12,9 @@ define(function () {
     container.style.left = "12px";
     document.body.appendChild(container);
 
-    var Notifier = window.Notifier = {};
+    Notifier = {};
 
-    Notifier.notify = function(message, title, iconUrl, timeOut) {
+    Notifier.notify = function (message, title, iconUrl, timeOut) {
         var iconElement, notificationElement, text, textElement, timeoutId;
 
         notificationElement = document.createElement("div");
@@ -48,14 +50,19 @@ define(function () {
             //notificationElement.animate({ opacity: 0 }, 400, function() {
             //    notificationElement.remove();
             //});
-console.log(notificationElement);
             container.removeChild(notificationElement);
         }, timeOut);
 
         notificationElement.addEventListener("click", function () {
             clearTimeout(timeoutId);
+console.log
             container.removeChild(notificationElement);
         });
+
+        // Limit displayed notifications to 3
+        if (container.childNodes.length > 2) {
+            container.removeChild(container.firstChild);
+        }
 
         notificationElement.appendChild(textElement);
         container.appendChild(notificationElement);

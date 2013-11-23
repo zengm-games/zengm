@@ -19,7 +19,7 @@ notification system
     https://github.com/Srirangan/notifer.js does too - simpler. might as well use this if possible
     http://fabien-d.github.io/alertify.js/ looks good also, but complicated
   IDEAL BEHAVIOR
-    show max of 3, fade out old ones if overflow
+    timeout should only execute if node is still shown
     click goes to URL (if set) and closes notification?
     should never close when hovered
     clicking internal link shouldn't close
@@ -56,6 +56,8 @@ notification system
     smart updating as notifications stream in (don't reload everything from db)
   changes log
     /changes
+landing page
+  http://agirlsaidmysmileiscute.webuda.com/
 
 BIG NEW FEATURES
 ----------------

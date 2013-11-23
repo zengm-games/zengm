@@ -9,24 +9,16 @@ play-by-play simulation
   highlight active players
 free agents going unsigned?
 notification system
-  some kind of live notification for important ones
-    hover like http://pinesframework.org/pnotify/
+  IDEAL BEHAVIOR
     should pop up in bottom left above some icon to link to notifications page
       what about for small screens? maybe just show one at a time
-    should fade away after a couple seconds
-    none should require action, but they can contain a link
-    https://github.com/CodeSeven/toastr looks quite nice
-    https://github.com/Srirangan/notifer.js does too - simpler. might as well use this if possible
-    http://fabien-d.github.io/alertify.js/ looks good also, but complicated
-  IDEAL BEHAVIOR
-    suppress gameResult if live
+    suppress gameWon, gameLost, injured, healed if live
     CSS
       animation as they move up
-      clean up .notification, fonts etc
+      clean up .notification
       move more css out of js file
       animation to replace commented out js?
         maybe https://developer.mozilla.org/en-US/docs/Web/CSS/transition-property
-  move core.eventLog to util.eventLog?
   things to show
     log
       DONE: gameWon, gameLost, injured, healed, retired
@@ -50,8 +42,7 @@ notification system
     big AI moves - trades, free agent signings
       only show big moves, not all. need some threshold
   event log
-    pagination
-      by season? add index
+    pagination by season? add index
     smart updating as notifications stream in (don't reload everything from db)
   changes log
     /changes

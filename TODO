@@ -12,7 +12,7 @@ notification system
   IDEAL BEHAVIOR
     should pop up in bottom left above some icon to link to notifications page
       what about for small screens? maybe just show one at a time
-    suppress gameWon, gameLost, injured, healed if live
+    suppress gameWon, gameLost, injured, healed, playoffs if live
     CSS
       clean up .notification
       move more css out of js file
@@ -31,8 +31,6 @@ notification system
       for user, don't show notification, but log
     refuse to sign
     fired - log, but don't show
-    MVP - any player
-    other awards - only user's team
     new league
     new team
     user's team makes the playoffs (or not)

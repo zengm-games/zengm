@@ -453,10 +453,17 @@ select.teams {
   border-radius: 3px;
   box-shadow: #999 0 0 12px;
   width: 300px;
+  
+  /* This transition is for the hover, not original fade in */
+  transition: opacity .25s ease-in-out;
+
+  /* Fade in on notification show */
+  -webkit-animation: fadeInLoad 1s;
+  animation: fadeInLoad 1s;
 }
 .notification:hover {
-    opacity: 1;
-    box-shadow: #000 0 0 12px;
+  opacity: 1;
+  box-shadow: #000 0 0 12px;
 }
 .notification a {
   color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
@@ -464,6 +471,24 @@ select.teams {
 .notification a:hover {
   color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
 }
+@keyframes fadeInLoad {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 0.8;
+  }
+}
+@-webkit-keyframes fadeInLoad {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 0.8;
+  }
+}
+
+
 
 .alert p:last-child {
   margin-bottom: 0;

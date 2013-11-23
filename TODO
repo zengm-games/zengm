@@ -21,7 +21,6 @@ notification system
   IDEAL BEHAVIOR
     suppress gameResult if live
     CSS
-      fade in/out animations
       animation as they move up
       clean up .notification, fonts etc
       move more css out of js file

@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "globals", "ui", "core/eventLog", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "core/team", "lib/underscore", "util/advStats", "util/lock", "util/helpers", "util/random"], function (db, g, ui, eventLog, freeAgents, finances, gameSim, player, season, team, _, advStats, lock, helpers, random) {
+define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "core/team", "lib/underscore", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (db, g, ui, freeAgents, finances, gameSim, player, season, team, _, advStats, eventLog, lock, helpers, random) {
     "use strict";
 
     function Game() {
@@ -796,7 +796,7 @@ define(["db", "globals", "ui", "core/eventLog", "core/freeAgents", "core/finance
                                 });
                             });
                         } else {
-                            helpers.error(userTeamSizeError);
+                            helpers.errorNotify(userTeamSizeError);
                         }
                     });
                 }

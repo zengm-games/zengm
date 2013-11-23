@@ -21,35 +21,38 @@ notification system
   IDEAL BEHAVIOR
     suppress gameResult if live
     CSS
+      fade in/out animations
+      animation as they move up
       clean up .notification, fonts etc
       move more css out of js file
       animation to replace commented out js?
         maybe https://developer.mozilla.org/en-US/docs/Web/CSS/transition-property
   move core.eventLog to util.eventLog?
   things to show
-    DONE: gameWon, gameLost, injured, healed
-    TODO: retiredPlayer, leagueChamps, trade, freeAgent, refuseToSign
-    how to handle links? another parameter in the objectStore, or hardcoded in text?
+    log
+      DONE: gameWon, gameLost, injured, healed, retired
+      TODO: retiredPlayer, leagueChamps, trade, freeAgent, refuseToSign
     ---
-    game results from user's team
-    players retiring from user's team
+    players who make hall of fame and played for user's team
     league champions
     trades
       for user, don't show notification, but log
-    free agent signings
+    signings
       for user, don't show notification, but log
     refuse to sign
-    fired
+    fired - log, but don't show
     new league
     new team
-    errors - show, but don't log!
+    user's team makes the playoffs
+    user's team wins a playoff round
+    user's team is eliminated from the playoffs
     changes.js - show, but don't log!
       link to a new "changes" page that will show all of them
     big AI moves - trades, free agent signings
       only show big moves, not all. need some threshold
   event log
     pagination
-      by season?
+      by season? add index
     smart updating as notifications stream in (don't reload everything from db)
   changes log
     /changes
@@ -133,6 +136,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+first errorNotify in contractNegotiation.js really should be inline within that page
 player.injury.gamesRemaining should go by day
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
 signing a free agent after the season shouldn't create a stats row, right?

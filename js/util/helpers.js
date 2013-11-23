@@ -2,7 +2,7 @@
  * @name util.helpers
  * @namespace Various utility functions that don't have anywhere else to go.
  */
-define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
+define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, $, ko, eventLog) {
     "use strict";
 
     /**
@@ -294,7 +294,9 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
     }
 
     /**
-     * Display a whole-page error message to the user by calling either views.leagueError or views.globalError as appropriate.
+     * Display a whole-page error message to the user by calling either leagueError or globalError as appropriate.
+     *
+     * Use errorNotify for minor errors.
      * 
      * @memberOf util.helpers
      * @param {string} error Text of the error message to be displayed.
@@ -312,6 +314,22 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
         } else {
             globalError(req);
         }
+    }
+
+    /**
+     * Display a transient error message as a notification popup.
+     *
+     * Use error if you need to block the whole page.
+     * 
+     * @memberOf util.helpers
+     * @param {string} error Text of the error message to be displayed.
+     */
+    function errorNotify(errorText) {
+        eventLog.add(null, {
+            type: "error",
+            text: errorText,
+            saveToDb: false
+        });
     }
 
     /**
@@ -576,6 +594,7 @@ define(["globals", "lib/jquery", "lib/knockout"], function (g, $, ko) {
         getTeamsDefault: getTeamsDefault,
         deepCopy: deepCopy,
         error: error,
+        errorNotify: errorNotify,
         resetG: resetG,
         bbgmPing: bbgmPing,
         skillsBlock: skillsBlock,

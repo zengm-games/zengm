@@ -103,7 +103,7 @@ define(function () {
     };
 
     return {
-        Notifier: Notifier
+        notify: Notifier.notify
     };
 
 });

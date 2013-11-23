@@ -2,7 +2,7 @@
  * @name core.season
  * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
  */
-define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/jquery", "lib/underscore", "util/helpers", "util/message", "util/random"], function (db, g, ui, contractNegotiation, draft, finances, freeAgents, player, team, $, _, helpers, message, random) {
+define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/jquery", "lib/underscore", "util/eventLog", "util/helpers", "util/message", "util/random"], function (db, g, ui, contractNegotiation, draft, finances, freeAgents, player, team, $, _, eventLog, helpers, message, random) {
     "use strict";
 
     var phaseText;
@@ -527,7 +527,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     });
                 });
             } else {
-                helpers.error(userTeamSizeError);
+                helpers.errorNotify(userTeamSizeError);
                 ui.updatePlayMenu(); // Otherwise the play menu will be blank
             }
         });
@@ -650,7 +650,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     function newPhaseBeforeDraft(cb) {
         var tx;
 
-        tx = g.dbl.transaction(["messages", "players", "teams"], "readwrite");
+        tx = g.dbl.transaction(["events", "messages", "players", "teams"], "readwrite");
 
         if (g.season === g.startingSeason + 3 && g.lid > 3 && !localStorage.nagged) {
             tx.objectStore("messages").add({
@@ -718,6 +718,13 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         }
                         excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
                         if (excessAge + excessPot + random.gauss(0, 1) > 0) {
+                            if (p.tid === g.userTid) {
+                                eventLog.add(tx, {
+                                    type: "retired",
+                                    text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> retired.'
+                                });
+                            }
+
                             p.tid = g.PLAYER.RETIRED;
                             p.retiredYear = g.season;
                             update = true;

@@ -1,5 +1,5 @@
 /**
- * @name core.eventLog
+ * @name util.eventLog
  * @namespace Event log.
  */
 define(["db", "globals", "lib/bbgm-notifications"], function (db, g, bbgmNotifications) {
@@ -21,7 +21,7 @@ define(["db", "globals", "lib/bbgm-notifications"], function (db, g, bbgmNotific
             title = "";
         }*/
 
-        bbgmNotifications.Notifier.notify(options.text, title);
+        bbgmNotifications.notify(options.text, title);
     }
 
     return {

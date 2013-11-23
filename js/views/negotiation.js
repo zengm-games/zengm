@@ -44,7 +44,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
         } else if (req.params.hasOwnProperty("accept")) {
             contractNegotiation.accept(pid, function (error) {
                 if (error !== undefined && error) {
-                    helpers.error(error);
+                    helpers.errorNotify(error);
+                    redirectNegotiationOrRoster(false);
                 } else {
                     redirectNegotiationOrRoster(false);
                 }
@@ -59,7 +60,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
                 if (!negotiation) {
                     contractNegotiation.create(null, pid, false, function (error) {
                         if (error !== undefined && error) {
-                            helpers.error(error);
+                            helpers.errorNotify(error);
+                            ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
                         } else {
                             ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
                         }

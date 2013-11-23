@@ -457,8 +457,8 @@ select.teams {
   transition: opacity .25s ease-in-out;
 
   /* Fade in on notification show */
-  -webkit-animation: fadeInLoad 1s;
-  animation: fadeInLoad 1s;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
 }
 .notification:hover {
   opacity: 1;
@@ -470,7 +470,11 @@ select.teams {
 .notification a:hover {
   color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
 }
-@keyframes fadeInLoad {
+.notification-delete {
+  -webkit-animation: fadeOut 1s;
+  animation: fadeOut 1s;
+}
+@keyframes fadeIn {
   from {
       opacity: 0;
   }
@@ -478,12 +482,28 @@ select.teams {
       opacity: 0.8;
   }
 }
-@-webkit-keyframes fadeInLoad {
+@-webkit-keyframes fadeIn {
   from {
       opacity: 0;
   }
   to {
       opacity: 0.8;
+  }
+}
+@keyframes fadeOut {
+  from {
+      opacity: 0.8;
+  }
+  to {
+      opacity: 0;
+  }
+}
+@-webkit-keyframes fadeOut {
+  from {
+      opacity: 0.8;
+  }
+  to {
+      opacity: 0;
   }
 }
 

@@ -15,7 +15,7 @@ define(function () {
     Notifier = {};
 
     Notifier.notify = function (message, title, iconUrl, timeOut) {
-        var iconElement, notificationElement, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
+        var i, iconElement, notificationElement, removeOnFadeOut, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
 
         notificationElement = document.createElement("div");
         notificationElement.classList.add("notification");
@@ -51,8 +51,7 @@ define(function () {
         function notificationTimeout() {
             timeoutId = setTimeout(function () {
                 if (container.contains(notificationElement)) {
-                    container.removeChild(notificationElement);
-                    notificationElement = null;
+                    notificationElement.classList.add("notification-delete");
                 }
             }, timeoutRemaining);
             timeoutStart = new Date();
@@ -82,9 +81,19 @@ define(function () {
         }*/
 
         // Limit displayed notifications to 5
-        if (container.childNodes.length >= 5) {
-            container.removeChild(container.firstChild);
+        for (i = 0; i <= container.childNodes.length - 5; i++) {
+            container.childNodes[i].classList.add("notification-delete");
         }
+
+        removeOnFadeOut = function (event) {
+            if (event.animationName === "fadeOut") {
+                container.removeChild(notificationElement);
+                notificationElement = null;
+            }
+        }
+        notificationElement.addEventListener("webkitAnimationEnd", removeOnFadeOut, false);
+        notificationElement.addEventListener("animationend", removeOnFadeOut, false);
+
 
         container.appendChild(notificationElement);
     };

@@ -15,7 +15,7 @@ define(function () {
     Notifier = {};
 
     Notifier.notify = function (message, title, iconUrl, timeOut) {
-        var iconElement, notificationElement, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
+        var i, iconElement, links, notificationElement, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
 
         notificationElement = document.createElement("div");
         notificationElement.classList.add("notification");
@@ -45,6 +45,7 @@ define(function () {
             text += message;
         }
         textElement.innerHTML = text;
+        notificationElement.appendChild(textElement);
 
         // Hide notification after timeout
         function notificationTimeout() {
@@ -67,18 +68,24 @@ define(function () {
             notificationTimeout();
         });
 
-        // Hide notification on click
-        notificationElement.addEventListener("click", function () {
+        /*// Hide notification on click, except if it's a link
+        notificationElement.addEventListener("click", function (event) {
             container.removeChild(notificationElement);
             notificationElement = null;
         });
+        // Stopping hiding on link click doesn't work because it also stops Davis.js from working
+        links = notificationElement.getElementsByTagName("a");
+        for (i = 0; i < links.length; i++) {
+            links[0].addEventListener("click", function (event) {
+                event.stopPropagation();
+            });
+        }*/
 
         // Limit displayed notifications to 3
         if (container.childNodes.length > 2) {
             container.removeChild(container.firstChild);
         }
 
-        notificationElement.appendChild(textElement);
         container.appendChild(notificationElement);
     };
 

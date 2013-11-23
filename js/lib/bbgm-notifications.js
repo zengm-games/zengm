@@ -15,12 +15,12 @@ define(function () {
     Notifier = {};
 
     Notifier.notify = function (message, title, iconUrl, timeOut) {
-        var iconElement, notificationElement, text, textElement;
+        var iconElement, notificationElement, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
 
         notificationElement = document.createElement("div");
         notificationElement.classList.add("notification");
 
-        timeOut = timeOut || 5000;
+        timeoutRemaining = timeOut || 5000;
 
         if (iconUrl) {
             iconElement = document.createElement("img");
@@ -47,12 +47,25 @@ define(function () {
         textElement.innerHTML = text;
 
         // Hide notification after timeout
-        setTimeout(function () {
-            if (container.contains(notificationElement)) {
-                container.removeChild(notificationElement);
-                notificationElement = null;
-            }
-        }, timeOut);
+        function notificationTimeout() {
+            timeoutId = setTimeout(function () {
+                if (container.contains(notificationElement)) {
+                    container.removeChild(notificationElement);
+                    notificationElement = null;
+                }
+            }, timeoutRemaining);
+            timeoutStart = new Date();
+        }
+        notificationTimeout();
+
+        // When hovering over, don't count towards timeout
+        notificationElement.addEventListener("mouseenter", function () {
+            clearTimeout(timeoutId);
+            timeoutRemaining -= new Date() - timeoutStart;
+        });
+        notificationElement.addEventListener("mouseleave", function () {
+            notificationTimeout();
+        });
 
         // Hide notification on click
         notificationElement.addEventListener("click", function () {

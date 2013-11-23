@@ -19,7 +19,6 @@ notification system
     https://github.com/Srirangan/notifer.js does too - simpler. might as well use this if possible
     http://fabien-d.github.io/alertify.js/ looks good also, but complicated
   IDEAL BEHAVIOR
-    should never close when hovered
     clicking internal link shouldn't close
     suppress gameResult if live
     CSS

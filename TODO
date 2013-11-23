@@ -26,8 +26,6 @@ notification system
     ---
     trades
       for user, don't show notification, but log
-    signings
-      for user, don't show notification, but log
     refuse to sign
     fired - log, but don't show
     new team

@@ -2,7 +2,7 @@
  * @name core.contractNegotiation
  * @namespace All aspects of contract negotiation.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers", "util/lock", "util/random"], function (db, g, ui, freeAgents, player, helpers, lock, random) {
+define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog", "util/helpers", "util/lock", "util/random"], function (db, g, ui, freeAgents, player, eventLog, helpers, lock, random) {
     "use strict";
 
     /**
@@ -351,10 +351,23 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/helpers",
                     }, true);
 
                     cursor.update(p);
+
+                    if (negotiation.resigning) {
+                        eventLog.add(null, {
+                            type: "reSigned",
+                            text: 'You resigned <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                            showNotification: false
+                        });
+                    } else {
+                        eventLog.add(null, {
+                            type: "freeAgent",
+                            text: 'You signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                            showNotification: false
+                        });
+                    }
                 };
                 tx.oncomplete = function () {
                     cancel(pid, function () {
-                        console.log("User accepted contract proposal from " + pid);
 
                         db.setGameAttributes({lastDbChange: Date.now()}, function () {
                             cb();

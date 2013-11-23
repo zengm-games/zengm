@@ -9,6 +9,7 @@ define(["db", "globals", "lib/bbgm-notifications"], function (db, g, bbgmNotific
         var title;
 
         options.saveToDb = options.saveToDb !== undefined ? options.saveToDb : true;
+        options.showNotification = options.showNotification !== undefined ? options.showNotification : true;
 
         if (options.saveToDb) {
             db = require("db"); // Not sure why this is necessary
@@ -19,14 +20,16 @@ define(["db", "globals", "lib/bbgm-notifications"], function (db, g, bbgmNotific
             });
         }
 
-        title = null;
-        if (options.type === "injured") {
-            title = "Injury!";
-        } else if (options.type === "error") {
-            title = "Error!";
-        }
+        if (options.showNotification) {
+            title = null;
+            if (options.type === "injured") {
+                title = "Injury!";
+            } else if (options.type === "error") {
+                title = "Error!";
+            }
 
-        bbgmNotifications.notify(options.text, title);
+            bbgmNotifications.notify(options.text, title);
+        }
     }
 
     return {

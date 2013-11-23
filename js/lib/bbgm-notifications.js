@@ -8,14 +8,14 @@ define(function () {
     container = document.createElement("div");
     container.style.position = "fixed";
     container.style.zIndex = 9999;
-    container.style.bottom = "12px";
+    container.style.bottom = 0;
     container.style.left = "12px";
     document.body.appendChild(container);
 
     Notifier = {};
 
     Notifier.notify = function (message, title, iconUrl, timeOut) {
-        var i, iconElement, links, notificationElement, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
+        var iconElement, notificationElement, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
 
         notificationElement = document.createElement("div");
         notificationElement.classList.add("notification");
@@ -81,8 +81,8 @@ define(function () {
             });
         }*/
 
-        // Limit displayed notifications to 3
-        if (container.childNodes.length > 2) {
+        // Limit displayed notifications to 5
+        if (container.childNodes.length >= 5) {
             container.removeChild(container.firstChild);
         }
 

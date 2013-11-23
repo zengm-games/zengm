@@ -25,8 +25,10 @@ notification system
       move more css out of js file
       animation to replace commented out js?
         maybe https://developer.mozilla.org/en-US/docs/Web/CSS/transition-property
+  move core.eventLog to util.eventLog?
   things to show
-    gameWon, gameLost, retiredPlayer, leagueChamps, trade, freeAgent, refuseToSign
+    DONE: gameWon, gameLost, injured, healed
+    TODO: retiredPlayer, leagueChamps, trade, freeAgent, refuseToSign
     how to handle links? another parameter in the objectStore, or hardcoded in text?
     ---
     game results from user's team
@@ -40,7 +42,6 @@ notification system
     fired
     new league
     new team
-    injuries
     errors - show, but don't log!
     changes.js - show, but don't log!
       link to a new "changes" page that will show all of them

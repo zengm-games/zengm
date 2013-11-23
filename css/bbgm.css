@@ -444,7 +444,7 @@ select.teams {
 }
 
 .notification {
-  padding: 12px 18px;
+  padding: 12px;
   margin: 0 0 6px 0;
   background-color: #000;
   opacity: 0.8;

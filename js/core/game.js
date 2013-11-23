@@ -67,12 +67,24 @@ define(["db", "globals", "ui", "core/eventLog", "core/freeAgents", "core/finance
             // Injury crap - assign injury type if player does not already have an injury in the database
             if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
                 player_.injury = player.injury(that.team[t].healthRank);
+                if (that.team[t].id === g.userTid) {
+                    eventLog.add(tx, {
+                        type: "injured",
+                        text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> was injured! (' + player_.injury.type + ', out for ' + player_.injury.gamesRemaining + ' games)'
+                    });
+                }
             } else if (player_.injury.gamesRemaining > 0) {
                 player_.injury.gamesRemaining -= 1;
             }
             // Is it already over?
-            if (player_.injury.gamesRemaining <= 0) {
+            if (player_.injury.type !== "Healthy" && player_.injury.gamesRemaining <= 0) {
                 player_.injury = {type: "Healthy", gamesRemaining: 0};
+                if (that.team[t].id === g.userTid) {
+                    eventLog.add(tx, {
+                        type: "healed",
+                        text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> has recovered from his injury.'
+                    });
+                }
             }
 
             cursor.update(player_);

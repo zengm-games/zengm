@@ -15,9 +15,9 @@ define(["db", "globals", "lib/bbgm-notifications"], function (db, g, bbgmNotific
         });
 
         title = null;
-        /*if (options.type === "") {
-            title = "";
-        } else if (options.type === "") {
+        if (options.type === "injured") {
+            title = "Injury!";
+        }/* else if (options.type === "") {
             title = "";
         }*/
 

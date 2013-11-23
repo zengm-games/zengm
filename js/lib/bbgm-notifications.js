@@ -15,7 +15,7 @@ define(function () {
     Notifier = {};
 
     Notifier.notify = function (message, title, iconUrl, timeOut) {
-        var iconElement, notificationElement, text, textElement, timeoutId;
+        var iconElement, notificationElement, text, textElement;
 
         notificationElement = document.createElement("div");
         notificationElement.classList.add("notification");
@@ -46,17 +46,18 @@ define(function () {
         }
         textElement.innerHTML = text;
 
-        timeoutId = setTimeout(function () {
-            //notificationElement.animate({ opacity: 0 }, 400, function() {
-            //    notificationElement.remove();
-            //});
-            container.removeChild(notificationElement);
+        // Hide notification after timeout
+        setTimeout(function () {
+            if (container.contains(notificationElement)) {
+                container.removeChild(notificationElement);
+                notificationElement = null;
+            }
         }, timeOut);
 
+        // Hide notification on click
         notificationElement.addEventListener("click", function () {
-            clearTimeout(timeoutId);
-console.log
             container.removeChild(notificationElement);
+            notificationElement = null;
         });
 
         // Limit displayed notifications to 3

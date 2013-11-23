@@ -733,6 +733,12 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                             if (player.madeHof(p)) {
                                 p.hof = true;
                                 p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
+                                if (p.statsTids.indexOf(g.userTid) >= 0) {
+                                    eventLog.add(tx, {
+                                        type: "hallOfFame",
+                                        text: 'Your former player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> was inducted into the <a href="' + helpers.leagueUrl(["hall_of_fame"]) + '">Hall of Fame</a>.'
+                                    });
+                                }
                             }
                         }
                     }

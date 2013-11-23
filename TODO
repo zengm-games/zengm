@@ -21,10 +21,9 @@ notification system
         maybe https://developer.mozilla.org/en-US/docs/Web/CSS/transition-property
   things to show
     log
-      DONE: gameWon, gameLost, injured, healed, retired
+      DONE: gameWon, gameLost, injured, healed, retired, hallOfFame
       TODO: retiredPlayer, leagueChamps, trade, freeAgent, refuseToSign
     ---
-    players who make hall of fame and played for user's team
     league champions
     trades
       for user, don't show notification, but log
@@ -32,10 +31,12 @@ notification system
       for user, don't show notification, but log
     refuse to sign
     fired - log, but don't show
+    MVP - any player
+    other awards - only user's team
     new league
     new team
-    user's team makes the playoffs
-    user's team wins a playoff round
+    user's team makes the playoffs (or not)
+    user's team wins a playoff round (except last one)
     user's team is eliminated from the playoffs
     changes.js - show, but don't log!
       link to a new "changes" page that will show all of them
@@ -183,7 +184,9 @@ reorganize top menu
 LOW PRIORITY
 ------------
 
-NaN in EWA: http://www.reddit.com/r/BasketballGM/comments/1r1i1e/nan_on_ewa_estimated_wins_added/
+NaN
+  NaN in EWA: http://www.reddit.com/r/BasketballGM/comments/1r1i1e/nan_on_ewa_estimated_wins_added/
+  NaN appears in new contract demands for some players sometimes, mainly when I'm skipping stuff
 add numbers for players
   ability to retire numbers
 some players should make bad plays - not everyone should have same basketball IQ in gameSim

@@ -179,7 +179,6 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var abbrev, args, extraText, lost, option, output, playoffRoundsWon, season, won;
 
-
             args = valueAccessor();
             abbrev = ko.utils.unwrapObservable(args[0]);
             season = ko.utils.unwrapObservable(args[1]);

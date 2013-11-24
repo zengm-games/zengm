@@ -35,7 +35,6 @@ define(function () {
         textElement = document.createElement("div");
         textElement.style.display = "inline-block";
         textElement.style.verticalAlign = "middle";
-        textElement.style.padding = "0 12px";
 
         text = "";
         if (title) {

@@ -364,7 +364,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
         that = this;
         if (this.playoffs) {
             tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
-                var cursor, i, playoffRound, playoffSeries, series, won0;
+                var cursor, currentRoundText, i, loserWon, otherTid, playoffRound, playoffSeries, series, won0;
 
                 cursor = event.target.result;
                 playoffSeries = cursor.value;
@@ -397,24 +397,47 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                     }
                 }
 
-                // Check if the user's team won/lost a playoff series
-                if (g.userTid === that.team[0].id || g.userTid === that.team[1].id) {
-console.log(["hi", that.team[0].id, that.team[1].id]);
+                // Check if the user's team won/lost a playoff series (before the finals)
+                if ((g.userTid === that.team[0].id || g.userTid === that.team[1].id) && playoffSeries.currentRound < 3) {
                     if (series.away.won === 4 || series.home.won === 4) {
-console.log("hey");
+                        otherTid = g.userTid === that.team[0].id ? that.team[1].id : that.team[0].id;
+                        loserWon = series.away.won === 4 ? series.home.won : series.away.won;
+                        if (playoffSeries.currentRound === 0) {
+                            currentRoundText = "first round of the playoffs";
+                        } else if (playoffSeries.currentRound === 1) {
+                            currentRoundText = "second round of the playoffs";
+                        } else if (playoffSeries.currentRound === 2) {
+                            currentRoundText = "conference finals";
+                        }
+                        // ...no finals because that is handled separately
+
                         if ((series.away.tid === g.userTid && series.away.won === 4) || (series.home.tid === g.userTid && series.home.won === 4)) {
-console.log(that.team[0]);
                             eventLog.add(tx, {
                                 type: "playoffs",
-                                text: 'Your team defeated the Blah in the first round of the playoffs, 4-2.'
+                                text: 'Your team defeated the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[otherTid], g.season]) + '">' + g.teamNamesCache[otherTid] + '</a> in the ' + currentRoundText + ', 4-' + loserWon + '.'
                             });
                         } else {
-console.log(that.team[0]);
                             eventLog.add(tx, {
                                 type: "playoffs",
-                                text: 'Your team lost to the Blah in the first round of the playoffs, 4-2.'
+                                text: 'Your team was eliminated by the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[otherTid], g.season]) + '">' + g.teamNamesCache[otherTid] + '</a> in the ' + currentRoundText + ', 4-' + loserWon + '.'
                             });
                         }
+                    }
+                }
+
+                // If somebody just won the title, announce it
+                if (playoffSeries.currentRound === 3 && (series.away.won === 4 || series.home.won === 4)) {
+                    if ((series.away.tid === g.userTid && series.away.won === 4) || (series.home.tid === g.userTid && series.home.won === 4)) {
+                        eventLog.add(tx, {
+                            type: "playoffs",
+                            text: 'Your team won the ' + g.season + ' league championship!'
+                        });
+                    } else {
+                        otherTid = series.away.won === 4 ? series.away.tid : series.home.tid;
+                        eventLog.add(tx, {
+                            type: "playoffs",
+                            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[otherTid], g.season]) + '">' + g.teamRegionsCache[otherTid]+ ' ' + g.teamNamesCache[otherTid] + '</a> won the ' + g.season + ' league championship!'
+                        });
                     }
                 }
 

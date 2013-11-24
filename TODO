@@ -26,6 +26,8 @@ notification system
     ---
     trades
       for user, don't show notification, but log
+    user draft picks
+      don't show notification, but log
     fired - log, but don't show
     new team
     changes.js - show, but don't log!
@@ -123,6 +125,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+resign -> re-sign or reSign
 Shouldn't say "This is what the playoff matchups would be" when playoffs first start
 first errorNotify in contractNegotiation.js really should be inline within that page
 player.injury.gamesRemaining should go by day
@@ -547,6 +550,16 @@ http://code.google.com/p/htmlcompressor/ or something similar
 player.filter
   the special case attributes should generally be moved directly into the database?
 views.teamFinances should merge db call with team.filter to get seasonAttrs, but that will require rewriting seasonAttrs handling in team.filter to handle multiple seasons.
+git log -- js/core/gameSimNew.js
+live play-by-play simulation
+  slow it down http://www.reddit.com/r/BasketballGM/comments/1pu92x/new_feature_live_playbyplay_simulation/cd6xq54?context=3
+  change of possession with no rebound/turnover?
+  live box score
+    update injury icon when player is hurt - would be easy if injury.type was observable, but it's not and I have no idea why. force update with fake name update?
+    game clock using min - more accurate, but more complicated - does this even work?
+  could fake where the shots are to display graphically
+  when someone wins the title, you can see the phase change at the top even while watching the live play-by-play of the last game. this leaks info about who won
+  allow the user to make substitutions in realtime
 
 Template Stuff
 --------------
@@ -608,16 +621,8 @@ dist
 gameLog
   set more stuff through mapping
 reassess dropdown - should it really be called like it is in uiEvery? can i use a computed? problem is, some things need to listen to updateEvents too, not just observables
-git log -- js/core/gameSimNew.js
-live play-by-play simulation
-  slow it down http://www.reddit.com/r/BasketballGM/comments/1pu92x/new_feature_live_playbyplay_simulation/cd6xq54?context=3
-  change of possession with no rebound/turnover?
-  live box score
-    update injury icon when player is hurt - would be easy if injury.type was observable, but it's not and I have no idea why. force update with fake name update?
-    game clock using min - more accurate, but more complicated - does this even work?
-  could fake where the shots are to display graphically
-  when someone wins the title, you can see the phase change at the top even while watching the live play-by-play of the last game. this leaks info about who won
-  allow the user to make substitutions in realtime
+eventLog
+  don't need things inside events observableArray to be observable
 
 ---
 

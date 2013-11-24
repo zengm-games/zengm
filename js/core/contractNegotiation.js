@@ -355,7 +355,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                     if (negotiation.resigning) {
                         eventLog.add(null, {
                             type: "reSigned",
-                            text: 'You resigned <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                            text: 'You re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
                             showNotification: false
                         });
                     } else {

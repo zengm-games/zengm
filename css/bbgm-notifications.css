@@ -1,0 +1,70 @@
+.notification-container {
+  position: fixed;
+  bottom: 0;
+  left: 12px;
+  z-index: 9999;
+}
+
+.notification {
+  padding: 6px 12px;
+  margin: 0 0 6px 0;
+  background-color: #000;
+  opacity: 0.8;
+  color: #fff;
+  border-radius: 3px;
+  box-shadow: #999 0 0 12px;
+  width: 300px;
+  
+  /* This transition is for the hover, not original fade in */
+  transition: opacity .25s ease-in-out;
+
+  /* Fade in on notification show */
+  -webkit-animation: fadeIn 0.75s;
+  animation: fadeIn 0.75s;
+}
+.notification:hover {
+  opacity: 1;
+  box-shadow: #000 0 0 12px;
+}
+.notification a {
+  color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
+}
+.notification a:hover {
+  color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
+}
+.notification-delete {
+  -webkit-animation: fadeOut 0.75s;
+  animation: fadeOut 0.75s;
+}
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 0.8;
+  }
+}
+@-webkit-keyframes fadeIn {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 0.8;
+  }
+}
+@keyframes fadeOut {
+  from {
+      opacity: 0.8;
+  }
+  to {
+      opacity: 0;
+  }
+}
+@-webkit-keyframes fadeOut {
+  from {
+      opacity: 0.8;
+  }
+  to {
+      opacity: 0;
+  }
+}

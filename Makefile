@@ -20,7 +20,7 @@ lint:
 
 # target: build-css - Concatenate main CSS files and run YUI compressor.
 build-css: appcache-timestamp
-	cat css/bootstrap.css css/bbgm.css css/DT_bootstrap.css | yui-compressor --type css -o gen/bbgm.css
+	cat css/bootstrap.css css/bbgm.css css/bbgm-notifications.css css/DT_bootstrap.css | yui-compressor --type css -o gen/bbgm.css
 
 # target: build-js - Run the RequireJS optimizer to concatenate and minify all JavaScript files.
 build-js: appcache-timestamp

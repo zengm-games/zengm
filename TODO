@@ -13,16 +13,10 @@ notification system
     should pop up in bottom left above some icon to link to notifications page
       what about for small screens? maybe just show one at a time
     suppress gameWon, gameLost, injured, healed, playoffs if live
-    CSS
-      clean up .notification
-      move more css out of js file
-        move to own css file? bbgm-notifications.css
-      animation to replace commented out js?
-        maybe https://developer.mozilla.org/en-US/docs/Web/CSS/transition-property
   things to show
     log
       DONE: gameWon, gameLost, injured, healed, retired, hallOfFame, award, playoffs, retired, reSigned, freeAgent, refuseToSign
-      TODO: trade
+      TODO: trade, draftPick
     ---
     trades
       for user, don't show notification, but log

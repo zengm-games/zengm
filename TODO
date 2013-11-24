@@ -38,6 +38,7 @@ notification system
       hover on fading in should also stop animation so there is no stutter
   event log
     pagination by season? add index
+    allow filtering based on type
     smart updating as notifications stream in (don't reload everything from db)
   changes log
     /changes

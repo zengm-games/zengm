@@ -63,7 +63,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                     }
 
                     if (freeAgents.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
-                        return cb(p.name + " refuses to sign with you, no matter what you offer.");
+                        return cb('<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> refuses to sign with you, no matter what you offer.');
                     }
 
                     negotiation = {

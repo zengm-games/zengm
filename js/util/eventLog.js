@@ -22,9 +22,7 @@ define(["db", "globals", "lib/bbgm-notifications"], function (db, g, bbgmNotific
 
         if (options.showNotification) {
             title = null;
-            if (options.type === "injured") {
-                title = "Injury!";
-            } else if (options.type === "error") {
+            if (options.type === "error") {
                 title = "Error!";
             }
 

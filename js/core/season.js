@@ -931,7 +931,10 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                                     // Open negotiations with player
                                     contractNegotiation.create(transaction, p.pid, true, function (error) {
                                         if (error !== undefined && error) {
-                                            $("#league_content").before('<div class="alert alert-danger alert-top"><button type="button" class="close" data-dismiss="alert">&times;</button><p>' + error + '</p></div>');
+                                            eventLog.add(null, {
+                                                type: "refuseToSign",
+                                                text: error
+                                            });
                                         }
                                     });
                                 });

@@ -21,12 +21,11 @@ notification system
         maybe https://developer.mozilla.org/en-US/docs/Web/CSS/transition-property
   things to show
     log
-      DONE: gameWon, gameLost, injured, healed, retired, hallOfFame, award, playoffs
-      TODO: retiredPlayer, leagueChamps, trade, freeAgent, refuseToSign
+      DONE: gameWon, gameLost, injured, healed, retired, hallOfFame, award, playoffs, retired, reSigned, freeAgent, refuseToSign
+      TODO: trade
     ---
     trades
       for user, don't show notification, but log
-    refuse to sign
     fired - log, but don't show
     new team
     changes.js - show, but don't log!

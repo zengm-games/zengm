@@ -125,6 +125,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+Shouldn't say "This is what the playoff matchups would be" when playoffs first start
 first errorNotify in contractNegotiation.js really should be inline within that page
 player.injury.gamesRemaining should go by day
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/

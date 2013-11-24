@@ -109,63 +109,6 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
         }
         that = this;
 
-        // Record progress of playoff series, if appropriate
-        if (this.playoffs && t1 === 0) {
-            tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
-                var cursor, i, playoffRound, playoffSeries, series, won0;
-
-                cursor = event.target.result;
-                playoffSeries = cursor.value;
-                playoffRound = playoffSeries.series[playoffSeries.currentRound];
-
-                // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
-                if (that.team[t1].stat.pts > that.team[t2].stat.pts) {
-                    won0 = true;
-                } else {
-                    won0 = false;
-                }
-
-                for (i = 0; i < playoffRound.length; i++) {
-                    series = playoffRound[i];
-
-                    if (series.home.tid === that.team[t1].id) {
-                        if (won0) {
-                            series.home.won += 1;
-                        } else {
-                            series.away.won += 1;
-                        }
-                    } else if (series.away.tid === that.team[t1].id) {
-                        if (won0) {
-                            series.away.won += 1;
-                        } else {
-                            series.home.won += 1;
-                        }
-                    }
-
-                    // Check if the user's team won/lost a playoff series
-                    if (g.userTid === that.team[t1].id && ((series.away.tid === that.team[t1].id) || (series.home.tid === that.team[t1].id))) {
-                        if (series.away.won === 4 || series.home.won === 4) {
-                            if ((series.away.tid === that.team[t1].id && series.away.won === 4) || (series.home.tid === that.team[t1].id && series.home.won === 4)) {
-console.log(that.team[t2]);
-                                eventLog.add(tx, {
-                                    type: "playoffs",
-                                    text: 'Your team won a playoff round.'
-                                });
-                            } else {
-console.log(that.team[t2]);
-                                eventLog.add(tx, {
-                                    type: "playoffs",
-                                    text: 'Your team lost a playoff round.'
-                                });
-                            }
-                        }
-                    }
-                }
-
-                cursor.update(playoffSeries);
-            };
-        }
-
 //console.log('writeTeamStats');
         db.getPayroll(tx, that.team[t1].id, function (payroll) {
             // Team stats
@@ -346,7 +289,7 @@ console.log(that.team[t2]);
     };
 
     Game.prototype.writeGameStats = function (tx, cb) {
-        var gameStats, i, keys, p, t, text, tl, tw;
+        var gameStats, i, keys, p, t, text, that, tl, tw;
 
         gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
         for (t = 0; t < 2; t++) {
@@ -415,6 +358,68 @@ console.log(that.team[t2]);
                 type: this.team[tw].id === g.userTid ? "gameWon" : "gameLost",
                 text: text
             });
+        }
+
+        // Record progress of playoff series, if appropriate
+        that = this;
+        if (this.playoffs) {
+            tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
+                var cursor, i, playoffRound, playoffSeries, series, won0;
+
+                cursor = event.target.result;
+                playoffSeries = cursor.value;
+                playoffRound = playoffSeries.series[playoffSeries.currentRound];
+
+                // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
+                if (that.team[0].stat.pts > that.team[1].stat.pts) {
+                    won0 = true;
+                } else {
+                    won0 = false;
+                }
+
+                for (i = 0; i < playoffRound.length; i++) {
+                    series = playoffRound[i];
+
+                    if (series.home.tid === that.team[0].id) {
+                        if (won0) {
+                            series.home.won += 1;
+                        } else {
+                            series.away.won += 1;
+                        }
+                        break;
+                    } else if (series.away.tid === that.team[0].id) {
+                        if (won0) {
+                            series.away.won += 1;
+                        } else {
+                            series.home.won += 1;
+                        }
+                        break;
+                    }
+                }
+
+                // Check if the user's team won/lost a playoff series
+                if (g.userTid === that.team[0].id || g.userTid === that.team[1].id) {
+console.log(["hi", that.team[0].id, that.team[1].id]);
+                    if (series.away.won === 4 || series.home.won === 4) {
+console.log("hey");
+                        if ((series.away.tid === g.userTid && series.away.won === 4) || (series.home.tid === g.userTid && series.home.won === 4)) {
+console.log(that.team[0]);
+                            eventLog.add(tx, {
+                                type: "playoffs",
+                                text: 'Your team defeated the Blah in the first round of the playoffs, 4-2.'
+                            });
+                        } else {
+console.log(that.team[0]);
+                            eventLog.add(tx, {
+                                type: "playoffs",
+                                text: 'Your team lost to the Blah in the first round of the playoffs, 4-2.'
+                            });
+                        }
+                    }
+                }
+
+                cursor.update(playoffSeries);
+            };
         }
 
         cb();

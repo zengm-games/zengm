@@ -141,6 +141,25 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                             series.home.won += 1;
                         }
                     }
+
+                    // Check if the user's team won/lost a playoff series
+                    if (g.userTid === that.team[t1].id && ((series.away.tid === that.team[t1].id) || (series.home.tid === that.team[t1].id))) {
+                        if (series.away.won === 4 || series.home.won === 4) {
+                            if ((series.away.tid === that.team[t1].id && series.away.won === 4) || (series.home.tid === that.team[t1].id && series.home.won === 4)) {
+console.log(that.team[t2]);
+                                eventLog.add(tx, {
+                                    type: "playoffs",
+                                    text: 'Your team won a playoff round.'
+                                });
+                            } else {
+console.log(that.team[t2]);
+                                eventLog.add(tx, {
+                                    type: "playoffs",
+                                    text: 'Your team lost a playoff round.'
+                                });
+                            }
+                        }
+                    }
                 }
 
                 cursor.update(playoffSeries);

@@ -34,6 +34,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2013-11-10",
         msg: "Removed the roster size limit in trades. Now you (and AI teams) can go above and below the min and max roster sizes, as long as you get back within the limits before playing any more games."
+    }, {
+        date: "2013-11-24",
+        msg: "Key events (wins/losses, injuries, etc.) now appear in notification bubbles when they happen."
     }];
 
     function check() {

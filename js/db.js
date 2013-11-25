@@ -586,6 +586,14 @@ console.log(event);
                     ]
                 });
             }
+            if (event.oldVersion <= 7) {
+                (function () {
+                    var eventStore;
+
+                    eventStore = dbl.createObjectStore("events", {keyPath: "eid", autoIncrement: true});
+                    eventStore.createIndex("season", "season", {unique: false});
+                }());
+            }
         });
     }
 
@@ -593,7 +601,7 @@ console.log(event);
         var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 7);
+        request = indexedDB.open("league" + lid, 8);
         request.onerror = function (event) {
             throw new Error("League connection error");
         };

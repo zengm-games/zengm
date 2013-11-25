@@ -28,7 +28,10 @@ define(["db", "globals", "lib/bbgm-notifications"], function (db, g, bbgmNotific
                 title = "Changes since your last visit";
             }
 
-            bbgmNotifications.notify(options.text, title);
+            // Don't show notification if we're viewing a live game now
+            if (location.pathname.indexOf("/live") === -1) {
+                bbgmNotifications.notify(options.text, title);
+            }
         }
     }
 

@@ -9,28 +9,21 @@ play-by-play simulation
   highlight active players
 free agents going unsigned?
 notification system
-  suppress ALL NOTIFICATIONS if live - how?
-  things to show
-    log
-      DONE: gameWon, gameLost, injured, healed, retired, hallOfFame, award, playoffs, retired, reSigned, freeAgent, refuseToSign
-      TODO: trade, draftPick
-    ---
-  polish
-    "healed" should show after game, not before
-    when fading out, hover should stop animation, remove notification-delete, reset timer to 1s (or something)
-      hover on fading in should also stop animation so there is no stutter
-    what about for small screens? maybe just show one at a time. is this actually a problem?
-    event log
-      allow filtering based on type
-    also log these events:
-      trades
-        for user, don't show notification, but log
-      user draft picks
-        don't show notification, but log
-      fired - log, but don't show
-      new team
-      big AI moves - trades, free agent signings
-        only show big moves, not all. need some threshold
+  "healed" should show after game, not before
+  when fading out, hover should stop animation, remove notification-delete, reset timer to 1s (or something)
+    hover on fading in should also stop animation so there is no stutter
+  what about for small screens? maybe just show one at a time. is this actually a problem?
+  event log
+    allow filtering based on type
+  also log these events:
+    trades
+      for user, don't show notification, but log
+    user draft picks
+      don't show notification, but log
+    fired - log, but don't show
+    new team
+    big AI moves - trades, free agent signings
+      only show big moves, not all. need some threshold
 landing page
   http://agirlsaidmysmileiscute.webuda.com/
 reddit button onclick

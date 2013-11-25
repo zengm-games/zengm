@@ -24,6 +24,8 @@ define(["db", "globals", "lib/bbgm-notifications"], function (db, g, bbgmNotific
             title = null;
             if (options.type === "error") {
                 title = "Error!";
+            } else if (options.type === "changes") {
+                title = "Changes since your last visit";
             }
 
             bbgmNotifications.notify(options.text, title);

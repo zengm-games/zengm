@@ -3,6 +3,15 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+awards
+  assigned based on wins added, like hof
+    store EWA in database, update when PER is updated in advStats
+      use in player.madeHof
+    formulas:
+      overall: linear combination of EWA and team wins
+      defensive: basically same stupid shit as now, but make sure to account for games played
+  show awards count in hall of fame
+merge git branch
 play-by-play simulation
   highlight active players
 free agents going unsigned?
@@ -60,6 +69,7 @@ more starting options
 localization
   http://requirejs.org/docs/api.html#i18n
 team and league records (highest scoring game, etc)
+  should show an event for cool single game feats
 random events
   like.. player gets suspended, out X games. or player gets into fight, fan support drops. etc.
   need a notification system first
@@ -129,14 +139,6 @@ player.value
       1. add fudge factor to make teams less willing to trade away young players without much game experience
       2. just increase the value for ovr in player.value (try this now)
         is there a better function than 4 * PER to map between PER and ovr? plot.
-awards
-  assigned based on wins added, like hof
-    store EWA in database, update when PER is updated in advStats
-      use in player.madeHof
-    formulas:
-      overall: linear combination of EWA and team wins
-      defensive: basically same stupid shit as now, but make sure to account for games played
-  show awards count in hall of fame
 show annual ratings changes in roster page
   green (up) or red (down) with the number ovr and pot changed, in parentheses
   then, on switch to preseason, redirect to current roster
@@ -375,7 +377,7 @@ can i get rid of js/api.js?
 core.trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore
-  trade and clear buttons should be disabled during gameSim, wiht message like in team finances
+  trade and clear buttons should be disabled during gameSim, with message like in team finances
 too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
   free agents are even less willing to sign with the user, even if it's a good team
 final score, hall of fame

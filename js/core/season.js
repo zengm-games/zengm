@@ -101,143 +101,155 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
         tx = g.dbl.transaction(["players", "releasedPlayers", "teams"]);
 
-        // Any non-retired player can win an award
-        tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
-            var awards, i, p, players, text, tx2, type;
+        // Get teams for won/loss record for awards, as well as finding the teams with the best records
+        team.filter({
+            attrs: ["tid", "abbrev", "region", "name", "cid"],
+            seasonAttrs: ["won", "lost", "winp"],
+            season: g.season,
+            sortBy: "winp",
+            ot: tx
+        }, function (teams) {
+            var awards, i, foundEast, foundWest, t;
 
             awards = {season: g.season};
 
-            players = player.filter(event.target.result, {
-                attrs: ["pid", "name", "tid", "abbrev", "draft"],
-                stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl"],
-                season: g.season
-            });
+            for (i = 0; i < teams.length; i++) {
+                if (!foundEast && teams[i].cid === 0) {
+                    t = teams[i];
+                    awards.bre = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
+                    foundEast = true;
+                } else if (!foundWest && teams[i].cid === 1) {
+                    t = teams[i];
+                    awards.brw = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
+                    foundWest = true;
+                }
 
-            // Most Valuable Player
-            players.sort(function (a, b) {  return (0.75 * b.stats.pts + b.stats.ast + b.stats.trb) - (0.75 * a.stats.pts + a.stats.ast + a.stats.trb); });
-            p = players[0];
-            awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
-            // Notification unless it's the user's player, in which case it'll be shown below
-            if (p.tid !== g.userTid) {
-                eventLog.add(null, {
-                    type: "award",
-                    text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", p.abbrev]) + '">' + p.abbrev + '</a>) won the Most Valuable Player award.'
+                if (foundEast && foundWest) {
+                    break;
+                }
+            }
+
+            // Sort teams by tid so it can be easily used in awards formulas
+            teams.sort(function (a, b) {  return a.tid - b.tid; });
+
+            // Any non-retired player can win an award
+            tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
+                var i, p, players, text, type;
+
+                players = player.filter(event.target.result, {
+                    attrs: ["pid", "name", "tid", "abbrev", "draft"],
+                    stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
+                    season: g.season
                 });
-            }
 
-            // Sixth Man of the Year - same sort as MVP
-            for (i = 0; i < players.length; i++) {
-                // Must have come off the bench in most games
-                if (players[i].stats.gs === 0 || players[i].stats.gp / players[i].stats.gs > 2) {
-                    break;
+                // Add team games won to players
+                for (i = 0; i < players.length; i++) {
+                    players[i].won = teams[players[i].tid].won;
                 }
-            }
-            p = players[i];
-            awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
 
-            // Rookie of the Year - same sort as MVP
-            for (i = 0; i < players.length; i++) {
-                // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-                if (players[i].draft.year === g.season - 1) {
-                    break;
-                }
-            }
-            p = players[i];
-            if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
-                awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
-            }
 
-            // All League Team - same sort as MVP
-            awards.allLeague = [{title: "First Team", players: []}];
-            type = "First Team All-League";
-            for (i = 0; i < 15; i++) {
-                p = players[i];
-                if (i === 5) {
-                    awards.allLeague.push({title: "Second Team", players: []});
-                    type = "Second Team All-League";
-                } else if (i === 10) {
-                    awards.allLeague.push({title: "Third Team", players: []});
-                    type = "Third Team All-League";
-                }
-                _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
-                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
-            }
-
-            // Defensive Player of the Year
-            players.sort(function (a, b) {  return (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl); });
-            p = players[0];
-            awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
-
-            // All Defensive Team - same sort as DPOY
-            awards.allDefensive = [{title: "First Team", players: []}];
-            type = "First Team All-Defensive";
-            for (i = 0; i < 15; i++) {
-                p = players[i];
-                if (i === 5) {
-                    awards.allDefensive.push({title: "Second Team", players: []});
-                    type = "Second Team All-Defensive";
-                } else if (i === 10) {
-                    awards.allDefensive.push({title: "Third Team", players: []});
-                    type = "Third Team All-Defensive";
-                }
-                _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
-                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
-            }
-
-            // Notifications for awards for user's players
-            tx2 = g.dbl.transaction("events", "readwrite");
-            for (i = 0; i < awardsByPlayer.length; i++) {
-                p = awardsByPlayer[i];
-                if (p.tid === g.userTid) {
-                    text = 'Your player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ';
-                    if (p.type.indexOf("Team") >= 0) {
-                        text += 'made the ' + p.type + '.';
-                    } else {
-                        text += 'won the ' + p.type + ' award.';
-                    }
-                    eventLog.add(tx2, {
+                // Most Valuable Player
+                players.sort(function (a, b) {  return (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won); });
+                p = players[0];
+                awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
+                // Notification unless it's the user's player, in which case it'll be shown below
+                if (p.tid !== g.userTid) {
+                    eventLog.add(null, {
                         type: "award",
-                        text: text
+                        text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", p.abbrev]) + '">' + p.abbrev + '</a>) won the Most Valuable Player award.'
                     });
                 }
-            }
 
-            team.filter({
-                attrs: ["tid", "abbrev", "region", "name", "cid"],
-                seasonAttrs: ["won", "lost", "winp"],
-                season: g.season,
-                sortBy: "winp",
-                ot: tx
-            }, function (teams) {
-                var i, foundEast, foundWest, t, tx;
-
-                for (i = 0; i < teams.length; i++) {
-                    if (!foundEast && teams[i].cid === 0) {
-                        t = teams[i];
-                        awards.bre = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
-                        foundEast = true;
-                    } else if (!foundWest && teams[i].cid === 1) {
-                        t = teams[i];
-                        awards.brw = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
-                        foundWest = true;
-                    }
-
-                    if (foundEast && foundWest) {
+                // Sixth Man of the Year - same sort as MVP
+                for (i = 0; i < players.length; i++) {
+                    // Must have come off the bench in most games
+                    if (players[i].stats.gs === 0 || players[i].stats.gp / players[i].stats.gs > 2) {
                         break;
                     }
+                }
+                p = players[i];
+                awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
+
+                // Rookie of the Year - same sort as MVP
+                for (i = 0; i < players.length; i++) {
+                    // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+                    if (players[i].draft.year === g.season - 1) {
+                        break;
+                    }
+                }
+                p = players[i];
+                if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
+                    awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
+                }
+
+                // All League Team - same sort as MVP
+                awards.allLeague = [{title: "First Team", players: []}];
+                type = "First Team All-League";
+                for (i = 0; i < 15; i++) {
+                    p = players[i];
+                    if (i === 5) {
+                        awards.allLeague.push({title: "Second Team", players: []});
+                        type = "Second Team All-League";
+                    } else if (i === 10) {
+                        awards.allLeague.push({title: "Third Team", players: []});
+                        type = "Third Team All-League";
+                    }
+                    _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
+                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
+                }
+
+                // Defensive Player of the Year
+                players.sort(function (a, b) {  return b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl); });
+                p = players[0];
+                awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
+                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
+
+                // All Defensive Team - same sort as DPOY
+                awards.allDefensive = [{title: "First Team", players: []}];
+                type = "First Team All-Defensive";
+                for (i = 0; i < 15; i++) {
+                    p = players[i];
+                    if (i === 5) {
+                        awards.allDefensive.push({title: "Second Team", players: []});
+                        type = "Second Team All-Defensive";
+                    } else if (i === 10) {
+                        awards.allDefensive.push({title: "Third Team", players: []});
+                        type = "Third Team All-Defensive";
+                    }
+                    _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
+                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
                 }
 
                 tx = g.dbl.transaction("awards", "readwrite");
                 tx.objectStore("awards").add(awards);
                 tx.oncomplete = function () {
+                    var tx;
+
+                    // Notifications for awards for user's players
+                    tx = g.dbl.transaction("events", "readwrite");
+                    for (i = 0; i < awardsByPlayer.length; i++) {
+                        p = awardsByPlayer[i];
+                        if (p.tid === g.userTid) {
+                            text = 'Your player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ';
+                            if (p.type.indexOf("Team") >= 0) {
+                                text += 'made the ' + p.type + '.';
+                            } else {
+                                text += 'won the ' + p.type + ' award.';
+                            }
+                            eventLog.add(tx, {
+                                type: "award",
+                                text: text
+                            });
+                        }
+                    }
+
                     cbAwardsByPlayer(awardsByPlayer, cb);
                 };
-            });
-        };
+            };
+        });
     }
 
     /**

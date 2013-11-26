@@ -3,9 +3,8 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-awards
-  show awards count in hall of fame
-merge git branch
+team logos
+  base on the pull request, but always retrieve from database, not cached variable
 play-by-play simulation
   highlight active players
 free agents going unsigned?
@@ -154,6 +153,8 @@ reorganize top menu
 LOW PRIORITY
 ------------
 
+awards
+  show awards count in hall of fame
 NaN
   NaN in EWA: http://www.reddit.com/r/BasketballGM/comments/1r1i1e/nan_on_ewa_estimated_wins_added/
   NaN appears in new contract demands for some players sometimes, mainly when I'm skipping stuff

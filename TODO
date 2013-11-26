@@ -4,12 +4,6 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 awards
-  assigned based on wins added, like hof
-    store EWA in database, update when PER is updated in advStats
-      use in player.madeHof
-    formulas:
-      overall: linear combination of EWA and team wins
-      defensive: basically same stupid shit as now, but make sure to account for games played
   show awards count in hall of fame
 merge git branch
 play-by-play simulation

@@ -144,7 +144,12 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
                 // Add team games won to players
                 for (i = 0; i < players.length; i++) {
-                    players[i].won = teams[players[i].tid].won;
+                    // Special handling for players who were cut mid-season
+                    if (players[i].tid >= 0) {
+                        players[i].won = teams[players[i].tid].won;
+                    } else {
+                        players[i].won = 20;
+                    }
                 }
 
 

@@ -261,11 +261,21 @@ select.teams {
   width: 203px
 }
 
-.player-picture {
+.player-picture, .team-picture {
   height: 150px;
   float: left;
   margin-right: 10px;
   width: 100px;
+}
+
+.team-picture {
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	margin-top: 12px;
+	width: 120px;
+	height: 120px;
+	float: left;
 }
 
 .skill {

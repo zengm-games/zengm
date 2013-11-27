@@ -4,14 +4,24 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 people shouldn't play 48 mins/game http://www.reddit.com/r/BasketballGM/comments/1rhavt/rarer_goat_players/
-  tweak energy formula - seems tricky
+  tweak energy formula - FUCK when i tried before i had debug mode off
   add some fudge factor - if a player's been on the court for 12 minutes, give him a break
 team logos
   base on the pull request, but always retrieve from database, not cached variable
-play-by-play simulation
-  highlight active players
 free agents going unsigned?
   this doesn't happen initially (possibly due to incorrect initialization of players) but if you play for a decade or so it becomes painfully obvious
+  salary cap exception? too complicated?
+    how much?
+    who gets it? only if over cap when free agency starts?
+    messages about it
+      anywhere salary cap is displayed, including team finanaces
+      contract negotiation - show warning if the exception will be used
+      resigning players page
+      update manual
+    implementation
+      flag in root of team object - exception available, exception used, exception not granted this season
+  add some fucking market shit. calculate the salary demanded by free agents vs cap space available, then adjust free agent demands somehow
+    this should be part of the daily updating. if everyone is capped out, drop all salaries to minimum.
 notification system
   "healed" should show after game, not before
   when fading out, hover should stop animation, remove notification-delete, reset timer to 1s (or something)
@@ -110,6 +120,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+bring back the old constantly-displayed menu for large screens?
 resign -> re-sign or reSign
 Shouldn't say "This is what the playoff matchups would be" when playoffs first start
 first errorNotify in contractNegotiation.js really should be inline within that page
@@ -169,16 +180,6 @@ some players should make bad plays - not everyone should have same basketball IQ
 client-side error tracking
   see kentavious for the problems with that
 contract extensions
-salary cap exception? too complicated?
-  how much?
-  who gets it? only if over cap when free agency starts?
-  messages about it
-    anywhere salary cap is displayed, including team finanaces
-    contract negotiation - show warning if the exception will be used
-    resigning players page
-    update manual
-  implementation
-    flag in root of team object - exception available, exception used, exception not granted this season
 fantasy draft
   when fantasy draft is over, go to summary of the draft
     do this in core.draft.untilUserOrEnd

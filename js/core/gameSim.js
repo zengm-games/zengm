@@ -266,6 +266,18 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                         this.team[t].player[b].stat.benchTime = random.uniform(-2, 2);
                         this.team[t].player[p].stat.courtTime = random.uniform(-2, 2);
                         this.team[t].player[p].stat.benchTime = random.uniform(-2, 2);
+
+                        // Keep track of deviations from the normal starting lineup for the play-by-play
+                        if (this.playByPlay !== undefined) {
+                            this.playByPlay.push({
+                                type: "sub",
+                                t: t,
+                                on: this.team[t].player[b].id,
+                                off: this.team[t].player[p].id
+                            });
+                        }
+
+                        // It's only a "substitution" if it's not the starting lineup
                         if (this.startersRecorded) {
                             this.recordPlay("sub", t, [this.team[t].player[b].name, this.team[t].player[p].name]);
                         }

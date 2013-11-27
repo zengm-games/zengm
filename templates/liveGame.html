@@ -27,7 +27,7 @@
               <tr><th>Name</th><th>Pos</th><th>Min</th><th>FG</th><th>3Pt</th><th>FT</th><th>Off</th><th>Reb</th><th>Ast</th><th>TO</th><th>Stl</th><th>Blk</th><th>PF</th><th>Pts</th></tr>
             </thead>
             <tbody data-bind="foreach: players">
-              <tr data-bind="attr: {class: $index() === 4 || $index() === $parent.players().length - 1 ? 'separator' : ''}">
+              <tr data-bind="attr: {class: $index() === 4 || $index() === $parent.players().length - 1 ? 'separator' : ''}, css: {warning: inGame}">
                 <td data-bind="playerNameLabels: [pid, name, injury, skills]"></td>
                 <td data-bind="text: pos"></td>
                 <td data-bind="round: [min, 1]"></td>

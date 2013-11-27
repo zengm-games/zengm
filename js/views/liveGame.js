@@ -47,7 +47,7 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
         var deferred, events, overtimes;
 
         function processToNextPause() {
-            var e, ptsQtrs, stop, text;
+            var e, i, ptsQtrs, stop, text;
 
             stop = false;
             while (!stop && events.length > 0) {
@@ -61,11 +61,23 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
                     } else {
                         text = e.text;
                     }
+
+                    // Show score after scoring plays
                     if (text.indexOf("made") >= 0) {
                         text += " (" + vm.boxScore.teams()[0].pts() + "-" + vm.boxScore.teams()[1].pts() + ")";
                     }
+
                     vm.boxScore.time(e.time);
+
                     stop = true;
+                } else if (e.type === "sub") {
+                    for (i = 0; i < vm.boxScore.teams()[e.t].players().length; i++) {
+                        if (vm.boxScore.teams()[e.t].players()[i].pid() === e.on) {
+                            vm.boxScore.teams()[e.t].players()[i].inGame(true);
+                        } else if (vm.boxScore.teams()[e.t].players()[i].pid() === e.off) {
+                            vm.boxScore.teams()[e.t].players()[i].inGame(false);
+                        }
+                    }
                 } else if (e.type === "stat") {
                     // Quarter-by-quarter score
                     if (e.s === "pts") {
@@ -151,25 +163,18 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
                         for (s = 0; s < resetStats.length; s++) {
                             boxScore.teams[i].players[j][resetStats[s]] = 0;
                         }
+
+                        if (j < 5) {
+                            boxScore.teams[i].players[j].inGame = true;
+                        } else {
+                            boxScore.teams[i].players[j].inGame = false;
+                        }
                     }
                 }
 
                 deferred.resolve({
                     boxScore: boxScore
                 });
-
-                // Copied from views.gameSim                
-                // UGLY HACK for two reasons:
-                // 1. Box score might be hidden if none is loaded, so in that case there is no table to make clickable
-                // 2. When box scores are shown, it might happen after uiEvery is called because vm.showBoxScore is throttled
-                window.setTimeout(function () {
-                    var tableEls;
-
-                    tableEls = $(".box-score-team");
-                    if (tableEls.length > 0 && !tableEls[0].classList.contains("table-hover")) {
-                        ui.tableClickableRows(tableEls);
-                    }
-                }, 100);
 
                 // Start showing play-by-play
                 processToNextPause();

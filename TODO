@@ -3,11 +3,15 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+people shouldn't play 48 mins/game http://www.reddit.com/r/BasketballGM/comments/1rhavt/rarer_goat_players/
+  tweak energy formula - seems tricky
+  add some fudge factor - if a player's been on the court for 12 minutes, give him a break
 team logos
   base on the pull request, but always retrieve from database, not cached variable
 play-by-play simulation
   highlight active players
 free agents going unsigned?
+  this doesn't happen initially (possibly due to incorrect initialization of players) but if you play for a decade or so it becomes painfully obvious
 notification system
   "healed" should show after game, not before
   when fading out, hover should stop animation, remove notification-delete, reset timer to 1s (or something)

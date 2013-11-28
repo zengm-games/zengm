@@ -2,7 +2,7 @@
  * @name core.player
  * @namespace Functions operating on player objects, parts of player objects, or arrays of player objects.
  */
-define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/helpers", "util/random"], function (g, finances, injuries, names, faces, _, helpers, random) {
+define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (g, finances, injuries, names, faces, _, eventLog, helpers, random) {
     "use strict";
 
     /**
@@ -1631,6 +1631,41 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         };
     }
 
+    /**
+     * Have a player retire, including all event and HOF bookkeeping.
+     *
+     * This just updates a player object. You need to write it to the database after.
+     * 
+     * @param {IDBTransaction} ot An IndexedDB transaction on events.
+     * @param {Object} p Player object.
+     * @return {Object} p Updated (retired) player object.
+     */
+    function retire(tx, p) {
+        if (p.tid === g.userTid) {
+            eventLog.add(tx, {
+                type: "retired",
+                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> retired.'
+            });
+        }
+
+        p.tid = g.PLAYER.RETIRED;
+        p.retiredYear = g.season;
+
+        // Add to Hall of Fame?
+        if (madeHof(p)) {
+            p.hof = true;
+            p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
+            if (p.statsTids.indexOf(g.userTid) >= 0) {
+                eventLog.add(tx, {
+                    type: "hallOfFame",
+                    text: 'Your former player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> was inducted into the <a href="' + helpers.leagueUrl(["hall_of_fame"]) + '">Hall of Fame</a>.'
+                });
+            }
+        }
+
+        return p;
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1648,6 +1683,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         filter: filter,
         madeHof: madeHof,
         value: value,
-        regressRatingsPer: regressRatingsPer
+        regressRatingsPer: regressRatingsPer,
+        retire: retire
     };
 });

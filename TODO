@@ -3,12 +3,16 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+HOF working consistently?
+  http://www.reddit.com/r/BasketballGM/comments/1osxg3/free_agents_who_arent_signed_to_a_team_dont_make/
 people shouldn't play 48 mins/game http://www.reddit.com/r/BasketballGM/comments/1rhavt/rarer_goat_players/
   tweak energy formula - FUCK when i tried before i had debug mode off
   add some fudge factor - if a player's been on the court for 12 minutes, give him a break
+  maybe it shouldn't be so easy to improve endurance?
 team logos
   base on the pull request, but always retrieve from database, not cached variable
 free agents going unsigned?
+  QUICK FIX: is this all because of the ratings/PER difference? so new leagues don't have this problem because all salaries are based on ratings?
   this doesn't happen initially (possibly due to incorrect initialization of players) but if you play for a decade or so it becomes painfully obvious
   salary cap exception? too complicated?
     how much?
@@ -38,6 +42,7 @@ notification system
     new team
     big AI moves - trades, free agent signings
       only show big moves, not all. need some threshold
+  merge "retired" and "HOF" notifications for a player on the user's team
 landing page
   http://agirlsaidmysmileiscute.webuda.com/
 reddit button onclick
@@ -121,17 +126,15 @@ MINOR FIXES
 -----------
 
 bring back the old constantly-displayed menu for large screens?
+make injuries more likely for old players
 resign -> re-sign or reSign
 Shouldn't say "This is what the playoff matchups would be" when playoffs first start
 first errorNotify in contractNegotiation.js really should be inline within that page
 player.injury.gamesRemaining should go by day
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
-signing a free agent after the season shouldn't create a stats row, right?
 some way to "install" app locally and create a shortcut icon, since it is playable offline
 bootstrap 3.0.2
 merge game.play and freeAgents.play
-HOF working consistently?
-  http://www.reddit.com/r/BasketballGM/comments/1osxg3/free_agents_who_arent_signed_to_a_team_dont_make/
 per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/
 make sure the changes alert and the "refuses to negotiate" alert both look good
   link to player in "refuses to negotiate" alert

@@ -773,28 +773,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         }
                         excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
                         if (excessAge + excessPot + random.gauss(0, 1) > 0) {
-                            if (p.tid === g.userTid) {
-                                eventLog.add(tx, {
-                                    type: "retired",
-                                    text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> retired.'
-                                });
-                            }
-
-                            p.tid = g.PLAYER.RETIRED;
-                            p.retiredYear = g.season;
+                            p = player.retire(tx, p);
                             update = true;
-
-                            // Add to Hall of Fame?
-                            if (player.madeHof(p)) {
-                                p.hof = true;
-                                p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
-                                if (p.statsTids.indexOf(g.userTid) >= 0) {
-                                    eventLog.add(tx, {
-                                        type: "hallOfFame",
-                                        text: 'Your former player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> was inducted into the <a href="' + helpers.leagueUrl(["hall_of_fame"]) + '">Hall of Fame</a>.'
-                                    });
-                                }
-                            }
                         }
                     }
                 }
@@ -802,8 +782,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                 // Update "free agent years" counter and retire players who have been free agents for more than one years
                 if (p.tid === g.PLAYER.FREE_AGENT) {
                     if (p.yearsFreeAgent >= 1) {
-                        p.tid = g.PLAYER.RETIRED;
-                        p.retiredYear = g.season;
+                        p = player.retire(tx, p);
+                        update = true;
                     } else {
                         p.yearsFreeAgent += 1;
                     }

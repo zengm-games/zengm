@@ -3,12 +3,15 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+team logos
+  base on the pull request, but always retrieve from database, not cached variable
+  make sure it has default value
+  make sure it works with old leagues
+roster glitch http://www.reddit.com/r/BasketballGM/comments/1rv91i/custom_roster_problems/
 people shouldn't play 48 mins/game http://www.reddit.com/r/BasketballGM/comments/1rhavt/rarer_goat_players/
   tweak energy formula - FUCK when i tried before i had debug mode off
   add some fudge factor - if a player's been on the court for 12 minutes, give him a break
   maybe it shouldn't be so easy to improve endurance?
-team logos
-  base on the pull request, but always retrieve from database, not cached variable
 free agents going unsigned?
   QUICK FIX: is this all because of the ratings/PER difference? so new leagues don't have this problem because all salaries are based on ratings?
   this doesn't happen initially (possibly due to incorrect initialization of players) but if you play for a decade or so it becomes painfully obvious
@@ -89,6 +92,7 @@ more detailed draft - slower picks, trades, etc.
     for years further in the future (maybe 3 more years), just show an estimate of draft class strength
   custom draft classes http://www.reddit.com/r/BasketballGM/comments/1r0ftx/nba_2k2/cdj769w
   slower picks http://www.reddit.com/r/BasketballGM/comments/1r70dv/trade_picks_during_draft
+  sort by generic value (current) or team-specific value
 
 BIG NEW GAMEPLAY CHANGES
 ------------------------
@@ -124,6 +128,7 @@ MINOR FIXES
 -----------
 
 bring back the old constantly-displayed menu for large screens?
+  expand play menu so it can be used with one click
 make injuries more likely for old players
 resign -> re-sign or reSign
 Shouldn't say "This is what the playoff matchups would be" when playoffs first start
@@ -165,6 +170,7 @@ in playoffs, replace "play week" with "play until end of round"
 IE11 testing
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
 reorganize top menu
+not all ratings should deteriorate equally with age (e.g. 3 point shooting)
 
 LOW PRIORITY
 ------------

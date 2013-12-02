@@ -448,25 +448,11 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         p.ptModifier = 1; // Reset
 
-        // The put doesn't always work in Chrome. I have no idea why. But I need the put to create pids if those aren't set, so use it only when absolutely necessary.
-        if (p.hasOwnProperty("pid")) {
-            require("db").getObjectStore(ot, "players", "players").openCursor(p.pid).onsuccess = function (event) {
-                var cursor;
+        // The put doesn't always work in Chrome. No idea why.
+        require("db").getObjectStore(ot, "players", "players").put(p);
 
-                cursor = event.target.result;
-
-                cursor.update(p);
-
-                if (cb !== undefined) {
-                    cb();
-                }
-            };
-        } else {
-            require("db").getObjectStore(ot, "players", "players").put(p);
-
-            if (cb !== undefined) {
-                cb();
-            }
+        if (cb !== undefined) {
+            cb();
         }
     }
 

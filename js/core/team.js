@@ -180,6 +180,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             region: tm.region,
             name: tm.name,
             abbrev: tm.abbrev,
+            imgURL: tm.imgURL,
             stats: [],
             seasons: [],
             budget: {

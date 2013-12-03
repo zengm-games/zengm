@@ -213,7 +213,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             team.filter({
                 season: inputs.season,
                 tid: inputs.tid,
-                attrs: ["region", "name", "strategy"],
+                attrs: ["region", "name", "strategy", "imgURL"],
                 seasonAttrs: ["profit", "won", "lost", "playoffRoundsWon"],
                 ot: tx
             }, function (t) {
@@ -357,6 +357,21 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 highlightHandles();
             }
             editableChanged(vm.editable(), vm);
+        }).extend({throttle: 1});
+
+        ko.computed(function () {
+            var pic, teamInfo, instructions;
+            pic = document.getElementById("picture");
+            teamInfo = document.getElementById("teamInfo");
+
+            // If imgURL is not an empty string, use it for team logo on roster page
+            if (vm.team.imgURL()) {
+            	instructions = document.getElementById("instructions");
+                pic.style.backgroundImage = "url('" + vm.team.imgURL() + "')";
+            } else {
+                teamInfo.style.float = "none";
+                pic.style.display = "none";
+            }
         }).extend({throttle: 1});
 
         $("#roster").on("change", "select", function () {

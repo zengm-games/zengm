@@ -3,10 +3,6 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-team logos
-  base on the pull request, but always retrieve from database, not cached variable
-  make sure it has default value
-  make sure it works with old leagues
 roster glitch http://www.reddit.com/r/BasketballGM/comments/1rv91i/custom_roster_problems/
 people shouldn't play 48 mins/game http://www.reddit.com/r/BasketballGM/comments/1rhavt/rarer_goat_players/
   tweak energy formula - FUCK when i tried before i had debug mode off

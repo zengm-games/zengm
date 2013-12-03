@@ -28,6 +28,7 @@ free agents going unsigned?
   add some fucking market shit. calculate the salary demanded by free agents vs cap space available, then adjust free agent demands somehow
     this should be part of the daily updating. if everyone is capped out, drop all salaries to minimum.
 notification system
+  customize: http://www.reddit.com/r/BasketballGM/comments/1re3ea/new_feature_notification_bubbles/cdmjdyn
   "healed" should show after game, not before
   when fading out, hover should stop animation, remove notification-delete, reset timer to 1s (or something)
     hover on fading in should also stop animation so there is no stutter
@@ -127,8 +128,8 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
-bring back the old constantly-displayed menu for large screens?
-  expand play menu so it can be used with one click
+bring back the old constantly-displayed menu for large screens? http://www.reddit.com/r/BasketballGM/comments/1rjmmr/as_a_player_do_you_think_the_game_needs_a_tutorial/cdnxb4d
+  expand play menu so it can be used with one click http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cds6hph
 make injuries more likely for old players
 resign -> re-sign or reSign
 Shouldn't say "This is what the playoff matchups would be" when playoffs first start

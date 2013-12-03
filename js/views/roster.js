@@ -360,9 +360,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         }).extend({throttle: 1});
 
         ko.computed(function () {
-            var picture, teamInfo;
+            var picture;
             picture = document.getElementById("picture");
-            teamInfo = document.getElementById("teamInfo");
 
             // If imgURL is not an empty string, use it for team logo on roster page
             if (vm.team.imgURL()) {

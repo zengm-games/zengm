@@ -3,6 +3,10 @@ body {
   padding-bottom: 20px;
 }
 
+footer {
+  color: #777;
+}
+
 .navbar-brand img {
   vertical-align: top;
 }

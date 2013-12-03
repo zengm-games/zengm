@@ -261,7 +261,7 @@ select.teams {
   width: 203px
 }
 
-.player-picture, .team-picture {
+.player-picture {
   height: 150px;
   float: left;
   margin-right: 10px;
@@ -269,9 +269,11 @@ select.teams {
 }
 
 .team-picture {
+  display: none; /* Hide by default, shown in views/roster.js */
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-size: contain;
+  margin-right: 10px;
 	margin-top: 12px;
 	width: 120px;
 	height: 120px;

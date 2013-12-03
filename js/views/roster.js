@@ -360,17 +360,14 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         }).extend({throttle: 1});
 
         ko.computed(function () {
-            var pic, teamInfo, instructions;
-            pic = document.getElementById("picture");
+            var picture, teamInfo;
+            picture = document.getElementById("picture");
             teamInfo = document.getElementById("teamInfo");
 
             // If imgURL is not an empty string, use it for team logo on roster page
             if (vm.team.imgURL()) {
-            	instructions = document.getElementById("instructions");
-                pic.style.backgroundImage = "url('" + vm.team.imgURL() + "')";
-            } else {
-                teamInfo.style.float = "none";
-                pic.style.display = "none";
+                picture.style.display = "inline";
+                picture.style.backgroundImage = "url('" + vm.team.imgURL() + "')";
             }
         }).extend({throttle: 1});
 

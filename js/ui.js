@@ -155,8 +155,6 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         });
 
         document.addEventListener("keyup", function (e) {
-            var firstOption;
-
             // alt + p
             if (e.altKey && e.keyCode === 80) {
                 // ul -> li -> a -> click

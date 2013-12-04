@@ -3,7 +3,11 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-keyboard shortcut for "play one day" etc?
+keyboard shortcuts
+  alt+p
+    shouldn't open menu
+    should be discoverable, somehow. hover?
+  others?
 blog stuff
 people shouldn't play 48 mins/game http://www.reddit.com/r/BasketballGM/comments/1rhavt/rarer_goat_players/
   tweak energy formula - FUCK when i tried before i had debug mode off

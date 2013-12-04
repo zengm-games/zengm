@@ -82,7 +82,7 @@
           <ul class="nav navbar-nav-no-collapse" id="play-menu" data-no-collapse="true" data-bind="visible: lid() !== undefined" style="display: none">
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="play-button-link" class="play-button">Play <b class="caret"></b></a>
-              <ul class="dropdown-menu" data-bind="foreach: options">
+              <ul class="dropdown-menu" data-bind="foreach: options" id="play-menu-options">
                 <li><a data-bind="attr: {href: url, id: id}, text: label"></a></li>
               </ul>
             </li>

@@ -7,7 +7,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
 
     // Things to do on initial page load
     function init() {
-        var api, playMenu, slideOut, topMenuCollapse;
+        var api, playMenu, playMenuOptions, slideOut, topMenuCollapse;
 
         // Slide out tabs
         slideOut = $("#feedback");
@@ -151,6 +151,16 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
 
                 // If a dropdown is open and another one is hovered over, open the hovered one and close the other
                 $(liHover.children[0]).dropdown("toggle");
+            }
+        });
+
+        document.addEventListener("keyup", function (e) {
+            var firstOption;
+
+            // alt + p
+            if (e.altKey && e.keyCode === 80) {
+                // ul -> li -> a -> click
+                document.getElementById("play-menu-options").firstElementChild.firstElementChild.click();
             }
         });
     }

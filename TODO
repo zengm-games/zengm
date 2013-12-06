@@ -131,6 +131,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+core.debug shouldn't be included by the requirejs compiler
 salary log in player page can be wrong http://www.reddit.com/r/BasketballGM/comments/1s6rbi/salary_years_error/
 bring back the old constantly-displayed menu for large screens? http://www.reddit.com/r/BasketballGM/comments/1rjmmr/as_a_player_do_you_think_the_game_needs_a_tutorial/cdnxb4d
   expand play menu so it can be used with one click http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cds6hph

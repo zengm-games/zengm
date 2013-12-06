@@ -196,6 +196,12 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
         };
     }
 
+    // Returns the average contract for the active players in the league
+    // Useful to run this while playing with the contract formula in core.player.genContract
+    function leagueAverageContract() {
+
+    }
+
     return {
         regressRatingsPer: regressRatingsPer,
     };

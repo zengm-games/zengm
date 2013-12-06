@@ -5,6 +5,7 @@ CURRENT
 -------
 free agents going unsigned?
   QUICK FIX: is this all because of the ratings/PER difference? so new leagues don't have this problem because all salaries are based on ratings?
+    add debug.leagueAverageContract and try to make it constant no matter whether stats are included in player.value or not (in a mature league)
   this doesn't happen initially (possibly due to incorrect initialization of players) but if you play for a decade or so it becomes painfully obvious
   salary cap exception? too complicated?
     how much?
@@ -142,7 +143,7 @@ first errorNotify in contractNegotiation.js really should be inline within that 
 player.injury.gamesRemaining should go by day
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
 some way to "install" app locally and create a shortcut icon, since it is playable offline
-bootstrap 3.0.2
+bootstrap 3.0.3
 merge game.play and freeAgents.play
 per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/
 make sure the changes alert and the "refuses to negotiate" alert both look good

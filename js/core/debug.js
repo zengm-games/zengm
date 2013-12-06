@@ -199,10 +199,28 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
     // Returns the average contract for the active players in the league
     // Useful to run this while playing with the contract formula in core.player.genContract
     function leagueAverageContract() {
+        var total;
 
+        total = 0;
+
+        // All non-retired players
+        g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
+            var contract, i, p, players;
+
+            players = event.target.result;
+
+            for (i = 0; i < players.length; i++) {
+                p = players[i];
+                contract = player.genContract(p);
+                total += contract.amount;
+            }
+
+            console.log(total / players.length);
+        };
     }
 
     return {
         regressRatingsPer: regressRatingsPer,
+        leagueAverageContract: leagueAverageContract
     };
 });

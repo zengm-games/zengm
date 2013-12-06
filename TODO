@@ -5,7 +5,7 @@ CURRENT
 -------
 free agents going unsigned?
   QUICK FIX: is this all because of the ratings/PER difference? so new leagues don't have this problem because all salaries are based on ratings?
-    add debug.leagueAverageContract and try to make it constant no matter whether stats are included in player.value or not (in a mature league)
+    this doesn't seem to matter. so what is changing? better players? PER distribution seems the same, though.
   this doesn't happen initially (possibly due to incorrect initialization of players) but if you play for a decade or so it becomes painfully obvious
   salary cap exception? too complicated?
     how much?

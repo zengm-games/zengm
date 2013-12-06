@@ -137,7 +137,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         //amount = ((3 * value(p)) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
         //amount = amount * (maxAmount - minAmount) + minAmount;
         amount = (value(p) / 100 - 0.45) * 3.5 * (maxAmount - minAmount) + minAmount;
-        amount *= random.gauss(1, 0.1);  // Randomize
+        amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
 
         // Expiration
         // Players with high potentials want short contracts
@@ -1364,7 +1364,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     current = current * (ps1.min + ps2.min) / 2000 + pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
                 }
             }
-            current = 0.1 * pr.ovr + 0.9 * current;
+            current = 0.1 * pr.ovr + 0.9 * current; // Include some part of the ratings
         }
 
         // Short circuit if we don't care about potential

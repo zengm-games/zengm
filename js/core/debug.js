@@ -204,7 +204,7 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
         total = 0;
 
         // All non-retired players
-        g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
+        g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
             var contract, i, p, players;
 
             players = event.target.result;

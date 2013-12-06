@@ -76,6 +76,13 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
 
     var errorMsg;
 
+    // If we're in debug mode, make debug functions available
+    if (localStorage.debug === "debug") {
+        require(["core/debug"], function (debug) {
+            window.debug = debug;
+        });
+    }
+
     ui.init();
 
     // Can't proceed any further without IndexedDB support

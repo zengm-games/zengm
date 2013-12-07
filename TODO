@@ -4,8 +4,7 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 free agents going unsigned?
-  QUICK FIX: is this all because of the ratings/PER difference? so new leagues don't have this problem because all salaries are based on ratings?
-    this doesn't seem to matter. so what is changing? better players? PER distribution seems the same, though. more players?
+  QUICK FIX: according to analysis/unsigned-free-agents, this probably happens as the pool of players increases and thus the average player quality increases. so maybe initialize new league with better players, and adjust contracts down? or make prospects worse? or some combination. should make those curves much closer, ideally
   this doesn't happen initially (possibly due to incorrect initialization of players) but if you play for a decade or so it becomes painfully obvious
   salary cap exception? too complicated?
     how much?
@@ -134,6 +133,8 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+trading block crashing bug
+  happens in chrome in old leagues, apparently. running out of memory somehow?
 core.debug shouldn't be included by the requirejs compiler
 salary log in player page can be wrong http://www.reddit.com/r/BasketballGM/comments/1s6rbi/salary_years_error/
 bring back the old constantly-displayed menu for large screens? http://www.reddit.com/r/BasketballGM/comments/1rjmmr/as_a_player_do_you_think_the_game_needs_a_tutorial/cdnxb4d

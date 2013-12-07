@@ -62,14 +62,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
 
             profiles = ["Point", "Wing", "Big", "Big", ""];
             for (i = 0; i < 70; i++) {
-                baseRating = random.randInt(8, 33);
-                pot = parseInt(random.gauss(50, 20), 10);
-                if (pot < baseRating) {
-                    pot = baseRating;
-                }
-                if (pot > 90) {
-                    pot = 90;
-                }
+                baseRating = random.randInt(8, 31);
+                pot = Math.round(helpers.bound(random.realGauss(48, 17), baseRating, 90));
 
                 profile = profiles[random.randInt(0, profiles.length - 1)];
                 agingYears = random.randInt(0, 3);

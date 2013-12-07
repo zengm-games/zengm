@@ -136,7 +136,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         // Scale proportional to (ovr*2 + pot)*0.5 120-210
         //amount = ((3 * value(p)) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
         //amount = amount * (maxAmount - minAmount) + minAmount;
-        amount = (value(p) / 100 - 0.45) * 3.5 * (maxAmount - minAmount) + minAmount;
+        amount = ((value(p) - 1) / 100 - 0.45) * 3.5 * (maxAmount - minAmount) + minAmount;
         amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
 
         // Expiration
@@ -1349,7 +1349,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         if (ps.length > 0) {
             if (ps.length === 1) {
                 // Only one year of stats
-                current = 4 * ps[0].per;
+                current = 3.75 * ps[0].per;
                 if (ps[0].min < 2000) {
                     current = current * ps[0].min / 2000 + pr.ovr * (1 - ps[0].min / 2000);
                 }
@@ -1358,7 +1358,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 ps1 = ps[0];
                 ps2 = ps[1];
                 if (ps1.min + ps2.min > 0) {
-                    current = 4 * (ps1.per * ps1.min + ps2.per * ps2.min) / (ps1.min + ps2.min);
+                    current = 3.75 * (ps1.per * ps1.min + ps2.per * ps2.min) / (ps1.min + ps2.min);
                 }
                 if (ps1.min + ps2.min < 2000) {
                     current = current * (ps1.min + ps2.min) / 2000 + pr.ovr * (1 - (ps1.min + ps2.min) / 2000);

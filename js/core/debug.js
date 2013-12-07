@@ -231,7 +231,7 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
             for (i = 0; i < players.length; i++) {
                 p = players[i];
                 contract = player.genContract(p);
-                output += player.value(p) + "," + contract.amount + "\n";
+                output += player.value(p) + "," + contract.amount + "," + _.last(p.ratings).ovr + "," + _.last(p.ratings).pot + "\n";
             }
             output += "</pre>";
 

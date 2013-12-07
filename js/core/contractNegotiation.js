@@ -24,7 +24,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
         console.log("Trying to start new contract negotiation with player " + pid);
         success = false;
 
-        if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.AFTER_DRAFT) && !resigning) {
+        if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) && !resigning) {
             return cb("You're not allowed to sign free agents now.");
         }
 

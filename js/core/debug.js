@@ -219,8 +219,29 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
         };
     }
 
+    function exportPlayerInfo() {
+        // All non-retired players
+        g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
+            var contract, i, output, p, players;
+
+            players = event.target.result;
+
+            output = "<pre>value,contract.amount\n";
+
+            for (i = 0; i < players.length; i++) {
+                p = players[i];
+                contract = player.genContract(p);
+                output += player.value(p) + "," + contract.amount + "\n";
+            }
+            output += "</pre>";
+
+            document.getElementById("league_content").innerHTML = output;
+        };
+    }
+
     return {
         regressRatingsPer: regressRatingsPer,
-        leagueAverageContract: leagueAverageContract
+        leagueAverageContract: leagueAverageContract,
+        exportPlayerInfo: exportPlayerInfo
     };
 });

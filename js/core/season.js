@@ -10,48 +10,44 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     /**
      * Update g.ownerMood based on performance this season.
      *
-     * This is based on three factors: regular season performance, playoff performance, and finances.
+     * This is based on three factors: regular season performance, playoff performance, and finances. Designed to be called after the playoffs end.
      * 
      * @memberOf core.season
      * @param {function(Object)} cb Callback function whose argument is an object containing the changes in g.ownerMood this season.
      */
     function updateOwnerMood(cb) {
-        if (g.season !== g.startingSeason) {
-            team.filter({
-                seasonAttrs: ["won", "playoffRoundsWon", "profit"],
-                season: g.season - 1,
-                tid: g.userTid
-            }, function (t) {
-                var deltas, ownerMood;
+        team.filter({
+            seasonAttrs: ["won", "playoffRoundsWon", "profit"],
+            season: g.season,
+            tid: g.userTid
+        }, function (t) {
+            var deltas, ownerMood;
 
-                deltas = {};
-                deltas.wins = 0.25 * (t.won - 41) / 41;
-                if (t.playoffRoundsWon < 0) {
-                    deltas.playoffs = -0.2;
-                } else if (t.playoffRoundsWon < 4) {
-                    deltas.playoffs = 0.04 * t.playoffRoundsWon;
-                } else {
-                    deltas.playoffs = 0.2;
-                }
-                deltas.money = (t.profit - 15) / 100;
+            deltas = {};
+            deltas.wins = 0.25 * (t.won - 41) / 41;
+            if (t.playoffRoundsWon < 0) {
+                deltas.playoffs = -0.2;
+            } else if (t.playoffRoundsWon < 4) {
+                deltas.playoffs = 0.04 * t.playoffRoundsWon;
+            } else {
+                deltas.playoffs = 0.2;
+            }
+            deltas.money = (t.profit - 15) / 100;
 
-                ownerMood = {};
-                ownerMood.wins = g.ownerMood.wins + deltas.wins;
-                ownerMood.playoffs = g.ownerMood.playoffs + deltas.playoffs;
-                ownerMood.money = g.ownerMood.money + deltas.money;
+            ownerMood = {};
+            ownerMood.wins = g.ownerMood.wins + deltas.wins;
+            ownerMood.playoffs = g.ownerMood.playoffs + deltas.playoffs;
+            ownerMood.money = g.ownerMood.money + deltas.money;
 
-                // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
-                if (ownerMood.wins > 1) { ownerMood.wins = 1; }
-                if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
-                if (ownerMood.money > 1) { ownerMood.money = 1; }
+            // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
+            if (ownerMood.wins > 1) { ownerMood.wins = 1; }
+            if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
+            if (ownerMood.money > 1) { ownerMood.money = 1; }
 
-                db.setGameAttributes({ownerMood: ownerMood}, function () {
-                    cb(deltas);
-                });
+            db.setGameAttributes({ownerMood: ownerMood}, function () {
+                cb(deltas);
             });
-        } else {
-            cb({wins: 0, playoffs: 0, money: 0});
-        }
+        });
     }
 
     /**
@@ -559,14 +555,28 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
     function newPhaseRegularSeason(cb) {
         team.checkRosterSizes(function (userTeamSizeError) {
+            var tx;
+
             // Only move to the next phase if the user's team size is ok
             if (userTeamSizeError === null) {
-                updateOwnerMood(function (deltas) {
-                    message.generate(deltas, function () {
-                        setSchedule(newSchedule(), function () {
+                setSchedule(newSchedule(), function () {
+                    if (g.showFirstOwnerMessage) {
+                        message.generate({wins: 0, playoffs: 0, money: 0}, function () {
                             newPhaseCb(g.PHASE.REGULAR_SEASON, cb);
                         });
-                    });
+                    } else {
+                        if (g.season === g.startingSeason + 3 && g.lid > 3 && !localStorage.nagged) {
+                            tx = g.dbl.transaction("messages", "readwrite");
+                            tx.objectStore("messages").add({
+                                read: false,
+                                from: "The Commissioner",
+                                year: g.season,
+                                text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.'
+                            });
+                            localStorage.nagged = true;
+                        }
+                        newPhaseCb(g.PHASE.REGULAR_SEASON, cb);
+                    }
                 });
             } else {
                 helpers.errorNotify(userTeamSizeError);
@@ -707,16 +717,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
         tx = g.dbl.transaction(["events", "messages", "players", "teams"], "readwrite");
 
-        if (g.season === g.startingSeason + 3 && g.lid > 3 && !localStorage.nagged) {
-            tx.objectStore("messages").add({
-                read: false,
-                from: "The Commissioner",
-                year: g.season,
-                text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.'
-            });
-            localStorage.nagged = true;
-        }
-
         // Add award for each player on the championship team
         team.filter({
             attrs: ["tid"],
@@ -838,13 +838,18 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                             url = helpers.leagueUrl(["history"]);
                         }
 
-                        newPhaseCb(g.PHASE.BEFORE_DRAFT, function () {
-                            if (cb !== undefined) {
-                                cb();
-                            }
 
-                            helpers.bbgmPing("season");
-                        }, url, ["playerMovement"]);
+                        updateOwnerMood(function (deltas) {
+                            message.generate(deltas, function () {
+                                newPhaseCb(g.PHASE.BEFORE_DRAFT, function () {
+                                    if (cb !== undefined) {
+                                        cb();
+                                    }
+
+                                    helpers.bbgmPing("season");
+                                }, url, ["playerMovement"]);
+                            });
+                        });
                     });
                 });
             };

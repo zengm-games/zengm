@@ -58,6 +58,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                     gTest.userTid.should.equal(0);
                     gTest.gameOver.should.equal(false);
                     gTest.daysLeft.should.equal(0);
+                    gTest.showFirstOwnerMessage.should.equal(true);
 
                     count = 0;
                     for (key in gTest) {
@@ -66,7 +67,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                         }
                     }
 
-                    count.should.equal(17);
+                    count.should.equal(18);
 
                     done();
                 };

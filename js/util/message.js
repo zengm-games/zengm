@@ -135,7 +135,7 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
     ];
     ovr[1] = [
         "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships.",
-        "You know, general managers aren't hired to be mediocre. Do better this year."
+        "You know, general managers aren't hired to be mediocre. Do better next year."
     ];
     ovr[2] = [
         "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}."
@@ -146,8 +146,9 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
 
         ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
 
-        if (g.season === g.startingSeason) {
+        if (g.showFirstOwnerMessage) {
             m = random.choice(first);
+            db.setGameAttributes({showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
         } else {
             activity1 = random.choice(activities);
             activity2 = random.choice(activities);
@@ -204,7 +205,7 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
                     "<p>" + random.choice(wins[indWins]) + " " + random.choice(playoffs[indPlayoffs]) + "</p>" +
                     "<p>" + random.choice(money[indMoney]) + "</p>" +
                     "<p>" + random.choice(ovr[indOvr]).replace("{{activity}}", activity2) + "</p>";
-            } else if ((g.season - g.startingSeason) < 4) {
+            } else if ((g.season - g.startingSeason) < 3) {
                 if (g.ownerMood.wins < 0 && g.ownerMood.playoffs < 0 && g.ownerMood.money < 0) {
                     m = "<p>What the hell did you do to my franchise?! I'd fire you, but I can't find anyone who wants to clean up your mess.</p>";
                 } else if (g.ownerMood.money < 0 && g.ownerMood.wins >= 0 && g.ownerMood.playoffs >= 0) {
@@ -239,9 +240,14 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
             if (ownerMoodSum > -1) {
                 cb();
             } else if ((g.season - g.startingSeason) < 3) {
+                // Can't get fired until after 4th season
                 cb();
             } else {
-                db.setGameAttributes({gameOver: true}, cb);
+                // Fired!
+                db.setGameAttributes({
+                    gameOver: true,
+                    showFirstOwnerMessage: true
+                }, cb);
             }
         };
     }

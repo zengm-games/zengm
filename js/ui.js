@@ -474,6 +474,10 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                         }
                     }
 
+                    if (someOptions.length > 0) {
+                        someOptions[0].label += ' <span class="text-muted pull-right">Alt+P</span>';
+                    }
+
                     g.vm.topMenu.options(someOptions);
 
                     if (cb !== undefined) {

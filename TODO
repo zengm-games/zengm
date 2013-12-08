@@ -4,9 +4,6 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 free agents going unsigned?
-  QUICK FIX: according to analysis/unsigned-free-agents, this probably happens as the pool of players increases and thus the average player quality increases. so maybe initialize new league with better players, and adjust contracts down? or make prospects worse? or some combination. should make those curves much closer, ideally
-    FIX player.value after tests
-  this doesn't happen initially (possibly due to incorrect initialization of players) but if you play for a decade or so it becomes painfully obvious
   salary cap exception? too complicated?
     how much?
     who gets it? only if over cap when free agency starts?
@@ -22,6 +19,7 @@ free agents going unsigned?
 bottom matter
   move about and advertise out of JS app and into root of domain?
   redo about page so it is more appropriate for an introduction from the root of the domain
+    link to twitter, reddit
 keyboard shortcuts
   alt+p
     shouldn't open menu
@@ -134,6 +132,7 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+fire GM before draft?
 Add markers for clinching playoffs / 1st seed in league standings
 Play > Read New Message should have effect immediately, so you can't quick click and see it twice
 trading block crashing bug
@@ -291,7 +290,6 @@ finances - too easy to make big $$$
 player morale - punishment for tanking
 player personality, team chemistry
 team colors, and uniforms in player icons
-fire GM before draft?
 harsher, more realistic luxury tax
 midlevel exception
 playerNameLabels should also put a little hover box over the player link with key stats/ratings

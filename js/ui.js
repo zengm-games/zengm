@@ -29,10 +29,13 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             });
         }
 
-        // The first time the Share tab is clicked, load all the social buttons
+        // The first time the Share tab is clicked, load all the social buttons. This is important because loading them
+        // on initial page load can make things appear slow and also interfere with Bootstrap dropdowns.
         $("#share .slide-out-handle").on("click", _.once(function () {
+            // Twitter
             !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
 
+            // Facebook
             (function(d, s, id) {
               var js, fjs = d.getElementsByTagName(s)[0];
               if (d.getElementById(id)) {return;}
@@ -41,11 +44,15 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
               fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));
 
+            // Google Plus
             (function() {
               var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
               po.src = 'https://apis.google.com/js/plusone.js';
               var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
             })();
+
+            // Reddit
+            document.getElementById("subreddit-btn").innerHTML = '<iframe src="http://jdscheff.github.io/subreddit-buttons/subreddit-btn.html?name=BasketballGM" allowtransparency="true" frameborder="0" scrolling="0" width="150" height="20"></iframe>';
         }));
 
         ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));

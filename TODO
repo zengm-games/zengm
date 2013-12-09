@@ -3,6 +3,11 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+keyboard shortcuts
+  alt+p
+    should be discoverable, somehow. hover? or next to item in dropdown, but in text-muted color?
+      http://stackoverflow.com/questions/20458998/left-and-right-aligned-text-on-the-same-line-in-a-bootstrap-dropdown
+  others? http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cdt4a4l?context=3
 free agents going unsigned?
   salary cap exception? too complicated?
     how much?
@@ -20,11 +25,6 @@ bottom matter
   move about and advertise out of JS app and into root of domain?
   redo about page so it is more appropriate for an introduction from the root of the domain
     link to twitter, reddit
-keyboard shortcuts
-  alt+p
-    should be discoverable, somehow. hover? or next to item in dropdown, but in text-muted color?
-      http://stackoverflow.com/questions/20458998/left-and-right-aligned-text-on-the-same-line-in-a-bootstrap-dropdown
-  others? http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cdt4a4l?context=3
 people shouldn't play 48 mins/game http://www.reddit.com/r/BasketballGM/comments/1rhavt/rarer_goat_players/
   tweak energy formula - FUCK when i tried before i had debug mode off
   add some fudge factor - if a player's been on the court for 12 minutes, give him a break
@@ -49,7 +49,6 @@ notification system
   merge "retired" and "HOF" notifications for a player on the user's team
 landing page
   http://agirlsaidmysmileiscute.webuda.com/
-reddit button onclick
 
 BIG NEW FEATURES
 ----------------

@@ -123,8 +123,6 @@ gameSim
     tweak perimFactor and synergyFactor.
   increase turnovers, particularly if perimFactor (or similar) is low
   increase fouls if perimFactor (or similar) is low
-  better foul logic - shouldn't just have big slow shot blockers fouling out
-    also, other players shouldn't get 0 fouls. make it a bit more evenly distributed
   assists should be function of speed, since those players have the ball more
 do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rookie_players_with_lots_100_skill_ratings/
 

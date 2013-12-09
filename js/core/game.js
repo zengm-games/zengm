@@ -455,7 +455,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
      * 
      * @memberOf core.game
      * @param {Object.<string, number>} ratings Player's ratings object.
-     * @param {Array.<string>} components List of player ratings to include in the composite ratings
+     * @param {Array.<string>} components List of player ratings to include in the composite ratings. In addition to the normal ones, "constant" is a constant value of 50 for every player, which can be used to add a baseline value for a stat.
      * @param {Array.<number>=} weights Optional array of weights used in the linear combination of components. If undefined, then all weights are assumed to be 1. If defined, this must be the same size as components.
      * @return {number} Composite rating, a number between 0 and 1.
      */
@@ -469,6 +469,8 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                 weights.push(1);
             }
         }
+
+        rating.constant = 50;
 
         r = 0;
         rmax = 0;
@@ -561,7 +563,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                         p.compositeRating.rebounding = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1.5, 0.1, 0.1, 0.7]);
                         p.compositeRating.stealing = _composite(rating, ['spd', 'stl']);
                         p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk'], [1.5, 0.5, 0.5]);
-                        p.compositeRating.fouling = _composite(rating, ['hgt', 'blk', 'spd'], [1, 1, -1]);
+                        p.compositeRating.fouling = _composite(rating, ['constant', 'hgt', 'blk', 'spd'], [1.5, 1, 1, -1]);
                         p.compositeRating.defense = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);
                         p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1]);
                         p.compositeRating.defensePerimeter = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'stl'], [1, 1, 2, 0.5, 1]);

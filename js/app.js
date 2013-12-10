@@ -124,8 +124,6 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
             this.get("/manual", views.manual.get);
             this.get("/manual/:page", views.manual.get);
             this.get("/changes", views.changes.get);
-            this.get("/about", views.staticPage("about", "About").get);
-            this.get("/advertise", views.staticPage("advertise", "Advertise").get);
 
             // League views
             this.get("/l/:lid", views.leagueDashboard.get);

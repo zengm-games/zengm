@@ -24,10 +24,6 @@ free agents going unsigned?
       flag in root of team object - exception available, exception used, exception not granted this season
   add some fucking market shit. calculate the salary demanded by free agents vs cap space available, then adjust free agent demands somehow
     this should be part of the daily updating. if everyone is capped out, drop all salaries to minimum.
-bottom matter
-  move about and advertise out of JS app and into root of domain?
-  redo about page so it is more appropriate for an introduction from the root of the domain
-    link to twitter, reddit
 people shouldn't play 48 mins/game http://www.reddit.com/r/BasketballGM/comments/1rhavt/rarer_goat_players/
   tweak energy formula - FUCK when i tried before i had debug mode off
   add some fudge factor - if a player's been on the court for 12 minutes, give him a break

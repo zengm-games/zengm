@@ -200,6 +200,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             }
 
             for (i = start; i <= p.contract.exp; i++) {
+console.log(i);
                 p.salaries.push({season: i, amount: contract.amount});
             }
         }

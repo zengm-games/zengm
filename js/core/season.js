@@ -921,8 +921,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                                 }
 
                                 if (Math.random() < player.value(p) / 100 - factor) { // Should eventually be smarter than a coin flip
-                                    p = player.setContract(p, player.genContract(p), true);
-                                    p.contract.exp += 1; // Otherwise contracts could expire this season
+                                    contract = player.genContract(p);
+                                    contract.exp += 1; // Otherwise contracts could expire this season
+                                    p = player.setContract(p, contract, true);
                                     cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
                                 } else {
                                     player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, baseMoods);

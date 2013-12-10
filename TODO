@@ -3,6 +3,12 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+trade improvements
+  AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
+    part of it should be looking ahead to see what the next contract will be
+      maybe implement valueWithContract? have that be team-dependent
+  balance
+    young players undervalued http://www.reddit.com/r/BasketballGM/comments/1sa9n4/this_team_isnt_even_fair/cdvm3ag
 keyboard shortcuts
   alt+p
     should be discoverable, somehow. hover? or next to item in dropdown, but in text-muted color?
@@ -54,11 +60,6 @@ BIG NEW FEATURES
 ----------------
 
 trade improvements
-  balance
-    young players undervalued http://www.reddit.com/r/BasketballGM/comments/1sa9n4/this_team_isnt_even_fair/cdvm3ag
-  AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
-    part of it should be looking ahead to see what the next contract will be
-      maybe implement valueWithContract? have that be team-dependent
   refactor trade module with all the below in mind
     clean up even more?
       should create and updatePlayers be merged? updatePlayers already updates tids too

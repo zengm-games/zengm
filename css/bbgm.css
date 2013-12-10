@@ -107,6 +107,20 @@ footer {
   border-top-color: #fff;
 }
 
+/* This is for keyboard shortcuts in dropdowns */
+.dropdown-menu > li > a {
+  position: relative;
+  padding-right: 70px;
+}
+.dropdown-menu > li > a > span.kbd {
+  position: absolute;
+  right: 20px;
+  top: 3px;
+}
+.dropdown-menu > li > a:hover > .text-muted {
+  color: #ccc;
+}
+
 ul.dashboard-boxes {
   list-style: none;
   margin: 0 -1em 0 0;

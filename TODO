@@ -3,17 +3,14 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+http://www.reddit.com/r/BasketballGM/comments/1sarll/open_source/cdxx3ql
 trade improvements
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
     part of it should be looking ahead to see what the next contract will be
       maybe implement valueWithContract? have that be team-dependent
   balance
     young players undervalued http://www.reddit.com/r/BasketballGM/comments/1sa9n4/this_team_isnt_even_fair/cdvm3ag
-keyboard shortcuts
-  alt+p
-    should be discoverable, somehow. hover? or next to item in dropdown, but in text-muted color?
-      http://stackoverflow.com/questions/20458998/left-and-right-aligned-text-on-the-same-line-in-a-bootstrap-dropdown
-  others? http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cdt4a4l?context=3
+keyboard shortcuts - others? http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cdt4a4l?context=3
 free agents going unsigned?
   salary cap exception? too complicated?
     how much?

@@ -376,6 +376,11 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             select2.change(function (event) {
                 var extraParam, league_page, league_root_url, result, url;
 
+                // UGLY HACK: Stop event handling if it looks like this is a season dropdown and a new season is starting. Otherwise you get double refreshes, often pointing to the previous year, since updating the season dropdown is interpreted as a "change"
+                if (parseInt(document.querySelector(".bbgm-dropdown .seasons").lastChild.value, 10) < g.season) {
+                    return;
+                }
+
                 extraParam = select2.parent()[0].dataset.extraParam;
                 result = parseLeagueUrl(document.URL);
                 league_root_url = result[1];

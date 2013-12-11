@@ -163,7 +163,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var arg = valueAccessor();
             return ko.bindingHandlers.html.update(element, function () {
-                return '<form id="' + arg + '-dropdown" class="form-inline pull-right" role="form">' +
+                return '<form id="' + arg + '-dropdown" class="form-inline pull-right bbgm-dropdown" role="form">' +
                        '<!-- ko foreach: fields -->' +
                          '<div class="form-group" style="margin-left: 4px; margin-bottom: 4px;">' +
                          '<select data-bind="attr: {id: id, class: \'form-control \' + name}, options: options, optionsText: \'val\', optionsValue: \'key\', value: selected">' +

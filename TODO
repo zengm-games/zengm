@@ -3,8 +3,6 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-show annual ratings changes in roster page http://www.reddit.com/r/BasketballGM/comments/1sktrz/suggestion_show_ovrpot_changes_on_roster_page/cdys78r
-  real dpot and dovr in player.filter. return 0 if no history.
 http://www.reddit.com/r/BasketballGM/comments/1sarll/open_source/cdxx3ql
 trade improvements
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/

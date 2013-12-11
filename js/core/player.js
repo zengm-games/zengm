@@ -939,7 +939,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         // Copys/filters the ratings listed in options.ratings from p to fp.
         filterRatings = function (fp, p, options) {
-            var hasStats, i, j, k, kk, pr, tidTemp;
+            var cat, hasStats, i, j, k, kk, pr, tidTemp;
 
             if (options.season !== null) {
                 // One season
@@ -957,12 +957,18 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
                 if (options.ratings.length > 0) {
                     fp.ratings = {};
-                    for (j = 0; j < options.ratings.length; j++) {
-                        fp.ratings[options.ratings[j]] = pr[options.ratings[j]];
-                        if (options.ratings[j] === "dovr" || options.ratings[j] === "dpot") {
-                            fp.ratings[options.ratings[j]] = -2;
-                        } else if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills" && options.ratings[j] !== "hgt") {
-                            fp.ratings[options.ratings[j]] = Math.round(helpers.bound(fp.ratings[options.ratings[j]] + pr.fuzz, 0, 100));
+                    for (k = 0; k < options.ratings.length; k++) {
+                        fp.ratings[options.ratings[k]] = pr[options.ratings[k]];
+                        if (options.ratings[k] === "dovr" || options.ratings[k] === "dpot") {
+                            // Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
+                            cat = options.ratings[k].slice(1); // either ovr or pot
+                            if (j > 0) {
+                                fp.ratings[options.ratings[k]] = Math.round(helpers.bound(p.ratings[j][cat] + p.ratings[j].fuzz, 0, 100)) - Math.round(helpers.bound(p.ratings[j - 1][cat] + p.ratings[j - 1].fuzz, 0, 100));;
+                            } else {
+                                fp.ratings[options.ratings[k]] = 0;
+                            }
+                        } else if (options.fuzz && options.ratings[k] !== "fuzz" && options.ratings[k] !== "season" && options.ratings[k] !== "skills" && options.ratings[k] !== "hgt") {
+                            fp.ratings[options.ratings[k]] = Math.round(helpers.bound(fp.ratings[options.ratings[k]] + pr.fuzz, 0, 100));
                         }
                     }
                 }

@@ -115,6 +115,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
                     fuzz: true
                 });
 
+                // See views.freeAgents for moods as well
                 if (p.freeAgentMood[g.userTid] < 0.25) {
                     p.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';
                 } else if (p.freeAgentMood[g.userTid] < 0.5) {

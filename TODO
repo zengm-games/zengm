@@ -4,8 +4,7 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 show annual ratings changes in roster page http://www.reddit.com/r/BasketballGM/comments/1sktrz/suggestion_show_ovrpot_changes_on_roster_page/cdys78r
-  green (up) or red (down) with the number ovr and pot changed, in parentheses
-  dpot and dovr should be obtainable from player.filter, but it looks like a mess now
+  real dpot and dovr in player.filter. return 0 if no history.
 http://www.reddit.com/r/BasketballGM/comments/1sarll/open_source/cdxx3ql
 trade improvements
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
@@ -127,6 +126,7 @@ MINOR FIXES
 -----------
 
 in player page, show red/green for ratings changes from the previous year
+in ratings tables, show dpot and dovr columns? maybe?
 more owner messages - crowdsource? especially intro
 Add markers for clinching playoffs / 1st seed in league standings
 Play > Read New Message should have effect immediately, so you can't quick click and see it twice

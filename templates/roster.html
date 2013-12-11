@@ -28,8 +28,8 @@
         <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills]"></td>
         <td data-bind="text: pos"></td>
         <td data-bind="text: age"></td>
-        <td data-bind="text: ratings.ovr"></td>
-        <td data-bind="text: ratings.pot"></td>
+        <td><span data-bind="text: ratings.ovr"></span><span data-bind="visible: ratings.dovr() !== 0, css: { 'text-success': ratings.dovr() > 0, 'text-danger': ratings.dovr() < 0 }"> (<span data-bind="text: ratings.dovr() > 0 ? '+' : ''"></span><span data-bind="text: ratings.dovr"></span>)</span></td>
+        <td><span data-bind="text: ratings.pot"></span><span data-bind="visible: ratings.dpot() !== 0, css: { 'text-success': ratings.dpot() > 0, 'text-danger': ratings.dpot() < 0 }"> (<span data-bind="text: ratings.dpot() > 0 ? '+' : ''"></span><span data-bind="text: ratings.dpot"></span>)</span></td>
         <td data-bind="visible: $parent.isCurrentSeason">
           <span data-bind="currency: [contract.amount, 'M']"></span> thru <span data-bind="text: contract.exp"></span>
         </td>

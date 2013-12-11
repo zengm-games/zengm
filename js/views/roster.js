@@ -222,7 +222,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 vars.team = t;
 
                 attrs = ["pid", "tid", "draft", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier"];  // tid and draft are used for checking if a player can be released without paying his salary
-                ratings = ["ovr", "pot", "skills"];
+                ratings = ["ovr", "pot", "dovr", "dpot", "skills"];
                 stats = ["gp", "min", "pts", "trb", "ast", "per"];
 
                 if (inputs.season === g.season) {

@@ -959,7 +959,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     fp.ratings = {};
                     for (j = 0; j < options.ratings.length; j++) {
                         fp.ratings[options.ratings[j]] = pr[options.ratings[j]];
-                        if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills" && options.ratings[j] !== "hgt") {
+                        if (options.ratings[j] === "dovr" || options.ratings[j] === "dpot") {
+                            fp.ratings[options.ratings[j]] = -2;
+                        } else if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills" && options.ratings[j] !== "hgt") {
                             fp.ratings[options.ratings[j]] = Math.round(helpers.bound(fp.ratings[options.ratings[j]] + pr.fuzz, 0, 100));
                         }
                     }
@@ -968,7 +970,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 // All seasons
                 fp.ratings = [];
                 for (k = 0; k < p.ratings.length; k++) {
-                    // If a specific tid was requested, only return ratings is a stat was accumulated for that tid
+                    // If a specific tid was requested, only return ratings if a stat was accumulated for that tid
                     if (options.tid !== null) {
                         hasStats = false;
                         for (j = 0; j < p.stats.length; j++) {

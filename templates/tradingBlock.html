@@ -32,6 +32,7 @@
 <!--ko foreach: offers-->
   <div class="trading-block-offer">
     <h3>Offer <span data-bind="text: $index() + 1"></span>: <span data-bind="text: region"></span> <span data-bind="text: name"></span></h3>
+    <p class="text-danger" data-bind="text: warning"></p>
     <div class="row" style="clear: both">
       <!--ko if: players().length > 0 -->
       <div class="col-lg-9 col-md-8">

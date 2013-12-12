@@ -61,7 +61,7 @@ trade improvements
     HOW?
     team.valueChange could be made fast if I allow an extra argument to pass pre-fetched values from the database
     quick fix: check box to only look for teams under the cap http://www.reddit.com/r/BasketballGM/comments/1qh107/proposed_trades_question/
-    at least show salary warning on trading block
+  trading block should show record, strategy, and conf rank of teams
   trades between AI teams
     call team.checkRosterSizes after this if it's in between days
   trade deadline
@@ -164,7 +164,7 @@ show attendance in box score
 security
   validate any user-added content, like custom team names (both in file and through form), custom players, and league names
 in playoffs, replace "play week" with "play until end of round"
-"Watch list" of players the user is interested in
+"Watch list" of players the user is interested in, mainly for free agency
 IE11 testing
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
 reorganize top menu

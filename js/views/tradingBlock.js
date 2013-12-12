@@ -44,11 +44,15 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
 
                 if (tid !== g.userTid) {
                     trade.makeItWork(teams, true, function (found, teams) {
-console.log(found);
                         if (found) {
-                            offers.push(teams[1]);
+                            trade.summary(teams, function (summary) {
+                                teams[1].warning = summary.warning;
+                                offers.push(teams[1]);
+                                afterOffers();
+                            });
+                        } else {
+                            afterOffers();
                         }
-                        afterOffers();
                     });
                 }
             }(tids[i]));
@@ -189,7 +193,8 @@ console.log(found);
                             region: g.teamRegionsCache[tid],
                             name: g.teamNamesCache[tid],
                             pids: inputs.offers[i].pids,
-                            dpids: inputs.offers[i].dpids
+                            dpids: inputs.offers[i].dpids,
+                            warning: inputs.offers[i].warning
                         };
 
                         tx.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {

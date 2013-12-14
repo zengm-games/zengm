@@ -33,7 +33,6 @@ requirejs.config({
             deps: ["lib/davis"]
         },
         "lib/faces": {
-            deps: ["lib/raphael"],
             exports: "faces"
         },
         "lib/html5-dataset": {},
@@ -61,9 +60,6 @@ requirejs.config({
         },
         "lib/jquery-ui.touch-punch": {
             deps: ["lib/jquery-ui"]
-        },
-        "lib/raphael": {
-            exports: "Raphael"
         },
         "lib/underscore": {
             exports: "_"

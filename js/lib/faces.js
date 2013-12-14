@@ -1,246 +1,310 @@
-/*global Raphael: false */
-
-var faces = (function (Raphael) {
+var faces = (function () {
     "use strict";
 
     var eye = [], eyebrow = [], hair = [], head = [], mouth = [], nose = [];
 
+    function newPath(paper) {
+        var e;
+        e = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        paper.appendChild(e);
+        return e;
+    }
+
+    // Rotate around center of bounding box of element e, like in Raphael.
+    function rotateCentered(e, angle) {
+        var bbox, cx, cy;
+
+        bbox = e.getBBox(1);
+        cx = bbox.x + bbox.width / 2;
+        cy = bbox.y + bbox.height / 2;
+        e.setAttribute("transform", "rotate(" + angle + " " + cx + " " + cy + ")");
+    }
+
+    // Scale relative to the center of bounding box of element e, like in Raphael.
+    // Set x and y to 1 and this does nothing. Higher = bigger, lower = smaller.
+    function scaleCentered(e, x, y) {
+        var bbox, cx, cy, strokeWidth, tx, ty;
+
+        bbox = e.getBBox(1);
+        cx = bbox.x + bbox.width / 2;
+        cy = bbox.y + bbox.height / 2;
+        tx = (cx * (1 - x)) / x;
+        ty = (cy * (1 - y)) / y;
+
+        e.setAttribute("transform", "scale(" + x + " " + y + "), translate(" + tx + " " + ty + ")");
+
+        // Keep apparent stroke width constant, similar to how Raphael does it (I think)
+        strokeWidth = e.getAttribute("stroke-width");
+        if (strokeWidth) {
+            e.setAttribute("stroke-width", strokeWidth / Math.abs(x));
+        }
+    }
+
+    // Defines the range of fat/skinny, relative to the original width of the default head.
+    function fatScale(fatness) {
+        return 0.75 + 0.25 * fatness;
+    }
+
     head.push(function (paper, fatness, color) {
-        paper.path("M 200,100"
-                 + "c 0,0 180,-10 180,200"
-                 + "c 0,0 0,210 -180,200"
-                 + "c 0,0 -180,10 -180,-200"
-                 + "c 0,0 0,-210 180,-200")
-             .attr({"stroke-width": 0,
-                    fill: color})
-             .transform("s " + (0.75 + 0.25 * fatness) + ",1");
+        var e;
+
+        e = newPath(paper);
+        e.setAttribute("d", "M 200,100" +
+                       "c 0,0 180,-10 180,200" +
+                       "c 0,0 0,210 -180,200" +
+                       "c 0,0 -180,10 -180,-200" +
+                       "c 0,0 0,-210 180,-200");
+        e.setAttribute("fill", color);
+        scaleCentered(e, fatScale(fatness), 1);
     });
 
     eyebrow.push(function (paper, lr, cx, cy) {
         var e, x = cx - 30, y = cy;
 
+        e = newPath(paper);
         if (lr === "l") {
-            e = paper.path("M " + x + "," + y
-                         + "c 0,0 -3,-30 60,0");
+            e.setAttribute("d", "M " + x + "," + y +
+                           "c 0,0 -3,-30 60,0");
         } else {
-            e = paper.path("M " + x + "," + y
-                         + "c 0,0 63,-30 60,0");
+            e.setAttribute("d", "M " + x + "," + y +
+                           "c 0,0 63,-30 60,0");
         }
-
-        e.attr({"stroke-width": 8});
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "8");
+        e.setAttribute("fill", "none");
     });
 
     eye.push(function (paper, lr, cx, cy, angle) {
         // Horizontal
+        var e, x = cx - 30, y = cy;
 
-        var x = cx - 30, y = cy;
-
-        paper.path("M " + x + "," + y
-                 + "h 60")
-             .attr({"stroke-width": 8})
-             .transform("r" + (lr === "l" ? angle : -angle));
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + y +
+                       "h 60");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "8");
+        e.setAttribute("fill", "none");
+        rotateCentered(e, (lr === "l" ? angle : -angle));
     });
     eye.push(function (paper, lr, cx, cy, angle) {
         // Normal (circle with a dot in it)
+        var e, x = cx, y = cy + 20;
 
-        var x = cx, y = cy + 20;
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + y +
+                       "a 30,20 0 1 1 0.1,0");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "6");
+        e.setAttribute("fill", "#f0f0f0");
+        rotateCentered(e, (lr === "l" ? angle : -angle));
 
-        paper.path("M " + x + "," + y
-                 + "a 30,20 0 1 1 0.1,0")
-             .attr({"stroke-width": 6,
-                    fill: "#f0f0f0"})
-             .transform("r" + (lr === "l" ? angle : -angle));
-
-        paper.path("M " + x + "," + (y - 12)
-                 + "a 12,8 0 1 1 0.1,0")
-             .attr({"stroke-width": 0,
-                    fill: "#000"})
-             .transform("r" + (lr === "l" ? angle : -angle));
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + (y - 12) +
+                       "a 12,8 0 1 1 0.1,0");
+        rotateCentered(e, (lr === "l" ? angle : -angle));
     });
     eye.push(function (paper, lr, cx, cy, angle) {
         // Dot
+        var e, x = cx, y = cy + 13;
 
-        var x = cx, y = cy + 13;
-
-        paper.path("M " + x + "," + y
-                 + "a 20,15 0 1 1 0.1,0")
-             .attr({"stroke-width": 0,
-                    fill: "#000"})
-             .transform("r" + (lr === "l" ? angle : -angle));
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + y +
+                       "a 20,15 0 1 1 0.1,0");
+        rotateCentered(e, (lr === "l" ? angle : -angle));
     });
     eye.push(function (paper, lr, cx, cy, angle) {
         // Arc eyelid
+        var e, x = cx, y = cy + 20;
 
-        var x = cx, y = cy + 20;
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + y +
+                       "a 17,17 0 1 1 0.1,0 z");
+        rotateCentered(e, (lr === "l" ? angle : -angle));
 
-        paper.path("M " + x + "," + y
-                 + "a 17,17 0 1 1 0.1,0 z")
-             .attr({"stroke-width": 0,
-                    fill: "#000"})
-             .transform("r" + (lr === "l" ? angle : -angle));
-
-        paper.path("M " + (x - 40) + "," + (y - 14)
-                 + "c 36,-44 87,-4 87,-4")
-             .attr({"stroke-width": 4})
-             .transform("r" + (lr === "l" ? angle : -angle));
+        e = newPath(paper);
+        e.setAttribute("d", "M " + (x - 40) + "," + (y - 14) +
+                       "c 36,-44 87,-4 87,-4");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "4");
+        e.setAttribute("fill", "none");
+        rotateCentered(e, (lr === "l" ? angle : -angle));
     });
 
     nose.push(function (paper, cx, cy, size, posY, flip) {
         // V
-
         var e, x = cx - 30, y = cy, scale = size + 0.5;
 
-        e = paper.path("M " + x + "," + y
-                     + "l 30,30"
-                     + "l 30,-30")
-                 .attr({"stroke-width": 8})
-                 .transform("s " + scale + "," + scale);
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + y +
+                       "l 30,30" +
+                       "l 30,-30");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "8");
+        e.setAttribute("fill", "none");
+        scaleCentered(e, scale, scale);
     });
     nose.push(function (paper, cx, cy, size, posY, flip) {
         // Pinnochio
-
         var e, x = cx, y = cy - 10, scale = size + 0.5;
 
-        e = paper.path("M " + x + "," + y
-                     + "c 0,0 50,-30 0,30")
-                 .attr({"stroke-width": 8});
-
+        e = newPath(paper);
+        e.setAttribute("d", "M " + (flip ? x - 48 : x) + "," + y +
+                       "c 0,0 50,-30 0,30");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "8");
+        e.setAttribute("fill", "none");
         if (flip) {
-            e.transform("t -24,0 s -" + scale + "," + scale);
+            scaleCentered(e, -scale, scale);
         } else {
-            e.transform("s " + scale + "," + scale);
+            scaleCentered(e, scale, scale);
         }
     });
     nose.push(function (paper, cx, cy, size, posY, flip) {
         // Big single
-
         var e, x = cx - 9, y = cy - 25, scale = size + 0.5;
 
-        e = paper.path("M " + x + "," + y
-                     + "c 0,0 -20,60 9,55"
-                     + "c 0,0 29,5 9,-55")
-                 .attr({"stroke-width": 8})
-                 .transform("s " + scale + "," + scale);
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + y +
+                       "c 0,0 -20,60 9,55" +
+                       "c 0,0 29,5 9,-55");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "8");
+        e.setAttribute("fill", "none");
+        scaleCentered(e, scale, scale);
     });
 
     mouth.push(function (paper, cx, cy) {
         // Thin smile
+        var e, x = cx - 75, y = cy - 15;
 
-        var x = cx - 75, y = cy - 15;
-
-        paper.path("M " + x + "," + y
-                 + "c 0,0 75,60 150,0")
-             .attr({"stroke-width": 8});
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + y +
+                       "c 0,0 75,60 150,0");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "8");
+        e.setAttribute("fill", "none");
     });
     mouth.push(function (paper, cx, cy) {
         // Thin flat
+        var e, x = cx - 55, y = cy;
 
-        var x = cx - 55, y = cy;
-
-        paper.path("M " + x + "," + y
-                 + "h 110")
-             .attr({"stroke-width": 8});
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + y +
+                       "h 110");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "8");
+        e.setAttribute("fill", "none");
     });
     mouth.push(function (paper, cx, cy) {
         // Open-mouthed smile, top teeth
+        var e, x = cx - 75, y = cy - 15;
 
-        var x = cx - 75, y = cy - 15;
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + y +
+                       "c 0,0 75,100 150,0" +
+                       "h -150");
 
-        paper.path("M " + x + "," + y
-                 + "c 0,0 75,100 150,0"
-                 + "h -150")
-             .attr({fill: "#000"});
-        paper.path("M " + (x + 16) + "," + (y + 8)
-                 + "l 16,16"
-                 + "h 86"
-                 + "l 16,-16"
-                 + "h -118")
-             .attr({fill: "#f0f0f0"});
+        e = newPath(paper);
+        e.setAttribute("d", "M " + (x + 16) + "," + (y + 8) +
+                       "l 16,16" +
+                       "h 86" +
+                       "l 16,-16" +
+                       "h -118");
+        e.setAttribute("fill", "#f0f0f0");
     });
     mouth.push(function (paper, cx, cy) {
         // Generic open mouth
+        var e, x = cx - 55, y = cy;
 
-        var x = cx - 55, y = cy;
-
-        paper.path("M " + x + "," + y
-                 + "a 54,10 0 1 1 110,0"
-                 + "a 54,20 0 1 1 -110,0")
-             .attr({"stroke-width": 0,
-                    fill: "#000"});
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + y +
+                       "a 54,10 0 1 1 110,0" +
+                       "a 54,20 0 1 1 -110,0");
     });
     mouth.push(function (paper, cx, cy) {
         // Thin smile with ends
+        var e, x = cx - 75, y = cy - 15;
 
-        var x = cx - 75, y = cy - 15;
+        e = newPath(paper);
+        e.setAttribute("d", "M " + x + "," + y +
+                       "c 0,0 75,60 150,0");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "8");
+        e.setAttribute("fill", "none");
 
-        paper.path("M " + x + "," + y
-                 + "c 0,0 75,60 150,0")
-             .attr({"stroke-width": 8});
+        e = newPath(paper);
+        e.setAttribute("d", "M " + (x + 145) + "," + (y + 19) +
+                       "c 15.15229,-18.18274 3.03046,-32.32488 3.03046,-32.32488");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "8");
+        e.setAttribute("fill", "none");
 
-        paper.path("M " + (x + 145) + "," + (y + 19)
-                 + "c 15.15229,-18.18274 3.03046,-32.32488 3.03046,-32.32488")
-             .attr({"stroke-width": 8});
-
-        paper.path("M " + (x + 5) + "," + (y + 19)
-                 + "c -15.15229,-18.18274 -3.03046,-32.32488 -3.03046,-32.32488")
-             .attr({"stroke-width": 8});
+        e = newPath(paper);
+        e.setAttribute("d", "M " + (x + 5) + "," + (y + 19) +
+                       "c -15.15229,-18.18274 -3.03046,-32.32488 -3.03046,-32.32488");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-width", "8");
+        e.setAttribute("fill", "none");
     });
 
     hair.push(function (paper, fatness) {
         // Normal short
+        var e;
 
-        paper.path("M 200,100"
-                 + "c 0,0 180,-10 176,150"
-                 + "c 0,0 -180,-150 -352,0"
-                 + "c 0,0 0,-160 176,-150")
-             .attr({"stroke-width": 0,
-                    fill: "#000"})
-             .transform("s " + (0.75 + 0.25 * fatness) + ",1");
+        e = newPath(paper);
+        e.setAttribute("d", "M 200,100" +
+                       "c 0,0 180,-10 176,150" +
+                       "c 0,0 -180,-150 -352,0" +
+                       "c 0,0 0,-160 176,-150");
+        scaleCentered(e, fatScale(fatness), 1);
     });
     hair.push(function (paper, fatness) {
         // Flat top
+        var e;
 
-        paper.path("M 25,60"
-                 + "h 352"
-                 + "v 190"
-                 + "c 0,0 -180,-150 -352,0"
-                 + "v -190")
-             .attr({"stroke-width": 0,
-                    fill: "#000"})
-             .transform("s " + (0.75 + 0.25 * fatness) + ",1");
+        e = newPath(paper);
+        e.setAttribute("d", "M 25,60" +
+                       "h 352" +
+                       "v 190" +
+                       "c 0,0 -180,-150 -352,0" +
+                       "v -190");
+        scaleCentered(e, fatScale(fatness), 1);
     });
     hair.push(function (paper, fatness) {
         // Afro
+        var e;
 
-        paper.path("M 25,250"
-                 + "a 210,150 0 1 1 352,0"
-                 + "c 0,0 -180,-150 -352,0")
-             .attr({"stroke-width": 0,
-                    fill: "#000"})
-             .transform("s " + (0.75 + 0.25 * fatness) + ",1");
+        e = newPath(paper);
+        e.setAttribute("d", "M 25,250" +
+                       "a 210,150 0 1 1 352,0" +
+                       "c 0,0 -180,-150 -352,0");
+        scaleCentered(e, fatScale(fatness), 1);
     });
     hair.push(function (paper, fatness) {
         // Cornrows
+        var e;
 
-        paper.path("M 36,229"
-                 + "v -10"
-                 + "m 40,-10"
-                 + "v -60"
-                 + "m 50,37"
-                 + "v -75"
-                 + "m 50,65"
-                 + "v -76"
-                 + "m 50,76"
-                 + "v -76"
-                 + "m 50,93"
-                 + "v -75"
-                 + "m 50,92"
-                 + "v -60"
-                 + "m 40,80"
-                 + "v -10")
-             .attr({"stroke-width": 22,
-                    "stroke-linecap": "round"})
-             .transform("s " + (0.75 + 0.25 * fatness) + ",1");
+        e = newPath(paper);
+        e.setAttribute("d", "M 36,229" +
+                       "v -10" +
+                       "m 40,-10" +
+                       "v -60" +
+                       "m 50,37" +
+                       "v -75" +
+                       "m 50,65" +
+                       "v -76" +
+                       "m 50,76" +
+                       "v -76" +
+                       "m 50,93" +
+                       "v -75" +
+                       "m 50,92" +
+                       "v -60" +
+                       "m 40,80" +
+                       "v -10");
+        e.setAttribute("stroke", "#000");
+        e.setAttribute("stroke-linecap", "round");
+        e.setAttribute("stroke-width", "22");
+        scaleCentered(e, fatScale(fatness), 1);
     });
     hair.push(function (paper, fatness) {
         // Intentionally left blank (bald)
@@ -257,24 +321,20 @@ var faces = (function (Raphael) {
      * @param {Object} face Face object, such as one generated from faces.generate.
      */
     function display(container, face) {
-        var h, paper, w;
+        var paper;
 
         container = document.getElementById(container);
         container.innerHTML = "";
-        if (container.offsetWidth > 0) {
-            w = container.offsetWidth;
-        } else {
-            w = 400;
-        }
-        if (container.offsetHeight > 0) {
-            h = container.offsetHeight;
-        } else {
-            h = w * 3 / 2;
-        }
 
-        paper = new Raphael(container, w, h);
-        paper.canvas.setAttribute("viewBox", "0 0 400 600");
-        paper.canvas.setAttribute("preserveAspectRatio", "xMinYMin meet");
+        paper = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        paper.setAttribute("version", "1.2");
+        paper.setAttribute("baseProfile", "tiny");
+        paper.setAttribute("width", "100%");
+        paper.setAttribute("height", "100%");
+        paper.setAttribute("viewBox", "0 0 400 600");
+        paper.setAttribute("preserveAspectRatio", "xMinYMin meet");
+        container.appendChild(paper);
+
         head[face.head.id](paper, face.fatness, face.color);
         eyebrow[face.eyebrows[0].id](paper, face.eyebrows[0].lr, face.eyebrows[0].cx, face.eyebrows[0].cy);
         eyebrow[face.eyebrows[1].id](paper, face.eyebrows[1].lr, face.eyebrows[1].cx, face.eyebrows[1].cy);
@@ -294,7 +354,7 @@ var faces = (function (Raphael) {
      * @return {Object} Randomly generated face object.
      */
     function generate(container) {
-        var angle, colors, face, flip, i, id, paper;
+        var angle, colors, face, flip, id, paper;
 
         face = {head: {}, eyebrows: [{}, {}], eyes: [{}, {}], nose: {}, mouth: {}, hair: {}};
         face.fatness = Math.random();
@@ -330,4 +390,4 @@ var faces = (function (Raphael) {
         display: display,
         generate: generate
     };
-}(Raphael));
+}());

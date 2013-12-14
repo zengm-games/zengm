@@ -3,6 +3,8 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+show +/- ratings on other pages http://www.reddit.com/r/BasketballGM/comments/1sktrz/suggestion_show_ovrpot_changes_on_roster_page/cdzoyvj
+  basically everywhere that ovr and pot are shown
 http://www.reddit.com/r/BasketballGM/comments/1sarll/open_source/cdxx3ql
 trade improvements
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
@@ -169,6 +171,7 @@ IE11 testing
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
 reorganize top menu
 not all ratings should deteriorate equally with age (e.g. 3 point shooting)
+http://code.google.com/p/htmlcompressor/ or something similar
 
 LOW PRIORITY
 ------------
@@ -291,7 +294,6 @@ draft
   randomness in picks should factor in relative ratings http://www.reddit.com/r/BasketballGM/comments/1l1713/the_draft_still_needs_some_work_it_seems_my/cbutw7v?context=1
   there should be some indication about the quality of upcoming drafts, which would influence how players/AI value draft picks
   somehow allow uploading of custom draft classes
-"rookie contracts" when a new game is started should be bounded at 5 million. so do bound at 20 million before dividing by 4.
 sourcemaps putting blank line in front of each file?
 trades between AI teams
   each day, pick two random teams. if a trade can be found that both teams like, do it
@@ -318,7 +320,6 @@ trades
       "I need to cut my payroll and start making more money."
       "I could really use a good rebounder."
 all star game
-switch teams after you're fired
 trades
   sign and trade (only during resigning phase)
 profits too large, too easy
@@ -350,7 +351,6 @@ how to handle aggregating stats for players who played for more than one team in
     no pass tid and you only get the latest row. need added logic to do sum
   for player view, want separate and combined rows in careerStats without fucking up totals (including PER)
     no pass tid and you get each team separately, but no merged stats as above
-better default league name
 contracts
   maybe make them nonlinear.. role players lower, stars higher
     compare to NBA contract distribution
@@ -531,7 +531,6 @@ bbgmView
     (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
   use req.redirect from POST to manage history optimally
   make it less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
-http://code.google.com/p/htmlcompressor/ or something similar
 player.filter
   the special case attributes should generally be moved directly into the database?
 views.teamFinances should merge db call with team.filter to get seasonAttrs, but that will require rewriting seasonAttrs handling in team.filter to handle multiple seasons.

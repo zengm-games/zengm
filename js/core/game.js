@@ -176,6 +176,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                 } else if (att < 0) {
                     att = 0;
                 }
+                that.att = Math.round(att);
                 ticketRevenue = t.budget.ticketPrice.amount * att / 1000;  // [thousands of dollars]
 
                 // Hype - relative to the expectations of prior seasons
@@ -207,7 +208,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                 revenue = merchRevenue + sponsorRevenue + nationalTvRevenue + localTvRevenue + ticketRevenue;
                 expenses = salaryPaid + scoutingPaid + coachingPaid + healthPaid + facilitiesPaid;
                 teamSeason.cash += revenue - expenses;
-                teamSeason.att += att;
+                teamSeason.att += that.att;
                 teamSeason.gp += 1;
                 teamSeason.revenues.merch.amount += merchRevenue;
                 teamSeason.revenues.sponsor.amount += sponsorRevenue;
@@ -291,7 +292,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
     Game.prototype.writeGameStats = function (tx, cb) {
         var gameStats, i, keys, p, t, text, that, tl, tw;
 
-        gameStats = {gid: this.id, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
+        gameStats = {gid: this.id, att: this.att, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
         for (t = 0; t < 2; t++) {
             keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts', 'ptsQtrs'];
             for (i = 0; i < keys.length; i++) {

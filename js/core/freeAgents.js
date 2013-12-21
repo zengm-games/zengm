@@ -91,7 +91,9 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
                                     if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
                                         p = players[i];
                                         p.tid = tid;
-                                        p = player.addStatsRow(p);
+                                        if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                                            p = player.addStatsRow(p);
+                                        }
                                         p = player.setContract(p, p.contract, true);
                                         transaction.objectStore("players").put(p);
                                         team.rosterAutoSort(transaction, tid, function () {

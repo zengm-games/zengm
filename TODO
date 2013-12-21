@@ -3,6 +3,7 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+team.autoSortRoster based on same metric used by coach for substitutions, not just ovr
 switch to real issue tracker, with tags. can make public?
   components
   github issues
@@ -66,8 +67,6 @@ team switching after being fired
 more starting options
   "equalize cities" under teams - set all to same population
     implications for popRank?
-localization
-  http://requirejs.org/docs/api.html#i18n
 team and league records (highest scoring game, etc)
   should show an event for cool single game feats
 random events
@@ -131,7 +130,7 @@ trading block crashing bug
   happens in chrome in old leagues, apparently. running out of memory somehow?
 bring back the old constantly-displayed menu for large screens? http://www.reddit.com/r/BasketballGM/comments/1rjmmr/as_a_player_do_you_think_the_game_needs_a_tutorial/cdnxb4d
   expand play menu so it can be used with one click http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cds6hph
-make injuries more likely for old players
+make injuries more likely for old players and fatigued players
 resign -> re-sign or reSign
 Shouldn't say "This is what the playoff matchups would be" when playoffs first start
 first errorNotify in contractNegotiation.js really should be inline within that page
@@ -144,7 +143,6 @@ per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6
 make sure the changes alert and the "refuses to negotiate" alert both look good
   link to player in "refuses to negotiate" alert
 replace random.gauss with random.realGauss
-raphael is big - can i rewrite faces.js to not use it?
 hall of fame - add career totals columns?
 current season shouldn't show in league history page dropdown
 team.valueChange
@@ -260,8 +258,6 @@ trades
   "undo" button for accidental trades
     transaction log first. put "Undo" button after message from other GM only right after a trade finishes. make sure it doesn't show up at other time
       only allow undo if dbChange hasn't changed since the transaction was logged
-  too easy to trade for yougn stars: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaayir http://www.reddit.com/r/BasketballGM/comments/1k1stt/traded_a_2017_2nd_rounder_for_the_1_pick/
-    maybe weight potential higher for players with no stats, or this could depend on age
   draft pick value needs to be reassessed: http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3 http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q http://www.reddit.com/r/BasketballGM/comments/1j4evq/new_version_311_uploaded/cbbbc0p?context=3
   "When signing free agents, if you offer then a contract 2 years longer/shorter than the one they want, they'll counter offer one with 1 more/less year. If you offer the same amount of money you previously offered, and change the year to what they want, they'll automatically offer the lowest $ for that amount of years."
   shouldn't be able to immediately trade away players you just acquired
@@ -362,20 +358,7 @@ test trades more
   multi-player valuation
     rank players by value. each additional value gets some multiplier to diminish its influence. this prevents adding a player to a trade from decreasing its value
     but this should have something to do with the difference between numbers of players on each side?
-analytics
-  should have no more referrals from basketball-gm.com since it's all set to the same domain now
-  https://github.com/segmentio/analytics.js/
-    analytics.pageview in lib/davis.google_analytics.js
-    analytics.track to get rid of bbgmPing
-    how to initialize GA with correct options?
-how to deal with a team that drops below 5 active players, factoring in injuries?
-  should minimum roster size be higher?
-  should allow them to exceed roster limit while injury exists
-  should not allow play when below 5
-  should use same logic/functions as core.season that checks on new season.
-    first, add support for auto-add players when AI teams are below limit (in season.js)
-  if fouling out drops team below 5, play fouled out players but add a FT each foul (technical)
-check effects of extreme ticket prices
+if fouling out drops team below 5 active players, play fouled out players but add a FT each foul (technical)
 show old contracts on old roster view
 reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
   what is the difference between util.viewHelpers, views.components, and ui?
@@ -388,7 +371,6 @@ too easy to do the "be bad, get draft picks, keep payroll low, sign free agents,
   free agents are even less willing to sign with the user, even if it's a good team
 final score, hall of fame
   influenced by size of city (see: difficulty in views.newLeague)
-any raw data files should go in the data folder, ideally with a script to convert them to however they're used here
 database changes
   add activeYears multientry like statsTids use for:
     league leaders
@@ -419,31 +401,28 @@ AI modules that contain functions which are called to determine actions
     budget items (like from team finances view)
     releasing/buying out players when over limit
 player finder
-  search by stats or ratings
-  trade for button, or sign button if free agent
+  search by stats, ratings, or attributes
+  trade for button, or sign button if free agent, or draft button if draft prospect
+    can this become main UI for drafting (at least fantasy draft)
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
   http://datatables.net/extras/colvis/
-auto sort roster based on value
-  AI teams should periodically reorder rosters throughout the season
+AI teams should periodically reorder rosters throughout the season
 PER
   slow, particularly after multiple seasons?
     can i have it share a transaction with writing stats in core.game?
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
   also can respond to budget changes
-more handlebars helpers for things like...
-  team dropdown
-  season dropdown
 DataTables - fix default sort order on column click
   text should be asc, numeric should be desc (except draft picks)
   http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
   but can it be set globally, based on column type? can have ui.datatable automatically read columns and figure it out?
 more tests
   https://github.com/gotwarlost/istanbul
-  https://github.com/metagriffin/indexeddb-js can i improve this and run tests outside of browser?
+  how to run indexeddb-based tests from command line?
+  multi-browser testing?
 like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   inline anything from the manual?
-tweak gameSim for stats again
 freeAgentMoods should affect AI team signings - or should it?
   for resigning players
   for signing free agents
@@ -462,7 +441,6 @@ FUTURE
 
 players from different countries/nationalities
   how to pick names?
-double season: http://www.reddit.com/r/BasketballGM/comments/1kja6e/so_my_league_decided_to_have_an_extended_season/
 IE10 support
   davisjs for knockoutjs links in IE10
     elem.host comes up blank in originChecks
@@ -516,8 +494,6 @@ contract negotiation
   don't have counter-offers be too drastic
   weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1 http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
   add free agent to the end of roster
-eliminate jquery UI dependency? it's only used for roster reordering currently
-can i use custom jquery with things i don't need deleted?
 core.gameSim.updateSynergy should produce continuous output
   no big difference between a 80 rating and 79 rating, or whatever
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed
@@ -645,14 +621,9 @@ git fetch origin pull/8/head:pr-8
 player view
   next, previous buttons (also active on left/right arrows)
 
-roster
-  highlight handle on hover, like button
-  "trade for" only sensitive when trades are allowed
-
 Client-side game simulation
   Robustness of javascript code
     g.phase == 3 in league_views might introduce race condition
-    validate data from client?
     make sure play menu doesn't ever get stuck - some kind of timeout
 
 play button requirements
@@ -671,10 +642,6 @@ security
     http://packages.python.org/Flask-SeaSurf/
     http://flask.pocoo.org/snippets/3/
     even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
-
-# Then
-
-self-contained game simulation code, to allow other people to hack on it easily. automatically make charts and stuff.
 
 warning when window is closed and game simulation is in progress
   http://stackoverflow.com/questions/1244535/alert-when-browser-window-closed-accidentally

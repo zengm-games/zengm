@@ -1,6 +1,6 @@
 /**
  * @name views.negotiationList
- * @namespace List of resigning negotiations in progress.
+ * @namespace List of re-signing negotiations in progress.
  */
 define(["globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, freeAgents, player, $, ko, _, bbgmView, helpers, viewHelpers) {
     "use strict";
@@ -79,7 +79,7 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/kn
     }
 
     function uiFirst(vm) {
-        ui.title("Resign Players");
+        ui.title("Re-sign Players");
 
         ko.computed(function () {
             ui.datatable($("#negotiation-list"), 4, _.map(vm.players(), function (p) {

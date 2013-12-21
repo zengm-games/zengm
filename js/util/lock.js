@@ -73,7 +73,7 @@ define(["db", "globals"], function (db, g) {
     /**
      * Can a new contract negotiation be started?
      *
-     * Calls the callback function with either true or false. If games are in progress or a free agent (not resigning!) is being negotiated with, false.
+     * Calls the callback function with either true or false. If games are in progress or a free agent (not re-signing!) is being negotiated with, false.
      * 
      * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
@@ -85,7 +85,7 @@ define(["db", "globals"], function (db, g) {
                 return cb(false);
             }
 
-            // Allow multiple parallel negotiations only for resigning players
+            // Allow multiple parallel negotiations only for re-signing players
             db.getObjectStore(ot, "negotiations", "negotiations").getAll().onsuccess = function (event) {
                 var i, negotiations;
 

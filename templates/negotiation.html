@@ -1,6 +1,6 @@
 <h1>Contract Negotiation <span data-bind="newWindow: []"></span></h1>
 
-<p data-bind="visible: negotiation.resigning">You are allowed to go over the salary cap to make this deal because you are resigning <a data-bind="attrLeagueUrl: {href: ['player', player.pid]}, text: player.name"></a> to a contract extension. <strong>If you do not come to an agreement here, <a data-bind="attrLeagueUrl: {href: ['player', player.pid]}, text: player.name"></a> will become a free agent.</strong> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>
+<p data-bind="visible: negotiation.resigning">You are allowed to go over the salary cap to make this deal because you are re-signing <a data-bind="attrLeagueUrl: {href: ['player', player.pid]}, text: player.name"></a> to a contract extension. <strong>If you do not come to an agreement here, <a data-bind="attrLeagueUrl: {href: ['player', player.pid]}, text: player.name"></a> will become a free agent.</strong> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>
 <p data-bind="visible: !negotiation.resigning()">You are not allowed to go over the salary cap to make this deal because <a data-bind="attrLeagueUrl: {href: ['player', player.pid]}, text: player.name"></a> is a free agent.</p>
 
 <div class="row">

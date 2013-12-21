@@ -285,7 +285,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
     /**
      * Cancel all ongoing contract negotiations.
      * 
-     * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is resigning players at the end of the season, although that should probably change eventually.
+     * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is re-signing players at the end of the season, although that should probably change eventually.
      * 
      * @memberOf core.contractNegotiation
      * @param {function()=} cb Optional callback.
@@ -317,7 +317,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
             negotiation = event.target.result;
 
             // If this contract brings team over the salary cap, it"s not a minimum;
-            // contract, and it's not resigning a current player, ERROR!;
+            // contract, and it's not re-signing a current player, ERROR!;
             db.getPayroll(null, g.userTid, function (payroll) {
                 var tx;
 
@@ -342,7 +342,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
 
                     // Handle stats if the season is in progress
                     p.tid = g.userTid;
-                    if (g.phase <= g.PHASE.PLAYOFFS) { // Resigning your own players happens after this
+                    if (g.phase <= g.PHASE.PLAYOFFS) { // Re-signing your own players happens after this
                         p = player.addStatsRow(p);
                     }
                     p = player.setContract(p, {

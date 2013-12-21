@@ -455,7 +455,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         "4": " before draft",
         "5": " draft",
         "6": " after draft",
-        "7": " resign players",
+        "7": " re-sign players",
         "8": " free agency"
     };
 
@@ -909,7 +909,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
                 playerStore = transaction.objectStore("players");
 
-                // Resign players or they become free agents
+                // Re-sign players or they become free agents
                 playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
                     var contract, cursor, factor, i, p;
 

@@ -3,8 +3,12 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+switch to real issue tracker, with tags. can make public?
+move manual to wordpress, add FAQ. open all non-play links in new window from play.
 show +/- ratings on other pages http://www.reddit.com/r/BasketballGM/comments/1sktrz/suggestion_show_ovrpot_changes_on_roster_page/cdzoyvj
   basically everywhere that ovr and pot are shown
+  maybe put in small text, like <sup>?
+  make knockout binding to automatically do format
 http://www.reddit.com/r/BasketballGM/comments/1sarll/open_source/cdxx3ql
 trade improvements
   AI teams should value expired contracts less http://www.reddit.com/r/BasketballGM/comments/1q70ds/biggest_loophole_in_the_game/
@@ -48,8 +52,6 @@ notification system
     big AI moves - trades, free agent signings
       only show big moves, not all. need some threshold
   merge "retired" and "HOF" notifications for a player on the user's team
-landing page
-  http://agirlsaidmysmileiscute.webuda.com/
 
 BIG NEW FEATURES
 ----------------
@@ -92,10 +94,15 @@ more detailed draft - slower picks, trades, etc.
   custom draft classes http://www.reddit.com/r/BasketballGM/comments/1r0ftx/nba_2k2/cdj769w
   slower picks http://www.reddit.com/r/BasketballGM/comments/1r70dv/trade_picks_during_draft
   sort by generic value (current) or team-specific value
+power rankings
 
 BIG NEW GAMEPLAY CHANGES
 ------------------------
 
+player development revamp
+  something needs to be done. still too many 3 point shooting centers.
+  are ovr/pot combos reasonable, since ovr is weighted now?
+  low ovr high pot players should pan out more?
 skills should be based on the composite ratings, not single ratings. http://www.reddit.com/r/BasketballGM/comments/1pxu83/positionless_basketball/cd7ob6j
 make low ovr high pot players more likely to improve
 Extended free agency
@@ -124,6 +131,11 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
+trading block results should be saved
+  but they need to be deleted if anything happens, as offers might change with the situation
+on team history, show counts of conf/league championships, hall of fame players, etc
+if a player refuses to resign, that decision should also be reflected in free agency (don't recalculate mood)
+add "drb" to usage so that good ball handlers shoot more (favor guards over bigs more)
 in player page, show red/green for ratings changes from the previous year, maybe as heatmap
 in ratings tables, show dpot and dovr columns? maybe?
 more owner messages - crowdsource? especially intro
@@ -174,6 +186,10 @@ http://code.google.com/p/htmlcompressor/ or something similar
 LOW PRIORITY
 ------------
 
+ratings change during the season, especially young players (development)
+add "years with team" column to roster gavin.handley@gmail.com
+  in player.filter, count regular season stats entries <= season
+show abbrev and highlight user's players in retired players list gavin.handley@gmail.com
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 awards
   show awards count in hall of fame
@@ -199,6 +215,7 @@ league settings
 appcache
   loads from network unless network is not available, because fallback only runs when the network is not available. so the cached versions of files are only used when it is offline. would be better/faster to use them even when online, but that's not possible until the appcache standard is updated unless i either (1) cache every page (way too much) or (2) use hash # urls instead of real URLs (ugly).
 some kind of more detailed UI/menu exposed in the lg view, maybe a sidebar like the old layout
+  css calc to implement static sidebar
 cross-league play
 mobile UI, bootstrap 3
   do something about hover tooltips
@@ -514,6 +531,7 @@ contract negotiation
   weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1 http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
   add free agent to the end of roster
 eliminate jquery UI dependency? it's only used for roster reordering currently
+can i use custom jquery with things i don't need deleted?
 core.gameSim.updateSynergy should produce continuous output
   no big difference between a 80 rating and 79 rating, or whatever
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed

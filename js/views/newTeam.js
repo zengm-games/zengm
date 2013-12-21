@@ -26,7 +26,8 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
                 wins: 0,
                 playoffs: 0,
                 money: 0
-            }
+            },
+            gracePeriodEnd: g.season + 3 // +3 is the same as +2 when staring a new league, since this happens at the end of a season
         }, function () {
             ui.realtimeUpdate([], helpers.leagueUrl([]));
         });

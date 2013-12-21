@@ -594,6 +594,14 @@ console.log(event);
                     eventStore.createIndex("season", "season", {unique: false});
                 }());
             }
+            if (event.oldVersion <= 8) {
+                (function () {
+                    tx.objectStore("gameAttributes").put({
+                        key: "gracePeriodEnd",
+                        value: g.startingSeason + 2
+                    });
+                }());
+            }
         });
     }
 
@@ -601,7 +609,7 @@ console.log(event);
         var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 8);
+        request = indexedDB.open("league" + lid, 9);
         request.onerror = function (event) {
             throw new Error("League connection error");
         };

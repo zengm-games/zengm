@@ -34,19 +34,24 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             }
             deltas.money = (t.profit - 15) / 100;
 
-            ownerMood = {};
-            ownerMood.wins = g.ownerMood.wins + deltas.wins;
-            ownerMood.playoffs = g.ownerMood.playoffs + deltas.playoffs;
-            ownerMood.money = g.ownerMood.money + deltas.money;
+            // Only update owner mood if grace period is over
+            if (g.season >= g.gracePeriodEnd) {
+                ownerMood = {};
+                ownerMood.wins = g.ownerMood.wins + deltas.wins;
+                ownerMood.playoffs = g.ownerMood.playoffs + deltas.playoffs;
+                ownerMood.money = g.ownerMood.money + deltas.money;
 
-            // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
-            if (ownerMood.wins > 1) { ownerMood.wins = 1; }
-            if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
-            if (ownerMood.money > 1) { ownerMood.money = 1; }
+                // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
+                if (ownerMood.wins > 1) { ownerMood.wins = 1; }
+                if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
+                if (ownerMood.money > 1) { ownerMood.money = 1; }
 
-            db.setGameAttributes({ownerMood: ownerMood}, function () {
+                db.setGameAttributes({ownerMood: ownerMood}, function () {
+                    cb(deltas);
+                });
+            } else {
                 cb(deltas);
-            });
+            }
         });
     }
 

@@ -205,12 +205,12 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
                     "<p>" + random.choice(wins[indWins]) + " " + random.choice(playoffs[indPlayoffs]) + "</p>" +
                     "<p>" + random.choice(money[indMoney]) + "</p>" +
                     "<p>" + random.choice(ovr[indOvr]).replace("{{activity}}", activity2) + "</p>";
-            } else if ((g.season - g.startingSeason) < 3) {
-                if (g.ownerMood.wins < 0 && g.ownerMood.playoffs < 0 && g.ownerMood.money < 0) {
+            } else if (g.season >= g.gracePeriodEnd) {
+                if (deltas.wins < 0 && deltas.playoffs < 0 && deltas.money < 0) {
                     m = "<p>What the hell did you do to my franchise?! I'd fire you, but I can't find anyone who wants to clean up your mess.</p>";
-                } else if (g.ownerMood.money < 0 && g.ownerMood.wins >= 0 && g.ownerMood.playoffs >= 0) {
+                } else if (deltas.money < 0 && deltas.wins >= 0 && deltas.playoffs >= 0) {
                     m = "<p>I don't care what our colors are. I need to see some green! I won't wait forever. MAKE ME MONEY.</p>";
-                } else if (g.ownerMood.money >= 0 && g.ownerMood.wins < 0 && g.ownderMood.playoffs < 0) {
+                } else if (deltas.money >= 0 && deltas.wins < 0 && deltas.playoffs < 0) {
                     m = "<p>Our fans are out for blood. Put a winning team together, or I'll let those animals have you.</p>";
                 } else {
                     m = "<p>The longer you keep your job, the more I question why I hired you. Do better or get out.</p>";
@@ -239,8 +239,8 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
         tx.oncomplete = function () {
             if (ownerMoodSum > -1) {
                 cb();
-            } else if ((g.season - g.startingSeason) < 3) {
-                // Can't get fired until after 4th season
+            } else if (g.season >= g.gracePeriodEnd) {
+                // Can't get fired until after 3rd season
                 cb();
             } else {
                 // Fired!

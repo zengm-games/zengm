@@ -217,7 +217,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
     }
 
     /**
-     * Sort a team's roster based on player ratings.
+     * Sort a team's roster based on player ratings and stats.
      *
      * If ot is null, then the callback will run only after the transaction finishes (i.e. only after the updated roster order is actually saved to the database). If ot is not null, then the callback might run earlier, so don't rely on the updated roster order actually being in the database yet.
      *
@@ -234,20 +234,24 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         tx = db.getObjectStore(ot, "players", null, true);
         playerStore = tx.objectStore("players");
 
-        // Get roster and sort by overall rating
+        // Get roster and sort by value (no potential included)
         playerStore.index("tid").getAll(tid).onsuccess = function (event) {
-            var i;
+            var i, playersAll;
 
             players = player.filter(event.target.result, {
                 attrs: ["pid"],
                 ratings: ["ovr"],
-                season: g.season,
+                stats: ["min", "per"],
                 tid: tid,
                 showNoStats: true,
                 showRookies: true,
                 fuzz: tid === g.userTid
             });
-            players.sort(function (a, b) { return b.ratings.ovr - a.ratings.ovr; });
+
+            // player.value called after player.filter because this gives the fuzzed values. Only
+            // ratings.ovr, stats.min, and stats.per are needed, so it's okay to not use full player
+            // objects here.
+            players.sort(function (a, b) { return player.value(b, true) - player.value(a, true); });
 
             for (i = 0; i < players.length; i++) {
                 players[i].rosterOrder = i;

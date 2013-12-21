@@ -3,10 +3,10 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-team.autoSortRoster based on same metric used by coach for substitutions, not just ovr
-switch to real issue tracker, with tags. can make public?
-  components
-  github issues
+switch to bitbucket issues
+  DON'T ADD ANYTHING NEW HERE!
+  gradually move these issues over
+  move over github issues
 http://www.reddit.com/r/BasketballGM/comments/1sarll/open_source/cdxx3ql
 free agents going unsigned?
   salary cap exception? too complicated?

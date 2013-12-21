@@ -538,7 +538,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                     t.healthRank = teamSeason.expenses.health.rank;
 
                     for (i = 0; i < players.length; i++) {
-                        p = {id: players[i].pid, name: players[i].name, pos: players[i].pos, valueNoPot: player.value(players[i], true), stat: {}, compositeRating: {}, skills: [], injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
+                        p = {id: players[i].pid, name: players[i].name, pos: players[i].pos, valueNoPot: player.value(players[i], {noPot: true}), stat: {}, compositeRating: {}, skills: [], injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
 
                         for (j = 0; j < players[i].ratings.length; j++) {
                             if (players[i].ratings[j].season === g.season) {

@@ -236,22 +236,17 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
         // Get roster and sort by value (no potential included)
         playerStore.index("tid").getAll(tid).onsuccess = function (event) {
-            var i, playersAll;
+            var i;
 
             players = player.filter(event.target.result, {
-                attrs: ["pid"],
+                attrs: ["pid", "valueNoPot"],
                 ratings: ["ovr"],
                 stats: ["min", "per"],
-                tid: tid,
                 showNoStats: true,
                 showRookies: true,
                 fuzz: tid === g.userTid
             });
-
-            // player.value called after player.filter because this gives the fuzzed values. Only
-            // ratings.ovr, stats.min, and stats.per are needed, so it's okay to not use full player
-            // objects here.
-            players.sort(function (a, b) { return player.value(b, true) - player.value(a, true); });
+            players.sort(function (a, b) { return b.valueNoPot - a.valueNoPot; }); // This will be fuzzed based on player.filter
 
             for (i = 0; i < players.length; i++) {
                 players[i].rosterOrder = i;

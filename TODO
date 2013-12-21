@@ -352,7 +352,6 @@ contracts
   maybe make them nonlinear.. role players lower, stars higher
     compare to NBA contract distribution
 luxury tax should be disbursed amongst non-taxpaying teams
-give bbgm website its own version of bootstrap (only with components needed)
 team.rosterAutoSort should automatically set dbChanged, and have an option to not if that's important
 test trades more
   multi-player valuation

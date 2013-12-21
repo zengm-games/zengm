@@ -918,7 +918,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 } else if (options.attrs[i] === "value") {
                     fp.value = value(p);
                 } else if (options.attrs[i] === "valueNoPot") {
-                    fp.valueNoPot = value(p, true);
+                    fp.valueNoPot = value(p, {noPot: true, fuzz: options.fuzz});
                 } else if (options.attrs[i] === "awardsGrouped") {
                     fp.awardsGrouped = [];
                     awardsGroupedTemp = _.groupBy(p.awards, function (award) { return award.type; });
@@ -1330,27 +1330,33 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      *
      * @memberOf core.player
      * @param {Object} p Player object.
-     * @param {boolean=} noPot When true, don't include potential in the value calcuation (useful for
-     *     roster ordering and game simulation). Default false.
+     * @param {Object=} options Object containing several optional options:
+     *     noPot: When true, don't include potential in the value calcuation (useful for roster
+     *         ordering and game simulation). Default false.
+     *     fuzz: When true, used fuzzed ratings (useful for roster ordering). Default false.
      * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential
      *     ratings.
      */
-    function value(p, noPot) {
+    function value(p, options) {
         var age, current, i, potential, pr, ps, ps1, ps2;
 
-        noPot = noPot !== undefined ? noPot : false;
+        options = options !== undefined ? options : {};
+        options.noPot = options.noPot !== undefined ? options.noPot : false;
+        options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
 
         // Current ratings
         pr = _.last(p.ratings);
 
         // Regular season stats ONLY, in order starting with most recent
         ps = [];
-        for (i = 0; i < p.stats.length; i++) {
-            if (!p.stats[i].playoffs) {
-                ps.push(p.stats[i]);
+        if (p.stats !== undefined) { // Filtered player objects might not include it, for rookies
+            for (i = 0; i < p.stats.length; i++) {
+                if (!p.stats[i].playoffs) {
+                    ps.push(p.stats[i]);
+                }
             }
+            ps.reverse();
         }
-        ps.reverse();
 
         // 1. Account for stats (and current ratings if not enough stats)
         current = pr.ovr; // No stats at all? Just look at ratings more, then.
@@ -1376,7 +1382,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         }
 
         // Short circuit if we don't care about potential
-        if (noPot) {
+        if (options.noPot) {
             return current;
         }
 

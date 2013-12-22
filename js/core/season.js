@@ -237,15 +237,15 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     }
                 }
                 players = player.filter(event.target.result, { // Only the champions, only playoff stats
-                    attrs: ["pid", "name", "tid", "abbrev", "draft"],
-                    stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
+                    attrs: ["pid", "name", "tid", "abbrev"],
+                    stats: ["pts", "trb", "ast", "ewa"],
                     season: g.season,
                     playoffs: true,
                     tid: champTid
                 });
-                players.sort(function (a, b) {  return b.stats.ewa - a.stats.ewa; });
+                players.sort(function (a, b) {  return b.statsPlayoffs.ewa - a.statsPlayoffs.ewa; });
                 p = players[0];
-                awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+                awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
                 awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
 
                 tx = g.dbl.transaction("awards", "readwrite");

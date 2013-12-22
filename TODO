@@ -39,6 +39,9 @@ notification system
     big AI moves - trades, free agent signings
       only show big moves, not all. need some threshold
   merge "retired" and "HOF" notifications for a player on the user's team
+  important notifications should be a different color
+    errors
+    refuse to sign
 
 BIG NEW FEATURES
 ----------------

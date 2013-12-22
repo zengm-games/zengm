@@ -37,6 +37,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2013-11-24",
         msg: "Key events (wins/losses, injuries, etc.) now appear in notification bubbles when they happen."
+    }, {
+        date: "2013-12-21",
+        msg: "At the end of each season, a Finals MVP will be selected along with the other awards."
     }];
 
     function check() {

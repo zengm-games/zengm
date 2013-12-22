@@ -14,6 +14,7 @@ number or not.
 - Centralized notification system and event log
 - Smarter in-game coach: substitutions are based on performance, not just ratings
 - GM firings happen after the playoffs, not before the regular season
+- Finals MVP award
 
 ## Technical details
 

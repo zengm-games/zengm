@@ -119,8 +119,6 @@ do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rook
 MINOR FIXES
 -----------
 
-trading block results should be saved
-  but they need to be deleted if anything happens, as offers might change with the situation
 on team history, show counts of conf/league championships, hall of fame players, etc
 if a player refuses to resign, that decision should also be reflected in free agency (don't recalculate mood)
 add "drb" to usage so that good ball handlers shoot more (favor guards over bigs more)
@@ -128,7 +126,6 @@ in player page, show red/green for ratings changes from the previous year, maybe
 in ratings tables, show dpot and dovr columns? maybe?
 more owner messages - crowdsource? especially intro
 Add markers for clinching playoffs / 1st seed in league standings
-Play > Read New Message should have effect immediately, so you can't quick click and see it twice
 trading block crashing bug
   happens in chrome in old leagues, apparently. running out of memory somehow?
 bring back the old constantly-displayed menu for large screens? http://www.reddit.com/r/BasketballGM/comments/1rjmmr/as_a_player_do_you_think_the_game_needs_a_tutorial/cdnxb4d
@@ -146,7 +143,6 @@ per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6
 make sure the changes alert and the "refuses to negotiate" alert both look good
   link to player in "refuses to negotiate" alert
 replace random.gauss with random.realGauss
-hall of fame - add career totals columns?
 current season shouldn't show in league history page dropdown
 team.valueChange
   contending teams shouldn't always see every player as a positive value. needs to be some balanced formula where a bad contract is a negative.
@@ -156,7 +152,7 @@ player.value
       1. add fudge factor to make teams less willing to trade away young players without much game experience
       2. just increase the value for ovr in player.value (try this now)
         is there a better function than 4 * PER to map between PER and ovr? plot.
-add function to delete old box scores (older than, say 5 years) to debug menu, to save space
+add function to delete old box scores (older than last year) to debug menu, to save space
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 document things that affect player mood
 show four factors somewhere
@@ -174,8 +170,6 @@ LOW PRIORITY
 ------------
 
 ratings change during the season, especially young players (development)
-add "years with team" column to roster gavin.handley@gmail.com
-  in player.filter, count regular season stats entries <= season
 show abbrev and highlight user's players in retired players list gavin.handley@gmail.com
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 awards

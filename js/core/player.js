@@ -870,7 +870,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         // Copys/filters the attributes listed in options.attrs from p to fp.
         filterAttrs = function (fp, p, options) {
-            var award, awardsGroupedTemp, i;
+            var award, awardsGroupedTemp, i, j;
 
             for (i = 0; i < options.attrs.length; i++) {
                 if (options.attrs[i] === "age") {
@@ -929,6 +929,26 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                                 count: awardsGroupedTemp[award].length,
                                 seasons: _.pluck(awardsGroupedTemp[award], "season")
                             });
+                        }
+                    }
+                } else if (options.attrs[i] === "yearsWithTeam") {
+                    fp.yearsWithTeam = 0;
+                    // Count non-playoff seasons starting from the current one
+                    for (j = p.stats.length - 1; j >= 0; j--) {
+                        if (p.stats[j].playoffs === false) { // Can do this because any playoff entry follows a regular season entry with the same team
+                            if (p.stats[j].tid === options.tid && options.season === p.stats[j].season) {
+                                // Find season requested
+                                fp.yearsWithTeam = 1;
+                            } else {
+                                if (fp.yearsWithTeam) {
+                                    // We found the season requested, so now count back until you find another team
+                                    if (p.stats[j].tid === options.tid) {
+                                        fp.yearsWithTeam += 1;
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
                 } else {

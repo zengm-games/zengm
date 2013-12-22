@@ -10,6 +10,8 @@
         <h4>League Champions</h4>
         <p><strong><a data-bind="attrLeagueUrl: {href: ['roster', champ.abbrev, season]}"><span data-bind="text: champ.region"></span> <span data-bind="text: champ.name"></span></a></strong><br>
         <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}">Playoffs Bracket</a></p>
+        <p>Finals MVP: <strong><a data-bind="attrLeagueUrl: {href: ['player', awards.finalsMvp.pid]}, text: awards.finalsMvp.name"></a></strong><br>
+          <span data-bind="round: [awards.finalsMvp.pts, 1]"></span> pts, <span data-bind="round: [awards.finalsMvp.trb, 1]"></span> reb, <span data-bind="round: [awards.finalsMvp.ast, 1]"></span> ast</p>
         <h4>Best Record</h4>
         <p>East: <a  data-bind="attrLeagueUrl: {href: ['roster', awards.bre.abbrev, season]}"><span data-bind="text: awards.bre.region"></span> <span data-bind="text: awards.bre.name"></span></a> (<span data-bind="text: awards.bre.won"></span>-<span data-bind="text: awards.bre.lost"></span>)<br>
         West: <a data-bind="attrLeagueUrl: {href: ['roster', awards.brw.abbrev, season]}"><span data-bind="text: awards.brw.region"></span> <span data-bind="text: awards.brw.name"></span></a> (<span data-bind="text: awards.brw.won"></span>-<span data-bind="text: awards.brw.lost"></span>)<br></p>

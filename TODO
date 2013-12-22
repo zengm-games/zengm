@@ -263,7 +263,6 @@ trades
   shouldn't be able to immediately trade away players you just acquired
 transaction log
   put index on pids involved, so then events involving a player can be shown on player page
-Finals MVP
 more detailed player moods - http://www.reddit.com/r/BasketballGM/comments/1k4val/players_refusing_to_sign_bug/cbln1oo?context=3
 strategy shouldn't be set randomly at start of new league
 AI teams need to get smarter about projecting the value of future draft picks: http://www.reddit.com/r/BasketballGM/comments/1jzel1/very_helpful_hint_regarding_tanking_and_draft/
@@ -316,9 +315,8 @@ trades
     display some indication of what a team wants to do on the trade view, e.g.
       "I need to cut my payroll and start making more money."
       "I could really use a good rebounder."
-all star game
-trades
   sign and trade (only during resigning phase)
+all star game
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?
@@ -332,7 +330,6 @@ export/import roster
     no base64? Firefox can't handle #
   error handling if blank or invalid file is supplied
   easily edit in excel?
-http://blog.stevensanderson.com/2013/05/20/knockout-es5-a-plugin-to-simplify-your-syntax/
 move most db functions into core.whatever. db should just be about initializing/upgrading
   get rid of "db" module dependence
 core.freeAgents should be core.freeAgent or core.freeAgency?

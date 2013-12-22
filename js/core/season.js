@@ -105,7 +105,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         // Get teams for won/loss record for awards, as well as finding the teams with the best records
         team.filter({
             attrs: ["tid", "abbrev", "region", "name", "cid"],
-            seasonAttrs: ["won", "lost", "winp"],
+            seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
             season: g.season,
             sortBy: "winp",
             ot: tx
@@ -135,7 +135,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
             // Any non-retired player can win an award
             tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
-                var i, p, players, text, type;
+                var champTid, i, p, players, text, type;
 
                 players = player.filter(event.target.result, {
                     attrs: ["pid", "name", "tid", "abbrev", "draft"],
@@ -228,6 +228,25 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
                     awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
                 }
+
+                // Finals MVP - most WS in playoffs
+                for (i = 0; i < teams.length; i++) {
+                    if (teams[i].playoffRoundsWon === 4) {
+                        champTid = teams[i].tid;
+                        break;
+                    }
+                }
+                players = player.filter(event.target.result, { // Only the champions, only playoff stats
+                    attrs: ["pid", "name", "tid", "abbrev", "draft"],
+                    stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
+                    season: g.season,
+                    playoffs: true,
+                    tid: champTid
+                });
+                players.sort(function (a, b) {  return b.stats.ewa - a.stats.ewa; });
+                p = players[0];
+                awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
 
                 tx = g.dbl.transaction("awards", "readwrite");
                 tx.objectStore("awards").add(awards);

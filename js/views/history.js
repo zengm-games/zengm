@@ -40,6 +40,17 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
 
                 awards = event.target.result;
 
+                // Hack placeholder for old seasons before Finals MVP existed
+                if (!awards.hasOwnProperty("finalsMvp")) {
+                    awards.finalsMvp = {
+                        pid: 0,
+                        name: "N/A",
+                        pts: 0,
+                        trb: 0,
+                        ast: 0
+                    };
+                }
+
                 g.dbl.transaction("players").objectStore("players").index("retiredYear").getAll(inputs.season).onsuccess = function (event) {
                     var retiredPlayers;
 

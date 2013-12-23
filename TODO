@@ -3,6 +3,10 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+some kind of more detailed UI/menu exposed in the lg view, maybe a sidebar like the old layout
+  make sure ads still work
+  highlighting?
+  how not to show while stretching fully wide for dashboard?
 switch to bitbucket issues
   DON'T ADD ANYTHING NEW HERE!
   gradually move these issues over
@@ -195,8 +199,6 @@ league settings
   enable/disable trading rules
 appcache
   loads from network unless network is not available, because fallback only runs when the network is not available. so the cached versions of files are only used when it is offline. would be better/faster to use them even when online, but that's not possible until the appcache standard is updated unless i either (1) cache every page (way too much) or (2) use hash # urls instead of real URLs (ugly).
-some kind of more detailed UI/menu exposed in the lg view, maybe a sidebar like the old layout
-  css calc to implement static sidebar
 cross-league play
 mobile UI, bootstrap 3
   do something about hover tooltips

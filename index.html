@@ -94,8 +94,8 @@
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse" id="top-menu-collapse">
           <ul class="nav navbar-nav navbar-right" id="nav-primary">
-            <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: []}">Dashboard</a></li>
-            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
+            <li class="hidden-lg" data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: []}">Dashboard</a></li>
+            <li class="dropdown hidden-lg" data-bind="visible: lid() !== undefined" style="display: none">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">League <b class="caret"></b></span><span class="visible-sm">L <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header visible-sm">League</li>
@@ -105,7 +105,7 @@
                 <li><a data-bind="attrLeagueUrl: {href: ['history']}">History</a></li>
               </ul>
             </li>
-            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
+            <li class="dropdown hidden-lg" data-bind="visible: lid() !== undefined" style="display: none">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Team <b class="caret"></b></span><span class="visible-sm">T <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header visible-sm">Team</li>
@@ -115,7 +115,7 @@
                 <li><a data-bind="attrLeagueUrl: {href: ['team_history']}">History</a></li>
               </ul>
             </li>
-            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
+            <li class="dropdown hidden-lg" data-bind="visible: lid() !== undefined" style="display: none">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Players <b class="caret"></b></span><span class="visible-sm">P <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header visible-sm">Players</li>
@@ -126,7 +126,7 @@
                 <li><a data-bind="attrLeagueUrl: {href: ['hall_of_fame']}">Hall of Fame</a></li>
               </ul>
             </li>
-            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
+            <li class="dropdown hidden-lg" data-bind="visible: lid() !== undefined" style="display: none">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Stats <b class="caret"></b></span><span class="visible-sm">S <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header visible-sm">Stats</li>
@@ -171,10 +171,41 @@
     </nav>
 
     <div class="container">
-      <div class="p402_premium">
-        <div id="content" data-id-loading="" data-id-loaded="">
-          <h1>Loading...</h1>
-          <p>This should only take a couple seconds on a fast connection.</p>
+      <div class="row">
+        <div class="col-lg-2 hidden-md hidden-sm hidden-xs" id="left-menu">
+          <div class="bs-sidebar">
+            <ul class="bs-sidenav nav">
+              <li id="nav_league_dashboard" class="active"><a data-bind="attrLeagueUrl: {href: []}">Dashboard</a></li>
+              <li class="bs-navheader">League</li>
+              <li id="nav_standings"><a data-bind="attrLeagueUrl: {href: ['standings']}">Standings</a></li>
+              <li id="nav_playoffs"><a data-bind="attrLeagueUrl: {href: ['playoffs']}">Playoffs</a></li>
+              <li id="nav_league_finances"><a data-bind="attrLeagueUrl: {href: ['league_finances']}">Finances</a></li>
+              <li id="nav_history"><a data-bind="attrLeagueUrl: {href: ['history']}">History</a></li>
+              <li class="bs-navheader">Team</li>
+              <li id="nav_roster"><a data-bind="attrLeagueUrl: {href: ['roster']}">Roster</a></li>
+              <li id="nav_schedule"><a data-bind="attrLeagueUrl: {href: ['schedule']}">Schedule</a></li>
+              <li id="nav_team_finances"><a data-bind="attrLeagueUrl: {href: ['team_finances']}">Finances</a></li>
+              <li id="nav_team_history"><a data-bind="attrLeagueUrl: {href: ['team_history']}">History</a></li>
+              <li class="bs-navheader">Players</li>
+              <li id="nav_free_agents"><a data-bind="attrLeagueUrl: {href: ['free_agents']}">Free Agents</a></li>
+              <li id="nav_trade"><a data-bind="attrLeagueUrl: {href: ['trade']}">Trade</a></li>
+              <li id="nav_trading_block"><a data-bind="attrLeagueUrl: {href: ['trading_block']}">Trading Block</a></li>
+              <li id="nav_draft"><a data-bind="attrLeagueUrl: {href: ['draft']}">Draft</a></li>
+              <li id="nav_hall_of_fame"><a data-bind="attrLeagueUrl: {href: ['hall_of_fame']}">Hall of Fame</a></li>
+              <li class="bs-navheader">Stats</li>
+              <li id="nav_game_log"><a data-bind="attrLeagueUrl: {href: ['game_log']}">Game Log</a></li>
+              <li id="nav_leaders"><a data-bind="attrLeagueUrl: {href: ['leaders']}">League Leaders</a></li>
+              <li id="nav_player_ratings"><a data-bind="attrLeagueUrl: {href: ['player_ratings']}">Player Ratings</a></li>
+              <li id="nav_player_stats"><a data-bind="attrLeagueUrl: {href: ['player_stats']}">Player Stats</a></li>
+              <li id="nav_team_stats"><a data-bind="attrLeagueUrl: {href: ['team_stats']}">Team Stats</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-10 col-xs-12 p402_premium">
+          <div id="content" data-id-loading="" data-id-loaded="">
+            <h1>Loading...</h1>
+            <p>This should only take a couple seconds on a fast connection.</p>
+          </div>
         </div>
       </div>
 

@@ -552,3 +552,39 @@ tr.warning > td {
     width: 360px;
   }
 }
+
+/* Large screen sidebar, taken from Bootstrap docs */
+.bs-sidenav {
+  margin-top: 24px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+}
+.bs-navheader {
+  color: #777;
+  font-size: 11px;
+  font-weight: bold;
+  margin-top: 14px;
+  padding: 5px 20px;
+  text-transform: uppercase;
+}
+.bs-sidebar .nav > li > a {
+  display: block;
+  color: #333;
+  padding: 5px 20px;
+}
+.bs-sidebar .nav > li > a:hover,
+.bs-sidebar .nav > li > a:focus {
+  text-decoration: none;
+  background-color: #e0e0e0;
+  color: #333;
+}
+.bs-sidebar .nav > .active > a,
+.bs-sidebar .nav > .active:hover > a,
+.bs-sidebar .nav > .active:focus > a {
+  background-color: transparent;
+  border-right: 4px solid #428bca;
+  color: #333;
+  font-weight: bold;
+}

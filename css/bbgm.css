@@ -553,7 +553,7 @@ tr.warning > td {
   }
 }
 
-/* Large screen sidebar, taken from Bootstrap docs */
+/* Large screen sidebar, adapted from Bootstrap docs */
 .bs-sidenav {
   margin-top: 24px;
   padding-top: 10px;

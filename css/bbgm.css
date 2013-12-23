@@ -560,6 +560,7 @@ tr.warning > td {
   padding-bottom: 10px;
   background-color: #f8f8f8;
   border-radius: 5px;
+  border: 1px solid #e7e7e7;
 }
 .bs-navheader {
   color: #777;

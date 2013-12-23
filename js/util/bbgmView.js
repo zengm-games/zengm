@@ -43,6 +43,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                 ko.cleanNode(containerEl);
 
                 containerEl.dataset.idLoading = args.id;
+                g.vm.topMenu.template(args.id);
 
                 updateEvents.push("firstRun");
 

@@ -61,6 +61,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                         container: "content",
                         template: "leagueLayout"
                     });
+                    ko.applyBindings(g.vm.topMenu, document.getElementById("left-menu"));
 
                     // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
                     if (popup) {

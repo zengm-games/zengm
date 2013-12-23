@@ -3,10 +3,7 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-some kind of more detailed UI/menu exposed in the lg view, maybe a sidebar like the old layout
-  make sure ads still work
-  highlighting?
-  how not to show while stretching fully wide for dashboard?
+when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
 switch to bitbucket issues
   DON'T ADD ANYTHING NEW HERE!
   gradually move these issues over

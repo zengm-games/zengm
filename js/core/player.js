@@ -1367,6 +1367,12 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         // Current ratings
         pr = _.last(p.ratings);
 
+        // Fuzz?
+        if (options.fuzz) {
+            pr.ovr = Math.round(helpers.bound(pr.ovr + pr.fuzz, 0, 100));
+            pr.pot = Math.round(helpers.bound(pr.pot + pr.fuzz, 0, 100));
+        }
+
         // Regular season stats ONLY, in order starting with most recent
         ps = [];
         if (p.stats !== undefined) { // Filtered player objects might not include it, for rookies

@@ -240,8 +240,6 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
             players = player.filter(event.target.result, {
                 attrs: ["pid", "valueNoPot"],
-                ratings: ["ovr"],
-                stats: ["min", "per"],
                 showNoStats: true,
                 showRookies: true,
                 fuzz: tid === g.userTid

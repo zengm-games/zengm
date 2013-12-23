@@ -6,7 +6,7 @@
 <p class="clearfix">The current payroll (<strong data-bind="currency: [team.payroll, 'M']"></strong>) is <span data-bind="text: aboveBelow.minPayroll"></span> the minimum payroll limit (<strong data-bind="currency: [minPayroll, 'M']"></strong>), <span data-bind="text: aboveBelow.salaryCap"></span> the salary cap (<strong data-bind="currency: [salaryCap, 'M']"></strong>), and <span data-bind="text: aboveBelow.luxuryPayroll"></span> the luxury tax limit (<strong data-bind="currency: [luxuryPayroll, 'M']"></strong>). <span class="glyphicon glyphicon-question-sign help-icon" id="help-payroll-limits" data-placement="bottom"></span></p>
 
 <div class="row">
-  <div class="col-lg-3 col-md-3 col-sm-2">
+  <div class="col-md-3 col-sm-2">
     <h4>Wins</h4>
     <div id="bar-graph-won" class="bar-graph-small"></div><br><br>
     <span class="clickover"><h4>Hype <span class="glyphicon glyphicon-question-sign help-icon" id="help-hype" data-placement="right"></span></h4></span>
@@ -16,7 +16,7 @@
     <h4>Average Attendance</h4>
     <div id="bar-graph-att" class="bar-graph-small"></div>
   </div>
-  <div class="col-lg-5 col-md-4 col-sm-4">
+  <div class="col-md-4 col-sm-4">
     <h4>Revenue</h4>
     <div id="bar-graph-revenue" class="bar-graph-large"></div><br><br>
     <h4>Expenses</h4>
@@ -24,7 +24,7 @@
     <h4>Cash</h4>
     <div id="bar-graph-cash" class="bar-graph-medium"></div>
   </div>
-  <div class="col-lg-4 col-md-5 col-sm-6">
+  <div class="col-md-5 col-sm-6">
     <form method="POST" id="finances-settings" data-bind="attrLeagueUrl: {action: ['team_finances']}">
       <h4>Revenue Settings <span class="glyphicon glyphicon-question-sign help-icon" id="help-revenue-settings" data-placement="bottom"></span></h4>
       <p class="text-danger"></p>

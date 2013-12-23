@@ -1,7 +1,7 @@
 <h1>Trade <span data-bind="newWindow: []"></span></h1>
 
 <div class="row">
-  <div class="col-lg-7 col-md-9">
+  <div class="col-md-9">
     <form id="rosters" class="form-inline">
       <p><select id="trade-select-team" name="team" class="form-control select-team" data-bind="foreach: teams">
         <option data-bind="attr: {value: abbrev, selected: selected}, text: region + ' ' + name"></option>
@@ -41,10 +41,10 @@
       </div>
     </form>
   </div>
-  <div class="col-lg-5 col-md-3" id="trade-summary">
+  <div class="col-md-3" id="trade-summary">
     <h3>Trade Summary</h3>
     <div class="row" data-bind="foreach: summary.teams">
-      <div class="col-lg-6 col-md-12 col-xs-6">
+      <div class="col-md-12 col-xs-6">
         <h4 data-bind="text: name"></h4>
         <h5>Trade Away:</h5>
         <ul class="list-unstyled">

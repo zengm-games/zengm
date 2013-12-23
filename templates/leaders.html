@@ -5,7 +5,7 @@
 <p>Only eligible players are shown (<i>e.g.</i> a player shooting 2 for 2 on the season is not eligible for the league lead in FG%).</p>
 
 <div class="row" data-bind="foreach: categories">
-  <div class="col-lg-4 col-sm-6">
+  <div class="col-md-4 col-sm-6">
     <div class="table-responsive">
       <table class="table table-striped table-bordered table-condensed leaders">
         <thead>
@@ -18,9 +18,9 @@
     </div>
   </div>
   <!--ko if: $index() % 3 === 2-->
-    <div class="clearfix visible-lg"></div>
+    <div class="clearfix visible-md visible-lg"></div>
   <!--/ko-->
   <!--ko if: $index() % 2 === 1-->
-    <div class="clearfix visible-md visible-sm"></div>
+    <div class="clearfix visible-sm"></div>
   <!--/ko-->
 </div>

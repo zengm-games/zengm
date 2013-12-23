@@ -3,7 +3,10 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
+left menu
+  when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
+  grep -R  lg templates
+    fix these! lg should use md, generally
 switch to bitbucket issues
   DON'T ADD ANYTHING NEW HERE!
   gradually move these issues over

@@ -236,42 +236,45 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         break;
                     }
                 }
-                players = player.filter(event.target.result, { // Only the champions, only playoff stats
-                    attrs: ["pid", "name", "tid", "abbrev"],
-                    stats: ["pts", "trb", "ast", "ewa"],
-                    season: g.season,
-                    playoffs: true,
-                    tid: champTid
-                });
-                players.sort(function (a, b) {  return b.statsPlayoffs.ewa - a.statsPlayoffs.ewa; });
-                p = players[0];
-                awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
-                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
+                // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
+                tx.objectStore("players").index("tid").getAll(champTid).onsuccess = function (event) {
+                    players = player.filter(event.target.result, { // Only the champions, only playoff stats
+                        attrs: ["pid", "name", "tid", "abbrev"],
+                        stats: ["pts", "trb", "ast", "ewa"],
+                        season: g.season,
+                        playoffs: true,
+                        tid: champTid
+                    });
+                    players.sort(function (a, b) {  return b.statsPlayoffs.ewa - a.statsPlayoffs.ewa; });
+                    p = players[0];
+                    awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
+                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
 
-                tx = g.dbl.transaction("awards", "readwrite");
-                tx.objectStore("awards").add(awards);
-                tx.oncomplete = function () {
-                    var tx;
+                    tx = g.dbl.transaction("awards", "readwrite");
+                    tx.objectStore("awards").add(awards);
+                    tx.oncomplete = function () {
+                        var tx;
 
-                    // Notifications for awards for user's players
-                    tx = g.dbl.transaction("events", "readwrite");
-                    for (i = 0; i < awardsByPlayer.length; i++) {
-                        p = awardsByPlayer[i];
-                        if (p.tid === g.userTid) {
-                            text = 'Your player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ';
-                            if (p.type.indexOf("Team") >= 0) {
-                                text += 'made the ' + p.type + '.';
-                            } else {
-                                text += 'won the ' + p.type + ' award.';
+                        // Notifications for awards for user's players
+                        tx = g.dbl.transaction("events", "readwrite");
+                        for (i = 0; i < awardsByPlayer.length; i++) {
+                            p = awardsByPlayer[i];
+                            if (p.tid === g.userTid) {
+                                text = 'Your player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ';
+                                if (p.type.indexOf("Team") >= 0) {
+                                    text += 'made the ' + p.type + '.';
+                                } else {
+                                    text += 'won the ' + p.type + ' award.';
+                                }
+                                eventLog.add(tx, {
+                                    type: "award",
+                                    text: text
+                                });
                             }
-                            eventLog.add(tx, {
-                                type: "award",
-                                text: text
-                            });
                         }
-                    }
 
-                    cbAwardsByPlayer(awardsByPlayer, cb);
+                        cbAwardsByPlayer(awardsByPlayer, cb);
+                    };
                 };
             };
         });

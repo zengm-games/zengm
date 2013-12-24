@@ -260,6 +260,8 @@ trades
 transaction log
   put index on pids involved, so then events involving a player can be shown on player page
 more detailed player moods - http://www.reddit.com/r/BasketballGM/comments/1k4val/players_refusing_to_sign_bug/cbln1oo?context=3
+  player personality, team chemistry
+  http://www.reddit.com/r/BasketballGM/comments/1tkw3e/idea_player_traits/
 strategy shouldn't be set randomly at start of new league
 AI teams need to get smarter about projecting the value of future draft picks: http://www.reddit.com/r/BasketballGM/comments/1jzel1/very_helpful_hint_regarding_tanking_and_draft/
 dashboard info should be on a widget accessible from any screen
@@ -269,7 +271,6 @@ player search page
   show stats, ratings, contract, etc. (customizable); allow filters to be applied. also filter by skill icon
 finances - too easy to make big $$$
 player morale - punishment for tanking
-player personality, team chemistry
 team colors, and uniforms in player icons
 harsher, more realistic luxury tax
 midlevel exception

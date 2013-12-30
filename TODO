@@ -3,6 +3,16 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+gs crash
+  http://www.reddit.com/r/BasketballGM/comments/1tn9fc/simulation_freeze/
+  http://www.reddit.com/r/BasketballGM/comments/1tlpk8/stuck_at_the_beginning_of_the_regular_season/ce98lnw?context=3
+  https://mail.google.com/mail/u/0/#inbox/143276e346494cc5
+  https://mail.google.com/mail/u/0/#inbox/142b97e311b2ad9c
+  https://mail.google.com/mail/u/0/#inbox/14320e4e6a600991
+  http://www.reddit.com/message/messages/1e4qj9
+  send message to reddit people once i start making progress
+  catch error, display relevant info (box score data, player), ask to email to me
+    g = require("globals"); g.dbl.transaction("players", "readwrite").objectStore("players").openCursor(63).onsuccess = function (event) { var cursor = event.target.result; var p = cursor.value; p.stats = []; cursor.update(p); };
 when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
 switch to bitbucket issues
   DON'T ADD ANYTHING NEW HERE!

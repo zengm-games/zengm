@@ -53,11 +53,13 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
             // Find the correct row of stats - should always be the last one, right?
             playerStats = _.last(player_.stats);
 
-//gs bug stuff
+//gs bug stuff - eventually this can be deleted, after everyone affected has been "cured"
 if (playerStats === undefined) {
-    var errorMsg;
+    /*var errorMsg;
     errorMsg = JSON.stringify(g) + "\n\n" + JSON.stringify(player_);
-    helpers.error("<p>You've run into a nasty bug that we're currently trying to diagnose. Please email the contents of the box below to commissioner@basketball-gm.com. Thank you, and sorry for the trouble.</p><textarea rows=15 cols=80>" + errorMsg + "</textarea>");
+    helpers.error("<p>You've run into a nasty bug that we're currently trying to diagnose. Please email the contents of the box below to commissioner@basketball-gm.com. Thank you, and sorry for the trouble.</p><textarea rows=15 cols=80>" + errorMsg + "</textarea>");*/
+    player_ = player.addStatsRow(player_);
+    playerStats = _.last(player_.stats);
 }
 
             // Update stats

@@ -40,7 +40,7 @@ notification system
     big AI moves - trades, free agent signings
       only show big moves, not all. need some threshold
   merge "retired" and "HOF" notifications for a player on the user's team
-  important notifications should be a different color
+  important notifications should be a different color, maybe require acknowledgement before closing
     errors
     refuse to sign
 
@@ -132,7 +132,6 @@ trading block crashing bug
 bring back the old constantly-displayed menu for large screens? http://www.reddit.com/r/BasketballGM/comments/1rjmmr/as_a_player_do_you_think_the_game_needs_a_tutorial/cdnxb4d
   expand play menu so it can be used with one click http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cds6hph
 make injuries more likely for old players and fatigued players
-resign -> re-sign or reSign
 Shouldn't say "This is what the playoff matchups would be" when playoffs first start
 first errorNotify in contractNegotiation.js really should be inline within that page
 player.injury.gamesRemaining should go by day
@@ -194,8 +193,6 @@ league settings
   enable buy out button or not
   set salary cap, luxury tax, exceptions, etc
   enable/disable trading rules
-appcache
-  loads from network unless network is not available, because fallback only runs when the network is not available. so the cached versions of files are only used when it is offline. would be better/faster to use them even when online, but that's not possible until the appcache standard is updated unless i either (1) cache every page (way too much) or (2) use hash # urls instead of real URLs (ugly).
 cross-league play
 mobile UI, bootstrap 3
   do something about hover tooltips
@@ -205,7 +202,6 @@ mobile UI, bootstrap 3
         make sure to use on player page too.. can i use helpers.playerName.. there too?
     table headers
     others?
-  get rid of leagueLayout.html
   any columns: *em css - can't i make columns use bootstrap?
 achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   Moneyball

@@ -19,7 +19,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
      *
      * @memberOf  views.components
      * @param {string} formId DOM ID of the form element to fill. If this is the same as the value the previous time this was called, then an update will occur.
-     * @param {Array.<string>} fields Array of strings of the type of fields to allow (current acceptable values are "teams" and "seasons"). Each element represents a dropdown and a component of the URL - so if "teams" and "seasons" is passed, URLs will be generated like /l/1/.../ATL/2014.
+     * @param {Array.<string>} fields Array of strings of the type of fields to allow (current acceptable values are "teams", "seasons", "shows", and "statTypes"). Each element represents a dropdown and a component of the URL - so if "teams" and "seasons" is passed, URLs will be generated like /l/1/.../ATL/2014.
      * @param {Array} selected Array of values corresponding to the default "selected" value of each field, like "CHI" or 2022 for "teams" or "seasons".
      * @param {Array.<string>} updateEvents Update events describing what has changed in this reload.
      * @param {?string=} extraParam Any extra parameter to append to the URL, like /l/1/.../ATL/2014/extraParam. Default is to append nothing.
@@ -56,6 +56,21 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                         {
                             val: "All seasons",
                             key: "all"
+                        }
+                    ];
+                } else if (fields[i] === "statTypes") {
+                    options = [
+                        {
+                            val: "Per Game",
+                            key: "per_game"
+                        },
+                        {
+                            val: "Per 36",
+                            key: "per_36"
+                        },
+                        {
+                            val: "Totals",
+                            key: "totals"
                         }
                     ];
                 }

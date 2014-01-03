@@ -6,6 +6,7 @@ CURRENT
 career stats
   highlighting like in team history for hall of fame, user's team, etc
   averages, per36, and totals dropdown
+    double refresh when page is loaded caused by dropdown
     no rounding for totals, somehow?
     backport to regular stats page
   EWA in averages should be average

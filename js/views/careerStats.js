@@ -9,12 +9,12 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
     function get(req) {
         return {
-            season: helpers.validateSeason(req.params.season)
+            statType: req.params.statType
         };
     }
 
     function InitViewModel() {
-        this.season = ko.observable();
+        this.statType = ko.observable();
     }
 
     mapping = {
@@ -28,15 +28,18 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     function updatePlayers(inputs, updateEvents, vm) {
         var deferred;
 
-        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
+console.log(inputs.statType);
+        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType()) {
             deferred = $.Deferred();
 
             g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
                 var i, players;
 
+console.log(inputs.statType);
                 players = player.filter(event.target.result, {
                     attrs: ["pid", "name", "pos", "age"],
-                    stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"]
+                    stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
+                    totals: inputs.statType === "totals"
                 });
 
                 for (i = 0; i < players.length; i++) {
@@ -45,7 +48,8 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 }
 
                 deferred.resolve({
-                    players: players
+                    players: players,
+                    statType: inputs.statType
                 });
             };
             return deferred.promise();
@@ -56,8 +60,6 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         ui.title("Career Stats");
 
         ko.computed(function () {
-            var season;
-            season = vm.season();
             ui.datatable($("#career-stats"), 2, _.map(vm.players(), function (p) {
                 return [helpers.playerNameLabels(p.pid, p.name), p.pos, String(p.careerStats.gp), String(p.careerStats.gs), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.fg, 1), helpers.round(p.careerStats.fga, 1), helpers.round(p.careerStats.fgp, 1), helpers.round(p.careerStats.tp, 1), helpers.round(p.careerStats.tpa, 1), helpers.round(p.careerStats.tpp, 1), helpers.round(p.careerStats.ft, 1), helpers.round(p.careerStats.fta, 1), helpers.round(p.careerStats.ftp, 1), helpers.round(p.careerStats.orb, 1), helpers.round(p.careerStats.drb, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.tov, 1), helpers.round(p.careerStats.stl, 1), helpers.round(p.careerStats.blk, 1), helpers.round(p.careerStats.pf, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1)];
             }));
@@ -66,12 +68,17 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         ui.tableClickableRows($("#career-stats"));
     }
 
+    function uiEvery(updateEvents, vm) {
+        components.dropdown("career-stats-dropdown", ["statTypes"], [vm.statType()], updateEvents);
+    }
+
     return bbgmView.init({
         id: "careerStats",
         get: get,
         InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updatePlayers],
-        uiFirst: uiFirst
+        uiFirst: uiFirst,
+        uiEvery: uiEvery
     });
 });

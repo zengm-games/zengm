@@ -5,12 +5,12 @@ CURRENT
 -------
 career stats
   highlighting like in team history for hall of fame, user's team, etc
-  links from other stats pages
-  rounding
   averages, per36, and totals dropdown
+    no rounding for totals, somehow?
     backport to regular stats page
   EWA in averages should be average
     if i change how it comes from player.filter, make sure it doesn't fuck up HoF
+  log to changes
 when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
 switch to bitbucket issues
   DON'T ADD ANYTHING NEW HERE!

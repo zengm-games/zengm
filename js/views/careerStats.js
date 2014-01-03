@@ -37,7 +37,7 @@ console.log(inputs.statType);
 
 console.log(inputs.statType);
                 players = player.filter(event.target.result, {
-                    attrs: ["pid", "name", "pos", "age"],
+                    attrs: ["pid", "name", "pos", "age", "hof", "tid"],
                     stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
                     totals: inputs.statType === "totals"
                 });
@@ -62,11 +62,22 @@ console.log(inputs.statType);
         ko.computed(function () {
             ui.datatable($("#career-stats"), 2, _.map(vm.players(), function (p) {
                 if (vm.statType() !== "totals") {
-                    return [helpers.playerNameLabels(p.pid, p.name), p.pos, String(p.careerStats.gp), String(p.careerStats.gs), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.fg, 1), helpers.round(p.careerStats.fga, 1), helpers.round(p.careerStats.fgp, 1), helpers.round(p.careerStats.tp, 1), helpers.round(p.careerStats.tpa, 1), helpers.round(p.careerStats.tpp, 1), helpers.round(p.careerStats.ft, 1), helpers.round(p.careerStats.fta, 1), helpers.round(p.careerStats.ftp, 1), helpers.round(p.careerStats.orb, 1), helpers.round(p.careerStats.drb, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.tov, 1), helpers.round(p.careerStats.stl, 1), helpers.round(p.careerStats.blk, 1), helpers.round(p.careerStats.pf, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1)];
+                    return [helpers.playerNameLabels(p.pid, p.name), p.pos, String(p.careerStats.gp), String(p.careerStats.gs), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.fg, 1), helpers.round(p.careerStats.fga, 1), helpers.round(p.careerStats.fgp, 1), helpers.round(p.careerStats.tp, 1), helpers.round(p.careerStats.tpa, 1), helpers.round(p.careerStats.tpp, 1), helpers.round(p.careerStats.ft, 1), helpers.round(p.careerStats.fta, 1), helpers.round(p.careerStats.ftp, 1), helpers.round(p.careerStats.orb, 1), helpers.round(p.careerStats.drb, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.tov, 1), helpers.round(p.careerStats.stl, 1), helpers.round(p.careerStats.blk, 1), helpers.round(p.careerStats.pf, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== g.userTid, p.tid === g.userTid];
                 } else {
-                    return [helpers.playerNameLabels(p.pid, p.name), p.pos, String(p.careerStats.gp), String(p.careerStats.gs), helpers.round(p.careerStats.min, 0), String(p.careerStats.fg), String(p.careerStats.fga), helpers.round(p.careerStats.fgp, 1), String(p.careerStats.tp), String(p.careerStats.tpa), helpers.round(p.careerStats.tpp, 1), String(p.careerStats.ft), String(p.careerStats.fta), helpers.round(p.careerStats.ftp, 1), String(p.careerStats.orb), String(p.careerStats.drb), String(p.careerStats.trb), String(p.careerStats.ast), String(p.careerStats.tov), String(p.careerStats.stl), String(p.careerStats.blk), String(p.careerStats.pf), String(p.careerStats.pts), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1)];
+                    return [helpers.playerNameLabels(p.pid, p.name), p.pos, String(p.careerStats.gp), String(p.careerStats.gs), helpers.round(p.careerStats.min, 0), String(p.careerStats.fg), String(p.careerStats.fga), helpers.round(p.careerStats.fgp, 1), String(p.careerStats.tp), String(p.careerStats.tpa), helpers.round(p.careerStats.tpp, 1), String(p.careerStats.ft), String(p.careerStats.fta), helpers.round(p.careerStats.ftp, 1), String(p.careerStats.orb), String(p.careerStats.drb), String(p.careerStats.trb), String(p.careerStats.ast), String(p.careerStats.tov), String(p.careerStats.stl), String(p.careerStats.blk), String(p.careerStats.pf), String(p.careerStats.pts), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== g.userTid, p.tid === g.userTid];
                 }
-            }));
+            }), {
+                fnRowCallback: function (nRow, aData) {
+                    // Highlight active players
+                    if (aData[aData.length - 1]) {
+                        nRow.classList.add("success"); // On this team
+                    } else if (aData[aData.length - 2]) {
+                        nRow.classList.add("info"); // On other team
+                    } else if (aData[aData.length - 3]) {
+                        nRow.classList.add("danger"); // Hall of Fame
+                    }
+                }
+            });
         }).extend({throttle: 1});
 
         ui.tableClickableRows($("#career-stats"));

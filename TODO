@@ -4,7 +4,6 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 career stats
-  highlighting like in team history for hall of fame, user's team, etc
   checkboxes
     playoffs
     minimum stat requirement to show (for %s sorting mainly)

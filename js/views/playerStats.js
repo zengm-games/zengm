@@ -31,7 +31,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
 
-            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
+            g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
                 var players;
 
                 players = player.filter(event.target.result, {

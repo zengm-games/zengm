@@ -1230,7 +1230,12 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     }
                     // Career totals
                     fp.careerStats = filterStatsPartial(p, ps.cr, options.stats);
-                    fp.careerStats.per = _.reduce(ps.r, function (memo, psr) { return memo + psr.per * psr.min; }, 0) / (fp.careerStats.min * fp.careerStats.gp); // Special case for PER - weight by minutes per season
+                    // Special case for PER - weight by minutes per season
+                    if (options.totals) {
+                        fp.careerStats.per = _.reduce(ps.r, function (memo, psr) { return memo + psr.per * psr.min; }, 0) / (fp.careerStats.min);
+                    } else {
+                        fp.careerStats.per = _.reduce(ps.r, function (memo, psr) { return memo + psr.per * psr.min; }, 0) / (fp.careerStats.min * fp.careerStats.gp);
+                    }
                     if (isNaN(fp.careerStats.per)) { fp.careerStats.per = 0; }
                     fp.careerStats.ewa = _.reduce(ps.r, function (memo, psr) { return memo + psr.ewa; }, 0); // Special case for EWA - sum
                     if (options.playoffs) {

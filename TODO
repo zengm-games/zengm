@@ -5,13 +5,12 @@ CURRENT
 -------
 career stats
   highlighting like in team history for hall of fame, user's team, etc
-  averages, per36, and totals dropdown
-    double refresh when page is loaded caused by dropdown
-      why does it happen here, but not on team finances "shows" dropdown??
-    no rounding for totals, somehow?
-    backport to regular stats page
-  totals
-    PER is broken, likely due to player.filter
+  checkboxes
+    playoffs
+    minimum stat requirement to show (for %s sorting mainly)
+  double refresh when page is loaded caused by dropdown
+    why does it happen here, but not on team finances "shows" dropdown??
+  backport dropdown to regular stats page
   EWA in averages should be average
     if i change how it comes from player.filter, make sure it doesn't fuck up HoF
   log to changes

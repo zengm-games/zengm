@@ -5,8 +5,6 @@ CURRENT
 -------
 career stats
   merge career and regular stats pages
-    somehow do highlighting? or is it worth it? maybe just HOF?
-      if it works, display paragraph above for career totals
     remove links from other stat pages
     remove career .js and .html file
   checkboxes (or more dropdowns?)

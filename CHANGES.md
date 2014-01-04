@@ -15,6 +15,7 @@ number or not.
 - Smarter in-game coach: substitutions are based on performance, not just ratings
 - GM firings happen after the playoffs, not before the regular season
 - Finals MVP award
+- Season totals, per 36 minutes stats, and career stats are viewable from the main player stats page
 
 ## Technical details
 

@@ -40,6 +40,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2013-12-21",
         msg: "At the end of each season, a Finals MVP will be selected along with the other awards."
+    }, {
+        date: "2014-01-03",
+        msg: "The Player Stats page can show career stats in addition to season stats. Also, it can show total stats and per 36 minute stats in addition to per game stats."
     }];
 
     function check() {

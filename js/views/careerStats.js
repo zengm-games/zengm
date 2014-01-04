@@ -9,7 +9,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
     function get(req) {
         return {
-            statType: req.params.statType
+            statType: req.params.statType !== undefined ? req.params.statType : "per_game"
         };
     }
 
@@ -28,14 +28,12 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     function updatePlayers(inputs, updateEvents, vm) {
         var deferred;
 
-console.log(inputs.statType);
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType()) {
             deferred = $.Deferred();
 
             g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
                 var i, players;
 
-console.log(inputs.statType);
                 players = player.filter(event.target.result, {
                     attrs: ["pid", "name", "pos", "age", "hof", "tid"],
                     stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],

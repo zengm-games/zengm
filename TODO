@@ -8,8 +8,6 @@ career stats
     playoffs
     minimum stat requirement to show (for %s sorting mainly)
     how do they look on mobile?
-  double refresh when page is loaded caused by dropdown
-    why does it happen here, but not on team finances "shows" dropdown??
   backport dropdown to regular stats page
   backport per36 to player page
   EWA in averages should be average

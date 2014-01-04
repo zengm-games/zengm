@@ -195,9 +195,6 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
             this.post("/l/:lid/live_game", views.liveGame.post);
             this.get("/l/:lid/event_log", views.eventLog.get);
             this.get("/l/:lid/event_log/:season", views.eventLog.get);
-            this.get("/l/:lid/career_stats", views.careerStats.get);
-            this.get("/l/:lid/career_stats/:statType", views.careerStats.get);
-            this.get("/l/:lid/career_stats/:statType/:playoffs", views.careerStats.get);
         });
 
         app.start();

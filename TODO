@@ -7,8 +7,6 @@ career stats
   merge career and regular stats pages
     rounding for totals
     column/table widths?
-    remove links from other stat pages
-    remove career .js and .html file
   EWA in averages should be average
     if i change how it comes from player.filter, make sure it doesn't fuck up HoF
     same with per36

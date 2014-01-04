@@ -862,6 +862,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
         options.oldStats = options.oldStats !== undefined ? options.oldStats : false;
         options.numGamesRemaining = options.numGamesRemaining !== undefined ? options.numGamesRemaining : 0;
+        options.per36 = options.per36 !== undefined ? options.per36 : false;
 
         // If no stats are requested, force showNoStats to be true since the stats will never be checked otherwise.
         if (options.stats.length === 0) {
@@ -1184,6 +1185,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     } else {
                         if (options.totals) {
                             row[stats[j]] = s[stats[j]];
+                        } else if (options.per36) {
+                            row[stats[j]] = s[stats[j]] * 36 / s.min;
                         } else {
                             row[stats[j]] = s[stats[j]] / s.gp;
                         }
@@ -1228,6 +1231,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                             }
                         }
                     }
+
                     // Career totals
                     fp.careerStats = filterStatsPartial(p, ps.cr, options.stats);
                     // Special case for PER - weight by minutes per season

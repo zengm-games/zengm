@@ -50,11 +50,11 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                 } else if (fields[i] === "shows") {
                     options = [
                         {
-                            val: "Past 10 seasons",
+                            val: "Past 10 Seasons",
                             key: "10"
                         },
                         {
-                            val: "All seasons",
+                            val: "All Seasons",
                             key: "all"
                         }
                     ];
@@ -65,7 +65,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                             key: "per_game"
                         },
                         {
-                            val: "Per 36",
+                            val: "Per 36 Mins",
                             key: "per_36"
                         },
                         {

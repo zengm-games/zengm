@@ -39,7 +39,8 @@ console.log(inputs.statType);
                 players = player.filter(event.target.result, {
                     attrs: ["pid", "name", "pos", "age", "hof", "tid"],
                     stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
-                    totals: inputs.statType === "totals"
+                    totals: inputs.statType === "totals",
+                    per36: inputs.statType === "per_36"
                 });
 
                 for (i = 0; i < players.length; i++) {

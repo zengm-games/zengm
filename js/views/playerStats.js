@@ -52,7 +52,10 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
     function uiFirst(vm) {
         ko.computed(function () {
-            ui.title("Player Stats - " + vm.season());
+            var label;
+
+            label = vm.season() !== null ? vm.season() : "Career Totals";
+            ui.title("Player Stats - " + label);
         }).extend({throttle: 1});
 
         ko.computed(function () {

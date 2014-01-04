@@ -65,7 +65,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         ko.computed(function () {
             ui.datatable($("#career-stats"), 2, _.map(vm.players(), function (p) {
                 // HACK due to ugly player.filter API
-                if (vm.playoffs()) {
+                if (vm.playoffs() === "playoffs") {
                     p.careerStats = p.careerStatsPlayoffs;
                 }
 

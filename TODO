@@ -5,7 +5,8 @@ CURRENT
 -------
 career stats
   merge career and regular stats pages
-    "career" should be an entry in the seasons dropdown.
+    remove links from other stat pages
+    remove career .js and .html file
   checkboxes (or more dropdowns?)
     minimum stat requirement to show (for %s sorting mainly)
     how do they look on mobile?

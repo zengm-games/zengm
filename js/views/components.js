@@ -41,11 +41,17 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                         options[j].key = g.teamAbbrevsCache[j];
                         options[j].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
                     }
-                } else if (fields[i] === "seasons") {
+                } else if (fields[i] === "seasons" || fields[i] === "seasonsAndCareer") {
                     options = helpers.getSeasons();
                     for (j = 0; j < options.length; j++) {
                         options[j].key = options[j].season;
                         options[j].val = options[j].season + " season";
+                    }
+                    if (fields[i] === "seasonsAndCareer") {
+                        options.unshift({
+                            key: "career",
+                            val: "Career Totals"
+                        });
                     }
                 } else if (fields[i] === "playoffs") {
                     options = [
@@ -121,7 +127,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
 
         // Check if any field needs to be updated
         for (i = 0; i < vm.fields().length; i++) {
-            if (vm.fields()[i].name === "seasons") {
+            if (vm.fields()[i].name === "seasons" || fields[i] === "seasonsAndCareer") {
                 if (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) {
                     vm.fields()[i].options.push({
                         val: g.season + " season",

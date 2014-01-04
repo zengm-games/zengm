@@ -4,9 +4,7 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 career stats
-  merge career and regular stats pages
-    rounding for totals
-    column/table widths?
+  column/table widths?
   EWA in averages should be average
     if i change how it comes from player.filter, make sure it doesn't fuck up HoF
     same with per36

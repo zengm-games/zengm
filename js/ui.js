@@ -345,36 +345,13 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
 
     // For dropdown menus to change team/season/whatever
     // This should be cleaned up, but it works for now.
-    function dropdown(select1, select2) {
-        if (arguments.length === 1) {
-            select1.off("change");
-            select1.change(function (event) {
-                var league_page, league_root_url, result, url;
+    function dropdown(select1, select2, select3) {
+        var handleDropdown;
 
-                result = parseLeagueUrl(document.URL);
-                league_root_url = result[1];
-                league_page = result[2];
-                url = helpers.leagueUrl([league_page, select1.val()]);
-                realtimeUpdate([], url);
-            });
-        } else if (arguments.length >= 2) {
-            select1.off("change");
-            select1.change(function (event) {
-                var extraParam, league_page, league_root_url, result, url;
-
-                extraParam = select1.parent()[0].dataset.extraParam;
-                result = parseLeagueUrl(document.URL);
-                league_root_url = result[1];
-                league_page = result[2];
-                url = helpers.leagueUrl([league_page, select1.val(), select2.val()]);
-                if (extraParam !== undefined && extraParam !== null && extraParam !== "") {
-                    url += "/" + extraParam;
-                }
-                realtimeUpdate([], url);
-            });
-            select2.off("change");
-            select2.change(function (event) {
-                var extraParam, league_page, league_root_url, result, url, seasonsDropdown;
+        handleDropdown = function (select) {
+            select.off("change");
+            select.change(function (event) {
+                var args, extraParam, leaguePage, result, url, seasonsDropdown;
 
                 // UGLY HACK: Stop event handling if it looks like this is a season dropdown and a new season is starting. Otherwise you get double refreshes, often pointing to the previous year, since updating the season dropdown is interpreted as a "change"
                 seasonsDropdown = document.querySelector(".bbgm-dropdown .seasons");
@@ -384,14 +361,31 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
 
                 extraParam = select2.parent()[0].dataset.extraParam;
                 result = parseLeagueUrl(document.URL);
-                league_root_url = result[1];
-                league_page = result[2];
-                url = helpers.leagueUrl([league_page, select1.val(), select2.val()]);
+                leaguePage = result[2];
+
+                args = [leaguePage, select1.val()];
+                if (select2 !== undefined) {
+                    args.push(select2.val());
+                }
+                if (select3 !== undefined) {
+                    args.push(select3.val());
+                }
+                url = helpers.leagueUrl(args);
+
                 if (extraParam !== undefined && extraParam !== null && extraParam !== "") {
                     url += "/" + extraParam;
                 }
+
                 realtimeUpdate([], url);
             });
+        }
+
+        handleDropdown(select1);
+        if (select2 !== undefined) {
+            handleDropdown(select2);
+        }
+        if (select3 !== undefined) {
+            handleDropdown(select3);
         }
     }
 

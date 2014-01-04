@@ -168,6 +168,8 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
             this.get("/l/:lid/player_ratings/:season", views.playerRatings.get);
             this.get("/l/:lid/player_stats", views.playerStats.get);
             this.get("/l/:lid/player_stats/:season", views.playerStats.get);
+            this.get("/l/:lid/player_stats/:season/:statType", views.playerStats.get);
+            this.get("/l/:lid/player_stats/:season/:statType/:playoffs", views.playerStats.get);
             this.get("/l/:lid/team_stats", views.teamStats.get);
             this.get("/l/:lid/team_stats/:season", views.teamStats.get);
             this.get("/l/:lid/player/:pid", views.player.get);

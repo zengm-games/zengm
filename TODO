@@ -5,18 +5,16 @@ CURRENT
 -------
 career stats
   merge career and regular stats pages
+    rounding for totals
+    column/table widths?
     remove links from other stat pages
     remove career .js and .html file
-  checkboxes (or more dropdowns?)
-    minimum stat requirement to show (for %s sorting mainly)
-    how do they look on mobile?
-  backport dropdown to regular stats page
-  backport per36 to player page
-    think about this... should it be a separate entry like playoffs?
   EWA in averages should be average
     if i change how it comes from player.filter, make sure it doesn't fuck up HoF
     same with per36
   log to changes
+per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/
+  already implemented for stats page, but should it be a separate entry like playoffs?
 when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
 switch to bitbucket issues
   DON'T ADD ANYTHING NEW HERE!
@@ -153,7 +151,6 @@ league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/leagu
 some way to "install" app locally and create a shortcut icon, since it is playable offline
 bootstrap 3.0.3
 merge game.play and freeAgents.play
-per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/
 make sure the changes alert and the "refuses to negotiate" alert both look good
   link to player in "refuses to negotiate" alert
 replace random.gauss with random.realGauss

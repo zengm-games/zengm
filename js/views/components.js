@@ -108,6 +108,8 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                 ui.dropdown($("#" + formId + "-" + fields[0]));
             } else if (fields.length === 2) {
                 ui.dropdown($("#" + formId + "-" + fields[0]), $("#" + formId + "-" + fields[1]));
+            } else if (fields.length === 3) {
+                ui.dropdown($("#" + formId + "-" + fields[0]), $("#" + formId + "-" + fields[1]), $("#" + formId + "-" + fields[2]));
             }
         }
 

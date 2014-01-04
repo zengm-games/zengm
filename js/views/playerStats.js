@@ -9,12 +9,16 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
     function get(req) {
         return {
-            season: req.params.season === "career" ? null : helpers.validateSeason(req.params.season)
+            season: req.params.season === "career" ? null : helpers.validateSeason(req.params.season),
+            statType: req.params.statType !== undefined ? req.params.statType : "per_game",
+            playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season"
         };
     }
 
     function InitViewModel() {
         this.season = ko.observable();
+        this.statType = ko.observable();
+        this.playoffs = ko.observable();
     }
 
     mapping = {
@@ -28,7 +32,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     function updatePlayers(inputs, updateEvents, vm) {
         var deferred;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season() || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
             deferred = $.Deferred();
 
             g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
@@ -38,12 +42,17 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     attrs: ["pid", "name", "pos", "age", "injury", "tid", "hof"],
                     ratings: ["skills"],
                     stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
-                    season: inputs.season // If null, then show career stats!
+                    season: inputs.season, // If null, then show career stats!
+                    totals: inputs.statType === "totals",
+                    per36: inputs.statType === "per_36",
+                    playoffs: inputs.playoffs === "playoffs"
                 });
 
                 deferred.resolve({
+                    players: players,
                     season: inputs.season,
-                    players: players
+                    statType: inputs.statType,
+                    playoffs: inputs.playoffs
                 });
             };
             return deferred.promise();
@@ -59,23 +68,36 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         }).extend({throttle: 1});
 
         ko.computed(function () {
-            var season;
-            season = vm.season();
-            ui.datatable($("#player-stats"), 2, _.map(vm.players(), function (p) {
-                var abbrev, row;
+            var abbrev, i, p, players, rows, season;
 
-                // HACK to show right stats
-                if (vm.season() === null) {
+            season = vm.season();
+
+            rows = [];
+            players = vm.players();
+            for (i = 0; i < vm.players().length; i++) {
+                p = players[i];
+
+                // HACKS to show right stats, info
+                if (season === null) {
                     p.stats = p.careerStats;
                     abbrev = helpers.getAbbrev(p.tid);
+                    if (vm.playoffs() === "playoffs") {
+                        p.stats = p.careerStatsPlayoffs;
+                    }
                 } else {
                     abbrev = p.stats.abbrev;
+                    if (vm.playoffs() === "playoffs") {
+                        p.stats = p.statsPlayoffs;
+                    }
                 }
 
-                row = [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="' + helpers.leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a>', String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, 1), helpers.round(p.stats.fg, 1), helpers.round(p.stats.fga, 1), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tp, 1), helpers.round(p.stats.tpa, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ft, 1), helpers.round(p.stats.fta, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.orb, 1), helpers.round(p.stats.drb, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.tov, 1), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, 1), helpers.round(p.stats.pf, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.per, 1), helpers.round(p.stats.ewa, 1), p.hof];
+                // Skip no stats: never played, didn't make playoffs, etc
+                if (p.stats.gp) {
+                    rows.push([helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="' + helpers.leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a>', String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, 1), helpers.round(p.stats.fg, 1), helpers.round(p.stats.fga, 1), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tp, 1), helpers.round(p.stats.tpa, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ft, 1), helpers.round(p.stats.fta, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.orb, 1), helpers.round(p.stats.drb, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.tov, 1), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, 1), helpers.round(p.stats.pf, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.per, 1), helpers.round(p.stats.ewa, 1), p.hof]);
+                }
+            }
 
-                return row;
-            }), {
+            ui.datatable($("#player-stats"), 2, rows, {
                 fnRowCallback: function (nRow, aData) {
                     // Highlight HOF players
                     if (aData[aData.length - 1]) {
@@ -89,7 +111,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     }
 
     function uiEvery(updateEvents, vm) {
-        components.dropdown("player-stats-dropdown", ["seasonsAndCareer"], [vm.season()], updateEvents);
+        components.dropdown("player-stats-dropdown", ["seasonsAndCareer", "statTypes", "playoffs"], [vm.season(), vm.statType(), vm.playoffs()], updateEvents);
     }
 
     return bbgmView.init({

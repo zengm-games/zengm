@@ -9,12 +9,14 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
     function get(req) {
         return {
+            playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season",
             statType: req.params.statType !== undefined ? req.params.statType : "per_game"
         };
     }
 
     function InitViewModel() {
         this.statType = ko.observable();
+        this.playoffs = ko.observable();
     }
 
     mapping = {
@@ -38,7 +40,8 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     attrs: ["pid", "name", "pos", "age", "hof", "tid"],
                     stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
                     totals: inputs.statType === "totals",
-                    per36: inputs.statType === "per_36"
+                    per36: inputs.statType === "per_36",
+                    playoffs: inputs.playoffs === "playoffs"
                 });
 
                 for (i = 0; i < players.length; i++) {
@@ -48,6 +51,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
                 deferred.resolve({
                     players: players,
+                    playoffs: inputs.playoffs,
                     statType: inputs.statType
                 });
             };
@@ -60,6 +64,11 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
         ko.computed(function () {
             ui.datatable($("#career-stats"), 2, _.map(vm.players(), function (p) {
+                // HACK due to ugly player.filter API
+                if (vm.playoffs()) {
+                    p.careerStats = p.careerStatsPlayoffs;
+                }
+
                 if (vm.statType() !== "totals") {
                     return [helpers.playerNameLabels(p.pid, p.name), p.pos, String(p.careerStats.gp), String(p.careerStats.gs), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.fg, 1), helpers.round(p.careerStats.fga, 1), helpers.round(p.careerStats.fgp, 1), helpers.round(p.careerStats.tp, 1), helpers.round(p.careerStats.tpa, 1), helpers.round(p.careerStats.tpp, 1), helpers.round(p.careerStats.ft, 1), helpers.round(p.careerStats.fta, 1), helpers.round(p.careerStats.ftp, 1), helpers.round(p.careerStats.orb, 1), helpers.round(p.careerStats.drb, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.tov, 1), helpers.round(p.careerStats.stl, 1), helpers.round(p.careerStats.blk, 1), helpers.round(p.careerStats.pf, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== g.userTid, p.tid === g.userTid];
                 } else {
@@ -83,7 +92,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     }
 
     function uiEvery(updateEvents, vm) {
-        components.dropdown("career-stats-dropdown", ["statTypes"], [vm.statType()], updateEvents);
+        components.dropdown("career-stats-dropdown", ["statTypes", "playoffs"], [vm.statType(), vm.playoffs()], updateEvents);
     }
 
     return bbgmView.init({

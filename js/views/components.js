@@ -47,6 +47,17 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                         options[j].key = options[j].season;
                         options[j].val = options[j].season + " season";
                     }
+                } else if (fields[i] === "playoffs") {
+                    options = [
+                        {
+                            val: "Regular Season",
+                            key: "regular_season"
+                        },
+                        {
+                            val: "Playoffs",
+                            key: "playoffs"
+                        }
+                    ];
                 } else if (fields[i] === "shows") {
                     options = [
                         {

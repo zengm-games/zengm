@@ -4,12 +4,14 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 career stats
+  merge career and regular stats pages
+    "career" should be an entry in the seasons dropdown.
   checkboxes (or more dropdowns?)
-    playoffs
     minimum stat requirement to show (for %s sorting mainly)
     how do they look on mobile?
   backport dropdown to regular stats page
   backport per36 to player page
+    think about this... should it be a separate entry like playoffs?
   EWA in averages should be average
     if i change how it comes from player.filter, make sure it doesn't fuck up HoF
     same with per36
@@ -54,6 +56,7 @@ notification system
   important notifications should be a different color, maybe require acknowledgement before closing
     errors
     refuse to sign
+    retire
 
 BIG NEW FEATURES
 ----------------

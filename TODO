@@ -4,8 +4,7 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 career stats
-  highlight user's players like on leaders page
-    leaders page uses different color than team history.. problem? user's team should be blue
+  somehow don't show players with hardly any playing time - come up with a filter formula
   column/table widths?
   EWA in averages should be average
     if i change how it comes from player.filter, make sure it doesn't fuck up HoF
@@ -16,6 +15,7 @@ per36, totals, playoffs options elsewhere
   roster
 per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/
   already implemented for stats page, but should it be a separate entry like playoffs?
+progressbar for trading block
 when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
 switch to bitbucket issues
   DON'T ADD ANYTHING NEW HERE!

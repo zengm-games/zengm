@@ -1178,6 +1178,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                         row.age = s.season - p.born.year;
                     } else if (stats[j] === "abbrev") {
                         row.abbrev = helpers.getAbbrev(s.tid);
+                    } else if (stats[j] === "tid") {
+                        row.tid = s.tid;
                     } else if (stats[j] === "per") {
                         row.per = s.per;
                     } else if (stats[j] === "ewa") {

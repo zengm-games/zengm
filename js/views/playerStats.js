@@ -41,7 +41,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 players = player.filter(event.target.result, {
                     attrs: ["pid", "name", "pos", "age", "injury", "tid", "hof"],
                     ratings: ["skills"],
-                    stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
+                    stats: ["abbrev", "tid", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
                     season: inputs.season, // If null, then show career stats!
                     totals: inputs.statType === "totals",
                     per36: inputs.statType === "per_36",
@@ -68,7 +68,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         }).extend({throttle: 1});
 
         ko.computed(function () {
-            var abbrev, d, i, p, players, rows, season;
+            var abbrev, d, i, p, players, rows, season, tid;
 
             season = vm.season();
 
@@ -88,11 +88,13 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 if (season === null) {
                     p.stats = p.careerStats;
                     abbrev = helpers.getAbbrev(p.tid);
+                    tid = p.tid;
                     if (vm.playoffs() === "playoffs") {
                         p.stats = p.careerStatsPlayoffs;
                     }
                 } else {
                     abbrev = p.stats.abbrev;
+                    tid = p.stats.tid;
                     if (vm.playoffs() === "playoffs") {
                         p.stats = p.statsPlayoffs;
                     }
@@ -100,15 +102,19 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
                 // Skip no stats: never played, didn't make playoffs, etc
                 if (p.stats.gp) {
-                    rows.push([helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="' + helpers.leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a>', String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, d), helpers.round(p.stats.fg, d), helpers.round(p.stats.fga, d), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tp, d), helpers.round(p.stats.tpa, d), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ft, d), helpers.round(p.stats.fta, d), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.orb, d), helpers.round(p.stats.drb, d), helpers.round(p.stats.trb, d), helpers.round(p.stats.ast, d), helpers.round(p.stats.tov, d), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, d), helpers.round(p.stats.pf, d), helpers.round(p.stats.pts, d), helpers.round(p.stats.per, 1), helpers.round(p.stats.ewa, 1), p.hof]);
+                    rows.push([helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, '<a href="' + helpers.leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a>', String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, d), helpers.round(p.stats.fg, d), helpers.round(p.stats.fga, d), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tp, d), helpers.round(p.stats.tpa, d), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ft, d), helpers.round(p.stats.fta, d), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.orb, d), helpers.round(p.stats.drb, d), helpers.round(p.stats.trb, d), helpers.round(p.stats.ast, d), helpers.round(p.stats.tov, d), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, d), helpers.round(p.stats.pf, d), helpers.round(p.stats.pts, d), helpers.round(p.stats.per, 1), helpers.round(p.stats.ewa, 1), p.hof, tid === g.userTid]);
                 }
             }
 
             ui.datatable($("#player-stats"), 2, rows, {
                 fnRowCallback: function (nRow, aData) {
                     // Highlight HOF players
-                    if (aData[aData.length - 1]) {
+                    if (aData[aData.length - 2]) {
                         nRow.classList.add("danger");
+                    }
+                    // Highlight user's team
+                    if (aData[aData.length - 1]) {
+                        nRow.classList.add("info");
                     }
                 }
             });

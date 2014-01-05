@@ -8,7 +8,11 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
     var mapping;
 
     function getOffers(userPids, userDpids, cb) {
-        var afterOffers, i, numAfter, offers, tids;
+        var afterOffers, done, i, numAfter, offers, progressBar, tids;
+
+        // Initialize progress bar
+        progressBar = document.querySelector("#ask-progress .progress-bar");
+        progressBar.style.width = "10%";
 
         offers = [];
 
@@ -25,6 +29,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
             cb(offers);
         });
 
+        done = 0;
         for (i = 0; i < tids.length; i++) {
             (function (tid) {
                 var teams;
@@ -44,6 +49,10 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
 
                 if (tid !== g.userTid) {
                     trade.makeItWork(teams, true, function (found, teams) {
+                        // Update progress bar
+                        done += 1;
+                        progressBar.style.width = Math.round(10 + 90 * done / numAfter) + "%";
+
                         if (found) {
                             trade.summary(teams, function (summary) {
                                 teams[1].warning = summary.warning;
@@ -74,19 +83,20 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
     }
 
     function post(req) {
-        var buttonEl, userDpids, userPids;
+        var buttonEl, progressEl, userDpids, userPids;
 
         buttonEl = document.getElementById("ask-button");
-        buttonEl.textContent = "Waiting for offers...";
-        buttonEl.disabled = true;
+        buttonEl.style.display = "none";
+        progressEl = document.getElementById("ask-progress");
+        progressEl.style.display = "block";
 
         userPids = _.map(req.params.pids, function (x) { return parseInt(x, 10); });
         userDpids = _.map(req.params.dpids, function (x) { return parseInt(x, 10); });
 
         getOffers(userPids, userDpids, function (offers) {
             ui.realtimeUpdate(["tradingBlockAsk"], helpers.leagueUrl(["trading_block"]), function () {
-                buttonEl.textContent = "Ask For Trade Proposals";
-                buttonEl.disabled = false;
+                buttonEl.style.display = "inline";
+                progressEl.style.display = "none";
 
                 window.setTimeout(function () {
                     var tableEls;
@@ -266,6 +276,11 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
         }).extend({throttle: 1});
 
         ui.tableClickableRows($("#roster-user"));
+
+        // Clear stale results while new results are being found
+        document.getElementById("ask-button").addEventListener("click", function () {
+            vm.offers([]);
+        });
     }
 
     return bbgmView.init({

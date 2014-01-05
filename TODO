@@ -15,7 +15,6 @@ per36, totals, playoffs options elsewhere
   roster
 per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/
   already implemented for stats page, but should it be a separate entry like playoffs?
-progressbar for trading block
 when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
 switch to bitbucket issues
   DON'T ADD ANYTHING NEW HERE!

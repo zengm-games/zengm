@@ -36,9 +36,9 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             deferred = $.Deferred();
 
             g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
-                var players;
+                var gp, i, min, players, playersAll;
 
-                players = player.filter(event.target.result, {
+                playersAll = player.filter(event.target.result, {
                     attrs: ["pid", "name", "pos", "age", "injury", "tid", "hof"],
                     ratings: ["skills"],
                     stats: ["abbrev", "tid", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
@@ -47,6 +47,43 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     per36: inputs.statType === "per_36",
                     playoffs: inputs.playoffs === "playoffs"
                 });
+
+                // Find max gp to use for filtering
+                gp = 0;
+                for (i = 0; i < playersAll.length; i++) {
+                    if (playersAll[i].stats.gp > gp) {
+                        gp = playersAll[i].stats.gp;
+                    }
+                }
+                // Special case for career totals - use 82 games, unless this is the first season
+                if (!inputs.season) {
+                    if (g.season > g.startingSeason) {
+                        gp = 82;
+                    }
+                }
+
+                // Only keep players with more than 5 mpg
+                players = [];
+                for (i = 0; i < playersAll.length; i++) {
+                    // Minutes played
+                    if (inputs.statType === "totals") {
+                        if (inputs.season) {
+                            min = playersAll[i].stats.min;
+                        } else {
+                            min = playersAll[i].careerStats.min;
+                        }
+                    } else {
+                        if (inputs.season) {
+                            min = playersAll[i].stats.gp * playersAll[i].stats.min;
+                        } else {
+                            min = playersAll[i].careerStats.gp * playersAll[i].careerStats.min;
+                        }
+                    }
+
+                    if (min > gp * 5) {
+                        players.push(playersAll[i]);
+                    }
+                }
 
                 deferred.resolve({
                     players: players,

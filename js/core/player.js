@@ -1187,7 +1187,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     } else {
                         if (options.totals) {
                             row[stats[j]] = s[stats[j]];
-                        } else if (options.per36) {
+                        } else if (options.per36 && stats[j] !== "min") { // Don't scale min by 36 minutes
                             row[stats[j]] = s[stats[j]] * 36 / s.min;
                         } else {
                             row[stats[j]] = s[stats[j]] / s.gp;

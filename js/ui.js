@@ -359,7 +359,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                     return;
                 }
 
-                extraParam = select2.parent()[0].dataset.extraParam;
+                extraParam = select.parent()[0].dataset.extraParam;
                 result = parseLeagueUrl(document.URL);
                 leaguePage = result[2];
 

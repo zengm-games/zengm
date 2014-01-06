@@ -57,6 +57,12 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knock
                     for (j = 0; j < teams[i].seasons.length; j++) {
                         if (teams[i].seasons[j].season === inputs.season) {
                             gps[i] = teams[i].seasons[j].gp;
+
+                            // Don't count playoff games
+                            if (gps[i] > 82) {
+                                gps[i] = 82;
+                            }
+
                             break;
                         }
                     }
@@ -83,9 +89,9 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knock
                     stats = ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa"];
 
                     players = player.filter(event.target.result, {
-                        attrs: ["pid", "name", "tid", "injury"],
+                        attrs: ["pid", "name", "injury"],
                         ratings: ["skills"],
-                        stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev"],
+                        stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev", "tid"],
                         season: inputs.season
                     });
 
@@ -103,7 +109,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knock
                                 }
 
                                 // Compare against value normalized for team games played
-                                if (playerValue >= Math.ceil(categories[i].minValue[k] * gps[players[j].tid] / 82)) {
+                                if (playerValue >= Math.ceil(categories[i].minValue[k] * gps[players[j].stats.tid] / 82)) {
                                     pass = true;
                                     break;  // If one is true, don't need to check the others
                                 }

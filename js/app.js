@@ -195,6 +195,8 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
             this.post("/l/:lid/live_game", views.liveGame.post);
             this.get("/l/:lid/event_log", views.eventLog.get);
             this.get("/l/:lid/event_log/:season", views.eventLog.get);
+            this.get("/l/:lid/delete_old_data", views.deleteOldData.get);
+            this.post("/l/:lid/delete_old_data", views.deleteOldData.post);
         });
 
         app.start();

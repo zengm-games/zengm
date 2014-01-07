@@ -3,6 +3,7 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+After some testing add changes notification for Delete Old Data
 career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year
   column/table widths?

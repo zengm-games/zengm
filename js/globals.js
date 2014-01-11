@@ -39,7 +39,9 @@ define(["lib/knockout"], function (ko) {
     g.PLAYER = {
         FREE_AGENT: -1,
         UNDRAFTED: -2,
-        RETIRED: -3
+        RETIRED: -3,
+        UNDRAFTED_2: -4,  // Next year's draft class
+        UNDRAFTED_3: -5   // Next next year's draft class
     };
 
 /*    // Web workers - create only if we're not already inside a web worker!

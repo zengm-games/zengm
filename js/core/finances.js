@@ -163,6 +163,10 @@ define(["globals", "lib/underscore"], function (g, _) {
     function getRankLastThree(t, category, item) {
         var s;
 
+console.log(t);
+if (t === undefined) {
+    debugger;
+}
         s = t.seasons.length - 1;  // Most recent season index
         if (s > 1) {
             // Use three seasons if possible

@@ -45,17 +45,18 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
     /**
      * Generate a set of draft prospects.
      *
-     * This is called before the draft occurs, otherwise there will be no one to draft!
+     * This is called after draft classes are moved up a year, to create the new UNDRAFTED_3 class. It's also called 3 times when a new league starts, to create all 3 draft classes.
      *
      * @memberOf core.draft
+     * @param {number} tid Team ID number for the generated draft class. Should be g.PLAYER.UNDRAFTED, g.PLAYER.UNDRAFTED_2, or g.PLAYER.UNDRAFTED_3.
+     * @param {number?} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
      * @param {function()} cb Callback function.
      */
-    function genPlayers(cb) {
-        g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
-            var agingYears, baseRating, draftYear, i, p, playerStore, pot, profile, profiles, scoutingRank, t, tx;
+    function genPlayers(tid, scoutingRank, cb) {
+        var withScoutingRank;
 
-            t = event.target.result;
-            scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
+        withScoutingRank = function (scoutingRank) {
+            var agingYears, baseRating, draftYear, i, p, playerStore, pot, profile, profiles, tx;
 
             tx = g.dbl.transaction("players", "readwrite");
             playerStore = tx.objectStore("players");
@@ -69,7 +70,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                 agingYears = random.randInt(0, 3);
                 draftYear = g.season;
 
-                p = player.generate(g.PLAYER.UNDRAFTED, 19, profile, baseRating, pot, draftYear, false, scoutingRank);
+                p = player.generate(tid, 19, profile, baseRating, pot, draftYear, false, scoutingRank);
                 p = player.develop(p, agingYears, true);
 
                 playerStore.put(p);
@@ -79,6 +80,18 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                 cb();
             };
         };
+
+        if (!scoutingRank) {
+            g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
+                var t;
+
+                t = event.target.result;
+                scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
+                withScoutingRank(scoutingRank);
+            };
+        } else {
+            withScoutingRank(scoutingRank);
+        }
     }
 
     /**

@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "core/team", "lib/underscore", "util/helpers", "util/random"], function (db, g, ui, finances, player, season, team, _, helpers, random) {
+define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "core/season", "core/team", "lib/underscore", "util/helpers", "util/random"], function (db, g, ui, draft, finances, player, season, team, _, helpers, random) {
     "use strict";
 
     /**
@@ -133,18 +133,25 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
 
                         // This can't be in transaction.oncomplete because loading players from a json file is async and breaks the transaction.
                         afterPlayerCreation = function () {
-                            // Make schedule, start season
-                            season.newPhase(g.PHASE.REGULAR_SEASON, function () {
-                                var lid;
+                            // Create three draft classes
+                            draft.genPlayers(g.PLAYER.UNDRAFTED, scoutingRank, function () {
+                                draft.genPlayers(g.PLAYER.UNDRAFTED_2, scoutingRank, function () {
+                                    draft.genPlayers(g.PLAYER.UNDRAFTED_3, scoutingRank, function () {
+                                        // Make schedule, start season
+                                        season.newPhase(g.PHASE.REGULAR_SEASON, function () {
+                                            var lid;
 
-                                ui.updateStatus("Idle");
+                                            ui.updateStatus("Idle");
 
-                                lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
+                                            lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
-                                // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
-                                team.rosterAutoSort(null, g.userTid, function () { cb(lid); });
+                                            // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
+                                            team.rosterAutoSort(null, g.userTid, function () { cb(lid); });
 
-                                helpers.bbgmPing("league");
+                                            helpers.bbgmPing("league");
+                                        });
+                                    });
+                                });
                             });
                         };
 

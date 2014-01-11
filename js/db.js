@@ -746,6 +746,7 @@ console.log(event);
                                 contracts.push({
                                     pid: releasedPlayers[i].pid,
                                     name: "Deleted Player",
+                                    skills: [],
                                     amount: releasedPlayers[i].contract.amount,
                                     exp: releasedPlayers[i].contract.exp,
                                     released: true

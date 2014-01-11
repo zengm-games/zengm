@@ -884,10 +884,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseDraft(cb) {
-        draft.genPlayers(function () {
-            draft.genOrder(function () {
-                newPhaseCb(g.PHASE.DRAFT, cb, helpers.leagueUrl(["draft"]));
-            });
+        draft.genOrder(function () {
+            newPhaseCb(g.PHASE.DRAFT, cb, helpers.leagueUrl(["draft"]));
         });
     }
 
@@ -985,10 +983,10 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             var playerStore, tx;
 
             tx = g.dbl.transaction(["players", "teams"], "readwrite");
-            player.genBaseMoods(tx, function (baseMoods) {
-                playerStore = tx.objectStore("players");
+            playerStore = tx.objectStore("players");
 
-                // Reset contract demands of current free agents
+            // Reset contract demands of current free agents and undrafted players
+            player.genBaseMoods(tx, function (baseMoods) {
                 // This IDBKeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
                 playerStore.index("tid").openCursor(IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
                     var cursor, p;
@@ -1001,12 +999,40 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         cursor.continue();
                     }
                 };
-                tx.oncomplete = function () {
+            });
+
+            // Bump up future draft classes
+            playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_2).onsuccess = function (event) {
+                var cursor, p;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+                    p.tid = g.PLAYER.UNDRAFTED;
+                    cursor.update(p);
+                    cursor.continue();
+                }
+            };
+            playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_3).onsuccess = function (event) {
+                var cursor, p;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+                    p.tid = g.PLAYER.UNDRAFTED_2;
+                    cursor.update(p);
+                    cursor.continue();
+                }
+            };
+
+            tx.oncomplete = function () {
+                // Create new draft class for 3 years in the future
+                draft.genPlayers(g.PLAYER.UNDRAFTED_3, null, function () {
                     db.setGameAttributes({daysLeft: 30}, function () {
                         newPhaseCb(g.PHASE.FREE_AGENCY, cb, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
                     });
-                };
-            });
+                });
+            };
         });
     }
 

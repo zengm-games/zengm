@@ -729,16 +729,28 @@ console.log(event);
                         transaction.objectStore("players").get(releasedPlayers[i].pid).onsuccess = function (event) {
                             var player;
 
+
+
                             player = event.target.result;
-                            contracts.push({
-                                pid: player.pid,
-                                name: player.name,
-                                skills: _.last(player.ratings).skills,
-                                injury: player.injury,
-                                amount: releasedPlayers[i].contract.amount,
-                                exp: releasedPlayers[i].contract.exp,
-                                released: true
-                            });
+                            if (player !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
+                                contracts.push({
+                                    pid: releasedPlayers[i].pid,
+                                    name: player.name,
+                                    skills: _.last(player.ratings).skills,
+                                    injury: player.injury,
+                                    amount: releasedPlayers[i].contract.amount,
+                                    exp: releasedPlayers[i].contract.exp,
+                                    released: true
+                                });
+                            } else {
+                                contracts.push({
+                                    pid: releasedPlayers[i].pid,
+                                    name: "Deleted Player",
+                                    amount: releasedPlayers[i].contract.amount,
+                                    exp: releasedPlayers[i].contract.exp,
+                                    released: true
+                                });
+                            }
 
                             if (contracts.length === players.length + releasedPlayers.length) {
                                 cb(contracts);

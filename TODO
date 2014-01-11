@@ -3,6 +3,9 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+show prospects before draft
+  generate prospects after draft ends, not before it begins. so you can see them earlier. have bigger fuzz that is reset at draft day
+  for years further in the future (maybe 3 more years), just show an estimate of draft class strength
 career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year
   column/table widths?
@@ -88,9 +91,6 @@ random events
   like.. player gets suspended, out X games. or player gets into fight, fan support drops. etc.
   need a notification system first
 more detailed draft - slower picks, trades, etc.
-  show prospects before draft
-    generate prospects after draft ends, not before it begins. so you can see them earlier. have bigger fuzz that is reset at draft day
-    for years further in the future (maybe 3 more years), just show an estimate of draft class strength
   custom draft classes http://www.reddit.com/r/BasketballGM/comments/1r0ftx/nba_2k2/cdj769w
   slower picks http://www.reddit.com/r/BasketballGM/comments/1r70dv/trade_picks_during_draft
   sort by generic value (current) or team-specific value

@@ -2,7 +2,7 @@
  * @name core.draft
  * @namespace The annual draft of new prospects.
  */
-define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "core/team", "util/helpers", "util/random"], function (db, g, ui, finances, player, season, team, helpers, random) {
+define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "util/helpers", "util/random"], function (db, g, ui, finances, player, team, helpers, random) {
     "use strict";
 
     /**
@@ -56,7 +56,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
         var withScoutingRank;
 
         withScoutingRank = function (scoutingRank) {
-            var agingYears, baseRating, draftYear, i, p, playerStore, pot, profile, profiles, tx;
+            var agingYears, baseAge, baseRating, draftYear, i, p, playerStore, pot, profile, profiles, tx;
 
             tx = g.dbl.transaction("players", "readwrite");
             playerStore = tx.objectStore("players");
@@ -70,7 +70,23 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
                 agingYears = random.randInt(0, 3);
                 draftYear = g.season;
 
-                p = player.generate(tid, 19, profile, baseRating, pot, draftYear, false, scoutingRank);
+                baseAge = 19;
+                if (g.season === g.startingSeason && g.phase < g.PHASE.DRAFT) {
+                    // New league, creating players for draft in same season and following 2 seasons
+                    if (tid === g.PLAYER.UNDRAFTED_2) {
+                        baseAge -= 1;
+                        draftYear += 1;
+                    } else if (tid === g.PLAYER.UNDRAFTED_3) {
+                        baseAge -= 2;
+                        draftYear += 2;
+                    }
+                } else if (tid === g.PLAYER.UNDRAFTED_3) {
+                    // Player being generated after draft ends, for draft in 3 years
+                    baseAge -= 3;
+                    draftYear += 3;
+                }
+
+                p = player.generate(tid, baseAge, profile, baseRating, pot, draftYear, false, scoutingRank);
                 p = player.develop(p, agingYears, true);
 
                 playerStore.put(p);
@@ -343,9 +359,11 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/season", "c
      * @param {function(Array.<Object>, Array.<number>)} cb Callback function. First argument is the list of draft picks (from getOrder). Second argument is a list of player IDs who were drafted during this function call, in order.
      */
     function untilUserOrEnd(cb) {
-        var pids;
+        var pids, season;
 
         pids = [];
+
+        season = require("core/season");
 
         g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
             var playersAll;

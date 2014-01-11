@@ -133,7 +133,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
 
                         // This can't be in transaction.oncomplete because loading players from a json file is async and breaks the transaction.
                         afterPlayerCreation = function () {
-                            // Create three draft classes
+                            // Create three draft classes - can be a race condition of scoutingRank isn't passed, as teams might not be in database yet
                             draft.genPlayers(g.PLAYER.UNDRAFTED, scoutingRank, function () {
                                 draft.genPlayers(g.PLAYER.UNDRAFTED_2, scoutingRank, function () {
                                     draft.genPlayers(g.PLAYER.UNDRAFTED_3, scoutingRank, function () {

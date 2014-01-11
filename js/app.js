@@ -197,6 +197,8 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
             this.get("/l/:lid/event_log/:season", views.eventLog.get);
             this.get("/l/:lid/delete_old_data", views.deleteOldData.get);
             this.post("/l/:lid/delete_old_data", views.deleteOldData.post);
+            this.get("/l/:lid/draft_scouting", views.draftScouting.get);
+            this.get("/l/:lid/draft_scouting/:season", views.draftScouting.get);
         });
 
         app.start();

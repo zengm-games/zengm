@@ -134,7 +134,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             teams.sort(function (a, b) {  return a.tid - b.tid; });
 
             // Any non-retired player can win an award
-            tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
+            tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
                 var champTid, i, p, players, text, type;
 
                 players = player.filter(event.target.result, {
@@ -545,7 +545,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         cursor.continue();
                     } else {
                         // Loop through all non-retired players
-                        tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
+                        tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
                             var cursorP, p;
 
                             cursorP = event.target.result;
@@ -776,7 +776,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         });
 
         // Do annual tasks for each player, like checking for retirement
-        tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) { // All non-retired players
+        tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) { // All non-retired players
             var age, cont, cursor, excessAge, excessPot, maxAge, minPot, p, pot, update;
 
             update = false;
@@ -997,33 +997,34 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         player.addToFreeAgents(playerStore, p, g.PHASE.FREE_AGENCY, baseMoods);
 //                        cursor.update(p);
                         cursor.continue();
+                    } else {
+                        // Bump up future draft classes (nested so tid updates don't cause race conditions)
+                        playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_2).onsuccess = function (event) {
+                            var cursor, p;
+
+                            cursor = event.target.result;
+                            if (cursor) {
+                                p = cursor.value;
+                                p.tid = g.PLAYER.UNDRAFTED;
+                                cursor.update(p);
+                                cursor.continue();
+                            } else {
+                                playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_3).onsuccess = function (event) {
+                                    var cursor, p;
+
+                                    cursor = event.target.result;
+                                    if (cursor) {
+                                        p = cursor.value;
+                                        p.tid = g.PLAYER.UNDRAFTED_2;
+                                        cursor.update(p);
+                                        cursor.continue();
+                                    }
+                                };
+                            }
+                        };
                     }
                 };
             });
-
-            // Bump up future draft classes
-            playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_2).onsuccess = function (event) {
-                var cursor, p;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-                    p.tid = g.PLAYER.UNDRAFTED;
-                    cursor.update(p);
-                    cursor.continue();
-                }
-            };
-            playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_3).onsuccess = function (event) {
-                var cursor, p;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-                    p.tid = g.PLAYER.UNDRAFTED_2;
-                    cursor.update(p);
-                    cursor.continue();
-                }
-            };
 
             tx.oncomplete = function () {
                 // Create new draft class for 3 years in the future
@@ -1044,8 +1045,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
                     tx = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
 
-                    // Make all players free agents
-                    tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
+                    // Make all players draftable
+                    tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
                         var cursor, p;
 
                         cursor = event.target.result;

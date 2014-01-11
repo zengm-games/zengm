@@ -905,7 +905,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                         fp.teamName = g.teamNamesCache[p.tid];
                     } else if (p.tid === g.PLAYER.FREE_AGENT) {
                         fp.teamName = "Free Agent";
-                    } else if (p.tid === g.PLAYER.UNDRAFTED) {
+                    } else if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3) {
                         fp.teamName = "Draft Prospect";
                     } else if (p.tid === g.PLAYER.RETIRED) {
                         fp.teamName = "Retired";

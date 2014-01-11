@@ -14,9 +14,13 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
         // Draft hasn't happened yet this year
         if (g.phase < g.PHASE.DRAFT) {
-            // View last season by default
-            if (season >= g.season) {
+            if (season > g.season) {
+                // View last season by default
                 season = g.season - 1;
+            } else if (season === g.season) {
+                return {
+                    redirectUrl: helpers.leagueUrl(["draft_scouting"])
+                };
             }
         }
 

@@ -4,12 +4,20 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 show prospects before draft
-  generate prospects after draft ends, not before it begins. so you can see them earlier. have bigger fuzz that is reset at draft day
-  have UNDRAFTED_2 and _3 for future draft classes - even bigger fuzzes, but decreasing each season
+  fuzzing
+    bigger in future. decrease each year as players move up
+  TEST TEST TEST
+    put online at beta.basketball-gm.com?
   how to show future prospects? draft_summary/g.season? but that fails after draft ends before next season starts. maybe new page?
+    draft_summary
+      should have dropdown for next season too, after draft is over
   upgrade code
     create all undrafted players, like in new league
     if UNDRAFTED has players, draft is going on (or free agency hasn't started) and just create UNDRAFTED_2 and UNDRAFTED_3
+  EVENTUALLY
+    ratings should really update annually, just like in normal years
+    movement between draft classes
+    promising to draft at certain position
 career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year
   column/table widths?

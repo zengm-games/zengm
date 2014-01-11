@@ -125,7 +125,7 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
 
                 drafted = [];
                 for (i = 0; i < players.length; i++) {
-                    if (players[i].tid !== g.PLAYER.UNDRAFTED) {
+                    if (players[i].tid >= 0) {
                         drafted.push(players[i]);
                     }
                 }

@@ -4,13 +4,9 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 show prospects before draft
-  fuzzing
-    bigger in future. decrease each year as players move up
   TEST TEST TEST
     put online at beta.basketball-gm.com?
-  how to show future prospects? draft_summary/g.season? but that fails after draft ends before next season starts. maybe new page?
-    draft_summary
-      should have dropdown for next season too, after draft is over
+  draft_summary and draft_scouting should just have text links between them. delete dropdown in draft_scouting
   upgrade code
     create all undrafted players, like in new league
     if UNDRAFTED has players, draft is going on (or free agency hasn't started) and just create UNDRAFTED_2 and UNDRAFTED_3

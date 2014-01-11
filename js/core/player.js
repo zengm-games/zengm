@@ -735,6 +735,12 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             p.ratings.push(genRatings(profile, baseRating, pot, draftYear, scoutingRank));
         }
 
+        if (tid === g.PLAYER.UNDRAFTED_2) {
+            p.ratings[0].fuzz *= 2;
+        } else if (tid === g.PLAYER.UNDRAFTED_3) {
+            p.ratings[0].fuzz *= 4;
+        }
+
         minHgt = 71;  // 5'11"
         maxHgt = 85;  // 7'1"
         minWeight = 150;

@@ -1006,6 +1006,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                             if (cursor) {
                                 p = cursor.value;
                                 p.tid = g.PLAYER.UNDRAFTED;
+                                p.ratings[0].fuzz /= 2;
                                 cursor.update(p);
                                 cursor.continue();
                             } else {
@@ -1016,6 +1017,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                                     if (cursor) {
                                         p = cursor.value;
                                         p.tid = g.PLAYER.UNDRAFTED_2;
+                                        p.ratings[0].fuzz /= 2;
                                         cursor.update(p);
                                         cursor.continue();
                                     }

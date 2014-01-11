@@ -43,7 +43,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
 
                 numPlayersOnRoster = event.target.result.length;
                 if (numPlayersOnRoster >= 15 && !resigning) {
-                    return cb("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
+                    return cb("Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.");
                 }
 
                 playerStore.get(pid).onsuccess = function (event) {

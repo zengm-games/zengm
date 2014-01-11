@@ -16,6 +16,7 @@ number or not.
 - GM firings happen after the playoffs, not before the regular season
 - Finals MVP award
 - Season totals, per 36 minutes stats, and career stats are viewable from the main player stats page
+- Option to delete old game data to improve performance
 
 ## Technical details
 

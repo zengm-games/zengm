@@ -43,6 +43,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2014-01-03",
         msg: "The Player Stats page can show career stats in addition to season stats. Also, it can show total stats and per 36 minute stats in addition to per game stats."
+    }, {
+        date: "2014-01-11",
+        msg: "To improve game simulation performance in old leagues, you can delete some of the old stored data by going to Tools > Improve Performance."
     }];
 
     function check() {

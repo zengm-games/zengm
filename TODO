@@ -3,7 +3,6 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-After some testing add changes notification for Delete Old Data
 career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year
   column/table widths?
@@ -277,6 +276,7 @@ some UI indicating how players developed over the offseason
 player search page
   show stats, ratings, contract, etc. (customizable); allow filters to be applied. also filter by skill icon
 finances - too easy to make big $$$
+  owner should take profits each year
 player morale - punishment for tanking
 team colors, and uniforms in player icons
 harsher, more realistic luxury tax
@@ -319,7 +319,6 @@ trades
       "I need to cut my payroll and start making more money."
       "I could really use a good rebounder."
   sign and trade (only during resigning phase)
-all star game
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?

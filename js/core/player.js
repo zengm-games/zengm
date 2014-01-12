@@ -1370,7 +1370,10 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @param {Object=} options Object containing several optional options:
      *     noPot: When true, don't include potential in the value calcuation (useful for roster
      *         ordering and game simulation). Default false.
-     *     fuzz: When true, used fuzzed ratings (useful for roster ordering). Default false.
+     *     fuzz: When true, used fuzzed ratings (useful for roster ordering, draft prospect
+     *         ordering). Default false.
+     *     age: If set, override the player's real age. This is only useful for draft prospects,
+     *         because you can use the age they will be at the draft.
      * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential
      *     ratings.
      */
@@ -1380,6 +1383,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         options = options !== undefined ? options : {};
         options.noPot = options.noPot !== undefined ? options.noPot : false;
         options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
+        options.age = options.age !== undefined ? options.age : null;
 
         // Current ratings
         pr = _.last(p.ratings);
@@ -1438,7 +1442,11 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         }
 
         // Otherwise, combine based on age
-        age = g.season - p.born.year;
+        if (options.age) {
+            age = options.age;
+        } else {
+            age = g.season - p.born.year;
+        }
         if (age <= 19) {
             return 0.8 * potential + 0.2 * current;
         }

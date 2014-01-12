@@ -432,8 +432,8 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * @memberOf util.helpers
      * @param {number} pid Player ID number.
      * @param {string} name Player name.
-     * @param {object} object Injury object (properties: type and gamesRemaining).
-     * @param {Array.<string>} skills Array of skill labels, like "R" for "Rebounder", etc. See: core.player.skills.
+     * @param {object=} object Injury object (properties: type and gamesRemaining).
+     * @param {Array.<string>=} skills Array of skill labels, like "R" for "Rebounder", etc. See: core.player.skills.
      * @return {string} String of HTML-formatted skill labels, ready for output.
      */
     function playerNameLabels(pid, name, injury, skills) {

@@ -25,12 +25,6 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             }
         }
 
-        if (season < g.startingSeason) {
-            return {
-                errorMessage: "There is no draft history yet. Check back after the draft."
-            };
-        }
-
         return {
             season: season
         };

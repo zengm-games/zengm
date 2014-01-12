@@ -88,7 +88,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         seasons = vm.seasons();
         for (i = 0; i < seasons.length; i++) {
             ui.datatableSinglePage($("#draft-scouting-" + i), 4, _.map(seasons[i].players, function (p) {
-                return ['<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>', p.pos, String(p.age), String(p.ovr), String(p.pot), '<span class="skills-alone">' + helpers.skillsBlock(p.skills) + '</span>'];
+                return [helpers.playerNameLabels(p.pid, p.name, undefined, p.skills), p.pos, String(p.age), String(p.ovr), String(p.pot)];
             }));
         }
 

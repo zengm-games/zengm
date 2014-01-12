@@ -4,6 +4,9 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 show prospects before draft
+  add column for rank, which goes by value
+  merge skills into name
+  fuzz changing for prospects should factor in changes in scouting budget
   TEST TEST TEST
     put online at beta.basketball-gm.com?
   upgrade code

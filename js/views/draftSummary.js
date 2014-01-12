@@ -14,13 +14,14 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
         // Draft hasn't happened yet this year
         if (g.phase < g.PHASE.DRAFT) {
-            if (season > g.season) {
-                // View last season by default
-                season = g.season - 1;
-            } else if (season === g.season) {
+            if (g.season === g.startingSeason) {
+                // No draft history
                 return {
                     redirectUrl: helpers.leagueUrl(["draft_scouting"])
                 };
+            } else if (season === g.season) {
+                // View last season by default
+                season = g.season - 1;
             }
         }
 

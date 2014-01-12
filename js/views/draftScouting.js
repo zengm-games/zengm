@@ -43,18 +43,6 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         };
     }
 
-    function get(req) {
-        var season;
-
-        season = helpers.validateSeason(req.params.season);
-
-        if (season < g.season) {
-            return {
-                redirectUrl: helpers.leagueUrl(["draft_summary", season])
-            };
-        }
-    }
-
     mapping = {
         seasons: {
             create: function (options) {
@@ -107,17 +95,10 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         ui.tableClickableRows($("#draft-scouting"));
     }
 
-    function uiEvery(updateEvents, vm) {
-        // Always start at the current season, as otherwise it redirects to draft_summary
-        components.dropdown("draft-scouting-dropdown", ["seasons"], [g.season], updateEvents);
-    }
-
     return bbgmView.init({
         id: "draftScouting",
-        get: get,
         mapping: mapping,
         runBefore: [updateDraftScouting],
-        uiFirst: uiFirst,
-        uiEvery: uiEvery
+        uiFirst: uiFirst
     });
 });

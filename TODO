@@ -6,14 +6,13 @@ CURRENT
 show prospects before draft
   TEST TEST TEST
     put online at beta.basketball-gm.com?
-  draft_summary and draft_scouting should just have text links between them. delete dropdown in draft_scouting
   upgrade code
     create all undrafted players, like in new league
     if UNDRAFTED has players, draft is going on (or free agency hasn't started) and just create UNDRAFTED_2 and UNDRAFTED_3
   EVENTUALLY
     ratings should really update annually, just like in normal years
     movement between draft classes
-    promising to draft at certain position
+      allow promising to draft a player at certain position to influence decision
 career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year
   column/table widths?

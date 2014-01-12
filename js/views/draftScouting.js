@@ -11,6 +11,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         g.dbl.transaction("players").objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
             var i, pa, p, players, playersAll;
 
+            console.log(event.target.result[60])
             playersAll = player.filter(event.target.result, {
                 attrs: ["pid", "name", "pos", "age"],
                 ratings: ["ovr", "pot", "skills", "fuzz"],
@@ -18,6 +19,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 showRookies: true,
                 fuzz: true
             });
+            console.log(playersAll[60])
 
             players = [];
             for (i = 0; i < playersAll.length; i++) {
@@ -31,7 +33,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 p.pot = pa.ratings[0].pot;
                 p.skills = pa.ratings[0].skills;
 
-                p.value = player.value(pa, {fuzz: true, age: p.age + (season - g.season)});
+                p.value = player.value(pa, {age: p.age + (season - g.season)});
 
                 players.push(p);
             }

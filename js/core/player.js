@@ -1385,6 +1385,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
         options.age = options.age !== undefined ? options.age : null;
 
+        // Otherwise the input player object can be modified when fuzzing occurs (or maybe elsewhere)
+        p = helpers.deepCopy(p);
+
         // Current ratings
         pr = _.last(p.ratings);
 

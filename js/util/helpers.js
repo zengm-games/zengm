@@ -235,7 +235,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
     function deepCopy(obj) {
         var key, retVal;
 
-        if (typeof obj !== "object") { return obj; }
+        if (typeof obj !== "object" || obj === null) { return obj; }
         if (obj.constructor === RegExp) { return obj; }
 
         retVal = new obj.constructor();

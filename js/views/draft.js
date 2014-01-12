@@ -99,6 +99,7 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
 
             undraftedAll = event.target.result;
             undraftedAll.sort(function (a, b) { return player.value(b, {fuzz: true}) - player.value(a, {fuzz: true}); });
+console.log(undraftedAll[0])
             undrafted = player.filter(undraftedAll, {
                 attrs: ["pid", "name", "pos", "age", "injury", "contract"],
                 ratings: ["ovr", "pot", "skills"],

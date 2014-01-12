@@ -11,7 +11,6 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         g.dbl.transaction("players").objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
             var i, pa, p, players, playersAll;
 
-            console.log(event.target.result[60])
             playersAll = player.filter(event.target.result, {
                 attrs: ["pid", "name", "pos", "age"],
                 ratings: ["ovr", "pot", "skills", "fuzz"],
@@ -19,7 +18,6 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 showRookies: true,
                 fuzz: true
             });
-            console.log(playersAll[60])
 
             players = [];
             for (i = 0; i < playersAll.length; i++) {

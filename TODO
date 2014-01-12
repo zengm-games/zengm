@@ -4,16 +4,15 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 show prospects before draft
-  fuzz changing for prospects should factor in changes in scouting budget
-  TEST TEST TEST
-    put online at beta.basketball-gm.com?
-  upgrade code
-    create all undrafted players, like in new league
-    if UNDRAFTED has players, draft is going on (or free agency hasn't started) and just create UNDRAFTED_2 and UNDRAFTED_3
   EVENTUALLY
     ratings should really update annually, just like in normal years
+      fuzz changing for prospects should factor in changes in scouting budget
     movement between draft classes
       allow promising to draft a player at certain position to influence decision
+anti-NBA stuff
+  allow abbrev customization
+  pick new cities (mostly)
+  get logos and colors for default teams - maybe by /u/mbingcrosby
 career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year
   column/table widths?

@@ -602,6 +602,22 @@ console.log(event);
                     });
                 }());
             }
+            if (event.oldVersion <= 9) {
+                (function () {
+                    var draft;
+
+                    draft = require("core/draft");
+                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, null, function () {
+                        draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, null, function () {
+                            tx.objectStore("players").index("tid").count(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
+                                if (event.target.result === 0) {
+                                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, function () {});
+                                }
+                            };
+                        });
+                    });
+                }());
+            }
         });
     }
 
@@ -609,7 +625,7 @@ console.log(event);
         var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 9);
+        request = indexedDB.open("league" + lid, 10);
         request.onerror = function (event) {
             throw new Error("League connection error");
         };

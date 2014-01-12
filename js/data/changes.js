@@ -46,6 +46,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2014-01-11",
         msg: "To improve game simulation performance in old leagues, you can delete some of the old stored data by going to Tools > Improve Performance."
+    }, {
+        date: "2014-01-13",
+        msg: "You can view upcoming draft classes up to three years in the future by going to Players > Draft and then clicking Future Draft Scouting."
     }];
 
     function check() {

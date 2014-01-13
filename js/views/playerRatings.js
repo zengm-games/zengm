@@ -31,8 +31,9 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("playerMovement") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
 
-            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
+            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED)).onsuccess = function (event) {
                 var i, players;
+console.log(event.target.result.length)
 
                 players = player.filter(event.target.result, {
                     attrs: ["pid", "name", "abbrev", "pos", "age", "injury"],

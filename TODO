@@ -169,6 +169,7 @@ player.value
       1. add fudge factor to make teams less willing to trade away young players without much game experience
       2. just increase the value for ovr in player.value (try this now)
         is there a better function than 4 * PER to map between PER and ovr? plot.
+AI valuation of draft picks http://www.reddit.com/r/BasketballGM/comments/1v233m/teams_value_1st_rounders_too_much/
 add function to delete old box scores (older than last year) to debug menu, to save space
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 document things that affect player mood

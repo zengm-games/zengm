@@ -176,8 +176,8 @@ console.log("FIXING")
                             slot = draftOrder[i];
                             drafted.push({
                                 draft: {
-                                    abbrev: slot.abbrev,
-                                    originalAbbrev: slot.originalAbbrev,
+                                    abbrev: g.teamAbbrevsCache[slot.tid],
+                                    originalAbbrev: g.teamAbbrevsCache[slot.originalTid],
                                     round: slot.round,
                                     pick: slot.pick
                                 },

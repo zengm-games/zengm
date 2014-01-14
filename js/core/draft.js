@@ -127,7 +127,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
      */
     function genOrder(cb) {
         team.filter({
-            attrs: ["tid", "abbrev", "name", "cid"],
+            attrs: ["tid", "cid"],
             seasonAttrs: ["winp", "playoffRoundsWon"],
             season: g.season
         }, function (teams) {
@@ -189,9 +189,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
                         round: 1,
                         pick: i + 1,
                         tid: tid,
-                        abbrev: g.teamAbbrevsCache[tid],
-                        originalTid: teams[firstThree[i]].tid,
-                        originalAbbrev: teams[firstThree[i]].abbrev
+                        originalTid: teams[firstThree[i]].tid
                     });
                 }
 
@@ -204,9 +202,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
                             round: 1,
                             pick: pick,
                             tid: tid,
-                            abbrev: g.teamAbbrevsCache[tid],
-                            originalTid: teams[i].tid,
-                            originalAbbrev: teams[i].abbrev
+                            originalTid: teams[i].tid
                         });
                         pick += 1;
                     }
@@ -222,9 +218,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
                         round: 2,
                         pick: i + 1,
                         tid: tid,
-                        abbrev: g.teamAbbrevsCache[tid],
-                        originalTid: teams[i].tid,
-                        originalAbbrev: teams[i].abbrev
+                        originalTid: teams[i].tid
                     });
                 }
 
@@ -272,9 +266,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
                     round: round,
                     pick: i + 1,
                     tid: tids[i],
-                    abbrev: g.teamAbbrevsCache[tids[i]],
-                    originalTid: tids[i],
-                    originalAbbrev: g.teamAbbrevsCache[tids[i]]
+                    originalTid: tids[i]
                 });
             }
 
@@ -319,12 +311,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
                     pick: pick.pick,
                     tid: pick.tid,
                     year: g.season,
-                    abbrev: g.teamAbbrevsCache[pick.tid],
                     originalTid: pick.originalTid,
-                    originalAbbrev: pick.originalAbbrev,
-                    // draftTeamName and draftTeamRegion are currently not used, but they don't do much harm
-                    teamName: g.teamNamesCache[pick.tid],
-                    teamRegion: g.teamRegionsCache[pick.tid],
                     pot: p.ratings[0].pot,
                     ovr: p.ratings[0].ovr,
                     skills: p.ratings[0].skills

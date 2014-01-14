@@ -11,6 +11,7 @@ show prospects before draft
       allow promising to draft a player at certain position to influence decision
 anti-NBA stuff
   allow abbrev customization
+    get rid of player.draft.abbrev and player.draft.originalAbbrev - inject them instead via player.filter
   pick new cities (mostly)
   get logos and colors for default teams - maybe by /u/mbingcrosby
 career stats
@@ -85,6 +86,7 @@ trade improvements
     if games remaining in schedule passes a threshold, initiate phase change
     show countdown on trade page
   should be harder to trade bad contracts for nothing
+    similarly, should be easier to trade nothing for bad contracts
 team switching after being fired
   intro message from new owner, like a new league?
   rename g.gameOver

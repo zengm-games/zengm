@@ -1,26 +1,32 @@
 <h1>Edit Team Info</h1>
 
 <div class="row" style="margin-top: -9px">
-  <div class="col-xs-4">
+  <div class="col-xs-3">
+    <h3>Abbrev</h3>
+  </div>
+  <div class="col-xs-3">
     <h3>Region</h3>
   </div>
-  <div class="col-xs-4">
+  <div class="col-xs-3">
     <h3>Name</h3>
   </div>
-  <div class="col-xs-4">
+  <div class="col-xs-3">
     <h4>Population<br>(in millions)</h4>
   </div>
 </div>
 
 <form method="POST" data-bind="attrLeagueUrl: {action: ['edit_team_info']}">
   <div class="row" data-bind="foreach: teams">
-    <div class="col-xs-4" style="margin-bottom: 1em">
+    <div class="col-xs-3" style="margin-bottom: 1em">
+      <input type="text" class="form-control" name="abbrev[]" data-bind="attr: {value: abbrev}">
+    </div>
+    <div class="col-xs-3" style="margin-bottom: 1em">
       <input type="text" class="form-control" name="region[]" data-bind="attr: {value: region}">
     </div>
-    <div class="col-xs-4" style="margin-bottom: 1em">
+    <div class="col-xs-3" style="margin-bottom: 1em">
       <input type="text" class="form-control" name="name[]" data-bind="attr: {value: name}">
     </div>
-    <div class="col-xs-4" style="margin-bottom: 1em">
+    <div class="col-xs-3" style="margin-bottom: 1em">
       <input type="text" class="form-control" name="pop[]" data-bind="attr: {value: pop}">
     </div>
   </div>

@@ -96,31 +96,26 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
         // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
         tx = g.dbl.transaction("players", "readwrite")
         tx.objectStore("players").index("tid").get(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-            var fixSeason, playerStore, season;
+            var playerStore, season;
 
             season = event.target.result.ratings[0].season;
 console.log(season);
-            if (season < g.season && g.phase === g.PHASE.DRAFT) {
+            if (season !== g.season && g.phase === g.PHASE.DRAFT) {
 console.log("FIXING")
                 playerStore = tx.objectStore("players");
 
-                fixSeason = function (event) {
+                playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
                     var cursor, p;
 
                     cursor = event.target.result;
                     if (cursor) {
                         p = cursor.value;
-                        p.ratings[0].season += 1;
-                        p.draft.year += 1;
+                        p.ratings[0].season = g.season;
+                        p.draft.year = g.season;
                         cursor.update(p);
                         cursor.continue();
                     }
-                }
-
-                playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED).onsuccess = fixSeason;
-                playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_2).onsuccess = fixSeason;
-                playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_3).onsuccess = fixSeason;
-                console.log(event.target.result)
+                };
             }
         };
 
@@ -131,7 +126,7 @@ console.log("FIXING")
 
                 undraftedAll = event.target.result;
                 undraftedAll.sort(function (a, b) { return player.value(b, {fuzz: true}) - player.value(a, {fuzz: true}); });
-    console.log("Hello loose_seal_2")
+    console.log("Howdy loose_seal_2")
     console.log("A: " + undraftedAll.length)
     console.log(undraftedAll);
                 undrafted = player.filter(undraftedAll, {

@@ -11,8 +11,8 @@ show prospects before draft
       allow promising to draft a player at certain position to influence decision
 anti-NBA stuff
   allow abbrev customization
-    get rid of player.draft.abbrev and player.draft.originalAbbrev - inject them instead via player.filter
     abbrev in ratings/stats rows?
+    update manual
   pick new cities (mostly)
   get logos and colors for default teams - maybe by /u/mbingcrosby
 career stats

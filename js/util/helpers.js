@@ -17,12 +17,11 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
     function validateAbbrev(abbrev) {
         var abbrevs, tid;
 
-        abbrevs = ["ATL", "BOS", "BK", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NOR", "NYK", "OKC", "ORL", "PHI", "PHO", "POR", "SAC", "SAS", "TOR", "UTA", "WAS"];
-        tid = abbrevs.indexOf(abbrev);
+        tid = g.teamAbbrevsCache.indexOf(abbrev);
 
         if (tid < 0) {
             tid = g.userTid;
-            abbrev = abbrevs[tid];
+            abbrev = g.teamAbbrevsCache[tid];
         }
 
         return [tid, abbrev];
@@ -38,15 +37,14 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * @return {Array} Array with two elements, the validated team ID and the corresponding abbreviation.
      */
     function validateTid(tid) {
-        var abbrev, abbrevs;
+        var abbrev;
 
-        abbrevs = ["ATL", "BOS", "BK", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NOR", "NYK", "OKC", "ORL", "PHI", "PHO", "POR", "SAC", "SAS", "TOR", "UTA", "WAS"];
         tid = parseInt(tid, 10);
 
-        if (tid < 0 || tid >= abbrevs.length || isNaN(tid)) {
+        if (tid < 0 || tid >= g.teamAbbrevsCache.length || isNaN(tid)) {
             tid = g.userTid;
         }
-        abbrev = abbrevs[tid];
+        abbrev = g.teamAbbrevsCache[tid];
 
         return [tid, abbrev];
     }

@@ -40,6 +40,7 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jqu
             g.dbl.transaction("players").objectStore("players").get(inputs.pid).onsuccess = function (event) {
                 var currentRatings, p;
 
+console.log(event.target.result);
                 p = player.filter(event.target.result, {
                     attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL"],
                     ratings: ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],

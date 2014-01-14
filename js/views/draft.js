@@ -99,7 +99,8 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
 
             undraftedAll = event.target.result;
             undraftedAll.sort(function (a, b) { return player.value(b, {fuzz: true}) - player.value(a, {fuzz: true}); });
-console.log(undraftedAll[0])
+console.log("Hello loose_seal_2")
+console.log("A: " + undraftedAll.length)
             undrafted = player.filter(undraftedAll, {
                 attrs: ["pid", "name", "pos", "age", "injury", "contract"],
                 ratings: ["ovr", "pot", "skills"],
@@ -110,6 +111,8 @@ console.log(undraftedAll[0])
                 fuzz: true,
                 oldStats: true
             });
+console.log("B: " + undraftedAll.length)
+console.log(undraftedAll);
 
             playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
                 var drafted, i, players, started;

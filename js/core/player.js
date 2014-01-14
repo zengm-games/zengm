@@ -774,9 +774,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             round: 0,
             pick: 0,
             tid: -1,
-            abbrev: null,
             originalTid: -1,
-            originalAbbrev: null,
             year: draftYear,
             teamName: null,
             teamRegion: null,
@@ -889,6 +887,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                         fp.draft.ovr =  Math.round(helpers.bound(fp.draft.ovr + p.ratings[0].fuzz, 0, 100));
                         fp.draft.pot =  Math.round(helpers.bound(fp.draft.pot + p.ratings[0].fuzz, 0, 100));
                     }
+                    // Inject abbrevs
+                    fp.draft.abbrev = g.teamAbbrevsCache[fp.draft.tid];
+                    fp.draft.originalAbbrev = g.teamAbbrevsCache[fp.draft.originalTid];
                 } else if (options.attrs[i] === "hgtFt") {
                     fp.hgtFt = Math.floor(p.hgt / 12);
                 } else if (options.attrs[i] === "hgtIn") {

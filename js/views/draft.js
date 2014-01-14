@@ -101,6 +101,7 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
             undraftedAll.sort(function (a, b) { return player.value(b, {fuzz: true}) - player.value(a, {fuzz: true}); });
 console.log("Hello loose_seal_2")
 console.log("A: " + undraftedAll.length)
+console.log(undraftedAll);
             undrafted = player.filter(undraftedAll, {
                 attrs: ["pid", "name", "pos", "age", "injury", "contract"],
                 ratings: ["ovr", "pot", "skills"],
@@ -111,12 +112,14 @@ console.log("A: " + undraftedAll.length)
                 fuzz: true,
                 oldStats: true
             });
-console.log("B: " + undraftedAll.length)
-console.log(undraftedAll);
+console.log("B: " + undrafted.length)
+console.log(undrafted);
 
             playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
                 var drafted, i, players, started;
 
+console.log("C: " + event.target.result.length)
+console.log(event.target.result);
                 players = player.filter(event.target.result, {
                     attrs: ["pid", "tid", "name", "pos", "age", "draft", "injury", "contract"],
                     ratings: ["ovr", "pot", "skills"],
@@ -126,6 +129,8 @@ console.log(undraftedAll);
                     fuzz: true,
                     oldStats: true
                 });
+console.log("D: " + players.length)
+console.log(players);
 
                 drafted = [];
                 for (i = 0; i < players.length; i++) {

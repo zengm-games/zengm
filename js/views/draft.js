@@ -88,79 +88,112 @@ define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmVi
     }
 
     function updateDraft(inputs, updateEvents, vm) {
-        var deferred, playerStore, vars;
+        var deferred, playerStore, tx, vars;
 
         deferred = $.Deferred();
         vars = {};
 
-        playerStore = g.dbl.transaction("players").objectStore("players");
-        playerStore.index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-            var undrafted, undraftedAll;
+        // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
+        tx = g.dbl.transaction("players", "readwrite")
+        tx.objectStore("players").index("tid").get(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
+            var fixSeason, playerStore, season;
 
-            undraftedAll = event.target.result;
-            undraftedAll.sort(function (a, b) { return player.value(b, {fuzz: true}) - player.value(a, {fuzz: true}); });
-console.log("Hello loose_seal_2")
-console.log("A: " + undraftedAll.length)
-console.log(undraftedAll);
-            undrafted = player.filter(undraftedAll, {
-                attrs: ["pid", "name", "pos", "age", "injury", "contract"],
-                ratings: ["ovr", "pot", "skills"],
-                stats: ["per", "ewa"],
-                season: g.season,
-                showNoStats: true,
-                showRookies: true,
-                fuzz: true,
-                oldStats: true
-            });
-console.log("B: " + undrafted.length)
-console.log(undrafted);
+            season = event.target.result.ratings[0].season;
+console.log(season);
+            if (season < g.season && g.phase === g.PHASE.DRAFT) {
+console.log("FIXING")
+                playerStore = tx.objectStore("players");
 
-            playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
-                var drafted, i, players, started;
+                fixSeason = function (event) {
+                    var cursor, p;
 
-console.log("C: " + event.target.result.length)
-console.log(event.target.result);
-                players = player.filter(event.target.result, {
-                    attrs: ["pid", "tid", "name", "pos", "age", "draft", "injury", "contract"],
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
+                        p.ratings[0].season += 1;
+                        p.draft.year += 1;
+                        cursor.update(p);
+                        cursor.continue();
+                    }
+                }
+
+                playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED).onsuccess = fixSeason;
+                playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_2).onsuccess = fixSeason;
+                playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_3).onsuccess = fixSeason;
+                console.log(event.target.result)
+            }
+        };
+
+        tx.oncomplete = function () {
+            playerStore = g.dbl.transaction("players").objectStore("players");
+            playerStore.index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
+                var undrafted, undraftedAll;
+
+                undraftedAll = event.target.result;
+                undraftedAll.sort(function (a, b) { return player.value(b, {fuzz: true}) - player.value(a, {fuzz: true}); });
+    console.log("Hello loose_seal_2")
+    console.log("A: " + undraftedAll.length)
+    console.log(undraftedAll);
+                undrafted = player.filter(undraftedAll, {
+                    attrs: ["pid", "name", "pos", "age", "injury", "contract"],
                     ratings: ["ovr", "pot", "skills"],
                     stats: ["per", "ewa"],
                     season: g.season,
+                    showNoStats: true,
                     showRookies: true,
                     fuzz: true,
                     oldStats: true
                 });
-console.log("D: " + players.length)
-console.log(players);
+    console.log("B: " + undrafted.length)
+    console.log(undrafted);
 
-                drafted = [];
-                for (i = 0; i < players.length; i++) {
-                    if (players[i].tid >= 0) {
-                        drafted.push(players[i]);
+                playerStore.index("draft.year").getAll(g.season).onsuccess = function (event) {
+                    var drafted, i, players, started;
+
+    console.log("C: " + event.target.result.length)
+    console.log(event.target.result);
+                    players = player.filter(event.target.result, {
+                        attrs: ["pid", "tid", "name", "pos", "age", "draft", "injury", "contract"],
+                        ratings: ["ovr", "pot", "skills"],
+                        stats: ["per", "ewa"],
+                        season: g.season,
+                        showRookies: true,
+                        fuzz: true,
+                        oldStats: true
+                    });
+    console.log("D: " + players.length)
+    console.log(players);
+
+                    drafted = [];
+                    for (i = 0; i < players.length; i++) {
+                        if (players[i].tid >= 0) {
+                            drafted.push(players[i]);
+                        }
                     }
-                }
-                drafted.sort(function (a, b) { return (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick); });
+                    drafted.sort(function (a, b) { return (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick); });
 
-                started = drafted.length > 0;
+                    started = drafted.length > 0;
 
-                draft.getOrder(function (draftOrder) {
-                    var data, i, slot;
+                    draft.getOrder(function (draftOrder) {
+                        var data, i, slot;
 
-                    for (i = 0; i < draftOrder.length; i++) {
-                        slot = draftOrder[i];
-                        drafted.push({
-                            draft: {
-                                abbrev: slot.abbrev,
-                                originalAbbrev: slot.originalAbbrev,
-                                round: slot.round,
-                                pick: slot.pick
-                            },
-                            pid: -1
-                        });
-                    }
+                        for (i = 0; i < draftOrder.length; i++) {
+                            slot = draftOrder[i];
+                            drafted.push({
+                                draft: {
+                                    abbrev: slot.abbrev,
+                                    originalAbbrev: slot.originalAbbrev,
+                                    round: slot.round,
+                                    pick: slot.pick
+                                },
+                                pid: -1
+                            });
+                        }
 
-                    vars = {undrafted: undrafted, drafted: drafted, started: started, fantasyDraft: g.phase === g.PHASE.FANTASY_DRAFT};
-                    deferred.resolve(vars);
-                });
+                        vars = {undrafted: undrafted, drafted: drafted, started: started, fantasyDraft: g.phase === g.PHASE.FANTASY_DRAFT};
+                        deferred.resolve(vars);
+                    });
+                };
             };
         };
 

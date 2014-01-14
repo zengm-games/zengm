@@ -604,49 +604,14 @@ console.log(event);
             }
             if (event.oldVersion <= 9) {
                 (function () {
-                    var draft, fixShit;
-
-                    // WHOOPS there was a bug in the upgrade code causing the wrong season if the upgrade happened after the draft ended. This fixes that
-                    fixShit = function (fixFirstSeason) {
-                        tx.objectStore("players").index("tid").get(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-                            var fixSeason, playerStore, season;
-
-                            season = event.target.result.ratings[0].season;
-                            if (season < g.season || (season === g.season && g.phase >= g.PHASE.FREE_AGENCY)) {
-                                playerStore = tx.objectStore("players");
-
-                                fixSeason = function (event) {
-                                    var cursor, p;
-
-                                    cursor = event.target.result;
-                                    if (cursor) {
-                                        p = cursor.value;
-                                        p.ratings[0].season += 1;
-                                        p.draft.year += 1;
-                                        cursor.update(p);
-                                        cursor.continue();
-                                    }
-                                };
-
-                                if (fixFirstSeason) {
-                                    playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED).onsuccess = fixSeason;
-                                }
-                                playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_2).onsuccess = fixSeason;
-                                playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_3).onsuccess = fixSeason;
-                            }
-                        };
-                    }
+                    var draft;
 
                     draft = require("core/draft");
                     draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, null, function () {
                         draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, null, function () {
                             tx.objectStore("players").index("tid").count(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
                                 if (event.target.result === 0) {
-                                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, function () {
-                                        fixShit(true);
-                                    });
-                                } else {
-                                    fixShit(false);
+                                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, function () {});
                                 }
                             };
                         });

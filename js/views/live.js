@@ -47,6 +47,10 @@ define(["globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgm
                     } else {
                         games[i].highlight = false;
                     }
+                    games[i].awayRegion = g.teamRegionsCache[games[i].awayTid];
+                    games[i].awayName = g.teamNamesCache[games[i].awayTid];
+                    games[i].homeRegion = g.teamRegionsCache[games[i].homeTid];
+                    games[i].homeName = g.teamNamesCache[games[i].homeTid];
                 }
 
                 deferred.resolve({

@@ -150,6 +150,11 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
                 boxScore.time = "12:00";
                 boxScore.gameOver = false;
                 for (i = 0; i < boxScore.teams.length; i++) {
+                    // Team metadata
+                    boxScore.teams[i].abbrev = g.teamAbbrevsCache[boxScore.teams[i].tid];
+                    boxScore.teams[i].region = g.teamRegionsCache[boxScore.teams[i].tid];
+                    boxScore.teams[i].name = g.teamNamesCache[boxScore.teams[i].tid];
+
                     boxScore.teams[i].ptsQtrs = [0];
                     for (s = 0; s < resetStats.length; s++) {
                         boxScore.teams[i][resetStats[s]] = 0;

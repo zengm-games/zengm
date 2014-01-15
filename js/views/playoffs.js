@@ -58,10 +58,18 @@ define(["globals", "ui", "core/season", "core/team", "lib/jquery", "lib/knockout
             } else {
                 // Display the current or archived playoffs
                 g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(inputs.season).onsuccess = function (event) {
-                    var playoffSeries, series;
+                    var i, j, playoffSeries, series;
 
                     playoffSeries = event.target.result;
                     series = playoffSeries.series;
+                    for (i = 0; i < series.length; i++) {
+                        for (j = 0; j < series[i].length; j++) {
+                            series[i][j].away.abbrev = g.teamAbbrevsCache[series[i][j].away.tid];
+                            series[i][j].away.name = g.teamNamesCache[series[i][j].away.tid];
+                            series[i][j].home.abbrev = g.teamAbbrevsCache[series[i][j].home.tid];
+                            series[i][j].home.name = g.teamNamesCache[series[i][j].home.tid];
+                        }
+                    }
 
                     deferred.resolve({
                         finalMatchups: true,

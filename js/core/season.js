@@ -613,7 +613,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     function newPhasePlayoffs(cb) {
         // Set playoff matchups
         team.filter({
-            attrs: ["tid", "abbrev", "name", "cid"],
+            attrs: ["tid", "cid"],
             seasonAttrs: ["winp"],
             season: g.season,
             sortBy: "winp"

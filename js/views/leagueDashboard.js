@@ -217,11 +217,11 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                 vars.nextGameHome = false;
                 for (i = 0; i < schedule.length; i++) {
                     if (schedule[i].homeTid === g.userTid) {
-                        vars.nextGameAbbrev = schedule[i].awayAbbrev;
+                        vars.nextGameAbbrev = g.teamAbbrevsCache[schedule[i].awayTid];
                         vars.nextGameHome = true;
                         break;
                     } else if (schedule[i].awayTid === g.userTid) {
-                        vars.nextGameAbbrev = schedule[i].homeAbbrev;
+                        vars.nextGameAbbrev = g.teamAbbrevsCache[schedule[i].homeTid];
                         break;
                     }
                 }

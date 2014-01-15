@@ -440,12 +440,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         schedule = [];
         for (i = 0; i < tids.length; i++) {
             row = {homeTid: tids[i][0], awayTid: tids[i][1]};
-            row.homeAbbrev = teams[row.homeTid].abbrev;
-            row.homeRegion = teams[row.homeTid].region;
-            row.homeName = teams[row.homeTid].name;
-            row.awayAbbrev = teams[row.awayTid].abbrev;
-            row.awayRegion = teams[row.awayTid].region;
-            row.awayName = teams[row.awayTid].name;
             schedule.push(row);
         }
 

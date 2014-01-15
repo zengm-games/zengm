@@ -29,8 +29,8 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "util/bbgmView", "ut
                 for (i = 0; i < schedule_.length; i++) {
                     game = schedule_[i];
                     if (g.userTid === game.homeTid || g.userTid === game.awayTid) {
-                        team0 = {tid: game.homeTid, abbrev: game.homeAbbrev, region: game.homeRegion, name: game.homeName};
-                        team1 = {tid: game.awayTid, abbrev: game.awayAbbrev, region: game.awayRegion, name: game.awayName};
+                        team0 = {tid: game.homeTid, abbrev: g.teamAbbrevsCache[game.homeTid], region: g.teamRegionsCache[game.homeTid], name: g.teamNamesCache[game.homeTid]};
+                        team1 = {tid: game.awayTid, abbrev: g.teamAbbrevsCache[game.awayTid], region: g.teamRegionsCache[game.awayTid], name: g.teamNamesCache[game.awayTid]};
                         if (g.userTid === game.homeTid) {
                             row = {teams: [team1, team0], vsat: "vs"};
                         } else {

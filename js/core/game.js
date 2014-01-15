@@ -336,20 +336,8 @@ if (playerStats === undefined) {
             tl = 0;
         }
 
-        gameStats.won.abbrev = g.teamAbbrevsCache[this.team[tw].id];
-        gameStats.won.region = g.teamRegionsCache[this.team[tw].id];
-        gameStats.won.name = g.teamNamesCache[this.team[tw].id];
-        gameStats.teams[tw].abbrev = g.teamAbbrevsCache[this.team[tw].id];
-        gameStats.teams[tw].region = g.teamRegionsCache[this.team[tw].id];
-        gameStats.teams[tw].name = g.teamNamesCache[this.team[tw].id];
-
-        gameStats.lost.abbrev = g.teamAbbrevsCache[this.team[tl].id];
-        gameStats.lost.region = g.teamRegionsCache[this.team[tl].id];
-        gameStats.lost.name = g.teamNamesCache[this.team[tl].id];
-        gameStats.teams[tl].abbrev = g.teamAbbrevsCache[this.team[tl].id];
-        gameStats.teams[tl].region = g.teamRegionsCache[this.team[tl].id];
-        gameStats.teams[tl].name = g.teamNamesCache[this.team[tl].id];
-
+        gameStats.won.tid = this.team[tw].id;
+        gameStats.lost.tid = this.team[tl].id;
         gameStats.won.pts = this.team[tw].stat.pts;
         gameStats.lost.pts = this.team[tl].stat.pts;
 

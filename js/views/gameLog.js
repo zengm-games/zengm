@@ -60,13 +60,13 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                         games[i].home = true;
                         games[i].pts = game.teams[0].pts;
                         games[i].oppPts = game.teams[1].pts;
-                        games[i].oppAbbrev = helpers.getAbbrev(game.teams[1].tid);
+                        games[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
                         games[i].won = game.teams[0].pts > game.teams[1].pts;
                     } else if (game.teams[1].tid === tid) {
                         games[i].home = false;
                         games[i].pts = game.teams[1].pts;
                         games[i].oppPts = game.teams[0].pts;
-                        games[i].oppAbbrev = helpers.getAbbrev(game.teams[0].tid);
+                        games[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
                         games[i].won = game.teams[1].pts > game.teams[0].pts;
                     }
                 }
@@ -92,6 +92,10 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
                 game = event.target.result;
                 for (i = 0; i < game.teams.length; i++) {
+                    // Team metadata
+                    game.teams[i].abbrev = g.teamAbbrevsCache[game.teams[i].tid];
+                    game.teams[i].region = g.teamRegionsCache[game.teams[i].tid];
+                    game.teams[i].name = g.teamNamesCache[game.teams[i].tid];
 
                     // Fix the total minutes calculation, which is usually fucked up for some unknown reason
                     game.teams[i].min = 240 + 25 * game.overtimes;
@@ -102,6 +106,12 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                         return (b.gs * 1000 + b.min + b.injury.gamesRemaining * 1000) - (a.gs * 1000 + a.min + a.injury.gamesRemaining * 1000);
                     });
                 }
+
+                // Team metadata
+                game.won.region = g.teamRegionsCache[game.won.tid];
+                game.won.name = g.teamNamesCache[game.won.tid];
+                game.lost.region = g.teamRegionsCache[game.lost.tid];
+                game.lost.name = g.teamNamesCache[game.lost.tid];
 
                 if (game.overtimes === 1) {
                     game.overtime = " (OT)";

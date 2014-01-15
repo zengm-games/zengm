@@ -546,12 +546,17 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
      *
      * @memberOf util.helpers
-     * @param {string} abbrev Drafting team (ATL).
-     * @param {string} originalAbbrev Original owner of the pick (BOS).
+     * @param {string} abbrev Drafting team ID.
+     * @param {string} originalTid Original owner of the pick team ID.
      * @param {season=} season Optional season for the roster links.
      * @return {string} HTML link(s).
      */
-    function draftAbbrev(abbrev, originalAbbrev, season) {
+    function draftAbbrev(tid, originalTid, season) {
+        var abbrev, originalAbbrev;
+
+        abbrev = g.teamAbbrevsCache[tid];
+        originalAbbrev = g.teamAbbrevsCache[originalTid];
+
         if (abbrev === originalAbbrev) {
             return '<a href="' + leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a>';
         }
@@ -564,7 +569,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
 
         desc = pick.season + " " + (pick.round === 1 ? "first" : "second") + " round pick";
         if (pick.tid !== pick.originalTid) {
-            desc += " (from " + pick.originalAbbrev + ")";
+            desc += " (from " + g.teamAbbrevsCache[pick.originalTid] + ")";
         }
 
         return desc;

@@ -46,7 +46,7 @@
       <tbody data-bind="foreach: drafted">
         <tr>
           <td><span data-bind="text: draft.round"></span>-<span data-bind="text: draft.pick"></span></td>
-          <td data-bind="draftAbbrev: [draft.abbrev, draft.originalAbbrev]"></td>
+          <td data-bind="draftAbbrev: [draft.tid, draft.originalTid]"></td>
           <!-- ko if: pid() >= 0 -->
             <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills]"></td>
             <td data-bind="text: pos"></td>

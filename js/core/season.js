@@ -893,9 +893,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             for (round = 1; round <= 2; round++) {
                 draftPickStore.add({
                     tid: t,
-                    abbrev: g.teamAbbrevsCache[t],
                     originalTid: t,
-                    originalAbbrev: g.teamAbbrevsCache[t],
                     round: round,
                     season: g.season + 4
                 });

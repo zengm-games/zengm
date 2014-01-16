@@ -488,7 +488,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @return {number} Probability from 0 to 1.
      */
     GameSim.prototype.probTov = function () {
-        return 0.15 * (1 + this.team[this.d].compositeRating.defense) / (1 + 0.5 * (this.team[this.o].compositeRating.dribbling + this.team[this.o].compositeRating.passing));
+        return 0.13 * (1 + this.team[this.d].compositeRating.defense) / (1 + 0.5 * (this.team[this.o].compositeRating.dribbling + this.team[this.o].compositeRating.passing));
     };
 
     /**

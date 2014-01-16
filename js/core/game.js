@@ -559,7 +559,7 @@ if (playerStats === undefined) {
                         p.compositeRating.shootingThreePointer = _composite(rating, ['hgt', 'tp'], [0.2, 1]);  // Three point jump shot
                         p.compositeRating.shootingFT = _composite(rating, ['ft']);  // Free throw
                         p.compositeRating.rebounding = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1.5, 0.1, 0.1, 0.7]);
-                        p.compositeRating.stealing = _composite(rating, ['spd', 'stl']);
+                        p.compositeRating.stealing = _composite(rating, ['constant', 'spd', 'stl'], [1.5, 1, 1]);
                         p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk'], [1.5, 0.5, 0.5]);
                         p.compositeRating.fouling = _composite(rating, ['constant', 'hgt', 'blk', 'spd'], [1.5, 1, 1, -1]);
                         p.compositeRating.defense = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);

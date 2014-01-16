@@ -59,6 +59,7 @@ notification system
     new team
     big AI moves - trades, free agent signings
       only show big moves, not all. need some threshold
+      all could still be stored to db, just not shown http://www.reddit.com/r/BasketballGM/comments/1valwk/suggestion_running_list_of_fa_signing/
   merge "retired" and "HOF" notifications for a player on the user's team
   important notifications should be a different color, maybe require acknowledgement before closing
     errors
@@ -85,6 +86,12 @@ trade improvements
     show countdown on trade page
   should be harder to trade bad contracts for nothing
     similarly, should be easier to trade nothing for bad contracts
+  too easy to trade for young prospects with no stats http://www.reddit.com/r/BasketballGM/comments/1lkv5m/utah_jugglers/
+    options:
+      1. add fudge factor to make teams less willing to trade away young players without much game experience
+      2. just increase the value for ovr in player.value (try this now)
+        is there a better function than 4 * PER to map between PER and ovr? plot.
+  http://www.reddit.com/r/BasketballGM/comments/1v82ci/put_cap_space_on_the_trading_block/ceqdfgj
 team switching after being fired
   intro message from new owner, like a new league?
   rename g.gameOver
@@ -163,12 +170,6 @@ replace random.gauss with random.realGauss
 current season shouldn't show in league history page dropdown
 team.valueChange
   contending teams shouldn't always see every player as a positive value. needs to be some balanced formula where a bad contract is a negative.
-player.value
-  too easy to trade for young prospects with no stats http://www.reddit.com/r/BasketballGM/comments/1lkv5m/utah_jugglers/
-    options:
-      1. add fudge factor to make teams less willing to trade away young players without much game experience
-      2. just increase the value for ovr in player.value (try this now)
-        is there a better function than 4 * PER to map between PER and ovr? plot.
 AI valuation of draft picks http://www.reddit.com/r/BasketballGM/comments/1v233m/teams_value_1st_rounders_too_much/
 add function to delete old box scores (older than last year) to debug menu, to save space
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/

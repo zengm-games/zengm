@@ -226,7 +226,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                         s.teams[i].picks = [];
                         for (j = 0; j < picks.length; j++) {
                             if (dpids[i].indexOf(picks[j].dpid) >= 0) {
-                                s.teams[i].picks.push({desc: picks[j].season + " " + (picks[j].round === 1 ? "1st" : "2nd") + " round pick (" + picks[j].originalAbbrev + ")"});
+                                s.teams[i].picks.push({desc: picks[j].season + " " + (picks[j].round === 1 ? "1st" : "2nd") + " round pick (" + g.teamAbbrevsCache[picks[j].originalTid] + ")"});
                             }
                         }
 

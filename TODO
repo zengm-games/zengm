@@ -65,6 +65,7 @@ notification system
     errors
     refuse to sign
     retire
+NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
 
 BIG NEW FEATURES
 ----------------
@@ -91,7 +92,8 @@ trade improvements
       1. add fudge factor to make teams less willing to trade away young players without much game experience
       2. just increase the value for ovr in player.value (try this now)
         is there a better function than 4 * PER to map between PER and ovr? plot.
-  http://www.reddit.com/r/BasketballGM/comments/1v82ci/put_cap_space_on_the_trading_block/ceqdfgj
+  teams should be more cautious to take on salary before/during free agency, since they could just use their cap space to sign free agents http://www.reddit.com/r/BasketballGM/comments/1v82ci/put_cap_space_on_the_trading_block/ceqdfgj
+  AI should understand contract length
 team switching after being fired
   intro message from new owner, like a new league?
   rename g.gameOver

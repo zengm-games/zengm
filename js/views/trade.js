@@ -42,6 +42,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                         picks: summary.teams[i].picks,
                         other: i === 0 ? 1 : 0  // Index of other team
                     };
+console.log(summary.teams[i].picks)
                 }
 
                 cb(vars);

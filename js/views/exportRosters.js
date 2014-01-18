@@ -22,11 +22,19 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
                 p = cursor.value;
 
                 found = false;
+
+                // Keep players who played that season
                 for (i = 0; i < p.ratings.length; i++) {
                     if (p.ratings[i].season === season) {
                         found = true;
                         break;
                     }
+                }
+
+                // Keep draft prospects
+                if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3) {
+                    found = true;
+                    i = 0; // So first rating entry is kept
                 }
 
                 // If no ratings entry for this year, skip

@@ -4,8 +4,6 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 show prospects before draft
-  test draft more thoroughly. some people say it's broken (no players).
-  support in custom rosters? should work with or without prospects specified
   EVENTUALLY
     ratings should really update annually, just like in normal years
       fuzz changing for prospects should factor in changes in scouting budget

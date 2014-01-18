@@ -130,10 +130,36 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                         var afterPlayerCreation, age, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, pg, playerStore, pots, profile, profiles, randomizeExpiration, simpleDefaults, t, t2, playerTids;
 
                         afterPlayerCreation = function () {
-                            // Create three draft classes - can be a race condition of scoutingRank isn't passed, as teams might not be in database yet
-                            draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank);
-                            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank);
-                            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank);
+                            var createUndrafted1, createUndrafted2, createUndrafted3, i;
+                            // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
+                            tx = g.dbl.transaction("players", "readwrite");
+
+                            // See if imported roster has draft picks included. If so, don't create any.
+                            createUndrafted1 = true;
+                            createUndrafted2 = true;
+                            createUndrafted3 = true;
+                            if (players !== undefined) {
+                                for (i = 0; i < players.length; i++) {
+                                    if (players[i].tid === g.PLAYER.UNDRAFTED) {
+                                        createUndrafted1 = false;
+                                    }
+                                    if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
+                                        createUndrafted2 = false;
+                                    }
+                                    if (players[i].tid === g.PLAYER.UNDRAFTED_3) {
+                                        createUndrafted3 = false;
+                                    }
+                                }
+                            }
+                            if (createUndrafted1) {
+                                draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank);
+                            }
+                            if (createUndrafted2) {
+                                draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank);
+                            }
+                            if (createUndrafted3) {
+                                draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank);
+                            }
 
                             tx.oncomplete = function () {
                                 // Make schedule, start season
@@ -221,7 +247,13 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                                 }
 
                                 // Fix always-missing info
-                                p.ratings[0].season = g.startingSeason;
+                                if (p.tid === g.PLAYER.UNDRAFTED_2) {
+                                    p.ratings[0].season = g.startingSeason + 1;
+                                } else if (p.tid === g.PLAYER.UNDRAFTED_3) {
+                                    p.ratings[0].season = g.startingSeason + 2;
+                                } else {
+                                    p.ratings[0].season = g.startingSeason;
+                                }
                                 if (!p.hasOwnProperty("stats")) {
                                     p.stats = [];
                                     if (p.tid >= 0) {

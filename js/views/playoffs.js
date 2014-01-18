@@ -65,8 +65,10 @@ define(["globals", "ui", "core/season", "core/team", "lib/jquery", "lib/knockout
                     for (i = 0; i < series.length; i++) {
                         for (j = 0; j < series[i].length; j++) {
                             series[i][j].away.abbrev = g.teamAbbrevsCache[series[i][j].away.tid];
+                            series[i][j].away.region = g.teamRegionsCache[series[i][j].away.tid];
                             series[i][j].away.name = g.teamNamesCache[series[i][j].away.tid];
                             series[i][j].home.abbrev = g.teamAbbrevsCache[series[i][j].home.tid];
+                            series[i][j].home.region = g.teamRegionsCache[series[i][j].home.tid];
                             series[i][j].home.name = g.teamNamesCache[series[i][j].home.tid];
                         }
                     }

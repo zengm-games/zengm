@@ -1,5 +1,6 @@
 DB CHANGES SINCE 3.2.0
 ----------------------
+meta database needs teamName and regionName - how?
 
 CURRENT
 -------
@@ -11,7 +12,6 @@ show prospects before draft
       allow promising to draft a player at certain position to influence decision
 pick new cities (mostly)
   get user input on names
-  store region and name in meta db, for dashboard
   rename custom "roster" file to something else
   when you add a custom roster file, update teams dropdown. revert when you switch away
     including difficulty level, somehow - infer, maybe break out popRank into its own function
@@ -129,6 +129,7 @@ player development revamp
   something needs to be done. still too many 3 point shooting centers.
   are ovr/pot combos reasonable, since ovr is weighted now?
   low ovr high pot players should pan out more?
+  old stars should exist
 skills should be based on the composite ratings, not single ratings. http://www.reddit.com/r/BasketballGM/comments/1pxu83/positionless_basketball/cd7ob6j
 make low ovr high pot players more likely to improve
 Extended free agency

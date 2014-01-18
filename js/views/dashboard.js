@@ -11,14 +11,17 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
         deferred = $.Deferred();
 
         g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
-            var i, leagues, teams;
+            var i, leagues;
 
             leagues = event.target.result;
-            teams = helpers.getTeamsDefault();
 
             for (i = 0; i < leagues.length; i++) {
-                leagues[i].region = teams[leagues[i].tid].region;
-                leagues[i].teamName = teams[leagues[i].tid].name;
+                if (leagues[i].teamRegion === undefined) {
+                    leagues[i].teamRegion = "???";
+                }
+                if (leagues[i].teamName === undefined) {
+                    leagues[i].teamName = "???";
+                }
                 delete leagues[i].tid;
             }
 

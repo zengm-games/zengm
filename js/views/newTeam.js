@@ -6,11 +6,11 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
     "use strict";
 
     function get(req) {
-        if (!g.gameOver) {
+        /*if (!g.gameOver) {
             return {
                 errorMessage: "You may only switch to another team after you're fired."
             };
-        }
+        }*/
     }
 
     function post(req) {
@@ -29,6 +29,7 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
             },
             gracePeriodEnd: g.season + 3 // +3 is the same as +2 when staring a new league, since this happens at the end of a season
         }, function () {
+            db.updateMetaNameRegion(g.lid, g.teamNamesCache[g.userTid], g.teamRegionsCache[g.userTid]);
             ui.realtimeUpdate([], helpers.leagueUrl([]));
         });
     }

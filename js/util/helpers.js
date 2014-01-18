@@ -220,7 +220,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
             {tid: 26, cid: 0, did: 2, region: "Tampa", name: "", abbrev: "TPA", pop: 2.2},
             {tid: 27, cid: 0, did: 0, region: "Toronto", name: "", abbrev: "TOR", pop: 6.3},
             {tid: 28, cid: 1, did: 4, region: "Vancouver", name: "", abbrev: "VAN", pop: 2.3},
-            {tid: 29, cid: 0, did: 2, region: "Washington", name: "Witches", abbrev: "WAS", pop: 4.2}
+            {tid: 29, cid: 0, did: 2, region: "Washington", name: "", abbrev: "WAS", pop: 4.2}
         ];
 
         // Add popRank

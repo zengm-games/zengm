@@ -22,6 +22,12 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
                 t.name = req.params.name[t.tid];
                 t.seasons[t.seasons.length - 1].pop = parseFloat(req.params.pop[t.tid]);
                 cursor.update(t);
+
+                // Update meta cache of user's team
+                if (t.tid === g.userTid) {
+                    db.updateMetaNameRegion(g.lid, t.name, t.region);
+                }
+
                 cursor.continue();
             } else {
                 // Updating cached values for team regions and team names for easy access.

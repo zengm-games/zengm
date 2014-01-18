@@ -981,6 +981,20 @@ console.log(event);
         };
     }
 
+    function updateMetaNameRegion(lid, name, region) {
+        g.dbm.transaction("leagues", "readwrite").objectStore("leagues").openCursor(lid).onsuccess = function (event) {
+            var cursor, l;
+
+            cursor = event.target.result;
+            if (cursor) {
+                l = cursor.value;
+                l.teamName = name;
+                l.teamRegion = region;
+                cursor.update(l);
+            }
+        };
+    }
+
     return {
         connectMeta: connectMeta,
         connectLeague: connectLeague,
@@ -990,6 +1004,7 @@ console.log(event);
         loadGameAttribute: loadGameAttribute,
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes,
-        reset: reset
+        reset: reset,
+        updateMetaNameRegion: updateMetaNameRegion
     };
 });

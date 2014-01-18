@@ -14,31 +14,30 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
      * @param {Array.<Object>?} players Either an array of pre-generated player objects to use in the new league or undefined. If undefined, then random players will be generated.
      */
     function create(name, tid, players, teams, startingSeason, randomizeRosters, cb) {
-        var l, leagueStore;
+        var i, l, leagueStore, prop, teamsDefault;
 
-        l = {name: name, tid: tid, phaseText: ""};
-        leagueStore = g.dbm.transaction("leagues", "readwrite").objectStore("leagues");
-        leagueStore.add(l).onsuccess = function (event) {
-            var i, prop, teamsDefault;
+        // Default teams
+        teamsDefault = helpers.getTeamsDefault();
 
-            g.lid = event.target.result;
-
-            // Default teams
-            teamsDefault = helpers.getTeamsDefault();
-
-            // Any custom teams?
-            if (teams !== undefined) {
-                for (i = 0; i < teams.length; i++) {
-                    // Fill in default values as needed
-                    for (prop in teamsDefault[i]) {
-                        if (teamsDefault[i].hasOwnProperty(prop) && !teams[i].hasOwnProperty(prop)) {
-                            teams[i][prop] = teamsDefault[i][prop];
-                        }
+        // Any custom teams?
+        if (teams !== undefined) {
+            for (i = 0; i < teams.length; i++) {
+                // Fill in default values as needed
+                for (prop in teamsDefault[i]) {
+                    if (teamsDefault[i].hasOwnProperty(prop) && !teams[i].hasOwnProperty(prop)) {
+                        teams[i][prop] = teamsDefault[i][prop];
                     }
                 }
-            } else {
-                teams = teamsDefault;
             }
+        } else {
+            teams = teamsDefault;
+        }
+
+        // Record in meta db
+        l = {name: name, tid: tid, phaseText: "", teamName: teams[tid].name, teamRegion: teams[tid].region};
+        leagueStore = g.dbm.transaction("leagues", "readwrite").objectStore("leagues");
+        leagueStore.add(l).onsuccess = function (event) {
+            g.lid = event.target.result;
 
             // Create new league database
             db.connectLeague(g.lid, function () {

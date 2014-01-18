@@ -47,15 +47,15 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             series = viewModel.series()[args[0]][args[1]];
 
             source = '';
-            if (series && series.home.name) {
+            if (series && series.home.region) {
                 if (series.home.hasOwnProperty("won") && series.home.won() === 4) { source += '<strong>'; }
-                source += series.home.seed() + '. <a href="' + helpers.leagueUrl(["roster", series.home.abbrev(), season]) + '">' + series.home.name() + '</a>';
+                source += series.home.seed() + '. <a href="' + helpers.leagueUrl(["roster", series.home.abbrev(), season]) + '">' + series.home.region() + '</a>';
                 if (series.home.hasOwnProperty("won")) { source += ' ' + series.home.won(); }
                 if (series.home.hasOwnProperty("won") && series.home.won() === 4) { source += '</strong>'; }
                 source += '<br>';
 
                 if (series.home.hasOwnProperty("won") && series.away.won() === 4) { source += '<strong>'; }
-                source += series.away.seed() + '. <a href="' + helpers.leagueUrl(["roster", series.away.abbrev(), season]) + '">' + series.away.name() + '</a>';
+                source += series.away.seed() + '. <a href="' + helpers.leagueUrl(["roster", series.away.abbrev(), season]) + '">' + series.away.region() + '</a>';
                 if (series.away.hasOwnProperty("won")) { source += ' ' + series.away.won(); }
                 if (series.home.hasOwnProperty("won") && series.away.won() === 4) { source += '</strong>'; }
             }

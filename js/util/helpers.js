@@ -188,38 +188,54 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * @return {Array.Object} All teams.
      */
     function getTeamsDefault() {
-        return [
-            {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Herons", abbrev: "ATL", pop: 5.4, popRank: 12},
-            {tid: 1, cid: 0, did: 0, region: "Boston", name: "Clovers", abbrev: "BOS", pop: 5.0, popRank: 13},
-            {tid: 2, cid: 0, did: 0, region: "Brooklyn", name: "Nests", abbrev: "BK", pop: 19.1, popRank: 1},
-            {tid: 3, cid: 0, did: 2, region: "Charlotte", name: "Bay Cats", abbrev: "CHA", pop: 1.8, popRank: 24},
-            {tid: 4, cid: 0, did: 1, region: "Chicago", name: "Bullies", abbrev: "CHI", pop: 9.6, popRank: 5},
-            {tid: 5, cid: 0, did: 1, region: "Cleveland", name: "Cobras", abbrev: "CLE", pop: 2.1, popRank: 20},
-            {tid: 6, cid: 1, did: 3, region: "Dallas", name: "Mares", abbrev: "DAL", pop: 6.4, popRank: 6},
-            {tid: 7, cid: 1, did: 4, region: "Denver", name: "Ninjas", abbrev: "DEN", pop: 2.6, popRank: 18},
-            {tid: 8, cid: 0, did: 1, region: "Detroit", name: "Pumps", abbrev: "DET", pop: 4.4, popRank: 14},
-            {tid: 9, cid: 1, did: 5, region: "Golden State", name: "War Machine", abbrev: "GSW", pop: 4.3, popRank: 16},
-            {tid: 10, cid: 1, did: 3, region: "Houston", name: "Rock Throwers", abbrev: "HOU", pop: 5.9, popRank: 9},
-            {tid: 11, cid: 0, did: 1, region: "Indiana", name: "Passers", abbrev: "IND", pop: 1.7, popRank: 25},
-            {tid: 12, cid: 1, did: 5, region: "Los Angeles", name: "Cutters", abbrev: "LAC", pop: 12.9, popRank: 3},
-            {tid: 13, cid: 1, did: 5, region: "Los Angeles", name: "Lagoons", abbrev: "LAL", pop: 12.9, popRank: 3},
-            {tid: 14, cid: 1, did: 3, region: "Memphis", name: "Growls", abbrev: "MEM", pop: 1.3, popRank: 27},
-            {tid: 15, cid: 0, did: 2, region: "Miami", name: "Heatwave", abbrev: "MIA", pop: 5.6, popRank: 11},
-            {tid: 16, cid: 0, did: 1, region: "Milwaukee", name: "Buccaneers", abbrev: "MIL", pop: 1.6, popRank: 26},
-            {tid: 17, cid: 1, did: 4, region: "Minnesota", name: "Trees", abbrev: "MIN", pop: 3.3, popRank: 17},
-            {tid: 18, cid: 1, did: 3, region: "New Orleans", name: "Peloteros", abbrev: "NOR", pop: 1.2, popRank: 28},
-            {tid: 19, cid: 0, did: 0, region: "New York", name: "Knights", abbrev: "NYK", pop: 19.1, popRank: 1},
-            {tid: 20, cid: 1, did: 4, region: "Oklahoma City", name: "Tornados", abbrev: "OKC", pop: 1.2, popRank: 28},
-            {tid: 21, cid: 0, did: 2, region: "Orlando", name: "Mystery", abbrev: "ORL", pop: 2.1, popRank: 20},
-            {tid: 22, cid: 0, did: 0, region: "Philadelphia", name: "Steaks", abbrev: "PHI", pop: 6.0, popRank: 7},
-            {tid: 23, cid: 1, did: 5, region: "Phoenix", name: "Stars", abbrev: "PHO", pop: 4.4, popRank: 14},
-            {tid: 24, cid: 1, did: 4, region: "Portland", name: "Trailer Park", abbrev: "POR", pop: 2.2, popRank: 19},
-            {tid: 25, cid: 1, did: 5, region: "Sacramento", name: "Killers", abbrev: "SAC", pop: 2.1, popRank: 20},
-            {tid: 26, cid: 1, did: 3, region: "San Antonio", name: "Spurts", abbrev: "SAS", pop: 2.1, popRank: 20},
-            {tid: 27, cid: 0, did: 0, region: "Toronto", name: "Ravens", abbrev: "TOR", pop: 6.0, popRank: 7},
-            {tid: 28, cid: 1, did: 4, region: "Utah", name: "Jugglers", abbrev: "UTA", pop: 1.0, popRank: 30},
-            {tid: 29, cid: 0, did: 2, region: "Washington", name: "Witches", abbrev: "WAS", pop: 5.7, popRank: 10}
+        var i, j, teams, teamsSorted;
+
+        teams = [
+            {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "", abbrev: "ATL", pop: 4.3},
+            {tid: 1, cid: 0, did: 2, region: "Baltimore", name: "", abbrev: "BAL", pop: 2.2},
+            {tid: 2, cid: 0, did: 0, region: "Boston", name: "", abbrev: "BOS", pop: 4.4},
+            {tid: 3, cid: 0, did: 1, region: "Chicago", name: "", abbrev: "CHI", pop: 8.8},
+            {tid: 4, cid: 0, did: 1, region: "Cincinnati", name: "", abbrev: "CIN", pop: 1.6},
+            {tid: 5, cid: 0, did: 1, region: "Cleveland", name: "", abbrev: "CLE", pop: 1.9},
+            {tid: 6, cid: 1, did: 3, region: "Dallas", name: "", abbrev: "DAL", pop: 4.7},
+            {tid: 7, cid: 1, did: 4, region: "Denver", name: "", abbrev: "DEN", pop: 2.2},
+            {tid: 8, cid: 0, did: 1, region: "Detroit", name: "", abbrev: "DET", pop: 4.0},
+            {tid: 9, cid: 1, did: 3, region: "Houston", name: "", abbrev: "HOU", pop: 4.3},
+            {tid: 10, cid: 1, did: 5, region: "Las Vegas", name: "", abbrev: "LV", pop: 1.7},
+            {tid: 11, cid: 1, did: 5, region: "Los Angeles", name: "", abbrev: "LA", pop: 12.3},
+            {tid: 12, cid: 1, did: 3, region: "Mexico City", name: "", abbrev: "MXC", pop: 19.4},
+            {tid: 13, cid: 0, did: 2, region: "Miami", name: "", abbrev: "MIA", pop: 5.4},
+            {tid: 14, cid: 1, did: 4, region: "Minneapolis", name: "", abbrev: "MIN", pop: 2.6},
+            {tid: 15, cid: 0, did: 0, region: "Montreal", name: "", abbrev: "MON", pop: 4.0},
+            {tid: 16, cid: 0, did: 0, region: "New York", name: "", abbrev: "NYC", pop: 18.7},
+            {tid: 17, cid: 0, did: 0, region: "Philadelphia", name: "", abbrev: "PHI", pop: 5.4},
+            {tid: 18, cid: 1, did: 3, region: "Phoenix", name: "", abbrev: "PHO", pop: 3.4},
+            {tid: 19, cid: 0, did: 1, region: "Pittsburgh", name: "", abbrev: "PIT", pop: 1.8},
+            {tid: 20, cid: 1, did: 4, region: "Portland", name: "", abbrev: "POR", pop: 1.8},
+            {tid: 21, cid: 1, did: 5, region: "Sacramento", name: "", abbrev: "SAC", pop: 1.6},
+            {tid: 22, cid: 1, did: 3, region: "St. Louis", name: "", abbrev: "PHO", pop: 2.2},
+            {tid: 23, cid: 1, did: 5, region: "San Diego", name: "", abbrev: "SD", pop: 2.9},
+            {tid: 24, cid: 1, did: 5, region: "San Francisco", name: "", abbrev: "SF", pop: 3.4},
+            {tid: 25, cid: 1, did: 4, region: "Seattle", name: "", abbrev: "SEA", pop: 3.0},
+            {tid: 26, cid: 0, did: 2, region: "Tampa", name: "", abbrev: "TPA", pop: 2.2},
+            {tid: 27, cid: 0, did: 0, region: "Toronto", name: "", abbrev: "TOR", pop: 6.3},
+            {tid: 28, cid: 1, did: 4, region: "Vancouver", name: "", abbrev: "VAN", pop: 2.3},
+            {tid: 29, cid: 0, did: 2, region: "Washington", name: "Witches", abbrev: "WAS", pop: 4.2}
         ];
+
+        // Add popRank
+        teamsSorted = teams.slice(); // Deep copy
+        teamsSorted.sort(function (a, b) { return b.pop - a.pop; });
+        for (i = 0; i < teams.length; i++) {
+            for (j = 0; j < teamsSorted.length; j++) {
+                if (teams[i].tid === teamsSorted[j].tid) {
+                    teams[i].popRank = j + 1;
+                    break;
+                }
+            }
+        }
+
+        return teams;
     }
 
     /**

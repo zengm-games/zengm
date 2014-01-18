@@ -91,13 +91,13 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
             team = teams[selectTeam.val()];
 
-            if (team.popRank <= 5) {
+            if (team.popRank <= 3) {
                 difficulty = "very easy";
-            } else if (team.popRank <= 13) {
+            } else if (team.popRank <= 8) {
                 difficulty = "easy";
             } else if (team.popRank <= 16) {
                 difficulty = "normal";
-            } else if (team.popRank <= 23) {
+            } else if (team.popRank <= 24) {
                 difficulty = "hard";
             } else {
                 difficulty = "very hard";

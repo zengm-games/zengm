@@ -9,9 +9,16 @@ show prospects before draft
       fuzz changing for prospects should factor in changes in scouting budget
     movement between draft classes
       allow promising to draft a player at certain position to influence decision
-anti-NBA stuff
-  pick new cities (mostly)
+pick new cities (mostly)
+  get user input on names
+  store region and name in meta db, for dashboard
+  rename custom "roster" file to something else
+  when you add a custom roster file, update teams dropdown. revert when you switch away
+    including difficulty level, somehow - infer, maybe break out popRank into its own function
   get logos and colors for default teams - maybe by /u/mbingcrosby
+customization
+  allow import of team info or draft classes from roster files
+  allow upload of just these files from the "new league" screen, somehow
 career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year
   column/table widths?
@@ -298,7 +305,7 @@ playerNameLabels should also put a little hover box over the player link with ke
 more refined control of playing time
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaegpq
   http://www.reddit.com/r/BasketballGM/comments/1qaml8/playing_time_explain_to_me_like_im_8/
-  just set minutes directly?
+  just set minutes directly? any minutes not included, leave up to coach's discretion
 signing draft picks should be optional
   maybe sign them in the "resign players" phase
 you should be able to drop below 5 players (and above 15) but only temporarily (no game simulation in that time)

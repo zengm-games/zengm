@@ -131,7 +131,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             }
 
             // Sort teams by tid so it can be easily used in awards formulas
-            teams.sort(function (a, b) {  return a.tid - b.tid; });
+            teams.sort(function (a, b) { return a.tid - b.tid; });
 
             // Any non-retired player can win an award
             tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {

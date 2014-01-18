@@ -4,6 +4,8 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 show prospects before draft
+  test draft more thoroughly. some people say it's broken (no players).
+  support in custom rosters? should work with or without prospects specified
   EVENTUALLY
     ratings should really update annually, just like in normal years
       fuzz changing for prospects should factor in changes in scouting budget
@@ -66,6 +68,8 @@ notification system
     refuse to sign
     retire
 NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
+"Watch list" of players the user is interested in, mainly for free agency
+  also show icon in playerNameLabels
 
 BIG NEW FEATURES
 ----------------
@@ -180,7 +184,6 @@ show four factors somewhere
 security
   validate any user-added content, like custom team names (both in file and through form), custom players, and league names
 in playoffs, replace "play week" with "play until end of round"
-"Watch list" of players the user is interested in, mainly for free agency
 IE11 testing
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
 reorganize top menu

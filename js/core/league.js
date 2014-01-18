@@ -72,13 +72,13 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                 helpers.resetG();
 
                 db.setGameAttributes(gameAttributes, function () {
-                    var draftPickStore, i, t, round, scoutingRank, teamStore, transaction;
+                    var draftPickStore, i, t, round, scoutingRank, teamStore, tx;
 
                     // Probably is fastest to use this transaction for everything done to create a new league
-                    transaction = g.dbl.transaction(["draftPicks", "draftOrder", "players", "teams", "trade"], "readwrite");
+                    tx = g.dbl.transaction(["draftPicks", "draftOrder", "players", "teams", "trade"], "readwrite");
 
                     // Generate draft picks for the first 4 years, as those are the ones can be traded initially
-                    draftPickStore = transaction.objectStore("draftPicks");
+                    draftPickStore = tx.objectStore("draftPicks");
                     for (i = 0; i < 4; i++) {
                         for (t = 0; t < 30; t++) {
                             for (round = 1; round <= 2; round++) {
@@ -93,13 +93,13 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                     }
 
                     // Initialize draft order object store for later use
-                    transaction.objectStore("draftOrder").add({
+                    tx.objectStore("draftOrder").add({
                         rid: 1,
                         draftOrder: []
                     });
 
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
-                    teamStore = transaction.objectStore("teams");
+                    teamStore = tx.objectStore("teams");
                     for (i = 0; i < teams.length; i++) {
                         t = team.generate(teams[i]);
                         teamStore.add(t);
@@ -110,7 +110,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                         }
                     }
 
-                    transaction.objectStore("trade").add({
+                    tx.objectStore("trade").add({
                         rid: 0,
                         teams: [
                             {
@@ -126,31 +126,30 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                         ]
                     });
 
-                    player.genBaseMoods(transaction, function (baseMoods) {
+                    player.genBaseMoods(tx, function (baseMoods) {
                         var afterPlayerCreation, age, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, pg, playerStore, pots, profile, profiles, randomizeExpiration, simpleDefaults, t, t2, playerTids;
 
-                        // This can't be in transaction.oncomplete because loading players from a json file is async and breaks the transaction.
                         afterPlayerCreation = function () {
                             // Create three draft classes - can be a race condition of scoutingRank isn't passed, as teams might not be in database yet
-                            draft.genPlayers(null, g.PLAYER.UNDRAFTED, scoutingRank, function () {
-                                draft.genPlayers(null, g.PLAYER.UNDRAFTED_2, scoutingRank, function () {
-                                    draft.genPlayers(null, g.PLAYER.UNDRAFTED_3, scoutingRank, function () {
-                                        // Make schedule, start season
-                                        season.newPhase(g.PHASE.REGULAR_SEASON, function () {
-                                            var lid;
+                            draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank);
+                            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank);
+                            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank);
 
-                                            ui.updateStatus("Idle");
+                            tx.oncomplete = function () {
+                                // Make schedule, start season
+                                season.newPhase(g.PHASE.REGULAR_SEASON, function () {
+                                    var lid;
 
-                                            lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
+                                    ui.updateStatus("Idle");
 
-                                            // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
-                                            team.rosterAutoSort(null, g.userTid, function () { cb(lid); });
+                                    lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
-                                            helpers.bbgmPing("league");
-                                        });
-                                    });
+                                    // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
+                                    team.rosterAutoSort(null, g.userTid, function () { cb(lid); });
+
+                                    helpers.bbgmPing("league");
                                 });
-                            });
+                            }
                         };
 
                         cbAfterEachPlayer = function () {
@@ -239,7 +238,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                             }
                         } else {
                             // Generate new players
-                            playerStore = transaction.objectStore("players");
+                            playerStore = tx.objectStore("players");
                             profiles = ["Point", "Wing", "Big", ""];
                             baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
                             pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];

@@ -40,8 +40,9 @@ define(["lib/knockout"], function (ko) {
         FREE_AGENT: -1,
         UNDRAFTED: -2,
         RETIRED: -3,
-        UNDRAFTED_2: -4,  // Next year's draft class
-        UNDRAFTED_3: -5   // Next next year's draft class
+        UNDRAFTED_2: -4, // Next year's draft class
+        UNDRAFTED_3: -5, // Next next year's draft class
+        UNDRAFTED_FANTASY_TEMP: -6 // Store current draft class hear during fantasy draft
     };
 
 /*    // Web workers - create only if we're not already inside a web worker!

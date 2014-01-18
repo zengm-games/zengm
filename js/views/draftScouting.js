@@ -60,7 +60,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     };
 
     function updateDraftScouting(inputs, updateEvents) {
-        var deferred, seasonOffset, seasons;
+        var deferred, firstUndraftedTid, seasonOffset, seasons;
 
         if (updateEvents.indexOf("firstRun") >= 0) {
             deferred = $.Deferred();
@@ -74,7 +74,14 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 seasonOffset = 1;
             }
 
-            addSeason(seasons, g.season + seasonOffset, g.PLAYER.UNDRAFTED, function () {
+            // In fantasy draft, use temp tid
+            if (g.phase === g.PHASE.FANTASY_DRAFT) {
+                firstUndraftedTid = g.PLAYER.UNDRAFTED_FANTASY_TEMP;
+            } else {
+                firstUndraftedTid = g.PLAYER.UNDRAFTED;
+            }
+
+            addSeason(seasons, g.season + seasonOffset, firstUndraftedTid, function () {
                 addSeason(seasons, g.season + seasonOffset + 1, g.PLAYER.UNDRAFTED_2, function () {
                     addSeason(seasons, g.season + seasonOffset + 2, g.PLAYER.UNDRAFTED_3, function () {
                         deferred.resolve({

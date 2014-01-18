@@ -1039,27 +1039,42 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
                     tx = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
 
-                    // Make all players draftable
-                    tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
+                    // Protect draft prospects from being included in this
+                    tx.objectStore("players").index("tid").openCursor(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
                         var cursor, p;
 
                         cursor = event.target.result;
                         if (cursor) {
                             p = cursor.value;
 
-                            p.tid = g.PLAYER.UNDRAFTED;
+                            p.tid = g.PLAYER.UNDRAFTED_FANTASY_TEMP;
 
                             cursor.update(p);
                             cursor.continue();
                         } else {
-                            // Delete all records of released players
-                            tx.objectStore("releasedPlayers").openCursor().onsuccess = function (event) {
-                                var cursor;
+                            // Make all players draftable
+                            tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
+                                var cursor, p;
 
                                 cursor = event.target.result;
                                 if (cursor) {
-                                    cursor.delete();
+                                    p = cursor.value;
+
+                                    p.tid = g.PLAYER.UNDRAFTED;
+
+                                    cursor.update(p);
                                     cursor.continue();
+                                } else {
+                                    // Delete all records of released players
+                                    tx.objectStore("releasedPlayers").openCursor().onsuccess = function (event) {
+                                        var cursor;
+
+                                        cursor = event.target.result;
+                                        if (cursor) {
+                                            cursor.delete();
+                                            cursor.continue();
+                                        }
+                                    };
                                 }
                             };
                         }

@@ -396,16 +396,31 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
                                             player.addToFreeAgents(playerStore, p, g.PHASE.FREE_AGENCY, baseMoods);
                                             cursor.continue();
                                         } else {
-                                            db.setGameAttributes({
-                                                lastDbChange: Date.now(),
-                                                phase: g.nextPhase,
-                                                nextPhase: null
-                                            }, function () {
-                                                ui.updatePhase(g.season + season.phaseText[g.phase]);
-                                                ui.updatePlayMenu(null, function () {
-                                                    cb(pids);
-                                                });
-                                            });
+                                            // Swap back in normal draft class
+                                            playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_FANTASY_TEMP).onsuccess = function (event) {
+                                                var cursor, p;
+
+                                                cursor = event.target.result;
+                                                if (cursor) {
+                                                    p = cursor.value;
+
+                                                    p.tid = g.PLAYER.UNDRAFTED;
+
+                                                    cursor.update(p);
+                                                    cursor.continue();
+                                                } else {
+                                                    db.setGameAttributes({
+                                                        lastDbChange: Date.now(),
+                                                        phase: g.nextPhase,
+                                                        nextPhase: null
+                                                    }, function () {
+                                                        ui.updatePhase(g.season + season.phaseText[g.phase]);
+                                                        ui.updatePlayMenu(null, function () {
+                                                            cb(pids);
+                                                        });
+                                                    });
+                                                }
+                                            };
                                         }
                                     };
                                 });

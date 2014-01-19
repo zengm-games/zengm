@@ -33,6 +33,7 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
         migrateMessage = '';
 
         dbm = event.target.result;
+        tx = event.currentTarget.transaction;
 
         if (event.oldVersion <= 1) {
             dbm.deleteObjectStore("teams");
@@ -52,16 +53,73 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
             migrateMessage = '<p><strong>New in version 3.1.0:</strong> better AI from opposing managers and more trade functionality, including trading draft picks and asking for counter-proposals from the team you\'re trading with.</p>' + migrateMessage;
         }
 
-        // This is no longer being used for update messages! See util/changes.js
+        if (event.oldVersion <= 5) {
+            (function () {
+                var teams;
 
-        $("#content").before('<div class="alert alert-info alert-top"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
+                // Old team names
+                teams = [
+                    {region: "Atlanta", name: "Herons"},
+                    {region: "Boston", name: "Clovers"},
+                    {region: "Brooklyn", name: "Nests"},
+                    {region: "Charlotte", name: "Bay Cats"},
+                    {region: "Chicago", name: "Bullies"},
+                    {region: "Cleveland", name: "Cobras"},
+                    {region: "Dallas", name: "Mares"},
+                    {region: "Denver", name: "Ninjas"},
+                    {region: "Detroit", name: "Pumps"},
+                    {region: "Golden State", name: "War Machine"},
+                    {region: "Houston", name: "Rock Throwers"},
+                    {region: "Indiana", name: "Passers"},
+                    {region: "Los Angeles", name: "Cutters"},
+                    {region: "Los Angeles", name: "Lagoons"},
+                    {region: "Memphis", name: "Growls"},
+                    {region: "Miami", name: "Heatwave"},
+                    {region: "Milwaukee", name: "Buccaneers"},
+                    {region: "Minnesota", name: "Trees"},
+                    {region: "New Orleans", name: "Peloteros"},
+                    {region: "New York", name: "Knights"},
+                    {region: "Oklahoma City", name: "Tornados"},
+                    {region: "Orlando", name: "Mystery"},
+                    {region: "Philadelphia", name: "Steaks"},
+                    {region: "Phoenix", name: "Stars"},
+                    {region: "Portland", name: "Trailer Park"},
+                    {region: "Sacramento", name: "Killers"},
+                    {region: "San Antonio", name: "Spurts"},
+                    {region: "Toronto", name: "Ravens"},
+                    {region: "Utah", name: "Jugglers"},
+                    {region: "Washington", name: "Witches"}
+                ];
+
+                tx.objectStore("leagues").openCursor().onsuccess = function (event) {
+                    var cursor, l;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        l = cursor.value;
+                        if (l.teamName === undefined) {
+                            l.teamName = teams[l.tid].name;
+                        }
+                        if (l.teamRegion === undefined) {
+                            l.teamRegion = teams[l.tid].region;
+                        }
+                        cursor.update(l);
+                        cursor.continue();
+                    }
+                };
+
+            }());
+        }
+
+        // This is no longer being used for update messages! See util/changes.js
+        //$("#content").before('<div class="alert alert-info alert-top"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
     }
 
     function connectMeta(cb) {
         var request;
 
 //        console.log('Connecting to database "meta"');
-        request = indexedDB.open("meta", 5);
+        request = indexedDB.open("meta", 6);
         request.onerror = function (event) {
             throw new Error("Meta connection error");
         };

@@ -7,6 +7,11 @@ footer {
   color: #777;
 }
 
+.rev {
+  font-size: 9px;
+  margin-top: -7px;
+}
+
 .navbar-brand img {
   vertical-align: top;
 }

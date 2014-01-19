@@ -3,6 +3,7 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+3.3
 show prospects before draft
   EVENTUALLY
     ratings should really update annually, just like in normal years

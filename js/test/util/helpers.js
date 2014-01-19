@@ -26,10 +26,10 @@ define(["globals", "util/helpers"], function (g, helpers) {
 
                 out = helpers.validateAbbrev("fuck");
                 out[0].should.equal(4);
-                out[1].should.equal("CHI");
+                out[1].should.equal("CIN");
                 out = helpers.validateAbbrev();
                 out[0].should.equal(4);
-                out[1].should.equal("CHI");
+                out[1].should.equal("CIN");
             });
         });
 
@@ -49,13 +49,13 @@ define(["globals", "util/helpers"], function (g, helpers) {
 
                 out = helpers.validateTid("63");
                 out[0].should.equal(4);
-                out[1].should.equal("CHI");
+                out[1].should.equal("CIN");
                 out = helpers.validateTid("fuck");
                 out[0].should.equal(4);
-                out[1].should.equal("CHI");
+                out[1].should.equal("CIN");
                 out = helpers.validateTid();
                 out[0].should.equal(4);
-                out[1].should.equal("CHI");
+                out[1].should.equal("CIN");
             });
         });
 
@@ -65,8 +65,8 @@ define(["globals", "util/helpers"], function (g, helpers) {
                 helpers.getAbbrev("6").should.equal("DAL");
             });
             it("should return user team abbrev on invalid input", function () {
-                helpers.getAbbrev("fuck").should.equal("CHI");
-                helpers.getAbbrev().should.equal("CHI");
+                helpers.getAbbrev("fuck").should.equal("CIN");
+                helpers.getAbbrev().should.equal("CIN");
             });
             it("should return \"FA\" for free agents", function () {
                 helpers.getAbbrev(g.PLAYER.FREE_AGENT).should.equal("FA");

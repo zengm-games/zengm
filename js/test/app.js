@@ -8,16 +8,12 @@ requirejs.config({
             exports: "Davis"
         },
         "lib/faces": {
-            deps: ["lib/raphael"],
             exports: "faces"
         },
         "lib/html5-dataset": {},
         "lib/IndexedDB-getAll-shim": {},
         "lib/jquery": {
             exports: "$"
-        },
-        "lib/raphael": {
-            exports: "Raphael"
         },
         "lib/underscore": {
             exports: "_"

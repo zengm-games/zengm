@@ -138,7 +138,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
                     cursor.update(p);
 
                     contractNegotiation.create(tx, 8, false, function (error) {
-                        error.should.equal("Your roster is full. Before you can sign a free agent, you'll have to buy out or release one of your current players.");
+                        error.should.equal("Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.");
 
                         tx.objectStore("negotiations").getAll().onsuccess = function (event) {
                             var negotiations;

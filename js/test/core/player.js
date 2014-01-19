@@ -71,7 +71,7 @@ define(["globals", "core/player"], function (g, player) {
                 pf.ratings.ovr.should.be.a("number");
                 Object.keys(pf.ratings).should.have.length(2);
                 pf.stats.season.should.equal(2012);
-                pf.stats.abbrev.should.equal("CHI");
+                pf.stats.abbrev.should.equal("CIN");
                 pf.stats.fg.should.be.a("number");
                 pf.stats.fgp.should.be.a("number");
                 pf.stats.per.should.be.a("number");
@@ -99,7 +99,7 @@ define(["globals", "core/player"], function (g, player) {
                     pf[i].ratings.ovr.should.be.a("number");
                     Object.keys(pf[i].ratings).should.have.length(2);
                     pf[i].stats.season.should.equal(2012);
-                    pf[i].stats.abbrev.should.equal("CHI");
+                    pf[i].stats.abbrev.should.equal("CIN");
                     pf[i].stats.fg.should.be.a("number");
                     pf[i].stats.fgp.should.be.a("number");
                     pf[i].stats.per.should.be.a("number");
@@ -124,7 +124,7 @@ define(["globals", "core/player"], function (g, player) {
                 pf.ratings.ovr.should.be.a("number");
                 Object.keys(pf.ratings).should.have.length(2);
                 pf.stats.season.should.equal(2012);
-                pf.stats.abbrev.should.equal("CHI");
+                pf.stats.abbrev.should.equal("CIN");
                 pf.stats.fg.should.be.a("number");
                 pf.stats.fgp.should.be.a("number");
                 pf.stats.per.should.be.a("number");
@@ -148,7 +148,7 @@ define(["globals", "core/player"], function (g, player) {
                 pf.awards.should.have.length(0);
                 pf.hasOwnProperty("ratings").should.equal(false);
                 pf.stats.season.should.equal(2012);
-                pf.stats.abbrev.should.equal("CHI");
+                pf.stats.abbrev.should.equal("CIN");
                 pf.stats.fg.should.be.a("number");
                 pf.stats.fgp.should.be.a("number");
                 pf.stats.per.should.be.a("number");
@@ -387,7 +387,7 @@ define(["globals", "core/player"], function (g, player) {
                 pf.ratings[2].season.should.equal(2013);
                 pf.ratings[2].ovr.should.be.a("number");
                 pf.stats[0].season.should.equal(2012);
-                pf.stats[0].abbrev.should.equal("CHI");
+                pf.stats[0].abbrev.should.equal("CIN");
                 pf.stats[0].fg.should.equal(20);
                 pf.stats[1].season.should.equal(2013);
                 pf.stats[1].abbrev.should.equal("ATL");
@@ -414,7 +414,7 @@ define(["globals", "core/player"], function (g, player) {
                 pf.ratings[0].ovr.should.be.a("number");
                 pf.ratings.should.have.length(1);
                 pf.stats[0].season.should.equal(2012);
-                pf.stats[0].abbrev.should.equal("CHI");
+                pf.stats[0].abbrev.should.equal("CIN");
                 pf.stats[0].fg.should.equal(20);
                 pf.stats.should.have.length(1);
                 pf.careerStats.fg.should.equal(20);

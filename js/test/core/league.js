@@ -58,7 +58,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                     gTest.userTid.should.equal(0);
                     gTest.gameOver.should.equal(false);
                     gTest.daysLeft.should.equal(0);
-                    gTest.showFirstOwnerMessage.should.equal(true);
+                    gTest.showFirstOwnerMessage.should.equal(false);
 
                     count = 0;
                     for (key in gTest) {
@@ -67,7 +67,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                         }
                     }
 
-                    count.should.equal(18);
+                    count.should.equal(19);
 
                     done();
                 };
@@ -116,7 +116,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
             });
             it("should initialize players object store", function (done) {
                 g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
-                    event.target.result.should.have.length(33 * 14);
+                    event.target.result.should.have.length(33 * 14 + 70 * 3);
                     done();
                 };
             });

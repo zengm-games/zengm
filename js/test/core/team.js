@@ -43,7 +43,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
                     season: g.season
                 }, function (t) {
                     t.tid.should.equal(4);
-                    t.abbrev.should.equal("CHI");
+                    t.abbrev.should.equal("CIN");
                     t.season.should.equal(g.season);
                     t.won.should.equal(0);
                     t.payroll.should.be.gt(0);
@@ -65,7 +65,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
                 }, function (teams) {
                     teams.should.have.length(g.numTeams);
                     teams[4].tid.should.equal(4);
-                    teams[4].abbrev.should.equal("CHI");
+                    teams[4].abbrev.should.equal("CIN");
                     teams[4].season.should.equal(g.season);
                     teams[4].won.should.equal(0);
                     teams[4].gp.should.equal(10);
@@ -102,7 +102,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
                     season: g.season
                 }, function (t) {
                     t.tid.should.equal(4);
-                    t.abbrev.should.equal("CHI");
+                    t.abbrev.should.equal("CIN");
                     t.gp.should.equal(10);
                     t.fg.should.equal(5);
                     t.fgp.should.equal(50);
@@ -119,7 +119,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
                     season: g.season
                 }, function (t) {
                     t.tid.should.equal(4);
-                    t.abbrev.should.equal("CHI");
+                    t.abbrev.should.equal("CIN");
                     t.season.should.equal(g.season);
                     t.won.should.equal(0);
                     Object.keys(t).should.have.length(4);
@@ -167,7 +167,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
                     ot: tx
                 }, function (t) {
                     t.tid.should.equal(4);
-                    t.abbrev.should.equal("CHI");
+                    t.abbrev.should.equal("CIN");
                     t.season.should.equal(g.season);
                     t.won.should.equal(0);
                     Object.keys(t).should.have.length(4);

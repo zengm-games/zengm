@@ -23,20 +23,20 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         if (tid >= 0 && tid <= 29) {
             // Davis.js can't handle file uploads, so do this manually first
             if (req.params.rosters === "custom-rosters") {
-                file = $("input[name='custom-rosters']").get(0).files[0];
+                file = document.getElementById("custom-rosters-file").files[0];
                 if (file !== undefined) {
                     reader = new window.FileReader();
                     reader.readAsText(file);
                     reader.onload = function (event) {
-                        var roster, randomizeRosters;
+                        var rosters, randomizeRosters;
 
-                        roster = JSON.parse(event.target.result);
+                        rosters = JSON.parse(event.target.result);
 
-                        startingSeason = roster.startingSeason !== undefined ? roster.startingSeason : startingSeason;
+                        startingSeason = rosters.startingSeason !== undefined ? rosters.startingSeason : startingSeason;
 
                         randomizeRosters = req.params.hasOwnProperty("randomize-rosters");
 
-                        league.create(req.params.name, tid, roster.players, roster.teams, startingSeason, randomizeRosters, function (lid) {
+                        league.create(req.params.name, tid, rosters.players, rosters.teams, startingSeason, randomizeRosters, function (lid) {
                             ui.realtimeUpdate([], "/l/" + lid, cb);
                         });
                     };
@@ -80,30 +80,28 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
     }
 
     function uiFirst(vm) {
-        var selectRosters, selectTeam, teams, updatePopText, updateShowUploadForm;
+        var fileEl, mergeTeams, newLeagueRostersEl, selectRosters, selectTeam, teams, updatePopText, updateShowUploadForm, useCustomTeams;
 
         ui.title("Create New League");
-
-        teams = helpers.getTeamsDefault();
 
         updatePopText = function () {
             var difficulty, team;
 
-            team = teams[selectTeam.val()];
+            team = vm.teams()[selectTeam.val()];
 
-            if (team.popRank <= 3) {
+            if (team.popRank() <= 3) {
                 difficulty = "very easy";
-            } else if (team.popRank <= 8) {
+            } else if (team.popRank() <= 8) {
                 difficulty = "easy";
-            } else if (team.popRank <= 16) {
+            } else if (team.popRank() <= 16) {
                 difficulty = "normal";
-            } else if (team.popRank <= 24) {
+            } else if (team.popRank() <= 24) {
                 difficulty = "hard";
             } else {
                 difficulty = "very hard";
             }
 
-            $("#pop-text").html("Region population: " + team.pop + " million, #" + team.popRank + " leaguewide<br>Difficulty: " + difficulty);
+            $("#pop-text").html("Region population: " + team.pop() + " million, #" + team.popRank() + " leaguewide<br>Difficulty: " + difficulty);
         };
 
         selectTeam = $("select[name='tid']");
@@ -126,6 +124,52 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
         updatePopText();
         updateShowUploadForm();
+
+        // Handle custom roster teams
+        mergeTeams = function (newTeams) {
+            var i, oldTeams, prop;
+
+            if (newTeams !== undefined) {
+                // Any update from current teams?
+                oldTeams = vm.teams();
+                for (i = 0; i < newTeams.length; i++) {
+                    // Fill in default values as needed
+                    for (prop in oldTeams[i]) {
+                        if (oldTeams[i].hasOwnProperty(prop) && newTeams[i].hasOwnProperty(prop)) {
+                            vm.teams()[i][prop](newTeams[i][prop]);
+                        }
+                    }
+                }
+            }
+
+            updatePopText();
+        };
+        useCustomTeams = function () {
+            var file, reader;
+
+            file = fileEl.files[0];
+
+            reader = new window.FileReader();
+            reader.readAsText(file);
+            reader.onload = function (event) {
+                var newTeams, rosters;
+
+                rosters = JSON.parse(event.target.result);
+                newTeams = rosters.teams;
+                mergeTeams(newTeams);
+            };
+        };
+        fileEl = document.getElementById("custom-rosters-file");
+        fileEl.addEventListener("change", useCustomTeams);
+        // Handle switch away from custom roster teams
+        newLeagueRostersEl = document.getElementById("new-league-rosters");
+        newLeagueRostersEl.addEventListener("change", function () {
+            if (this.value === "custom-rosters") {
+                useCustomTeams();
+            } else {
+                mergeTeams(helpers.getTeamsDefault())
+            }
+        });
     }
 
     return bbgmView.init({

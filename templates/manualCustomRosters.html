@@ -120,6 +120,8 @@
   "teams": [
     {
       "tid": 0,
+      "cid": 0,
+      "did", 0,
       "region": "Atlanta",
       "name": "Herons",
       "abbrev": "ATL",
@@ -130,6 +132,15 @@
 }
 </pre>
 
-<p>You can optionally include a URL for a 120x120 image to be displayed on the roster page for a team by putting "imgURL": "http://www.example.com/img.jpg" in the root of a team object (next to all the other attributes for a team).</p>
+<p>The contents of each team object is as follows. Note that all entries except "tid" are optional and will be filled in with the defaults if you don't include them.</p>
 
-<p>Note that if you add teams to the roster file, you must add entries for all 30 teams (no, you can't add/remove teams) and you must list the teams in order (by tid). All of the values except "tid" are optional and will be filled in with default values if not specified. "pop" is the population of the region in millions of people.</p>
+<ul>
+  <li>"tid": team ID number, from 0 to 29 so there are 30 teams in total - <b>you must include all 30 teams, in order</b></li>
+  <li>"cid": conference ID number, either 0 (Eastern) or 1 (Western) - <b>you must have 15 teams in each conference</b></li>
+  <li>"did": division ID number, from 0 to 5 for the Atlantic, Central, Southeast, Southwest, Northwest, and Pacific divisions, respectively -  - <b>you must have 5 teams in each division</b></li>
+  <li>"region": team region/city</li>
+  <li>"name": team name</li>
+  <li>"abbrev": team abbreviation, typically 3 upper case letters like ATL for Atlanta</li>
+  <li>"pop": population of the region, in millions of people</li>
+  <li>"imgURL": URL for a 120x120 image to be displayed on the roster page for a team</li>
+</ul>

@@ -18,6 +18,7 @@ number or not.
 - Season totals, per 36 minutes stats, and career stats are viewable from the main player stats page
 - Option to delete old game data to improve performance
 - Future draft classes are visible up to 3 years in the future
+- New default team regions and names
 
 ## Technical details
 

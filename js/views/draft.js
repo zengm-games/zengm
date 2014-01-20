@@ -130,7 +130,7 @@ console.log("FIXING")
     console.log("A: " + undraftedAll.length)
     console.log(undraftedAll);
                 undrafted = player.filter(undraftedAll, {
-                    attrs: ["pid", "name", "pos", "age", "injury", "contract"],
+                    attrs: ["pid", "name", "pos", "age", "injury", "contract", "watch"],
                     ratings: ["ovr", "pot", "skills"],
                     stats: ["per", "ewa"],
                     season: g.season,
@@ -148,7 +148,7 @@ console.log("FIXING")
     console.log("C: " + event.target.result.length)
     console.log(event.target.result);
                     players = player.filter(event.target.result, {
-                        attrs: ["pid", "tid", "name", "pos", "age", "draft", "injury", "contract"],
+                        attrs: ["pid", "tid", "name", "pos", "age", "draft", "injury", "contract", "watch"],
                         ratings: ["ovr", "pot", "skills"],
                         stats: ["per", "ewa"],
                         season: g.season,

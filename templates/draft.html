@@ -18,7 +18,7 @@
       </thead>
       <tbody data-bind="foreach: undrafted">
         <tr data-bind="attr: {id: 'undrafted-' + pid()}">
-          <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills]"></td>
+          <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills, watch]"></td>
           <td data-bind="text: pos"></td>
           <td data-bind="text: age"></td>
           <td data-bind="text: ratings.ovr"></td>
@@ -48,7 +48,7 @@
           <td><span data-bind="text: draft.round"></span>-<span data-bind="text: draft.pick"></span></td>
           <td data-bind="draftAbbrev: [draft.tid, draft.originalTid]"></td>
           <!-- ko if: pid() >= 0 -->
-            <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills]"></td>
+            <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills, watch]"></td>
             <td data-bind="text: pos"></td>
             <td data-bind="text: age"></td>
             <td data-bind="text: ratings.ovr"></td>

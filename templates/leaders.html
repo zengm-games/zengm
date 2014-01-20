@@ -12,7 +12,7 @@
           <tr><th data-bind="text: name"></th><th data-bind="text: stat, attr: {title: title}"></th></tr>
         </thead>
         <tbody data-bind="foreach: data">
-          <tr data-bind="css: {'info': userTeam}"><td><span data-bind="text: i"></span>. <span data-bind="playerNameLabels: [pid, name, injury, ratings.skills]"></span>, <a data-bind="text: abbrev, attrLeagueUrl: {href: ['roster', abbrev, $root.season]}"></a></td><td data-bind="round: [stat, 1]"></tr>
+          <tr data-bind="css: {'info': userTeam}"><td><span data-bind="text: i"></span>. <span data-bind="playerNameLabels: [pid, name, injury, ratings.skills, watch]"></span>, <a data-bind="text: abbrev, attrLeagueUrl: {href: ['roster', abbrev, $root.season]}"></a></td><td data-bind="round: [stat, 1]"></tr>
         </tbody>
       </table>
     </div>

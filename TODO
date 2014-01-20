@@ -7,11 +7,12 @@ CURRENT
 "Watch list" of players the user is interested in, mainly for free agency
   changes
   explicitly pass to playerNameLabels everywhere
-    check every playerNameLabels in templates and js, make sure it all works
     player page
   watch_list page
     pretty up playoff stats when no data (0s)
-    some indication under "team" for draft prospects and retired players
+    draft prospects and retired players
+      some indication under "team"
+      don't show contract
     add "actions" - draft, negotiate
   send dbchange event on toggle so that watch_list page refreshes
 show prospects before draft

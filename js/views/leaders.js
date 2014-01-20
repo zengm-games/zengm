@@ -40,7 +40,8 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knock
     function updateLeaders(inputs, updateEvents, vm) {
         var deferred, tx, vars;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
+        // Respond to watchList in case players are listed twice in different categories
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
             vars = {};
 
@@ -89,7 +90,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knock
                     stats = ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa"];
 
                     players = player.filter(event.target.result, {
-                        attrs: ["pid", "name", "injury"],
+                        attrs: ["pid", "name", "injury", "watch"],
                         ratings: ["skills"],
                         stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev", "tid"],
                         season: inputs.season

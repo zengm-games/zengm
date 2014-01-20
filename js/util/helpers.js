@@ -442,9 +442,9 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
 
     function watchBlock(pid, watch) {
         if (watch) {
-            return '<span class="glyphicon glyphicon-eye-open watch watch-active" title="Remove from Watch List" data-pid="' + pid + '"></span>';
+            return '<span class="glyphicon glyphicon-flag watch watch-active" title="Remove from Watch List" data-pid="' + pid + '"></span>';
         } else {
-            return '<span class="glyphicon glyphicon-eye-open watch" title="Add to Watch List" data-pid="' + pid + '"></span>';
+            return '<span class="glyphicon glyphicon-flag watch" title="Add to Watch List" data-pid="' + pid + '"></span>';
         }
     }
 

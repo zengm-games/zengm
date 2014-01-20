@@ -5,9 +5,10 @@ CURRENT
 -------
 3.3
 "Watch list" of players the user is interested in, mainly for free agency
-  add "actions" where appropriate
+  http://www.reddit.com/r/BasketballGM/comments/1vfrod/suggestion_ability_to_flag_certain_free_agents/
+  add "actions" where appropriate, probably as output in player.filter so it can be used elsewhere
     negotiate
-      factor out negotiateButton code from freeAgents and negotiationList (if possible)
+      factor out negotiateButton code from freeAgents and negotiationList and player page (if possible)
       some heuristic to see if player is a negotiable
     draft, fantasy draft
       if prospect, add "draft" button?

@@ -200,6 +200,9 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                         watchEl.title = "Remove from Watch List";
                     }
                     cursor.update(p);
+                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        realtimeUpdate(["watchList"]);
+                    });
                 }
             };
         });

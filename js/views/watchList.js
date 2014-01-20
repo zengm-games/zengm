@@ -2,7 +2,7 @@
  * @name views.watchList
  * @namespace List of players to watch.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (g, ui, player, $, ko, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -30,13 +30,14 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     function updatePlayers(inputs, updateEvents, vm) {
         var deferred, playersUnfiltered;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
             deferred = $.Deferred();
 
             playersUnfiltered = [];
 
+            // Can't index on a boolean in IndexedDB, so loop through them all
             g.dbl.transaction("players").objectStore("players").openCursor().onsuccess = function (event) {
-                var cursor, gp, i, min, p, players;
+                var cursor, p, players;
 
                 cursor = event.target.result;
                 if (cursor) {
@@ -47,14 +48,17 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     cursor.continue();
                 } else {
                     players = player.filter(playersUnfiltered, {
-                        attrs: ["pid", "name", "pos", "age", "injury", "tid", "watch"],
+                        attrs: ["pid", "name", "pos", "age", "injury", "abbrev", "watch", "contract"],
                         ratings: ["ovr", "pot", "skills"],
-                        stats: ["abbrev", "tid", "gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"],
+                        stats: ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"],
                         season: g.season,
                         totals: inputs.statType === "totals",
                         per36: inputs.statType === "per_36",
                         playoffs: inputs.playoffs === "playoffs",
-                        fuzz: true
+                        fuzz: true,
+                        showNoStats: true,
+                        showRookies: true,
+                        oldStats: true
                     });
 
                     deferred.resolve({
@@ -72,7 +76,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         ui.title("Watch List");
 
         ko.computed(function () {
-            var abbrev, d, i, p, players, rows, tid;
+            var abbrev, d, i, p, players, rows;
 
             // Number of decimals for many stats
             if (vm.statType() === "totals") {
@@ -87,13 +91,11 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 p = players[i];
 
                 // HACKS to show right stats, info
-                abbrev = p.stats.abbrev;
-                tid = p.stats.tid;
                 if (vm.playoffs() === "playoffs") {
                     p.stats = p.statsPlayoffs;
                 }
 
-                rows.push([helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, '<a href="' + helpers.leagueUrl(["roster", abbrev]) + '">' + abbrev + '</a>', String(p.ratings.ovr), String(p.ratings.pot), "AAA", String(p.stats.gp), helpers.round(p.stats.min, d), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.trb, d), helpers.round(p.stats.ast, d), helpers.round(p.stats.tov, d), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, d), helpers.round(p.stats.pts, d), helpers.round(p.stats.per, 1), helpers.round(p.stats.ewa, 1)]);
+                rows.push([helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, '<a href="' + helpers.leagueUrl(["roster", p.abbrev]) + '">' + p.abbrev + '</a>', String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, String(p.stats.gp), helpers.round(p.stats.min, d), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.trb, d), helpers.round(p.stats.ast, d), helpers.round(p.stats.tov, d), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, d), helpers.round(p.stats.pts, d), helpers.round(p.stats.per, 1), helpers.round(p.stats.ewa, 1)]);
             }
 
             ui.datatable($("#watch-list"), 2, rows);

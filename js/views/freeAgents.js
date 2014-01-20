@@ -57,7 +57,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
                 var i, players;
 
                 players = player.filter(event.target.result, {
-                    attrs: ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury"],
+                    attrs: ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury", "watch"],
                     ratings: ["ovr", "pot", "skills"],
                     stats: ["min", "pts", "trb", "ast", "per"],
                     season: g.season,
@@ -115,7 +115,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
                     negotiateButton = '<form action="' + helpers.leagueUrl(["negotiation", p.pid], {noQueryString: true}) + '" method="POST" style="margin: 0"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-default btn-xs">Negotiate</button></form>';
                 }
                 // The display: none for mood allows sorting, somehow
-                return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, '<div title="' + p.mood + '" style="width: 100%; height: 21px; background-color: ' + p.moodColor + '"><span style="display: none">' + p.freeAgentMood[g.userTid] + '</span></div>', negotiateButton];
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, '<div title="' + p.mood + '" style="width: 100%; height: 21px; background-color: ' + p.moodColor + '"><span style="display: none">' + p.freeAgentMood[g.userTid] + '</span></div>', negotiateButton];
             }));
         }).extend({throttle: 1});
 

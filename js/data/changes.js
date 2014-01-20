@@ -49,6 +49,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2014-01-13",
         msg: "You can view upcoming draft classes up to three years in the future by going to Players > Draft and then clicking Future Draft Scouting."
+    }, {
+        date: "2014-01-20",
+        msg: "By clicking the watch icon next to players' names, you can add them to the Watch List (accessible from Players > Watch List) to keep an eye on them."
     }];
 
     function check() {

@@ -5,7 +5,6 @@ CURRENT
 -------
 3.3
 "Watch list" of players the user is interested in, mainly for free agency
-  changes
   add "actions" where appropriate
     negotiate
       factor out negotiateButton code from freeAgents and negotiationList (if possible)

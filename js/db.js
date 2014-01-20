@@ -782,6 +782,7 @@ console.log(event);
                     name: players[i].name,
                     skills: _.last(players[i].ratings).skills,
                     injury: players[i].injury,
+                    watch: players[i].watch !== undefined ? players[i].watch : false, // undefined check is for old leagues, can delete eventually
                     amount: players[i].contract.amount,
                     exp: players[i].contract.exp,
                     released: false

@@ -42,7 +42,6 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                         picks: summary.teams[i].picks,
                         other: i === 0 ? 1 : 0  // Index of other team
                     };
-console.log(summary.teams[i].picks)
                 }
 
                 cb(vars);
@@ -185,7 +184,7 @@ console.log(summary.teams[i].picks)
             playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
                 var attrs, i, ratings, stats, userRoster;
 
-                attrs = ["pid", "name", "pos", "age", "contract", "injury"];
+                attrs = ["pid", "name", "pos", "age", "contract", "injury", "watch"];
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["min", "pts", "trb", "ast", "per"];
 
@@ -385,7 +384,7 @@ console.log(summary.teams[i].picks)
                 if (p.selected) {
                     selected = ' checked = "checked"';
                 }
-                return ['<input name="' + userOrOther + '-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                return ['<input name="' + userOrOther + '-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
             });
 
             return playersAndPicks;

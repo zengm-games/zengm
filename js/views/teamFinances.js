@@ -253,7 +253,7 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
         ko.computed(function () {
             ui.datatableSinglePage($("#player-salaries"), 1, _.map(vm.contracts(), function (p) {
                 var i, output;
-                output = [helpers.playerNameLabels(p.pid, p.name, p.injury, p.skills)];
+                output = [helpers.playerNameLabels(p.pid, p.name, p.injury, p.skills, p.watch)];
                 if (p.released) {
                     output[0] = "<i>" + output[0] + "</i>";
                 }

@@ -138,7 +138,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
                 var i, userRoster;
 
                 userRoster = player.filter(event.target.result, {
-                    attrs: ["pid", "name", "pos", "age", "contract", "injury"],
+                    attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch"],
                     ratings: ["ovr", "pot", "skills"],
                     stats: ["min", "pts", "trb", "ast", "per"],
                     season: g.season,
@@ -213,7 +213,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
                             players = _.filter(event.target.result, function (p) { return inputs.offers[i].pids.indexOf(p.pid) >= 0; });
 
                             offers[i].players = player.filter(players, {
-                                attrs: ["pid", "name", "pos", "age", "contract", "injury"],
+                                attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch"],
                                 ratings: ["ovr", "pot", "skills"],
                                 stats: ["min", "pts", "trb", "ast", "per"],
                                 season: g.season,
@@ -264,7 +264,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
                 if (p.selected) {
                     selected = ' checked = "checked"';
                 }
-                return ['<input name="pids[]" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                return ['<input name="pids[]" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
             });
 
             return playersAndPicks;

@@ -840,6 +840,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @param {boolean=} options.playoffs Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false. Either way, regular season stats are always returned.
      * @param {boolean=} options.showNoStats When true, players are returned with zeroed stats objects even if they have accumulated no stats for a team (such as  players who were just traded for, free agents, etc.); this applies only for regular season stats. Even when this is true, undefined will still be returned if a season is requested from before they entered the league. To show draft prospects, options.showRookies is needed. Default is false, but if options.stats is empty, this is always true.
      * @param {boolean=} options.showRookies If true (default false), then rookies drafted in the current season (g.season) are shown if that season is requested. This is mainly so, after the draft, rookies can show up in the roster, player ratings view, etc. After the next season starts, then they will no longer show up in a request for that season since they didn't actually play that season.
+     * @param {boolean=} options.showRetired If true (default false), then players with no ratings for the current season are still returned, with 0 for every rating and a blank array for skills. This is currently only used for the watch list, so retired players can still be watched.
      * @param {boolean=} options.fuzz When true (default false), noise is added to any returned ratings based on the fuzz variable for the given season (default: false); any user-facing rating should use true, any non-user-facing rating should use false.
      * @param {boolean=} options.oldStats When true (default false), stats from the previous season are displayed if there are no stats for the current season. This is currently only used for the free agents list, so it will either display stats from this season if they exist, or last season if they don't.
      * @param {number=} options.numGamesRemaining If the "cashOwed" attr is requested, options.numGamesRemaining is used to calculate how much of the current season's contract remains to be paid. This is used for buying out players.
@@ -864,6 +865,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         options.playoffs = options.playoffs !== undefined ? options.playoffs : false;
         options.showNoStats = options.showNoStats !== undefined ? options.showNoStats : false;
         options.showRookies = options.showRookies !== undefined ? options.showRookies : false;
+        options.showRetired = options.showRetired !== undefined ? options.showRetired : false;
         options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
         options.oldStats = options.oldStats !== undefined ? options.oldStats : false;
         options.numGamesRemaining = options.numGamesRemaining !== undefined ? options.numGamesRemaining : 0;
@@ -988,7 +990,19 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 }
                 if (pr === null) {
                     // Must be retired, or not in the league yet
-                    return false;
+                    if (options.showRetired) {
+                        fp.ratings = {};
+                        for (k = 0; k < options.ratings.length; k++) {
+                            if (options.ratings[k] === "skills") {
+                                fp.ratings[options.ratings[k]] = [];
+                            } else {
+                                fp.ratings[options.ratings[k]] = 0;
+                            }
+                        }
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
 
                 if (options.ratings.length > 0) {

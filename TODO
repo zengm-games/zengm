@@ -10,7 +10,8 @@ CURRENT
     check every playerNameLabels in templates and js, make sure it all works
     player page
   watch_list page
-    make sure prospects work. what about retired players? why not
+    age
+    make sure prospects work
     show only this season (or last season with option), like FA
     pretty up playoff stats when no data (0s)
     add "actions" - draft, negotiate

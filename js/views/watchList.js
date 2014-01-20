@@ -47,6 +47,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "views/com
                     }
                     cursor.continue();
                 } else {
+console.log(playersUnfiltered);
                     players = player.filter(playersUnfiltered, {
                         attrs: ["pid", "name", "pos", "age", "injury", "abbrev", "watch", "contract"],
                         ratings: ["ovr", "pot", "skills"],
@@ -58,8 +59,10 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "views/com
                         fuzz: true,
                         showNoStats: true,
                         showRookies: true,
+                        showRetired: true,
                         oldStats: true
                     });
+console.log(players);
 
                     deferred.resolve({
                         players: players,

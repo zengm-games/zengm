@@ -5,11 +5,15 @@ CURRENT
 -------
 3.3
 "Watch list" of players the user is interested in, mainly for free agency
+  changes
   explicitly pass to playerNameLabels everywhere
     check every playerNameLabels in templates and js, make sure it all works
+    player page
   add watch_list page
-    if empty, display message explaining how to add them
-    can't index on boolean, so loop through them all and keep the ones needed
+    contract
+    show only this season (or last season with option), like FA
+    pretty up playoff stats when no data (0s)
+  send dbchange event on toggle so that watch_list page refreshes
 show prospects before draft
   EVENTUALLY
     ratings should really update annually, just like in normal years
@@ -28,6 +32,10 @@ career stats
   EWA in averages should be average
     if i change how it comes from player.filter, make sure it doesn't fuck up HoF
     same with per36
+per36, totals, playoffs options elsewhere
+  currently in playerStats and watchList, but too much copy/paste. refactor before expanding
+  team history
+  roster
 per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/
   already implemented for stats page, but should it be a separate entry from player.filter like playoffs? totals isn't. maybe should just be a dropdown to change this all on the player page?
 when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
@@ -119,6 +127,7 @@ more detailed draft - slower picks, trades, etc.
   sort by generic value (current) or team-specific value
 power rankings
 player editor, for customizing rosters
+popup next to player name with quick view of key stats/ratings
 
 BIG NEW GAMEPLAY CHANGES
 ------------------------
@@ -505,8 +514,6 @@ stat views
     could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
   playoff/regular season toggle in team/player stats, league leaders
   player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
-  per 36 stats in team/player stats view, league leaders
-    add a dropdown (maybe make the dropdown handling code more general?)
 contract negotiation
   don't have counter-offers be too drastic
   weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1 http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
@@ -539,9 +546,6 @@ live play-by-play simulation
   could fake where the shots are to display graphically
   when someone wins the title, you can see the phase change at the top even while watching the live play-by-play of the last game. this leaks info about who won
   allow the user to make substitutions in realtime
-per36, totals, playoffs options elsewhere
-  team history
-  roster
 
 Template Stuff
 --------------

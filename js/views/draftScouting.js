@@ -12,7 +12,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             var i, pa, p, players, playersAll;
 
             playersAll = player.filter(event.target.result, {
-                attrs: ["pid", "name", "pos", "age"],
+                attrs: ["pid", "name", "pos", "age", "watch"],
                 ratings: ["ovr", "pot", "skills", "fuzz"],
                 showNoStats: true,
                 showRookies: true,
@@ -24,7 +24,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 pa = playersAll[i];
 
                 // Attributes
-                p = {pid: pa.pid, name: pa.name, pos: pa.pos, age: pa.age};
+                p = {pid: pa.pid, name: pa.name, pos: pa.pos, age: pa.age, watch: pa.watch};
 
                 // Ratings - just take the only entry
                 p.ovr = pa.ratings[0].ovr;
@@ -103,7 +103,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         seasons = vm.seasons();
         for (i = 0; i < seasons.length; i++) {
             ui.datatableSinglePage($("#draft-scouting-" + i), 4, _.map(seasons[i].players, function (p) {
-                return [String(p.rank), helpers.playerNameLabels(p.pid, p.name, undefined, p.skills), p.pos, String(p.age), String(p.ovr), String(p.pot)];
+                return [String(p.rank), helpers.playerNameLabels(p.pid, p.name, undefined, p.skills, p.watch), p.pos, String(p.age), String(p.ovr), String(p.pot)];
             }));
         }
 

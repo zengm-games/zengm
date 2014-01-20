@@ -789,6 +789,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         p.ptModifier = 1;
 
         p.hof = false;
+        p.watch = false;
 
         return p;
     }
@@ -958,6 +959,13 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                                 }
                             }
                         }
+                    }
+                } else if (options.attrs[i] === "watch") {
+                    // This is needed for old player objects without the watch property
+                    if (p.watch !== undefined) {
+                        fp.watch = p.watch;
+                    } else {
+                        fp.watch = false;
                     }
                 } else {
                     fp[options.attrs[i]] = p[options.attrs[i]];

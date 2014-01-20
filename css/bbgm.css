@@ -315,6 +315,15 @@ select.teams {
   vertical-align: 2%;
 }
 
+.watch {
+  color: #aaa;
+  cursor: pointer;
+  margin-left: 5px;
+}
+.watch-active {
+  color: #d9534f;
+}
+
 #roster select {
   margin: 0;
   width: auto;

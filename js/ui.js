@@ -161,6 +161,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             }
         });
 
+        // Keyboard shortcut
         $playMenuDropdown = $("#play-menu a.dropdown-toggle");
         playMenuOptions = document.getElementById("play-menu-options");
         document.addEventListener("keyup", function (e) {
@@ -174,6 +175,33 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
                     $playMenuDropdown.dropdown("toggle");
                 }
             }
+        });
+
+        // Watch list toggle
+        $(document).on("click", ".watch", function () {
+            var pid, watchEl;
+
+            watchEl = this;
+            pid = parseInt(watchEl.dataset.pid, 10);
+
+            g.dbl.transaction("players", "readwrite").objectStore("players").openCursor(pid).onsuccess = function (event) {
+                var cursor, p;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+                    if (watchEl.classList.contains("watch-active")) {
+                        p.watch = false;
+                        watchEl.classList.remove("watch-active");
+                        watchEl.title = "Add to Watch List";
+                    } else {
+                        p.watch = true;
+                        watchEl.classList.add("watch-active");
+                        watchEl.title = "Remove from Watch List";
+                    }
+                    cursor.update(p);
+                }
+            };
         });
     }
 

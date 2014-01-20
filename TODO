@@ -4,6 +4,12 @@ DB CHANGES SINCE 3.2.0
 CURRENT
 -------
 3.3
+"Watch list" of players the user is interested in, mainly for free agency
+  explicitly pass to playerNameLabels everywhere
+    check every playerNameLabels in templates and js, make sure it all works
+  add watch_list page
+    if empty, display message explaining how to add them
+    can't index on boolean, so loop through them all and keep the ones needed
 show prospects before draft
   EVENTUALLY
     ratings should really update annually, just like in normal years
@@ -22,9 +28,6 @@ career stats
   EWA in averages should be average
     if i change how it comes from player.filter, make sure it doesn't fuck up HoF
     same with per36
-per36, totals, playoffs options elsewhere
-  team history
-  roster
 per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/
   already implemented for stats page, but should it be a separate entry from player.filter like playoffs? totals isn't. maybe should just be a dropdown to change this all on the player page?
 when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
@@ -70,8 +73,6 @@ notification system
     refuse to sign
     retire
 NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
-"Watch list" of players the user is interested in, mainly for free agency
-  also show icon in playerNameLabels
 
 BIG NEW FEATURES
 ----------------
@@ -538,6 +539,9 @@ live play-by-play simulation
   could fake where the shots are to display graphically
   when someone wins the title, you can see the phase change at the top even while watching the live play-by-play of the last game. this leaks info about who won
   allow the user to make substitutions in realtime
+per36, totals, playoffs options elsewhere
+  team history
+  roster
 
 Template Stuff
 --------------

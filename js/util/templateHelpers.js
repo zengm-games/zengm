@@ -122,7 +122,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             injury.gamesRemaining = ko.utils.unwrapObservable(injury.gamesRemaining);
 
             return ko.bindingHandlers.html.update(element, function () {
-                return helpers.playerNameLabels(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]), injury, ko.utils.unwrapObservable(args[3]));
+                return helpers.playerNameLabels(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]), injury, ko.utils.unwrapObservable(args[3]), ko.utils.unwrapObservable(args[4]));
             });
         }
     };

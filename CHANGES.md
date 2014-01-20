@@ -19,6 +19,7 @@ number or not.
 - Option to delete old game data to improve performance
 - Future draft classes are visible up to 3 years in the future
 - New default team regions and names
+- Watch List where selected players can be tracked
 
 ## Technical details
 

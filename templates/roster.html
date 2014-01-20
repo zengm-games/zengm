@@ -25,7 +25,7 @@
     <tbody data-bind="foreach: players">
       <tr data-bind="attr: {class: $index() === 4 ? 'separator' : '', 'data-pid': pid}">
         <td class="roster-handle" data-bind="visible: $parent.editable"></td>
-        <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills]"></td>
+        <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills, watch]"></td>
         <td data-bind="text: pos"></td>
         <td data-bind="text: age"></td>
         <td data-bind="text: yearsWithTeam"></td>

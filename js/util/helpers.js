@@ -448,9 +448,10 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * @param {string} name Player name.
      * @param {object=} object Injury object (properties: type and gamesRemaining).
      * @param {Array.<string>=} skills Array of skill labels, like "R" for "Rebounder", etc. See: core.player.skills.
+     * @param {Array.<string>=} skills True: player is on watch list. False: player is not on watch list. Undefined: not sure, so don't show watch icon.
      * @return {string} String of HTML-formatted skill labels, ready for output.
      */
-    function playerNameLabels(pid, name, injury, skills) {
+    function playerNameLabels(pid, name, injury, skills, watch) {
         var html;
 
         html = '<a href="' + leagueUrl(["player", pid]) + '">' + name + '</a>';
@@ -466,6 +467,14 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
 
         if (skills !== undefined) {
             html += skillsBlock(skills);
+        }
+
+        if (watch !== undefined) {
+            if (watch) {
+                html += '<span class="glyphicon glyphicon-eye-open watch watch-active" title="Remove from Watch List" data-pid="' + pid + '"></span>';
+            } else {
+                html += '<span class="glyphicon glyphicon-eye-open watch" title="Add to Watch List" data-pid="' + pid + '"></span>';
+            }
         }
 
         return html;

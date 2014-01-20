@@ -62,7 +62,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     function updateDraftScouting(inputs, updateEvents) {
         var deferred, firstUndraftedTid, seasonOffset, seasons;
 
-        if (updateEvents.indexOf("firstRun") >= 0) {
+        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0) {
             deferred = $.Deferred();
 
             seasons = [];
@@ -96,16 +96,18 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     }
 
     function uiFirst(vm) {
-        var i, seasons;
 
         ui.title("Draft Scouting");
 
-        seasons = vm.seasons();
-        for (i = 0; i < seasons.length; i++) {
-            ui.datatableSinglePage($("#draft-scouting-" + i), 4, _.map(seasons[i].players, function (p) {
-                return [String(p.rank), helpers.playerNameLabels(p.pid, p.name, undefined, p.skills, p.watch), p.pos, String(p.age), String(p.ovr), String(p.pot)];
-            }));
-        }
+        ko.computed(function () {
+            var i, seasons;
+            seasons = vm.seasons();
+            for (i = 0; i < seasons.length; i++) {
+                ui.datatableSinglePage($("#draft-scouting-" + i), 4, _.map(seasons[i].players, function (p) {
+                    return [String(p.rank), helpers.playerNameLabels(p.pid, p.name, undefined, p.skills, p.watch), p.pos, String(p.age), String(p.ovr), String(p.pot)];
+                }));
+            }
+        }).extend({throttle: 1});
 
         ui.tableClickableRows($("#draft-scouting"));
     }

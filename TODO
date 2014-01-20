@@ -6,14 +6,12 @@ CURRENT
 3.3
 "Watch list" of players the user is interested in, mainly for free agency
   changes
-  make sure clicking icon in one window updates the view in the other (should be a dbChange signal)
-    draftScouting
   explicitly pass to playerNameLabels everywhere
     check every playerNameLabels in templates and js, make sure it all works
     player page
   watch_list page
-    make sure prospects work
     pretty up playoff stats when no data (0s)
+    some indication under "team" for draft prospects and retired players
     add "actions" - draft, negotiate
   send dbchange event on toggle so that watch_list page refreshes
 show prospects before draft

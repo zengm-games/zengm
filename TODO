@@ -6,7 +6,13 @@ CURRENT
 3.3
 "Watch list" of players the user is interested in, mainly for free agency
   changes
-  add "actions" where appropriate- draft (normal and fantasy), negotiate
+  add "actions" where appropriate
+    negotiate
+      factor out negotiateButton code from freeAgents and negotiationList (if possible)
+      some heuristic to see if player is a negotiable
+    draft, fantasy draft
+      if prospect, add "draft" button?
+      if so, factor out from draft page and add on player page
 show prospects before draft
   EVENTUALLY
     ratings should really update annually, just like in normal years

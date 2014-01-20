@@ -42,7 +42,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "views/com
                 cursor = event.target.result;
                 if (cursor) {
                     p = cursor.value;
-                    if (p.watch) {
+                    if (p.watch && typeof p.watch !== "function") { // In Firefox, objects have a "watch" function
                         playersUnfiltered.push(p);
                     }
                     cursor.continue();

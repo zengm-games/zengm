@@ -964,7 +964,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     }
                 } else if (options.attrs[i] === "watch") {
                     // This is needed for old player objects without the watch property
-                    if (p.watch !== undefined) {
+                    if (p.watch !== undefined && typeof p.watch !== "function") { // In Firefox, objects have a "watch" function
                         fp.watch = p.watch;
                     } else {
                         fp.watch = false;

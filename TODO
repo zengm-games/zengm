@@ -10,9 +10,7 @@ CURRENT
     check every playerNameLabels in templates and js, make sure it all works
     player page
   watch_list page
-    age
     make sure prospects work
-    show only this season (or last season with option), like FA
     pretty up playoff stats when no data (0s)
     add "actions" - draft, negotiate
   send dbchange event on toggle so that watch_list page refreshes

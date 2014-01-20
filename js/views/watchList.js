@@ -47,7 +47,6 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "views/com
                     }
                     cursor.continue();
                 } else {
-console.log(playersUnfiltered)
                     players = player.filter(playersUnfiltered, {
                         attrs: ["pid", "name", "pos", "age", "injury", "abbrev", "watch", "contract"],
                         ratings: ["ovr", "pot", "skills"],
@@ -62,7 +61,6 @@ console.log(playersUnfiltered)
                         showRetired: true,
                         oldStats: true
                     });
-console.log(playersUnfiltered)
 
                     deferred.resolve({
                         players: players,
@@ -79,7 +77,7 @@ console.log(playersUnfiltered)
         ui.title("Watch List");
 
         ko.computed(function () {
-            var abbrev, d, i, p, players, rows;
+            var abbrev, d, i, p, players, rows, category, categories;
 
             // Number of decimals for many stats
             if (vm.statType() === "totals") {
@@ -96,6 +94,13 @@ console.log(playersUnfiltered)
                 // HACKS to show right stats, info
                 if (vm.playoffs() === "playoffs") {
                     p.stats = p.statsPlayoffs;
+
+                    // If no playoff stats, blank them
+                    ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"].forEach(function (category) {
+                        if (p.stats[category] === undefined) {
+                            p.stats[category] = 0;
+                        }
+                    });
                 }
 
                 rows.push([helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), '<a href="' + helpers.leagueUrl(["roster", p.abbrev]) + '">' + p.abbrev + '</a>', String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, String(p.stats.gp), helpers.round(p.stats.min, d), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.trb, d), helpers.round(p.stats.ast, d), helpers.round(p.stats.tov, d), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, d), helpers.round(p.stats.pts, d), helpers.round(p.stats.per, 1), helpers.round(p.stats.ewa, 1)]);

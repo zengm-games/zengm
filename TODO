@@ -7,7 +7,6 @@ CURRENT
 "Watch list" of players the user is interested in, mainly for free agency
   changes
   watch_list page
-    pretty up playoff stats when no data (0s)
     draft prospects and retired players
       some indication under "team"
       don't show contract

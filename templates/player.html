@@ -19,7 +19,7 @@
       <!-- /ko -->
       <!-- ko if: !retired() -->
         <span class="label label-danger label-injury" style="margin-left: 0" data-bind="visible: injured, text: player.injury.gamesRemaining, attr: {title: player.injury.type() + ' (out ' + player.injury.gamesRemaining() + ' more games)'}"></span><span data-bind="visible: injured, skillsBlock: currentRatings.skills"></span>
-        <span class="skills-alone" data-bind="visible: !injured(), skillsBlock: currentRatings.skills"></span>
+        <span class="skills-alone" data-bind="visible: !injured(), skillsBlock: currentRatings.skills"></span><span data-bind="watchBlock: [player.pid, player.watch]"></span>
         <br>
       <!-- /ko -->
     </div>

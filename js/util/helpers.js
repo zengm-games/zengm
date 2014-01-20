@@ -440,6 +440,14 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         return url;
     }
 
+    function watchBlock(pid, watch) {
+        if (watch) {
+            return '<span class="glyphicon glyphicon-eye-open watch watch-active" title="Remove from Watch List" data-pid="' + pid + '"></span>';
+        } else {
+            return '<span class="glyphicon glyphicon-eye-open watch" title="Add to Watch List" data-pid="' + pid + '"></span>';
+        }
+    }
+
     /**
      * Generate a block of HTML with a player's name, skill labels.
      *
@@ -470,11 +478,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         }
 
         if (watch !== undefined) {
-            if (watch) {
-                html += '<span class="glyphicon glyphicon-eye-open watch watch-active" title="Remove from Watch List" data-pid="' + pid + '"></span>';
-            } else {
-                html += '<span class="glyphicon glyphicon-eye-open watch" title="Add to Watch List" data-pid="' + pid + '"></span>';
-            }
+            html += watchBlock(pid, watch);
         }
 
         return html;
@@ -632,6 +636,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         resetG: resetG,
         bbgmPing: bbgmPing,
         skillsBlock: skillsBlock,
+        watchBlock: watchBlock,
         playerNameLabels: playerNameLabels,
         round: round,
         nullPad: nullPad,

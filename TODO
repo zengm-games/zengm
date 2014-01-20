@@ -6,15 +6,12 @@ CURRENT
 3.3
 "Watch list" of players the user is interested in, mainly for free agency
   changes
-  explicitly pass to playerNameLabels everywhere
-    player page
   watch_list page
     pretty up playoff stats when no data (0s)
     draft prospects and retired players
       some indication under "team"
       don't show contract
     add "actions" - draft, negotiate
-  send dbchange event on toggle so that watch_list page refreshes
 show prospects before draft
   EVENTUALLY
     ratings should really update annually, just like in normal years

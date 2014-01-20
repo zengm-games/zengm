@@ -94,6 +94,15 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         }
     };
 
+    ko.bindingHandlers.watchBlock = {
+        update: function (element, valueAccessor) {
+            var args = valueAccessor();
+            return ko.bindingHandlers.html.update(element, function () {
+                return helpers.watchBlock(ko.utils.unwrapObservable(args[0]), args[1]);
+            });
+        }
+    };
+
     ko.bindingHandlers.currency = {
         update: function (element, valueAccessor) {
             var args = valueAccessor();

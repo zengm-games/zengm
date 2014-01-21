@@ -26,6 +26,7 @@ pick new cities (mostly)
 customization
   allow import of team info or draft classes from roster files
   allow upload of just these files from the "new league" screen, somehow
+  popRank/difficulty being set correctly for uploaded rosters, on new league screen and elsewhere?
 career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year
   column/table widths?
@@ -275,9 +276,6 @@ better core.player.ovr formula
     weight by minutes played
   THIS NEEDS TO BE UPDATED WHEN PLAYER GENERATION/DEVELOPMENT OR GAMESIM CHANGES!
 team names from db
-  g.teamNamesCache and g.teamRegionsCache and g.teamAbbrevsCache - update this when appropriate
-  store region and name in meta so it can be shown on dashboard
-    update this when changed on customize screen
   option to load from JSON file on "Edit Team Info"
   export rosters should include teams
     option to include just team names or just players

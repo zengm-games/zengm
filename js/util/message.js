@@ -156,8 +156,6 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
                 activity2 = random.choice(activities);
             }
 
-console.log(g.ownerMood);
-console.log(deltas);
             indWins = 2;
             if (g.ownerMood.wins <= 0 && deltas.wins < 0) {
                 indWins = 0;

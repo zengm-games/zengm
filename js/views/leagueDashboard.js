@@ -342,7 +342,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
             };
 
             g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
-                var data, found, i, playoffSeries, rnd, series;
+                var found, i, playoffSeries, rnd, series;
 
                 playoffSeries = event.target.result;
                 if (playoffSeries !== undefined) {

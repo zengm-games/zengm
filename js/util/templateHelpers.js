@@ -47,15 +47,15 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             series = viewModel.series()[args[0]][args[1]];
 
             source = '';
-            if (series && series.home.region) {
+            if (series && series.home.tid) {
                 if (series.home.hasOwnProperty("won") && series.home.won() === 4) { source += '<strong>'; }
-                source += series.home.seed() + '. <a href="' + helpers.leagueUrl(["roster", series.home.abbrev(), season]) + '">' + series.home.region() + '</a>';
+                source += series.home.seed() + '. <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[series.home.tid()], season]) + '">' + g.teamRegionsCache[series.home.tid()] + '</a>';
                 if (series.home.hasOwnProperty("won")) { source += ' ' + series.home.won(); }
                 if (series.home.hasOwnProperty("won") && series.home.won() === 4) { source += '</strong>'; }
                 source += '<br>';
 
                 if (series.home.hasOwnProperty("won") && series.away.won() === 4) { source += '<strong>'; }
-                source += series.away.seed() + '. <a href="' + helpers.leagueUrl(["roster", series.away.abbrev(), season]) + '">' + series.away.region() + '</a>';
+                source += series.away.seed() + '. <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[series.away.tid()], season]) + '">' + g.teamRegionsCache[series.away.tid()] + '</a>';
                 if (series.away.hasOwnProperty("won")) { source += ' ' + series.away.won(); }
                 if (series.home.hasOwnProperty("won") && series.away.won() === 4) { source += '</strong>'; }
             }

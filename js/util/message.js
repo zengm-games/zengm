@@ -156,8 +156,10 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
                 activity2 = random.choice(activities);
             }
 
+console.log(g.ownerMood);
+console.log(deltas);
             indWins = 2;
-            if (g.ownerMood.wins < 0 && deltas.wins < 0) {
+            if (g.ownerMood.wins <= 0 && deltas.wins < 0) {
                 indWins = 0;
             } else if (g.ownerMood.wins < -0.5 && deltas.wins >= 0) {
                 indWins = 1;
@@ -167,11 +169,11 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
                 indWins = 4;
             }
 
-            if (g.ownerMood.playoffs < 0 && deltas.playoffs < 0) {
+            if (g.ownerMood.playoffs <= 0 && deltas.playoffs < 0) {
                 indPlayoffs = 0;
-            } else if (g.ownerMood.playoffs < 0 && deltas.playoffs === 0) {
+            } else if (g.ownerMood.playoffs <= 0 && deltas.playoffs === 0) {
                 indPlayoffs = 1;
-            } else if (g.ownerMood.playoffs < 0 && deltas.playoffs > 0) {
+            } else if (g.ownerMood.playoffs <= 0 && deltas.playoffs > 0) {
                 indPlayoffs = 2;
             } else if (g.ownerMood.playoffs >= 0 && deltas.playoffs >= 0) {
                 indPlayoffs = 2;
@@ -205,7 +207,7 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
                     "<p>" + random.choice(wins[indWins]) + " " + random.choice(playoffs[indPlayoffs]) + "</p>" +
                     "<p>" + random.choice(money[indMoney]) + "</p>" +
                     "<p>" + random.choice(ovr[indOvr]).replace("{{activity}}", activity2) + "</p>";
-            } else if (g.season >= g.gracePeriodEnd) {
+            } else if (g.season < g.gracePeriodEnd) {
                 if (deltas.wins < 0 && deltas.playoffs < 0 && deltas.money < 0) {
                     m = "<p>What the hell did you do to my franchise?! I'd fire you, but I can't find anyone who wants to clean up your mess.</p>";
                 } else if (deltas.money < 0 && deltas.wins >= 0 && deltas.playoffs >= 0) {
@@ -239,8 +241,8 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
         tx.oncomplete = function () {
             if (ownerMoodSum > -1) {
                 cb();
-            } else if (g.season >= g.gracePeriodEnd) {
-                // Can't get fired until after 3rd season
+            } else if (g.season < g.gracePeriodEnd) {
+                // Can't get fired yet...
                 cb();
             } else {
                 // Fired!

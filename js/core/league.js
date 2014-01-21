@@ -64,7 +64,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                     teamRegionsCache: _.pluck(teams, "region"),
                     teamNamesCache: _.pluck(teams, "name"),
                     showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
-                    gracePeriodEnd: startingSeason + 2 // Can't get fired until this season
+                    gracePeriodEnd: startingSeason + 2 // Can't get fired for the first two seasons
                 };
 
                 // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes

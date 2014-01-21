@@ -98,7 +98,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var args = valueAccessor();
             return ko.bindingHandlers.html.update(element, function () {
-                return helpers.watchBlock(ko.utils.unwrapObservable(args[0]), args[1]);
+                return helpers.watchBlock(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]));
             });
         }
     };

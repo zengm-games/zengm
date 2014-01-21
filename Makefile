@@ -31,7 +31,7 @@ appcache-timestamp:
 	sed -i "s/LAST UPDATED:.*/LAST UPDATED: `date`/" bbgm.appcache
 
 # target: rev-timestamp - Update the timestamp in index.html (year.month.date.minutes)
-mins = $$((`date +"%M"` + 60 * `date +"%H"`))
+mins = $$((`date +"%_M"` + 60 * `date +"%_H"`))
 rev-timestamp:
 	sed -i "s/<!--rev-->.*<\/p>/<!--rev-->`date +"%Y.%m.%d"`.$(mins)<\/p>/" index.html
 

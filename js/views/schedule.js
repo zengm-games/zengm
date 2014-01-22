@@ -32,9 +32,9 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "util/bbgmView", "ut
                         team0 = {tid: game.homeTid, abbrev: g.teamAbbrevsCache[game.homeTid], region: g.teamRegionsCache[game.homeTid], name: g.teamNamesCache[game.homeTid]};
                         team1 = {tid: game.awayTid, abbrev: g.teamAbbrevsCache[game.awayTid], region: g.teamRegionsCache[game.awayTid], name: g.teamNamesCache[game.awayTid]};
                         if (g.userTid === game.homeTid) {
-                            row = {teams: [team1, team0], vsat: "vs"};
+                            row = {teams: [team1, team0], vsat: "at"};
                         } else {
-                            row = {teams: [team0, team1], vsat: "at"};
+                            row = {teams: [team0, team1], vsat: "vs"};
                         }
                         games.push(row);
                     }

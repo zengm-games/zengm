@@ -82,10 +82,9 @@
 <p>A list of things you should know when making a roster file:</p>
 
 <ul>
-  <li>tid is the team ID number, ranging from 0 to 29 in alphabetical order. -1 is for free agents.</p>
-  <li>In the example above, there are only two players defined. If your file doesn't include at least 5 players on every team, then bad things will happen when you try to use it.</li>
-  <li>You can also create draft prospects for draft classes up to three years in the future. For the first draft class, use a team ID of -2. For the next year's use -4. For the third year's, use -5. You don't have to include all three future draft classes, but each draft class you do include should have 70 players in it.</li>
-  <li>You can view definitions of all the rating abbreviations within any league by going to the player ratings page and hovering your mouse over each column header.</li>
+  <li>tid is the team ID number, ranging from 0 to 29 in alphabetical order. -1 is for free agents.</li>
+  <li>In the example above, there are only two players defined. If your file doesn't include at least 10 players on each team, then bad things will happen when you try to use it.</li>
+  <li>You can also create draft prospects for draft classes up to three years in the future. For the first draft class, use a team ID of -2. For the next year's use -4. For the third year's, use -5. If a draft class is not included or has less than 70 players in it, then random players will be automatically generated to fill up the rest of the draft class.</li>
   <li>Ratings should be on a scale from 0 to 100 with a mean of about 50 and about half of the players between 35 and 65. Descriptions of rating categories:
     <ul>
       <li>"hgt": height, which factors into pretty much everything - this is meant to also reflect things like standing reach and wingspan, and it is used in game simulations rather than the player's "true" height in feet/inches</li>

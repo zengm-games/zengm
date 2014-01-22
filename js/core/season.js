@@ -1022,7 +1022,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
             tx.oncomplete = function () {
                 // Create new draft class for 3 years in the future
-                draft.genPlayers(null, g.PLAYER.UNDRAFTED_3, null, function () {
+                draft.genPlayers(null, g.PLAYER.UNDRAFTED_3, null, null, function () {
                     db.setGameAttributes({daysLeft: 30}, function () {
                         newPhaseCb(g.PHASE.FREE_AGENCY, cb, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
                     });

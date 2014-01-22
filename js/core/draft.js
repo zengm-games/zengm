@@ -51,10 +51,15 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
      * @param {IDBTransaction|null} ot An IndexedDB transaction on players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID number for the generated draft class. Should be g.PLAYER.UNDRAFTED, g.PLAYER.UNDRAFTED_2, or g.PLAYER.UNDRAFTED_3.
      * @param {number?} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
+     * @param {number?} numPlayers The number of prospects to generate. Default value is 70.
      * @param {function()} cb Callback function.
      */
-    function genPlayers(ot, tid, scoutingRank, cb) {
+    function genPlayers(ot, tid, scoutingRank, numPlayers, cb) {
         var withScoutingRank;
+
+        if (numPlayers === null || numPlayers === undefined) {
+            numPlayers = 70;
+        }
 
         withScoutingRank = function (scoutingRank) {
             var agingYears, baseAge, baseRating, draftYear, i, p, playerStore, pot, profile, profiles, tx;
@@ -63,7 +68,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
             playerStore = tx.objectStore("players");
 
             profiles = ["Point", "Wing", "Big", "Big", ""];
-            for (i = 0; i < 70; i++) {
+            for (i = 0; i < numPlayers; i++) {
                 baseRating = random.randInt(8, 31);
                 pot = Math.round(helpers.bound(random.realGauss(48, 17), baseRating, 90));
 

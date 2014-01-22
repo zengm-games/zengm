@@ -665,11 +665,11 @@ console.log(event);
                     var draft;
 
                     draft = require("core/draft");
-                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, null, function () {
-                        draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, null, function () {
+                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, null, null, function () {
+                        draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, null, null, function () {
                             tx.objectStore("players").index("tid").count(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
                                 if (event.target.result === 0) {
-                                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, function () {});
+                                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, null, function () {});
                                 }
                             };
                         });

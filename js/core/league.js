@@ -133,31 +133,29 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                             // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
                             tx = g.dbl.transaction("players", "readwrite");
 
-                            // See if imported roster has draft picks included. If so, don't create any.
-                            createUndrafted1 = true;
-                            createUndrafted2 = true;
-                            createUndrafted3 = true;
+                            // See if imported roster has draft picks included. If so, create less than 70
+                            createUndrafted1 = 70;
+                            createUndrafted2 = 70;
+                            createUndrafted3 = 70;
                             if (players !== undefined) {
                                 for (i = 0; i < players.length; i++) {
                                     if (players[i].tid === g.PLAYER.UNDRAFTED) {
-                                        createUndrafted1 = false;
-                                    }
-                                    if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
-                                        createUndrafted2 = false;
-                                    }
-                                    if (players[i].tid === g.PLAYER.UNDRAFTED_3) {
-                                        createUndrafted3 = false;
+                                        createUndrafted1 -= 1;
+                                    } else if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
+                                        createUndrafted2 -= 1;
+                                    } else if (players[i].tid === g.PLAYER.UNDRAFTED_3) {
+                                        createUndrafted3 -= 1;
                                     }
                                 }
                             }
                             if (createUndrafted1) {
-                                draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank);
+                                draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1);
                             }
                             if (createUndrafted2) {
-                                draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank);
+                                draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2);
                             }
                             if (createUndrafted3) {
-                                draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank);
+                                draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3);
                             }
 
                             tx.oncomplete = function () {

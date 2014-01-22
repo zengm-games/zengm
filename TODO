@@ -3,7 +3,7 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-3.3
+2k rosters - execute old plan
 "Watch list" of players the user is interested in, mainly for free agency
   add "actions" where appropriate, probably as output in player.filter so it can be used elsewhere
     negotiate

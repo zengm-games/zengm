@@ -2,7 +2,7 @@ Don't read much into the release dates. Changes are pushed live as often as
 possible, regardless of whether I make an official release with a new version
 number or not.
 
-# 3.3.0 (2014-01-??)
+# 3.3.0 (2014-01-21)
 
 ## Gameplay and UI
 

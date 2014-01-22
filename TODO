@@ -12,7 +12,6 @@ CURRENT
     draft, fantasy draft
       if prospect, add "draft" button?
       if so, factor out from draft page and add on player page
-is firing working? test http://www.reddit.com/r/BasketballGM/comments/1vqlof/how_do_you_get_fired/
 show prospects before draft
   EVENTUALLY
     ratings should really update annually, just like in normal years
@@ -21,7 +20,7 @@ show prospects before draft
       allow promising to draft a player at certain position to influence decision
 pick new cities (mostly)
   get user input on names
-  get logos and colors for default teams - maybe by /u/mbingcrosby or /u/R_E_D_D_l_T
+  get logos and colors for default teams - maybe by /u/mbingcrosby (sent) or /u/R_E_D_D_l_T
 customization
   allow import of team info or draft classes from roster files
   allow upload of just these files from the "new league" screen, somehow

@@ -2,7 +2,7 @@
  * @name views.editTeamInfo
  * @namespace Edit Team Info.
  */
-define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util/helpers"], function (db, g, ui, team, $, bbgmView, helpers) {
+define(["db", "globals", "ui", "core/team", "lib/jquery", "lib/underscore", "util/bbgmView", "util/helpers"], function (db, g, ui, team, $, _, bbgmView, helpers) {
     "use strict";
 
     function post(req) {
@@ -32,6 +32,7 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
             } else {
                 // Updating cached values for team regions and team names for easy access.
                 db.setGameAttributes({
+                    lastDbChange: Date.now(),
                     teamAbbrevsCache: req.params.abbrev,
                     teamRegionsCache: req.params.region,
                     teamNamesCache: req.params.name
@@ -66,8 +67,96 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
         return deferred.promise();
     }
 
-    function uiFirst() {
+    function uiFirst(vm) {
+        var fileEl;
+
         ui.title("Edit Team Names");
+
+        fileEl = document.getElementById("custom-teams");
+        fileEl.addEventListener("change", function () {
+            var file, reader;
+
+            file = fileEl.files[0];
+
+            reader = new window.FileReader();
+            reader.readAsText(file);
+            reader.onload = function (event) {
+                var i, newTeams, rosters;
+
+                rosters = JSON.parse(event.target.result);
+                newTeams = rosters.teams;
+
+                // Validate teams
+                if (newTeams.length < g.numTeams) {
+                    console.log("ROSTER ERROR: Wrong number of teams");
+                    return;
+                }
+                for (i = 0; i < newTeams.length; i++) {
+                    if (i !== newTeams[i].tid) {
+                        console.log("ROSTER ERROR: Wrong tid, team " + i);
+                        return;
+                    }
+                    if (newTeams[i].cid < 0 || newTeams[i].cid > 1) {
+                        console.log("ROSTER ERROR: Invalid cid, team " + i);
+                        return;
+                    }
+                    if (newTeams[i].did < 0 || newTeams[i].did > 5) {
+                        console.log("ROSTER ERROR: Invalid did, team " + i);
+                        return;
+                    }
+                    if (typeof newTeams[i].region !== "string") {
+                        console.log("ROSTER ERROR: Invalid region, team " + i);
+                        return;
+                    }
+                    if (typeof newTeams[i].name !== "string") {
+                        console.log("ROSTER ERROR: Invalid name, team " + i);
+                        return;
+                    }
+                    if (typeof newTeams[i].abbrev !== "string") {
+                        console.log("ROSTER ERROR: Invalid abbrev, team " + i);
+                        return;
+                    }
+                    if (typeof newTeams[i].pop !== "number") {
+                        console.log("ROSTER ERROR: Invalid pop, team " + i);
+                        return;
+                    }
+                }
+
+                g.dbl.transaction("teams", "readwrite").objectStore("teams").openCursor().onsuccess = function (event) {
+                    var cursor, t;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        t = cursor.value;
+
+                        t.cid = newTeams[t.tid].cid;
+                        t.did = newTeams[t.tid].did;
+                        t.region = newTeams[t.tid].region;
+                        t.name = newTeams[t.tid].name;
+                        t.abbrev = newTeams[t.tid].abbrev;
+                        t.pop = newTeams[t.tid].pop;
+
+                        // Update meta cache of user's team
+                        if (t.tid === g.userTid) {
+                            db.updateMetaNameRegion(g.lid, t.name, t.region);
+                        }
+
+                        cursor.update(t);
+                        cursor.continue();
+                    } else {
+                        // Updating cached values for team regions and team names for easy access.
+                        db.setGameAttributes({
+                            lastDbChange: Date.now(),
+                            teamAbbrevsCache: _.pluck(newTeams, "abbrev"),
+                            teamRegionsCache: _.pluck(newTeams, "region"),
+                            teamNamesCache: _.pluck(newTeams, "name")
+                        }, function () {
+                            ui.realtimeUpdate();
+                        });
+                    }
+                };
+            };
+        });
     }
 
     return bbgmView.init({

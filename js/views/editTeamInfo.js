@@ -134,7 +134,7 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "lib/underscore", "uti
                         t.region = newTeams[t.tid].region;
                         t.name = newTeams[t.tid].name;
                         t.abbrev = newTeams[t.tid].abbrev;
-                        t.pop = newTeams[t.tid].pop;
+                        t.seasons[t.seasons.length - 1].pop = newTeams[t.tid].pop;
 
                         // Update meta cache of user's team
                         if (t.tid === g.userTid) {

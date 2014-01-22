@@ -683,7 +683,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                         };
                         tx.oncomplete = function () {
                             if (s.warning) {
-                                cb(g.teamRegionsCache[teams[1].tid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking any rules."');
+                                cb(g.teamRegionsCache[teams[1].tid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."');
                             } else {
                                 cb(g.teamRegionsCache[teams[1].tid] + ' GM: "How does this sound?"');
                             }

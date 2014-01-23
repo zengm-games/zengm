@@ -3,7 +3,6 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-2k rosters - execute old plan
 "Watch list" of players the user is interested in, mainly for free agency
   add "actions" where appropriate, probably as output in player.filter so it can be used elsewhere
     negotiate
@@ -18,9 +17,6 @@ show prospects before draft
       fuzz changing for prospects should factor in changes in scouting budget
     movement between draft classes
       allow promising to draft a player at certain position to influence decision
-pick new cities (mostly)
-  get user input on names
-  get logos and colors for default teams - maybe by /u/mbingcrosby (sent) or /u/R_E_D_D_l_T
 customization
   allow import of team info or draft classes from roster files
   allow upload of just these files from the "new league" screen, somehow
@@ -490,7 +486,9 @@ other advanced stats
   APM?
 hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
   maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
-worth it to switch to closure library? http://stackoverflow.com/questions/10782612/what-is-the-sturdiest-way-to-get-the-closure-compilers-type-safety-together-wit
+worth it to switch to closure library?
+  http://stackoverflow.com/questions/10782612/what-is-the-sturdiest-way-to-get-the-closure-compilers-type-safety-together-wit
+  http://www.nonblocking.io/2011/12/experimental-support-for-common-js-and.html
 moving to other cities
 expansion teams (add population growth, expand when certain conditions are met)
 team finances view
@@ -510,7 +508,6 @@ stat views
   add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
     could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
   playoff/regular season toggle in team/player stats, league leaders
-  player stats: toggle to only show players > 2000 minutes http://www.nba.com/leader_requirements.html
 contract negotiation
   don't have counter-offers be too drastic
   weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1 http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
@@ -530,8 +527,6 @@ bbgmView
     (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
   use req.redirect from POST to manage history optimally
   make it less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
-player.filter
-  the special case attributes should generally be moved directly into the database?
 views.teamFinances should merge db call with team.filter to get seasonAttrs, but that will require rewriting seasonAttrs handling in team.filter to handle multiple seasons.
 git log -- js/core/gameSimNew.js
 live play-by-play simulation
@@ -543,6 +538,7 @@ live play-by-play simulation
   could fake where the shots are to display graphically
   when someone wins the title, you can see the phase change at the top even while watching the live play-by-play of the last game. this leaks info about who won
   allow the user to make substitutions in realtime
+when i have more money, get logos and colors for default teams - maybe by /u/mbingcrosby or /u/R_E_D_D_l_T
 
 Template Stuff
 --------------

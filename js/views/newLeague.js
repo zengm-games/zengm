@@ -2,7 +2,7 @@
  * @name views.newLeague
  * @namespace Create new league form.
  */
-define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/helpers", "util/random", "util/viewHelpers"], function (g, ui, league, $, bbgmView, helpers, random, viewHelpers) {
     "use strict";
 
     function post(req) {
@@ -20,6 +20,12 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         };
 
         tid = Math.floor(req.params.tid);
+
+        // Handle random team
+        if (tid === -1) {
+            tid = random.randInt(0, 29);
+        }
+
         if (tid >= 0 && tid <= 29) {
             // Davis.js can't handle file uploads, so do this manually first
             if (req.params.rosters === "custom-rosters") {
@@ -69,6 +75,11 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
             }
 
             teams = helpers.getTeamsDefault();
+            teams.unshift({
+                tid: -1,
+                region: "Random",
+                name: "Team"
+            })
 
             deferred.resolve({
                 name: "League " + newLid,
@@ -87,21 +98,25 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         updatePopText = function () {
             var difficulty, team;
 
-            team = vm.teams()[selectTeam.val()];
+            team = vm.teams()[parseInt(selectTeam.val(), 10) + 1];
 
-            if (team.popRank() <= 3) {
-                difficulty = "very easy";
-            } else if (team.popRank() <= 8) {
-                difficulty = "easy";
-            } else if (team.popRank() <= 16) {
-                difficulty = "normal";
-            } else if (team.popRank() <= 24) {
-                difficulty = "hard";
+            if (team.tid() >= 0) {
+                if (team.popRank() <= 3) {
+                    difficulty = "very easy";
+                } else if (team.popRank() <= 8) {
+                    difficulty = "easy";
+                } else if (team.popRank() <= 16) {
+                    difficulty = "normal";
+                } else if (team.popRank() <= 24) {
+                    difficulty = "hard";
+                } else {
+                    difficulty = "very hard";
+                }
+
+                document.getElementById("pop-text").innerHTML = "Region population: " + team.pop() + " million, #" + team.popRank() + " leaguewide<br>Difficulty: " + difficulty;
             } else {
-                difficulty = "very hard";
+                document.getElementById("pop-text").innerHTML = "Region population: ?<br>Difficulty: ?";
             }
-
-            $("#pop-text").html("Region population: " + team.pop() + " million, #" + team.popRank() + " leaguewide<br>Difficulty: " + difficulty);
         };
 
         selectTeam = $("select[name='tid']");

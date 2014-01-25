@@ -98,7 +98,7 @@ trade improvements
     show countdown on trade page
   should be harder to trade bad contracts for nothing
     similarly, should be easier to trade nothing for bad contracts
-  too easy to trade for young prospects with no stats http://www.reddit.com/r/BasketballGM/comments/1lkv5m/utah_jugglers/
+  too easy to trade for young prospects with no stats http://www.reddit.com/r/BasketballGM/comments/1lkv5m/utah_jugglers/ http://www.reddit.com/r/BasketballGM/comments/1vzx0e/ai_undervalues_rookies_just_out_of_the_draft/
     options:
       1. add fudge factor to make teams less willing to trade away young players without much game experience
       2. just increase the value for ovr in player.value (try this now)

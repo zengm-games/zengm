@@ -14,7 +14,7 @@ fs.readFile("./gen/app.js.map", 'utf8', function (err, data) {
     var smc = new sourceMap.SourceMapConsumer(data);
 
     console.log(smc.originalPositionFor({
-        line: 14,
-        column: 68
+        line: 13,
+        column: 14528
     }));
 });

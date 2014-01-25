@@ -755,7 +755,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     }
                     roster.shift(); // Remove from value calculation
                 } else {
-                    if (add[1].value < roster[0].value) {
+                    if (add.length > 1 && add[1].value < roster[0].value) {
                         add[1].contractAmount += add[0].contractAmount;
                     } else {
                         roster[0].contractAmount += add[0].contractAmount;

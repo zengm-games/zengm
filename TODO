@@ -11,6 +11,7 @@ CURRENT
     draft, fantasy draft
       if prospect, add "draft" button?
       if so, factor out from draft page and add on player page
+    ADD TO PLAYER PAGE, elsewhere?
 show prospects before draft
   EVENTUALLY
     ratings should really update annually, just like in normal years
@@ -77,6 +78,8 @@ notification system
     refuse to sign
     retire
 NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
+Team name shows up as BOLD or is highlighted in some other way in all League lists (playoffs, standings)
+  wrap abbrev in function before display
 
 BIG NEW FEATURES
 ----------------

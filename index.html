@@ -154,12 +154,12 @@
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['delete_old_data']}">Improve Performance</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none" role="presentation" class="divider"></li>
                 <li role="presentation" class="dropdown-header">Use at your own risk!</li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PLAYOFFS); }())">Skip To Playoffs</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.BEFORE_DRAFT); }())">Skip To Before Draft</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.AFTER_DRAFT); }())">Skip To After Draft</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="javascript:(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PRESEASON); }())">Skip To Preseason</a></li>
-                <li><a href="javascript:toggleDebugMode()" id="toggle-debug-mode">Toggle Debug Mode</a></li>
-                <li><a href="javascript:resetDb()">Reset DB</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PLAYOFFS); }())">Skip To Playoffs</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.BEFORE_DRAFT); }())">Skip To Before Draft</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.AFTER_DRAFT); }())">Skip To After Draft</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PRESEASON); }())">Skip To Preseason</a></li>
+                <li><a href="" onclick="toggleDebugMode()" id="toggle-debug-mode">Toggle Debug Mode</a></li>
+                <li><a href="" onclick="resetDb()">Reset DB</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -169,7 +169,7 @@
                 <li><a href="/manual">Overview</a></li>
                 <li><a href="/changes">Changes</a></li>
                 <li><a href="/manual/custom_rosters">Custom Rosters</a></li>
-                <li><a href="javascript:manualDebugging()">Debugging</a></li>
+                <li><a href="http://basketball-gm.com/manual/debugging/" target="_blank">Debugging</a></li>
               </ul>
             </li>
           </ul>
@@ -188,8 +188,8 @@
 
       <footer>
         <p>
-          <a href="http://basketball-gm.com/about/">About</a> · <a href="http://basketball-gm.com/advertise/">Advertise</a> · <a href="http://basketball-gm.com/blog/">Blog</a> · <a href="http://basketball-gm.com/contact/">Contact</a><br>
-          <p class="rev">v3.3 · <!--rev-->2014.01.25.694</p>
+          <a href="http://basketball-gm.com/about/" target="_blank">About</a> · <a href="http://basketball-gm.com/advertise/" target="_blank">Advertise</a> · <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> · <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a><br>
+          <p class="rev">v3.3 · <!--rev-->2014.01.25.1029</p>
         </p>
       </footer>
     </div>
@@ -212,31 +212,13 @@
 
     <div class="slide-out" id="feedback">
       <button class="slide-out-handle btn btn-danger">Feedback</button>
-      <p><a href="https://twitter.com/basketball_gm">Tweet</a>, <a href="mailto:commissioner@basketball-gm.com">send an email</a> (commissioner@basketball-gm.com), or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>
+      <p><a href="https://twitter.com/basketball_gm" target="_blank">Tweet</a>, <a href="mailto:commissioner@basketball-gm.com">send an email</a> (commissioner@basketball-gm.com), or <a href="http://www.reddit.com/r/BasketballGM/" target="_blank">join the discussion on Reddit</a>.</p>
       <p>All thoughts, comments, and suggestions are appreciated!</p>
     </div>
 
     <iframe style="display: none;" src="/manifest_hack"></iframe> 
 
     <script>
-      // This is so the "Debugging" manual entry can be read even if IndexedDB doesn't load
-      function manualDebugging() {
-        document.getElementById("content").innerHTML = '<h1>Debugging</h1>' + 
-          '<h2>Reporting a bug</h2>' +
-          '<p>If you found a bug and you want to help fix it, click "Feedback" in the bottom right corner of your screen and follow the instructions there to get in contact with developer. Please include as much detail as possible, including your browser version, operating system, and specific steps one can take to reproduce your problem.</p>' +
-          '<p>Additionally, if you want to be extra helpful, try to report the specific error message that occurs. To do this, first switch to "debug mode" by clicking "Tools > Enable Debug Mode" in the menu at the top of this page. Then, <a href="http://webmasters.stackexchange.com/q/8525">open the JavaScript console of your web browser</a> and see if any error message gets displayed there when you observe a bug. For example, if the draft won\'t start when you press the "Start Draft" button, then enable debug mode, open the JavaScript console, and try pressing it again. You will probably see an error message that will be very helpful to a developer trying to fix the bug.</p>' +
-          '<h2>Hard Reset</h2>' +
-          '<p>Sometimes things just get stuck and you never get past the "Loading..." screen. If this happens, you can completely reset the game (and lose all your previous data) by doing this:</p>' +
-          '<ol>' +
-          '<li>Close your browser</li>' +
-          '<li>Open your browser profile folder (Google for how to do this in Firefox and Chrome for your OS)</li>' +
-          '<li><b>Chrome only:</b> Within your profile folder, there is another folder called "IndexedDB". Open that folder</li>' +
-          '<li><b>Firefox only:</b> Within your profile folder, there is a folder called "storage" and another folder inside that called "persistent". Open that folder</li>' +
-          '<li>Within that folder, there will be some other folder with "basketball-gm" in the name. Delete that folder</li>' +
-          '<li>Open your browser again. The game should now work (although any previous game data will be gone)</li>' +
-          '</ol>';
-      }
-
       // Tools > Reset DB
       function resetDb() {
         var db;

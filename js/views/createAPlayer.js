@@ -7,6 +7,18 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
     var mapping;
 
+    // Same as faces.generate, but round of long decimals
+    function generateFace() {
+        var face;
+
+        face = faces.generate();
+        face.fatness = helpers.round(face.fatness, 2);
+        face.eyes[0].angle = helpers.round(face.eyes[0].angle, 1);
+        face.eyes[1].angle = helpers.round(face.eyes[1].angle, 1);
+
+        return face;
+    }
+
     function post(req) {
         var button;
 
@@ -144,7 +156,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                 positions = [{pos: "PG"}, {pos: "SG"}, {pos: "SF"}, {pos: "PF"}, {pos: "C"}, {pos: "G"}, {pos: "GF"}, {pos: "FC"}];
 
-                face = faces.generate();
+                face = generateFace();
 
                 deferred.resolve({
                     face: face,
@@ -167,13 +179,23 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
     function uiFirst(vm) {
         ui.title("Create A Player");
 
-        faces.display("picture", ko.toJS(vm.face()));
+        //faces.display("picture", ko.toJS(vm.face()));
 
         document.getElementById("randomize-face").addEventListener("click", function (event) {
             event.preventDefault();
-            vm.face(komapping.fromJS(faces.generate()));
-            faces.display("picture", ko.toJS(vm.face()));
+            vm.face(komapping.fromJS(generateFace()));
         });
+
+        ko.computed(function () {
+            vm.face().eyes()[1].id(vm.face().eyes()[0].id());
+        }).extend({throttle: 1});
+        ko.computed(function () {
+            vm.face().eyes()[1].angle(vm.face().eyes()[0].angle());
+        }).extend({throttle: 1});
+
+        ko.computed(function () {
+            faces.display("picture", ko.toJS(vm.face()));
+        }).extend({throttle: 1});
     }
 
     return bbgmView.init({

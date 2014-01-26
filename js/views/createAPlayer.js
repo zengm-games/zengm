@@ -85,6 +85,17 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             p.watch = true;
             p.weight = parseInt(req.params.weight, 10);
 
+            p.face.color = req.params["face-color"];
+            p.face.fatness = parseFloat(req.params["face-fatness"]);
+            p.face.eyes[0].id = parseInt(req.params["face-eyes"], 10);
+            p.face.eyes[1].id = parseInt(req.params["face-eyes"], 10);
+            p.face.eyes[0].angle = parseFloat(req.params["face-eyes"]);
+            p.face.eyes[1].angle = parseFloat(req.params["face-eyes"]);
+            p.face.hair.id = parseInt(req.params["face-hair"], 10);
+            p.face.mouth.id = parseInt(req.params["face-mouth"], 10);
+            p.face.nose.id = parseInt(req.params["face-nose"], 10);
+            p.face.nose.flip = req.params["face-nose-flip"] === "on";
+
             tx = g.dbl.transaction("players", "readwrite");
             tx.objectStore("players").add(p).onsuccess = function (event) {
                 // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition

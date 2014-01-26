@@ -2,7 +2,7 @@
  * @name views.editTeamInfo
  * @namespace Edit Team Info.
  */
-define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/faces", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers"], function (db, g, ui, finances, player, team, faces, $, ko, bbgmView, helpers) {
+define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/helpers"], function (db, g, ui, finances, player, team, faces, $, ko, komapping, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -82,16 +82,15 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 db.setGameAttributes({lastDbChange: Date.now()}, function () {
                     ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
                 });
-            }
+            };
         };
     }
 
+    function InitViewModel() {
+        this.face = ko.observable();
+    }
+
     mapping = {
-        face: {
-            create: function (options) {
-                return ko.observable(options.data);
-            }
-        },
         positions: {
             create: function (options) {
                 return options.data;
@@ -168,13 +167,19 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
     function uiFirst(vm) {
         ui.title("Create A Player");
 
-console.log(vm.face())
-        faces.display("picture", vm.face());
+        faces.display("picture", ko.toJS(vm.face()));
+
+        document.getElementById("randomize-face").addEventListener("click", function (event) {
+            event.preventDefault();
+            vm.face(komapping.fromJS(faces.generate()));
+            faces.display("picture", ko.toJS(vm.face()));
+        });
     }
 
     return bbgmView.init({
         id: "createAPlayer",
         post: post,
+        InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateCreateAPlayer],
         uiFirst: uiFirst

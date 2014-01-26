@@ -48,6 +48,9 @@
     <div class="row">
       <div class="col-sm-4">
         <div id="picture" style="max-height: 225px; max-width: 150px"></div>
+        <center>
+          <button class="btn btn-default" id="randomize-face">Randomize</button>
+        </center>
       </div>
       <div class="col-sm-8">
         <div class="row">
@@ -61,11 +64,11 @@
           </div>
           <div class="col-xs-6 form-group">
             <label for="cap-face-eyes">Eyes</label>
-            <select class="form-control" id="cap-eyes" name="face-eyes" data-bind="options: faceOptions.eyes, value: face().eyes[0].id"></select>
+            <select class="form-control" id="cap-eyes" name="face-eyes" data-bind="options: faceOptions.eyes, value: face().eyes()[0].id"></select>
           </div>
           <div class="col-xs-6 form-group">
             <label for="cap-face-eyes-angle">Eye Angle (-20 to 30)</label>
-            <input type="text" class="form-control" id="cap-face-eyes-angle" name="face-eyes-angle" data-bind="value: face().eyes[0].angle"></input>
+            <input type="text" class="form-control" id="cap-face-eyes-angle" name="face-eyes-angle" data-bind="value: face().eyes()[0].angle"></input>
           </div>
           <div class="col-xs-6 form-group">
             <label for="cap-face-nose">Nose</label>

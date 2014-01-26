@@ -3,6 +3,15 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
+create a player http://www.reddit.com/r/BasketballGM/comments/1w4bcj/some_thoughts_after_the_first_week_of_playing/cez0oq3
+  appearance
+    customize face, or supply url (link to http://imgur.com/)
+webfaction is slow
+  ask for help
+  https://www.digitalocean.com/pricing
+move manual to wordpress
+  " < Basketball GM Manual" in title
+  search for any manual links
 "Watch list" of players the user is interested in, mainly for free agency
   add "actions" where appropriate, probably as output in player.filter so it can be used elsewhere
     negotiate
@@ -80,6 +89,7 @@ notification system
 NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
 Team name shows up as BOLD or is highlighted in some other way in all League lists (playoffs, standings)
   wrap abbrev in function before display
+player.injury.gamesRemaining should go by day http://www.reddit.com/r/BasketballGM/comments/1w55sb/suggestionplayoffs_simulate_by_round_instead_of/
 
 BIG NEW FEATURES
 ----------------
@@ -178,7 +188,6 @@ bring back the old constantly-displayed menu for large screens? http://www.reddi
 make injuries more likely for old players and fatigued players
 Shouldn't say "This is what the playoff matchups would be" when playoffs first start
 first errorNotify in contractNegotiation.js really should be inline within that page
-player.injury.gamesRemaining should go by day
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
 some way to "install" app locally and create a shortcut icon, since it is playable offline
 bootstrap 3.0.3
@@ -202,6 +211,7 @@ don't need to check every team's roster limits every time games are played - cou
 reorganize top menu
 not all ratings should deteriorate equally with age (e.g. 3 point shooting)
 http://code.google.com/p/htmlcompressor/ or something similar
+in playoffs, replace Week/Month in Play menu with Round http://www.reddit.com/r/BasketballGM/comments/1w55sb/suggestionplayoffs_simulate_by_round_instead_of/
 
 LOW PRIORITY
 ------------

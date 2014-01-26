@@ -449,7 +449,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         p.ptModifier = 1; // Reset
 
         // The put doesn't always work in Chrome. No idea why.
-        require("db").getObjectStore(ot, "players", "players").put(p);
+        require("db").getObjectStore(ot, "players", "players", true).put(p);
 
         if (cb !== undefined) {
             cb();
@@ -803,7 +803,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @return {Object} Injury object (type and gamesRemaining)
      */
     function injury(healthRank) {
-        var gamesRemaining, i, rand, type;
+        var i, rand, type;
 
         rand = random.uniform(0, 10882);
         for (i = 0; i < injuries.cumSum.length; i++) {
@@ -1573,6 +1573,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         filter: filter,
         madeHof: madeHof,
         value: value,
-        retire: retire
+        retire: retire,
+        name: name
     };
 });

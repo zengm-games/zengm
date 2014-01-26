@@ -43,14 +43,14 @@
           ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
-      }
 
         // Kentavious
-        /*(function() {
+        (function() {
           var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
           ga.src = 'http://basketball-gm.com/kentavious/kentavious.js';
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();*/
+        })();
+      }
     </script>
   </head>
 
@@ -147,8 +147,9 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Tools <b class="caret"></b></span><span class="visible-sm">X <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header visible-sm">Tools</li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['event_log']}">Event Log</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['create_a_player']}">Create A Player</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['edit_team_info']}">Edit Team Info</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['event_log']}">Event Log</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['export_rosters']}">Export Rosters</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['fantasy_draft']}">Fantasy Draft</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['delete_old_data']}">Improve Performance</a></li>

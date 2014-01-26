@@ -1,0 +1,144 @@
+<h1>Create A Player</h1>
+
+<p>Here, you can create a custom player with whatever attributes and ratings you want. If you want to make a whole league of custom players, you should probably create a <a href="/manual/custom_rosters">custom roster file</a>.</p>
+
+<form method="POST" data-bind="attrLeagueUrl: {action: ['create_a_player']}">
+
+<div class="row">
+  <div class="col-md-7">
+    <h2>Attributes</h2>
+
+    <div class="row">
+      <div class="col-sm-6 form-group">
+        <label for="cap-name">Name</label>
+        <input type="text" class="form-control" id="cap-name" name="name" data-bind="value: name"></input>
+      </div>
+      <div class="col-sm-3 col-xs-6 form-group">
+        <label for="cap-age">Age</label>
+        <input type="text" class="form-control" id="cap-age" name="age" value="19"></input>
+      </div>
+      <div class="col-sm-3 col-xs-6 form-group">
+        <label for="cap-tid">Team</label>
+        <select class="form-control" id="cap-tid" name="tid" data-bind="foreach: teams">
+          <option data-bind="attr: {value: tid}, text: region + ' ' + name"></option>
+        </select>
+      </div>
+      <div class="col-sm-3 col-xs-6 form-group">
+        <label for="cap-hgt">Height (inches)</label>
+        <input type="text" class="form-control" id="cap-hgt" name="hgt" value="78"></input>
+      </div>
+      <div class="col-sm-3 col-xs-6 form-group">
+        <label for="cap-weight">Weight (lbs)</label>
+        <input type="text" class="form-control" id="cap-weight" name="weight" value="220"></input>
+      </div>
+      <div class="col-sm-3 col-xs-6 form-group">
+        <label for="cap-pos">Position</label>
+        <select class="form-control" id="cap-pos" name="pos" data-bind="foreach: positions">
+          <option data-bind="attr: {value: pos}, text: pos"></option>
+        </select>
+      </div>
+      <div class="col-sm-3 col-xs-6 form-group">
+        <label for="cap-born-loc">Hometown</label>
+        <input type="text" class="form-control" id="cap-born-loc" name="born-loc" value="USA"></input>
+      </div>
+    </div>
+
+    <h2>Appearance</h2>
+    <p>You can either create a cartoon face or specify the URL to an image.</p>
+    <div id="picture" class="player-picture"></div>
+  </div>
+
+  <div class="clearfix visible-sm visible-xs"></div>
+
+  <div class="col-md-5">
+    <h2>Ratings</h2>
+
+    <p>All ratings are on a scale of 0 to 100.</p>
+
+    <div class="row">
+      <div class="col-xs-4">
+        <div class="form-group">
+          <label for="cap-rating-pot">Potential</label>
+          <input type="text" class="form-control" id="cap-rating-pot" name="rating-pot" value="50"></input>
+        </div>
+      </div>
+      <div class="col-xs-8">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-4">
+        <h3>Physical</h3>
+        <div class="form-group">
+          <label for="cap-rating-hgt">Height</label>
+          <input type="text" class="form-control" id="cap-rating-hgt" name="rating-hgt" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-stre">Strength</label>
+          <input type="text" class="form-control" id="cap-rating-stre" name="rating-stre" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-spd">Speed</label>
+          <input type="text" class="form-control" id="cap-rating-spd" name="rating-spd" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-jmp">Jumping</label>
+          <input type="text" class="form-control" id="cap-rating-jmp" name="rating-jmp" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-endu">Endurance</label>
+          <input type="text" class="form-control" id="cap-rating-endu" name="rating-endu" value="50"></input>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <h3>Shooting</h3>
+        <div class="form-group">
+          <label for="cap-rating-ins">Inside</label>
+          <input type="text" class="form-control" id="cap-rating-ins" name="rating-ins" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-dnk">Dunks/Layups</label>
+          <input type="text" class="form-control" id="cap-rating-dnk" name="rating-dnk" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-ft">Free Throws</label>
+          <input type="text" class="form-control" id="cap-rating-ft" name="rating-ft" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-fg">Two Pointers</label>
+          <input type="text" class="form-control" id="cap-rating-fg" name="rating-fg" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-tp">Three Pointers</label>
+          <input type="text" class="form-control" id="cap-rating-tp" name="rating-tp" value="50"></input>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <h3>Skill</h3>
+        <div class="form-group">
+          <label for="cap-rating-blk">Blocks</label>
+          <input type="text" class="form-control" id="cap-rating-blk" name="rating-blk" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-stl">Steals</label>
+          <input type="text" class="form-control" id="cap-rating-stl" name="rating-stl" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-drb">Dribbling</label>
+          <input type="text" class="form-control" id="cap-rating-drb" name="rating-drb" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-pss">Passing</label>
+          <input type="text" class="form-control" id="cap-rating-pss" name="rating-pss" value="50"></input>
+        </div>
+        <div class="form-group">
+          <label for="cap-rating-reb">Rebounding</label>
+          <input type="text" class="form-control" id="cap-rating-reb" name="rating-reb" value="50"></input>
+        </div>
+      </div>
+    </div>
+</div>
+
+<center>
+  <button type="submit" class="btn btn-primary" id="create-a-player">Create Player</button>
+</center>
+</form>

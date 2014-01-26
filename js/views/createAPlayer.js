@@ -77,6 +77,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             p.ratings[0].reb = helpers.bound(parseInt(req.params["rating-reb"], 10), 0, 100);
             p.ratings[0].ovr = player.ovr(p.ratings[0]);
             p.ratings[0].skills = player.skills(p.ratings[0]);
+            if (p.ratings[0].ovr > p.ratings[0].pot) {
+                p.ratings[0].pot = p.ratings[0].ovr;
+            }
 
             p.born.loc = req.params["born-loc"];
             p.hgt = parseInt(req.params.hgt, 10);

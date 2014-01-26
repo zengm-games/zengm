@@ -78,16 +78,16 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jqu
         }).extend({throttle: 1});
 
         ko.computed(function () {
-            var pic;
+            var img, pic;
 
             // If playerImgURL is not an empty string, use it instead of the generated face
             if (vm.player.imgURL()) {
                 pic = document.getElementById("picture");
-                pic.style.backgroundImage = "url('" + vm.player.imgURL() + "')";
-                pic.style.backgroundRepeat = "no-repeat";
-                pic.style.backgroundSize = "100% 73px";
-                pic.style.marginTop = "12px";
-                pic.style.width = "100px";
+                img = document.createElement("img");
+                img.src = vm.player.imgURL();
+                img.style.maxHeight = "100%";
+                img.style.maxWidth = "100%";
+                pic.appendChild(img);
             } else {
                 faces.display("picture", vm.player.face());
             }

@@ -44,8 +44,13 @@
     </div>
 
     <h2>Appearance</h2>
-    <p>You can either create a cartoon face or specify the URL to an image.</p>
-    <div class="row">
+
+    <div class="form-group">
+      <label for="cap-appearance-option">You can either create a cartoon face or specify the URL to an image.</label>
+      <select class="form-control" id="cap-appearance-option" name="appearance-option" data-bind="options: appearanceOptions, value: appearanceOption" style="max-width: 150px"></select>
+    </div>
+
+    <div class="row" data-bind="visible: appearanceOption() === 'Cartoon Face'">
       <div class="col-sm-4">
         <div id="picture" style="max-height: 225px; max-width: 150px"></div>
         <center>
@@ -88,6 +93,12 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="form-group" data-bind="visible: appearanceOption() === 'Image URL'">
+      <label for="cap-image-url">Image URL</label>
+      <input type="text" class="form-control" id="cap-image-url" name="image-url" value="http://"></input>
+      <span class="help-block">Your image must be hosted externally. If you need to upload an image, try using <a href="http://imgur.com/">imgur</a>. For ideal display, crop your image so it has a 2:3 aspect ratio (such as 100px wide and 150px tall).</span>
     </div>
   </div>
 

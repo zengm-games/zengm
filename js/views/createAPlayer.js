@@ -96,6 +96,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             p.face.nose.id = parseInt(req.params["face-nose"], 10);
             p.face.nose.flip = req.params["face-nose-flip"] === "on";
 
+            if (req.params["appearance-option"] === "Image URL") {
+                p.imgURL = req.params["image-url"];
+            }
+
             tx = g.dbl.transaction("players", "readwrite");
             tx.objectStore("players").add(p).onsuccess = function (event) {
                 // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
@@ -170,6 +174,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 face = generateFace();
 
                 deferred.resolve({
+                    appearanceOption: "",
+                    appearanceOptions: ["Cartoon Face", "Image URL"],
                     face: face,
                     faceOptions: {
                         eyes: [0, 1, 2, 3],

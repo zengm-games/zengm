@@ -149,6 +149,12 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                 deferred.resolve({
                     face: face,
+                    faceOptions: {
+                        eyes: [0, 1, 2, 3],
+                        nose: [0, 1, 2],
+                        mouth: [0, 1, 2, 3, 4],
+                        hair: [0, 1, 2, 3, 4, 5]
+                    },
                     name: player.name(),
                     positions: positions,
                     teams: teams
@@ -162,7 +168,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
     function uiFirst(vm) {
         ui.title("Create A Player");
 
-console.log(vm)
+console.log(vm.face())
         faces.display("picture", vm.face());
     }
 

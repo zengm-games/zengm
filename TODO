@@ -5,7 +5,10 @@ CURRENT
 -------
 create a player http://www.reddit.com/r/BasketballGM/comments/1w4bcj/some_thoughts_after_the_first_week_of_playing/cez0oq3
   appearance
-    customize face, or supply url (link to http://imgur.com/)
+    customize face
+      keep everything in observable, use to update face
+      make some recursive unobserve function to use to display face
+    supply url (link to http://imgur.com/)
 webfaction is slow
   ask for help
   https://www.digitalocean.com/pricing

@@ -5,7 +5,7 @@ CURRENT
 -------
 create a player
   changes
-edit player
+edit/delete player
   share code with create a player
   do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
 webfaction is slow
@@ -148,6 +148,7 @@ player development revamp
   are ovr/pot combos reasonable, since ovr is weighted now?
   low ovr high pot players should pan out more?
   old stars should exist
+  reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
 skills should be based on the composite ratings, not single ratings. http://www.reddit.com/r/BasketballGM/comments/1pxu83/positionless_basketball/cd7ob6j
 make low ovr high pot players more likely to improve
 Extended free agency

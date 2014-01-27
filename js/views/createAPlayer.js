@@ -103,6 +103,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 p.imgURL = req.params["image-url"];
             }
 
+            if (tid !== g.PLAYER.UNDRAFTED && tid !== g.PLAYER.UNDRAFTED_2 && tid !== g.PLAYER.UNDRAFTED_3 && g.phase < g.PHASE.FREE_AGENCY) {
+                p.draft.year -= 1; // Otherwise he'll show up in this year's draft
+            }
+
             tx = g.dbl.transaction("players", "readwrite");
             tx.objectStore("players").add(p).onsuccess = function (event) {
                 // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition

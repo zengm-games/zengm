@@ -6,7 +6,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
     "use strict";
 
     function beforeLeague(req, cb) {
-        var reqCb, checkDbChange, leagueMenu, popup, updateEvents;
+        var reqCb, checkDbChange, popup, updateEvents;
 
         g.lid = parseInt(req.params.lid, 10);
 
@@ -14,8 +14,6 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
 
         // Check for some other window making changes to the database
         checkDbChange = function (lid) {
-            var oldLastDbChange;
-
             // Stop if the league isn't viewed anymore
             if (lid !== g.lid) {
                 return;
@@ -31,12 +29,12 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                             ui.updatePlayMenu(null, function () {
                                 ui.updatePhase();
                                 ui.updateStatus();
-                                setTimeout(checkDbChange, 3000, g.lid);
+                                setTimeout(function () { checkDbChange(g.lid); }, 3000); // g.lid can't be passed as third argument when using Bugsnag
                             });
                         });
                     });
                 } else {
-                    setTimeout(checkDbChange, 3000, g.lid);
+                    setTimeout(function () { checkDbChange(g.lid); }, 3000); // g.lid can't be passed as third argument when using Bugsnag
                 }
             };
         };

@@ -21,6 +21,7 @@ move manual to wordpress
     negotiate
       factor out negotiateButton code from freeAgents and negotiationList and player page (if possible)
       some heuristic to see if player is a negotiable
+      show mood too?
     draft, fantasy draft
       if prospect, add "draft" button?
       if so, factor out from draft page and add on player page
@@ -122,6 +123,7 @@ trade improvements
         is there a better function than 4 * PER to map between PER and ovr? plot.
   teams should be more cautious to take on salary before/during free agency, since they could just use their cap space to sign free agents http://www.reddit.com/r/BasketballGM/comments/1v82ci/put_cap_space_on_the_trading_block/ceqdfgj
   AI should understand contract length
+  rebuilding AI teams should leave cap space open
 team switching after being fired
   intro message from new owner, like a new league?
   rename g.gameOver
@@ -217,6 +219,7 @@ reorganize top menu
 not all ratings should deteriorate equally with age (e.g. 3 point shooting)
 http://code.google.com/p/htmlcompressor/ or something similar
 in playoffs, replace Week/Month in Play menu with Round http://www.reddit.com/r/BasketballGM/comments/1w55sb/suggestionplayoffs_simulate_by_round_instead_of/
+hardcode that you never get "refuses to negotiate" if you just won the title
 
 LOW PRIORITY
 ------------

@@ -2,7 +2,7 @@
  * @name views.watchList
  * @namespace List of players to watch.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (g, ui, player, $, ko, components, bbgmView, helpers) {
+define(["globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (g, ui, freeAgents, player, $, ko, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -37,7 +37,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "views/com
 
             // Can't index on a boolean in IndexedDB, so loop through them all
             g.dbl.transaction("players").objectStore("players").openCursor().onsuccess = function (event) {
-                var cursor, p, players;
+                var cursor, i, p, players;
 
                 cursor = event.target.result;
                 if (cursor) {
@@ -48,7 +48,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "views/com
                     cursor.continue();
                 } else {
                     players = player.filter(playersUnfiltered, {
-                        attrs: ["pid", "name", "pos", "age", "injury", "tid", "abbrev", "watch", "contract", "draft"],
+                        attrs: ["pid", "name", "pos", "age", "injury", "tid", "abbrev", "watch", "contract", "freeAgentMood", "draft"],
                         ratings: ["ovr", "pot", "skills"],
                         stats: ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"],
                         season: g.season,
@@ -61,6 +61,13 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "views/com
                         showRetired: true,
                         oldStats: true
                     });
+
+                    // Add mood to free agent contracts
+                    for (i = 0; i < players.length; i++) {
+                        if (players[i].tid === g.PLAYER.FREE_AGENT) {
+                            players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
+                        }
+                    }
 
                     deferred.resolve({
                         players: players,

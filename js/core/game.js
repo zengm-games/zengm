@@ -82,18 +82,6 @@ if (playerStats === undefined) {
                         text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> was injured! (' + player_.injury.type + ', out for ' + player_.injury.gamesRemaining + ' games)'
                     });
                 }
-            } else if (player_.injury.gamesRemaining > 0) {
-                player_.injury.gamesRemaining -= 1;
-            }
-            // Is it already over?
-            if (player_.injury.type !== "Healthy" && player_.injury.gamesRemaining <= 0) {
-                player_.injury = {type: "Healthy", gamesRemaining: 0};
-                if (that.team[t].id === g.userTid) {
-                    eventLog.add(tx, {
-                        type: "healed",
-                        text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> has recovered from his injury.'
-                    });
-                }
             }
 
             cursor.update(player_);
@@ -673,6 +661,39 @@ if (playerStats === undefined) {
             };
 
             cbSaveResult(results.length - 1);
+
+            // Injury countdown
+            tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
+                var changed, cursor, p;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+
+                    changed = false;
+                    if (p.injury.gamesRemaining > 0) {
+                        p.injury.gamesRemaining -= 1;
+                        changed = true;
+                    }
+                    // Is it already over?
+                    if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
+                        p.injury = {type: "Healthy", gamesRemaining: 0};
+                        if (p.tid === g.userTid) {
+                            eventLog.add(tx, {
+                                type: "healed",
+                                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.'
+                            });
+                        }
+                        changed = true;
+                    }
+
+                    if (changed) {
+                        cursor.update(p);
+                    }
+
+                    cursor.continue();
+                }
+            }
 
             tx.oncomplete = function () {
                 var i, raw, url;

@@ -94,7 +94,6 @@ notification system
 NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
 Team name shows up as BOLD or is highlighted in some other way in all League lists (playoffs, standings)
   wrap abbrev in function before display
-player.injury.gamesRemaining should go by day http://www.reddit.com/r/BasketballGM/comments/1w55sb/suggestionplayoffs_simulate_by_round_instead_of/
 
 BIG NEW FEATURES
 ----------------
@@ -600,6 +599,7 @@ roster
   check release, buy out, trade for
   flatten a bit
   vars.ptModifiers does not need to be observable
+  for some reason, vars.players.injury stuff isnt' observable so days remaining injured doesn't update in a timely manner. very bizarre
 dataTables/grid knockout
   examples
     https://github.com/CogShift/Knockout.Extensions

@@ -656,44 +656,44 @@ if (playerStats === undefined) {
 
                         // Update ranks
                         finances.updateRanks(tx, ["expenses", "revenues"]);
+
+                        // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
+                        tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
+                            var changed, cursor, p;
+
+                            cursor = event.target.result;
+                            if (cursor) {
+                                p = cursor.value;
+
+                                changed = false;
+                                if (p.injury.gamesRemaining > 0) {
+                                    p.injury.gamesRemaining -= 1;
+                                    changed = true;
+                                }
+                                // Is it already over?
+                                if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
+                                    p.injury = {type: "Healthy", gamesRemaining: 0};
+                                    if (p.tid === g.userTid) {
+                                        eventLog.add(tx, {
+                                            type: "healed",
+                                            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.'
+                                        });
+                                    }
+                                    changed = true;
+                                }
+
+                                if (changed) {
+                                    cursor.update(p);
+                                }
+
+                                cursor.continue();
+                            }
+                        };
                     }
                 });
             };
 
             cbSaveResult(results.length - 1);
-
-            // Injury countdown
-            tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
-                var changed, cursor, p;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-
-                    changed = false;
-                    if (p.injury.gamesRemaining > 0) {
-                        p.injury.gamesRemaining -= 1;
-                        changed = true;
-                    }
-                    // Is it already over?
-                    if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
-                        p.injury = {type: "Healthy", gamesRemaining: 0};
-                        if (p.tid === g.userTid) {
-                            eventLog.add(tx, {
-                                type: "healed",
-                                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.'
-                            });
-                        }
-                        changed = true;
-                    }
-
-                    if (changed) {
-                        cursor.update(p);
-                    }
-
-                    cursor.continue();
-                }
-            }
 
             tx.oncomplete = function () {
                 var i, raw, url;

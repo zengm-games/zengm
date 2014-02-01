@@ -55,6 +55,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2014-01-21",
         msg: "By clicking the flag icon next to players' names, you can add them to the Watch List (accessible from Players > Watch List) to keep an eye on them."
+    }, {
+        date: "2014-01-30",
+        msg: "New Create A Player feature, under the Tools menu."
     }];
 
     function check() {

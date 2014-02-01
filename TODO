@@ -3,8 +3,6 @@ DB CHANGES SINCE 3.2.0
 
 CURRENT
 -------
-create a player
-  changes
 edit/delete player
   share code with create a player
   do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr

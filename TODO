@@ -1,8 +1,42 @@
-DB CHANGES SINCE 3.2.0
+DB CHANGES SINCE 3.3.0
 ----------------------
+
+TEAM.VALUECHANGE REVAMP
+-----------------------
+Transaction value is multidimensional.
+  How much this helps the team now (current talent)
+  How much this helps the team in the future (youth, future draft picks, cap space)
+Weight these aspects differently for rebuilding and contending teams.
+Estimate if a player is overpaid/underpaid by calculating what his contract would be if he was a free agent. Then maybe modulate value by something like:
+    value * (amt_actual / amt_worth) ^ 2
+... but that still puts every contract as a positive. Need some way to allow it to go negative. Possibly: the default comparison isn't 0, it's some low number.
+For "youth", add fudge factor for rebuilding team to make them value young players much more than contending teams
+  http://www.reddit.com/r/BasketballGM/comments/1lkv5m/utah_jugglers/
+  http://www.reddit.com/r/BasketballGM/comments/1vzx0e/ai_undervalues_rookies_just_out_of_the_draft/
+Ignore "fit" (skills, individual ratings) for now
+After season ends, don't allow trading players who will be free agents
+Draft pick valuing
+  http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3
+  http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q
+  http://www.reddit.com/r/BasketballGM/comments/1j4evq/new_version_311_uploaded/cbbbc0p?context=3
+  http://www.reddit.com/r/BasketballGM/comments/1jzel1/very_helpful_hint_regarding_tanking_and_draft/
+  Need a better way to project the value
+  Projection should get a lot more confident for the current season as it progresses
+  Ideally, take into account the strength of the future draft class too
+What to do with expiring contracts? Or contract length in general. Maybe incorporate into the value/amount formula somehow.
+Get valueChange for signing best possible free agent, and use that to compare against trade, not 0
+Shouldn't be able to immediately trade away players you just acquired
+Test with trading nothing for bad contracts, and trading bad contracts for nothing
+Key goals:
+  Better valuing of draft picks
+  Better understanding what good/bad contracts are
+  Rebuilding teams tend to keep cap space open
+  Teams are more reluctant to trade if they have cap space and free agents are available
+  Fixed some loopholes, like getting excessive value for expiring contracts, and signing top free agents only to immediately trade them and repeat
 
 CURRENT
 -------
+remove feedback tab, merge content into about page
 edit/delete player
   share code with create a player
   do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
@@ -108,16 +142,6 @@ trade improvements
   trading block should show record, strategy, and conf rank of teams
   trades between AI teams
     call team.checkRosterSizes after this if it's in between days
-  trade deadline
-    if games remaining in schedule passes a threshold, initiate phase change
-    show countdown on trade page
-  should be harder to trade bad contracts for nothing
-    similarly, should be easier to trade nothing for bad contracts
-  too easy to trade for young prospects with no stats http://www.reddit.com/r/BasketballGM/comments/1lkv5m/utah_jugglers/ http://www.reddit.com/r/BasketballGM/comments/1vzx0e/ai_undervalues_rookies_just_out_of_the_draft/
-    options:
-      1. add fudge factor to make teams less willing to trade away young players without much game experience
-      2. just increase the value for ovr in player.value (try this now)
-        is there a better function than 4 * PER to map between PER and ovr? plot.
   teams should be more cautious to take on salary before/during free agency, since they could just use their cap space to sign free agents http://www.reddit.com/r/BasketballGM/comments/1v82ci/put_cap_space_on_the_trading_block/ceqdfgj
   AI should understand contract length
   rebuilding AI teams should leave cap space open
@@ -200,9 +224,6 @@ make sure the changes alert and the "refuses to negotiate" alert both look good
   link to player in "refuses to negotiate" alert
 replace random.gauss with random.realGauss
 current season shouldn't show in league history page dropdown
-team.valueChange
-  contending teams shouldn't always see every player as a positive value. needs to be some balanced formula where a bad contract is a negative.
-AI valuation of draft picks http://www.reddit.com/r/BasketballGM/comments/1v233m/teams_value_1st_rounders_too_much/
 add function to delete old box scores (older than last year) to debug menu, to save space
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 document things that affect player mood
@@ -299,16 +320,13 @@ trades
   "undo" button for accidental trades
     transaction log first. put "Undo" button after message from other GM only right after a trade finishes. make sure it doesn't show up at other time
       only allow undo if dbChange hasn't changed since the transaction was logged
-  draft pick value needs to be reassessed: http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3 http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q http://www.reddit.com/r/BasketballGM/comments/1j4evq/new_version_311_uploaded/cbbbc0p?context=3
   "When signing free agents, if you offer then a contract 2 years longer/shorter than the one they want, they'll counter offer one with 1 more/less year. If you offer the same amount of money you previously offered, and change the year to what they want, they'll automatically offer the lowest $ for that amount of years."
-  shouldn't be able to immediately trade away players you just acquired
 transaction log
   put index on pids involved, so then events involving a player can be shown on player page
 more detailed player moods - http://www.reddit.com/r/BasketballGM/comments/1k4val/players_refusing_to_sign_bug/cbln1oo?context=3
   player personality, team chemistry
   http://www.reddit.com/r/BasketballGM/comments/1tkw3e/idea_player_traits/
 strategy shouldn't be set randomly at start of new league
-AI teams need to get smarter about projecting the value of future draft picks: http://www.reddit.com/r/BasketballGM/comments/1jzel1/very_helpful_hint_regarding_tanking_and_draft/
 dashboard info should be on a widget accessible from any screen
 some UI indicating how players developed over the offseason
   integrated into roster, or separate page?
@@ -331,7 +349,6 @@ you should be able to drop below 5 players (and above 15) but only temporarily (
 fake feet/inches heights should be taller
 draft
   randomness in picks should factor in relative ratings http://www.reddit.com/r/BasketballGM/comments/1l1713/the_draft_still_needs_some_work_it_seems_my/cbutw7v?context=1
-  there should be some indication about the quality of upcoming drafts, which would influence how players/AI value draft picks
   somehow allow uploading of custom draft classes
 trades between AI teams
   each day, pick two random teams. if a trade can be found that both teams like, do it
@@ -345,9 +362,6 @@ IE10 support
   text in dashboard is messed up
 core.team.valueChange should be used to pick which free agents to sign in core.freeAgents.autoSign, but that would be a bitch beacuse of how transactions are set up
   also for resigning players in core.season
-revamp core.team.valueChange
-  simpler formulas for rebuilding/contending team values
-  use for signing free agents? would make rebuilding more meaningful
 trades
   cash
     estimate value of cash - different for different teams? depending on cash, net profit recently, and market size

@@ -569,7 +569,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
     }
 
     function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, cb) {
-        var add, getPicks, getPlayers, i, pop, remove, roster, strategy, tx;
+        var add, getPicks, getPlayers, pop, remove, roster, strategy, tx;
 
         // UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
         if (dpidsRemove.length > 2) {
@@ -584,21 +584,6 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
         tx = g.dbl.transaction(["draftPicks", "players", "teams"]);
 
-        // Get team strategy and population, for future use
-        filter({
-            attrs: ["strategy"],
-            seasonAttrs: ["pop"],
-            season: g.season,
-            tid: tid,
-            ot: tx
-        }, function (t) {
-            strategy = t.strategy;
-            pop = t.pop;
-            if (pop > 20) {
-                pop = 20;
-            }
-        });
-
         // Get players
         getPlayers = function () {
             var i;
@@ -612,16 +597,17 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
                     if (pidsRemove.indexOf(p.pid) < 0) {
                         roster.push({
-                            value: player.value(p),
+                            value: player.value(p, {withContract: true}),
                             skills: _.last(p.ratings).skills,
                             contract: {
                                 amount: p.contract.amount / 1000
                             },
+                            worth: player.genContract(p, false, false),
                             age: g.season - p.born.year
                         });
                     } else {
                         remove.push({
-                            value: player.value(p),
+                            value: player.value(p, {withContract: true}),
                             skills: _.last(p.ratings).skills,
                             contract: {
                                 amount: p.contract.amount / 1000
@@ -641,10 +627,10 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     p = event.target.result;
 
                     add.push({
-                        value: player.value(p),
+                        value: player.value(p, {withContract: true}),
                         skills: _.last(p.ratings).skills,
                         contract: {
-                            amount: p.contract.amount / 1000,
+                            amount: p.contract.amount / 1000
                         },
                         age: g.season - p.born.year
                     });
@@ -760,11 +746,28 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             }
         };
 
-        getPlayers();
-        getPicks();
+
+        // Get team strategy and population, for future use
+        filter({
+            attrs: ["strategy"],
+            seasonAttrs: ["pop"],
+            season: g.season,
+            tid: tid,
+            ot: tx
+        }, function (t) {
+            strategy = t.strategy;
+            pop = t.pop;
+            if (pop > 20) {
+                pop = 20;
+            }
+
+            getPlayers();
+            getPicks();
+        });
 
         tx.oncomplete = function () {
             var calcDv, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, skillsNeeded;
+console.log(remove);
 
             // Handle situations where the team goes over the roster size limit
             if (roster.length + remove.length > 15) {

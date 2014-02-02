@@ -9,7 +9,7 @@ Transaction value is multidimensional.
 Weight these aspects differently for rebuilding and contending teams.
 Estimate if a player is overpaid/underpaid by calculating what his contract would be if he was a free agent. Then maybe modulate value by something like:
     value * (amt_actual / amt_worth) ^ 2
-... but that still puts every contract as a positive. Need some way to allow it to go negative. Possibly: the default comparison isn't 0, it's some low number.
+... but that still puts every contract as a positive. Need some way to allow it to go negative. Possibly: the default comparison isn't 0, it's some low number. leaguewide average player value?
 For "youth", add fudge factor for rebuilding team to make them value young players much more than contending teams
   http://www.reddit.com/r/BasketballGM/comments/1lkv5m/utah_jugglers/
   http://www.reddit.com/r/BasketballGM/comments/1vzx0e/ai_undervalues_rookies_just_out_of_the_draft/
@@ -40,11 +40,6 @@ remove feedback tab, merge content into about page
 edit/delete player
   share code with create a player
   do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
-webfaction is slow
-  tried disabling toptop, ats forums. static avatic. get any better?
-  https://github.com/mozilla/phpbb3-static
-  ask for help
-  https://www.digitalocean.com/pricing
 move manual to wordpress
   " < Basketball GM Manual" in title
   search for any manual links

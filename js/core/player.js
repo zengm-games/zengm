@@ -122,12 +122,13 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @param {boolean} randomizeExp If true, then it is assumed that some random amount of years has elapsed since the contract was signed, thus decreasing the expiration date. This is used when generating players in a new league.
      * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
      */
-    function genContract(p, randomizeExp) {
+    function genContract(p, randomizeExp, randomizeAmount) {
         var amount, expiration, maxAmount, minAmount, potentialDifference, ratings, years;
 
         ratings = _.last(p.ratings);
 
         randomizeExp = randomizeExp !== undefined ? randomizeExp : false;
+        randomizeAmount = randomizeAmount !== undefined ? randomizeAmount : true;
 
         // Limits on yearly contract amount, in $1000's
         minAmount = 500;
@@ -137,7 +138,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         //amount = ((3 * value(p)) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
         //amount = amount * (maxAmount - minAmount) + minAmount;
         amount = ((value(p) - 1) / 100 - 0.45) * 3.5 * (maxAmount - minAmount) + minAmount;
-        amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
+        if (randomizeAmount) {
+            amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
+        }
 
         // Expiration
         // Players with high potentials want short contracts
@@ -1401,16 +1404,19 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      *         ordering). Default false.
      *     age: If set, override the player's real age. This is only useful for draft prospects,
      *         because you can use the age they will be at the draft.
+     *     withContract: When true, factor in contract value relative to what the player would get
+     *         as a free agent. Default false.
      * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential
      *     ratings.
      */
     function value(p, options) {
-        var age, current, i, potential, pr, ps, ps1, ps2;
+        var age, current, i, potential, pr, ps, ps1, ps2, worth;
 
         options = options !== undefined ? options : {};
         options.noPot = options.noPot !== undefined ? options.noPot : false;
         options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
         options.age = options.age !== undefined ? options.age : null;
+        options.withContract = options.withContract !== undefined ? options.withContract : false;
 
         // Otherwise the input player object can be modified when fuzzing occurs (or maybe elsewhere)
         p = helpers.deepCopy(p);
@@ -1458,13 +1464,20 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             current = 0.1 * pr.ovr + 0.9 * current; // Include some part of the ratings
         }
 
+        // 2. Potential
+        potential = pr.pot;
+
+        // Normalize for contract, if applicable
+        if (options.withContract && p.tid >= 0) {
+            worth = genContract(p, false, false);
+            current *= Math.pow(worth.amount / p.contract.amount, 1/4);
+            potential *= Math.pow(worth.amount / p.contract.amount, 1/4);
+        }
+
         // Short circuit if we don't care about potential
         if (options.noPot) {
             return current;
         }
-
-        // 2. Potential
-        potential = pr.pot;
 
         // If performance is already exceeding predicted potential, just use that
         if (current >= potential && age < 29) {

@@ -35,6 +35,7 @@ Filter out players from tradeable list by making checkbox inactive (make sure to
 Key goals:
   Better valuing of draft picks
   Better understanding what good/bad contracts are
+  Fixing loopholes
 Loopholes fixed:
   You used to be able to trade away expired contracts after the season ended but before re-signing players. That is no longer allowed.
   You used to be able to acquire a player and then immediately trade him, which could be exploited by repeatedly signing free agents and trading them away for draft picks. This has been fixed by requiring 15 games to elapse before you can trade a player.

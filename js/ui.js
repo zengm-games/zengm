@@ -53,6 +53,9 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
 
             // Reddit
             document.getElementById("subreddit-btn").innerHTML = '<iframe src="http://jdscheff.github.io/subreddit-buttons/subreddit-btn.html?name=BasketballGM" allowtransparency="true" frameborder="0" scrolling="0" width="150" height="20"></iframe>';
+
+            // Chrome Web Store
+            document.getElementById("chrome-web-store").innerHTML = '<a href="https://chrome.google.com/webstore/detail/basketball-gm/mjkkihncmpbegfapfieiamdkgliooecl/details"><img src="/img/ChromeWebStore_Badge_v2_206x58.png" height="58" width="206" alt="Available in the Chrome Web Store"></a>';
         }));
 
         ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));

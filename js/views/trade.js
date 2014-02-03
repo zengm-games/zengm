@@ -198,6 +198,12 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                     showRookies: true,
                     fuzz: true
                 });
+
+                // If the season is over, can't trade players whose contracts are expired
+                if (g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
+                    userRoster = _.filter(userRoster, function (p) { return p.contract.exp > g.season; });
+                }
+
                 for (i = 0; i < userRoster.length; i++) {
                     if (teams[0].pids.indexOf(userRoster[i].pid) >= 0) {
                         userRoster[i].selected = true;
@@ -207,7 +213,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                 }
 
                 playerStore.index("tid").getAll(teams[1].tid).onsuccess = function (event) {
-                    var draftPickStore, i, otherRoster;
+                    var draftPickStore, i, otherRoster, showResigningMsg;
 
                     otherRoster = player.filter(event.target.result, {
                         attrs: attrs,
@@ -219,6 +225,15 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                         showRookies: true,
                         fuzz: true
                     });
+
+                    // If the season is over, can't trade players whose contracts are expired
+                    if (g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
+                        otherRoster = _.filter(otherRoster, function (p) { return p.contract.exp > g.season; });
+                        showResigningMsg = true;
+                    } else {
+                        showResigningMsg = false;
+                    }
+
                     for (i = 0; i < otherRoster.length; i++) {
                         if (teams[1].pids.indexOf(otherRoster[i].pid) >= 0) {
                             otherRoster[i].selected = true;
@@ -261,7 +276,8 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                                     otherPids: teams[1].pids,
                                     otherRoster: otherRoster,
                                     message: inputs.message,
-                                    strategy: strategy
+                                    strategy: strategy,
+                                    showResigningMsg: showResigningMsg
                                 };
 
                                 updateSummary(vars, function (vars) {

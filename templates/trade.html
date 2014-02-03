@@ -1,5 +1,7 @@
 <h1>Trade <span data-bind="newWindow: []"></span></h1>
 
+<p data-bind="if: showResigningMsg">You can't trade players whose contracts expired this season, but their old contracts still count against team salary caps until they are either re-signed or become free agents.</p>
+
 <div class="row">
   <div class="col-md-9">
     <form id="rosters" class="form-inline">

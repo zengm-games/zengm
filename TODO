@@ -13,7 +13,6 @@ Estimate if a player is overpaid/underpaid by calculating what his contract woul
 For "youth", add fudge factor for rebuilding team to make them value young players much more than contending teams
   http://www.reddit.com/r/BasketballGM/comments/1lkv5m/utah_jugglers/
   http://www.reddit.com/r/BasketballGM/comments/1vzx0e/ai_undervalues_rookies_just_out_of_the_draft/
-After season ends, don't allow trading players who will be free agents
 Draft pick valuing
   http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q
@@ -35,6 +34,7 @@ Key goals:
   Rebuilding teams tend to keep cap space open
   Teams are more reluctant to trade if they have cap space and free agents are available
   Fixed some loopholes, like getting excessive value for expiring contracts, and signing top free agents only to immediately trade them and repeat
+EXPLOIT that might be tricky to solve: in the "resigning players" phase, your free agents should still count towards your cap. Otherwise, you can trade to take on salary and then sign your players over the cap
 
 CURRENT
 -------

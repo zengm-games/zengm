@@ -1410,7 +1410,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      *     ratings.
      */
     function value(p, options) {
-        var age, current, i, potential, pr, ps, ps1, ps2, worth;
+        var age, current, i, potential, pr, ps, ps1, ps2, worth, worthFactor;
 
         options = options !== undefined ? options : {};
         options.noPot = options.noPot !== undefined ? options.noPot : false;
@@ -1470,8 +1470,14 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         // Normalize for contract, if applicable
         if (options.withContract && p.tid >= 0) {
             worth = genContract(p, false, false);
-            current *= Math.pow(worth.amount / p.contract.amount, 1/4);
-            potential *= Math.pow(worth.amount / p.contract.amount, 1/4);
+            /*if (worth.amount > p.contract.amount) {
+                worthFactor = Math.pow(worth.amount / p.contract.amount, 1 / 16);
+            } else {
+                worthFactor = Math.pow(worth.amount / p.contract.amount, 2);
+            }*/
+            worthFactor = 0.5 * (worth.amount - p.contract.amount) / 1000;
+            current += worthFactor;
+            potential += worthFactor;
         }
 
         // Short circuit if we don't care about potential

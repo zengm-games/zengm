@@ -13,7 +13,6 @@ Estimate if a player is overpaid/underpaid by calculating what his contract woul
 For "youth", add fudge factor for rebuilding team to make them value young players much more than contending teams
   http://www.reddit.com/r/BasketballGM/comments/1lkv5m/utah_jugglers/
   http://www.reddit.com/r/BasketballGM/comments/1vzx0e/ai_undervalues_rookies_just_out_of_the_draft/
-Ignore "fit" (skills, individual ratings) for now? Or leave as is?
 After season ends, don't allow trading players who will be free agents
 Draft pick valuing
   http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3
@@ -27,6 +26,9 @@ What to do with expiring contracts? Or contract length in general. Maybe incorpo
 Get valueChange for signing best possible free agent, and use that to compare against trade, not 0
 Shouldn't be able to immediately trade away players you just acquired
 Test with trading nothing for bad contracts, and trading bad contracts for nothing
+  tune "player.contract.amount > 6"
+"What would make this work?" functions should know about contending/rebuilding. Contending teams should be more eager to offer up young/cheap players, rebuilding teams should be more eager to offer up old/expensive players
+Auto sign free agents needs to understand rebuilding teams don't want to sign huge contracts
 Key goals:
   Better valuing of draft picks
   Better understanding what good/bad contracts are

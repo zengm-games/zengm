@@ -767,7 +767,6 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
         tx.oncomplete = function () {
             var calcDv, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, skillsNeeded;
-console.log(remove);
 
             // Handle situations where the team goes over the roster size limit
             if (roster.length + remove.length > 15) {
@@ -817,7 +816,7 @@ console.log(remove);
                 // What are current skills?
                 rosterSkills = [];
                 for (i = 0; i < roster.length; i++) {
-                    if (roster.value >= 45) {
+                    if (roster[i].value >= 45) {
                         rosterSkills.push(roster[i].skills);
                     }
                 }
@@ -832,19 +831,19 @@ console.log(remove);
                         for (j = 0; j < test[i].skills.length; j++) {
                             s = test[i].skills[j];
 
-                            if (rosterSkills[s] <= skillsNeeded[s] - 2) {
+                            if (rosterSkillsCount[s] <= skillsNeeded[s] - 2) {
                                 // Big bonus
                                 test.value *= 1.1;
-                            } else if (rosterSkills[s] <= skillsNeeded[s] - 1) {
+                            } else if (rosterSkillsCount[s] <= skillsNeeded[s] - 1) {
                                 // Medium bonus
                                 test.value *= 1.05;
-                            } else if (rosterSkills[s] <= skillsNeeded[s]) {
+                            } else if (rosterSkillsCount[s] <= skillsNeeded[s]) {
                                 // Little bonus
                                 test.value *= 1.025;
                             }
 
                             // Account for redundancy in test
-                            rosterSkills[s] += 1;
+                            rosterSkillsCount[s] += 1;
                         }
                     }
                 }
@@ -879,14 +878,32 @@ console.log(remove);
                         if (player.draftPick) {
                             dv *= 2;
                         } else {
-                            if (player.age < 25 || player.contract.amount < 3) {
+                            if (player.age <= 19) {
+                                dv *= 1.5;
+                            } else if (player.age === 20) {
+                                dv *= 1.4;
+                            } else if (player.age === 21) {
+                                dv *= 1.3;
+                            } else if (player.age === 22) {
                                 dv *= 1.2;
+                            } else if (player.age === 23) {
+                                dv *= 1.1;
+                            } else if (player.age === 27) {
+                                dv *= 0.9;
+                            } else if (player.age === 28) {
+                                dv *= 0.8;
+                            } else if (player.age >= 29) {
+                                dv *= 0.7;
                             }
+
+                            // player.value already includes some normalization for contract amount, but let's do some more for rebuilding teams.
                             if (player.contract.amount > 6) {
-                                dv -= Math.pow(3, 0.3 * 50) * player.contract.amount * 0.8;
+                                dv -= Math.pow(3, 0.3 * 55) * player.contract.amount * 0.8;
                             }
                         }
                     }
+console.log(player)
+console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
 
                     return memo + dv;
                 }, 0);
@@ -898,6 +915,8 @@ console.log(add);
 console.log(calcDv(remove));
 console.log(remove);*/
             dv = calcDv(add) - calcDv(remove);
+console.log("---");
+console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
 
             // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
             if (add.length > remove.length) {

@@ -11,8 +11,7 @@ Tuning?
   Contract amount formula in player.value
   Exponential formula for player valueChange
   Multipliers for value of youth
-Contending teams still put every contract as a positive. Need some way to allow it to go negative. Possibly: the default comparison isn't 0, it's some low number. leaguewide average player value?
-  this is kind of implemented already for rebuilding teams and players with big contracts, but not contending. it should be. make sure that formula is sensible though
+  Amount to subtract based on contract amount (Math.pow) in team.valueChange
 Draft pick valuing
   http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q
@@ -32,6 +31,8 @@ Filter out players from tradeable list by making checkbox inactive (make sure to
   Shouldn't be able to immediately trade away players you just acquired
     add a counter somewhere. wait 15 games until allowing trade
   Players with expired contract (already implemented by just deleting from list, but do this instead)
+Fix needToDrop stuff
+  Problem now is, contract gets pushed into someone on the roster and it's lost. This is especially obvious if there is only one player in add and his contract is pushed to roster, then the trade is nothing.
 Key goals:
   Better valuing of draft picks
   Better understanding what good/bad contracts are

@@ -768,7 +768,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         tx.oncomplete = function () {
             var calcDv, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, skillsNeeded;
 
-            // Handle situations where the team goes over the roster size limit
+/*            // Handle situations where the team goes over the roster size limit
             if (roster.length + remove.length > 15) {
                 // Already over roster limit, so don't worry unless this trade actually makes it worse
                 needToDrop = (roster.length + add.length) - (roster.length + remove.length);
@@ -796,7 +796,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 }
 
                 needToDrop -= 1;
-            }
+            }*/
 
             // This roughly corresponds with core.gameSim.updateSynergy
             skillsNeeded = {
@@ -901,9 +901,12 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                                 dv -= Math.pow(3, 0.3 * 55) * player.contract.amount * 0.8;
                             }
                         }
+                    } else {
+                        // player.value already includes some normalization for contract amount, but let's do a very little more for contending teams.
+                        if (player.contract.amount > 6) {
+                            dv -= Math.pow(3, 0.3 * 40) * player.contract.amount * 0.8;
+                        }
                     }
-console.log(player)
-console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
 
                     return memo + dv;
                 }, 0);
@@ -915,8 +918,7 @@ console.log(add);
 console.log(calcDv(remove));
 console.log(remove);*/
             dv = calcDv(add) - calcDv(remove);
-console.log("---");
-console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
+//console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
 
             // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
             if (add.length > remove.length) {

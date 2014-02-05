@@ -2,7 +2,7 @@
  * @name views.watchList
  * @namespace List of players to watch.
  */
-define(["globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (g, ui, freeAgents, player, $, ko, components, bbgmView, helpers) {
+define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (db, g, ui, freeAgents, player, $, ko, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -125,6 +125,26 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/kn
         }).extend({throttle: 1});
 
         ui.tableClickableRows($("#watch-list"));
+
+        document.getElementById("clear-watch-list").addEventListener("click", function () {
+            g.dbl.transaction("players", "readwrite").objectStore("players").openCursor().onsuccess = function (event) {
+                var cursor, p;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
+                    if (p.watch) {
+                        p.watch = false;
+                        cursor.update(p);
+                    }
+                    cursor.continue();
+                } else {
+                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        ui.realtimeUpdate(["watchList"]);
+                    });
+                }
+            };
+        });
     }
 
     function uiEvery(updateEvents, vm) {

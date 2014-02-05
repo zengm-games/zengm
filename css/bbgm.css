@@ -266,7 +266,7 @@ select.teams {
   width: 203px
 }
 
-.player-picture {
+.player-picture, .team-picture {
   height: 150px;
   float: left;
   margin-right: 10px;

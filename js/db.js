@@ -538,6 +538,10 @@ console.log(event);
                         key: "teamNamesCache",
                         value: _.pluck(teams, "name")
                     });
+                    tx.objectStore("gameAttributes").put({
+                        key: "logoImgURL",
+                        value: _.pluck(teams, "logoImgURL")
+                    });
                 };
 
                 tx.objectStore("games").openCursor().onsuccess = function (event) {

@@ -172,7 +172,6 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
      */
     function generate(tm) {
         var t;
-
         t = {
             tid: tm.tid,
             cid: tm.cid,
@@ -180,6 +179,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             region: tm.region,
             name: tm.name,
             abbrev: tm.abbrev,
+            logoImgURL: tm.logoImgURL,
             stats: [],
             seasons: [],
             budget: {

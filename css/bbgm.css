@@ -487,6 +487,12 @@ select.teams {
   text-decoration: none;
 }
 
+@media (max-width: 768px) {
+  .new_window {
+    display: none;
+  }
+}
+
 .alert p:last-child {
   margin-bottom: 0;
 }

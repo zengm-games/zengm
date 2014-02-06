@@ -132,6 +132,7 @@ notification system
 NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
 Team name shows up as BOLD or is highlighted in some other way in all League lists (playoffs, standings)
   wrap abbrev in function before display
+gracefully handle disk space errors
 
 BIG NEW FEATURES
 ----------------

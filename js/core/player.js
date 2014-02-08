@@ -1404,8 +1404,6 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      *         ordering). Default false.
      *     age: If set, override the player's real age. This is only useful for draft prospects,
      *         because you can use the age they will be at the draft.
-     *     withContract: When true, factor in contract value relative to what the player would get
-     *         as a free agent. Default false.
      * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential
      *     ratings.
      */
@@ -1464,26 +1462,13 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             current = 0.1 * pr.ovr + 0.9 * current; // Include some part of the ratings
         }
 
-        // 2. Potential
-        potential = pr.pot;
-
-        // Normalize for contract, if applicable
-        if (options.withContract && p.tid >= 0) {
-            worth = genContract(p, false, false);
-            /*if (worth.amount > p.contract.amount) {
-                worthFactor = Math.pow(worth.amount / p.contract.amount, 1 / 16);
-            } else {
-                worthFactor = Math.pow(worth.amount / p.contract.amount, 2);
-            }*/
-            worthFactor = 0.5 * (worth.amount - p.contract.amount) / 1000;
-            current += worthFactor;
-            potential += worthFactor;
-        }
-
         // Short circuit if we don't care about potential
         if (options.noPot) {
             return current;
         }
+
+        // 2. Potential
+        potential = pr.pot;
 
         // If performance is already exceeding predicted potential, just use that
         if (current >= potential && age < 29) {

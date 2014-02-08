@@ -15,7 +15,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
      * @return {Object} Updated team object.
      */
     function addSeasonRow(t) {
-        var key, newSeason, s;
+        var newSeason, s;
 
         s = t.seasons.length - 1; // Most recent ratings
 
@@ -127,8 +127,6 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
      * @return {Object} Updated team object.
      */
     function addStatsRow(t, playoffs) {
-        var key, newStats;
-
         playoffs = playoffs !== undefined ? playoffs : false;
 
         t.stats.push({
@@ -597,7 +595,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
                     if (pidsRemove.indexOf(p.pid) < 0) {
                         roster.push({
-                            value: player.value(p, {withContract: true}),
+                            value: player.value(p),
                             skills: _.last(p.ratings).skills,
                             contract: {
                                 amount: p.contract.amount / 1000
@@ -607,11 +605,12 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         });
                     } else {
                         remove.push({
-                            value: player.value(p, {withContract: true}),
+                            value: player.value(p),
                             skills: _.last(p.ratings).skills,
                             contract: {
                                 amount: p.contract.amount / 1000
                             },
+                            worth: player.genContract(p, false, false),
                             age: g.season - p.born.year
                         });
                     }
@@ -632,6 +631,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         contract: {
                             amount: p.contract.amount / 1000
                         },
+                        worth: player.genContract(p, false, false),
                         age: g.season - p.born.year
                     });
                 };
@@ -716,6 +716,9 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                                 contract: {
                                     amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
                                 },
+                                worth: {
+                                    amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
+                                },
                                 age: 19,
                                 draftPick: true
                             });
@@ -735,6 +738,9 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                                 value: estValues[estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * 5, // Fudge factor: AI teams like their own picks
                                 skills: [],
                                 contract: {
+                                    amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
+                                },
+                                worth: {
                                     amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
                                 },
                                 age: 19,
@@ -863,17 +869,18 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     var dv, factors;
 
                     // If the population of the region is larger, the contract size becomes less important. So factors.contract should increase
-                    factors = {
+/*                    factors = {
                         value: 0.3 * player.value,
                         // This is a straight line from ($0.5, 1.4) to ($20M, 0.1) - higher second coordinate means greater value
                         //contract: (20 - player.contract.amount) / 15 + 0.1
                         // This takes that straight line and roughly rotates it around the middle to make it more horizontal
                         contract: (20 - player.contract.amount) / (15 * Math.sqrt(pop)) + (-0.12 + Math.sqrt(pop) / Math.sqrt(20))
-                    };
+                    };*/
 
-                    dv = Math.pow(3, factors.value) * factors.contract;
 
                     if (strategy === "rebuilding") {
+                        dv = Math.pow(3, 0.3 * (player.value + 0.75 * (player.worth.amount - player.contract.amount) / 1000));
+
                         // Value young/cheap players and draft picks more. Penalize expensive/old players
                         if (player.draftPick) {
                             dv *= 2;
@@ -896,15 +903,16 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                                 dv *= 0.7;
                             }
 
-                            // player.value already includes some normalization for contract amount, but let's do some more for rebuilding teams.
+                            // General aversion to large contracts. Also, this makes it possible for dv to be negative for a player
                             if (player.contract.amount > 6) {
-                                dv -= Math.pow(3, 0.3 * 55) * player.contract.amount * 0.8;
+                                dv -= Math.pow(3, 0.3 * 55) * player.contract.amount;
                             }
                         }
                     } else {
-                        // player.value already includes some normalization for contract amount, but let's do a very little more for contending teams.
+                        dv = Math.pow(3, 0.3 * (player.value + 0.5 * (player.worth.amount - player.contract.amount) / 1000));
+
                         if (player.contract.amount > 6) {
-                            dv -= Math.pow(3, 0.3 * 40) * player.contract.amount * 0.8;
+                            dv -= Math.pow(3, 0.3 * 40) * player.contract.amount;
                         }
                     }
 

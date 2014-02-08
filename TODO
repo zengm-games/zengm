@@ -8,10 +8,13 @@ Transaction value is multidimensional.
   How much this helps the team in the future (youth, future draft picks, cap space)
   Weight these aspects differently for rebuilding and contending teams.
 Tuning?
-  Contract amount formula in player.value
+  Amount to modulate based on contract amount (Math.pow) in team.valueChange
   Exponential formula for player valueChange
   Multipliers for value of youth
-  Amount to subtract based on contract amount (Math.pow) in team.valueChange
+CURRENT IDEA
+  Add up the value of all the players in the trade, factoring in diminishing returns (five nickels for a quarter)
+  Divide by contract amoutn (how to factor in length? maybe artificially inflate/deflate the amoutn based on if it's a good contract or not and how long it is)
+  Compare to some baseline value
 Draft pick valuing
   http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q

@@ -698,14 +698,6 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     sorted = wps.slice().sort(function (a, b) { return a - b; });
                     estPicks = wps.slice().map(function (v) { return sorted.indexOf(v) + 1; }); // For each team, what is their estimated draft position?
 
-                    // Not needed because of rCurrent override above
-                    /*// Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
-                    if (gp < 10 && t.seasons.length == 1) {
-                        for (i = 0; i < estPicks.length; i++) {
-                            estPicks[i] = 5;
-                        }
-                    }*/
-
                     rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500]; // Keep in sync with core.draft
                     estValues = [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37]; // This is basically arbitrary
 
@@ -913,13 +905,13 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                                 dv -= Math.pow(3, 0.3 * 55) * player.contract.amount;
                             }*/
                         }
-                    } else {
-                        /*dv = Math.pow(3, 0.3 * (player.value + 0.5 * (player.worth.amount - player.contract.amount) / 1000));
+                    }/* else {
+                        dv = Math.pow(3, 0.3 * (player.value + 0.5 * (player.worth.amount - player.contract.amount) / 1000));
 
                         if (player.contract.amount > 6) {
                             dv -= Math.pow(3, 0.3 * 40) * player.contract.amount;
-                        }*/
-                    }
+                        }
+                    }*/
 
                     // Anything below 40 is pretty worthless - SHOULD THIS BE HERE?
                     value -= 40;
@@ -945,11 +937,11 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 return sum;
             };
 
-console.log('---');
+            dv = (sumValues(add) - sumContracts(add)) - (sumValues(remove) -  sumContracts(remove));
+/*console.log('---');
 console.log([sumValues(add), sumContracts(add)]);
 console.log([sumValues(remove), sumContracts(remove)]);
-            dv = (sumValues(add) - sumContracts(add)) - (sumValues(remove) -  sumContracts(remove));
-console.log(dv);
+console.log(dv);*/
 
             /*// Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
             if (add.length > remove.length) {

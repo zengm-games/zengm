@@ -459,7 +459,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                     if (cursor) {
                         p = cursor.value;
 
-                        if (teams[0].pids.indexOf(p.pid) < 0) {
+                        if (teams[0].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                             assets.push({
                                 type: "player",
                                 pid: p.pid,
@@ -480,7 +480,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                 if (cursor) {
                     p = cursor.value;
 
-                    if (teams[1].pids.indexOf(p.pid) < 0) {
+                    if (teams[1].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                         assets.push({
                             type: "player",
                             pid: p.pid,
@@ -717,6 +717,18 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
         }
 
         return players;
+    }
+
+    /**
+     * Is a player untradable.
+     *
+     * Just calls filterUntradable and discards everything but the boolean.
+     * 
+     * @param {<Object>} players Player object or partial player objects
+     * @return {boolean} Processed input
+     */
+    function isUntradable(player) {
+        return filterUntradable([player])[0].untradable;
     }
 
     return {

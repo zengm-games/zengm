@@ -27,21 +27,23 @@ Draft pick valuing
   http://www.reddit.com/r/BasketballGM/comments/1jzel1/very_helpful_hint_regarding_tanking_and_draft/
   Need a better way to project the value
   Projection should get a lot more confident for the current season as it progresses
+    account for this in the "fudge factor" - have it decay as the season progresses
   Ideally, take into account the strength of the future draft class too
+    can look directly at the draft classes! for further in the future, estimate an average from data, rather than the ad hoc stuff currently used to value picks
+      still should "overvalue" them some, especially lottery picks, since they could turn into something special
 What to do with expiring contracts? Or contract length in general. Maybe incorporate into the value/amount formula somehow.
   this mainly matters for undervalued or overvalued contracts. makes them better/worse.
 Get valueChange for signing best possible free agent, and use that to compare against trade, not 0
   This should only apply for trades that are increasing payroll, as one that makes it stay the same or go down is not impacted by alternative options for using cap space
+    Should be a little more sophisticated than just "is payroll increasing by >= $1"
+  check for this in core.trade, do another call to team.valueChange to see how adding a FA compares to the trade
 Test with trading nothing for bad contracts, and trading bad contracts for nothing. Both contending and rebuilding
 "What would make this work?" functions should know about contending/rebuilding. Contending teams should be more eager to offer up young/cheap players, rebuilding teams should be more eager to offer up old/expensive players
   basically, they should view the trade from the other team's perspective, not just their own
 Filter out players from tradeable list by trade.filterUntradable
   Shouldn't be able to immediately trade away players you just acquired
     add a counter somewhere. wait 15 games until allowing trade
-  Players with expired contract (already implemented by just deleting from list, but do this instead)
-  need to do a check to see if player is in trade (quick fix: empty current trade)
-  need to do it in trading block too
-  need to do it in "trade for" button too
+  need to do a check to see if player is in trade already when he becomes untradable (quick fix: empty current trade)
 Fix needToDrop stuff
   Problem now is, contract gets pushed into someone on the roster and it's lost. This is especially obvious if there is only one player in add and his contract is pushed to roster, then the trade is nothing.
 Can I provide better feedback about trade? Like if it's close or not?
@@ -511,6 +513,7 @@ preview strength of the draft, free agent class
 FUTURE
 ------
 
+If you are simulating through the whole season and execute a trade while simulating, it will continue simulating even if you are over the roster limit. http://www.reddit.com/r/BasketballGM/comments/1xch01/trades_after_season/cfamo73
 players from different countries/nationalities
   how to pick names?
 IE10 support

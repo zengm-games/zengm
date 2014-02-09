@@ -198,11 +198,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                     showRookies: true,
                     fuzz: true
                 });
-
-                // If the season is over, can't trade players whose contracts are expired
-                if (g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
-                    userRoster = _.filter(userRoster, function (p) { return p.contract.exp > g.season; });
-                }
+                userRoster = trade.filterUntradable(userRoster);
 
                 for (i = 0; i < userRoster.length; i++) {
                     if (teams[0].pids.indexOf(userRoster[i].pid) >= 0) {
@@ -225,10 +221,10 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                         showRookies: true,
                         fuzz: true
                     });
+                    otherRoster = trade.filterUntradable(otherRoster);
 
                     // If the season is over, can't trade players whose contracts are expired
                     if (g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
-                        otherRoster = _.filter(otherRoster, function (p) { return p.contract.exp > g.season; });
                         showResigningMsg = true;
                     } else {
                         showResigningMsg = false;
@@ -395,12 +391,18 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             var playersAndPicks;
 
             playersAndPicks = _.map(roster, function (p) {
-                var selected;
+                var checkbox, disabled, selected;
 
                 if (p.selected) {
                     selected = ' checked = "checked"';
                 }
-                return ['<input name="' + userOrOther + '-pids" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                if (p.untradable) {
+                    disabled = ' disabled = "disabled"';
+                }
+
+                checkbox = '<input name="' + userOrOther + '-pids" type="checkbox" value="' + p.pid + '" title="' + p.untradableMsg + '"' + selected + disabled + '>';
+
+                return [checkbox, helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
             });
 
             return playersAndPicks;

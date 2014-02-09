@@ -587,11 +587,12 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             var i;
 
             tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
-                var cursor, p;
+                var cursor, p, worth;
 
                 cursor = event.target.result;
                 if (cursor) {
                     p = cursor.value;
+                    worth = player.genContract(p, false, false);
 
                     if (pidsRemove.indexOf(p.pid) < 0) {
                         roster.push({
@@ -600,7 +601,9 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                             contract: {
                                 amount: p.contract.amount / 1000
                             },
-                            worth: player.genContract(p, false, false),
+                            worth: {
+                                amount: worth.amount / 1000
+                            },
                             age: g.season - p.born.year
                         });
                     } else {
@@ -610,7 +613,9 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                             contract: {
                                 amount: p.contract.amount / 1000
                             },
-                            worth: player.genContract(p, false, false),
+                            worth: {
+                                amount: worth.amount / 1000
+                            },
                             age: g.season - p.born.year
                         });
                     }
@@ -621,9 +626,10 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
             for (i = 0; i < pidsAdd.length; i++) {
                 tx.objectStore("players").get(pidsAdd[i]).onsuccess = function (event) {
-                    var p;
+                    var p, worth;
 
                     p = event.target.result;
+                    worth = player.genContract(p, false, false);
 
                     add.push({
                         value: player.value(p, {withContract: true}),
@@ -631,7 +637,9 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         contract: {
                             amount: p.contract.amount / 1000
                         },
-                        worth: player.genContract(p, false, false),
+                        worth: {
+                            amount: worth.amount / 1000
+                        },
                         age: g.season - p.born.year
                     });
                 };
@@ -772,7 +780,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         });
 
         tx.oncomplete = function () {
-            var calcDv, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, skillsNeeded;
+            var base, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, skillsNeeded, sumContracts, sumValues;
 
 /*            // Handle situations where the team goes over the roster size limit
             if (roster.length + remove.length > 15) {
@@ -863,75 +871,90 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             add = doSkillBonuses(add, rosterAndRemove);
             remove = doSkillBonuses(remove, rosterAndAdd);
 
-            // Actually calculate the change in value
-            calcDv = function (players) {
-                return _.reduce(players, function (memo, player) {
-                    var dv, factors;
+            base = 1.15;
 
-                    // If the population of the region is larger, the contract size becomes less important. So factors.contract should increase
-/*                    factors = {
-                        value: 0.3 * player.value,
-                        // This is a straight line from ($0.5, 1.4) to ($20M, 0.1) - higher second coordinate means greater value
-                        //contract: (20 - player.contract.amount) / 15 + 0.1
-                        // This takes that straight line and roughly rotates it around the middle to make it more horizontal
-                        contract: (20 - player.contract.amount) / (15 * Math.sqrt(pop)) + (-0.12 + Math.sqrt(pop) / Math.sqrt(20))
-                    };*/
+            sumValues = function (players) {
+                var exponential;
 
+                if (players.length === 0) {
+                    return 0;
+                }
+
+                exponential = _.reduce(players, function (memo, player) {
+                    var value;
+
+                    value = player.value;
 
                     if (strategy === "rebuilding") {
-                        dv = Math.pow(3, 0.3 * (player.value + 0.75 * (player.worth.amount - player.contract.amount) / 1000));
-
                         // Value young/cheap players and draft picks more. Penalize expensive/old players
                         if (player.draftPick) {
-                            dv *= 2;
+                            value *= 1.15;
                         } else {
                             if (player.age <= 19) {
-                                dv *= 1.5;
+                                value *= 1.15;
                             } else if (player.age === 20) {
-                                dv *= 1.4;
+                                value *= 1.1;
                             } else if (player.age === 21) {
-                                dv *= 1.3;
+                                value *= 1.075;
                             } else if (player.age === 22) {
-                                dv *= 1.2;
+                                value *= 1.05;
                             } else if (player.age === 23) {
-                                dv *= 1.1;
+                                value *= 1.025;
                             } else if (player.age === 27) {
-                                dv *= 0.9;
+                                value *= 0.975;
                             } else if (player.age === 28) {
-                                dv *= 0.8;
+                                value *= 0.95;
                             } else if (player.age >= 29) {
-                                dv *= 0.7;
+                                value *= 0.9;
                             }
 
                             // General aversion to large contracts. Also, this makes it possible for dv to be negative for a player
-                            if (player.contract.amount > 6) {
+                            /*if (player.contract.amount > 6) {
                                 dv -= Math.pow(3, 0.3 * 55) * player.contract.amount;
-                            }
+                            }*/
                         }
                     } else {
-                        dv = Math.pow(3, 0.3 * (player.value + 0.5 * (player.worth.amount - player.contract.amount) / 1000));
+                        /*dv = Math.pow(3, 0.3 * (player.value + 0.5 * (player.worth.amount - player.contract.amount) / 1000));
 
                         if (player.contract.amount > 6) {
                             dv -= Math.pow(3, 0.3 * 40) * player.contract.amount;
-                        }
+                        }*/
                     }
 
-                    return memo + dv;
+                    // Anything below 40 is pretty worthless - SHOULD THIS BE HERE?
+                    value -= 40;
+
+                    return memo + Math.pow(base, value);
                 }, 0);
+
+                return Math.log(exponential) / Math.log(1.15); // Log base 1.15 (ln(e) is 1)
             };
 
-/*console.log('---');
-console.log(calcDv(add));
-console.log(add);
-console.log(calcDv(remove));
-console.log(remove);*/
-            dv = calcDv(add) - calcDv(remove);
-//console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
+            // Positive output: overpaid. Negative output: underpaid
+            sumContracts = function (players) {
+                var sum;
 
-            // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
+                if (players.length === 0) {
+                    return 0;
+                }
+
+                sum = _.reduce(players, function (memo, player) {
+                    return memo + (player.contract.amount - player.worth.amount);
+                }, 0);
+
+                return sum;
+            };
+
+console.log('---');
+console.log([sumValues(add), sumContracts(add)]);
+console.log([sumValues(remove), sumContracts(remove)]);
+            dv = (sumValues(add) - sumContracts(add)) - (sumValues(remove) -  sumContracts(remove));
+console.log(dv);
+
+            /*// Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
             if (add.length > remove.length) {
                 dv *= Math.pow(0.95, add.length - remove.length);
-            }
+            }*/
 
             cb(dv);
         };

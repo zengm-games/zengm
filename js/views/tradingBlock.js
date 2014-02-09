@@ -147,6 +147,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
                     showRookies: true,
                     fuzz: true
                 });
+                userRoster = trade.filterUntradable(userRoster);
                 for (i = 0; i < userRoster.length; i++) {
                     if (inputs.userPids.indexOf(userRoster[i].pid) >= 0) {
                         userRoster[i].selected = true;
@@ -259,12 +260,18 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
             var playersAndPicks;
 
             playersAndPicks = _.map(roster, function (p) {
-                var selected;
+                var checkbox, disabled, selected;
 
                 if (p.selected) {
                     selected = ' checked = "checked"';
                 }
-                return ['<input name="pids[]" type="checkbox" value="' + p.pid + '"' + selected + '>', helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                if (p.untradable) {
+                    disabled = ' disabled = "disabled"';
+                }
+
+                checkbox = '<input name="pids[]" type="checkbox" value="' + p.pid + '" title="' + p.untradableMsg + '"' + selected + disabled + '>';
+
+                return [checkbox, helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
             });
 
             return playersAndPicks;

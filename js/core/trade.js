@@ -85,7 +85,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
 
         // This is just for debugging
         team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
-            console.log(dv / Math.abs(dv) * Math.log(Math.abs(dv)));
+            console.log(dv);
         });
 
         // This will get called after all the pids and dpids are checked to make sure they are accurate
@@ -694,6 +694,31 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
         });
     }
 
+    /**
+     * Filter untradable players.
+     *
+     * If a player is not tradable, set untradable flag in the root of the object.
+     * 
+     * @param {Array.<Object>} players Array of player objects or partial player objects
+     * @return {Array.<Object>} Processed input
+     */
+    function filterUntradable(players) {
+        var i;
+
+        for (i = 0; i < players.length; i++) {
+            // If the season is over, can't trade players whose contracts are expired
+            if (players[i].contract.exp <= g.season && g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
+                players[i].untradable = true;
+                players[i].untradableMsg = "Cannot trade expired contracts";
+            } else {
+                players[i].untradable = false;
+                players[i].untradableMsg = "";
+            }
+        }
+
+        return players;
+    }
+
     return {
         create: create,
         updatePlayers: updatePlayers,
@@ -703,6 +728,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
         clear: clear,
         propose: propose,
         makeItWork: makeItWork,
-        makeItWorkTrade: makeItWorkTrade
+        makeItWorkTrade: makeItWorkTrade,
+        filterUntradable: filterUntradable
     };
 });

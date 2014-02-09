@@ -39,7 +39,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             // Rank prospects
             players.sort(function (a, b) { return b.value - a.value; });
             for (i = 0; i < players.length; i++) {
-                players[i].rank = i + 1;
+                players[i].rank = i + 1;players[i].rank = i + 1;
             }
 
             seasons.push({

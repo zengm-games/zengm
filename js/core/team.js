@@ -727,15 +727,24 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
                     for (i = 0; i < dpidsRemove.length; i++) {
                         tx.objectStore("draftPicks").get(dpidsRemove[i]).onsuccess = function (event) {
-                            var dp, estPick, seasons;
+                            var dp, estPick, fudgeFactor, seasons;
 
                             dp = event.target.result;
                             estPick = estPicks[dp.originalTid];
+
+                            // For future draft picks, add some uncertainty
                             seasons = dp.season - g.season;
                             estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
 
+                            // Set fudge factor with more confidence if it's the current season
+                            if (seasons === 0 && gp >= 41) {
+                                fudgeFactor = (1 - gp / 82) * 4;
+                            } else {
+                                fudgeFactor = 4;
+                            }
+
                             remove.push({
-                                value: estValues[estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * 5, // Fudge factor: AI teams like their own picks
+                                value: estValues[estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor, // Fudge factor: AI teams like their own picks
                                 skills: [],
                                 contract: {
                                     amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000

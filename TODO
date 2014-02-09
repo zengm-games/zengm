@@ -21,13 +21,6 @@ NEW IDEA #1
     Add a general "aversion to adding salary" term after, with difference in contract values?
   Weights of adding/subtracting depend on contending/rebuilding
 Draft pick valuing
-  http://www.reddit.com/r/BasketballGM/comments/1j2mag/ive_gotten_pretty_good/cbajbz6?context=3
-  http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbb3l2q
-  http://www.reddit.com/r/BasketballGM/comments/1j4evq/new_version_311_uploaded/cbbbc0p?context=3
-  http://www.reddit.com/r/BasketballGM/comments/1jzel1/very_helpful_hint_regarding_tanking_and_draft/
-  Need a better way to project the value
-  Projection should get a lot more confident for the current season as it progresses
-    account for this in the "fudge factor" - have it decay as the season progresses
   Ideally, take into account the strength of the future draft class too
     can look directly at the draft classes! for further in the future, estimate an average from data, rather than the ad hoc stuff currently used to value picks
       still should "overvalue" them some, especially lottery picks, since they could turn into something special
@@ -37,6 +30,9 @@ Get valueChange for signing best possible free agent, and use that to compare ag
   This should only apply for trades that are increasing payroll, as one that makes it stay the same or go down is not impacted by alternative options for using cap space
     Should be a little more sophisticated than just "is payroll increasing by >= $1"
   check for this in core.trade, do another call to team.valueChange to see how adding a FA compares to the trade
+  what about longer term? like before free agency starts, should have some projection about potential free agents
+    might be better and simpler to just treat cap space as a positive asset
+    YES! this is it. treat any added salary (including some normalization for length) as a threat to cap space
 Test with trading nothing for bad contracts, and trading bad contracts for nothing. Both contending and rebuilding
 "What would make this work?" functions should know about contending/rebuilding. Contending teams should be more eager to offer up young/cheap players, rebuilding teams should be more eager to offer up old/expensive players
   basically, they should view the trade from the other team's perspective, not just their own

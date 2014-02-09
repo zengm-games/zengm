@@ -699,6 +699,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
      *
      * If a player is not tradable, set untradable flag in the root of the object.
      * 
+     * @memberOf core.trade
      * @param {Array.<Object>} players Array of player objects or partial player objects
      * @return {Array.<Object>} Processed input
      */
@@ -724,6 +725,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
      *
      * Just calls filterUntradable and discards everything but the boolean.
      * 
+     * @memberOf core.trade
      * @param {<Object>} players Player object or partial player objects
      * @return {boolean} Processed input
      */

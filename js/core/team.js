@@ -651,7 +651,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
                 // Estimate the order of the picks by team
                 tx.objectStore("teams").getAll().onsuccess = function (event) {
-                    var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, teams, wps;
+                    var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, teams, whenReady, wps;
 
                     teams = event.target.result;
 
@@ -699,62 +699,109 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     estPicks = wps.slice().map(function (v) { return sorted.indexOf(v) + 1; }); // For each team, what is their estimated draft position?
 
                     rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500]; // Keep in sync with core.draft
-                    estValues = [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37]; // This is basically arbitrary
+                    estValues = {
+                        default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37] // This is basically arbitrary
+                    };
 
-                    for (i = 0; i < dpidsAdd.length; i++) {
-                        tx.objectStore("draftPicks").get(dpidsAdd[i]).onsuccess = function (event) {
-                            var dp, estPick, seasons;
+                    // Actually add picks after some stuff below is done
+                    whenReady = _.after(4, function () {
+                        var i;
+//console.log(estValues);
 
-                            dp = event.target.result;
-                            estPick = estPicks[dp.originalTid];
-                            seasons = dp.season - g.season;
-                            estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
+                        for (i = 0; i < dpidsAdd.length; i++) {
+                            tx.objectStore("draftPicks").get(dpidsAdd[i]).onsuccess = function (event) {
+                                var dp, estPick, seasons, value;
 
-                            add.push({
-                                value: estValues[estPick - 1 + 30 * (dp.round - 1)],
-                                skills: [],
-                                contract: {
-                                    amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
-                                },
-                                worth: {
-                                    amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
-                                },
-                                age: 19,
-                                draftPick: true
-                            });
-                        };
-                    }
+                                dp = event.target.result;
+                                estPick = estPicks[dp.originalTid];
 
-                    for (i = 0; i < dpidsRemove.length; i++) {
-                        tx.objectStore("draftPicks").get(dpidsRemove[i]).onsuccess = function (event) {
-                            var dp, estPick, fudgeFactor, seasons;
+                                // For future draft picks, add some uncertainty
+                                seasons = dp.season - g.season;
+                                estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
 
-                            dp = event.target.result;
-                            estPick = estPicks[dp.originalTid];
+                                // No fudge factor, since this is coming from the user's team (or eventually, another AI)
+                                if (estValues[dp.season]) {
+                                    value = estValues[dp.season][estPick - 1 + 30 * (dp.round - 1)];
+                                }
+                                if (!value) {
+                                    value = estValues.default[estPick - 1 + 30 * (dp.round - 1)];
+                                }
 
-                            // For future draft picks, add some uncertainty
-                            seasons = dp.season - g.season;
-                            estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
+                                add.push({
+                                    value: value,
+                                    skills: [],
+                                    contract: {
+                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
+                                    },
+                                    worth: {
+                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
+                                    },
+                                    age: 19,
+                                    draftPick: true
+                                });
+                            };
+                        }
 
-                            // Set fudge factor with more confidence if it's the current season
-                            if (seasons === 0 && gp >= 41) {
-                                fudgeFactor = (1 - gp / 82) * 4;
-                            } else {
-                                fudgeFactor = 4;
+                        for (i = 0; i < dpidsRemove.length; i++) {
+                            tx.objectStore("draftPicks").get(dpidsRemove[i]).onsuccess = function (event) {
+                                var dp, estPick, fudgeFactor, seasons, value;
+
+                                dp = event.target.result;
+                                estPick = estPicks[dp.originalTid];
+
+                                // For future draft picks, add some uncertainty
+                                seasons = dp.season - g.season;
+                                estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
+
+                                // Set fudge factor with more confidence if it's the current season
+                                if (seasons === 0 && gp >= 41) {
+                                    fudgeFactor = (1 - gp / 82) * 4;
+                                } else {
+                                    fudgeFactor = 4;
+                                }
+
+                                // Use fudge factor: AI teams like their own picks
+                                if (estValues[dp.season]) {
+                                    value = estValues[dp.season][estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
+//console.log([estPick, estValues[dp.season][estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor]);
+                                }
+                                if (!value) {
+                                    value = estValues.default[estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
+                                }
+//console.log([estPick, estValues.default[estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor]);
+
+                                remove.push({
+                                    value: value,
+                                    skills: [],
+                                    contract: {
+                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
+                                    },
+                                    worth: {
+                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
+                                    },
+                                    age: 19,
+                                    draftPick: true
+                                });
+                            };
+                        }
+                    });
+
+                    // Look up to 4 season in the future, but depending on whether this is before or after the draft, the first or last will be empty/incomplete
+                    for (i = g.season; i < g.season + 4; i++) {
+                        tx.objectStore("players").index("draft.year").getAll(i).onsuccess = function (event) {
+                            var i, players;
+
+                            players = event.target.result;
+
+                            if (players.length > 0) {
+                                for (i = 0; i < players.length; i++) {
+                                    players[i].value = player.value(players[i], {age: (g.season - players[i].born.year) + (players[i].draft.year - g.season)}) + 4; // +4 is to generally make picks more valued
+                                }
+                                players.sort(function (a, b) { return b.value - a.value; });
+                                estValues[players[0].draft.year] = _.pluck(players, "value");
                             }
 
-                            remove.push({
-                                value: estValues[estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor, // Fudge factor: AI teams like their own picks
-                                skills: [],
-                                contract: {
-                                    amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
-                                },
-                                worth: {
-                                    amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
-                                },
-                                age: 19,
-                                draftPick: true
-                            });
+                            whenReady();
                         };
                     }
                 };

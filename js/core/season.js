@@ -941,6 +941,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                                     contract = player.genContract(p);
                                     contract.exp += 1; // Otherwise contracts could expire this season
                                     p = player.setContract(p, contract, true);
+                                    p.gamesUntilTradable = 15;
                                     cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
                                 } else {
                                     player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, baseMoods);

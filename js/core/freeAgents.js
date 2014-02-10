@@ -95,6 +95,7 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
                                             p = player.addStatsRow(p);
                                         }
                                         p = player.setContract(p, p.contract, true);
+                                        p.gamesUntilTradable = 15;
                                         transaction.objectStore("players").put(p);
                                         team.rosterAutoSort(transaction, tid, function () {
                                             if (ti <= tids.length) {

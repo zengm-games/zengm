@@ -384,6 +384,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                                             cursor = event.target.result;
                                             p = cursor.value;
                                             p.tid = tids[k];
+                                            p.gamesUntilTradable = 15;
                                             p.ptModifier = 1; // Reset
                                             if (g.phase <= g.PHASE.PLAYOFFS) {
                                                 p = player.addStatsRow(p);
@@ -707,10 +708,14 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
         var i;
 
         for (i = 0; i < players.length; i++) {
-            // If the season is over, can't trade players whose contracts are expired
             if (players[i].contract.exp <= g.season && g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
+                // If the season is over, can't trade players whose contracts are expired
                 players[i].untradable = true;
                 players[i].untradableMsg = "Cannot trade expired contracts";
+            } else if (players[i].gamesUntilTradable > 0) {
+                // Can't trade players who recently were signed or traded
+                players[i].untradable = true;
+                players[i].untradableMsg = "Cannot trade recently-acquired player for " + players[i].gamesUntilTradable + " more games";
             } else {
                 players[i].untradable = false;
                 players[i].untradableMsg = "";

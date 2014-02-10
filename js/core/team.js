@@ -1139,6 +1139,7 @@ console.log(dv);*/
                             p.tid = tid;
                             p = player.addStatsRow(p);
                             p = player.setContract(p, p.contract, true);
+                            p.gamesUntilTradable = 15;
                             playerStore.put(p);
 
                             numPlayersOnRoster += 1;

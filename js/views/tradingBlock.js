@@ -138,7 +138,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
                 var i, userRoster;
 
                 userRoster = player.filter(event.target.result, {
-                    attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch"],
+                    attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch", "gamesUntilTradable"],
                     ratings: ["ovr", "pot", "skills"],
                     stats: ["min", "pts", "trb", "ast", "per"],
                     season: g.season,

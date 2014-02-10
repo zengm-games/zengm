@@ -342,6 +342,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
 
                     // Handle stats if the season is in progress
                     p.tid = g.userTid;
+                    p.gamesUntilTradable = 15;
                     if (g.phase <= g.PHASE.PLAYOFFS) { // Re-signing your own players happens after this
                         p = player.addStatsRow(p);
                     }

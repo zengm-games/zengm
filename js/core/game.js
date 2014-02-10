@@ -682,6 +682,15 @@ if (playerStats === undefined) {
                                     changed = true;
                                 }
 
+                                // Also check for gamesUntilTradable
+                                if (!p.hasOwnProperty("gamesUntilTradable")) {
+                                    p.gamesUntilTradable = 0; // Initialize for old leagues
+                                    changed = true;
+                                } else if (p.gamesUntilTradable > 0) {
+                                    p.gamesUntilTradable -= 1;
+                                    changed = true;
+                                }
+
                                 if (changed) {
                                     cursor.update(p);
                                 }

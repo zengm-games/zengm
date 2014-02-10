@@ -793,6 +793,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         p.hof = false;
         p.watch = false;
+        p.gamesUntilTradable = 0;
 
         return p;
     }

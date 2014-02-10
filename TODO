@@ -24,11 +24,8 @@ Get valueChange for signing best possible free agent, and use that to compare ag
 Test with trading nothing for bad contracts, and trading bad contracts for nothing. Both contending and rebuilding
 "What would make this work?" functions should know about contending/rebuilding. Contending teams should be more eager to offer up young/cheap players, rebuilding teams should be more eager to offer up old/expensive players
   basically, they should view the trade from the other team's perspective, not just their own
-Filter out players from tradeable list by trade.filterUntradable
-  Shouldn't be able to immediately trade away players you just acquired
-    player.daysUntilTradable - set when signing free agent or trade
-    add a counter somewhere. wait 15 games until allowing trade
-  need to do a check to see if player is in trade already when he becomes untradable (quick fix: empty current trade)
+need to do a check to see if player is in trade already when he becomes untradable (quick fix: empty current trade)
+  there must already be a check to make sure he's on the right tid. just add this check there. then test with expiring contract.
 Fix needToDrop stuff
   Problem now is, contract gets pushed into someone on the roster and it's lost. This is especially obvious if there is only one player in add and his contract is pushed to roster, then the trade is nothing.
 Can I provide better feedback about trade? Like if it's close or not?
@@ -38,7 +35,7 @@ Key goals:
   Fixing loopholes
 Loopholes fixed:
   You used to be able to trade away expired contracts after the season ended but before re-signing players. That is no longer allowed.
-  You used to be able to acquire a player and then immediately trade him, which could be exploited by repeatedly signing free agents and trading them away for draft picks. This has been fixed by requiring 15 games to elapse before you can trade a player.
+  You used to be able to acquire a player and then immediately trade him, which could be exploited by repeatedly signing free agents and trading them away for draft picks. This has been fixed by requiring 15 games to elapse before you can trade a player who was just signed or traded.
   You used to be able to easily poach undervalued assets from AI teams, mainly far future first round picks and rookies without much playing time. This has been fixed by more appropriately valuing those assets in the AI.
   You used to be able to dump big contracts on pretty much any team with cap space. This has been fixed by making all AI teams much more reluctant to take on bad contracts. So, more realistically, you'll have to include other assets like draft picks and young players if you want to get out of a bad contract.
   You used to be able to easily trade away big contracts during free agency, before other teams filled up their cap space with free agents. This has been fixed by making teams more reluctant to use up their cap space in a trade if there are still good free agents on the market.

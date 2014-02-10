@@ -184,7 +184,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
                 var attrs, i, ratings, stats, userRoster;
 
-                attrs = ["pid", "name", "pos", "age", "contract", "injury", "watch"];
+                attrs = ["pid", "name", "pos", "age", "contract", "injury", "watch", "gamesUntilTradable"];
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["min", "pts", "trb", "ast", "per"];
 

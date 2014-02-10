@@ -828,7 +828,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         });
 
         tx.oncomplete = function () {
-            var base, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, skillsNeeded, sumContracts, sumValues;
+            var contractsFactor, contractExcessFactor, base, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, skillsNeeded, sumContracts, sumContractExcess, sumValues;
 
 /*            // Handle situations where the team goes over the roster size limit
             if (roster.length + remove.length > 15) {
@@ -979,7 +979,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             };
 
             // Positive output: overpaid. Negative output: underpaid
-            sumContracts = function (players) {
+            sumContractExcess = function (players) {
                 var sum;
 
                 if (players.length === 0) {
@@ -993,7 +993,39 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 return sum;
             };
 
-            dv = (sumValues(add) - sumContracts(add)) - (sumValues(remove) -  sumContracts(remove));
+            // Sum of contracts
+            sumContracts = function (players) {
+                var sum;
+
+                if (players.length === 0) {
+                    return 0;
+                }
+
+                sum = _.reduce(players, function (memo, player) {
+                    return memo + player.contract.amount;
+                }, 0);
+
+                return sum;
+            };
+
+            contractExcessFactor = 0.5;
+
+            if (strategy === "rebuilding") {
+                contractsFactor = 0.6;
+            } else {
+                contractsFactor = 0.3;
+            }
+
+            dv = (sumValues(add) - contractExcessFactor * sumContractExcess(add))
+                 - (sumValues(remove) -  contractsFactor * sumContractExcess(remove))
+                 + contractsFactor * (sumContracts(remove) - sumContracts(add));
+
+
+            // Fudge factor: teams should be less likely to trade in free agency, since they could alternatively just sign a free agent
+            if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {
+                dv -= 5;
+            }
+
 /*console.log('---');
 console.log([sumValues(add), sumContracts(add)]);
 console.log([sumValues(remove), sumContracts(remove)]);

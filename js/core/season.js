@@ -963,7 +963,10 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         }
                         cursor.continue();
                     } else {
-                        newPhaseCb(g.PHASE.RESIGN_PLAYERS, cb, helpers.leagueUrl(["negotiation"]), ["playerMovement"]);
+                        // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
+                        db.setGameAttributes({daysLeft: 30}, function () {
+                            newPhaseCb(g.PHASE.RESIGN_PLAYERS, cb, helpers.leagueUrl(["negotiation"]), ["playerMovement"]);
+                        });
                     }
                 };
             });
@@ -1024,9 +1027,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             tx.oncomplete = function () {
                 // Create new draft class for 3 years in the future
                 draft.genPlayers(null, g.PLAYER.UNDRAFTED_3, null, null, function () {
-                    db.setGameAttributes({daysLeft: 30}, function () {
-                        newPhaseCb(g.PHASE.FREE_AGENCY, cb, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
-                    });
+                    newPhaseCb(g.PHASE.FREE_AGENCY, cb, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
                 });
             };
         });

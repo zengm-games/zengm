@@ -1022,8 +1022,13 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                  - (sumValues(remove) -  contractsFactor * sumContractExcess(remove))
                  + contractsFactor * salaryRemoved;
 
+            // Teams should be less likely to trade in free agency, since they could alternatively just sign a free agent. This will sometimes do dumb stuff, but it's fast and prevents abuse.
+            if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {
+                dv -= g.daysLeft / 2;
+            }
 
-            // Teams should be less likely to trade in free agency, since they could alternatively just sign a free agent
+            // Below is TOO SLOW and TOO CONFUSING. Above is less correct, but performs well.
+            /*// Teams should be less likely to trade in free agency, since they could alternatively just sign a free agent
             if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {
                 // Short circuit if we're not adding any salary
                 if (salaryRemoved > 0) {
@@ -1078,8 +1083,9 @@ console.log("Worse options in free agency")
                 });
             } else {
                 cb(dv);
-            }
+            }*/
 
+            cb(dv);
 /*console.log('---');
 console.log([sumValues(add), sumContracts(add)]);
 console.log([sumValues(remove), sumContracts(remove)]);

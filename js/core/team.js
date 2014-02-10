@@ -828,7 +828,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         });
 
         tx.oncomplete = function () {
-            var contractsFactor, contractExcessFactor, base, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, skillsNeeded, sumContracts, sumContractExcess, sumValues;
+            var contractsFactor, contractExcessFactor, base, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, salaryRemoved, skillsNeeded, sumContracts, sumContractExcess, sumValues, tx;
 
 /*            // Handle situations where the team goes over the roster size limit
             if (roster.length + remove.length > 15) {
@@ -1016,14 +1016,68 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 contractsFactor = 0.3;
             }
 
+            salaryRemoved = sumContracts(remove) - sumContracts(add);
+
             dv = (sumValues(add) - contractExcessFactor * sumContractExcess(add))
                  - (sumValues(remove) -  contractsFactor * sumContractExcess(remove))
-                 + contractsFactor * (sumContracts(remove) - sumContracts(add));
+                 + contractsFactor * salaryRemoved;
 
 
-            // Fudge factor: teams should be less likely to trade in free agency, since they could alternatively just sign a free agent
+            // Teams should be less likely to trade in free agency, since they could alternatively just sign a free agent
             if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {
-                dv -= 5;
+                // Short circuit if we're not adding any salary
+                if (salaryRemoved > 0) {
+                    return cb(dv);
+                }
+
+                tx = g.dbl.transaction(["players", "releasedPlayers"]);
+
+                // Is this team under the cap?
+                db.getPayroll(tx, tid, function (payroll) {
+                    if (payroll < g.salaryCap) {
+console.log(payroll);
+                        // Get the top free agent that fits under the cap
+                        tx.objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
+                            var i, players, topFreeAgent;
+
+                            // List of free agents, sorted by value
+                            players = event.target.result;
+                            players.sort(function (a, b) { return player.value(b) - player.value(a); });
+
+                            for (i = 0; i < players.length; i++) {
+                                if (players[i].contract.amount + payroll <= g.salaryCap) {
+                                    topFreeAgent = players[i];
+                                    break;
+                                }
+                            }
+console.log(topFreeAgent);
+
+                            // Short circuit to prevent infinite callbacks
+                            if (pidsAdd[0] === topFreeAgent.pid && pidsAdd.length === 1 && pidsRemove.length === 0 && dpidsAdd.length === 0 && dpidsRemove.length === 0) {
+                                return cb(dv);
+                            }
+
+                            // Short circuit if the added salary doesn't impact this signing
+                            if (topFreeAgent.contract.amount + payroll - salaryRemoved * 1000 <= g.salaryCap) {
+console.log("Trade doesn't add so much as to prevent FA signing");
+                                return cb(dv);
+                            }
+
+                            valueChange(tid, [topFreeAgent.pid], [], [], [], function (dvFreeAgent) {
+console.log([dv, dvFreeAgent]);
+                                if (dvFreeAgent > dv) {
+console.log("Better options in free agency");
+                                } else {
+console.log("Worse options in free agency")
+                                }
+                            });
+                        };
+                    } else {
+                        cb(dv);
+                    }
+                });
+            } else {
+                cb(dv);
             }
 
 /*console.log('---');
@@ -1036,7 +1090,6 @@ console.log(dv);*/
                 dv *= Math.pow(0.95, add.length - remove.length);
             }*/
 
-            cb(dv);
         };
     }
 

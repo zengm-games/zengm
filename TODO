@@ -12,6 +12,8 @@ IDEA #1
   DOESN'T MAKE SENSE! Trading two identical players for one identical player will favor the one, because it only has one contract.
     Add a general "aversion to adding salary" term after, with difference in contract values?
   Weights of adding/subtracting depend on contending/rebuilding
+Need some way of conveying to the user that a trade was turned down because of FA alternatives
+  Move this code to its own function, separate from team.valueChange?
 What to do with expiring contracts? Or contract length in general. Maybe incorporate into the value/amount formula somehow.
   this mainly matters for undervalued or overvalued contracts. makes them better/worse.
 Test with trading nothing for bad contracts, and trading bad contracts for nothing. Both contending and rebuilding

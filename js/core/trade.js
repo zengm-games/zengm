@@ -139,7 +139,8 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                     pidsGood = [];
                     players = event.target.result;
                     for (j = 0; j < players.length; j++) {
-                        if (teams[i].pids.indexOf(players[j].pid) >= 0) {
+                        // Also, make sure player is not untradable
+                        if (teams[i].pids.indexOf(players[j].pid) >= 0 && !isUntradable(players[j])) {
                             pidsGood.push(players[j].pid);
                         }
                     }

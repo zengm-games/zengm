@@ -159,6 +159,7 @@
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.BEFORE_DRAFT); }())">Skip To Before Draft</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.AFTER_DRAFT); }())">Skip To After Draft</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PRESEASON); }())">Skip To Preseason</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { draft = require('core/draft'); draft.untilUserOrEnd(); }())">Force Resume Draft</a></li>
                 <li><a href="" onclick="toggleDebugMode()" id="toggle-debug-mode">Toggle Debug Mode</a></li>
                 <li><a href="" onclick="resetDb()">Reset DB</a></li>
               </ul>
@@ -194,7 +195,7 @@
           <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> · 
           <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> · 
           <a href="http://basketball-gm.com/share/" target="_blank">Share</a><br>
-          <p class="rev">v3.3 · <!--rev-->2014.02.06.1062</p>
+          <p class="rev">v3.3 · <!--rev-->2014.02.10.1400</p>
         </p>
       </footer>
     </div>

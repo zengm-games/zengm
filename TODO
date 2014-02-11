@@ -12,6 +12,7 @@ IDEA #1
   DOESN'T MAKE SENSE! Trading two identical players for one identical player will favor the one, because it only has one contract.
     Add a general "aversion to adding salary" term after, with difference in contract values?
   Weights of adding/subtracting depend on contending/rebuilding
+aversion to making trades during free agency should only apply to teams with cap space and trades that use that cap space
 What to do with expiring contracts? Or contract length in general. Maybe incorporate into the value/amount formula somehow.
   this mainly matters for undervalued or overvalued contracts. makes them better/worse.
 Test with trading nothing for bad contracts, and trading bad contracts for nothing. Both contending and rebuilding
@@ -138,12 +139,8 @@ trade improvements
     HOW?
     team.valueChange could be made fast if I allow an extra argument to pass pre-fetched values from the database
     quick fix: check box to only look for teams under the cap http://www.reddit.com/r/BasketballGM/comments/1qh107/proposed_trades_question/
-  trading block should show record, strategy, and conf rank of teams
   trades between AI teams
     call team.checkRosterSizes after this if it's in between days
-  teams should be more cautious to take on salary before/during free agency, since they could just use their cap space to sign free agents http://www.reddit.com/r/BasketballGM/comments/1v82ci/put_cap_space_on_the_trading_block/ceqdfgj
-  AI should understand contract length
-  rebuilding AI teams should leave cap space open
 team switching after being fired
   intro message from new owner, like a new league?
   rename g.gameOver

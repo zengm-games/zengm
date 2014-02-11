@@ -257,9 +257,9 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                             }
 
                             g.dbl.transaction("teams").objectStore("teams").get(teams[1].tid).onsuccess = function (event) {
-                                var strategy;
+                                var t;
 
-                                strategy = event.target.result.strategy;
+                                t = event.target.result;
 
                                 vars = {
                                     salaryCap: g.salaryCap / 1000,
@@ -272,7 +272,9 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                                     otherPids: teams[1].pids,
                                     otherRoster: otherRoster,
                                     message: inputs.message,
-                                    strategy: strategy,
+                                    strategy: t.strategy,
+                                    won: t.seasons[t.seasons.length - 1].won,
+                                    lost: t.seasons[t.seasons.length - 1].lost,
                                     showResigningMsg: showResigningMsg
                                 };
 

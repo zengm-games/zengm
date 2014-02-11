@@ -2,7 +2,7 @@
  * @name views.tradingBlock
  * @namespace Trading block.
  */
-define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/random"], function (g, ui, player, trade, $, ko, _, bbgmView, helpers, random) {
+define(["globals", "ui", "core/player", "core/team", "core/trade", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/random"], function (g, ui, player, team, trade, $, ko, _, bbgmView, helpers, random) {
     "use strict";
 
     var mapping;
@@ -178,7 +178,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
     }
 
     function updateOffers(inputs, updateEvents, vm) {
-        var deferred, i, offers, tx;
+        var deferred, offers, tx;
 
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0) {
             deferred = $.Deferred();
@@ -190,53 +190,67 @@ define(["globals", "ui", "core/player", "core/trade", "lib/jquery", "lib/knockou
                     offers: offers
                 });
             } else {
-                tx = g.dbl.transaction(["players", "draftPicks"]);
+                tx = g.dbl.transaction(["players", "draftPicks", "teams"]);
 
-                // Take the pids and dpids in each offer and get the info needed to display the offer
-                for (i = 0; i < inputs.offers.length; i++) {
-                    (function (i) {
-                        var tid;
+                team.filter({
+                    attrs: ["abbrev", "region", "name", "strategy"],
+                    seasonAttrs: ["won", "lost"],
+                    season: g.season,
+                    sortBy: "winp",
+                    ot: tx
+                }, function (teams) {
+                    var i;
 
-                        tid = inputs.offers[i].tid;
+                    // Take the pids and dpids in each offer and get the info needed to display the offer
+                    for (i = 0; i < inputs.offers.length; i++) {
+                        (function (i) {
+                            var tid;
 
-                        offers[i] = {
-                            tid: tid,
-                            region: g.teamRegionsCache[tid],
-                            name: g.teamNamesCache[tid],
-                            pids: inputs.offers[i].pids,
-                            dpids: inputs.offers[i].dpids,
-                            warning: inputs.offers[i].warning
-                        };
+                            tid = inputs.offers[i].tid;
 
-                        tx.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-                            var players;
-
-                            players = _.filter(event.target.result, function (p) { return inputs.offers[i].pids.indexOf(p.pid) >= 0; });
-
-                            offers[i].players = player.filter(players, {
-                                attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch"],
-                                ratings: ["ovr", "pot", "skills"],
-                                stats: ["min", "pts", "trb", "ast", "per"],
-                                season: g.season,
+                            offers[i] = {
                                 tid: tid,
-                                showNoStats: true,
-                                showRookies: true,
-                                fuzz: true
-                            });
-                        };
+                                abbrev: teams[tid].abbrev,
+                                region: teams[tid].region,
+                                name: teams[tid].name,
+                                strategy: teams[tid].strategy,
+                                won: teams[tid].won,
+                                lost: teams[tid].lost,
+                                pids: inputs.offers[i].pids,
+                                dpids: inputs.offers[i].dpids,
+                                warning: inputs.offers[i].warning
+                            };
 
-                        tx.objectStore("draftPicks").index("tid").getAll(tid).onsuccess = function (event) {
-                            var j, picks;
+                            tx.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
+                                var players;
 
-                            picks = _.filter(event.target.result, function (dp) { return inputs.offers[i].dpids.indexOf(dp.dpid) >= 0; });
-                            for (j = 0; j < picks.length; j++) {
-                                picks[j].desc = helpers.pickDesc(picks[j]);
-                            }
+                                players = _.filter(event.target.result, function (p) { return inputs.offers[i].pids.indexOf(p.pid) >= 0; });
 
-                            offers[i].picks = picks;
-                        };
-                    }(i));
-                }
+                                offers[i].players = player.filter(players, {
+                                    attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch"],
+                                    ratings: ["ovr", "pot", "skills"],
+                                    stats: ["min", "pts", "trb", "ast", "per"],
+                                    season: g.season,
+                                    tid: tid,
+                                    showNoStats: true,
+                                    showRookies: true,
+                                    fuzz: true
+                                });
+                            };
+
+                            tx.objectStore("draftPicks").index("tid").getAll(tid).onsuccess = function (event) {
+                                var j, picks;
+
+                                picks = _.filter(event.target.result, function (dp) { return inputs.offers[i].dpids.indexOf(dp.dpid) >= 0; });
+                                for (j = 0; j < picks.length; j++) {
+                                    picks[j].desc = helpers.pickDesc(picks[j]);
+                                }
+
+                                offers[i].picks = picks;
+                            };
+                        }(i));
+                    }
+                });
 
                 tx.oncomplete = function () {
                     random.shuffle(offers);

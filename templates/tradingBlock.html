@@ -36,7 +36,8 @@
 
 <!--ko foreach: offers-->
   <div class="trading-block-offer">
-    <h3>Offer <span data-bind="text: $index() + 1"></span>: <span data-bind="text: region"></span> <span data-bind="text: name"></span></h3>
+    <h3>Offer <span data-bind="text: $index() + 1"></span>: <a data-bind="attrLeagueUrl: {href: ['roster', abbrev]}"><span data-bind="text: region"></span> <span data-bind="text: name"></span></a></h3>
+    <p><span data-bind="text: won"></span>-<span data-bind="text: lost"></span>, <span data-bind="text: strategy"></span></p>
     <p class="text-danger" data-bind="text: warning"></p>
     <div class="row" style="clear: both">
       <!--ko if: players().length > 0 -->

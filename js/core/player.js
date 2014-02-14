@@ -905,7 +905,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     fp.contract = helpers.deepCopy(p.contract);  // [millions of dollars]
                     fp.contract.amount = fp.contract.amount / 1000;  // [millions of dollars]
                 } else if (options.attrs[i] === "cashOwed") {
-                    fp.cashOwed = ((1 + p.contract.exp - g.season) * p.contract.amount - (1 - options.numGamesRemaining / 82) * p.contract.amount) / 1000;  // [millions of dollars]
+                    fp.cashOwed = contractSeasonsRemaining(p.contract.exp, options.numGamesRemaining) * p.contract.amount / 1000;  // [millions of dollars]
                 } else if (options.attrs[i] === "abbrev") {
                     fp.abbrev = helpers.getAbbrev(p.tid);
                 } else if (options.attrs[i] === "teamRegion") {
@@ -1531,6 +1531,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      *
      * This just updates a player object. You need to write it to the database after.
      * 
+     * @memberOf core.player
      * @param {IDBTransaction} ot An IndexedDB transaction on events.
      * @param {Object} p Player object.
      * @return {Object} p Updated (retired) player object.
@@ -1561,6 +1562,18 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         return p;
     }
 
+
+    /**
+     * How many seasons are left on this contract? The answer can be a fraction if the season is partially over
+     * 
+     * @memberOf core.player
+     * @param {Object} exp Contract expiration year.
+     * @return {number} numGamesRemaining Number of games remaining in the current season (0 to 82).
+     */
+    function contractSeasonsRemaining(exp, numGamesRemaining) {
+        return (exp - g.season) + numGamesRemaining / 82;
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1579,6 +1592,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         madeHof: madeHof,
         value: value,
         retire: retire,
-        name: name
+        name: name,
+        contractSeasonsRemaining: contractSeasonsRemaining
     };
 });

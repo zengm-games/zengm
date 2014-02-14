@@ -567,7 +567,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
     }
 
     function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, cb) {
-        var add, getPicks, getPlayers, pop, remove, roster, strategy, tx;
+        var add, getPicks, getPlayers, gpAvg, pop, remove, roster, strategy, tx;
 
         // UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
         if (dpidsRemove.length > 2) {
@@ -579,6 +579,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         roster = [];
         add = [];
         remove = [];
+
+        gpAvg = 0;
 
         tx = g.dbl.transaction(["draftPicks", "players", "teams"]);
 
@@ -598,24 +600,16 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         roster.push({
                             value: player.value(p),
                             skills: _.last(p.ratings).skills,
-                            contract: {
-                                amount: p.contract.amount / 1000
-                            },
-                            worth: {
-                                amount: worth.amount / 1000
-                            },
+                            contract: p.contract,
+                            worth: player.genContract(p, false, false),
                             age: g.season - p.born.year
                         });
                     } else {
                         remove.push({
                             value: player.value(p),
                             skills: _.last(p.ratings).skills,
-                            contract: {
-                                amount: p.contract.amount / 1000
-                            },
-                            worth: {
-                                amount: worth.amount / 1000
-                            },
+                            contract: p.contract,
+                            worth: player.genContract(p, false, false),
                             age: g.season - p.born.year
                         });
                     }
@@ -626,20 +620,15 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
             for (i = 0; i < pidsAdd.length; i++) {
                 tx.objectStore("players").get(pidsAdd[i]).onsuccess = function (event) {
-                    var p, worth;
+                    var p;
 
                     p = event.target.result;
-                    worth = player.genContract(p, false, false);
 
                     add.push({
                         value: player.value(p, {withContract: true}),
                         skills: _.last(p.ratings).skills,
-                        contract: {
-                            amount: p.contract.amount / 1000
-                        },
-                        worth: {
-                            amount: worth.amount / 1000
-                        },
+                        contract: p.contract,
+                        worth: player.genContract(p, false, false),
                         age: g.season - p.born.year
                     });
                 };
@@ -648,52 +637,54 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
         getPicks = function () {
             // For each draft pick, estimate its value based on the recent performance of the team
-            if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
-                // Estimate the order of the picks by team
-                tx.objectStore("teams").getAll().onsuccess = function (event) {
-                    var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, teams, whenReady, wps;
+            // Estimate the order of the picks by team
+            tx.objectStore("teams").getAll().onsuccess = function (event) {
+                var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, teams, whenReady, wps;
 
-                    teams = event.target.result;
+                teams = event.target.result;
 
-                    wps = []; // Contains estimated winning percentages for all teams by the end of the season
-                    for (i = 0; i < teams.length; i++) {
-                        t = teams[i];
-                        if (t.seasons.length === 1) {
-                            // First season
-                            if (t.seasons[0].won + t.seasons[0].lost > 15) {
-                                rCurrent = [t.seasons[0].won, t.seasons[0].lost];
-                            } else {
-                                // Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
-                                if (i === g.userTid) {
-                                    rCurrent = [82, 0];
-                                } else {
-                                    rCurrent = [0, 82];
-                                }
-                            }
+                // This part needs to be run every time so that gpAvg is available
+                wps = []; // Contains estimated winning percentages for all teams by the end of the season
+                for (i = 0; i < teams.length; i++) {
+                    t = teams[i];
+                    if (t.seasons.length === 1) {
+                        // First season
+                        if (t.seasons[0].won + t.seasons[0].lost > 15) {
+                            rCurrent = [t.seasons[0].won, t.seasons[0].lost];
+                        } else {
+                            // Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
                             if (i === g.userTid) {
-                                rLast = [50, 32];
+                                rCurrent = [82, 0];
                             } else {
-                                rLast = [32, 50]; // Assume a losing season to minimize bad trades
+                                rCurrent = [0, 82];
                             }
-                        } else {
-                            // Second (or higher) season
-                            s = t.seasons.length;
-                            rCurrent = [t.seasons[s - 1].won, t.seasons[s - 1].lost];
-                            rLast = [t.seasons[s - 2].won, t.seasons[s - 2].lost];
                         }
-
-                        gp = rCurrent[0] + rCurrent[1];
-
-                        // If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
-                        if (gp >= 41) {
-                            wps.push(rCurrent[0] / gp);
-                        } else if (gp > 0) {
-                            wps.push((gp / 41 * rCurrent[0] / gp + (41 - gp) / 41 * rLast[0] / 82));
+                        if (i === g.userTid) {
+                            rLast = [50, 32];
                         } else {
-                            wps.push(rLast[0] / 82);
+                            rLast = [32, 50]; // Assume a losing season to minimize bad trades
                         }
+                    } else {
+                        // Second (or higher) season
+                        s = t.seasons.length;
+                        rCurrent = [t.seasons[s - 1].won, t.seasons[s - 1].lost];
+                        rLast = [t.seasons[s - 2].won, t.seasons[s - 2].lost];
                     }
 
+                    gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
+                    gpAvg += (t.seasons[0].won + t.seasons[0].lost) / 30; // Real games played
+
+                    // If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
+                    if (gp >= 41) {
+                        wps.push(rCurrent[0] / gp);
+                    } else if (gp > 0) {
+                        wps.push((gp / 41 * rCurrent[0] / gp + (41 - gp) / 41 * rLast[0] / 82));
+                    } else {
+                        wps.push(rLast[0] / 82);
+                    }
+                }
+
+                if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
                     // Get rank order of wps http://stackoverflow.com/a/14834599/786644
                     sorted = wps.slice().sort(function (a, b) { return a - b; });
                     estPicks = wps.slice().map(function (v) { return sorted.indexOf(v) + 1; }); // For each team, what is their estimated draft position?
@@ -731,10 +722,12 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                                     value: value,
                                     skills: [],
                                     contract: {
-                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
+                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)],
+                                        exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
                                     },
                                     worth: {
-                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
+                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)],
+                                        exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
                                     },
                                     age: 19,
                                     draftPick: true
@@ -804,8 +797,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                             whenReady();
                         };
                     }
-                };
-            }
+                }
+            };
         };
 
 
@@ -955,19 +948,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                             } else if (player.age >= 29) {
                                 value *= 0.9;
                             }
-
-                            // General aversion to large contracts. Also, this makes it possible for dv to be negative for a player
-                            /*if (player.contract.amount > 6) {
-                                dv -= Math.pow(3, 0.3 * 55) * player.contract.amount;
-                            }*/
                         }
-                    }/* else {
-                        dv = Math.pow(3, 0.3 * (player.value + 0.5 * (player.worth.amount - player.contract.amount) / 1000));
-
-                        if (player.contract.amount > 6) {
-                            dv -= Math.pow(3, 0.3 * 40) * player.contract.amount;
-                        }
-                    }*/
+                    }
 
                     // Anything below 40 is pretty worthless - SHOULD THIS BE HERE?
                     value -= 40;
@@ -986,8 +968,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     return 0;
                 }
 
-                sum = _.reduce(players, function (memo, player) {
-                    return memo + (player.contract.amount - player.worth.amount);
+                sum = _.reduce(players, function (memo, p) {
+                    return memo + (p.contract.amount - p.worth.amount) / 1000 * Math.pow(1.4, player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg));
                 }, 0);
 
                 return sum;
@@ -1001,8 +983,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     return 0;
                 }
 
-                sum = _.reduce(players, function (memo, player) {
-                    return memo + player.contract.amount;
+                sum = _.reduce(players, function (memo, p) {
+                    return memo + p.contract.amount / 1000 * Math.pow(1.4, player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg));
                 }, 0);
 
                 return sum;

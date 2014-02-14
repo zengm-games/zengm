@@ -3,18 +3,8 @@ DB CHANGES SINCE 3.3.0
 
 TEAM.VALUECHANGE REVAMP
 -----------------------
-IDEA #1
-  Add up the value of all the players in the trade
-    logarithmic nature (but come up with a new formula that is intuitive)
-    diminishing returns (five nickels for a quarter) - does current formula make sense? not really. and the logarithmic part combined with subtracting total contract amount should account for this much more directly. so explicit accounting for is maybe not needed.
-  Convert back from logarithm, so something like log(1.15^60 + 1.15^60) * log(10) / log(1.15)
-  Subtract total contract amount (how to factor in length? maybe artificially inflate/deflate the amoutn based on if it's a good contract or not and how long it is)
-  DOESN'T MAKE SENSE! Trading two identical players for one identical player will favor the one, because it only has one contract.
-    Add a general "aversion to adding salary" term after, with difference in contract values?
-  Weights of adding/subtracting depend on contending/rebuilding
+
 aversion to making trades during free agency should only apply to teams with cap space and trades that use that cap space
-What to do with expiring contracts? Or contract length in general. Maybe incorporate into the value/amount formula somehow.
-  this mainly matters for undervalued or overvalued contracts. makes them better/worse.
 Test with trading nothing for bad contracts, and trading bad contracts for nothing. Both contending and rebuilding
 Key goals:
   Better valuing of draft picks
@@ -27,6 +17,7 @@ Loopholes fixed:
   You used to be able to dump big contracts on pretty much any team with cap space. This has been fixed by making all AI teams much more reluctant to take on bad contracts. So, more realistically, you'll have to include other assets like draft picks and young players if you want to get out of a bad contract.
   You used to be able to easily trade away big contracts during free agency, before other teams filled up their cap space with free agents. This has been fixed by making teams more reluctant to make trades early in free agency (this part of the AI is fairly dumb but at least prevents abuse - I wrote a smarter version that would compare the value of a trade against the value of signing the top free agent iff that trade would increase salary so much that the top free agent couldn't be signed, but it was too slow and cumbersome).
   You used to be able to steal picks from the AI in good drafts and sell picks to the AI in bad drafts, since the AI treated every draft the same. Now, the AI looks at the draft prospects available and sees if it is a strong draft or not, which impacts how they value draft picks in different years.
+  You used to be able to dump your bad long contracts on AI teams in return for bad short contracts, and steal good long contracts in return for good short contracts, but now the AI factors in contract length.
 Eventually:
   "What would make this work?" functions should know about contending/rebuilding. Contending teams should be more eager to offer up young/cheap players, rebuilding teams should be more eager to offer up old/expensive players
     basically, they should view the trade from the other team's perspective, not just their own
@@ -36,6 +27,8 @@ Eventually:
     Problem now is, contract gets pushed into someone on the roster and it's lost. This is especially obvious if there is only one player in add and his contract is pushed to roster, then the trade is nothing.
     Probably not that important, since teams almost always have shitty players at the end of their rosters
   EXPLOIT that might be tricky to solve: in the "resigning players" phase, your free agents should still count towards your cap. Otherwise, you can trade to take on salary and then sign your players over the cap
+  Should draft pick contract "worth" be determined better somehow, like it is for normal contracts? probably yes
+    does this allow removal of fudge factor?
 
 CURRENT
 -------
@@ -43,6 +36,7 @@ option to keep your player stats in improve performance http://www.reddit.com/r/
 remove feedback tab, merge content into about page
 edit/delete player
   share code with create a player
+    contract?
   do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
 move manual to wordpress
   " < Basketball GM Manual" in title
@@ -162,6 +156,7 @@ power rankings
   preseason too
 player editor, for customizing rosters
 popup next to player name with quick view of key stats/ratings
+league history "dashboard", list of past champions and other very important info
 
 BIG NEW GAMEPLAY CHANGES
 ------------------------

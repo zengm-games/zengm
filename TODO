@@ -4,7 +4,6 @@ DB CHANGES SINCE 3.3.0
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
-aversion to making trades during free agency should only apply to teams with cap space and trades that use that cap space
 Test with trading nothing for bad contracts, and trading bad contracts for nothing. Both contending and rebuilding
 Key goals:
   Better valuing of draft picks
@@ -15,7 +14,7 @@ Loopholes fixed:
   You used to be able to acquire a player and then immediately trade him, which could be exploited by repeatedly signing free agents and trading them away for draft picks. This has been fixed by requiring 15 games to elapse before you can trade a player who was just signed or traded.
   You used to be able to easily poach undervalued assets from AI teams, mainly far future first round picks and rookies without much playing time. This has been fixed by more appropriately valuing those assets in the AI.
   You used to be able to dump big contracts on pretty much any team with cap space. This has been fixed by making all AI teams much more reluctant to take on bad contracts. So, more realistically, you'll have to include other assets like draft picks and young players if you want to get out of a bad contract.
-  You used to be able to easily trade away big contracts during free agency, before other teams filled up their cap space with free agents. This has been fixed by making teams more reluctant to make trades early in free agency (this part of the AI is fairly dumb but at least prevents abuse - I wrote a smarter version that would compare the value of a trade against the value of signing the top free agent iff that trade would increase salary so much that the top free agent couldn't be signed, but it was too slow and cumbersome).
+  You used to be able to easily trade away big contracts during free agency, before other teams filled up their cap space with free agents. This has been fixed by making teams more reluctant to use up their cap space in a trade during free agency.
   You used to be able to steal picks from the AI in good drafts and sell picks to the AI in bad drafts, since the AI treated every draft the same. Now, the AI looks at the draft prospects available and sees if it is a strong draft or not, which impacts how they value draft picks in different years.
   You used to be able to dump your bad long contracts on AI teams in return for bad short contracts, and steal good long contracts in return for good short contracts, but now the AI factors in contract length.
 Eventually:

@@ -567,7 +567,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
     }
 
     function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, cb) {
-        var add, getPicks, getPlayers, gpAvg, pop, remove, roster, strategy, tx;
+        var add, getPicks, getPlayers, gpAvg, payroll, pop, remove, roster, strategy, tx;
 
         // UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
         if (dpidsRemove.length > 2) {
@@ -582,19 +582,18 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
         gpAvg = 0;
 
-        tx = g.dbl.transaction(["draftPicks", "players", "teams"]);
+        tx = g.dbl.transaction(["draftPicks", "players", "releasedPlayers", "teams"]);
 
         // Get players
         getPlayers = function () {
             var i;
 
             tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
-                var cursor, p, worth;
+                var cursor, p;
 
                 cursor = event.target.result;
                 if (cursor) {
                     p = cursor.value;
-                    worth = player.genContract(p, false, false);
 
                     if (pidsRemove.indexOf(p.pid) < 0) {
                         roster.push({
@@ -820,8 +819,12 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             getPicks();
         });
 
+        db.getPayroll(tx, tid, function (payrollLocal) {
+            payroll = payrollLocal;
+        });
+
         tx.oncomplete = function () {
-            var contractsFactor, contractExcessFactor, base, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, salaryRemoved, skillsNeeded, sumContracts, sumContractExcess, sumValues, tx;
+            var contractsFactor, contractExcessFactor, base, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, salaryAddedThisSeason, salaryRemoved, skillsNeeded, sumContracts, sumContractExcess, sumValues;
 
 /*            // Handle situations where the team goes over the roster size limit
             if (roster.length + remove.length > 15) {
@@ -969,22 +972,25 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 }
 
                 sum = _.reduce(players, function (memo, p) {
-                    return memo + (p.contract.amount - p.worth.amount) / 1000 * Math.pow(1.4, player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg));
+                    return memo + (p.contract.amount - p.worth.amount) / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg), 0.5);
                 }, 0);
 
                 return sum;
             };
 
             // Sum of contracts
-            sumContracts = function (players) {
+            // If onlyThisSeason is set, then amounts after this season are ignored and the return value is the sum of this season's contract amounts in millions of dollars
+            sumContracts = function (players, onlyThisSeason) {
                 var sum;
+
+                onlyThisSeason = onlyThisSeason !== undefined ? onlyThisSeason : false;
 
                 if (players.length === 0) {
                     return 0;
                 }
 
                 sum = _.reduce(players, function (memo, p) {
-                    return memo + p.contract.amount / 1000 * Math.pow(1.4, player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg));
+                    return memo + p.contract.amount / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg), 0.5 - (onlyThisSeason ? 0.5 : 0));
                 }, 0);
 
                 return sum;
@@ -1004,9 +1010,16 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                  - (sumValues(remove) -  contractsFactor * sumContractExcess(remove))
                  + contractsFactor * salaryRemoved;
 
-            // Teams should be less likely to trade in free agency, since they could alternatively just sign a free agent. This will sometimes do dumb stuff, but it's fast and prevents abuse.
+            // Aversion towards losing cap space in a trade during free agency
             if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {
-                dv -= g.daysLeft / 2;
+                // Only care if cap space is over 2 million
+                if (payroll + 2000 < g.salaryCap) {
+                    salaryAddedThisSeason = sumContracts(add, true) - sumContracts(remove, true);
+                    // Only care if cap space is being used
+                    if (salaryAddedThisSeason > 0) {
+                        dv -= (0.2 + 0.8 * g.daysLeft / 30) * salaryAddedThisSeason; // 0.2 to 1 times the amount, depending on stage of free agency
+                    }
+                }
             }
 
             // Below is TOO SLOW and TOO CONFUSING. Above is less correct, but performs well.

@@ -7,6 +7,7 @@ number or not.
 ## Gameplay and UI
 
 - Create A Player page
+- New trade AI, fixing a ton of loopholes
 
 # 3.3.0 (2014-01-21)
 

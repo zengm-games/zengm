@@ -58,6 +58,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2014-01-30",
         msg: "New Create A Player feature, under the Tools menu."
+    }, {
+        date: "2014-02-15",
+        msg: '<a href="http://basketball-gm.com/blog/2014/02/new-improved-trade-ai/">Big changes to the trade AI</a>, which hopefully will fix some loopholes and make things more realistic.'
     }];
 
     function check() {

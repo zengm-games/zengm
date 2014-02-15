@@ -915,7 +915,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             add = doSkillBonuses(add, rosterAndRemove);
             remove = doSkillBonuses(remove, rosterAndAdd);
 
-            base = 1.15;
+            base = 1.25;
 
             sumValues = function (players) {
                 var exponential;
@@ -954,13 +954,16 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         }
                     }
 
-                    // Anything below 40 is pretty worthless - SHOULD THIS BE HERE?
+                    // Anything below 40 is pretty worthless
                     value -= 40;
+
+                    // A little nonlinear scaling (/ 8 comes from when value is 60 (100), to keep it on the same scale)
+                    value = Math.pow(value, 2) / 60;
 
                     return memo + Math.pow(base, value);
                 }, 0);
 
-                return Math.log(exponential) / Math.log(1.15); // Log base 1.15 (ln(e) is 1)
+                return Math.log(exponential) / Math.log(base); // Log base transformation (ln(e) is 1)
             };
 
             // Positive output: overpaid. Negative output: underpaid
@@ -972,7 +975,11 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 }
 
                 sum = _.reduce(players, function (memo, p) {
-                    return memo + (p.contract.amount - p.worth.amount) / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg), 0.5);
+                    if (p.draftPick) {
+                        return memo;
+                    }
+
+                    return memo + (p.contract.amount - p.worth.amount) / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg), 0.25);
                 }, 0);
 
                 return sum;
@@ -990,7 +997,11 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 }
 
                 sum = _.reduce(players, function (memo, p) {
-                    return memo + p.contract.amount / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg), 0.5 - (onlyThisSeason ? 0.5 : 0));
+                    if (p.draftPick) {
+                        return memo;
+                    }
+
+                    return memo + p.contract.amount / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg), 0.25 - (onlyThisSeason ? 0.25 : 0));
                 }, 0);
 
                 return sum;
@@ -1009,6 +1020,11 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             dv = (sumValues(add) - contractExcessFactor * sumContractExcess(add))
                  - (sumValues(remove) -  contractsFactor * sumContractExcess(remove))
                  + contractsFactor * salaryRemoved;
+/*console.log("Added players/picks: " + sumValues(add));
+console.log("Removed players/picks: " + (-sumValues(remove)));
+console.log("Added contract quality: -" + contractExcessFactor + " * " + sumContractExcess(add));
+console.log("Removed contract quality: -" + contractExcessFactor + " * " + sumContractExcess(remove));
+console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved);*/
 
             // Aversion towards losing cap space in a trade during free agency
             if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {
@@ -1017,6 +1033,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     salaryAddedThisSeason = sumContracts(add, true) - sumContracts(remove, true);
                     // Only care if cap space is being used
                     if (salaryAddedThisSeason > 0) {
+//console.log("Free agency penalty: -" + (0.2 + 0.8 * g.daysLeft / 30) * salaryAddedThisSeason);
                         dv -= (0.2 + 0.8 * g.daysLeft / 30) * salaryAddedThisSeason; // 0.2 to 1 times the amount, depending on stage of free agency
                     }
                 }

@@ -4,7 +4,14 @@ DB CHANGES SINCE 3.3.0
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
-Test with trading nothing for bad contracts, and trading bad contracts for nothing. Both contending and rebuilding
+injuries?
+  cheat! AI teams should be reluctant to accept, but shouldn't change propensity to give
+  reduce player value by some percentage based on number of days injured - maybe 1% for each day?
+test
+  obvious problem: you can trade several shitty players for a good player. potential solutions:
+    nonlinear scale for value, so lower values are worse (this is convoluted and shitty)
+    increase base of logarithmic scale
+    add explicit penalty for trading many players for fewer players (like had before)
 Key goals:
   Better valuing of draft picks
   Better understanding what good/bad contracts are

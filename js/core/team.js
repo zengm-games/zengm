@@ -601,6 +601,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                             skills: _.last(p.ratings).skills,
                             contract: p.contract,
                             worth: player.genContract(p, false, false),
+                            injury: p.injury,
                             age: g.season - p.born.year
                         });
                     } else {
@@ -609,6 +610,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                             skills: _.last(p.ratings).skills,
                             contract: p.contract,
                             worth: player.genContract(p, false, false),
+                            injury: p.injury,
                             age: g.season - p.born.year
                         });
                     }
@@ -628,6 +630,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         skills: _.last(p.ratings).skills,
                         contract: p.contract,
                         worth: player.genContract(p, false, false),
+                        injury: p.injury,
                         age: g.season - p.born.year
                     });
                 };
@@ -728,6 +731,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                                         amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)],
                                         exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
                                     },
+                                    injury: {type: "Healthy", gamesRemaining: 0},
                                     age: 19,
                                     draftPick: true
                                 });
@@ -766,11 +770,14 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                                     value: value,
                                     skills: [],
                                     contract: {
-                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
+                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000,
+                                        exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
                                     },
                                     worth: {
-                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000
+                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000,
+                                        exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
                                     },
+                                    injury: {type: "Healthy", gamesRemaining: 0},
                                     age: 19,
                                     draftPick: true
                                 });
@@ -917,8 +924,10 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
             base = 1.25;
 
-            sumValues = function (players) {
+            sumValues = function (players, includeInjuries) {
                 var exponential;
+
+                includeInjuries = includeInjuries !== undefined ? includeInjuries : false;
 
                 if (players.length === 0) {
                     return 0;
@@ -957,8 +966,14 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     // Anything below 40 is pretty worthless
                     value -= 40;
 
-                    // A little nonlinear scaling (/ 8 comes from when value is 60 (100), to keep it on the same scale)
-                    value = Math.pow(value, 2) / 60;
+                    // Normalize for injuries
+                    if (includeInjuries && tid !== g.userTid) {
+                        if (player.injury.gamesRemaining > 75) {
+                            value -= value * 0.75;
+                        } else {
+                            value -= value * player.injury.gamesRemaining / 100;
+                        }
+                    }
 
                     return memo + Math.pow(base, value);
                 }, 0);
@@ -1017,10 +1032,10 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
             salaryRemoved = sumContracts(remove) - sumContracts(add);
 
-            dv = (sumValues(add) - contractExcessFactor * sumContractExcess(add))
+            dv = (sumValues(add, true) - contractExcessFactor * sumContractExcess(add))
                  - (sumValues(remove) -  contractsFactor * sumContractExcess(remove))
                  + contractsFactor * salaryRemoved;
-/*console.log("Added players/picks: " + sumValues(add));
+/*console.log("Added players/picks: " + sumValues(add, true));
 console.log("Removed players/picks: " + (-sumValues(remove)));
 console.log("Added contract quality: -" + contractExcessFactor + " * " + sumContractExcess(add));
 console.log("Removed contract quality: -" + contractExcessFactor + " * " + sumContractExcess(remove));

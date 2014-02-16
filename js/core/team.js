@@ -649,6 +649,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                 wps = []; // Contains estimated winning percentages for all teams by the end of the season
                 for (i = 0; i < teams.length; i++) {
                     t = teams[i];
+                    s = t.seasons.length;
                     if (t.seasons.length === 1) {
                         // First season
                         if (t.seasons[0].won + t.seasons[0].lost > 15) {
@@ -668,13 +669,12 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         }
                     } else {
                         // Second (or higher) season
-                        s = t.seasons.length;
                         rCurrent = [t.seasons[s - 1].won, t.seasons[s - 1].lost];
                         rLast = [t.seasons[s - 2].won, t.seasons[s - 2].lost];
                     }
 
                     gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
-                    gpAvg += (t.seasons[0].won + t.seasons[0].lost) / 30; // Real games played
+                    gpAvg += (t.seasons[s - 1].won + t.seasons[s - 1].lost) / 30; // Real games played
 
                     // If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
                     if (gp >= 41) {
@@ -832,6 +832,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
         tx.oncomplete = function () {
             var contractsFactor, contractExcessFactor, base, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, salaryAddedThisSeason, salaryRemoved, skillsNeeded, sumContracts, sumContractExcess, sumValues;
+
+            gpAvg = helpers.bound(gpAvg, 0, 82);
 
 /*            // Handle situations where the team goes over the roster size limit
             if (roster.length + remove.length > 15) {

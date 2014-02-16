@@ -804,7 +804,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                 if (p.tid === g.PLAYER.FREE_AGENT) {
                     if (p.yearsFreeAgent >= 1) {
                         p = player.retire(tx, p);
-                        update = true;
                     } else {
                         p.yearsFreeAgent += 1;
                     }

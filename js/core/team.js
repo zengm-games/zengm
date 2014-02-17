@@ -831,7 +831,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         });
 
         tx.oncomplete = function () {
-            var contractsFactor, contractExcessFactor, base, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, salaryAddedThisSeason, salaryRemoved, skillsNeeded, sumContracts, sumContractExcess, sumValues;
+            var contractsFactor, base, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, salaryAddedThisSeason, salaryRemoved, skillsNeeded, sumContracts, sumValues;
 
             gpAvg = helpers.bound(gpAvg, 0, 82);
 
@@ -993,7 +993,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     if (playerValue < 0) {
                         playerValue = 0;
                     }
-console.log([playerValue, contractValue]);
+//console.log([playerValue, contractValue]);
 
                     value = playerValue + 0.5 * contractValue;
 
@@ -1007,26 +1007,6 @@ console.log([playerValue, contractValue]);
                     return exponential;
                 }
                 return Math.pow(Math.abs(exponential), 1 / base) * Math.abs(exponential) / exponential;
-            };
-
-            // Positive output: overpaid. Negative output: underpaid
-            sumContractExcess = function (players) {
-                var sum;
-
-return 0;
-                if (players.length === 0) {
-                    return 0;
-                }
-
-                sum = _.reduce(players, function (memo, p) {
-                    if (p.draftPick) {
-                        return memo;
-                    }
-
-                    return memo + (p.contract.amount - p.worth.amount) / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg), 0.25);
-                }, 0);
-
-                return sum;
             };
 
             // Sum of contracts
@@ -1051,8 +1031,6 @@ return 0;
                 return sum;
             };
 
-            contractExcessFactor = 0.5;
-
             if (strategy === "rebuilding") {
                 contractsFactor = 0.3;
             } else {
@@ -1061,9 +1039,7 @@ return 0;
 
             salaryRemoved = sumContracts(remove) - sumContracts(add);
 
-            dv = (sumValues(add, true) - contractExcessFactor * sumContractExcess(add))
-                 - (sumValues(remove) -  contractsFactor * sumContractExcess(remove))
-                 + contractsFactor * salaryRemoved;
+            dv = sumValues(add, true) - sumValues(remove) + contractsFactor * salaryRemoved;
 /*console.log("Added players/picks: " + sumValues(add, true));
 console.log("Removed players/picks: " + (-sumValues(remove)));
 console.log("Added contract quality: -" + contractExcessFactor + " * " + sumContractExcess(add));

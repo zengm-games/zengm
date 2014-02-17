@@ -153,6 +153,19 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     }
                 }
 
+                // Rookie of the Year
+                players.sort(function (a, b) {  return b.stats.ewa - a.stats.ewa; }); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
+                for (i = 0; i < players.length; i++) {
+                    // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+                    if (players[i].draft.year === g.season - 1) {
+                        break;
+                    }
+                }
+                p = players[i];
+                if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
+                    awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
+                }
 
                 // Most Valuable Player
                 players.sort(function (a, b) {  return (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won); });
@@ -177,19 +190,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                 p = players[i];
                 awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
                 awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
-
-                // Rookie of the Year - same sort as MVP
-                for (i = 0; i < players.length; i++) {
-                    // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-                    if (players[i].draft.year === g.season - 1) {
-                        break;
-                    }
-                }
-                p = players[i];
-                if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
-                    awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
-                }
 
                 // All League Team - same sort as MVP
                 awards.allLeague = [{title: "First Team", players: []}];

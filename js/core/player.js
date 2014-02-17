@@ -1418,7 +1418,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      *     ratings.
      */
     function value(p, options) {
-        var age, current, i, potential, pr, ps, ps1, ps2, worth, worthFactor;
+        var age, current, i, potential, pr, ps, ps1, ps2, s, worth, worthFactor;
 
         options = options !== undefined ? options : {};
         options.noPot = options.noPot !== undefined ? options.noPot : false;
@@ -1426,16 +1426,17 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         options.age = options.age !== undefined ? options.age : null;
         options.withContract = options.withContract !== undefined ? options.withContract : false;
 
-        // Otherwise the input player object can be modified when fuzzing occurs (or maybe elsewhere)
-        p = helpers.deepCopy(p);
-
         // Current ratings
-        pr = _.last(p.ratings);
+        pr = {}; // Start blank, add what we need (efficiency, wow!)
+        s = p.ratings.length - 1; // Latest season
 
         // Fuzz?
         if (options.fuzz) {
-            pr.ovr = Math.round(helpers.bound(pr.ovr + pr.fuzz, 0, 100));
-            pr.pot = Math.round(helpers.bound(pr.pot + pr.fuzz, 0, 100));
+            pr.ovr = Math.round(helpers.bound(p.ratings[s].ovr + p.ratings[s].fuzz, 0, 100));
+            pr.pot = Math.round(helpers.bound(p.ratings[s].pot + p.ratings[s].fuzz, 0, 100));
+        } else {
+            pr.ovr = p.ratings[s].ovr;
+            pr.pot = p.ratings[s].pot;
         }
 
         // Regular season stats ONLY, in order starting with most recent
@@ -1443,7 +1444,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         if (p.stats !== undefined) { // Filtered player objects might not include it, for rookies
             for (i = 0; i < p.stats.length; i++) {
                 if (!p.stats[i].playoffs) {
-                    ps.push(p.stats[i]);
+                    ps.push(p.stats[i]); // Okay that it's not deep copied, because this isn't modified
                 }
             }
             ps.reverse();

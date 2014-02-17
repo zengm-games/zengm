@@ -4,8 +4,6 @@ DB CHANGES SINCE 3.3.0
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
-slow
-  getPicks is the problem. cache results somehow
 combining multiple players is wonky. really bad.
   http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
   the exponential, sum, log method is weird. some other nonlinear scaling should be used.

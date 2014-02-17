@@ -84,7 +84,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
         tx = g.dbl.transaction(["draftPicks", "players"]);
 
         // This is just for debugging
-        team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
+        team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null, function (dv) {
             console.log(dv);
         });
 
@@ -357,7 +357,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
 
                 outcome = "rejected"; // Default
 
-                team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
+                team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null, function (dv) {
                     var draftPickStore, j, playerStore, tx;
 
                     tx = g.dbl.transaction(["draftPicks", "players"], "readwrite");
@@ -437,9 +437,10 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
      * @memberOf core.trade
      * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
      * @param {boolean} holdUserConstant If true, then players/picks will only be added from the other team. This is useful for the trading block feature.
+     * @param {?Object} estValuesCached Estimated draft pick values from trade.getPickValues, or null. Only pass if you're going to call this repeatedly, then it'll be faster if you cache the values up front.
      * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
-    function makeItWork(teams, holdUserConstant, cb) {
+    function makeItWork(teams, holdUserConstant, estValuesCached, cb) {
         var added, initialSign, tryAddAsset, testTrade;
 
         added = 0;
@@ -567,7 +568,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                         }
                     }
                     (function (i) {
-                        team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, function (dv) {
+                        team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached, function (dv) {
                             var asset, j;
 
                             assets[i].dv = dv;
@@ -611,7 +612,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
 
         // See if the AI team likes the current trade. If not, try adding something to it.
         testTrade = function () {
-            team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
+            team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached, function (dv) {
                 if (dv > 0 && initialSign === -1) {
                     cb(true, teams);
                 } else if ((added > 2 || (added > 0 && Math.random() > 0.5)) && initialSign === 1) {
@@ -626,7 +627,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
             });
         };
 
-        team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, function (dv) {
+        team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached, function (dv) {
             if (dv > 0) {
                 // Try to make trade better for user's team
                 initialSign = 1;
@@ -648,50 +649,52 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
      * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
     function makeItWorkTrade(cb) {
-        get(function (teams0) {
-            makeItWork(teams0, false, function (found, teams) {
-                if (!found) {
-                    cb(g.teamRegionsCache[teams0[1].tid] + ' GM: "I can\'t afford to give up so much."');
-                } else {
-                    summary(teams, function (s) {
-                        var tx;
+        getPickValues(g.dbl.transaction("players"), function (estValues) {
+            get(function (teams0) {
+                makeItWork(teams0, false, estValues, function (found, teams) {
+                    if (!found) {
+                        cb(g.teamRegionsCache[teams0[1].tid] + ' GM: "I can\'t afford to give up so much."');
+                    } else {
+                        summary(teams, function (s) {
+                            var tx;
 
-                        // Store AI's proposed trade in database
-                        tx = g.dbl.transaction("trade", "readwrite");
-                        tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
-                            var cursor, i, updated, tr;
+                            // Store AI's proposed trade in database
+                            tx = g.dbl.transaction("trade", "readwrite");
+                            tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
+                                var cursor, i, updated, tr;
 
-                            cursor = event.target.result;
-                            tr = cursor.value;
+                                cursor = event.target.result;
+                                tr = cursor.value;
 
-                            updated = false;
+                                updated = false;
 
-                            for (i = 0; i < 2; i++) {
-                                if (teams[i].tid !== tr.teams[i].tid) {
-                                    updated = true;
+                                for (i = 0; i < 2; i++) {
+                                    if (teams[i].tid !== tr.teams[i].tid) {
+                                        updated = true;
+                                    }
+                                    if (teams[i].pids.toString() !== tr.teams[i].pids.toString()) {
+                                        updated = true;
+                                    }
+                                    if (teams[i].dpids.toString() !== tr.teams[i].dpids.toString()) {
+                                        updated = true;
+                                    }
                                 }
-                                if (teams[i].pids.toString() !== tr.teams[i].pids.toString()) {
-                                    updated = true;
-                                }
-                                if (teams[i].dpids.toString() !== tr.teams[i].dpids.toString()) {
-                                    updated = true;
-                                }
-                            }
 
-                            if (updated) {
-                                tr.teams = teams;
-                                cursor.update(tr);
-                            }
-                        };
-                        tx.oncomplete = function () {
-                            if (s.warning) {
-                                cb(g.teamRegionsCache[teams[1].tid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."');
-                            } else {
-                                cb(g.teamRegionsCache[teams[1].tid] + ' GM: "How does this sound?"');
-                            }
-                        };
-                    });
-                }
+                                if (updated) {
+                                    tr.teams = teams;
+                                    cursor.update(tr);
+                                }
+                            };
+                            tx.oncomplete = function () {
+                                if (s.warning) {
+                                    cb(g.teamRegionsCache[teams[1].tid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."');
+                                } else {
+                                    cb(g.teamRegionsCache[teams[1].tid] + ' GM: "How does this sound?"');
+                                }
+                            };
+                        });
+                    }
+                });
             });
         });
     }
@@ -739,6 +742,47 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
         return filterUntradable([player])[0].untradable;
     }
 
+
+    /**
+     * Estimate draft pick values, based on the generated draft prospects in the database.
+     *
+     * This was made for team.valueChange, so it could be called once and the results cached.
+     * 
+     * @memberOf core.trade
+     * @param {(IDBTransaction)} tx An IndexedDB transaction on players.
+     * @param {function(Object)} cb Callback function that takes estimated draft pick values.
+     */
+    function getPickValues(tx, cb) {
+        var estValues, i, withAll;
+
+        estValues = {
+            default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37] // This is basically arbitrary
+        };
+
+        withAll = _.after(4, function () {
+            cb(estValues);
+        });
+
+        // Look up to 4 season in the future, but depending on whether this is before or after the draft, the first or last will be empty/incomplete
+        for (i = g.season; i < g.season + 4; i++) {
+            tx.objectStore("players").index("draft.year").getAll(i).onsuccess = function (event) {
+                var i, players;
+
+                players = event.target.result;
+
+                if (players.length > 0) {
+                    for (i = 0; i < players.length; i++) {
+                        players[i].value = player.value(players[i], {age: (g.season - players[i].born.year) + (players[i].draft.year - g.season)}) + 4; // +4 is to generally make picks more valued
+                    }
+                    players.sort(function (a, b) { return b.value - a.value; });
+                    estValues[players[0].draft.year] = _.pluck(players, "value");
+                }
+
+                withAll();
+            };
+        }
+    }
+
     return {
         create: create,
         updatePlayers: updatePlayers,
@@ -749,6 +793,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
         propose: propose,
         makeItWork: makeItWork,
         makeItWorkTrade: makeItWorkTrade,
-        filterUntradable: filterUntradable
+        filterUntradable: filterUntradable,
+        getPickValues: getPickValues
     };
 });

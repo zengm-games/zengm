@@ -566,7 +566,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         };
     }
 
-    function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, cb) {
+    // estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).
+    function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesCached, cb) {
         var add, getPicks, getPlayers, gpAvg, payroll, pop, remove, roster, strategy, tx;
 
         // UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
@@ -640,7 +641,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
                 // Estimate the order of the picks by team
                 tx.objectStore("teams").getAll().onsuccess = function (event) {
-                    var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, teams, whenReady, wps;
+                    var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, teams, trade, withEstValues, wps;
 
                     teams = event.target.result;
 
@@ -689,14 +690,10 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     estPicks = wps.slice().map(function (v) { return sorted.indexOf(v) + 1; }); // For each team, what is their estimated draft position?
 
                     rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500]; // Keep in sync with core.draft
-                    estValues = {
-                        default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37] // This is basically arbitrary
-                    };
 
                     // Actually add picks after some stuff below is done
-                    whenReady = _.after(4, function () {
+                    withEstValues = function () {
                         var i;
-//console.log(estValues);
 
                         for (i = 0; i < dpidsAdd.length; i++) {
                             tx.objectStore("draftPicks").get(dpidsAdd[i]).onsuccess = function (event) {
@@ -780,25 +777,17 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                                 });
                             };
                         }
-                    });
+                    };
 
-                    // Look up to 4 season in the future, but depending on whether this is before or after the draft, the first or last will be empty/incomplete
-                    for (i = g.season; i < g.season + 4; i++) {
-                        tx.objectStore("players").index("draft.year").getAll(i).onsuccess = function (event) {
-                            var i, players;
-
-                            players = event.target.result;
-
-                            if (players.length > 0) {
-                                for (i = 0; i < players.length; i++) {
-                                    players[i].value = player.value(players[i], {age: (g.season - players[i].born.year) + (players[i].draft.year - g.season)}) + 4; // +4 is to generally make picks more valued
-                                }
-                                players.sort(function (a, b) { return b.value - a.value; });
-                                estValues[players[0].draft.year] = _.pluck(players, "value");
-                            }
-
-                            whenReady();
-                        };
+                    if (estValuesCached) {
+                        estValues = estValuesCached;
+                        withEstValues();
+                    } else {
+                        trade = require("core/trade");
+                        trade.getPickValues(tx, function (newEstValues) {
+                            estValues = newEstValues;
+                            withEstValues();
+                        });
                     }
                 };
             }

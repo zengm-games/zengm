@@ -29,43 +29,46 @@ define(["globals", "ui", "core/player", "core/team", "core/trade", "lib/jquery",
             cb(offers);
         });
 
-        done = 0;
-        for (i = 0; i < tids.length; i++) {
-            (function (tid) {
-                var teams;
 
-                teams = [
-                    {
-                        tid: g.userTid,
-                        pids: userPids,
-                        dpids: userDpids
-                    },
-                    {
-                        tid: tid,
-                        pids: [],
-                        dpids: []
-                    }
-                ];
+        trade.getPickValues(g.dbl.transaction("players"), function (estValues) {
+            done = 0;
+            for (i = 0; i < tids.length; i++) {
+                (function (tid) {
+                    var teams;
 
-                if (tid !== g.userTid) {
-                    trade.makeItWork(teams, true, function (found, teams) {
-                        // Update progress bar
-                        done += 1;
-                        progressBar.style.width = Math.round(10 + 90 * done / numAfter) + "%";
-
-                        if (found) {
-                            trade.summary(teams, function (summary) {
-                                teams[1].warning = summary.warning;
-                                offers.push(teams[1]);
-                                afterOffers();
-                            });
-                        } else {
-                            afterOffers();
+                    teams = [
+                        {
+                            tid: g.userTid,
+                            pids: userPids,
+                            dpids: userDpids
+                        },
+                        {
+                            tid: tid,
+                            pids: [],
+                            dpids: []
                         }
-                    });
-                }
-            }(tids[i]));
-        }
+                    ];
+
+                    if (tid !== g.userTid) {
+                        trade.makeItWork(teams, true, estValues, function (found, teams) {
+                            // Update progress bar
+                            done += 1;
+                            progressBar.style.width = Math.round(10 + 90 * done / numAfter) + "%";
+
+                            if (found) {
+                                trade.summary(teams, function (summary) {
+                                    teams[1].warning = summary.warning;
+                                    offers.push(teams[1]);
+                                    afterOffers();
+                                });
+                            } else {
+                                afterOffers();
+                            }
+                        });
+                    }
+                }(tids[i]));
+            }
+        });
     }
 
     function get(req) {

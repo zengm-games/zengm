@@ -580,8 +580,6 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
         add = [];
         remove = [];
 
-        gpAvg = 0;
-
         tx = g.dbl.transaction(["draftPicks", "players", "releasedPlayers", "teams"]);
 
         // Get players
@@ -639,54 +637,53 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
         getPicks = function () {
             // For each draft pick, estimate its value based on the recent performance of the team
-            // Estimate the order of the picks by team
-            tx.objectStore("teams").getAll().onsuccess = function (event) {
-                var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, teams, whenReady, wps;
+            if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
+                // Estimate the order of the picks by team
+                tx.objectStore("teams").getAll().onsuccess = function (event) {
+                    var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, teams, whenReady, wps;
 
-                teams = event.target.result;
+                    teams = event.target.result;
 
-                // This part needs to be run every time so that gpAvg is available
-                wps = []; // Contains estimated winning percentages for all teams by the end of the season
-                for (i = 0; i < teams.length; i++) {
-                    t = teams[i];
-                    s = t.seasons.length;
-                    if (t.seasons.length === 1) {
-                        // First season
-                        if (t.seasons[0].won + t.seasons[0].lost > 15) {
-                            rCurrent = [t.seasons[0].won, t.seasons[0].lost];
-                        } else {
-                            // Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
-                            if (i === g.userTid) {
-                                rCurrent = [82, 0];
+                    // This part needs to be run every time so that gpAvg is available
+                    wps = []; // Contains estimated winning percentages for all teams by the end of the season
+                    for (i = 0; i < teams.length; i++) {
+                        t = teams[i];
+                        s = t.seasons.length;
+                        if (t.seasons.length === 1) {
+                            // First season
+                            if (t.seasons[0].won + t.seasons[0].lost > 15) {
+                                rCurrent = [t.seasons[0].won, t.seasons[0].lost];
                             } else {
-                                rCurrent = [0, 82];
+                                // Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
+                                if (i === g.userTid) {
+                                    rCurrent = [82, 0];
+                                } else {
+                                    rCurrent = [0, 82];
+                                }
                             }
-                        }
-                        if (i === g.userTid) {
-                            rLast = [50, 32];
+                            if (i === g.userTid) {
+                                rLast = [50, 32];
+                            } else {
+                                rLast = [32, 50]; // Assume a losing season to minimize bad trades
+                            }
                         } else {
-                            rLast = [32, 50]; // Assume a losing season to minimize bad trades
+                            // Second (or higher) season
+                            rCurrent = [t.seasons[s - 1].won, t.seasons[s - 1].lost];
+                            rLast = [t.seasons[s - 2].won, t.seasons[s - 2].lost];
                         }
-                    } else {
-                        // Second (or higher) season
-                        rCurrent = [t.seasons[s - 1].won, t.seasons[s - 1].lost];
-                        rLast = [t.seasons[s - 2].won, t.seasons[s - 2].lost];
+
+                        gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
+
+                        // If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
+                        if (gp >= 41) {
+                            wps.push(rCurrent[0] / gp);
+                        } else if (gp > 0) {
+                            wps.push((gp / 41 * rCurrent[0] / gp + (41 - gp) / 41 * rLast[0] / 82));
+                        } else {
+                            wps.push(rLast[0] / 82);
+                        }
                     }
 
-                    gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
-                    gpAvg += (t.seasons[s - 1].won + t.seasons[s - 1].lost) / 30; // Real games played
-
-                    // If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
-                    if (gp >= 41) {
-                        wps.push(rCurrent[0] / gp);
-                    } else if (gp > 0) {
-                        wps.push((gp / 41 * rCurrent[0] / gp + (41 - gp) / 41 * rLast[0] / 82));
-                    } else {
-                        wps.push(rLast[0] / 82);
-                    }
-                }
-
-                if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
                     // Get rank order of wps http://stackoverflow.com/a/14834599/786644
                     sorted = wps.slice().sort(function (a, b) { return a - b; });
                     estPicks = wps.slice().map(function (v) { return sorted.indexOf(v) + 1; }); // For each team, what is their estimated draft position?
@@ -803,15 +800,15 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                             whenReady();
                         };
                     }
-                }
-            };
+                };
+            }
         };
-
 
         // Get team strategy and population, for future use
         filter({
             attrs: ["strategy"],
             seasonAttrs: ["pop"],
+            stats: ["gp"],
             season: g.season,
             tid: tid,
             ot: tx
@@ -821,6 +818,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             if (pop > 20) {
                 pop = 20;
             }
+            gpAvg = t.gp; // Ideally would be done separately for each team, but close enough
 
             getPlayers();
             getPicks();

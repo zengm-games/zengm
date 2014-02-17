@@ -1064,11 +1064,11 @@ return 0;
             dv = (sumValues(add, true) - contractExcessFactor * sumContractExcess(add))
                  - (sumValues(remove) -  contractsFactor * sumContractExcess(remove))
                  + contractsFactor * salaryRemoved;
-console.log("Added players/picks: " + sumValues(add, true));
+/*console.log("Added players/picks: " + sumValues(add, true));
 console.log("Removed players/picks: " + (-sumValues(remove)));
 console.log("Added contract quality: -" + contractExcessFactor + " * " + sumContractExcess(add));
 console.log("Removed contract quality: -" + contractExcessFactor + " * " + sumContractExcess(remove));
-console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved);
+console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved);*/
 
             // Aversion towards losing cap space in a trade during free agency
             if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {

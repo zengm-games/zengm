@@ -122,13 +122,14 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @param {boolean} randomizeExp If true, then it is assumed that some random amount of years has elapsed since the contract was signed, thus decreasing the expiration date. This is used when generating players in a new league.
      * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
      */
-    function genContract(p, randomizeExp, randomizeAmount) {
+    function genContract(p, randomizeExp, randomizeAmount, noLimit) {
         var amount, expiration, maxAmount, minAmount, potentialDifference, ratings, years;
 
         ratings = _.last(p.ratings);
 
         randomizeExp = randomizeExp !== undefined ? randomizeExp : false;
         randomizeAmount = randomizeAmount !== undefined ? randomizeAmount : true;
+        noLimit = noLimit !== undefined ? noLimit : false;
 
         // Limits on yearly contract amount, in $1000's
         minAmount = 500;
@@ -169,13 +170,21 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         }
 
         expiration = g.season + years - 1;
-        if (amount < minAmount * 1.1) {
-            amount = minAmount;
-        } else if (amount > maxAmount) {
-            amount = maxAmount;
+
+        if (!noLimit) {
+            if (amount < minAmount * 1.1) {
+                amount = minAmount;
+            } else if (amount > maxAmount) {
+                amount = maxAmount;
+            }
         } else {
-            amount = 50 * Math.round(amount / 50);  // Make it a multiple of 50k
+            // Well, at least keep it positive
+            if (amount < 0) {
+                amount = 0;
+            }
         }
+
+        amount = 50 * Math.round(amount / 50);  // Make it a multiple of 50k
 
         return {amount: amount, exp: expiration};
     }

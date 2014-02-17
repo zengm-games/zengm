@@ -600,7 +600,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                             value: player.value(p),
                             skills: _.last(p.ratings).skills,
                             contract: p.contract,
-                            worth: player.genContract(p, false, false),
+                            worth: player.genContract(p, false, false, true),
                             injury: p.injury,
                             age: g.season - p.born.year
                         });
@@ -609,7 +609,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                             value: player.value(p),
                             skills: _.last(p.ratings).skills,
                             contract: p.contract,
-                            worth: player.genContract(p, false, false),
+                            worth: player.genContract(p, false, false, true),
                             injury: p.injury,
                             age: g.season - p.born.year
                         });
@@ -629,7 +629,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         value: player.value(p, {withContract: true}),
                         skills: _.last(p.ratings).skills,
                         contract: p.contract,
-                        worth: player.genContract(p, false, false),
+                        worth: player.genContract(p, false, false, true),
                         injury: p.injury,
                         age: g.season - p.born.year
                     });
@@ -935,58 +935,85 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     return 0;
                 }
 
-                exponential = _.reduce(players, function (memo, player) {
-                    var value;
+                exponential = _.reduce(players, function (memo, p) {
+                    var contractSeasonsRemaining, contractValue, playerValue, value;
 
-                    value = player.value;
+                    playerValue = p.value;
 
                     if (strategy === "rebuilding") {
                         // Value young/cheap players and draft picks more. Penalize expensive/old players
-                        if (player.draftPick) {
-                            value *= 1.15;
+                        if (p.draftPick) {
+                            playerValue *= 1.15;
                         } else {
-                            if (player.age <= 19) {
-                                value *= 1.15;
-                            } else if (player.age === 20) {
-                                value *= 1.1;
-                            } else if (player.age === 21) {
-                                value *= 1.075;
-                            } else if (player.age === 22) {
-                                value *= 1.05;
-                            } else if (player.age === 23) {
-                                value *= 1.025;
-                            } else if (player.age === 27) {
-                                value *= 0.975;
-                            } else if (player.age === 28) {
-                                value *= 0.95;
-                            } else if (player.age >= 29) {
-                                value *= 0.9;
+                            if (p.age <= 19) {
+                                playerValue *= 1.15;
+                            } else if (p.age === 20) {
+                                playerValue *= 1.1;
+                            } else if (p.age === 21) {
+                                playerValue *= 1.075;
+                            } else if (p.age === 22) {
+                                playerValue *= 1.05;
+                            } else if (p.age === 23) {
+                                playerValue *= 1.025;
+                            } else if (p.age === 27) {
+                                playerValue *= 0.975;
+                            } else if (p.age === 28) {
+                                playerValue *= 0.95;
+                            } else if (p.age >= 29) {
+                                playerValue *= 0.9;
                             }
                         }
                     }
 
-                    // Anything below 40 is pretty worthless
-                    value -= 40;
+                    // Anything below 45 is pretty worthless
+                    playerValue -= 45;
 
                     // Normalize for injuries
                     if (includeInjuries && tid !== g.userTid) {
-                        if (player.injury.gamesRemaining > 75) {
-                            value -= value * 0.75;
+                        if (p.injury.gamesRemaining > 75) {
+                            playerValue -= playerValue * 0.75;
                         } else {
-                            value -= value * player.injury.gamesRemaining / 100;
+                            playerValue -= playerValue * p.injury.gamesRemaining / 100;
                         }
                     }
 
-                    return memo + Math.pow(base, value);
+                    contractValue = (p.worth.amount - p.contract.amount) / 1000;
+
+                    // Account for duration
+                    contractSeasonsRemaining = player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg);
+                    if (contractSeasonsRemaining > 1) {
+                        // Don't make it too extreme
+                        contractValue *= Math.pow(contractSeasonsRemaining, 0.25);
+                    } else {
+                        // Raising < 1 to < 1 power would make this too large
+                        contractValue *= contractSeasonsRemaining;
+                    }
+
+                    // Really bad players will just get no PT
+                    if (playerValue < 0) {
+                        playerValue = 0;
+                    }
+console.log([playerValue, contractValue]);
+
+                    value = playerValue + 0.5 * contractValue;
+
+                    if (value === 0) {
+                        return memo;
+                    }
+                    return memo + Math.pow(Math.abs(value), base) * Math.abs(value) / value;
                 }, 0);
 
-                return Math.log(exponential) / Math.log(base); // Log base transformation (ln(e) is 1)
+                if (exponential === 0) {
+                    return exponential;
+                }
+                return Math.pow(Math.abs(exponential), 1 / base) * Math.abs(exponential) / exponential;
             };
 
             // Positive output: overpaid. Negative output: underpaid
             sumContractExcess = function (players) {
                 var sum;
 
+return 0;
                 if (players.length === 0) {
                     return 0;
                 }
@@ -1027,9 +1054,9 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             contractExcessFactor = 0.5;
 
             if (strategy === "rebuilding") {
-                contractsFactor = 0.6;
-            } else {
                 contractsFactor = 0.3;
+            } else {
+                contractsFactor = 0.1;
             }
 
             salaryRemoved = sumContracts(remove) - sumContracts(add);
@@ -1037,11 +1064,11 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             dv = (sumValues(add, true) - contractExcessFactor * sumContractExcess(add))
                  - (sumValues(remove) -  contractsFactor * sumContractExcess(remove))
                  + contractsFactor * salaryRemoved;
-/*console.log("Added players/picks: " + sumValues(add, true));
+console.log("Added players/picks: " + sumValues(add, true));
 console.log("Removed players/picks: " + (-sumValues(remove)));
 console.log("Added contract quality: -" + contractExcessFactor + " * " + sumContractExcess(add));
 console.log("Removed contract quality: -" + contractExcessFactor + " * " + sumContractExcess(remove));
-console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved);*/
+console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved);
 
             // Aversion towards losing cap space in a trade during free agency
             if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {
@@ -1114,16 +1141,17 @@ console.log("Worse options in free agency")
                 cb(dv);
             }*/
 
+            // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
+            // This is a fudge factor, since it's one-sided to punish the player
+            if (add.length > remove.length) {
+                dv *= Math.pow(0.95, add.length - remove.length);
+            }
+
             cb(dv);
 /*console.log('---');
 console.log([sumValues(add), sumContracts(add)]);
 console.log([sumValues(remove), sumContracts(remove)]);
 console.log(dv);*/
-
-            /*// Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
-            if (add.length > remove.length) {
-                dv *= Math.pow(0.95, add.length - remove.length);
-            }*/
 
         };
     }

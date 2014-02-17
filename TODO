@@ -4,6 +4,16 @@ DB CHANGES SINCE 3.3.0
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
+combining multiple players is wonky. really bad.
+  http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
+  the exponential, sum, log method is weird. some other nonlinear scaling should be used.
+  BETTER IDEA
+    just use exponentials, never take lot
+    (3^.1)^x => triples every time x increases by 10
+    but then for high values, adding extra contracts doesn't seem to matter. like a superstar is worth it even if you add on $100M in crappy contracts.
+      is this a problem, really?
+PER scaling in player.value is wrong http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
+  change scaling in ovr formula? too confusing?
 Why does "What would make this work?" button stop working?
   was it exacerbated by the recent changes?
 Eventually:

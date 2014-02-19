@@ -85,7 +85,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             return false;
         };
 
-        // Most of these use the same formulas as the composite rating definitions in core.game!
+        // These use the same formulas as the composite rating definitions in core.game!
         if (hasSkill(ratings, ['hgt', 'tp'], [0.2, 1])) {
             sk.push("3");
         }

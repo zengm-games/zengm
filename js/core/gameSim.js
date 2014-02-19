@@ -311,17 +311,40 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @memberOf core.gameSim
      */
     GameSim.prototype.updateSynergy = function () {
-        var allSkills, i, p, perimFactor, t, skillsCount;
+        var allSkills, i, p, perimFactor, sigmoid, t, skillsCount;
+
+        // Input from 0 to 1
+        sigmoid = function (x) {
+            return 1 / (1 + Math.exp(-(15 * (x - 0.7)))); // 1 / (1 + e^-(15 * (x - 0.7))) from 0 to 1
+        };
 
         for (t = 0; t < 2; t++) {
-            // Make a list with all the skills of the active players on a team (including duplicates)
+            // Count all the *fractional* skills of the active players on a team (including duplicates)
+            skillsCount = {
+                "3": 0,
+                A: 0,
+                B: 0,
+                Di: 0,
+                Dp: 0,
+                Po: 0,
+                Ps: 0,
+                R: 0
+            };
+
             allSkills = [];
             for (i = 0; i < 5; i++) {
                 p = this.playersOnCourt[t][i];
+                skillsCount["3"] += sigmoid(this.team[t].player[p].compositeRating.shootingThreePointer);
+                skillsCount.A += sigmoid(this.team[t].player[p].compositeRating.athleticism);
+                skillsCount.B += sigmoid(this.team[t].player[p].compositeRating.dribbling);
+                skillsCount.Di += sigmoid(this.team[t].player[p].compositeRating.defenseInterior);
+                skillsCount.Dp += sigmoid(this.team[t].player[p].compositeRating.defensePerimeter);
+                skillsCount.Po += sigmoid(this.team[t].player[p].compositeRating.shootingLowPost);
+                skillsCount.Ps += sigmoid(this.team[t].player[p].compositeRating.passing);
+                skillsCount.R += sigmoid(this.team[t].player[p].compositeRating.rebounding);
                 allSkills.push(this.team[t].player[p].skills);
             }
             allSkills = _.flatten(allSkills);
-            skillsCount = _.countBy(allSkills);
 
             // Just stick all players skills together in a list, then use _.countBy?
             // Base offensive synergy

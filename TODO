@@ -4,6 +4,8 @@ DB CHANGES SINCE 3.3.0
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
+make blog post reiterating that the skill labels are purely cosmetic
+second round draft picks are undervalued. also, giving away a pick should never make a trade worse, but sometimes it does now.
 PER scaling in player.value is wrong http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
   change scaling in ovr formula? too confusing?
   this impacts rookie values, leating to an EXPLOIT: http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfhkvnv
@@ -160,7 +162,6 @@ player development revamp
   old stars should exist
   reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
   really high ovr/pot is handled poorly, rapid declines if there is a gap
-skills should be based on the composite ratings, not single ratings. http://www.reddit.com/r/BasketballGM/comments/1pxu83/positionless_basketball/cd7ob6j
 make low ovr high pot players more likely to improve
 Extended free agency
   order of AI team signings shouldn't be linear

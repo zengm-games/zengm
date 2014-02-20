@@ -372,7 +372,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             // Defensive synergy
             this.team[t].synergy.def = 0;
             if (skillsCount.Dp >= 1) { this.team[t].synergy.def += 1; }
-            if (skillsCount.Di >= 1) { this.team[t].synergy.def += 3; }
+            if (skillsCount.Di >= 1) { this.team[t].synergy.def += 2; }
             if (skillsCount.A >= 3) { this.team[t].synergy.def += 1; }
             if (skillsCount.A >= 4) { this.team[t].synergy.def += 1; }
             this.team[t].synergy.def /= 6;

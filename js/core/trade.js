@@ -385,7 +385,8 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                                             cursor = event.target.result;
                                             p = cursor.value;
                                             p.tid = tids[k];
-                                            p.gamesUntilTradable = 15;
+                                            // Don't make traded players untradable
+                                            //p.gamesUntilTradable = 15;
                                             p.ptModifier = 1; // Reset
                                             if (g.phase <= g.PHASE.PLAYOFFS) {
                                                 p = player.addStatsRow(p);

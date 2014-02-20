@@ -4,7 +4,9 @@ DB CHANGES SINCE 3.3.0
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
-make blog post reiterating that the skill labels are purely cosmetic
+ovr changes should impact player.value, somehow - probably by scaling PER from the previous season
+  but are past years ratings always available from player.value? or is it sometimes done with fake player objects? need to check
+  http://www.reddit.com/r/BasketballGM/comments/1ydtpd/seems_much_more_random_now/cfjxhj6
 second round draft picks are undervalued. also, giving away a pick should never make a trade worse, but sometimes it does now.
 PER scaling in player.value is wrong http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
   change scaling in ovr formula? too confusing?

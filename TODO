@@ -4,8 +4,10 @@ DB CHANGES SINCE 3.3.0
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
-ovr changes should impact player.value, somehow - probably by scaling PER from the previous season
-  but are past years ratings always available from player.value? or is it sometimes done with fake player objects? need to check
+ovr changes should impact player.value, somehow
+  probably by scaling PER from the previous season
+    but what about old players? is this already factored in to the age decline in player.value?
+    but are past years ratings always available from player.value? or is it sometimes done with fake player objects? need to check
   http://www.reddit.com/r/BasketballGM/comments/1ydtpd/seems_much_more_random_now/cfjxhj6
 second round draft picks are undervalued. also, giving away a pick should never make a trade worse, but sometimes it does now.
 PER scaling in player.value is wrong http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
@@ -186,6 +188,7 @@ gameSim
   increase turnovers, particularly if perimFactor (or similar) is low
   increase fouls if perimFactor (or similar) is low
   assists should be function of speed, since those players have the ball more
+  situational awareness
 do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rookie_players_with_lots_100_skill_ratings/
 
 MINOR FIXES
@@ -447,6 +450,8 @@ player finder
     can this become main UI for drafting (at least fantasy draft)
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
   http://datatables.net/extras/colvis/
+  would it be better just to toggle displays? http://www.reddit.com/r/BasketballGM/comments/1ygzlt/idea_watch_list_toggle_between_stats_and/
+    could be different levels of detail (all stats, some stats, min stats) and have these preprogrammed in somehow for toggling to the same number of ratings
 AI teams should periodically reorder rosters throughout the season
 PER
   slow, particularly after multiple seasons?

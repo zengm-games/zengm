@@ -30,6 +30,10 @@ Eventually:
 
 CURRENT
 -------
+cordova
+  requireJS http://stackoverflow.com/questions/21924072/using-a-variable-in-the-mainconfigfile-with-the-requirejs-optimizer
+  splash screen
+  make sure database persists across upgrades/restarts
 option to keep your player stats in improve performance http://www.reddit.com/r/BasketballGM/comments/1xgo2q/delete_old_player_stats_keep_your_teams_old/
 remove feedback tab, merge content into about page
 edit/delete player
@@ -188,7 +192,7 @@ gameSim
   increase turnovers, particularly if perimFactor (or similar) is low
   increase fouls if perimFactor (or similar) is low
   assists should be function of speed, since those players have the ball more
-  situational awareness
+  situational awareness http://www.reddit.com/r/BasketballGM/comments/1yg6wi/end_of_game_simulation/
 do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rookie_players_with_lots_100_skill_ratings/
 
 MINOR FIXES

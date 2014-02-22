@@ -30,6 +30,7 @@ Eventually:
 
 CURRENT
 -------
+FIX TESTS!
 cordova
   make sure data persists across upgrades
     have 1 league on v3 (1303). should upgrade to v4 (1420)

@@ -796,7 +796,11 @@ if (playerStats === undefined) {
         cbPlayGames = function (cb) {
             var tx;
 
-            ui.updateStatus("Playing games (" + numDays + " days left)");
+            if (numDays === 1) {
+                ui.updateStatus("Playing games (1 day left)");
+            } else {
+                ui.updateStatus("Playing games (" + numDays + " days left)");
+            }
 
             tx = g.dbl.transaction(["players", "schedule", "teams"]);
 

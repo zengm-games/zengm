@@ -176,7 +176,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                     name: "Free Agent"
                 });
 
-                positions = [{pos: "PG"}, {pos: "SG"}, {pos: "SF"}, {pos: "PF"}, {pos: "C"}, {pos: "G"}, {pos: "GF"}, {pos: "FC"}];
+                positions = [{pos: "PG"}, {pos: "SG"}, {pos: "SF"}, {pos: "PF"}, {pos: "C"}, {pos: "G"}, {pos: "GF"}, {pos: "F"}, {pos: "FC"}];
 
                 face = generateFace();
 

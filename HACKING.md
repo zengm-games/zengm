@@ -13,16 +13,9 @@ npm). Then, just run:
 
 (Running  just `make` will run the RequireJS optimizer and minify CSS.)
 
-Alternatively, to use the unminified uncombined JavaScript files, just change
-
-      <script src="/gen/app.js"></script>
-
-to
-
-      <script data-main="/js/app.js" src="/js/lib/require.js"></script>
-
-in index.html. This is convenient for development, since any change to a .js or
-.html file will immediately be reflected after a page reload.
+Alternatively, to use the unminified uncombined JavaScript files, go to Tools >
+Enable Debug Mode. This is quite useful during development, since it avoids the
+need for any compile step
 
 
 
@@ -46,8 +39,17 @@ run:
 
 (Running  just `make` will run the RequireJS optimizer and minify CSS.)
 
-Alternatively, you can use the unminified CSS files by switching a couple
-comments in index.html.
+Alternatively, you can use the unminified CSS files by going to Tools > Enable
+Debug Mode, which removes the need for any compile step during development.
+
+
+
+# Adding a new page
+
+...is kind of a bitch. You need to explicitly include the template file in
+js/templates.js, and explicitly include the view in js.views.js. Beyond that,
+my best guidance is to copy from an existing page and use that as a starting
+point.
 
 
 
@@ -92,7 +94,7 @@ For instance, "defensive rebounds" is "drb".
 - (if necessary) Write database upgrade code in db.js
 - (if not already done piecemeal) Write key changes in js/data/changes.js
 - Set version in index.html, CHANGES.md, and README.md, like http://semver.org/
-- Tag it in git:
+- Tag it in git like:
 
     git tag -a v3.0.0-beta.2 -m ''
     git push --tags

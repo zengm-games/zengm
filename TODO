@@ -31,13 +31,14 @@ Eventually:
 CURRENT
 -------
 cordova
-  get beta testers
   don't include source map
     add "make cordova" target to put all the cordova files in one place
   make more responsive on mobile
     click/tap reaction
       if i fix this, does drag reorder roster still work?
     time from click on menu to updating the status when playing game
+  make sure data persists across upgrades
+  get beta testers
 mobile UI
   slide in full height menu from right, like facebook or android's DrawerLayout
 option to keep your player stats in improve performance http://www.reddit.com/r/BasketballGM/comments/1xgo2q/delete_old_player_stats_keep_your_teams_old/

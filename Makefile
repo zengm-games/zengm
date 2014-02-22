@@ -1,5 +1,8 @@
 # target: all - Default target. Minify JavaScript and CSS.
-all: clean build-js build-css 
+all: clean build-js build-css
+
+# target: cordova - Minify JavaScript and CSS, and put files ready for Cordova distribution in the cordova folder.
+cordova: clean build-js build-css cp-cordova
 
 # target: check - Run tests.
 check:
@@ -39,6 +42,13 @@ rev-timestamp:
 clean:
 	rm -f gen/app.js
 	rm -f gen/bbgm.css
+
+# target: cp-cordova - Move files needed for Cordova to the cordova folder, removing source maps.
+cp-cordova:
+	cp index.html cordova/index.html
+	cp fonts/* cordova/fonts
+	head -n -1 gen/app.js > cordova/gen/app.js # Copy while removing source maps comment
+	cp gen/bbgm.css cordova/gen/bbgm.css
 
 
 

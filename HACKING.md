@@ -98,3 +98,13 @@ For instance, "defensive rebounds" is "drb".
 
     git tag -a v3.0.0-beta.2 -m ''
     git push --tags
+
+
+
+# Cordova
+
+The game runs equally well within a web browser and within Cordova (Android
+4.4+). The codebase is designed to handle both situations (the main difference
+is absolute vs relative paths, governed by window.inCordova in index.html). To
+collect the files needed for Cordova, run `make cordova` and look in the cordova
+folder.

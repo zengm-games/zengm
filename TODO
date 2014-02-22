@@ -31,9 +31,8 @@ Eventually:
 CURRENT
 -------
 cordova
-  don't include source map
-    add "make cordova" target to put all the cordova files in one place
   make sure data persists across upgrades
+    have 1 league on v3 (1303). should upgrade to v4 (1420)
   get beta testers
 mobile UI
   slide in full height menu from right, like facebook or android's DrawerLayout

@@ -13,8 +13,6 @@ second round draft picks are undervalued. also, giving away a pick should never 
 PER scaling in player.value is wrong http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
   change scaling in ovr formula? too confusing?
   this impacts rookie values, leating to an EXPLOIT: http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfhkvnv
-Why does "What would make this work?" button stop working?
-  was it exacerbated by the recent changes?
 Eventually:
   "What would make this work?" functions should know about contending/rebuilding. Contending teams should be more eager to offer up young/cheap players, rebuilding teams should be more eager to offer up old/expensive players
     basically, they should view the trade from the other team's perspective, not just their own
@@ -35,7 +33,6 @@ cordova
 mobile UI
   slide in full height menu from right, like facebook or android's DrawerLayout
 option to keep your player stats in improve performance http://www.reddit.com/r/BasketballGM/comments/1xgo2q/delete_old_player_stats_keep_your_teams_old/
-remove feedback tab, merge content into about page
 edit/delete player
   share code with create a player
     contract?

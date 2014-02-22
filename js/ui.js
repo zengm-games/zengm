@@ -10,22 +10,13 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         var api, playMenu, $playMenuDropdown, playMenuOptions, slideOut, topMenuCollapse;
 
         // Slide out tabs
-        slideOut = $("#feedback");
-        if (slideOut.length > 0) {
-            slideOut.css({
-                visibility: "visible"
-            }).tabSlideOut({
-                tabHandle: "#feedback .slide-out-handle",
-                rightPos: "20px"
-            });
-        }
         slideOut = $("#share");
         if (slideOut.length > 0) {
             slideOut.css({
                 visibility: "visible"
             }).tabSlideOut({
                 tabHandle: "#share .slide-out-handle",
-                rightPos: "120px"
+                rightPos: "20px"
             });
         }
 

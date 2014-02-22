@@ -217,6 +217,7 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
             this.get("/l/:lid/watch_list/:statType/:playoffs", views.watchList.get);
             this.get("/l/:lid/create_a_player", views.createAPlayer.get);
             this.post("/l/:lid/create_a_player", views.createAPlayer.post);
+            this.get("/l/:lid/history_all", views.historyAll.get);
         });
 
         app.start();

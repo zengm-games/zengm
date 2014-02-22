@@ -135,8 +135,6 @@ trade improvements
   trades between AI teams
     call team.checkRosterSizes after this if it's in between days
 team switching after being fired
-  intro message from new owner, like a new league?
-  rename g.gameOver
   keep track of what team the user controlled, so stats for the user (not the team) can be shown
 team and league records (highest scoring game, etc)
   should show an event for cool single game feats
@@ -152,7 +150,6 @@ power rankings
   preseason too
 player editor, for customizing rosters
 popup next to player name with quick view of key stats/ratings
-league history "dashboard", list of past champions and other very important info
 achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   should this be linked into some BBGM account system? or maybe use google's achievements system?
   Moneyball
@@ -220,6 +217,8 @@ contract negotiation
 MINOR FIXES
 -----------
 
+don't need to store abbrev with awards, just tids
+  fix display in season summary (correct in historyAll)
 show team records in playoffs page
 on team history, show counts of conf/league championships, hall of fame players, etc
 if a player refuses to resign, that decision should also be reflected in free agency (don't recalculate mood)

@@ -194,6 +194,11 @@ gameSim
   assists should be function of speed, since those players have the ball more
   situational awareness http://www.reddit.com/r/BasketballGM/comments/1yg6wi/end_of_game_simulation/
 do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rookie_players_with_lots_100_skill_ratings/
+contract negotiation
+  don't have counter-offers be too drastic
+  weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1 http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
+  add free agent to the end of roster
+  http://www.reddit.com/r/BasketballGM/comments/1ykybp/free_agent_signing_suggestion/
 
 MINOR FIXES
 -----------
@@ -540,10 +545,6 @@ stat views
   add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
     could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
   playoff/regular season toggle in team/player stats, league leaders
-contract negotiation
-  don't have counter-offers be too drastic
-  weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1 http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
-  add free agent to the end of roster
 core.gameSim.updateSynergy should produce continuous output
   no big difference between a 80 rating and 79 rating, or whatever
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed

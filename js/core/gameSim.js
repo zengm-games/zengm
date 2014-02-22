@@ -303,6 +303,11 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         return substitutions;
     };
 
+    // x is value, a controls sharpness, b controls center
+    GameSim.prototype.sigmoid = function (x, a, b) {
+        return 1 / (1 + Math.exp(-(a * (x - b)))); 
+    };
+
     /**
      * Update synergy.
      *
@@ -311,12 +316,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @memberOf core.gameSim
      */
     GameSim.prototype.updateSynergy = function () {
-        var allSkills, i, p, perimFactor, sigmoid, t, skillsCount;
-
-        // Input from 0 to 1
-        sigmoid = function (x) {
-            return 1 / (1 + Math.exp(-(15 * (x - 0.7)))); // 1 / (1 + e^-(15 * (x - 0.7))) from 0 to 1
-        };
+        var i, p, perimFactor, t, skillsCount;
 
         for (t = 0; t < 2; t++) {
             // Count all the *fractional* skills of the active players on a team (including duplicates)
@@ -331,56 +331,45 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 R: 0
             };
 
-            allSkills = [];
             for (i = 0; i < 5; i++) {
                 p = this.playersOnCourt[t][i];
-                skillsCount["3"] += sigmoid(this.team[t].player[p].compositeRating.shootingThreePointer);
-                skillsCount.A += sigmoid(this.team[t].player[p].compositeRating.athleticism);
-                skillsCount.B += sigmoid(this.team[t].player[p].compositeRating.dribbling);
-                skillsCount.Di += sigmoid(this.team[t].player[p].compositeRating.defenseInterior);
-                skillsCount.Dp += sigmoid(this.team[t].player[p].compositeRating.defensePerimeter);
-                skillsCount.Po += sigmoid(this.team[t].player[p].compositeRating.shootingLowPost);
-                skillsCount.Ps += sigmoid(this.team[t].player[p].compositeRating.passing);
-                skillsCount.R += sigmoid(this.team[t].player[p].compositeRating.rebounding);
-                allSkills.push(this.team[t].player[p].skills);
-            }
-            allSkills = _.flatten(allSkills);
 
-            // Just stick all players skills together in a list, then use _.countBy?
+                // 1 / (1 + e^-(15 * (x - 0.7))) from 0 to 1
+                skillsCount["3"] += this.sigmoid(this.team[t].player[p].compositeRating.shootingThreePointer, 15, 0.7);
+                skillsCount.A += this.sigmoid(this.team[t].player[p].compositeRating.athleticism, 15, 0.7);
+                skillsCount.B += this.sigmoid(this.team[t].player[p].compositeRating.dribbling, 15, 0.7);
+                skillsCount.Di += this.sigmoid(this.team[t].player[p].compositeRating.defenseInterior, 15, 0.7);
+                skillsCount.Dp += this.sigmoid(this.team[t].player[p].compositeRating.defensePerimeter, 15, 0.7);
+                skillsCount.Po += this.sigmoid(this.team[t].player[p].compositeRating.shootingLowPost, 15, 0.7);
+                skillsCount.Ps += this.sigmoid(this.team[t].player[p].compositeRating.passing, 15, 0.7);
+                skillsCount.R += this.sigmoid(this.team[t].player[p].compositeRating.rebounding, 15, 0.7);
+            }
+
             // Base offensive synergy
             this.team[t].synergy.off = 0;
-            if (skillsCount["3"] >= 2) { this.team[t].synergy.off += 3; }
-            if (skillsCount["3"] >= 2.5) { this.team[t].synergy.off += 1; }
-            if (skillsCount["3"] >= 3) { this.team[t].synergy.off += 1; }
-            if (skillsCount.B >= 1) { this.team[t].synergy.off += 3; }
-            if (skillsCount.B >= 2) { this.team[t].synergy.off += 1; }
-            if (skillsCount.Ps >= 1) { this.team[t].synergy.off += 3; }
-            if (skillsCount.Ps >= 2) { this.team[t].synergy.off += 1; }
-            if (skillsCount.Ps >= 2.5) { this.team[t].synergy.off += 1; }
-            if (skillsCount.Po >= 1) { this.team[t].synergy.off += 1; }
-            if (skillsCount.A >= 2) { this.team[t].synergy.off += 1; }
-            if (skillsCount.A >= 3) { this.team[t].synergy.off += 1; }
+            this.team[t].synergy.off += 5 * this.sigmoid(skillsCount["3"], 3, 2); // 5 / (1 + e^-(3 * (x - 2))) from 0 to 5
+            this.team[t].synergy.off += 3 * this.sigmoid(skillsCount.B, 15, 0.75) + this.sigmoid(skillsCount.B, 5, 1.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
+            this.team[t].synergy.off += 3 * this.sigmoid(skillsCount.Ps, 15, 0.75) + this.sigmoid(skillsCount.Ps, 5, 1.75) + this.sigmoid(skillsCount.Ps, 5, 2.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
+            this.team[t].synergy.off += this.sigmoid(skillsCount.Po, 15, 0.75); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
+            this.team[t].synergy.off += this.sigmoid(skillsCount.A, 15, 1.75) + this.sigmoid(skillsCount.A, 5, 2.75); // 1 / (1 + e^-(15 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
             this.team[t].synergy.off /= 17;
 
-            // Punish teams for not having multiple players without perimeter skills
-            skillsCount.B = skillsCount.B !== undefined ? skillsCount.B : 0;
-            skillsCount.Ps = skillsCount.Ps !== undefined ? skillsCount.Ps : 0;
-            skillsCount["3"] = skillsCount["3"] !== undefined ? skillsCount["3"] : 0;
+            // Punish teams for not having multiple perimeter skills
             perimFactor = helpers.bound(Math.sqrt(1 + skillsCount.B + skillsCount.Ps + skillsCount["3"]) - 1, 0, 2) / 2; // Between 0 and 1, representing the perimeter skills
             this.team[t].synergy.off *= 0.5 + 0.5 * perimFactor;
 
             // Defensive synergy
             this.team[t].synergy.def = 0;
-            if (skillsCount.Dp >= 1) { this.team[t].synergy.def += 1; }
-            if (skillsCount.Di >= 1) { this.team[t].synergy.def += 2; }
-            if (skillsCount.A >= 2.5) { this.team[t].synergy.def += 1; }
-            if (skillsCount.A >= 3) { this.team[t].synergy.def += 1; }
+            this.team[t].synergy.def += this.sigmoid(skillsCount.Dp, 15, 0.75); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
+            this.team[t].synergy.def += 2 * this.sigmoid(skillsCount.Di, 15, 0.75); // 2 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
+            this.team[t].synergy.def += this.sigmoid(skillsCount.A, 5, 2) + this.sigmoid(skillsCount.A, 5, 3.25); // 1 / (1 + e^-(5 * (x - 2))) + 1 / (1 + e^-(5 * (x - 3.25))) from 0 to 5
             this.team[t].synergy.def /= 6;
 
             // Rebounding synergy
             this.team[t].synergy.reb = 0;
             if (skillsCount.R >= 1) { this.team[t].synergy.reb += 1; }
             if (skillsCount.R >= 2) { this.team[t].synergy.reb += 1; }
+            this.team[t].synergy.reb += this.sigmoid(skillsCount.R, 15, 0.75) + this.sigmoid(skillsCount.R, 5, 1.75); // 1 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
             this.team[t].synergy.reb /= 4;
         }
     };

@@ -566,7 +566,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     // AI teams sign free agents
                     newPhaseCb(g.PHASE.PRESEASON, cb, undefined, ["playerMovement"]);
 
-                    if (g.enableLogging) {
+                    if (g.enableLogging && !window.inCordova) {
+                        // Google Consumer Surveys
                         TriggerPrompt("http://www.basketball-gm.com/", (new Date()).getTime());
                     }
                 };

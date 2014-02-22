@@ -107,14 +107,16 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
             this.use(Davis.googleAnalytics);
 
             this.before(function (req) {
-                // Normal Cordova pages
-                if (req.path.substr(0, 7) === 'file://') {
-                    req.path = req.path.substr(7);
-                }
+                if (window.inCordova) {
+                    // Normal Cordova pages
+                    if (req.path.substr(0, 7) === 'file://') {
+                        req.path = req.path.substr(7);
+                    }
 
-                // First load Cordova page
-                if (req.path.indexOf("/index.html") >= 0) {
-                    req.path = "/";
+                    // First load Cordova page
+                    if (req.path.indexOf("/index.html") >= 0) {
+                        req.path = "/";
+                    }
                 }
             });
 

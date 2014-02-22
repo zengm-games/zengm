@@ -1,5 +1,4 @@
 requirejs.config({
-    baseUrl: window.bbgmPrefix + "js",
     shim: {
         "lib/bootstrap-affix": {
             deps: ["lib/jquery"]

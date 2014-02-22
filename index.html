@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <title>Basketball GM</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<base href=".">
 
     <link rel="shortcut icon" href="/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
@@ -191,7 +190,7 @@
           <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> · 
           <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> · 
           <a href="http://basketball-gm.com/share/" target="_blank">Share</a><br>
-          <p class="rev">v3.3 · <!--rev-->2014.02.20.1383</p>
+          <p class="rev">v3.3 · <!--rev-->2014.02.21.1303</p>
         </p>
       </footer>
     </div>
@@ -246,6 +245,10 @@
           localStorage.debug = "debug";
         }
         location.reload();
+      }
+      // Hide in Cordova
+      if (document.URL.indexOf('file://') === 0) {
+        document.getElementById("toggle-debug-mode").parentNode.style.display = "none";
       }
 
       // Load either compiled script or RequireJS loader

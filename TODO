@@ -33,9 +33,6 @@ CURRENT
 cordova
   don't include source map
     add "make cordova" target to put all the cordova files in one place
-  make more responsive on mobile
-    click/tap reaction
-      if i fix this, does drag reorder roster still work?
   make sure data persists across upgrades
   get beta testers
 mobile UI

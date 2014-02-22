@@ -118,6 +118,7 @@ notification system
 NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
 Team name shows up as BOLD or is highlighted in some other way in all League lists (playoffs, standings)
   wrap abbrev in function before display
+  maybe allow wrapping of arbitrary strings, not just abbrevs? then pass tid or abbrev as second param
 gracefully handle disk space errors
 
 BIG NEW FEATURES
@@ -232,17 +233,14 @@ trading block crashing bug
 bring back the old constantly-displayed menu for large screens? http://www.reddit.com/r/BasketballGM/comments/1rjmmr/as_a_player_do_you_think_the_game_needs_a_tutorial/cdnxb4d
   expand play menu so it can be used with one click http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cds6hph
 make injuries more likely for old players and fatigued players
-Shouldn't say "This is what the playoff matchups would be" when playoffs first start
 first errorNotify in contractNegotiation.js really should be inline within that page
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
-some way to "install" app locally and create a shortcut icon, since it is playable offline
 bootstrap 3.0.3
 merge game.play and freeAgents.play
 make sure the changes alert and the "refuses to negotiate" alert both look good
   link to player in "refuses to negotiate" alert
 replace random.gauss with random.realGauss
 current season shouldn't show in league history page dropdown
-add function to delete old box scores (older than last year) to debug menu, to save space
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 document things that affect player mood
 show four factors somewhere
@@ -274,7 +272,6 @@ some players should make bad plays - not everyone should have same basketball IQ
   add a rating for basketball IQ?
 client-side error tracking
   see kentavious for the problems with that
-contract extensions
 fantasy draft
   when fantasy draft is over, go to summary of the draft
     do this in core.draft.untilUserOrEnd

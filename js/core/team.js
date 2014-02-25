@@ -448,6 +448,8 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         } else {
                             ft.ftp = 0;
                         }
+                    } else if (stats[j] === "diff") {
+                        ft.diff = ft.pts - ft.oppPts;
                     } else if (stats[j] === "season") {
                         ft.season = s.season;
                     } else {

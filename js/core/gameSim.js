@@ -367,8 +367,6 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
             // Rebounding synergy
             this.team[t].synergy.reb = 0;
-            if (skillsCount.R >= 1) { this.team[t].synergy.reb += 1; }
-            if (skillsCount.R >= 2) { this.team[t].synergy.reb += 1; }
             this.team[t].synergy.reb += this.sigmoid(skillsCount.R, 15, 0.75) + this.sigmoid(skillsCount.R, 5, 1.75); // 1 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
             this.team[t].synergy.reb /= 4;
         }

@@ -59,21 +59,12 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
                 return ['<a href="' + helpers.leagueUrl(["roster", t.abbrev, season]) + '">' + t.abbrev + '</a>', String(t.gp), String(t.won), String(t.lost), helpers.round(t.fg, 1), helpers.round(t.fga, 1), helpers.round(t.fgp, 1), helpers.round(t.tp, 1), helpers.round(t.tpa, 1), helpers.round(t.tpp, 1), helpers.round(t.ft, 1), helpers.round(t.fta, 1), helpers.round(t.ftp, 1), helpers.round(t.orb, 1), helpers.round(t.drb, 1), helpers.round(t.trb, 1), helpers.round(t.ast, 1), helpers.round(t.tov, 1), helpers.round(t.stl, 1), helpers.round(t.blk, 1), helpers.round(t.pf, 1), helpers.round(t.pts, 1), helpers.round(t.oppPts, 1), helpers.round(t.diff, 1)];
             }), {
                 fnRowCallback: function (nRow, aData) {
-                    //debugger;
                     // Show point differential in green or red for positive or negative
                     if (aData[aData.length - 1] > 0) {
                         nRow.childNodes[nRow.childNodes.length - 1].classList.add("text-success");
                     } else if (aData[aData.length - 1] < 0) {
                         nRow.childNodes[nRow.childNodes.length - 1].classList.add("text-danger");
                     }
-/*                    // Highlight active players
-                    if (aData[aData.length - 1]) {
-                        nRow.classList.add("success"); // On this team
-                    } else if (aData[aData.length - 2]) {
-                        nRow.classList.add("info"); // On other team
-                    } else if (aData[aData.length - 3]) {
-                        nRow.classList.add("danger"); // Hall of Fame
-                    }*/
                 }
             });
         }).extend({throttle: 1});

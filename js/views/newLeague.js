@@ -83,7 +83,8 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
             deferred.resolve({
                 name: "League " + newLid,
-                teams: teams
+                teams: teams,
+                inCordova: window.inCordova
             });
         };
 

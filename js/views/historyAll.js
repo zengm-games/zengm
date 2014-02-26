@@ -86,6 +86,11 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
         ui.title("League History");
 
         awardName = function (award, season) {
+            if (!award) {
+                // For old seasons with no Finals MVP
+                return 'N/A';
+            }
+
             return helpers.playerNameLabels(award.pid, award.name) + ' (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[award.tid], season]) + '">' + g.teamAbbrevsCache[award.tid] + '</a>)';
         };
         teamName = function (t, season) {

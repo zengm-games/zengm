@@ -352,6 +352,7 @@ select.teams {
 #account {
   position: fixed;
   bottom: 0;
+  pointer-events: none;
   width: 100%;
 }
 /* http://twitterbootstrap3buttons.w3masters.nl/ */

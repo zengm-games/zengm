@@ -32,7 +32,7 @@ login/register forms
   somehow intelligently handle .dev/.com URLs
   redirect to previous page after login/register
   widget: periodically check with user_info.php to make sure still logged in (do this through util.account.check, start a timeout)
-  logout inside container makes bottom row unclickable - how to solve?
+    worth it?
 achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   UI
     if logged in, use that for achievements souce. otherwise, use local DB of pending achievements and show warning about account

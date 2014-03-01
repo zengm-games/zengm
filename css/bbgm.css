@@ -377,6 +377,20 @@ select.teams {
   border-color: #3e2c5a;
 }
 
+.achievements {
+  margin: -4px;
+}
+.achievements .list-group-item {
+  border-radius: 0;
+  border: 0;
+  padding: 0;
+}
+.achievements .list-group-item div {
+  border-radius: 4px;
+  margin: 4px;
+  padding: 10px 15px;
+}
+
 .bar-graph-small {
   height: 40px;
 }

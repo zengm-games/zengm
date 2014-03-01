@@ -4,11 +4,12 @@
 
 <h2>Achievements</h2>
 
-<ul class="list-group">
-  <li class="list-group-item" data-bind="css: {'list-group-item-success': achievements.hasOwnProperty('participation')}">
-    <span class="badge" data-bind="text: achievements.participation"></span>
-    <h4 class="list-group-item-heading">Participation</h4>
-    <p class="list-group-item-text">You get an achievement just for signing up, you special snowflake!</p>
+<ul class="achievements list-group" data-bind="foreach: achievements">
+  <li class="list-group-item col-xs-12 col-sm-6 col-md-4 col-lg-3 pull-left">
+    <div data-bind="css: {'list-group-item-success': count() > 0, 'text-muted': count() == 0}">
+      <span class="badge" data-bind="text: count(), visible: count() > 1"></span>
+      <h4 class="list-group-item-heading" data-bind="text: name"></h4>
+      <p class="list-group-item-text" data-bind="text: desc"></p>
+    </div>
   </li>
-  <li class="list-group-item list-group-item-success">Dapibus ac facilisis in</li>
 </ul>

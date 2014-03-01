@@ -230,7 +230,6 @@ bring back the old constantly-displayed menu for large screens? http://www.reddi
 make injuries more likely for old players and fatigued players
 first errorNotify in contractNegotiation.js really should be inline within that page
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
-bootstrap 3.0.3
 merge game.play and freeAgents.play
 make sure the changes alert and the "refuses to negotiate" alert both look good
   link to player in "refuses to negotiate" alert

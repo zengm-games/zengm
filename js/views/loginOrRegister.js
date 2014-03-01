@@ -46,6 +46,9 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                 url: "http://account.basketball-gm.dev/register.php",
                 data: $register.serialize(),
                 dataType: "json",
+                xhrFields: {
+                    withCredentials: true
+                },
                 success: function (data) {
                     var error;
 
@@ -60,7 +63,9 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                     document.getElementById("register-password2-error").innerHTML = "";
 
                     if (data.success) {
-console.log("SUCCESS");
+                        g.vm.account.username(data.username);
+console.log("REDIRECT")
+                        ui.realtimeUpdate([], "/account");
                     } else {
                         for (error in data.errors) {
                             if (data.errors.hasOwnProperty(error)) {

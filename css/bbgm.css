@@ -368,6 +368,7 @@ select.teams {
   border-color: #563D7C;
   color: #fff;
   float: right;
+  pointer-events: auto;
 }
 .account-button:hover,
 .account-button:focus,

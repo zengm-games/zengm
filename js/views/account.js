@@ -6,11 +6,10 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
     "use strict";
 
     function updateAccount(inputs, updateEvents, vm) {
-        var deferred, vars, tx;
+        var deferred;
 
         if (updateEvents.indexOf("firstRun") >= 0) {
             deferred = $.Deferred();
-            vars = {};
 
             account.check(function () {
                 if (g.vm.account.username() === null || g.vm.account.username() === "") {
@@ -22,6 +21,23 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
                         username: g.vm.account.username
                     });
                 }
+            });
+
+            return deferred.promise();
+        }
+    }
+
+    function updateAchievements(inputs, updateEvents, vm) {
+        var deferred, tx;
+
+        if (updateEvents.indexOf("firstRun") >= 0) {
+            deferred = $.Deferred();
+
+            account.getAchievements(function (achievements) {
+console.log(achievements);
+                deferred.resolve({
+                    achievements: achievements
+                });
             });
 
             return deferred.promise();
@@ -52,7 +68,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
     return bbgmView.init({
         id: "account",
         beforeReq: viewHelpers.beforeNonLeague,
-        runBefore: [updateAccount],
+        runBefore: [updateAccount, updateAchievements],
         uiFirst: uiFirst
     });
 });

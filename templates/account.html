@@ -3,3 +3,12 @@
 <p>Logged in as: <b data-bind="text: username"></b> (<a href="" id="logout" data-no-davis="true">Logout</a>)</p>
 
 <h2>Achievements</h2>
+
+<ul class="list-group">
+  <li class="list-group-item" data-bind="css: {'list-group-item-success': achievements.hasOwnProperty('participation')}">
+    <span class="badge" data-bind="text: achievements.participation"></span>
+    <h4 class="list-group-item-heading">Participation</h4>
+    <p class="list-group-item-text">You get an achievement just for signing up, you special snowflake!</p>
+  </li>
+  <li class="list-group-item list-group-item-success">Dapibus ac facilisis in</li>
+</ul>

@@ -23,7 +23,24 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
         });
     }
 
+    function getAchievements(cb) {
+        $.ajax({
+            type: "GET",
+            url: "http://account.basketball-gm.dev/get_achievements.php",
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+                if (cb !== undefined) {
+                    cb(data);
+                }
+            }
+        });
+    }
+
     return {
-        check: check
+        check: check,
+        getAchievements: getAchievements
     };
 });

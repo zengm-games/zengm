@@ -349,6 +349,29 @@ select.teams {
   color: #fff;
 }
 
+/* http://twitterbootstrap3buttons.w3masters.nl/ */
+.user-button {
+  position: fixed;
+  right: 20px;
+  bottom: 0;
+  -webkit-border-bottom-left-radius: 0;
+     -moz-border-bottom-left-radius: 0;
+          border-bottom-left-radius: 0;
+  -webkit-border-bottom-right-radius: 0;
+     -moz-border-bottom-right-radius: 0;
+          border-bottom-right-radius: 0;
+
+  background-color: #563D7C;
+  border-color: #563D7C;
+  color: #fff;
+}
+.user-button:hover,
+.user-button:focus,
+.user-button:active {
+  background-color: #4a356b;
+  border-color: #3e2c5a;
+}
+
 .bar-graph-small {
   height: 40px;
 }

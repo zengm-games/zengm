@@ -29,8 +29,9 @@ Eventually:
 CURRENT
 -------
 login/register forms
-  should do AJAX if you press enter in them
   somehow intelligently handle .dev/.com URLs
+  make util/account.js that handles setting ko variable for logging in
+  make login/register widget switch to a link to user account
 achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   should this be linked into some BBGM account system? or maybe use google's achievements system?
   Participation: You get an achievement just for signing up, you special snowflake!

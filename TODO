@@ -30,7 +30,7 @@ CURRENT
 -------
 login/register forms
   should do AJAX if you press enter in them
-  http://bbgm-account/
+  somehow intelligently handle .dev/.com URLs
 achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   should this be linked into some BBGM account system? or maybe use google's achievements system?
   Participation: You get an achievement just for signing up, you special snowflake!

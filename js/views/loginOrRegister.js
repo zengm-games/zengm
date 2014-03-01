@@ -18,15 +18,19 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
             $.ajax({
                 type: "POST",
-                url: "http://bbgm-account/login.php",
+                url: "http://account.basketball-gm.dev/login.php",
                 data: $login.serialize(),
                 dataType: "json",
+                xhrFields: {
+                    withCredentials: true
+                },
                 success: function (data) {
                     // Reset error display
                     document.getElementById("login-error").innerHTML = "";
 
                     if (data.success) {
 console.log("SUCCESS");
+console.log(data);
                     } else {
                         document.getElementById("login-error").innerHTML = "Invalid username or password.";
                     }
@@ -39,7 +43,7 @@ console.log("SUCCESS");
 
             $.ajax({
                 type: "POST",
-                url: "http://bbgm-account/register.php",
+                url: "http://account.basketball-gm.dev/register.php",
                 data: $register.serialize(),
                 dataType: "json",
                 success: function (data) {

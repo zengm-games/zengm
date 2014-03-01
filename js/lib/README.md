@@ -26,3 +26,5 @@ make it work in IE10. Also, lines 267-270 are similarly added for IE10:
       if (elem.host.length === 0) {
         return false;
       }
+
+jquery.tabSlideOut.js is currently not used.

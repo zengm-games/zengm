@@ -7,47 +7,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
 
     // Things to do on initial page load
     function init() {
-        var api, playMenu, $playMenuDropdown, playMenuOptions, slideOut, topMenuCollapse;
-
-        // Slide out tabs
-        slideOut = $("#share");
-        if (slideOut.length > 0) {
-            slideOut.css({
-                visibility: "visible"
-            }).tabSlideOut({
-                tabHandle: "#share .slide-out-handle",
-                rightPos: "20px"
-            });
-        }
-
-        // The first time the Share tab is clicked, load all the social buttons. This is important because loading them
-        // on initial page load can make things appear slow and also interfere with Bootstrap dropdowns.
-        $("#share .slide-out-handle").on("click", _.once(function () {
-            // Twitter
-            !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
-
-            // Facebook
-            (function(d, s, id) {
-              var js, fjs = d.getElementsByTagName(s)[0];
-              if (d.getElementById(id)) {return;}
-              js = d.createElement(s); js.id = id;
-              js.src = "http://connect.facebook.net/en_US/all.js#xfbml=1";
-              fjs.parentNode.insertBefore(js, fjs);
-            }(document, 'script', 'facebook-jssdk'));
-
-            // Google Plus
-            (function() {
-              var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-              po.src = 'https://apis.google.com/js/plusone.js';
-              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-            })();
-
-            // Reddit
-            document.getElementById("subreddit-btn").innerHTML = '<iframe src="http://jdscheff.github.io/subreddit-buttons/subreddit-btn.html?name=BasketballGM" allowtransparency="true" frameborder="0" scrolling="0" width="150" height="20"></iframe>';
-
-            // Chrome Web Store
-            document.getElementById("chrome-web-store").innerHTML = '<a href="https://chrome.google.com/webstore/detail/basketball-gm/mjkkihncmpbegfapfieiamdkgliooecl/details"><img src="/img/ChromeWebStore_Badge_v2_206x58.png" height="58" width="206" alt="Available in the Chrome Web Store"></a>';
-        }));
+        var api, playMenu, $playMenuDropdown, playMenuOptions, topMenuCollapse;
 
         ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
 

@@ -349,41 +349,6 @@ select.teams {
   color: #fff;
 }
 
-.slide-out {
-  visibility: hidden;
-  padding: 20px;
-  width: 200px;
-  background: #f8f8f8;
-  border: 1px solid #e7e7e7;
-  -webkit-border-top-left-radius: 4px;
-     -moz-border-top-left-radius: 4px;
-          border-top-left-radius: 4px;
-}
-/* http://twitterbootstrap3buttons.w3masters.nl/ */
-.slide-out-handle {
-  -webkit-border-bottom-left-radius: 0;
-     -moz-border-bottom-left-radius: 0;
-          border-bottom-left-radius: 0;
-  -webkit-border-bottom-right-radius: 0;
-     -moz-border-bottom-right-radius: 0;
-          border-bottom-right-radius: 0;
-}
-#share {
-  width: 270px;
-  height: 210px;
-}
-#share .slide-out-handle {
-  background-color: #563D7C;
-  border-color: #563D7C;
-  color: #fff;
-}
-#share .slide-out-handle:hover,
-#share .slide-out-handle:focus,
-#share .slide-out-handle:active {
-  background-color: #4a356b;
-  border-color: #3e2c5a;
-}
-
 .bar-graph-small {
   height: 40px;
 }

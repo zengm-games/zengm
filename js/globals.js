@@ -62,7 +62,7 @@ define(["lib/knockout"], function (ko) {
             template: ko.observable() // Used for left menu on large screens for highlighting active page, so g.vm.topMenu should really be g.vm.menu, since it's used by both
         },
         account: {
-            username: ko.observable()
+            username: ko.observable(null)
         }
     };
 

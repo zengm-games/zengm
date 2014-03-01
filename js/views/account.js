@@ -2,13 +2,51 @@
  * @name views.loginOrRegister
  * @namespace Login and register forms.
  */
-define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/helpers", "util/random", "util/viewHelpers"], function (g, ui, league, $, bbgmView, helpers, random, viewHelpers) {
+define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgmView", "util/helpers", "util/random", "util/viewHelpers"], function (g, ui, league, $, account, bbgmView, helpers, random, viewHelpers) {
     "use strict";
+
+    function updateAccount(inputs, updateEvents, vm) {
+        var deferred, vars, tx;
+
+        if (updateEvents.indexOf("firstRun") >= 0) {
+            deferred = $.Deferred();
+            vars = {};
+
+            account.check(function () {
+                if (g.vm.account.username() === null || g.vm.account.username() === "") {
+                    deferred.resolve({
+                        redirectUrl: "/login_or_register"
+                    });
+                } else {
+                    deferred.resolve({
+                        username: g.vm.account.username
+                    });
+                }
+            });
+
+            return deferred.promise();
+        }
+    }
 
     function uiFirst() {
         var $login, $register;
 
-        ui.title("Login or Register");
+        ui.title("Account");
+
+        document.getElementById("logout").addEventListener("click", function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "http://account.basketball-gm.dev/logout.php",
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function () {
+                    g.vm.account.username("");
+                    ui.realtimeUpdate([], "/");
+                }
+            });
+        });
 
         $login = $("#login");
         $register = $("#register");
@@ -29,8 +67,8 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                     document.getElementById("login-error").innerHTML = "";
 
                     if (data.success) {
-                        g.vm.account.username(data.username);
-                        ui.realtimeUpdate([], "/account");
+console.log("SUCCESS");
+console.log(data);
                     } else {
                         document.getElementById("login-error").innerHTML = "Invalid username or password.";
                     }
@@ -90,8 +128,9 @@ console.log("SUCCESS");
     }
 
     return bbgmView.init({
-        id: "loginOrRegister",
+        id: "account",
         beforeReq: viewHelpers.beforeNonLeague,
+        runBefore: [updateAccount],
         uiFirst: uiFirst
     });
 });

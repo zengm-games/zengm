@@ -231,7 +231,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
     /**
      * Smartly update the currently loaded view or redirect to a new one.
      *
-     * This will only refresh or redirect to in-league URLs. Otherwise, the callback is just called immediately.
+     * This will only refresh or redirect to in-league URLs (and a couple out of league). Otherwise, the callback is just called immediately.
      *
      * @memberOf ui
      * @param {Array.<string>=} updateEvents Optional array of strings containing information about what caused this update, e.g. "gameSim" or "playerMovement".
@@ -260,7 +260,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         // This prevents the Create New League form from inappropriately refreshing after it is submitted
         if (refresh) {
             Davis.location.replace(new Davis.Request(url, raw));
-        } else if (inLeague || url === "/") {
+        } else if (inLeague || url === "/" || url === "/account" || url === "/login_or_register") {
             Davis.location.assign(new Davis.Request(url, raw));
         } else if (cb !== undefined) {
             cb();

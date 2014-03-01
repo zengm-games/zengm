@@ -5,7 +5,7 @@
 define(["db", "globals", "lib/jquery"], function (db, g, $) {
     "use strict";
 
-    function check() {
+    function check(cb) {
         $.ajax({
             type: "GET",
             url: "http://account.basketball-gm.dev/user_info.php",
@@ -15,6 +15,10 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
             },
             success: function (data) {
                 g.vm.account.username(data.username);
+
+                if (cb !== undefined) {
+                    cb();
+                }
             }
         });
     }

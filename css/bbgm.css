@@ -349,11 +349,13 @@ select.teams {
   color: #fff;
 }
 
+#account {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
 /* http://twitterbootstrap3buttons.w3masters.nl/ */
 .account-button {
-  position: fixed;
-  right: 20px;
-  bottom: 0;
   -webkit-border-bottom-left-radius: 0;
      -moz-border-bottom-left-radius: 0;
           border-bottom-left-radius: 0;
@@ -364,6 +366,7 @@ select.teams {
   background-color: #563D7C;
   border-color: #563D7C;
   color: #fff;
+  float: right;
 }
 .account-button:hover,
 .account-button:focus,

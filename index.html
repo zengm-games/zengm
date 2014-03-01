@@ -196,7 +196,10 @@
       </footer>
     </div>
 
-    <a class="user-button btn btn-danger" href="/login_or_register">Login or Register</a>
+    <div id="account">
+      <a class="account-button btn btn-danger" href="/login_or_register" data-bind="visible: !username()" style="display: none">Login or Register</a>
+      <a class="account-button btn btn-danger" href="/account" data-bind="visible: username, text: username" style="display: none"></a>
+    </div>
 
     <iframe style="display: none;" src="/manifest_hack"></iframe> 
 

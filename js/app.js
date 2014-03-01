@@ -102,6 +102,7 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
                 this.generateRequestOnPageLoad = true;
                 this.handleRouteNotFound = true;
                 this.linkSelector = "a:not([data-no-davis=true])";
+                this.formSelector = "form:not([data-no-davis=true])";
             });
 
             this.use(Davis.googleAnalytics);
@@ -133,6 +134,7 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/helpers", "li
             this.get("/manual", views.manual.get);
             this.get("/manual/:page", views.manual.get);
             this.get("/changes", views.changes.get);
+            this.get("/login_or_register", views.loginOrRegister.get);
 
             // League views
             this.get("/l/:lid", views.leagueDashboard.get);

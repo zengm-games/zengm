@@ -28,28 +28,16 @@ Eventually:
 
 CURRENT
 -------
+login/register forms
+  should do AJAX if you press enter in them
+  http://bbgm-account/
 achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   should this be linked into some BBGM account system? or maybe use google's achievements system?
-  Moneyball
-    bronze: win a title with a payroll under $40 million
-    silver: win a title with a payroll under $30 million
-    gold: win three consecutive titles a payroll under $30 million
-  Fo Fo Fo
-    bronze: go 16-0 in the playoffs
-    silver: go 16-0 in the playoffs three times in a row
-    gold: go 16-0 in the playoffs five times in a row
-  98 Degrees
-    bronze: go 98-0 in the playoffs and regular season
-    silver: go 98-0 in the playoffs and regular season three times in a row
-    gold: go 98-0 in the playoffs and regular season five times in a row
-  Dynasty
-    bronze: win 6 championships in 8 years
-    silver: win 10 championships in a row
-    gold: win 30 championships in a row
-  Messed Around
-    bronze: win a title with a player averaging a triple double
-    silver: win two consecutive titles with a player averaging a triple double
-    gold: win three consecutive titles with a player averaging a triple double
+  Participation: You get an achievement just for signing up, you special snowflake!
+  Moneyball: win a title with a payroll under $40 million
+  Fo Fo Fo: go 16-0 in the playoffs
+  98 Degrees: go 98-0 in the playoffs and regular season
+  Dynasty: win 6 championships in 8 years
 mobile UI
   slide in full height menu from right, like facebook or android's DrawerLayout
 option to keep your player stats in improve performance http://www.reddit.com/r/BasketballGM/comments/1xgo2q/delete_old_player_stats_keep_your_teams_old/

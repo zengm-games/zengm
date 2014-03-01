@@ -1,0 +1,43 @@
+<div class="row">
+  <div class="col-sm-6">
+    <h1>Login</h1>
+    <form id="login" data-no-davis="true">
+      <div class="form-group">
+        <label class="control-label" for="login-username">Username</label>
+        <input type="text" class="form-control" id="login-username" name="username" required="required">
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="login-password">Password</label>
+        <input type="password" class="form-control" id="login-password" name="password" required="required">
+      </div>
+      <button type="submit" class="btn btn-default">Login</button>
+      <p class="text-danger" id="login-error" style="margin-top: 1em"></p>
+    </form>
+  </div>
+  <div class="col-sm-6">
+    <h1>Register</h1>
+    <form id="register" data-no-davis="true">
+      <div class="form-group">
+        <label class="control-label" for="register-username">Username</label>
+        <input type="text" class="form-control" id="register-username" name="username" required="required">
+        <span class="help-block" id="register-username-error"></span>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="register-email">Email Address</label>
+        <input type="email" class="form-control" id="register-email" name="email" required="required">
+        <span class="help-block" id="register-email-error"></span>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="register-password">Password</label>
+        <input type="password" class="form-control" id="register-password" name="password" required="required">
+        <span class="help-block" id="register-password-error"></span>
+      </div>
+      <div class="form-group">
+        <label class="control-label" for="register-password2">Verify Password</label>
+        <input type="password" class="form-control" id="register-password2" name="password2" required="required">
+        <span class="help-block" id="register-password2-error"></span>
+      </div>
+      <button type="submit" class="btn btn-default">Create New Account</button>
+    </form>
+  </div>
+</div>

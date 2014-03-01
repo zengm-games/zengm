@@ -34,6 +34,7 @@ login/register forms
     worth it?
 achievements that span leagues, or milestones: http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   UI
+    list-group-item-success
     if logged in, use that for achievements souce. otherwise, use local DB of pending achievements and show warning about account
   record achievements
     if logged in, send to DB. if fails, fall back on indexeddb

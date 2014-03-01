@@ -510,29 +510,7 @@ select.teams {
   font-weight: bold;
 }
 
-/* Meant to be equivalent to .warning, .danger, .success from Bootstrap, mainly for table rows. But with decreased specificity so that it won't override .warning. */
-.table > thead > tr > td.info,
-.table > tbody > tr > td.info,
-.table > tfoot > tr > td.info,
-.table > thead > tr > th.info,
-.table > tbody > tr > th.info,
-.table > tfoot > tr > th.info,
-.table > thead > tr.info > td,
-.table > tbody > tr.info > td,
-.table > tfoot > tr.info > td,
-.table > thead > tr.info > th,
-.table > tbody > tr.info > th,
-.table > tfoot > tr.info > th {
-  background-color: #d9edf7;
-  border-color: #bce8f1;
-}
-.table-hover > tbody > tr > td.info:hover,
-.table-hover > tbody > tr > th.info:hover,
-.table-hover > tbody > tr.info:hover > td {
-  background-color: #cbe8f7; /* +6 saturation in GIMP */
-  border-color: #aee6f1; /* +6 saturation in GIMP */
-}
-/* HACK so that the .info class defined above can be overriden in teamHistory (and possibly elsewhere). */
+/* HACK so that the td.info class can be overriden in teamHistory (and possibly elsewhere). */
 tr.warning > td {
   background-color: #fcf8e3;
   border-color: #fbeed5;

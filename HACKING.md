@@ -75,9 +75,9 @@ https://developers.google.com/closure/compiler/docs/js-for-compiler
 
 # Twitter Bootstrap
 
-Basketball GM currently uses Bootstrap 3.0 with the following options:
+Basketball GM currently uses Bootstrap 3.1.1 with the following options:
 
-* @baseFontSize set to 13px
+* @font-size-base set to 13px
 
 
 

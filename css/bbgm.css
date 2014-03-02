@@ -108,6 +108,15 @@ footer {
 .user-menu:hover {
   text-decoration: none;
 }
+/* http://stackoverflow.com/a/20839087/786644 */
+.navbar-link .visible-lg {
+    display: none !important;
+}
+@media (min-width: 1200px) {
+  .navbar-link .visible-lg {
+    display: inline-block !important;
+  }
+}
 
 /* These colors are copied from the default "success" button. */
 #play-button-link {

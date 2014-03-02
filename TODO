@@ -28,6 +28,9 @@ Eventually:
 
 CURRENT
 -------
+icons in md menu
+  home for dashboard
+  tooltips
 user/login widget is ugly and weird
   put in top right, glyphicon user and username. when collapse, just show username
     if more space is needed, delete "Basketball GM" and/or basketball logo

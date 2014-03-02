@@ -11,12 +11,13 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
      * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
      */
     function createMeta(event) {
-        var dbm, leagueStore;
+        var dbm;
         console.log("Creating meta database");
 
         dbm = event.target.result;
 
-        leagueStore = dbm.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
+        dbm.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
+        dbm.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
     }
 
     /**
@@ -111,6 +112,12 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
             }());
         }
 
+        if (event.oldVersion <= 6) {
+            (function () {
+                dbm.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
+            }());
+        }
+
         // This is no longer being used for update messages! See util/changes.js
         //$("#content").before('<div class="alert alert-info alert-top"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
     }
@@ -119,11 +126,13 @@ define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "
         var request;
 
 //        console.log('Connecting to database "meta"');
-        request = indexedDB.open("meta", 6);
+        request = indexedDB.open("meta", 7);
         request.onerror = function (event) {
             throw new Error("Meta connection error");
         };
-        request.onblocked = function () { g.dbm.close(); };
+        request.onblocked = function () {
+            alert("Please close all other tabs with this site open!");
+        };
         request.onupgradeneeded = function (event) {
             if (event.oldVersion === 0) {
                 createMeta(event);
@@ -687,7 +696,9 @@ console.log(event);
         request.onerror = function (event) {
             throw new Error("League connection error");
         };
-        request.onblocked = function () { g.dbl.close(); };
+        request.onblocked = function () {
+            alert("Please close all other tabs with this site open!");
+        };
         request.onupgradeneeded = function (event) {
             if (event.oldVersion === 0) {
                 createLeague(event, lid);

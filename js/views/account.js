@@ -22,7 +22,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
     }
 
     function updateAchievements(inputs, updateEvents, vm) {
-        var deferred, tx;
+        var deferred;
 
         if (updateEvents.indexOf("firstRun") >= 0) {
             deferred = $.Deferred();

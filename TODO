@@ -29,7 +29,6 @@ Eventually:
 CURRENT
 -------
 login/register forms
-  somehow intelligently handle .dev/.com URLs
   widget: periodically check with user_info.php to make sure still logged in (do this through util.account.check, start a timeout)
     worth it?
 achievements

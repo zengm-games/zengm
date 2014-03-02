@@ -46,7 +46,7 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
     }, {
         aid: "hardware-store",
         name: "Hardware Store",
-        desc: "Sweep MVP, DPoY, ROY, and Finals MVP in the same season."
+        desc: "Sweep MVP, DPOY, ROY, and Finals MVP in the same season."
     }, {
         aid: "small-market",
         name: "Small Market",
@@ -64,7 +64,7 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
     function check(cb) {
         $.ajax({
             type: "GET",
-            url: "http://account.basketball-gm.dev/user_info.php",
+            url: "http://account.basketball-gm." + g.tld + "/user_info.php",
             dataType: "json",
             xhrFields: {
                 withCredentials: true
@@ -82,7 +82,7 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
     function getAchievements(cb) {
         $.ajax({
             type: "GET",
-            url: "http://account.basketball-gm.dev/get_achievements.php",
+            url: "http://account.basketball-gm." + g.tld + "/get_achievements.php",
             dataType: "json",
             xhrFields: {
                 withCredentials: true

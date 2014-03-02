@@ -18,7 +18,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
             $.ajax({
                 type: "POST",
-                url: "http://account.basketball-gm.dev/login.php",
+                url: "http://account.basketball-gm." + g.tld + "/login.php",
                 data: $login.serialize(),
                 dataType: "json",
                 xhrFields: {
@@ -43,7 +43,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
             $.ajax({
                 type: "POST",
-                url: "http://account.basketball-gm.dev/register.php",
+                url: "http://account.basketball-gm." + g.tld + "/register.php",
                 data: $register.serialize(),
                 dataType: "json",
                 xhrFields: {

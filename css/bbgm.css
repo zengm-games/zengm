@@ -101,8 +101,12 @@ footer {
 }
 
 /* For the user/login widget */
-.navbar-user {
-  float: right;
+.user-menu {
+  display: block;
+  padding: 16px 15px;
+}
+.user-menu:hover {
+  text-decoration: none;
 }
 
 /* These colors are copied from the default "success" button. */

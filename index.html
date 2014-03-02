@@ -73,12 +73,14 @@
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="top-menu">
       <div class="container">
         <div class="pull-right">
-          <p class="navbar-text">
-            <a class="navbar-link" href="/account/login_or_register" data-bind="visible: !username() && username() !== null" style="display: none">Login/Register</a>
-            <a class="navbar-link" href="/account" data-bind="visible: username" style="display: none">
-              <span class="glyphicon glyphicon-user" style="padding-right: 6px"></span><span data-bind="text: username"></span>
+            <a class="navbar-link user-menu" href="/account/login_or_register" data-bind="visible: !username()">
+              <span class="glyphicon glyphicon-user"></span>
+              Login/Register
             </a>
-          </p>
+            <a class="navbar-link user-menu" href="/account" data-bind="visible: username" style="display: none">
+              <span class="glyphicon glyphicon-user"></span>
+              <span data-bind="text: username"></span>
+            </a>
         </div>
 
         <div class="navbar-header">

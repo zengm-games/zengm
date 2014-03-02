@@ -120,7 +120,7 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
 
                     cb(achievements);
                 },
-                failure: function () {
+                error: function () {
                     cb(achievements);
                 }
             });

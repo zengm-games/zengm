@@ -11,7 +11,7 @@ define(["db", "globals", "lib/bbgm-notifications"], function (db, g, bbgmNotific
         options.saveToDb = options.saveToDb !== undefined ? options.saveToDb : true;
         options.showNotification = options.showNotification !== undefined ? options.showNotification : true;
 
-        if (options.saveToDb) {
+        if (options.saveToDb && g.lid) { // Only save to league event log if within a league
             db = require("db"); // Not sure why this is necessary
             db.getObjectStore(ot, "events", "events", true).add({
                 season: g.season,

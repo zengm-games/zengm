@@ -2,7 +2,7 @@
  * @name util.account
  * @namespace Functions for accessing account crap.
  */
-define(["db", "globals", "lib/jquery"], function (db, g, $) {
+define(["db", "globals", "lib/jquery", "util/eventLog"], function (db, g, $, eventLog) {
     "use strict";
 
     var allAchievements;
@@ -140,7 +140,18 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
         var addToIndexedDB, notify;
 
         notify = function (slug) {
-console.log("NOTIFICATION: " + slug);
+            var i;
+
+            // Find name of achievement
+            for (i = 0; i < allAchievements.length; i++) {
+                if (allAchievements[i].slug === slug) {
+                    eventLog.add(null, {
+                        type: "achievement",
+                        text: '"' + allAchievements[i].name + '" achievement unlocked! <a href="/account">View all achievements.</a>'
+                    });
+                    break;
+                }
+            }
         };
 
         addToIndexedDB = function (achievements, cb) {

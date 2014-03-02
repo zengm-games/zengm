@@ -2,7 +2,7 @@
  * @name views.loginOrRegister
  * @namespace Login and register forms.
  */
-define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, account, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     function uiFirst() {
@@ -76,7 +76,10 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
                     if (data.success) {
                         g.vm.topMenu.username(data.username);
-                        ui.realtimeUpdate([], "/account");
+
+                        account.addAchievements(["participation"], function () {
+                            ui.realtimeUpdate([], "/account");
+                        });
                     } else {
                         for (error in data.errors) {
                             if (data.errors.hasOwnProperty(error)) {

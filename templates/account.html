@@ -1,6 +1,6 @@
 <h1>Your Account</h1>
 
-<p data-bind="visible: username() === null || username() === ''">Not logged in! <a href="/login_or_register">Click here to create an account.</a></p>
+<p data-bind="visible: username() === null || username() === ''">Not logged in! <a href="/account/login_or_register">Click here to create an account.</a></p>
 <p data-bind="visible: username() !== null && username() !== ''">Logged in as: <b data-bind="text: username"></b> (<a href="" id="logout" data-no-davis="true">Logout</a>)</p>
 
 <h2>Achievements</h2>
@@ -8,7 +8,7 @@
 <ul class="achievements list-group" data-bind="foreach: achievements">
   <li class="list-group-item col-xs-12 col-sm-6 col-md-4 col-lg-3 pull-left">
     <div data-bind="css: {'list-group-item-success': count() > 0, 'text-muted': count() == 0}">
-      <span class="badge" data-bind="text: count(), visible: count() > 1"></span>
+      <span class="badge pull-right" data-bind="text: count(), visible: count() > 1"></span>
       <h4 class="list-group-item-heading" data-bind="text: name"></h4>
       <p class="list-group-item-text" data-bind="text: desc"></p>
     </div>

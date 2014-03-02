@@ -131,7 +131,7 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "ut
             this.get("/manual", views.manual.get);
             this.get("/manual/:page", views.manual.get);
             this.get("/changes", views.changes.get);
-            this.get("/login_or_register", views.loginOrRegister.get);
+            this.get("/account/login_or_register", views.loginOrRegister.get);
             this.get("/account", views.account.get);
 
             // League views

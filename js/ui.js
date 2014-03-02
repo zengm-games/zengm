@@ -261,7 +261,7 @@ console.log('aaa');
         // This prevents the Create New League form from inappropriately refreshing after it is submitted
         if (refresh) {
             Davis.location.replace(new Davis.Request(url, raw));
-        } else if (inLeague || url === "/" || url === "/account" || url === "/login_or_register") {
+        } else if (inLeague || url === "/" || url.indexOf("/account") === 0) {
             Davis.location.assign(new Davis.Request(url, raw));
         } else if (cb !== undefined) {
             cb();

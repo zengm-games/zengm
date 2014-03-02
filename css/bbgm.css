@@ -100,6 +100,12 @@ footer {
   border-bottom-color: #777777;
 }
 
+/* For the user/login widget */
+.navbar-user {
+  position: relative;
+  float: right;
+}
+
 /* These colors are copied from the default "success" button. */
 #play-button-link {
   color: #fff;

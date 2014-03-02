@@ -28,6 +28,9 @@ Eventually:
 
 CURRENT
 -------
+user/login widget is ugly and weird
+  put in top right, glyphicon user and username. when collapse, just show username
+    if more space is needed, delete "Basketball GM" and/or basketball logo
 login/register forms
   widget: periodically check with user_info.php to make sure still logged in (do this through util.account.check, start a timeout)
     worth it?

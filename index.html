@@ -72,6 +72,12 @@
 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="top-menu">
       <div class="container">
+        <div class="navbar-user">
+          <p class="navbar-text">
+            <a href="/account" class="navbar-link"><span class="glyphicon glyphicon-user" style="margin-right: 6px"></span>dumbmatter</a>
+          </p>
+        </div>
+
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
             <span class="sr-only">Toggle navigation</span>
@@ -93,8 +99,9 @@
             <span data-bind="text: statusText"></span>
           </p>
         </div>
-        <div class="collapse navbar-collapse navbar-ex1-collapse" id="top-menu-collapse">
-          <ul class="nav navbar-nav navbar-right" id="nav-primary">
+
+        <div class="collapse navbar-collapse navbar-right" id="top-menu-collapse">
+          <ul class="nav navbar-nav" id="nav-primary">
             <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: []}">Dashboard</a></li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">League <b class="caret"></b></span><span class="visible-sm">L <b class="caret"></b></span></a>

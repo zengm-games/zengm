@@ -1,6 +1,7 @@
-<h1>Account</h1>
+<h1>Your Account</h1>
 
-<p>Logged in as: <b data-bind="text: username"></b> (<a href="" id="logout" data-no-davis="true">Logout</a>)</p>
+<p data-bind="visible: username() === null || username() === ''">Not logged in! <a href="/login_or_register">Click here to create an account.</a></p>
+<p data-bind="visible: username() !== null && username() !== ''">Logged in as: <b data-bind="text: username"></b> (<a href="" id="logout" data-no-davis="true">Logout</a>)</p>
 
 <h2>Achievements</h2>
 
@@ -12,4 +13,13 @@
       <p class="list-group-item-text" data-bind="text: desc"></p>
     </div>
   </li>
+  <!--ko if: $index() % 4 === 3-->
+    <li class="clearfix visible-lg"></li>
+  <!--/ko-->
+  <!--ko if: $index() % 3 === 2-->
+    <li class="clearfix visible-md"></li>
+  <!--/ko-->
+  <!--ko if: $index() % 2 === 1-->
+    <li class="clearfix visible-sm"></li>
+  <!--/ko-->
 </ul>

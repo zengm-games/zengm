@@ -354,34 +354,6 @@ select.teams {
   color: #fff;
 }
 
-#account {
-  position: fixed;
-  bottom: 0;
-  pointer-events: none;
-  width: 100%;
-}
-/* http://twitterbootstrap3buttons.w3masters.nl/ */
-.account-button {
-  -webkit-border-bottom-left-radius: 0;
-     -moz-border-bottom-left-radius: 0;
-          border-bottom-left-radius: 0;
-  -webkit-border-bottom-right-radius: 0;
-     -moz-border-bottom-right-radius: 0;
-          border-bottom-right-radius: 0;
-
-  background-color: #563D7C;
-  border-color: #563D7C;
-  color: #fff;
-  float: right;
-  pointer-events: auto;
-}
-.account-button:hover,
-.account-button:focus,
-.account-button:active {
-  background-color: #4a356b;
-  border-color: #3e2c5a;
-}
-
 .achievements {
   margin: -4px;
 }

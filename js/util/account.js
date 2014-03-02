@@ -71,7 +71,7 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
                 withCredentials: true
             },
             success: function (data) {
-                g.vm.account.username(data.username);
+                g.vm.topMenu.username(data.username);
 
                 if (cb !== undefined) {
                     cb();

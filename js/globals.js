@@ -59,9 +59,7 @@ define(["lib/knockout"], function (ko) {
             options: ko.observable([]),
             phaseText: ko.observable(),
             statusText: ko.observable(),
-            template: ko.observable() // Used for left menu on large screens for highlighting active page, so g.vm.topMenu should really be g.vm.menu, since it's used by both
-        },
-        account: {
+            template: ko.observable(), // Used for left menu on large screens for highlighting active page, so g.vm.topMenu should really be g.vm.menu, since it's used by both
             username: ko.observable(null)
         }
     };

@@ -13,7 +13,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
 
             account.check(function () {
                 deferred.resolve({
-                    username: g.vm.account.username
+                    username: g.vm.topMenu.username
                 });
             });
 
@@ -51,7 +51,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
                     withCredentials: true
                 },
                 success: function () {
-                    g.vm.account.username("");
+                    g.vm.topMenu.username("");
                     ui.realtimeUpdate([], "/");
                 }
             });

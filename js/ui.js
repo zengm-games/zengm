@@ -10,7 +10,6 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         var api, playMenu, $playMenuDropdown, playMenuOptions, topMenuCollapse;
 
         ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
-        ko.applyBindings(g.vm.account, document.getElementById("account"));
 
         // Handle clicks from play menu
         api = require("api");

@@ -74,9 +74,9 @@
       <div class="container">
         <div class="pull-right">
           <p class="navbar-text">
-            <a href="/account" class="navbar-link">
-              <span class="glyphicon glyphicon-user" style="margin-right: 6px"></span><!--
-              -->dumbmatter
+            <a class="navbar-link" href="/account/login_or_register" data-bind="visible: !username() && username() !== null" style="display: none">Login/Register</a>
+            <a class="navbar-link" href="/account" data-bind="visible: username" style="display: none">
+              <span class="glyphicon glyphicon-user" style="padding-right: 6px"></span><span data-bind="text: username"></span>
             </a>
           </p>
         </div>
@@ -204,13 +204,6 @@
           <p class="rev">v3.3 · <!--rev-->2014.02.27.1387</p>
         </p>
       </footer>
-    </div>
-
-    <div id="account">
-      <div class="container">
-        <a class="account-button btn btn-danger" href="/account/login_or_register" data-bind="visible: !username() && username() !== null" style="display: none">Login or Register <span data-bind="text: username"></span></a>
-        <a class="account-button btn btn-danger" href="/account" data-bind="visible: username, text: username" style="display: none"></a>
-      </div>
     </div>
 
     <iframe style="display: none;" src="/manifest_hack"></iframe> 

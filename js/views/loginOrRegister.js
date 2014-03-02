@@ -31,7 +31,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                     document.getElementById("login-error").innerHTML = "";
 
                     if (data.success) {
-                        g.vm.account.username(data.username);
+                        g.vm.topMenu.username(data.username);
                         ui.realtimeUpdate([], "/account");
                     } else {
                         document.getElementById("login-error").innerHTML = "Invalid username or password.";
@@ -75,7 +75,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                     resetErrors();
 
                     if (data.success) {
-                        g.vm.account.username(data.username);
+                        g.vm.topMenu.username(data.username);
                         ui.realtimeUpdate([], "/account");
                     } else {
                         for (error in data.errors) {

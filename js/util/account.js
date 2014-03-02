@@ -7,12 +7,13 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
 
     var allAchievements;
 
+    // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
     allAchievements = [{
         aid: "participation",
         name: "Participation",
         desc: "You get an achievement just for creating an account, you special snowflake!"
     }, {
-        aid: "fo-fo-fo",
+        aid: "fo_fo_fo",
         name: "Fo Fo Fo",
         desc: "Go 16-0 in the playoffs."
     }, {
@@ -20,7 +21,7 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
         name: "Septuawinarian",
         desc: "Win 70+ games in the regular season."
     }, {
-        aid: "98-degrees",
+        aid: "98_degrees",
         name: "98 Degrees",
         desc: "Go 98-0 in the playoffs and regular season."
     }, {
@@ -28,11 +29,11 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
         name: "Dynasty",
         desc: "Win 6 championships in 8 years."
     }, {
-        aid: "dynasty-2",
+        aid: "dynasty_2",
         name: "Dynasty 2",
         desc: "Win 8 championships in a row."
     }, {
-        aid: "dynasty-3",
+        aid: "dynasty_3",
         name: "Dynasty 3",
         desc: "Win 11 championships in 13 years."
     }, {
@@ -40,23 +41,23 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
         name: "Moneyball",
         desc: "Win a title with a payroll under $40 million."
     }, {
-        aid: "moneyball-2",
+        aid: "moneyball_2",
         name: "Moneyball 2",
         desc: "Win a title with a payroll under $30 million."
     }, {
-        aid: "hardware-store",
+        aid: "hardware_store",
         name: "Hardware Store",
         desc: "Sweep MVP, DPOY, ROY, and Finals MVP in the same season."
     }, {
-        aid: "small-market",
+        aid: "small_market",
         name: "Small Market",
         desc: "Win a title in a city with under 2 million people."
     }, {
-        aid: "sleeper-pick",
+        aid: "sleeper_pick",
         name: "Sleeper Pick",
         desc: "Use a non-lottery pick to draft the ROY."
     }, {
-        aid: "sleeper-pick-2",
+        aid: "sleeper_pick_2",
         name: "Sleeper Pick 2",
         desc: "One of your second round picks makes First Team All League on your team."
     }];
@@ -100,8 +101,40 @@ define(["db", "globals", "lib/jquery"], function (db, g, $) {
         });
     }
 
+    /**
+     * Records one or more achievements.
+     *
+     * If logged in, try to record remotely and fall back to IndexedDB if necessary. If not logged in, just write to IndexedDB. Then, create a notification.
+     * 
+     * @memberOf util.helpers
+     * @param {Array.<string>} achievements Array of achievement IDs (see allAchievements above).
+     * @param {function} cb Callback function.
+     */
+    function addAchievements(achievements, cb) {
+        $.ajax({
+            type: "POST",
+            url: "http://account.basketaaball-gm." + g.tld + "/add_achievements.php",
+            data: {achievements: achievements},
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+                if (data.success) {
+console.log("SUCCESS");
+                } else {
+console.log("FAILURE, ADD to indexeddb");
+                }
+            },
+            error: function () {
+console.log("ERROR, ADD to indexeddb");
+            }
+        });
+    }
+
     return {
         check: check,
-        getAchievements: getAchievements
+        getAchievements: getAchievements,
+        addAchievements: addAchievements
     };
 });

@@ -35,10 +35,10 @@ achievements
   http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   UI
     if logged in, use that for achievements souce. otherwise, use local DB of pending achievements and show warning about account
-  record achievements
+  util.account.addAchievements
     if logged in, send to DB. if fails, fall back on indexeddb
     if not logged in, send to indexeddb
-    sync idb to account on login or check
+    sync idb to account on login or check - MORE SPECIFIC?
     add "persist" option to notifications (require click to close) and use here (and for refuse to resign)
 mobile UI
   slide in full height menu from right, like facebook or android's DrawerLayout

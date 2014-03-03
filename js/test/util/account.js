@@ -486,7 +486,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 awards = {"season":2013,"roy":{"pid":501,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973},"mvp":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","pts":28.951219512195124,"trb":11.329268292682928,"ast":0.6585365853658537},"smoy":{"pid":505,"name":"Donald Gallager","tid":7,"abbrev":"MON","pts":22.195121951219512,"trb":7.878048780487805,"ast":0.7682926829268293},"dpoy":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","trb":11.329268292682928,"blk":3.2560975609756095,"stl":2.2804878048780486},"finalsMvp":{"pid":335,"name":"Erwin Ritchey","tid":7,"abbrev":"POR","pts":24.4,"trb":8.85,"ast":2.65}} ;
 
                 tx = g.dbl.transaction("awards", "readwrite");
-                tx.objectStore("awards").put(awards );
+                tx.objectStore("awards").put(awards);
                 tx.oncomplete = function () {
                     account.checkAchievement.hardware_store(function (awarded) {
                         awarded.should.be.true;
@@ -516,7 +516,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 awards = {"season":2013,"roy":{"pid":501,"name":"Timothy Gonzalez","tid":8,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973},"mvp":{"pid":280,"name":"William Jarosz","tid":8,"abbrev":"PHI","pts":28.951219512195124,"trb":11.329268292682928,"ast":0.6585365853658537},"smoy":{"pid":505,"name":"Donald Gallager","tid":8,"abbrev":"MON","pts":22.195121951219512,"trb":7.878048780487805,"ast":0.7682926829268293},"dpoy":{"pid":280,"name":"William Jarosz","tid":8,"abbrev":"PHI","trb":11.329268292682928,"blk":3.2560975609756095,"stl":2.2804878048780486},"finalsMvp":{"pid":335,"name":"Erwin Ritchey","tid":8,"abbrev":"POR","pts":24.4,"trb":8.85,"ast":2.65}} ;
 
                 tx = g.dbl.transaction("awards", "readwrite");
-                tx.objectStore("awards").put(awards );
+                tx.objectStore("awards").put(awards);
                 tx.oncomplete = function () {
                     account.checkAchievement.hardware_store(function (awarded) {
                         awarded.should.be.false;
@@ -588,6 +588,159 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 };
                 tx.oncomplete = function () {
                     account.checkAchievement.small_market(function (awarded) {
+                        awarded.should.be.false;
+                        done();
+                    });
+                };
+            });
+        });
+
+        describe("#checkAchievement.sleeper_pick()", function () {
+            it("should award achievement if user's non-lottery pick wins ROY while on user's team", function (done) {
+                account.checkAchievement.sleeper_pick(function (awarded) {
+                    var awards, tx;
+
+                    awarded.should.be.false;
+
+                    tx = g.dbl.transaction(["awards", "players"], "readwrite");
+
+                    tx.objectStore("players").openCursor(1).onsuccess = function (event) {
+                        var cursor, p;
+
+                        cursor = event.target.result;
+                        p = cursor.value;
+
+                        p.tid = g.userTid;
+                        p.draft.tid = g.userTid;
+                        p.draft.round = 1;
+                        p.draft.pick = 20;
+                        p.draft.year = g.season - 1;
+
+                        cursor.update(p);
+                    };
+
+                    // ROY is pid 1 on tid 7
+                    awards = {"season":2013,"roy":{"pid":1,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973}} ;
+
+                    tx.objectStore("awards").put(awards);
+
+                    tx.oncomplete = function () {
+                        account.checkAchievement.sleeper_pick(function (awarded) {
+                            awarded.should.be.true;
+                            done();
+                        });
+                    };
+                });
+            });
+            it("should not award achievement if not currently on user's team", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("players", "readwrite");
+                tx.objectStore("players").openCursor(1).onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    p = cursor.value;
+
+                    p.tid = 15;
+
+                    cursor.update(p);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.sleeper_pick(function (awarded) {
+                        awarded.should.be.false;
+                        done();
+                    });
+                };
+            });
+            it("should not award achievement if not drafted by user", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("players", "readwrite");
+                tx.objectStore("players").openCursor(1).onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    p = cursor.value;
+
+                    p.tid = g.userTid;
+                    p.draft.tid = 15;
+
+                    cursor.update(p);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.sleeper_pick(function (awarded) {
+                        awarded.should.be.false;
+                        done();
+                    });
+                };
+            });
+            it("should not award achievement if lottery pick", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("players", "readwrite");
+                tx.objectStore("players").openCursor(1).onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    p = cursor.value;
+
+                    p.draft.tid = g.userTid;
+                    p.draft.pick = 7;
+
+                    cursor.update(p);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.sleeper_pick(function (awarded) {
+                        awarded.should.be.false;
+                        done();
+                    });
+                };
+            });
+            it("should not award achievement if old pick", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("players", "readwrite");
+                tx.objectStore("players").openCursor(1).onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    p = cursor.value;
+
+                    p.draft.pick = 15;
+                    p.draft.year = g.season - 2;
+
+                    cursor.update(p);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.sleeper_pick(function (awarded) {
+                        awarded.should.be.false;
+                        done();
+                    });
+                };
+            });
+            it("should not award achievement not ROY", function (done) {
+                var awards, tx;
+
+                tx = g.dbl.transaction(["awards", "players"], "readwrite");
+
+                // Switch to pid 2
+                awards = {"season":2013,"roy":{"pid":2,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973}} ;
+                tx.objectStore("awards").put(awards);
+
+                tx.objectStore("players").openCursor(1).onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    p = cursor.value;
+
+                    p.draft.year = g.season - 1;
+
+                    cursor.update(p);
+                };
+
+                tx.oncomplete = function () {
+                    account.checkAchievement.sleeper_pick(function (awarded) {
                         awarded.should.be.false;
                         done();
                     });

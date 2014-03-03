@@ -275,6 +275,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         tx.oncomplete = function () {
                             // Achievements after awards
                             account.checkAchievement.hardware_store();
+                            account.checkAchievement.sleeper_pick();
                         }
 
                         cbAwardsByPlayer(awardsByPlayer, cb);

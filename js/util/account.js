@@ -59,7 +59,7 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
     }, {
         slug: "sleeper_pick_2",
         name: "Sleeper Pick 2",
-        desc: "One of your second round picks makes First Team All League on your team."
+        desc: "One of your second round picks makes All League while still on your team."
     }, {
         slug: "hacker",
         name: "Hacker",
@@ -446,6 +446,38 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
                 }
             }
         });
+    };
+
+    checkAchievement.sleeper_pick = function (cb) {
+        g.dbl.transaction("awards").objectStore("awards").get(g.season).onsuccess = function (event) {
+            var awards;
+
+            awards = event.target.result;
+
+            if (awards.roy.tid === g.userTid) {
+                g.dbl.transaction("players").objectStore("players").get(awards.roy.pid).onsuccess = function (event) {
+                    var p;
+
+                    p = event.target.result;
+
+                    if (p.tid === g.userTid && p.draft.tid === g.userTid && p.draft.year === g.season - 1 && (p.draft.round > 1 || p.draft.pick >= 15)) {
+                        if (cb !== undefined) {
+                            cb(true);
+                        } else {
+                            addAchievements(["sleeper_pick"]);
+                        }
+                    } else {
+                        if (cb !== undefined) {
+                            cb(false);
+                        }
+                    }
+                };
+            } else {
+                if (cb !== undefined) {
+                    cb(false);
+                }
+            }
+        };
     };
 
     return {

@@ -477,5 +477,53 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 };
             });
         });
+
+        describe("#checkAchievement.hardware_store()", function () {
+            it("should award achievement if user's team sweeps awards", function (done) {
+                var awards, tx;
+
+                // tid 7 wins all awards
+                awards = {"season":2013,"roy":{"pid":501,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973},"mvp":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","pts":28.951219512195124,"trb":11.329268292682928,"ast":0.6585365853658537},"smoy":{"pid":505,"name":"Donald Gallager","tid":7,"abbrev":"MON","pts":22.195121951219512,"trb":7.878048780487805,"ast":0.7682926829268293},"dpoy":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","trb":11.329268292682928,"blk":3.2560975609756095,"stl":2.2804878048780486},"finalsMvp":{"pid":335,"name":"Erwin Ritchey","tid":7,"abbrev":"POR","pts":24.4,"trb":8.85,"ast":2.65}} ;
+
+                tx = g.dbl.transaction("awards", "readwrite");
+                tx.objectStore("awards").put(awards );
+                tx.oncomplete = function () {
+                    account.checkAchievement.hardware_store(function (awarded) {
+                        awarded.should.be.true;
+                        done();
+                    });
+                };
+            });
+            it("should not award achievement if user's team loses an award", function (done) {
+                var awards, tx;
+
+                // tid 7 wins loses an award!
+                awards = {"season":2013,"roy":{"pid":501,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973},"mvp":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","pts":28.951219512195124,"trb":11.329268292682928,"ast":0.6585365853658537},"smoy":{"pid":505,"name":"Donald Gallager","tid":8,"abbrev":"MON","pts":22.195121951219512,"trb":7.878048780487805,"ast":0.7682926829268293},"dpoy":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","trb":11.329268292682928,"blk":3.2560975609756095,"stl":2.2804878048780486},"finalsMvp":{"pid":335,"name":"Erwin Ritchey","tid":7,"abbrev":"POR","pts":24.4,"trb":8.85,"ast":2.65}} ;
+
+                tx = g.dbl.transaction("awards", "readwrite");
+                tx.objectStore("awards").put(awards);
+                tx.oncomplete = function () {
+                    account.checkAchievement.hardware_store(function (awarded) {
+                        awarded.should.be.false;
+                        done();
+                    });
+                };
+            });
+            it("should not award achievement if another team sweeps the awards", function (done) {
+                var awards, tx;
+
+                // tid 7 is changed to 8
+                awards = {"season":2013,"roy":{"pid":501,"name":"Timothy Gonzalez","tid":8,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973},"mvp":{"pid":280,"name":"William Jarosz","tid":8,"abbrev":"PHI","pts":28.951219512195124,"trb":11.329268292682928,"ast":0.6585365853658537},"smoy":{"pid":505,"name":"Donald Gallager","tid":8,"abbrev":"MON","pts":22.195121951219512,"trb":7.878048780487805,"ast":0.7682926829268293},"dpoy":{"pid":280,"name":"William Jarosz","tid":8,"abbrev":"PHI","trb":11.329268292682928,"blk":3.2560975609756095,"stl":2.2804878048780486},"finalsMvp":{"pid":335,"name":"Erwin Ritchey","tid":8,"abbrev":"POR","pts":24.4,"trb":8.85,"ast":2.65}} ;
+
+                tx = g.dbl.transaction("awards", "readwrite");
+                tx.objectStore("awards").put(awards );
+                tx.oncomplete = function () {
+                    account.checkAchievement.hardware_store(function (awarded) {
+                        awarded.should.be.false;
+                        done();
+                    });
+                };
+            });
+        });
     });
 });

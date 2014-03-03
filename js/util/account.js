@@ -2,7 +2,7 @@
  * @name util.account
  * @namespace Functions for accessing account crap.
  */
-define(["db", "globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"], function (db, g, team, $, _, eventLog) {
+define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"], function (g, team, $, _, eventLog) {
     "use strict";
 
     var allAchievements, checkAchievement;
@@ -47,7 +47,7 @@ define(["db", "globals", "core/team", "lib/jquery", "lib/underscore", "util/even
     }, {
         slug: "hardware_store",
         name: "Hardware Store",
-        desc: "Sweep MVP, DPOY, ROY, and Finals MVP in the same season."
+        desc: "Sweep MVP, DPOY, SMOY, ROY, and Finals MVP in the same season."
     }, {
         slug: "small_market",
         name: "Small Market",
@@ -406,6 +406,26 @@ define(["db", "globals", "core/team", "lib/jquery", "lib/underscore", "util/even
 
     checkAchievement.moneyball_2 = function (cb) {
         checkMoneyball(30000, "moneyball_2", cb);
+    };
+
+    checkAchievement.hardware_store = function (cb) {
+        g.dbl.transaction("awards").objectStore("awards").get(g.season).onsuccess = function (event) {
+            var awards;
+
+            awards = event.target.result;
+
+            if (awards.mvp.tid === g.userTid && awards.dpoy.tid === g.userTid && awards.smoy.tid === g.userTid && awards.roy.tid === g.userTid && awards.finalsMvp.tid === g.userTid) {
+                if (cb !== undefined) {
+                    cb(true);
+                } else {
+                    addAchievements(["hardware_store"]);
+                }
+            } else {
+                if (cb !== undefined) {
+                    cb(false);
+                }
+            }
+        };
     };
 
     return {

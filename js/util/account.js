@@ -47,7 +47,7 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
     }, {
         slug: "hardware_store",
         name: "Hardware Store",
-        desc: "Sweep MVP, DPOY, SMOY, ROY, and Finals MVP in the same season."
+        desc: "Players on your team win MVP, DPOY, SMOY, ROY, and Finals MVP in the same season."
     }, {
         slug: "small_market",
         name: "Small Market",

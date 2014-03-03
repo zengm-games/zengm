@@ -2,7 +2,7 @@
  * @name util.account
  * @namespace Functions for accessing account crap.
  */
-define(["db", "globals", "lib/jquery", "lib/underscore", "util/eventLog"], function (db, g, $, _, eventLog) {
+define(["db", "globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"], function (db, g, team, $, _, eventLog) {
     "use strict";
 
     var allAchievements, checkAchievement;
@@ -277,6 +277,25 @@ define(["db", "globals", "lib/jquery", "lib/underscore", "util/eventLog"], funct
                     addAchievements(["fo_fo_fo"]);
                 }
             };
+        },
+        septuawinarian: function (cb) {
+            team.filter({
+                seasonAttrs: ["won"],
+                season: g.season,
+                tid: g.userTid
+            }, function (t) {
+                if (t.won >= 70) {
+                    if (cb !== undefined) {
+                        cb(true);
+                    } else {
+                        addAchievements(["septuawinarian"]);
+                    }
+                } else {
+                    if (cb !== undefined) {
+                        cb(false);
+                    }
+                }
+            });
         }
     };
 

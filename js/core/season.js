@@ -612,6 +612,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhasePlayoffs(cb) {
+        // Achievements after regular season
+        account.checkAchievement.septuawinarian();
+
         // Set playoff matchups
         team.filter({
             attrs: ["tid", "cid"],
@@ -738,7 +741,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         var tx;
 
         // Achievements after playoffs
-        account.checkAchievements.fo_fo_fo();
+        account.checkAchievement.fo_fo_fo();
 
         tx = g.dbl.transaction(["events", "messages", "players", "teams"], "readwrite");
 

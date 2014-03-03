@@ -61,7 +61,35 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                }
+                };
+            });
+        });
+
+        describe("#checkAchievement.septuawinarian()", function () {
+            it("should award achievement only if user's team has more than 70 wins", function (done) {
+                account.checkAchievement.septuawinarian(function (awarded) {
+                    var tx;
+
+                    awarded.should.be.false;
+
+                    tx = g.dbl.transaction("teams", "readwrite");
+                    tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                        var cursor, t;
+
+                        cursor = event.target.result;
+                        t = cursor.value;
+
+                        t.seasons[0].won = 70;
+
+                        cursor.update(t);
+                    };
+                    tx.oncomplete = function () {
+                        account.checkAchievement.septuawinarian(function (awarded) {
+                            awarded.should.be.true;
+                            done();
+                        });
+                    };
+                });
             });
         });
     });

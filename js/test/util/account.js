@@ -231,38 +231,38 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                             awarded.should.be.false;
 
                             account.checkAchievement.dynasty_3(function (awarded) {
+                                var tx;
+
                                 awarded.should.be.false;
 
-                                done();
-                            });
-                        });
-                    });
-                };
+                                // Add 1 to the existing 7 seasons, making 8 seasons total
+                                tx = g.dbl.transaction("teams", "readwrite");
+                                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                                    var cursor, extraSeasons, t;
 
-                // Add 1 to the existing 7 seasons, making 8 seasons total
-                tx = g.dbl.transaction("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
-                    var cursor, extraSeasons, t;
+                                    cursor = event.target.result;
+                                    t = cursor.value;
 
-                    cursor = event.target.result;
-                    t = cursor.value;
+                                    extraSeasons = [{playoffRoundsWon: 3}];
+                                    t.seasons = t.seasons.concat(extraSeasons);
 
-                    extraSeasons = [{playoffRoundsWon: 3}];
-                    t.seasons = t.seasons.concat(extraSeasons);
+                                    cursor.update(t);
+                                };
+                                tx.oncomplete = function () {
+                                    account.checkAchievement.dynasty(function (awarded) {
+                                        awarded.should.be.true;
 
-                    cursor.update(t);
-                };
-                tx.oncomplete = function () {
-                    account.checkAchievement.dynasty(function (awarded) {
-                        awarded.should.be.true;
+                                        account.checkAchievement.dynasty_2(function (awarded) {
+                                            awarded.should.be.false;
 
-                        account.checkAchievement.dynasty_2(function (awarded) {
-                            awarded.should.be.false;
+                                            account.checkAchievement.dynasty_3(function (awarded) {
+                                                awarded.should.be.false;
 
-                            account.checkAchievement.dynasty_3(function (awarded) {
-                                awarded.should.be.false;
-
-                                done();
+                                                done();
+                                            });
+                                        });
+                                    });
+                                };
                             });
                         });
                     });

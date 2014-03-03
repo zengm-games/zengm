@@ -77,7 +77,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
                     if (data.success) {
                         g.vm.topMenu.username(data.username);
 
-                        account.addAchievements(["participation"], function () {
+                        account.addAchievements(["participation"], false, function () {
                             ui.realtimeUpdate([], "/account");
                         });
                     } else {

@@ -2,7 +2,7 @@
  * @name util.account
  * @namespace Functions for accessing account crap.
  */
-define(["db", "globals", "lib/jquery", "util/eventLog"], function (db, g, $, eventLog) {
+define(["db", "globals", "lib/jquery", "lib/underscore", "util/eventLog"], function (db, g, $, _, eventLog) {
     "use strict";
 
     var allAchievements;
@@ -71,10 +71,39 @@ define(["db", "globals", "lib/jquery", "util/eventLog"], function (db, g, $, eve
                 withCredentials: true
             },
             success: function (data) {
+                var achievementStore, tx;
+
+                // Save username for display
                 g.vm.topMenu.username(data.username);
 
-                if (cb !== undefined) {
-                    cb();
+                // If user is logged in, upload any locally saved achievements
+                if (data.username !== "") {
+                    tx = g.dbm.transaction("achievements", "readwrite");
+                    achievementStore = tx.objectStore("achievements");
+                    achievementStore.getAll().onsuccess = function (event) {
+                        var achievements;
+
+                        achievements = _.pluck(event.target.result, "slug");
+
+                        // If any exist, delete and upload
+                        if (achievements.length > 0) {
+                            achievementStore.clear();
+                            // If this fails to save remotely, will be added to IDB again
+                            addAchievements(achievements, true, function () {
+                                if (cb !== undefined) {
+                                    cb();
+                                }
+                            });
+                        } else {
+                            if (cb !== undefined) {
+                                cb();
+                            }
+                        }
+                    };
+                } else {
+                    if (cb !== undefined) {
+                        cb();
+                    }
                 }
             }
         });
@@ -134,13 +163,20 @@ define(["db", "globals", "lib/jquery", "util/eventLog"], function (db, g, $, eve
      * 
      * @memberOf util.helpers
      * @param {Array.<string>} achievements Array of achievement IDs (see allAchievements above).
+     * @param {boolean=} silent If true, don't show any notifications (like if achievements are only being moved from IDB to remote). Default false.
      * @param {function()=} cb Optional callback.
      */
-    function addAchievements(achievements, cb) {
+    function addAchievements(achievements, silent, cb) {
         var addToIndexedDB, notify;
+
+        silent = silent !== undefined ? silent : false;
 
         notify = function (slug) {
             var i;
+
+            if (silent) {
+                return;
+            }
 
             // Find name of achievement
             for (i = 0; i < allAchievements.length; i++) {

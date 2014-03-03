@@ -29,17 +29,17 @@ Eventually:
 CURRENT
 -------
 
-user/login widget is ugly and weird
-  put in top right, glyphicon user and username. when collapse, just show username
-    if more space is needed, delete "Basketball GM" and/or basketball logo
+somehow periodically run util.account.check, which will check for login and for local achievements to send to cloud
 login/register forms
-  widget: periodically check with user_info.php to make sure still logged in (do this through util.account.check, start a timeout)
-    worth it?
+  more validation for username
 achievements
   http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
-  util.account.addAchievements
-    sync idb to account on login or check - or more frequently?
-      maybe integrate with util.account.check and call that relatively frequently?
+  actually implement achievements!
+Achievements to add
+  longeivity: play 10, 100, 1000 seasons in a singel league
+  lucky/unlucky win/lose game 7 in OT
+  underdog: things like winning title as 8 seed, etc
+  Hacker: <a href="mailto:commissioner@basketball-gm.com">Report</a> a security issue in <a href="">the account system</a>.
 mobile UI
   slide in full height menu from right, like facebook or android's DrawerLayout
 option to keep your player stats in improve performance http://www.reddit.com/r/BasketballGM/comments/1xgo2q/delete_old_player_stats_keep_your_teams_old/

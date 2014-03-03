@@ -2,7 +2,7 @@
  * @name core.season
  * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
  */
-define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/jquery", "lib/underscore", "util/eventLog", "util/helpers", "util/message", "util/random"], function (db, g, ui, contractNegotiation, draft, finances, freeAgents, player, team, $, _, eventLog, helpers, message, random) {
+define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/jquery", "lib/underscore", "util/account", "util/eventLog", "util/helpers", "util/message", "util/random"], function (db, g, ui, contractNegotiation, draft, finances, freeAgents, player, team, $, _, account, eventLog, helpers, message, random) {
     "use strict";
 
     var phaseText;
@@ -736,6 +736,9 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
     function newPhaseBeforeDraft(cb) {
         var tx;
+
+        // Achievements after playoffs
+        account.checkAchievements.fo_fo_fo();
 
         tx = g.dbl.transaction(["events", "messages", "players", "teams"], "readwrite");
 

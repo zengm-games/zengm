@@ -5,7 +5,7 @@
 define(["db", "globals", "lib/jquery", "lib/underscore", "util/eventLog"], function (db, g, $, _, eventLog) {
     "use strict";
 
-    var allAchievements;
+    var allAchievements, checkAchievement;
 
     // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
     allAchievements = [{
@@ -242,9 +242,48 @@ define(["db", "globals", "lib/jquery", "lib/underscore", "util/eventLog"], funct
         });
     }
 
+    // If cb is passed, it gets true/false depending on if achievement should be awarded. Otherwise, achievement is directly added.
+    checkAchievement = {
+        fo_fo_fo: function (cb) {
+            g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
+                var found, i, playoffSeries, round, series;
+
+                playoffSeries = event.target.result;
+                series = playoffSeries.series;
+
+                for (round = 0; round < series.length; round++) {
+                    found = false;
+                    for (i = 0; i < series[round].length; i++) {
+                        if (series[round][i].away.won === 4 && series[round][i].home.won === 0 && series[round][i].away.tid === g.userTid) {
+                            found = true;
+                            break;
+                        }
+                        if (series[round][i].home.won === 4 && series[round][i].away.won === 0 && series[round][i].home.tid === g.userTid) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        if (cb !== undefined) {
+                            cb(false);
+                        }
+                        return;
+                    }
+                }
+
+                if (cb !== undefined) {
+                    cb(true);
+                } else {
+                    addAchievements(["fo_fo_fo"]);
+                }
+            };
+        }
+    };
+
     return {
         check: check,
         getAchievements: getAchievements,
-        addAchievements: addAchievements
+        addAchievements: addAchievements,
+        checkAchievement: checkAchievement
     };
 });

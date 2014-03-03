@@ -242,61 +242,91 @@ define(["db", "globals", "core/team", "lib/jquery", "lib/underscore", "util/even
         });
     }
 
-    // If cb is passed, it gets true/false depending on if achievement should be awarded. Otherwise, achievement is directly added.
-    checkAchievement = {
-        fo_fo_fo: function (cb) {
-            g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
-                var found, i, playoffSeries, round, series;
+    // FOR EACH checkAchievement FUNCTION:
+    // If cb is passed, it gets true/false depending on if achievement should be awarded, but nothing is actually recorded. If cb is not, the achievement is directly added if it's awarded.
+    checkAchievement = {};
 
-                playoffSeries = event.target.result;
-                series = playoffSeries.series;
+    checkAchievement.fo_fo_fo = function (cb) {
+        g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
+            var found, i, playoffSeries, round, series;
 
-                for (round = 0; round < series.length; round++) {
-                    found = false;
-                    for (i = 0; i < series[round].length; i++) {
-                        if (series[round][i].away.won === 4 && series[round][i].home.won === 0 && series[round][i].away.tid === g.userTid) {
-                            found = true;
-                            break;
-                        }
-                        if (series[round][i].home.won === 4 && series[round][i].away.won === 0 && series[round][i].home.tid === g.userTid) {
-                            found = true;
-                            break;
-                        }
+            playoffSeries = event.target.result;
+            series = playoffSeries.series;
+
+            for (round = 0; round < series.length; round++) {
+                found = false;
+                for (i = 0; i < series[round].length; i++) {
+                    if (series[round][i].away.won === 4 && series[round][i].home.won === 0 && series[round][i].away.tid === g.userTid) {
+                        found = true;
+                        break;
                     }
-                    if (!found) {
-                        if (cb !== undefined) {
-                            cb(false);
-                        }
-                        return;
+                    if (series[round][i].home.won === 4 && series[round][i].away.won === 0 && series[round][i].home.tid === g.userTid) {
+                        found = true;
+                        break;
                     }
                 }
-
-                if (cb !== undefined) {
-                    cb(true);
-                } else {
-                    addAchievements(["fo_fo_fo"]);
-                }
-            };
-        },
-        septuawinarian: function (cb) {
-            team.filter({
-                seasonAttrs: ["won"],
-                season: g.season,
-                tid: g.userTid
-            }, function (t) {
-                if (t.won >= 70) {
-                    if (cb !== undefined) {
-                        cb(true);
-                    } else {
-                        addAchievements(["septuawinarian"]);
-                    }
-                } else {
+                if (!found) {
                     if (cb !== undefined) {
                         cb(false);
                     }
+                    return;
                 }
-            });
-        }
+            }
+
+            if (cb !== undefined) {
+                cb(true);
+            } else {
+                addAchievements(["fo_fo_fo"]);
+            }
+        };
+    };
+
+    checkAchievement.septuawinarian = function (cb) {
+        team.filter({
+            seasonAttrs: ["won"],
+            season: g.season,
+            tid: g.userTid
+        }, function (t) {
+            if (t.won >= 70) {
+                if (cb !== undefined) {
+                    cb(true);
+                } else {
+                    addAchievements(["septuawinarian"]);
+                }
+            } else {
+                if (cb !== undefined) {
+                    cb(false);
+                }
+            }
+        });
+    };
+
+    checkAchievement["98_degrees"] = function (cb) {
+        checkAchievement.fo_fo_fo(function (awarded) {
+            if (awarded) {
+                team.filter({
+                    seasonAttrs: ["won", "lost"],
+                    season: g.season,
+                    tid: g.userTid
+                }, function (t) {
+                    if (t.won === 82 && t.lost === 0) {
+                        if (cb !== undefined) {
+                            cb(true);
+                        } else {
+                            addAchievements(["98_degrees"]);
+                        }
+                    } else {
+                        if (cb !== undefined) {
+                            cb(false);
+                        }
+                    }
+                });
+            } else {
+                if (cb !== undefined) {
+                    cb(false);
+                }
+            }
+        });
     };
 
     return {

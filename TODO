@@ -32,6 +32,7 @@ CURRENT
 achievements
   http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
   actually implement achievements!
+    can leverage the callbacks of certain achievements to build on them for harder ones!!
     and unit tests for them all!
 TEST IN FIREFOX AND IE11
 account

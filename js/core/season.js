@@ -742,6 +742,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
         // Achievements after playoffs
         account.checkAchievement.fo_fo_fo();
+        account.checkAchievement["98_degrees"]();
 
         tx = g.dbl.transaction(["events", "messages", "players", "teams"], "readwrite");
 

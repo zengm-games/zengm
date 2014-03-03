@@ -57,10 +57,6 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
         name: "Sleeper Pick",
         desc: "Use a non-lottery pick to draft the ROY."
     }, {
-        slug: "sleeper_pick_2",
-        name: "Sleeper Pick 2",
-        desc: "One of your second round picks makes All League while still on your team."
-    }, {
         slug: "hacker",
         name: "Hacker",
         desc: 'Privately <a href="http://basketball-gm.com/contact/">report</a> a security issue in <a href="https://bitbucket.org/dumbmatter/bbgm-account">the account system</a> or some other part of the site.'

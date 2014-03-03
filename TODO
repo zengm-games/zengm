@@ -31,11 +31,8 @@ CURRENT
 
 achievements
   http://www.reddit.com/r/BasketballGM/comments/1jb8d6/milestones/
-  actually implement achievements!
-    can leverage the callbacks of certain achievements to build on them for harder ones!!
-    and unit tests for them all!
   test performance, particularly at end of season and end of playoffs
-  test at least one in a real simulation, not just unit tests
+  test at least one in a real simulation, not just unit tests, to make sure notification and DB storage actually happen
 TEST IN FIREFOX AND IE11
 account
   somehow periodically run util.account.check, which will check for login and for local achievements to send to cloud

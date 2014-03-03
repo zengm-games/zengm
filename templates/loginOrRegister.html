@@ -30,7 +30,8 @@
     <form id="register" data-no-davis="true">
       <div class="form-group">
         <label class="control-label" for="register-username">Username</label>
-        <input type="text" class="form-control" id="register-username" name="username" required="required">
+        <input type="text" class="form-control" id="register-username" name="username" required="required" maxlength="15" pattern="[A-Za-z-0-9-_]+" title="Letters, numbers, dashes (-), and underscores (_) only">
+        <span class="help-block" id="username-format">Letters, numbers, dashes (-), and underscores (_) only. Max 15 characters.</span>
         <span class="help-block" id="register-username-error"></span>
       </div>
       <div class="form-group">

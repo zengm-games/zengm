@@ -21,7 +21,7 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
         msg: "New mobile-friendly UI - try playing in Chrome or Firefox on your Android device!"
     }, {
         date: "2013-10-02",
-        msg: '<a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a> to keep up with the latest news, updates, and discussion.'
+        msg: '<a href="https://twitter.com/basketball_gm" target="_blank">Follow Basketball GM on Twitter</a> to keep up with the latest news, updates, and discussion.'
     }, {
         date: "2013-10-16",
         msg: "Added fantasy draft feature - try it out by clicking Tools > Fantasy Draft!"
@@ -51,7 +51,7 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
         msg: "You can view upcoming draft classes up to three years in the future by going to Players > Draft and then clicking Future Draft Scouting."
     }, {
         date: "2014-01-20",
-        msg: 'Want to help pick new default team names? <a href="http://www.reddit.com/r/BasketballGM/comments/1voggc/survey_basketball_gm_is_renaming_its_teams_vote/">Click here to learn more and vote in our poll!</a>'
+        msg: 'Want to help pick new default team names? <a href="http://www.reddit.com/r/BasketballGM/comments/1voggc/survey_basketball_gm_is_renaming_its_teams_vote/" target="_blank">Click here to learn more and vote in our poll!</a>'
     }, {
         date: "2014-01-21",
         msg: "By clicking the flag icon next to players' names, you can add them to the Watch List (accessible from Players > Watch List) to keep an eye on them."
@@ -60,7 +60,10 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
         msg: "New Create A Player feature, under the Tools menu."
     }, {
         date: "2014-02-15",
-        msg: '<a href="http://basketball-gm.com/blog/2014/02/new-improved-trade-ai/">Big changes to the trade AI</a>, which hopefully will fix some loopholes and make things more realistic.'
+        msg: '<a href="http://basketball-gm.com/blog/2014/02/new-improved-trade-ai/" target="_blank">Big changes to the trade AI</a>, which hopefully will fix some loopholes and make things more realistic.'
+    }, {
+        date: "2014-03-03",
+        msg: '<a href="http://basketball-gm.com/blog/2014/03/new-feature-achievements/" target="_blank">Achievements!</a>'
     }];
 
     function check() {

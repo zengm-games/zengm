@@ -187,7 +187,7 @@ define(["db", "globals", "lib/jquery", "lib/underscore", "util/eventLog"], funct
                 if (allAchievements[i].slug === slug) {
                     eventLog.add(null, {
                         type: "achievement",
-                        text: '"' + allAchievements[i].name + '" achievement unlocked! <a href="/account">View all achievements.</a>'
+                        text: '"' + allAchievements[i].name + '" achievement awarded! <a href="/account">View all achievements.</a>'
                     });
                     break;
                 }

@@ -14,7 +14,7 @@
     <div data-bind="css: {'list-group-item-success': count() > 0, 'text-muted': count() == 0}">
       <span class="badge pull-right" data-bind="text: count(), visible: count() > 1"></span>
       <h4 class="list-group-item-heading" data-bind="text: name"></h4>
-      <p class="list-group-item-text" data-bind="text: desc"></p>
+      <p class="list-group-item-text" data-bind="html: desc"></p>
     </div>
   </li>
   <!--ko if: $index() % 4 === 3-->

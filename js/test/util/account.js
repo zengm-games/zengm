@@ -525,5 +525,74 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 };
             });
         });
+
+        describe("#checkAchievement.small_market()", function () {
+            it("should award achievement if user's team wins title in a small market", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    t.seasons[0].playoffRoundsWon = 4;
+                    t.seasons[0].pop = 1.5;
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.small_market(function (awarded) {
+                        awarded.should.be.true;
+                        done();
+                    });
+                };
+            });
+            it("should not award achievement if user's team is not in a small market", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    t.seasons[0].playoffRoundsWon = 4;
+                    t.seasons[0].pop = 3;
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.small_market(function (awarded) {
+                        awarded.should.be.false;
+                        done();
+                    });
+                };
+            });
+            it("should not award achievement if user's team does not win the title", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    t.seasons[0].playoffRoundsWon = 3;
+                    t.seasons[0].pop = 1.5;
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.small_market(function (awarded) {
+                        awarded.should.be.false;
+                        done();
+                    });
+                };
+            });
+        });
     });
 });

@@ -428,6 +428,26 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
         };
     };
 
+    checkAchievement.small_market = function (cb) {
+        team.filter({
+            seasonAttrs: ["playoffRoundsWon", "pop"],
+            season: g.season,
+            tid: g.userTid
+        }, function (t) {
+            if (t.playoffRoundsWon === 4 && t.pop <= 2) {
+                if (cb !== undefined) {
+                    cb(true);
+                } else {
+                    addAchievements(["small_market"]);
+                }
+            } else {
+                if (cb !== undefined) {
+                    cb(false);
+                }
+            }
+        });
+    };
+
     return {
         check: check,
         getAchievements: getAchievements,

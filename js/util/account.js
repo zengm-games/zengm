@@ -329,6 +329,52 @@ define(["db", "globals", "core/team", "lib/jquery", "lib/underscore", "util/even
         });
     };
 
+    function checkDynasty(titles, years, slug, cb) {
+        g.dbl.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
+            var i, t, titlesFound;
+
+            t = event.target.result[g.userTid];
+
+            titlesFound = 0;
+            // Look over past years
+            for (i = 0; i < years; i++) {
+                // Don't overshoot
+                if (t.seasons.length - 1 - i < 0) {
+                    break;
+                }
+
+                // Won title?
+                if (t.seasons[t.seasons.length - 1 - i].playoffRoundsWon === 4) {
+                    titlesFound += 1;
+                }
+            }
+
+            if (titlesFound >= titles) {
+                if (cb !== undefined) {
+                    cb(true);
+                } else {
+                    addAchievements([slug]);
+                }
+            } else {
+                if (cb !== undefined) {
+                    cb(false);
+                }
+            }
+        };
+    }
+
+    checkAchievement.dynasty = function (cb) {
+        checkDynasty(6, 8, "dynasty", cb);
+    };
+
+    checkAchievement.dynasty_2 = function (cb) {
+        checkDynasty(8, 8, "dynasty_2", cb);
+    };
+
+    checkAchievement.dynasty_3 = function (cb) {
+        checkDynasty(11, 13, "dynasty_3", cb);
+    };
+
     return {
         check: check,
         getAchievements: getAchievements,

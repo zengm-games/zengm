@@ -109,6 +109,11 @@ define(["db", "globals", "core/team", "lib/jquery", "lib/underscore", "util/even
                         cb();
                     }
                 }
+            },
+            error: function () {
+                if (cb !== undefined) {
+                    cb();
+                }
             }
         });
     }

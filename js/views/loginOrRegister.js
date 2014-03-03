@@ -18,6 +18,9 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
         $login.on("submit", function (event) {
             event.preventDefault();
 
+            // Reset error display
+            document.getElementById("login-error").innerHTML = "";
+
             $.ajax({
                 type: "POST",
                 url: "http://account.basketball-gm." + g.tld + "/login.php",
@@ -27,9 +30,6 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
                     withCredentials: true
                 },
                 success: function (data) {
-                    // Reset error display
-                    document.getElementById("login-error").innerHTML = "";
-
                     if (data.success) {
                         g.vm.topMenu.username(data.username);
                         ui.realtimeUpdate([], "/account");
@@ -48,18 +48,16 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
 
             event.preventDefault();
 
-            resetErrors = function () {
-                // Reset error display
-                document.getElementById("register-error").innerHTML = "";
-                document.getElementById("register-username").parentNode.classList.remove("has-error");
-                document.getElementById("register-email").parentNode.classList.remove("has-error");
-                document.getElementById("register-password").parentNode.classList.remove("has-error");
-                document.getElementById("register-password2").parentNode.classList.remove("has-error");
-                document.getElementById("register-username-error").innerHTML = "";
-                document.getElementById("register-email-error").innerHTML = "";
-                document.getElementById("register-password-error").innerHTML = "";
-                document.getElementById("register-password2-error").innerHTML = "";
-            };
+            // Reset error display
+            document.getElementById("register-error").innerHTML = "";
+            document.getElementById("register-username").parentNode.classList.remove("has-error");
+            document.getElementById("register-email").parentNode.classList.remove("has-error");
+            document.getElementById("register-password").parentNode.classList.remove("has-error");
+            document.getElementById("register-password2").parentNode.classList.remove("has-error");
+            document.getElementById("register-username-error").innerHTML = "";
+            document.getElementById("register-email-error").innerHTML = "";
+            document.getElementById("register-password-error").innerHTML = "";
+            document.getElementById("register-password2-error").innerHTML = "";
 
             $.ajax({
                 type: "POST",
@@ -71,8 +69,6 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
                 },
                 success: function (data) {
                     var error;
-
-                    resetErrors();
 
                     if (data.success) {
                         g.vm.topMenu.username(data.username);
@@ -105,8 +101,6 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
                     }
                 },
                 error: function () {
-                    resetErrors();
-
                     document.getElementById("register-error").innerHTML = ajaxErrorMsg;
                 }
             });

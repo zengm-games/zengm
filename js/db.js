@@ -850,7 +850,7 @@ console.log(event);
     }
 
     /**
-     * Get the total payroll for a team.
+     * Get the total current payroll for a team.
      * 
      * This includes players who have been released but are still owed money from their old contracts.
      * 
@@ -877,7 +877,7 @@ console.log(event);
     }
 
     /**
-     * Get the total payroll for every team team.
+     * Get the total current payroll for every team team.
      * 
      * @memberOf db
      * @param {function(Array.<number>)} cb Callback whose first argument is an array of payrolls, ordered by team id.

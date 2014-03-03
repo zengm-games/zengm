@@ -44,6 +44,10 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
 
         document.getElementById("logout").addEventListener("click", function (e) {
             e.preventDefault();
+
+            // Reset error display
+            document.getElementById("logout-error").innerHTML = "";
+
             $.ajax({
                 type: "POST",
                 url: "http://account.basketball-gm." + g.tld + "/logout.php",
@@ -51,8 +55,14 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
                     withCredentials: true
                 },
                 success: function () {
+                    // Reset error display
+                    document.getElementById("logout-error").innerHTML = "";
+
                     g.vm.topMenu.username("");
                     ui.realtimeUpdate([], "/");
+                },
+                error: function () {
+                    document.getElementById("logout-error").innerHTML = "Error connecting to server. Check your Internet connection or try again later.";
                 }
             });
         });

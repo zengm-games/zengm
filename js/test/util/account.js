@@ -190,5 +190,180 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 };
             });
         });
+
+        describe("#checkAchievement.dynasty*()", function () {
+            it("should gracefully handle case where not enough seasons are present", function (done) {
+                account.checkAchievement.dynasty(function (awarded) {
+                    awarded.should.be.false;
+
+                    account.checkAchievement.dynasty_2(function (awarded) {
+                        awarded.should.be.false;
+
+                        account.checkAchievement.dynasty_3(function (awarded) {
+                            awarded.should.be.false;
+
+                            done();
+                        });
+                    });
+                });
+            });
+            it("should award dynasty for 6 titles in 8 seasons, but not dynasty_2 or dynasty_3", function (done) {
+                var tx;
+
+                // Add 6 to the existing season, making 7 seasons total
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, extraSeasons, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    extraSeasons = [{playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}];
+                    t.seasons = t.seasons.concat(extraSeasons);
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.dynasty(function (awarded) {
+                        awarded.should.be.true;
+
+                        account.checkAchievement.dynasty_2(function (awarded) {
+                            awarded.should.be.false;
+
+                            account.checkAchievement.dynasty_3(function (awarded) {
+                                awarded.should.be.false;
+
+                                done();
+                            });
+                        });
+                    });
+                };
+
+                // Add 1 to the existing 7 seasons, making 8 seasons total
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, extraSeasons, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    extraSeasons = [{playoffRoundsWon: 3}];
+                    t.seasons = t.seasons.concat(extraSeasons);
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.dynasty(function (awarded) {
+                        awarded.should.be.true;
+
+                        account.checkAchievement.dynasty_2(function (awarded) {
+                            awarded.should.be.false;
+
+                            account.checkAchievement.dynasty_3(function (awarded) {
+                                awarded.should.be.false;
+
+                                done();
+                            });
+                        });
+                    });
+                };
+            });
+            it("should award dynasty and dynasty_2 for 8 titles in 8 seasons, but not dynasty_3", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    // Update non-winning years from last test
+                    t.seasons[0].playoffRoundsWon = 4;
+                    t.seasons[7].playoffRoundsWon = 4;
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.dynasty(function (awarded) {
+                        awarded.should.be.true;
+
+                        account.checkAchievement.dynasty_2(function (awarded) {
+                            awarded.should.be.true;
+
+                            account.checkAchievement.dynasty_3(function (awarded) {
+                                awarded.should.be.false;
+
+                                done();
+                            });
+                        });
+                    });
+                };
+            });
+            it("should award dynasty, dynasty_2, and dynasty_3 for 11 titles in 13 seasons if there are 8 contiguous", function (done) {
+                var tx;
+
+                // Add 5 to the existing season, making 13 seasons total
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, extraSeasons, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    extraSeasons = [{playoffRoundsWon: 0}, {playoffRoundsWon: 0}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}];
+                    t.seasons = t.seasons.concat(extraSeasons);
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.dynasty(function (awarded) {
+                        awarded.should.be.true;
+
+                        account.checkAchievement.dynasty_2(function (awarded) {
+                            awarded.should.be.true;
+
+                            account.checkAchievement.dynasty_3(function (awarded) {
+                                awarded.should.be.true;
+
+                                done();
+                            });
+                        });
+                    });
+                };
+            });
+            it("should award dynasty and dynasty_3 for 11 titles in 13 seasons, but not dynasty_2 if there are not 8 contiguous", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    // Swap a couple titles to make no 8 in a row
+                    t.seasons[5].playoffRoundsWon = 0;
+                    t.seasons[9].playoffRoundsWon = 4;
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.dynasty(function (awarded) {
+                        awarded.should.be.true;
+
+                        account.checkAchievement.dynasty_2(function (awarded) {
+                            awarded.should.be.false;
+
+                            account.checkAchievement.dynasty_3(function (awarded) {
+                                awarded.should.be.true;
+
+                                done();
+                            });
+                        });
+                    });
+                };
+            });
+        });
     });
 });

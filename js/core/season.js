@@ -746,6 +746,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         account.checkAchievement.dynasty();
         account.checkAchievement.dynasty_2();
         account.checkAchievement.dynasty_3();
+        account.checkAchievement.moneyball();
+        account.checkAchievement.moneyball_2();
 
         tx = g.dbl.transaction(["events", "messages", "players", "teams"], "readwrite");
 

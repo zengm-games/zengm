@@ -34,13 +34,15 @@ achievements
   actually implement achievements!
     can leverage the callbacks of certain achievements to build on them for harder ones!!
     and unit tests for them all!
+  test performance, particularly at end of season and end of playoffs
 TEST IN FIREFOX AND IE11
 account
   somehow periodically run util.account.check, which will check for login and for local achievements to send to cloud
     is this necessary?
   more pages
-    edit
-    lost_password
+    account/edit
+    account/lost_password
+    account/:username (public profile showing achievements)
 Achievements to add
   longeivity: play 10, 100, 1000 seasons in a singel league
   lucky/unlucky win/lose game 7 in OT

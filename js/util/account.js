@@ -375,6 +375,34 @@ define(["db", "globals", "core/team", "lib/jquery", "lib/underscore", "util/even
         checkDynasty(11, 13, "dynasty_3", cb);
     };
 
+    function checkMoneyball(maxPayroll, slug, cb) {
+        team.filter({
+            seasonAttrs: ["expenses", "playoffRoundsWon"],
+            season: g.season,
+            tid: g.userTid
+        }, function (t) {
+            if (t.playoffRoundsWon === 4 && t.expenses.salary.amount <= maxPayroll) {
+                if (cb !== undefined) {
+                    cb(true);
+                } else {
+                    addAchievements([slug]);
+                }
+            } else {
+                if (cb !== undefined) {
+                    cb(false);
+                }
+            }
+        });
+    }
+
+    checkAchievement.moneyball = function (cb) {
+        checkMoneyball(40000, "moneyball", cb);
+    };
+
+    checkAchievement.moneyball_2 = function (cb) {
+        checkMoneyball(30000, "moneyball_2", cb);
+    };
+
     return {
         check: check,
         getAchievements: getAchievements,

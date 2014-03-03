@@ -367,5 +367,115 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 };
             });
         });
+
+        describe("#checkAchievement.moneyball*()", function () {
+            it("should award moneyball and moneyball_2 for title with payroll <= $30M", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    t.seasons = [t.seasons[0]]; // Reset from dynasty*, only one season
+                    t.seasons[0].playoffRoundsWon = 4;
+                    t.seasons[0].expenses.salary.amount = 30000;
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.moneyball(function (awarded) {
+                        awarded.should.be.true;
+
+                        account.checkAchievement.moneyball_2(function (awarded) {
+                            awarded.should.be.true;
+
+                            done();
+                        });
+                    });
+                };
+            });
+            it("should not award either if didn't win title", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    t.seasons[0].playoffRoundsWon = 3;
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.moneyball(function (awarded) {
+                        awarded.should.be.false;
+
+                        account.checkAchievement.moneyball_2(function (awarded) {
+                            awarded.should.be.false;
+
+                            done();
+                        });
+                    });
+                };
+            });
+            it("should award moneyball but not moneyball_2 for title with payroll > $30M and <= $40M", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    t.seasons[0].playoffRoundsWon = 4;
+                    t.seasons[0].expenses.salary.amount = 40000;
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.moneyball(function (awarded) {
+                        awarded.should.be.true;
+
+                        account.checkAchievement.moneyball_2(function (awarded) {
+                            awarded.should.be.false;
+
+                            done();
+                        });
+                    });
+                };
+            });
+            it("should not award either if payroll > $40M", function (done) {
+                var tx;
+
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                    var cursor, t;
+
+                    cursor = event.target.result;
+                    t = cursor.value;
+
+                    t.seasons[0].expenses.salary.amount = 40001;
+
+                    cursor.update(t);
+                };
+                tx.oncomplete = function () {
+                    account.checkAchievement.moneyball(function (awarded) {
+                        awarded.should.be.false;
+
+                        account.checkAchievement.moneyball_2(function (awarded) {
+                            awarded.should.be.false;
+
+                            done();
+                        });
+                    });
+                };
+            });
+        });
     });
 });

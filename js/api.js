@@ -56,9 +56,18 @@ define(["db", "globals", "ui", "core/freeAgents", "core/game", "core/season", "l
             }
         } else if (amount === "untilFreeAgency") {
             if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-                season.newPhase(g.PHASE.FREE_AGENCY, function () {
-                    ui.updateStatus(g.daysLeft + " days left");
-                });
+                g.dbl.transaction("negotiations").objectStore("negotiations").count().onsuccess = function (event) {
+                    var numRemaining;
+
+                    numRemaining = event.target.result;
+
+                    // Show warning dialog only if there are players remaining un-re-signed
+                    if (numRemaining === 0 || window.confirm("Are you sure you want to proceed to free agency while " + numRemaining + " of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.")) {
+                        season.newPhase(g.PHASE.FREE_AGENCY, function () {
+                            ui.updateStatus(g.daysLeft + " days left");
+                        });
+                    }
+                };
             }
         } else if (amount === "untilRegularSeason") {
             if (g.phase === g.PHASE.PRESEASON) {

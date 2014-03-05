@@ -29,6 +29,7 @@ Eventually:
 CURRENT
 -------
 
+When moving to Free Agency, pop up a confirmation dialog if there are still players left to be re-signed
 account
   widget
     get rid of right margin somehow, like for logo? most visible on small screens
@@ -42,6 +43,7 @@ Achievements to add
   longeivity: play 10, 100, 1000 seasons in a singel league
   lucky/unlucky win/lose game 7 in OT
   underdog: things like winning title as 8 seed, etc
+  win title without making a trade
   career stat milestone for players on your team from draft to the milestone
 mobile UI
   slide in full height menu from right, like facebook or android's DrawerLayout

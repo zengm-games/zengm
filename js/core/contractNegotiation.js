@@ -340,12 +340,14 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                     cursor = event.target.result;
                     p = cursor.value;
 
-                    // Handle stats if the season is in progress
                     p.tid = g.userTid;
                     p.gamesUntilTradable = 15;
+
+                    // Handle stats if the season is in progress
                     if (g.phase <= g.PHASE.PLAYOFFS) { // Re-signing your own players happens after this
                         p = player.addStatsRow(p);
                     }
+
                     p = player.setContract(p, {
                         amount: negotiation.player.amount,
                         exp: g.season + negotiation.player.years

@@ -219,6 +219,7 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "ut
             this.post("/l/:lid/create_a_player", views.createAPlayer.post);
             this.get("/l/:lid/history_all", views.historyAll.get);
             this.get("/l/:lid/upcoming_free_agents", views.upcomingFreeAgents.get);
+            this.get("/l/:lid/upcoming_free_agents/:season", views.upcomingFreeAgents.get);
         });
 
         app.start();

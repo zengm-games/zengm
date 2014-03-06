@@ -2,14 +2,28 @@
  * @name views.upcomingFreeAgents
  * @namespace List of upcoming free agents.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, freeAgents, player, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "views/components"], function (g, ui, player, $, ko, _, bbgmView, helpers, components) {
     "use strict";
 
     var mapping;
 
     function get(req) {
+        var season;
+
+        season = helpers.validateSeason(req.params.season);
+
+        if (g.phase < g.PHASE.RESIGN_PLAYERS) {
+            if (season < g.season) {
+                season = g.season;
+            }
+        } else {
+            if (season < g.season + 1) {
+                season = g.season + 1;
+            }
+        }
+
         return {
-            season: helpers.validateSeason(req.params.season)
+            season: season
         };
     }
 
@@ -43,13 +57,14 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
                 for (i = 0; i < playersAll.length; i++) {
                     playersAll[i].contractDesired = player.genContract(playersAll[i]);
                     playersAll[i].contractDesired.amount /= 1000;
+                    playersAll[i].contractDesired.exp += inputs.season - g.season;
                 }
 
                 players = player.filter(playersAll, {
                     attrs: ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury", "watch", "contractDesired"],
                     ratings: ["ovr", "pot", "skills"],
                     stats: ["min", "pts", "trb", "ast", "per"],
-                    season: inputs.season,
+                    season: g.season,
                     showNoStats: true,
                     showRookies: true,
                     fuzz: true,
@@ -61,7 +76,8 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
                 }
 
                 deferred.resolve({
-                    players: players
+                    players: players,
+                    season: inputs.season
                 });
             }
         };
@@ -83,11 +99,16 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
         ui.tableClickableRows($("#upcoming-free-agents"));
     }
 
+    function uiEvery(updateEvents, vm) {
+        components.dropdown("upcoming-free-agents-dropdown", ["seasonsUpcoming"], [vm.season()], updateEvents);
+    }
+
     return bbgmView.init({
         id: "upcomingFreeAgents",
         get: get,
         mapping: mapping,
         runBefore: [updateUpcomingFreeAgents],
-        uiFirst: uiFirst
+        uiFirst: uiFirst,
+        uiEvery: uiEvery
     });
 });

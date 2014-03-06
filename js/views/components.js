@@ -25,7 +25,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
      * @param {?string=} extraParam Any extra parameter to append to the URL, like /l/1/.../ATL/2014/extraParam. Default is to append nothing.
      */
     function dropdown(formId, fields, selected, updateEvents, extraParam) {
-        var fieldId, formEl, i, j, options;
+        var fieldId, formEl, i, j, offset, options;
 
         formEl = document.getElementById(formId);
         if (formEl.dataset.idLoaded !== formId) {
@@ -51,6 +51,16 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                         options.unshift({
                             key: "career",
                             val: "Career Totals"
+                        });
+                    }
+                } else if (fields[i] === "seasonsUpcoming") {
+                    options = [];
+                    // For upcomingFreeAgents, bump up 1 if we're past the season
+                    offset = g.phase < g.PHASE.RESIGN_PLAYERS ? 0 : 1;
+                    for (j = 0 + offset; j < 5 + offset; j++) {
+                        options.push({
+                            key: g.season + j,
+                            val: (g.season + j) + " season"
                         });
                     }
                 } else if (fields[i] === "playoffs") {

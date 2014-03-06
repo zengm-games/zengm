@@ -9,6 +9,7 @@ number or not.
 - Create A Player page
 - New trade AI, fixing a ton of loopholes
 - Achievements
+- Upcoming Free Agents page
 
 # 3.3.0 (2014-01-21)
 

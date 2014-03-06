@@ -64,6 +64,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2014-03-03",
         msg: '<a href="http://basketball-gm.com/blog/2014/03/new-feature-achievements/" target="_blank">Achievements!</a>'
+    }, {
+        date: "2014-03-05",
+        msg: 'Upcoming Free Agents page, accessible from Players > Free Agents.'
     }];
 
     function check() {

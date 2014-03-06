@@ -40,10 +40,9 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
     };
 
     function updateFreeAgents() {
-        var deferred, vars;
+        var deferred;
 
         deferred = $.Deferred();
-        vars = {};
 
         db.getPayroll(null, g.userTid, function (payroll, contracts) {
             var capSpace;
@@ -72,12 +71,10 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
                     players[i].mood = player.moodColorText(players[i]);
                 }
 
-                vars = {
+                deferred.resolve({
                     capSpace: capSpace,
                     players: players
-                };
-
-                deferred.resolve(vars);
+                });
             };
         });
 

@@ -13,6 +13,8 @@ second round draft picks are undervalued. also, giving away a pick should never 
 PER scaling in player.value is wrong http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
   change scaling in ovr formula? too confusing?
   this impacts rookie values, leating to an EXPLOIT: http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfhkvnv
+AI teams should value their own assets even more?
+  http://www.reddit.com/r/BasketballGM/comments/1zikdf/trades/cfvcsxz
 Eventually:
   "What would make this work?" functions should know about contending/rebuilding. Contending teams should be more eager to offer up young/cheap players, rebuilding teams should be more eager to offer up old/expensive players
     basically, they should view the trade from the other team's perspective, not just their own
@@ -29,7 +31,6 @@ Eventually:
 CURRENT
 -------
 
-When moving to Free Agency, pop up a confirmation dialog if there are still players left to be re-signed
 account
   widget
     get rid of right margin somehow, like for logo? most visible on small screens
@@ -178,6 +179,7 @@ player development revamp
   old stars should exist
   reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
   really high ovr/pot is handled poorly, rapid declines if there is a gap
+  too many rookies come in as instant stars. should be more gradual.
 make low ovr high pot players more likely to improve
 Extended free agency
   order of AI team signings shouldn't be linear
@@ -201,6 +203,7 @@ gameSim
   increase fouls if perimFactor (or similar) is low
   assists should be function of speed, since those players have the ball more
   situational awareness http://www.reddit.com/r/BasketballGM/comments/1yg6wi/end_of_game_simulation/
+  mediocre players on bad teams should be less efficient (shouldn't put up such a high PER, which falls if they join a good team)
 do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rookie_players_with_lots_100_skill_ratings/
 contract negotiation
   don't have counter-offers be too drastic
@@ -320,8 +323,10 @@ some UI indicating how players developed over the offseason
   integrated into roster, or separate page?
 player search page
   show stats, ratings, contract, etc. (customizable); allow filters to be applied. also filter by skill icon
-finances - too easy to make big $$$
-  owner should take profits each year
+finances
+  too easy to make big $$$
+    owner should take profits each year
+  AI teams should adjust spending
 player morale - punishment for tanking
 team colors, and uniforms in player icons
 harsher, more realistic luxury tax

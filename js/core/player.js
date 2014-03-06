@@ -1584,6 +1584,35 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         return (exp - g.season) + numGamesRemaining / 82;
     }
 
+    // See views.negotiation for moods as well
+    function moodColorText(p) {
+        if (p.freeAgentMood[g.userTid] < 0.25) {
+            return {
+                color: "#5cb85c",
+                text: 'Eager to reach an agreement.'
+            };
+        }
+
+        if (p.freeAgentMood[g.userTid] < 0.5) {
+            return {
+                color: "#ccc",
+                text: 'Willing to sign for the right price.'
+            };
+        }
+
+        if (p.freeAgentMood[g.userTid] < 0.75) {
+            return {
+                color: "#f0ad4e",
+                text: 'Annoyed at you.'
+            };
+        }
+
+        return {
+            color: "#d9534f",
+            text: 'Insulted by your presence.'
+        };
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1603,6 +1632,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         value: value,
         retire: retire,
         name: name,
-        contractSeasonsRemaining: contractSeasonsRemaining
+        contractSeasonsRemaining: contractSeasonsRemaining,
+        moodColorText: moodColorText
     };
 });

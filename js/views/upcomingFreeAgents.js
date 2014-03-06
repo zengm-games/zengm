@@ -71,10 +71,6 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     oldStats: true
                 });
 
-                for (i = 0; i < players.length; i++) {
-                    players[i].mood = player.moodColorText(players[i]);
-                }
-
                 deferred.resolve({
                     players: players,
                     season: inputs.season
@@ -92,7 +88,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         ko.computed(function () {
             ui.datatable($("#upcoming-free-agents"), 4, _.map(vm.players(), function (p) {
                 // The display: none for mood allows sorting, somehow
-                return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.formatCurrency(p.contractDesired.amount, "M") + ' thru ' + p.contractDesired.exp, '<div title="' + p.mood.text + '" style="width: 100%; height: 21px; background-color: ' + p.mood.color + '"><span style="display: none">' + p.freeAgentMood[g.userTid] + '</span></div>'];
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.formatCurrency(p.contractDesired.amount, "M") + ' thru ' + p.contractDesired.exp];
             }));
         }).extend({throttle: 1});
 

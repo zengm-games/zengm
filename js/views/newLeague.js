@@ -21,41 +21,34 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
         tid = Math.floor(req.params.tid);
 
-        // Handle random team - THIS IGNORES TEAMS ABOVE 30!
-        if (tid === -1) {
-            tid = random.randInt(0, 29);
-        }
+        // Davis.js can't handle file uploads, so do this manually first
+        if (req.params.rosters === "custom-rosters") {
+            file = document.getElementById("custom-rosters-file").files[0];
+            if (file !== undefined) {
+                reader = new window.FileReader();
+                reader.readAsText(file);
+                reader.onload = function (event) {
+                    var rosters, randomizeRosters;
 
-        if (tid >= 0 && tid <= 29) {
-            // Davis.js can't handle file uploads, so do this manually first
-            if (req.params.rosters === "custom-rosters") {
-                file = document.getElementById("custom-rosters-file").files[0];
-                if (file !== undefined) {
-                    reader = new window.FileReader();
-                    reader.readAsText(file);
-                    reader.onload = function (event) {
-                        var rosters, randomizeRosters;
+                    rosters = JSON.parse(event.target.result);
 
-                        rosters = JSON.parse(event.target.result);
+                    startingSeason = rosters.startingSeason !== undefined ? rosters.startingSeason : startingSeason;
 
-                        startingSeason = rosters.startingSeason !== undefined ? rosters.startingSeason : startingSeason;
+                    randomizeRosters = req.params.hasOwnProperty("randomize-rosters");
 
-                        randomizeRosters = req.params.hasOwnProperty("randomize-rosters");
-
-                        league.create(req.params.name, tid, rosters.players, rosters.teams, startingSeason, randomizeRosters, function (lid) {
-                            ui.realtimeUpdate([], "/l/" + lid, cb);
-                        });
-                    };
-                } else {
-                    league.create(req.params.name, tid, undefined, undefined, startingSeason, false, function (lid) {
+                    league.create(req.params.name, tid, rosters.players, rosters.teams, startingSeason, randomizeRosters, function (lid) {
                         ui.realtimeUpdate([], "/l/" + lid, cb);
                     });
-                }
+                };
             } else {
                 league.create(req.params.name, tid, undefined, undefined, startingSeason, false, function (lid) {
                     ui.realtimeUpdate([], "/l/" + lid, cb);
                 });
             }
+        } else {
+            league.create(req.params.name, tid, undefined, undefined, startingSeason, false, function (lid) {
+                ui.realtimeUpdate([], "/l/" + lid, cb);
+            });
         }
     }
 

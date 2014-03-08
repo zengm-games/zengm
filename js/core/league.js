@@ -10,7 +10,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
      * 
      * @memberOf core.league
      * @param {string} name The name of the league.
-     * @param {number} tid The team ID for the team the user wants to manage.
+     * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
      * @param {Array.<Object>?} players Either an array of pre-generated player objects to use in the new league or undefined. If undefined, then random players will be generated.
      */
     function create(name, tid, players, teams, startingSeason, randomizeRosters, cb) {
@@ -31,6 +31,11 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
             }
         } else {
             teams = teamsDefault;
+        }
+
+        // Handle random team
+        if (tid === -1) {
+            tid = random.randInt(0, teams.length - 1);
         }
 
         // Record in meta db

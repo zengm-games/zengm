@@ -229,6 +229,7 @@ contract negotiation
 MINOR FIXES
 -----------
 
+"Upload custom roster" removes "Random Team" as start option
 top menu tooltips for md
 show team records in playoffs, conference standings
 don't need to store abbrev with awards, just tids

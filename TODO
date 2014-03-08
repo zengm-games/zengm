@@ -38,10 +38,6 @@ CURRENT
 
 30+ teams
   schedule?
-  PER?
-  check normal dropdowns
-  check new league dropdown
-    does it work staring with tid > 29?
 upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page

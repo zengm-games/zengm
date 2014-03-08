@@ -44,6 +44,11 @@ define(["globals", "core/player", "core/team", "lib/underscore"], function (g, p
             for (i = 0; i < teams.length; i++) {
                 //estimated pace adjustment = 2 * lg_PPG / (team_PPG + opp_PPG)
                 teams[i].pace = 2 * (league.pts / league.gp) / (teams[i].pts / teams[i].gp + teams[i].oppPts / teams[i].gp);
+
+                // Handle divide by 0 error
+                if (isNaN(teams[i].pace)) {
+                    teams[i].pace = 1;
+                }
             }
 
             // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf

@@ -2,7 +2,7 @@
  * @name views.newLeague
  * @namespace Create new league form.
  */
-define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/helpers", "util/random", "util/viewHelpers"], function (g, ui, league, $, bbgmView, helpers, random, viewHelpers) {
+define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, komapping, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     function post(req) {
@@ -58,7 +58,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         deferred = $.Deferred();
 
         g.dbm.transaction("leagues").objectStore("leagues").openCursor(null, "prev").onsuccess = function (event) {
-            var cursor, data, l, newLid, teams;
+            var cursor, newLid, teams;
 
             cursor = event.target.result;
             if (cursor) {
@@ -72,7 +72,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                 tid: -1,
                 region: "Random",
                 name: "Team"
-            })
+            });
 
             deferred.resolve({
                 name: "League " + newLid,
@@ -85,7 +85,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
     }
 
     function uiFirst(vm) {
-        var fileEl, mergeTeams, newLeagueRostersEl, selectRosters, selectTeam, teams, updatePopText, updateShowUploadForm, useCustomTeams;
+        var fileEl, newLeagueRostersEl, selectRosters, selectTeam, setTeams, updatePopText, updateShowUploadForm, useCustomTeams;
 
         ui.title("Create New League");
 
@@ -135,20 +135,19 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         updateShowUploadForm();
 
         // Handle custom roster teams
-        mergeTeams = function (newTeams) {
-            var i, oldTeams, prop;
-
+        setTeams = function (newTeams) {
             if (newTeams !== undefined) {
-                // Any update from current teams?
-                oldTeams = vm.teams();
-                for (i = 0; i < newTeams.length; i++) {
-                    // Fill in default values as needed
-                    for (prop in oldTeams[i]) {
-                        if (oldTeams[i].hasOwnProperty(prop) && newTeams[i].hasOwnProperty(prop)) {
-                            vm.teams()[i][prop](newTeams[i][prop]);
-                        }
-                    }
-                }
+                // Add popRanks
+                newTeams = helpers.addPopRank(newTeams);
+
+                // Add random team
+                newTeams.unshift({
+                    tid: -1,
+                    region: "Random",
+                    name: "Team"
+                });
+
+                komapping.fromJS({teams: newTeams}, vm);
             }
 
             updatePopText();
@@ -156,17 +155,19 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         useCustomTeams = function () {
             var file, reader;
 
-            file = fileEl.files[0];
+            if (fileEl.files.length) {
+                file = fileEl.files[0];
 
-            reader = new window.FileReader();
-            reader.readAsText(file);
-            reader.onload = function (event) {
-                var newTeams, rosters;
+                reader = new window.FileReader();
+                reader.readAsText(file);
+                reader.onload = function (event) {
+                    var newTeams, rosters;
 
-                rosters = JSON.parse(event.target.result);
-                newTeams = rosters.teams;
-                mergeTeams(newTeams);
-            };
+                    rosters = JSON.parse(event.target.result);
+                    newTeams = rosters.teams;
+                    setTeams(newTeams);
+                };
+            }
         };
         fileEl = document.getElementById("custom-rosters-file");
         fileEl.addEventListener("change", useCustomTeams);
@@ -176,7 +177,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
             if (this.value === "custom-rosters") {
                 useCustomTeams();
             } else {
-                mergeTeams(helpers.getTeamsDefault())
+                setTeams(helpers.getTeamsDefault())
             }
         });
     }

@@ -2,7 +2,7 @@
  * @name views.trade
  * @namespace Trade.
  */
-define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, trade, Davis, $, ko, komapping, _, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers"], function (g, ui, player, trade, Davis, $, ko, komapping, _, bbgmView, helpers) {
     "use strict";
 
     var mapping;

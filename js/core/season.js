@@ -286,15 +286,15 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     /**
-     * Creates a new regular season schedule.
+     * Creates a new regular season schedule for 30 teams.
      *
      * This makes an NBA-like schedule in terms of conference matchups, division matchups, and home/away games.
      * 
      * @memberOf core.season
-     * @return {Array.<Array.<number>>} cb Callback function. Argument is all the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
+     * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
      */
-    function newSchedule() {
-        var cid, days, dids, game, games, good, i, ii, iters, j, jj, jMax, k, matchup, matchups, n, newMatchup, t, teams, tids, tidsByConf, tidsInDays, tryNum, used;
+    function newScheduleDefault() {
+        var cid, dids, game, games, good, i, ii, iters, j, jj, k, matchup, matchups, n, newMatchup, t, teams, tids, tidsByConf, tryNum;
 
         teams = helpers.getTeamsDefault(); // Only tid, cid, and did are used, so this is okay for now. But if someone customizes cid and did, this will break. To fix that, make this function require DB access (and then fix the tests). Or even better, just accept "teams" as a param to this function, then the tests can use default values and the real one can use values from the DB.
 
@@ -401,6 +401,76 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             }
         }
 
+        return tids;
+    }
+
+    /**
+     * Creates a new regular season schedule for an arbitrary number of teams.
+     *
+     * newScheduleDefault is much nicer and more balanced, but only works for 30 teams.
+     * 
+     * @memberOf core.season
+     * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
+     */
+    function newScheduleCrappy() {
+        var i, j, numGames, numRemaining, numWithRemaining, tids;
+
+        numGames = 82;
+
+        // Number of games left to reschedule for each team
+        numRemaining = [];
+        for (i = 0; i < g.numTeams; i++) {
+            numRemaining[i] = numGames;
+        }
+        numWithRemaining = g.numTeams; // Number of teams with numRemaining > 0
+
+        tids = [];
+        while (tids.length < numGames * g.numTeams) {
+            i = -1; // Home tid
+            j = -1; // Away tid
+            while (i === j || numRemaining[i] === 0 || numRemaining[j] === 0) {
+                i = random.randInt(0, g.numTeams - 1);
+                j = random.randInt(0, g.numTeams - 1);
+            }
+
+            tids.push([i, j]);
+
+            numRemaining[i] -= 1;
+            numRemaining[j] -= 1;
+
+            // Make sure we're not left with just one team to play itself
+            if (numRemaining[i] === 0) {
+                numWithRemaining -= 1;
+            }
+            if (numRemaining[j] === 0) {
+                numWithRemaining -= 1;
+            }
+            if (numWithRemaining === 1) {
+                // If this happens, we didn't find 82 for each team and one team will play a few less games
+                break;
+            }
+        }
+
+        return tids;
+    }
+
+    /**
+     * Wrapper function to generate a new schedule with the appropriate algorithm based on the number of teams in the league.
+     *
+     * For 30 teams, use newScheduleDefault (NBA-like).
+     * 
+     * @memberOf core.season
+     * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
+     */
+    function newSchedule() {
+        var days, i, j, jMax, tids, tidsInDays, used;
+
+        if (g.numTeams === 30) {
+            tids = newScheduleDefault();
+        } else {
+            tids = newScheduleCrappy();
+        }
+
         // Order the schedule so that it takes fewer days to play
         random.shuffle(tids);
         days = [[]];
@@ -423,7 +493,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                 jMax += 1;
             }
         }
-        random.shuffle(days);  // Otherwise the most dense days will be at the beginning and the least dense days will be at the end
+        random.shuffle(days); // Otherwise the most dense days will be at the beginning and the least dense days will be at the end
         tids = _.flatten(days, true);
 
         return tids;

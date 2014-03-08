@@ -82,7 +82,7 @@
 <p>A list of things you should know when making a roster file:</p>
 
 <ul>
-  <li>tid is the team ID number, ranging from 0 to 29 in alphabetical order. -1 is for free agents.</li>
+  <li>tid is the team ID number, ranging from 0 to N in alphabetical order. -1 is for free agents.</li>
   <li>In the example above, there are only two players defined. If your file doesn't include at least 10 players on each team, then bad things will happen when you try to use it.</li>
   <li>You can also create draft prospects for draft classes up to three years in the future. For the first draft class, use a team ID of -2. For the next year's use -4. For the third year's, use -5. If a draft class is not included or has less than 70 players in it, then random players will be automatically generated to fill up the rest of the draft class.</li>
   <li>Ratings should be on a scale from 0 to 100 with a mean of about 50 and about half of the players between 35 and 65. Descriptions of rating categories:
@@ -131,15 +131,17 @@
 }
 </pre>
 
-<p>The contents of each team object is as follows. Note that all entries except "tid" are optional and will be filled in with the defaults if you don't include them.</p>
+<p>The contents of each team object is as follows. Note that imgURL is optional.</p>
 
 <ul>
-  <li>"tid": team ID number, from 0 to 29 so there are 30 teams in total - <b>you must include all 30 teams, in order</b></li>
-  <li>"cid": conference ID number, either 0 (Eastern) or 1 (Western) - <b>you must have 15 teams in each conference</b></li>
-  <li>"did": division ID number, from 0 to 5 for the Atlantic, Central, Southeast, Southwest, Northwest, and Pacific divisions, respectively -  - <b>you must have 5 teams in each division</b></li>
+  <li>"tid": team ID number (from 0 to N-1 so there are N teams in total, usually N is 30)</li>
+  <li>"cid": conference ID number, either 0 (Eastern) or 1 (Western)</li>
+  <li>"did": division ID number, from 0 to 5 for the Atlantic, Central, Southeast, Southwest, Northwest, and Pacific divisions, respectively</li>
   <li>"region": team region/city</li>
   <li>"name": team name</li>
   <li>"abbrev": team abbreviation, typically 3 upper case letters like ATL for Atlanta</li>
   <li>"pop": population of the region, in millions of people</li>
-  <li>"imgURL": URL for a 120x120 image to be displayed on the roster page for a team</li>
+  <li>"imgURL": URL for a 120x120 image to be displayed on the roster page for a team (optional)</li>
 </ul>
+
+<p>The game works best with 30 teams, 15 in each conference, and 5 in each division. If you add more teams, it will still work, but generated schedules (and maybe some other aspects of the game) will be less balanced.</p>

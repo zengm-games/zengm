@@ -168,6 +168,30 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
     }
 
     /**
+     * Take a list of teams (similar to the output of getTeamsDefault) and add popRank properties, where 1 is the largest population and teams.length is the smallest.
+     * 
+     * @param {Array.<Object>} teams Teams without popRank properties.
+     * @return {Array.<Object>} Teams with added popRank properties.
+     */
+    function addPopRank(teams) {
+        var i, j, teamsSorted;
+
+        // Add popRank
+        teamsSorted = teams.slice(); // Deep copy
+        teamsSorted.sort(function (a, b) { return b.pop - a.pop; });
+        for (i = 0; i < teams.length; i++) {
+            for (j = 0; j < teamsSorted.length; j++) {
+                if (teams[i].tid === teamsSorted[j].tid) {
+                    teams[i].popRank = j + 1;
+                    break;
+                }
+            }
+        }
+
+        return teams;
+    }
+
+    /**
      * Get list of default teams, along with some more metadata
      *
      * Returns an array of default 30 teams. Each array is an object with the following properties:
@@ -185,10 +209,10 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * 
      * @memberOf util.helpers
      * @param {number|string} selectedTid A team ID or abbrev for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.
-     * @return {Array.Object} All teams.
+     * @return {Array.<Object>} All teams.
      */
     function getTeamsDefault() {
-        var i, j, teams, teamsSorted;
+        var teams;
 
         teams = [
             {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Gold Club", abbrev: "ATL", pop: 4.3},
@@ -223,17 +247,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
             {tid: 29, cid: 0, did: 2, region: "Washington", name: "Monuments", abbrev: "WAS", pop: 4.2}
         ];
 
-        // Add popRank
-        teamsSorted = teams.slice(); // Deep copy
-        teamsSorted.sort(function (a, b) { return b.pop - a.pop; });
-        for (i = 0; i < teams.length; i++) {
-            for (j = 0; j < teamsSorted.length; j++) {
-                if (teams[i].tid === teamsSorted[j].tid) {
-                    teams[i].popRank = j + 1;
-                    break;
-                }
-            }
-        }
+        teams = addPopRank(teams);
 
         return teams;
     }
@@ -629,6 +643,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         validateSeason: validateSeason,
         getSeasons: getSeasons,
         getTeams: getTeams,
+        addPopRank: addPopRank,
         getTeamsDefault: getTeamsDefault,
         deepCopy: deepCopy,
         error: error,

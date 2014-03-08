@@ -50,7 +50,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
      * @memberOf core.draft
      * @param {IDBTransaction|null} ot An IndexedDB transaction on players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID number for the generated draft class. Should be g.PLAYER.UNDRAFTED, g.PLAYER.UNDRAFTED_2, or g.PLAYER.UNDRAFTED_3.
-     * @param {number?} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
+     * @param {number?} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
      * @param {number?} numPlayers The number of prospects to generate. Default value is 70.
      * @param {function()} cb Callback function.
      */
@@ -58,7 +58,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
         var withScoutingRank;
 
         if (numPlayers === null || numPlayers === undefined) {
-            numPlayers = 70;
+            numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
         }
 
         withScoutingRank = function (scoutingRank) {
@@ -286,6 +286,32 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
     }
 
     /**
+     * Get a list of rookie salaries for all players in the draft.
+     *
+     * By default there are 60 picks, but some are added/removed if there aren't 30 teams.
+     *
+     * @memberOf core.draft
+     * @param {Array.<number>} cb Array of salaries, in thousands of dollars/year.
+     */
+    function getRookieSalaries() {
+        var rookieSalaries;
+
+        // Default for 60 picks
+        rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];
+
+        while (g.numTeams * 2 > rookieSalaries.length) {
+            // Add min contracts on to end
+            rookieSalaries.push(500);
+        }
+        while (g.numTeams * 2 < rookieSalaries.length) {
+            // Remove smallest salaries
+            rookieSalaries.pop();
+        }
+
+        return rookieSalaries;
+    }
+
+    /**
      * Select a player for the current drafting team.
      *
      * This can be called in response to the user clicking the "draft" button for a player, or by some other function like untilUserOrEnd.
@@ -329,8 +355,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
 
             // Contract
             if (g.phase !== g.PHASE.FANTASY_DRAFT) {
-                rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500]; // Keep in sync with core.team
-                i = pick.pick - 1 + 30 * (pick.round - 1);
+                rookieSalaries = getRookieSalaries();
+                i = pick.pick - 1 + g.numTeams * (pick.round - 1);
                 years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
                 p = player.setContract(p, {
                     amount: rookieSalaries[i],
@@ -478,6 +504,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
         genOrder: genOrder,
         genOrderFantasy: genOrderFantasy,
         untilUserOrEnd: untilUserOrEnd,
+        getRookieSalaries: getRookieSalaries,
         selectPlayer: selectPlayer
     };
 });

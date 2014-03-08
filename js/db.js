@@ -356,23 +356,23 @@ console.log(event);
 
                         t.budget = {
                             ticketPrice: {
-                                amount: helpers.round(25 + 25 * (30 - teams[t.tid].popRank) / 29, 2),
+                                amount: helpers.round(25 + 25 * (g.numTeams - teams[t.tid].popRank) / (g.numTeams - 1), 2),
                                 rank: teams[t.tid].popRank
                             },
                             scouting: {
-                                amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                                amount: helpers.round(900 + 900 * (g.numTeams - teams[t.tid].popRank) / (g.numTeams - 1)) * 10,
                                 rank: teams[t.tid].popRank
                             },
                             coaching: {
-                                amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                                amount: helpers.round(900 + 900 * (g.numTeams - teams[t.tid].popRank) / (g.numTeams - 1)) * 10,
                                 rank: teams[t.tid].popRank
                             },
                             health: {
-                                amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                                amount: helpers.round(900 + 900 * (g.numTeams - teams[t.tid].popRank) / (g.numTeams - 1)) * 10,
                                 rank: teams[t.tid].popRank
                             },
                             facilities: {
-                                amount: helpers.round(900 + 900 * (30 - teams[t.tid].popRank) / 29) * 10,
+                                amount: helpers.round(900 + 900 * (g.numTeams - teams[t.tid].popRank) / (g.numTeams - 1)) * 10,
                                 rank: teams[t.tid].popRank
                             }
                         };
@@ -552,7 +552,7 @@ console.log(event);
                     }
 
                     for (i = offset; i < 4 + offset; i++) {
-                        for (t = 0; t < 30; t++) {
+                        for (t = 0; t < g.numTeams; t++) {
                             for (round = 1; round <= 2; round++) {
                                 draftPickStore.add({
                                     tid: t,
@@ -941,6 +941,11 @@ console.log(event);
 
             for (i = 0; i < gameAttributes.length; i++) {
                 g[gameAttributes[i].key] = gameAttributes[i].value;
+            }
+
+            // Default values for old leagues
+            if (g.numTeams === undefined) {
+                g.numTeams = 30;
             }
 
             if (cb !== undefined) {

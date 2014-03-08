@@ -907,7 +907,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         // Add a new set of draft picks
         tx = g.dbl.transaction("draftPicks", "readwrite");
         draftPickStore = tx.objectStore("draftPicks");
-        for (t = 0; t < 30; t++) {
+        for (t = 0; t < g.numTeams; t++) {
             for (round = 1; round <= 2; round++) {
                 draftPickStore.add({
                     tid: t,

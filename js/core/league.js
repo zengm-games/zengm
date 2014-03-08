@@ -64,7 +64,8 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                     teamRegionsCache: _.pluck(teams, "region"),
                     teamNamesCache: _.pluck(teams, "name"),
                     showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
-                    gracePeriodEnd: startingSeason + 2 // Can't get fired for the first two seasons
+                    gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
+                    numTeams: teams.length // Will be 30 if the user doesn't supply custom rosters
                 };
 
                 // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
@@ -79,7 +80,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                     // Generate draft picks for the first 4 years, as those are the ones can be traded initially
                     draftPickStore = tx.objectStore("draftPicks");
                     for (i = 0; i < 4; i++) {
-                        for (t = 0; t < 30; t++) {
+                        for (t = 0; t < g.numTeams; t++) {
                             for (round = 1; round <= 2; round++) {
                                 draftPickStore.add({
                                     tid: t,
@@ -99,7 +100,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
 
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
                     teamStore = tx.objectStore("teams");
-                    for (i = 0; i < teams.length; i++) {
+                    for (i = 0; i < g.numTeams; i++) {
                         t = team.generate(teams[i]);
                         teamStore.add(t);
 
@@ -133,10 +134,10 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                             // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
                             tx = g.dbl.transaction("players", "readwrite");
 
-                            // See if imported roster has draft picks included. If so, create less than 70
-                            createUndrafted1 = 70;
-                            createUndrafted2 = 70;
-                            createUndrafted3 = 70;
+                            // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
+                            createUndrafted1 = Math.round(70 * g.numTeams / 30);
+                            createUndrafted2 = Math.round(70 * g.numTeams / 30);
+                            createUndrafted3 = Math.round(70 * g.numTeams / 30);
                             if (players !== undefined) {
                                 for (i = 0; i < players.length; i++) {
                                     if (players[i].tid === g.PLAYER.UNDRAFTED) {
@@ -273,7 +274,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                             pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
 
                             numLeft = 33 * 14;
-                            for (t = -3; t < 30; t++) {
+                            for (t = -3; t < teams.length; t++) {
                                 // Create multiple "teams" worth of players for the free agent pool
                                 if (t < 0) {
                                     t2 = g.PLAYER.FREE_AGENT;

@@ -21,7 +21,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
         tid = Math.floor(req.params.tid);
 
-        // Handle random team
+        // Handle random team - THIS IGNORES TEAMS ABOVE 30!
         if (tid === -1) {
             tid = random.randInt(0, 29);
         }

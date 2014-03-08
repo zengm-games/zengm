@@ -67,7 +67,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                         }
                     }
 
-                    count.should.equal(19);
+                    count.should.equal(20);
 
                     done();
                 };
@@ -95,7 +95,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                     for (i = 0; i < 6; i++) {
                         testHelpers.numInArrayEqualTo(dids, i).should.equal(5);
                     }
-                    for (i = 0; i < 30; i++) {
+                    for (i = 0; i < g.numTeams; i++) {
                         teams[i].name.should.be.a("string");
                         teams[i].region.should.be.a("string");
                         teams[i].tid.should.be.a("number");

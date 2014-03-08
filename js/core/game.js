@@ -167,7 +167,7 @@ if (playerStats === undefined) {
                 // Attendance - final estimate
                 att = random.gauss(att, 1000);
                 att *= 30 / t.budget.ticketPrice.amount;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
-                att *= 1 + 0.075 * (30 - finances.getRankLastThree(t, "expenses", "facilities")) / 29;  // Attendance depends on facilities. Not sure if this formula is reasonable.
+                att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(t, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
                 if (att > 25000) {
                     att = 25000;
                 } else if (att < 0) {
@@ -498,7 +498,7 @@ if (playerStats === undefined) {
 
         teams = [];
 
-        for (tid = 0; tid < 30; tid++) {
+        for (tid = 0; tid < g.numTeams; tid++) {
             transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
                 var players, realTid, t;
 
@@ -586,7 +586,7 @@ if (playerStats === undefined) {
 
                     t.stat = {min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, ptsQtrs: [0]};
                     teams.push(t);
-                    if (teams.length === 30) {
+                    if (teams.length === g.numTeams) {
                         cb(teams);
                     }
                 };

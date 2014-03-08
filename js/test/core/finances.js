@@ -25,7 +25,7 @@ define(["db", "globals", "core/league", "core/finances"], function (db, g, leagu
 
                         teams = event.target.result;
 
-                        for (i = 0; i < 30; i++) {
+                        for (i = 0; i < g.numTeams; i++) {
                             teams[i].seasons[0].payrollEndOfSeason.should.be.above(0);
 
                             if (teams[i].seasons[0].payrollEndOfSeason > g.luxuryPayroll) {

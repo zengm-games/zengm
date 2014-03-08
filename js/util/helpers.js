@@ -124,8 +124,8 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
     /**
      * Get list of teams, along with some metadata
      *
-     * Returns an array of 30 teams, sorted by tid. Each element contains an object with the following properties:
-     *     tid: Integer team ID (0 to 29).
+     * Returns an array of all teams, sorted by tid. Each element contains an object with the following properties:
+     *     tid: Integer team ID (from 0 to the number of teams - 1, default 0 to 29).
      *     region: String region name.
      *     name: String team name.
      *     abbrev: String 3-letter team abbreviation.
@@ -168,9 +168,9 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
     }
 
     /**
-     * Get list of teams, along with some more metadata
+     * Get list of default teams, along with some more metadata
      *
-     * Returns an array of 30 teams. Each array is an object with the following properties:
+     * Returns an array of default 30 teams. Each array is an object with the following properties:
      *     tid: Integer team ID (0 to 29).
      *     cid: Integer conference ID (0=East, 1=West).
      *     did: Integer division ID.

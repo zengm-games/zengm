@@ -158,7 +158,7 @@ define(["globals", "lib/underscore"], function (g, _) {
      * @param {Object} t Team object
      * @param {string} category Currently either "expenses" or "revenues", but could be extended to allow "budget" if needed.
      * @param {string} item Item inside the category
-     * @return {number} Rank, from 1 to 30
+     * @return {number} Rank, from 1 to g.numTeams (default 30)
      */
     function getRankLastThree(t, category, item) {
         var s;

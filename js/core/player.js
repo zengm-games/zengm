@@ -226,7 +226,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @param {Object} p Player object.
      * @param {number=} years Number of years to develop (default 1).
      * @param {boolean=} generate Generating a new player? (default false). If true, then the player's age is also updated based on years.
-     * @param {number=} coachingRank From 1 to 30, where 1 is best coaching staff and 30 is worst. Default is 15.5
+     * @param {number=} coachingRank From 1 to g.numTeams (default 30), where 1 is best coaching staff and g.numTeams is worst. Default is 15.5
      * @return {Object} Updated player object.
      */
     function develop(p, years, generate, coachingRank) {
@@ -286,9 +286,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             // Modulate by coaching
             sign = baseChange ? baseChange < 0 ? -1 : 1 : 0;
             if (sign >= 0) { // life is normal
-                baseChange *= ((coachingRank - 1) * (-0.5) / 29 + 1.25);
+                baseChange *= ((coachingRank - 1) * (-0.5) / (g.numTeams - 1) + 1.25);
             } else {
-                baseChange *= ((coachingRank - 1) * (0.5) / 29 + 0.75);
+                baseChange *= ((coachingRank - 1) * (0.5) / (g.numTeams - 1) + 0.75);
             }
 
             /*ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
@@ -405,7 +405,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     baseMoods[i] += 0.5 * (1 - teams[i].seasons[s].hype);
 
                     // Facilities
-                    baseMoods[i] += 0.1 * (finances.getRankLastThree(teams[i], "expenses", "facilities") - 1) / 29;
+                    baseMoods[i] += 0.1 * (finances.getRankLastThree(teams[i], "expenses", "facilities") - 1) / (g.numTeams - 1);
 
                     // Population
                     baseMoods[i] += 0.2 * (1 - teams[i].seasons[s].pop / 10);
@@ -512,8 +512,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
     function genFuzz(scoutingRank) {
         var cutoff, fuzz, sigma;
 
-        cutoff = 2 + 8 * (scoutingRank - 1) / 29;  // Max error is from 2 to 10, based on scouting rank
-        sigma = 1 + 2 * (scoutingRank - 1) / 29;  // Stddev is from 1 to 3, based on scouting rank
+        cutoff = 2 + 8 * (scoutingRank - 1) / (g.numTeams - 1);  // Max error is from 2 to 10, based on scouting rank
+        sigma = 1 + 2 * (scoutingRank - 1) / (g.numTeams - 1);  // Stddev is from 1 to 3, based on scouting rank
 
         fuzz = random.gauss(0, sigma);
         if (fuzz > cutoff) {
@@ -532,7 +532,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @param {number} baseRating [description]
      * @param {number} pot [description]
      * @param {number} season [description]
-     * @param {number} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
+     * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
      * @return {Object} Ratings object
      */
     function genRatings(profile, baseRating, pot, season, scoutingRank) {
@@ -691,7 +691,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      *
      * @memberOf core.player
      * @param {Object} p Player object.
-     * @param {number} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
+     * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
      * @return {Object} Updated player object.
      */
     function addRatingsRow(p, scoutingRank) {
@@ -817,7 +817,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      *
      * This depends on core.data.injuries, health expenses, and randomness.
      *
-     * @param {number} healthRank From 1-30, 1 if the player's team has the highest health spending this season and 30 if the player's team has the lowest.
+     * @param {number} healthRank Between 1 and g.numTeams (default 30), 1 if the player's team has the highest health spending this season and g.numTeams if the player's team has the lowest.
      * @return {Object} Injury object (type and gamesRemaining)
      */
     function injury(healthRank) {
@@ -831,7 +831,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         }
         return {
             type: injuries.types[i],
-            gamesRemaining: Math.round(((healthRank - 1) / 29 + 0.5)  * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])
+            gamesRemaining: Math.round(((healthRank - 1) / (g.numTeams - 1) + 0.5)  * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])
         };
     }
 

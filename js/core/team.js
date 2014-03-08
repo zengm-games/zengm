@@ -183,23 +183,23 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             seasons: [],
             budget: {
                 ticketPrice: {
-                    amount: helpers.round(25 + 25 * (30 - tm.popRank) / 29, 2),
+                    amount: helpers.round(25 + 25 * (g.numTeams - tm.popRank) / (g.numTeams - 1), 2),
                     rank: tm.popRank
                 },
                 scouting: {
-                    amount: helpers.round(900 + 900 * (30 - tm.popRank) / 29) * 10,
+                    amount: helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
                     rank: tm.popRank
                 },
                 coaching: {
-                    amount: helpers.round(900 + 900 * (30 - tm.popRank) / 29) * 10,
+                    amount: helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
                     rank: tm.popRank
                 },
                 health: {
-                    amount: helpers.round(900 + 900 * (30 - tm.popRank) / 29) * 10,
+                    amount: helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
                     rank: tm.popRank
                 },
                 facilities: {
-                    amount: helpers.round(900 + 900 * (30 - tm.popRank) / 29) * 10,
+                    amount: helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
                     rank: tm.popRank
                 }
             },
@@ -515,7 +515,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
             t = event.target.result;
 
-            // t will be an array of 30 teams (if options.tid is null) or an array of 1 team. If 1, then we want to return just that team object at the end, not an array of 1 team.
+            // t will be an array of g.numTeams teams (if options.tid is null) or an array of 1 team. If 1, then we want to return just that team object at the end, not an array of 1 team.
             returnOneTeam = false;
             if (t.length === 1) {
                 returnOneTeam = true;
@@ -691,7 +691,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     sorted = wps.slice().sort(function (a, b) { return a - b; });
                     estPicks = wps.slice().map(function (v) { return sorted.indexOf(v) + 1; }); // For each team, what is their estimated draft position?
 
-                    rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500]; // Keep in sync with core.draft
+                    rookieSalaries = require("core/draft").getRookieSalaries();
 
                     // Actually add picks after some stuff below is done
                     withEstValues = function () {
@@ -710,21 +710,21 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
                                 // No fudge factor, since this is coming from the user's team (or eventually, another AI)
                                 if (estValues[dp.season]) {
-                                    value = estValues[dp.season][estPick - 1 + 30 * (dp.round - 1)];
+                                    value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)];
                                 }
                                 if (!value) {
-                                    value = estValues.default[estPick - 1 + 30 * (dp.round - 1)];
+                                    value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)];
                                 }
 
                                 add.push({
                                     value: value,
                                     skills: [],
                                     contract: {
-                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)],
+                                        amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
                                         exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
                                     },
                                     worth: {
-                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)],
+                                        amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
                                         exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
                                     },
                                     injury: {type: "Healthy", gamesRemaining: 0},
@@ -754,23 +754,21 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
                                 // Use fudge factor: AI teams like their own picks
                                 if (estValues[dp.season]) {
-                                    value = estValues[dp.season][estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
-//console.log([estPick, estValues[dp.season][estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor]);
+                                    value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
                                 }
                                 if (!value) {
-                                    value = estValues.default[estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
+                                    value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
                                 }
-//console.log([estPick, estValues.default[estPick - 1 + 30 * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor]);
 
                                 remove.push({
                                     value: value,
                                     skills: [],
                                     contract: {
-                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000,
+                                        amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
                                         exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
                                     },
                                     worth: {
-                                        amount: rookieSalaries[estPick - 1 + 30 * (dp.round - 1)] / 1000,
+                                        amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
                                         exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
                                     },
                                     injury: {type: "Healthy", gamesRemaining: 0},

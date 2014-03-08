@@ -395,21 +395,26 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             s = teams[0].seasons.length - 1;  // Most recent season index
 
             for (i = 0; i < teams.length; i++) {
-                baseMoods[i] = 0;
+                // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
+                if (teams[i].seasons[s].playoffRoundsWon === 4 && Math.random() < 0.99) {
+                    baseMoods[i] = -0.25; // Should guarantee no refusing to re-sign
+                } else {
+                    baseMoods[i] = 0;
 
-                // Hype
-                baseMoods[i] += 0.5 * (1 - teams[i].seasons[s].hype);
+                    // Hype
+                    baseMoods[i] += 0.5 * (1 - teams[i].seasons[s].hype);
 
-                // Facilities
-                baseMoods[i] += 0.1 * (1 - (finances.getRankLastThree(teams[i], "expenses", "facilities") - 1) / 29);
+                    // Facilities
+                    baseMoods[i] += 0.1 * (finances.getRankLastThree(teams[i], "expenses", "facilities") - 1) / 29;
 
-                // Population
-                baseMoods[i] += 0.2 * (1 - teams[i].seasons[s].pop / 10);
+                    // Population
+                    baseMoods[i] += 0.2 * (1 - teams[i].seasons[s].pop / 10);
 
-                // Randomness
-                baseMoods[i] += random.uniform(-0.2, 0.2);
+                    // Randomness
+                    baseMoods[i] += random.uniform(-0.2, 0.2);
 
-                baseMoods[i] = helpers.bound(baseMoods[i], 0, 1);
+                    baseMoods[i] = helpers.bound(baseMoods[i], 0, 1);
+                }
             }
 
             cb(baseMoods);

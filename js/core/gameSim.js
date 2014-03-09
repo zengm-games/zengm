@@ -423,7 +423,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 if (this.playersOnCourt[t].indexOf(p) >= 0) {
                     this.recordStat(t, p, "min", this.dt);
                     this.recordStat(t, p, "courtTime", this.dt);
-                    this.recordStat(t, p, "energy", -this.dt * 0.04 * (1 - this.team[t].player[p].compositeRating.endurance));
+                    // This used to be 0.04. Increase more to lower PT
+                    this.recordStat(t, p, "energy", -this.dt * 0.06 * (1 - this.team[t].player[p].compositeRating.endurance));
                     if (this.team[t].player[p].stat.energy < 0) {
                         this.team[t].player[p].stat.energy = 0;
                     }

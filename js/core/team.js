@@ -587,7 +587,14 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
         // Get players
         getPlayers = function () {
-            var i;
+            var fudgeFactor, i;
+
+            // Fudge factor for AI overvaluing its own players
+            if (tid !== g.userTid) {
+                fudgeFactor = 1.1
+            } else {
+                fudgeFactor = 1;
+            }
 
             tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
                 var cursor, p;
@@ -607,7 +614,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         });
                     } else {
                         remove.push({
-                            value: player.value(p),
+                            value: player.value(p) * fudgeFactor,
                             skills: _.last(p.ratings).skills,
                             contract: p.contract,
                             worth: player.genContract(p, false, false, true),
@@ -747,9 +754,9 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
                                 // Set fudge factor with more confidence if it's the current season
                                 if (seasons === 0 && gp >= 41) {
-                                    fudgeFactor = (1 - gp / 82) * 4;
+                                    fudgeFactor = (1 - gp / 82) * 6;
                                 } else {
-                                    fudgeFactor = 4;
+                                    fudgeFactor = 6;
                                 }
 
                                 // Use fudge factor: AI teams like their own picks
@@ -1107,7 +1114,7 @@ console.log("Worse options in free agency")
             // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
             // This is a fudge factor, since it's one-sided to punish the player
             if (add.length > remove.length) {
-                dv *= Math.pow(0.95, add.length - remove.length);
+                dv *= Math.pow(0.9, add.length - remove.length);
             }
 
             cb(dv);

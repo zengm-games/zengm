@@ -149,6 +149,7 @@ gracefully handle disk space errors
 BIG NEW FEATURES
 ----------------
 
+display of relative ratings like https://mail.google.com/mail/u/0/#inbox/144a4a04330edf3d
 trade improvements
   refactor trade module with all the below in mind
     clean up even more?
@@ -224,7 +225,6 @@ fuzz should affect potential more than other variables, when pot is different th
 MINOR FIXES
 -----------
 
-"Upload custom roster" removes "Random Team" as start option
 top menu tooltips for md
 show team records in playoffs, conference standings
 don't need to store abbrev with awards, just tids
@@ -239,8 +239,7 @@ more owner messages - crowdsource? especially intro
 Add markers for clinching playoffs / 1st seed in league standings
 trading block crashing bug
   happens in chrome in old leagues, apparently. running out of memory somehow?
-bring back the old constantly-displayed menu for large screens? http://www.reddit.com/r/BasketballGM/comments/1rjmmr/as_a_player_do_you_think_the_game_needs_a_tutorial/cdnxb4d
-  expand play menu so it can be used with one click http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cds6hph
+expand play menu so it can be used with one click http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cds6hph
 make injuries more likely for old players and fatigued players
 first errorNotify in contractNegotiation.js really should be inline within that page
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
@@ -265,6 +264,8 @@ in playoffs, replace Week/Month in Play menu with Round http://www.reddit.com/r/
 LOW PRIORITY
 ------------
 
+box plots / distributions
+  "it'd be great to overlay your roster to see where you stand. Maybe click on a name in a list to add or remove it from the display. Do I have a fast team? Do I have a three point shooting team? Are we big and bruising and slow?"
 ratings change during the season, especially young players (development)
 show abbrev and highlight user's players in retired players list gavin.handley@gmail.com
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
@@ -346,9 +347,6 @@ more refined control of playing time
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaegpq
   http://www.reddit.com/r/BasketballGM/comments/1qaml8/playing_time_explain_to_me_like_im_8/
   just set minutes directly? any minutes not included, leave up to coach's discretion
-signing draft picks should be optional
-  maybe sign them in the "resign players" phase
-you should be able to drop below 5 players (and above 15) but only temporarily (no game simulation in that time)
 fake feet/inches heights should be taller
 draft
   randomness in picks should factor in relative ratings http://www.reddit.com/r/BasketballGM/comments/1l1713/the_draft_still_needs_some_work_it_seems_my/cbutw7v?context=1

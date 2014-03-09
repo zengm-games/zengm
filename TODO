@@ -219,6 +219,7 @@ contract negotiation
   weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1 http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
   add free agent to the end of roster
   http://www.reddit.com/r/BasketballGM/comments/1ykybp/free_agent_signing_suggestion/
+fuzz should affect potential more than other variables, when pot is different than ovr
 
 MINOR FIXES
 -----------

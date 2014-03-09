@@ -1231,7 +1231,7 @@ console.log(dv);*/
                 numPlayersOnRoster = players.length;
                 if (numPlayersOnRoster > 15) {
                     if (tid === g.userTid) {
-                        userTeamSizeError = 'Your team currently has more than the maximum number of players (15). You must add players (through <a href="' + helpers.leagueUrl(["free_agents"]) + '">free agency</a> or <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
+                        userTeamSizeError = 'Your team currently has more than the maximum number of players (15). You must remove players (by <a href="' + helpers.leagueUrl(["roster"]) + '">releasing them</a> or through <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
                     } else {
                         // Automatically drop lowest value players until we reach 15
                         players.sort(function (a, b) { return player.value(a) - player.value(b); }); // Lowest first

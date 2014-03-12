@@ -29,6 +29,8 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                     }
                 }
             }
+            // Add in popRanks
+            teams = helpers.addPopRank(teams);
         } else {
             teams = teamsDefault;
         }

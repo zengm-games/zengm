@@ -591,7 +591,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
             // Fudge factor for AI overvaluing its own players
             if (tid !== g.userTid) {
-                fudgeFactor = 1.1
+                fudgeFactor = 1.05;
             } else {
                 fudgeFactor = 1;
             }
@@ -754,9 +754,9 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
 
                                 // Set fudge factor with more confidence if it's the current season
                                 if (seasons === 0 && gp >= 41) {
-                                    fudgeFactor = (1 - gp / 82) * 6;
+                                    fudgeFactor = (1 - gp / 82) * 5;
                                 } else {
-                                    fudgeFactor = 6;
+                                    fudgeFactor = 5;
                                 }
 
                                 // Use fudge factor: AI teams like their own picks

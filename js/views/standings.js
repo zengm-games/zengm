@@ -59,14 +59,16 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
                 season: inputs.season,
                 sortBy: ["winp", "-lost", "won"]
             }, function (teams) {
-                var confs, confTeams, data, divTeams, i, j, k, l, lastTenLost, lastTenWon;
+                var confs, confRanks, confTeams, data, divTeams, i, j, k, l, lastTenLost, lastTenWon;
 
                 confs = [];
                 for (i = 0; i < g.confs.length; i++) {
+                    confRanks = [];
                     confTeams = [];
                     l = 0;
                     for (k = 0; k < teams.length; k++) {
                         if (g.confs[i].cid === teams[k].cid) {
+                            confRanks[teams[k].tid] = l + 1; // Store ranks by tid, for use in division standings
                             confTeams.push(helpers.deepCopy(teams[k]));
                             confTeams[l].rank = l + 1;
                             if (l === 0) {
@@ -79,6 +81,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
                     }
 
                     confs.push({name: g.confs[i].name, divs: [], teams: confTeams});
+console.log(confRanks);
 
                     for (j = 0; j < g.divs.length; j++) {
                         if (g.divs[j].cid === g.confs[i].cid) {
@@ -92,6 +95,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
                                     } else {
                                         divTeams[l].gb = gb(divTeams[0], divTeams[l]);
                                     }
+                                    divTeams[l].confRank = confRanks[divTeams[l].tid];
                                     l += 1;
                                 }
                             }

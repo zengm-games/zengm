@@ -4,6 +4,11 @@ DB CHANGES SINCE 3.3.0
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
+IMPORTANT http://www.reddit.com/r/BasketballGM/comments/20i6v3/still_too_easy_to_trade_for_drafted_players/
+  just drafted players are undervalued, possibly related to the following issue
+PER scaling in player.value is wrong http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
+  change scaling in ovr formula? too confusing?
+  this impacts rookie values, leating to an EXPLOIT: http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfhkvnv
 ovr changes should impact player.value, somehow
   probably by scaling PER from the previous season
     but what about old players? is this already factored in to the age decline in player.value?
@@ -11,9 +16,6 @@ ovr changes should impact player.value, somehow
   http://www.reddit.com/r/BasketballGM/comments/1ydtpd/seems_much_more_random_now/cfjxhj6
     teams do overvalue their own players in trades, generally
 second round draft picks are undervalued. also, giving away a pick should never make a trade worse, but sometimes it does now.
-PER scaling in player.value is wrong http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
-  change scaling in ovr formula? too confusing?
-  this impacts rookie values, leating to an EXPLOIT: http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfhkvnv
 release and resign pick exploit http://www.reddit.com/r/BasketballGM/comments/1zn61h/finances/cfvzr35
 Eventually:
   "What would make this work?" functions should know about contending/rebuilding. Contending teams should be more eager to offer up young/cheap players, rebuilding teams should be more eager to offer up old/expensive players
@@ -215,7 +217,10 @@ gameSim
 do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rookie_players_with_lots_100_skill_ratings/
 contract negotiation
   don't have counter-offers be too drastic
-  weirdness http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1 http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
+  weirdness
+    http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1
+    http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
+    http://www.reddit.com/r/BasketballGM/comments/20k310/may_have_encountered_a_bug_during_contract/
   add free agent to the end of roster
   http://www.reddit.com/r/BasketballGM/comments/1ykybp/free_agent_signing_suggestion/
 fuzz should affect potential more than other variables, when pot is different than ovr
@@ -223,6 +228,11 @@ fuzz should affect potential more than other variables, when pot is different th
 MINOR FIXES
 -----------
 
+DataTables - fix default sort order on column click
+  text should be asc, numeric should be desc (except draft picks)
+  http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
+  but can it be set globally, based on column type? can have ui.datatable automatically read columns and figure it out?
+Add MVP and Titles columns to HoF table
 Make good young players much less likely to become FAs
 Make rookie contracts 1 year longer
 top menu tooltips for md
@@ -240,7 +250,9 @@ Add markers for clinching playoffs / 1st seed in league standings
 trading block crashing bug
   happens in chrome in old leagues, apparently. running out of memory somehow?
 expand play menu so it can be used with one click http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cds6hph
-make injuries more likely for old players and fatigued players
+injuries
+  make injuries more likely for old players and fatigued players
+  long-term effects of injuries - maybe just decrease endurance
 first errorNotify in contractNegotiation.js really should be inline within that page
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
 merge game.play and freeAgents.play
@@ -469,10 +481,6 @@ PER
     can i have it share a transaction with writing stats in core.game?
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
   also can respond to budget changes
-DataTables - fix default sort order on column click
-  text should be asc, numeric should be desc (except draft picks)
-  http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
-  but can it be set globally, based on column type? can have ui.datatable automatically read columns and figure it out?
 more tests
   https://github.com/gotwarlost/istanbul
   how to run indexeddb-based tests from command line?
@@ -495,6 +503,8 @@ update formulas
 FUTURE
 ------
 
+shot charts showing hot spots (red/yellow/green) based on shot location data
+most improved player
 If you are simulating through the whole season and execute a trade while simulating, it will continue simulating even if you are over the roster limit. http://www.reddit.com/r/BasketballGM/comments/1xch01/trades_after_season/cfamo73
 players from different countries/nationalities
   how to pick names?

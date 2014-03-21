@@ -199,7 +199,6 @@ define(["globals", "ui", "core/player", "core/team", "core/trade", "lib/jquery",
                     attrs: ["abbrev", "region", "name", "strategy"],
                     seasonAttrs: ["won", "lost"],
                     season: g.season,
-                    sortBy: "winp",
                     ot: tx
                 }, function (teams) {
                     var i;

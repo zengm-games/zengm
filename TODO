@@ -35,8 +35,6 @@ Eventually:
 CURRENT
 -------
 
-account/lost_password
-  http://stackoverflow.com/a/1102817/786644
 upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page

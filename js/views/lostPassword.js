@@ -8,7 +8,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
     function uiFirst() {
         var ajaxErrorMsg, $lostpw;
 
-        ui.title("Login or Register");
+        ui.title("Lost Password");
 
         ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 

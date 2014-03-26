@@ -134,6 +134,7 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "ut
             this.get("/account", views.account.get);
             this.get("/account/login_or_register", views.loginOrRegister.get);
             this.get("/account/lost_password", views.lostPassword.get);
+            this.get("/account/reset_password/:token", views.resetPassword.get);
 
             // League views
             this.get("/l/:lid", views.leagueDashboard.get);

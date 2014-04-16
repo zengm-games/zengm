@@ -1,6 +1,24 @@
 DB CHANGES SINCE 3.3.0
 ----------------------
 
+PLAYER DEVELOPMENT REVAMP
+-------------------------
+
+player development revamp
+  something needs to be done. still too many 3 point shooting centers.
+  are ovr/pot combos reasonable, since ovr is weighted now?
+  low ovr high pot players should pan out more?
+  old stars should exist
+  reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
+  really high ovr/pot is handled poorly, rapid declines if there is a gap
+  too many rookies come in as instant stars. should be more gradual.
+  career arcs for ratings - like low endurance/athleticism for old players, but skills remain
+  make low ovr high pot players more likely to improve
+
+options:
+  compute "pot" for each rating, use that to generate displayed pot
+  somehow do it organically, with different rates of growth in different categories
+
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
@@ -138,6 +156,7 @@ notification system
     errors
     refuse to sign
     retire
+  colors/icons for good/bad things http://www.reddit.com/r/BasketballGM/comments/22bpwm/suggestion_notification_improvements/
 NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
 Team name shows up as BOLD or is highlighted in some other way in all League lists (playoffs, standings)
   wrap abbrev in function before display
@@ -181,16 +200,6 @@ contests: post roster file and goal
 BIG NEW GAMEPLAY CHANGES
 ------------------------
 
-player development revamp
-  something needs to be done. still too many 3 point shooting centers.
-  are ovr/pot combos reasonable, since ovr is weighted now?
-  low ovr high pot players should pan out more?
-  old stars should exist
-  reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
-  really high ovr/pot is handled poorly, rapid declines if there is a gap
-  too many rookies come in as instant stars. should be more gradual.
-  career arcs for ratings - like low endurance/athleticism for old players, but skills remain
-make low ovr high pot players more likely to improve
 Extended free agency
   order of AI team signings shouldn't be linear
   0 year contracts http://www.reddit.com/r/BasketballGM/comments/1p0sa8/new_feature_extended_free_agency/ccy4gvp

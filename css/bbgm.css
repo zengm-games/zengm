@@ -272,10 +272,8 @@ table {
   text-decoration: none;
 }
 
-.schedule-list > li:nth-child(odd) {
-  background-color: #f9f9f9;
-}
 .schedule-row {
+  color: #000;
   font-size: 16px;
 }
 .schedule-results {

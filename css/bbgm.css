@@ -272,6 +272,28 @@ table {
   text-decoration: none;
 }
 
+.schedule-list > li:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+.schedule-row {
+  font-size: 16px;
+}
+.schedule-results {
+  float: left;
+  width: 100px;
+}
+.schedule-score {
+  margin-left: 6px;
+  font-size: 14px;
+}
+.schedule-wl {
+  font-size: 22px;
+  text-decoration: underline;
+}
+.schedule-at {
+  font-size: 22px;
+}
+
 .table-nonfluid {
    width: auto;
 }

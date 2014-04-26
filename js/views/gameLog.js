@@ -8,77 +8,6 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
     var mapping;
 
     /**
-     * Generate a game log list.
-     *
-     * @memberOf views.gameLog
-     * @param {string} abbrev Abbrev of the team for the list of games.
-     * @param {number} season Season for the list of games.
-     * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
-     * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
-     * @param {function(Array.<Object>)} cb Callback whose argument is a list of game objects.
-     */
-    function gameLogList(abbrev, season, gid, loadedGames, cb) {
-        var games, maxGid, out, tid;
-
-        out = helpers.validateAbbrev(abbrev);
-        tid = out[0];
-        abbrev = out[1];
-
-        if (loadedGames.length > 0) {
-            maxGid = loadedGames[0].gid; // Load new games
-        } else {
-            maxGid = -1; // Load all games
-        }
-
-        games = [];
-        // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
-        g.dbl.transaction("games").objectStore("games").index("season").openCursor(season, "prev").onsuccess = function (event) {
-            var cursor, game, i, overtime;
-
-            cursor = event.target.result;
-            if (cursor && cursor.value.gid > maxGid) {
-                game = cursor.value;
-
-                if (game.overtimes === 1) {
-                    overtime = " (OT)";
-                } else if (game.overtimes > 1) {
-                    overtime = " (" + game.overtimes + "OT)";
-                } else {
-                    overtime = "";
-                }
-
-                // Check tid
-                if (game.teams[0].tid === tid || game.teams[1].tid === tid) {
-                    games.push({
-                        gid: game.gid,
-                        selected: game.gid === gid,
-                        overtime: overtime
-                    });
-
-                    i = games.length - 1;
-                    if (game.teams[0].tid === tid) {
-                        games[i].home = true;
-                        games[i].pts = game.teams[0].pts;
-                        games[i].oppPts = game.teams[1].pts;
-                        games[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
-                        games[i].won = game.teams[0].pts > game.teams[1].pts;
-                    } else if (game.teams[1].tid === tid) {
-                        games[i].home = false;
-                        games[i].pts = game.teams[1].pts;
-                        games[i].oppPts = game.teams[0].pts;
-                        games[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
-                        games[i].won = game.teams[1].pts > game.teams[0].pts;
-                    }
-                }
-
-                cursor.continue();
-            } else {
-                cb(games);
-            }
-        };
-    }
-
-    /**
      * Generate a box score.
      *
      * @memberOf views.gameLog
@@ -235,7 +164,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
             // Load all games in list
             vm.gamesList.loading(true);
             vm.gamesList.games([]);
-            gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
+            helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
                 vm.gamesList.games(games);
                 vm.gamesList.abbrev(inputs.abbrev);
                 vm.gamesList.season(inputs.season);
@@ -255,7 +184,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         }
         if (updateEvents.indexOf("gameSim") >= 0 && inputs.season === g.season) {
             // Partial update of only new games
-            gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
+            helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
                 var i;
                 for (i = games.length - 1; i >= 0; i--) {
                     vm.gamesList.games.unshift(games[i]);

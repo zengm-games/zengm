@@ -282,13 +282,16 @@ table {
   float: left;
   width: 100px;
 }
-.schedule-score {
-  margin-left: 6px;
-  font-size: 14px;
-}
 .schedule-wl {
   font-size: 22px;
   text-decoration: underline;
+  width: 30px;
+  float: left;
+}
+.schedule-score {
+  margin-left: 6px;
+  font-size: 14px;
+  line-height: 36px; /* so bottom aligns despite float */
 }
 .schedule-at {
   font-size: 22px;

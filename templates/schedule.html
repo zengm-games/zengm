@@ -13,11 +13,11 @@
   </div>
   <div class="col-sm-6 hidden-xs">
     <h2>Completed Games</h2>
-    <ul class="list-group schedule-list" data-bind="foreach: completed">
+    <ul class="list-group schedule-list" data-bind="foreach: completed.games">
       <li class="list-group-item schedule-row">
         <div class="schedule-results">
-          <span class="schedule-wl">W</span>
-          <span class="schedule-score">105-52</span>
+          <div class="schedule-wl" data-bind="text: won ? 'W' : 'L'"></div>
+          <div class="schedule-score"><a data-bind="attrLeagueUrl: {href: ['game_log', $root.abbrev, $root.season, gid]}, text: score + overtime"></a></div>
         </div>
         <a data-bind="attrLeagueUrl: {href: ['roster', teams[0].abbrev]}"><span data-bind="text: teams[0].region"></span></a>
         <span class="schedule-at">@</span>

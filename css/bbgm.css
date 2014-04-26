@@ -278,13 +278,15 @@ table {
 }
 .schedule-results {
   float: left;
-  width: 100px;
+  width: 135px;
+  text-align: center;
 }
 .schedule-wl {
   font-size: 22px;
   text-decoration: underline;
-  width: 30px;
+  width: 26px;
   float: left;
+  text-align: center;
 }
 .schedule-score {
   margin-left: 6px;

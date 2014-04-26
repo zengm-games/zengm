@@ -828,7 +828,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         }
         return {
             type: injuries.types[i],
-            gamesRemaining: Math.round(((healthRank - 1) / (g.numTeams - 1) + 0.5)  * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])
+            gamesRemaining: Math.round((0.7 * (healthRank - 1) / (g.numTeams - 1) + 0.65)  * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])
         };
     }
 

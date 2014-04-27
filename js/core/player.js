@@ -257,8 +257,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             // Bound possible changes
             if (baseChange > 30) {
                 baseChange = 30;
-            } else if (baseChange < -3) {
-                baseChange = -3;
+            } else if (baseChange < -5) {
+                baseChange = -5;
             }
             if (baseChange + p.ratings[r].pot > 95) {
                 baseChange = 95 - p.ratings[r].pot;
@@ -272,6 +272,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             // Modulate by age
             if (age > 23) {
                 baseChange /= 3;
+            }
+            if (age > 29) {
+                baseChange -= 1;
             }
             if (age > 31) {
                 baseChange -= 1;

@@ -8,7 +8,16 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     var mapping;
 
     function get(req) {
+        var abbrev;
+
+        if (g.teamAbbrevsCache.indexOf(req.params.abbrev) >= 0) {
+            abbrev = req.params.abbrev;
+        } else {
+            abbrev = "all";
+        }
+
         return {
+            abbrev: abbrev,
             season: req.params.season === "career" ? null : helpers.validateSeason(req.params.season),
             statType: req.params.statType !== undefined ? req.params.statType : "per_game",
             playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season"
@@ -16,6 +25,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     }
 
     function InitViewModel() {
+        this.abbrev = ko.observable();
         this.season = ko.observable();
         this.statType = ko.observable();
         this.playoffs = ko.observable();
@@ -32,17 +42,21 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     function updatePlayers(inputs, updateEvents, vm) {
         var deferred;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season() || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
             deferred = $.Deferred();
 
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED)).onsuccess = function (event) {
-                var gp, i, min, players, playersAll;
+                var gp, i, min, players, playersAll, tid;
+
+                tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
+                if (tid < 0) { tid = null; } // Show all teams
 
                 playersAll = player.filter(event.target.result, {
                     attrs: ["pid", "name", "pos", "age", "injury", "tid", "hof", "watch"],
                     ratings: ["skills"],
                     stats: ["abbrev", "tid", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
                     season: inputs.season, // If null, then show career stats!
+                    tid: tid,
                     totals: inputs.statType === "totals",
                     per36: inputs.statType === "per_36",
                     playoffs: inputs.playoffs === "playoffs"
@@ -87,6 +101,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
                 deferred.resolve({
                     players: players,
+                    abbrev: inputs.abbrev,
                     season: inputs.season,
                     statType: inputs.statType,
                     playoffs: inputs.playoffs
@@ -161,7 +176,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     }
 
     function uiEvery(updateEvents, vm) {
-        components.dropdown("player-stats-dropdown", ["seasonsAndCareer", "statTypes", "playoffs"], [vm.season(), vm.statType(), vm.playoffs()], updateEvents);
+        components.dropdown("player-stats-dropdown", ["teamsAndAll", "seasonsAndCareer", "statTypes", "playoffs"], [vm.abbrev(), vm.season(), vm.statType(), vm.playoffs()], updateEvents);
     }
 
     return bbgmView.init({

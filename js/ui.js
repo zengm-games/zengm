@@ -333,7 +333,7 @@ console.log(url)
 
     // For dropdown menus to change team/season/whatever
     // This should be cleaned up, but it works for now.
-    function dropdown(select1, select2, select3) {
+    function dropdown(select1, select2, select3, select4) {
         var handleDropdown;
 
         handleDropdown = function (select) {
@@ -358,6 +358,9 @@ console.log(url)
                 if (select3 !== undefined) {
                     args.push(select3.val());
                 }
+                if (select4 !== undefined) {
+                    args.push(select4.val());
+                }
                 url = helpers.leagueUrl(args);
 
                 if (extraParam !== undefined && extraParam !== null && extraParam !== "") {
@@ -374,6 +377,9 @@ console.log(url)
         }
         if (select3 !== undefined) {
             handleDropdown(select3);
+        }
+        if (select4 !== undefined) {
+            handleDropdown(select4);
         }
     }
 

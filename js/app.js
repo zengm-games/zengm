@@ -183,9 +183,10 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "ut
             this.get("/l/:lid/player_ratings/:abbrev", views.playerRatings.get);
             this.get("/l/:lid/player_ratings/:abbrev/:season", views.playerRatings.get);
             this.get("/l/:lid/player_stats", views.playerStats.get);
-            this.get("/l/:lid/player_stats/:season", views.playerStats.get);
-            this.get("/l/:lid/player_stats/:season/:statType", views.playerStats.get);
-            this.get("/l/:lid/player_stats/:season/:statType/:playoffs", views.playerStats.get);
+            this.get("/l/:lid/player_stats/:abbrev", views.playerStats.get);
+            this.get("/l/:lid/player_stats/:abbrev/:season", views.playerStats.get);
+            this.get("/l/:lid/player_stats/:abbrev/:season/:statType", views.playerStats.get);
+            this.get("/l/:lid/player_stats/:abbrev/:season/:statType/:playoffs", views.playerStats.get);
             this.get("/l/:lid/team_stats", views.teamStats.get);
             this.get("/l/:lid/team_stats/:season", views.teamStats.get);
             this.get("/l/:lid/player/:pid", views.player.get);

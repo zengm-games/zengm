@@ -17,12 +17,13 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         }
 
         return {
-            season: helpers.validateSeason(req.params.season),
-            abbrev: abbrev
+            abbrev: abbrev,
+            season: helpers.validateSeason(req.params.season)
         };
     }
 
     function InitViewModel() {
+        this.abbrev = ko.observable();
         this.season = ko.observable();
     }
 

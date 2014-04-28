@@ -1035,7 +1035,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                             // Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
                             cat = options.ratings[k].slice(1); // either ovr or pot
                             if (j > 0) {
-                                fp.ratings[options.ratings[k]] = Math.round(helpers.bound(p.ratings[j][cat] + p.ratings[j].fuzz, 0, 100)) - Math.round(helpers.bound(p.ratings[j - 1][cat] + p.ratings[j - 1].fuzz, 0, 100));;
+                                fp.ratings[options.ratings[k]] = Math.round(helpers.bound(p.ratings[j][cat] + p.ratings[j].fuzz, 0, 100)) - Math.round(helpers.bound(p.ratings[j - 1][cat] + p.ratings[j - 1].fuzz, 0, 100));
                             } else {
                                 fp.ratings[options.ratings[k]] = 0;
                             }

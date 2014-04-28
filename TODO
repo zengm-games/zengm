@@ -1,26 +1,6 @@
 DB CHANGES SINCE 3.3.0
 ----------------------
 
-ratings and stats tables: filter by team
-
-PLAYER DEVELOPMENT REVAMP
--------------------------
-
-player development revamp
-  something needs to be done. still too many 3 point shooting centers.
-  are ovr/pot combos reasonable, since ovr is weighted now?
-  low ovr high pot players should pan out more?
-  old stars should exist
-  reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
-  really high ovr/pot is handled poorly, rapid declines if there is a gap
-  too many rookies come in as instant stars. should be more gradual.
-  career arcs for ratings - like low endurance/athleticism for old players, but skills remain
-  make low ovr high pot players more likely to improve
-
-options:
-  compute "pot" for each rating, use that to generate displayed pot
-  somehow do it organically, with different rates of growth in different categories
-
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
@@ -55,6 +35,8 @@ Eventually:
 CURRENT
 -------
 
+ratings and stats tables: filter by team
+  add to normal dropdowns
 upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page
@@ -164,6 +146,24 @@ Team name shows up as BOLD or is highlighted in some other way in all League lis
   wrap abbrev in function before display
   maybe allow wrapping of arbitrary strings, not just abbrevs? then pass tid or abbrev as second param
 gracefully handle disk space errors
+
+PLAYER DEVELOPMENT REVAMP
+-------------------------
+
+player development revamp
+  something needs to be done. still too many 3 point shooting centers.
+  are ovr/pot combos reasonable, since ovr is weighted now?
+  low ovr high pot players should pan out more?
+  old stars should exist
+  reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
+  really high ovr/pot is handled poorly, rapid declines if there is a gap
+  too many rookies come in as instant stars. should be more gradual.
+  career arcs for ratings - like low endurance/athleticism for old players, but skills remain
+  make low ovr high pot players more likely to improve
+
+options:
+  compute "pot" for each rating, use that to generate displayed pot
+  somehow do it organically, with different rates of growth in different categories
 
 BIG NEW FEATURES
 ----------------

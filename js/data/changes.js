@@ -67,6 +67,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2014-03-05",
         msg: 'Upcoming Free Agents page, accessible from Players > Free Agents.'
+    }, {
+        date: "2014-04-27",
+        msg: 'Player Stats and Player Ratings pages now let you easily filter by team.'
     }];
 
     function check() {

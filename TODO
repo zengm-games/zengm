@@ -36,7 +36,8 @@ CURRENT
 -------
 
 ratings and stats tables: filter by team
-  add to normal dropdowns
+  add to normal dropdowns, but how to specify "all"?
+  shouldn't immediately refresh to full URL if only partial is specified
 upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page

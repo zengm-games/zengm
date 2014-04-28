@@ -241,6 +241,9 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
     function realtimeUpdate(updateEvents, url, cb, raw) {
         var inLeague, refresh;
 
+console.log(updateEvents)
+console.log(url)
+//debugger;
         updateEvents = updateEvents !== undefined ? updateEvents : [];
         url = url !== undefined ? url : location.pathname + location.search;
         raw = raw !== undefined ? raw : {};

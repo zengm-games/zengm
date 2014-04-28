@@ -13,7 +13,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         if (g.teamAbbrevsCache.indexOf(req.params.abbrev) >= 0) {
             abbrev = req.params.abbrev;
         } else {
-            abbrev = null;
+            abbrev = "all";
         }
 
         return {

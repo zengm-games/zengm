@@ -39,7 +39,8 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
         "lobbying the state government for more subsidies",
         "figuring out how to fit in more courtside seats for celebrities",
         "coming up with a way to slightly shrink or expand the hoop, depending on which one we're shooting at",
-        "perfecting my money laundering infrastructure (owning this team is very helpful)"
+        "perfecting my money laundering infrastructure (owning this team is very helpful)",
+        "making sure my \"girlfriends\" aren't posting pictures with black people on Instagram (how many times do I have to tell them??)"
     ];
 
     // Intro of annual message

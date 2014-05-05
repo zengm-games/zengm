@@ -15,7 +15,7 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
         players = [];
 
         g.dbl.transaction("players").objectStore("players").openCursor().onsuccess = function (event) {
-            var cursor, found, i, j, p;
+            var a, blob, cursor, found, i, j, json, p, url;
 
             cursor = event.target.result;
             if (cursor) {
@@ -63,8 +63,24 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
 
                 cursor.continue();
             } else {
-                // I should be able to just use window.encodeURI to skip the base64 step, but Firefox can't fully download some URIs (like ones containing #)
-                $("#download-link").html('<a href="data:application/json;base64,' + window.btoa(JSON.stringify({startingSeason: season, players: players})) + '" download="rosters-' + season + '.json">Download Exported Rosters</a>');
+                json = JSON.stringify({startingSeason: season, players: players}, undefined, 2);
+                blob = new Blob([json], {type: "application/json"});
+                url = window.URL.createObjectURL(blob);
+
+                a = document.createElement("a");
+                a.download = "rosters-" + season + ".json";
+                a.href = url;
+                a.textContent = "Download Exported Rosters";
+                a.dataset.noDavis = "true";
+//                a.click(); // Works in Chrome to auto-download, but not Firefox
+
+                document.getElementById("download-link").innerHTML = ""; // Clear "Generating..."
+                document.getElementById("download-link").appendChild(a);
+
+                // Delete object, eventually
+                window.setTimeout(function () {
+                    window.URL.revokeObjectURL(url);
+                }, 60 * 1000);
             }
         };
     }

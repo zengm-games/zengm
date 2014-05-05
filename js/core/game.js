@@ -538,7 +538,7 @@ if (playerStats === undefined) {
 
                         // These use the same formulas as the skill definitions in player.skills!
                         p.compositeRating.pace = _composite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
-                        p.compositeRating.usage = _composite(rating, ['ins', 'dnk', 'fg', 'tp']);
+                        p.compositeRating.usage = Math.pow(_composite(rating, ['ins', 'dnk', 'fg', 'tp', 'spd', 'drb'], [1.5, 1, 1, 1, 0.15, 0.15]), 1.9);
                         p.compositeRating.dribbling = _composite(rating, ['drb', 'spd']);
                         p.compositeRating.passing = _composite(rating, ['drb', 'pss'], [0.4, 1]);
                         p.compositeRating.turnovers = _composite(rating, ['drb', 'pss', 'spd', 'hgt', 'ins'], [1, 1, -1, 1, 1]);  // This should not influence whether a turnover occurs, it should just be used to assign players

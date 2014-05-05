@@ -35,6 +35,7 @@ Eventually:
 CURRENT
 -------
 
+make scoring a little more uneven, so league leaders have higher PPG
 upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page
@@ -239,6 +240,7 @@ fuzz should affect potential more than other variables, when pot is different th
 MINOR FIXES
 -----------
 
+Number of years in college should depend on talent level
 DataTables - fix default sort order on column click
   text should be asc, numeric should be desc (except draft picks)
   http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable

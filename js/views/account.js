@@ -51,6 +51,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
             $.ajax({
                 type: "POST",
                 url: "http://account.basketball-gm." + g.tld + "/logout.php",
+                data: "sport=" + g.sport,
                 xhrFields: {
                     withCredentials: true
                 },

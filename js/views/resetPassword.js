@@ -31,7 +31,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
         $.ajax({
             type: "POST",
             url: "http://account.basketball-gm." + g.tld + "/reset_password.php",
-            data: {action: "check_token", token: token},
+            data: {action: "check_token", token: token, sport: g.sport},
             dataType: "json",
             xhrFields: {
                 withCredentials: true
@@ -57,7 +57,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
                         $.ajax({
                             type: "POST",
                             url: "http://account.basketball-gm." + g.tld + "/reset_password.php",
-                            data: $resetpw.serialize(),
+                            data: $resetpw.serialize() + "&sport=" + g.sport,
                             dataType: "json",
                             xhrFields: {
                                 withCredentials: true

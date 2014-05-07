@@ -24,7 +24,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
             $.ajax({
                 type: "POST",
                 url: "http://account.basketball-gm." + g.tld + "/login.php",
-                data: $login.serialize(),
+                data: $login.serialize() + "&sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {
                     withCredentials: true
@@ -32,7 +32,17 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
                 success: function (data) {
                     if (data.success) {
                         g.vm.topMenu.username(data.username);
-                        ui.realtimeUpdate([], "/account");
+
+                        // Check for participation achievement, if this is the first time logging in to this sport
+                        account.getAchievements(function (achievements) {
+                            if (achievements[0].count === 0) {
+                                account.addAchievements(["participation"], false, function () {
+                                    ui.realtimeUpdate([], "/account");
+                                });
+                            } else {
+                                ui.realtimeUpdate([], "/account");
+                            }
+                        });
                     } else {
                         document.getElementById("login-error").innerHTML = "Invalid username or password.";
                     }
@@ -62,7 +72,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
             $.ajax({
                 type: "POST",
                 url: "http://account.basketball-gm." + g.tld + "/register.php",
-                data: $register.serialize(),
+                data: $register.serialize() + "&sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {
                     withCredentials: true

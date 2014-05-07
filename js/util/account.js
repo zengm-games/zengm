@@ -66,6 +66,7 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
         $.ajax({
             type: "GET",
             url: "http://account.basketball-gm." + g.tld + "/user_info.php",
+            data: "sport=" + g.sport,
             dataType: "json",
             xhrFields: {
                 withCredentials: true
@@ -141,6 +142,7 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
             $.ajax({
                 type: "GET",
                 url: "http://account.basketball-gm." + g.tld + "/get_achievements.php",
+                data: "sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {
                     withCredentials: true
@@ -217,7 +219,7 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
         $.ajax({
             type: "POST",
             url: "http://account.basketball-gm." + g.tld + "/add_achievements.php",
-            data: {achievements: achievements},
+            data: {achievements: achievements, sport: g.sport},
             dataType: "json",
             xhrFields: {
                 withCredentials: true

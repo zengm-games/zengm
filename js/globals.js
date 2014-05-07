@@ -68,8 +68,10 @@ define(["lib/knockout"], function (ko) {
     splitUrl = window.location.hostname.split(".");
     g.tld = splitUrl[splitUrl.length - 1]; // .com or .dev TLD
 
+    g.sport = "basketball"; // For account ajax stuff
+
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "gameSimWorkers", "vm", "enableLogging", "tld", "notInDb"];
+    g.notInDb = ["dbm", "dbl", "lid", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "gameSimWorkers", "vm", "enableLogging", "tld", "sport", "notInDb"];
 
     return g;
 });

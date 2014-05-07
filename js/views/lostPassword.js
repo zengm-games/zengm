@@ -24,7 +24,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
             $.ajax({
                 type: "POST",
                 url: "http://account.basketball-gm." + g.tld + "/lost_password.php",
-                data: $lostpw.serialize(),
+                data: $lostpw.serialize() + "&sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {
                     withCredentials: true

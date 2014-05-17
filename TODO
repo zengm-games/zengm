@@ -4,6 +4,7 @@ DB CHANGES SINCE 3.3.0
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
+http://www.reddit.com/r/BasketballGM/comments/255sta/i_think_we_need_longer_dynasty_achievements/che050a?context=3
 IMPORTANT http://www.reddit.com/r/BasketballGM/comments/20i6v3/still_too_easy_to_trade_for_drafted_players/
   just drafted players are undervalued, possibly related to the following issue
 PER scaling in player.value is wrong http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
@@ -241,6 +242,7 @@ fuzz should affect potential more than other variables, when pot is different th
 MINOR FIXES
 -----------
 
+assist leaders too low
 Number of years in college should depend on talent level
 DataTables - fix default sort order on column click
   text should be asc, numeric should be desc (except draft picks)
@@ -495,6 +497,7 @@ PER
     can i have it share a transaction with writing stats in core.game?
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
   also can respond to budget changes
+  more general: have "media" reporting things like 10 worst contracts, etc
 more tests
   https://github.com/gotwarlost/istanbul
   how to run indexeddb-based tests from command line?

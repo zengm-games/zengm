@@ -4,7 +4,7 @@
   <div class="col-md-8">
     <div style="text-align: center">
       <span style="font-size: 48px"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></span><br>
-      <span style="font-size: 24px">3rd in conference</span>
+      <span style="font-size: 24px"><span data-bind="ordinal: rank"></span> in conference</span>
     </div>
 
     <div class="row">
@@ -55,36 +55,30 @@
         </div>
       </div>
       <div class="col-sm-4">
-        <h3>Standings here</h3>
+        <h3>STANDINGS HERE</h3>
+        <a data-bind="attrLeagueUrl: {href: ['standings']}">» Full Standings</a><br>
       </div>
     </div>
   </div>
   <div class="col-md-4">
-    <h2>Upcoming Games</h2>
-    <h2>Completed Games</h2>
+    <!-- ko if: showPlayoffSeries -->
+      <h3>Playoffs</h3>
+      <p>
+        <b><span data-bind="text: seriesTitle"></span></b><br>
+        <span data-bind="matchup: [0, 0]"></span><br>
+        <a data-bind="attrLeagueUrl: {href: ['playoffs']}">» Playoffs</a>
+      </p>
+    <!-- /ko -->
+    <!-- ko if: !showPlayoffSeries() -->
+      <h3>Upcoming Games</h3>
+    <!-- /ko -->
+    <h3>Completed Games</h3>
   </div>
 </div>
 
 
 <div class="row">
   <div class="col-md-3 col-sm-4 col-xs-6">
-    <h3>Playoffs</h3>
-    <p>
-      <!-- ko if: showPlayoffSeries -->
-        <b><span data-bind="text: seriesTitle"></span></b><br>
-        <span data-bind="matchup: [0, 0]"></span><br>
-      <!-- /ko -->
-      <!-- ko if: !showPlayoffSeries() -->
-        <span data-bind="ordinal: rank"></span> place in conference<br>
-        (Top 8 teams make the playoffs)<br>
-      <!-- /ko -->
-      <!-- ko if: playoffsStarted -->
-        <a data-bind="attrLeagueUrl: {href: ['playoffs']}">» Playoffs</a>
-      <!-- /ko -->
-      <!-- ko if: !playoffsStarted() -->
-        <a data-bind="attrLeagueUrl: {href: ['playoffs']}">» Playoffs Projections</a>
-      <!-- /ko -->
-    </p>
   </div>
   <div class="visible-xs clearfix"></div>
   <div class="col-md-3 col-sm-4 col-xs-6">

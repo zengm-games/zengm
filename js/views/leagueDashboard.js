@@ -295,8 +295,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
             deferred = $.Deferred();
             vars = {
-                showPlayoffSeries: false,
-                playoffsStarted: g.phase >= g.PHASE.PLAYOFFS
+                showPlayoffSeries: false
             };
 
             g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {

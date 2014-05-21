@@ -4,10 +4,17 @@ DB CHANGES SINCE 3.3.0
 DASHBOARD REDESIGN
 ------------------
 
+standings
+roster (just starters)
 Need inbox link somewhere
-Show playoffs box instead of standings if team makes the playoffs
-"3rd in conference" should show real value
-  in playoffs, change to "status" like in roster
+  just to the left of upcomign games?
+  below completed games?
+in playoffs, change to conference place text to "status" like in roster view
+check responsive
+
+changes from design
+  inbox
+  upcoming games changes to playoff series after season ends
 
 TEAM.VALUECHANGE REVAMP
 -----------------------

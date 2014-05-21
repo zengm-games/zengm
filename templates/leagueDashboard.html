@@ -6,6 +6,58 @@
       <span style="font-size: 48px"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></span><br>
       <span style="font-size: 24px">3rd in conference</span>
     </div>
+
+    <div class="row">
+      <div class="col-sm-8">
+        <div class="row">
+          <div class="col-xs-6">
+            <h3>Team Leaders</h3>
+            <p>
+              <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.pts.pid]}, text: teamLeaders.pts.name"></a>: <span data-bind="round: [teamLeaders.pts.stat, 1]"></span> pts<br>
+              <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.trb.pid]}, text: teamLeaders.trb.name"></a>: <span data-bind="round: [teamLeaders.trb.stat, 1]"></span> reb<br>
+              <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.ast.pid]}, text: teamLeaders.ast.name"></a>: <span data-bind="round: [teamLeaders.ast.stat, 1]"></span> ast<br>
+              <a data-bind="attrLeagueUrl: {href: ['roster']}">» Full Roster</a>
+            </p>
+          </div>
+          <div class="col-xs-6">
+            <h3>League Leaders</h3>
+            <p>
+              <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.pts.pid]}, text: leagueLeaders.pts.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.pts.abbrev]}, text: leagueLeaders.pts.abbrev"></a>: <span data-bind="round: [leagueLeaders.pts.stat, 1]"></span> pts<br>
+              <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.trb.pid]}, text: leagueLeaders.trb.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.trb.abbrev]}, text: leagueLeaders.trb.abbrev"></a>: <span data-bind="round: [leagueLeaders.trb.stat, 1]"></span> reb<br>
+              <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.ast.pid]}, text: leagueLeaders.ast.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.ast.abbrev]}, text: leagueLeaders.ast.abbrev"></a>: <span data-bind="round: [leagueLeaders.ast.stat, 1]"></span> ast<br>
+              <a data-bind="attrLeagueUrl: {href: ['leaders']}">» League Leaders</a><br>
+              <a data-bind="attrLeagueUrl: {href: ['player_stats']}">» Player Stats</a>
+            </p>
+          </div>
+          <div class="clearfix"></div>
+          <div class="col-xs-6">
+            <h3>Team Stats</h3>
+            <p>
+              Points: <span data-bind="round: [pts, 1]"></span> (<span data-bind="ordinal: ptsRank"></span>)<br>
+              Allowed: <span data-bind="round: [oppPts, 1]"></span> (<span data-bind="ordinal: oppPtsRank"></span>)<br>
+              Rebounds: <span data-bind="round: [trb, 1]"></span> (<span data-bind="ordinal: trbRank"></span>)<br>
+              Assists: <span data-bind="round: [ast, 1]"></span> (<span data-bind="ordinal: astRank"></span>)<br>
+              <a data-bind="attrLeagueUrl: {href: ['team_stats']}">» Team Stats</a>
+            </p>
+          </div>
+          <div class="col-xs-6">
+            <h3>Finances</h3>
+            <p>
+              Avg Attendance: <span data-bind="numberWithCommas: att"></span><br>
+              Revenue (YTD): <span data-bind="currency: [revenue, 'M']"></span><br>
+              Profit (YTD): <span data-bind="currency: [profit, 'M']"></span><br>
+              Cash: <span data-bind="currency: [cash, 'M']"></span><br>
+              Payroll: <span data-bind="currency: [payroll, 'M']"></span><br>
+              Salary Cap: <span data-bind="currency: [salaryCap, 'M']"></span><br>
+              <a data-bind="attrLeagueUrl: {href: ['league_finances']}">» League Finances</a>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <h3>Standings here</h3>
+      </div>
+    </div>
   </div>
   <div class="col-md-4">
     <h2>Upcoming Games</h2>
@@ -71,49 +123,6 @@
       <!-- /ko -->
       <a data-bind="attrLeagueUrl: {href: ['team_history']}">» Team History</a><br>
       <a data-bind="attrLeagueUrl: {href: ['history']}">» League History</a>
-    </p>
-  </div>
-  <div class="col-md-3 col-sm-4 col-xs-6">
-    <h3>Team Stats</h3>
-    <p>
-      Points: <span data-bind="round: [pts, 1]"></span> (<span data-bind="ordinal: ptsRank"></span>)<br>
-      Allowed: <span data-bind="round: [oppPts, 1]"></span> (<span data-bind="ordinal: oppPtsRank"></span>)<br>
-      Rebounds: <span data-bind="round: [trb, 1]"></span> (<span data-bind="ordinal: trbRank"></span>)<br>
-      Assists: <span data-bind="round: [ast, 1]"></span> (<span data-bind="ordinal: astRank"></span>)<br>
-      <a data-bind="attrLeagueUrl: {href: ['team_stats']}">» Team Stats</a>
-    </p>
-  </div>
-  <div class="visible-sm visible-xs clearfix"></div>
-  <div class="col-md-3 col-sm-4 col-xs-6">
-    <h3>Team Leaders</h3>
-    <p>
-      <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.pts.pid]}, text: teamLeaders.pts.name"></a>: <span data-bind="round: [teamLeaders.pts.stat, 1]"></span> pts<br>
-      <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.trb.pid]}, text: teamLeaders.trb.name"></a>: <span data-bind="round: [teamLeaders.trb.stat, 1]"></span> reb<br>
-      <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.ast.pid]}, text: teamLeaders.ast.name"></a>: <span data-bind="round: [teamLeaders.ast.stat, 1]"></span> ast<br>
-      <a data-bind="attrLeagueUrl: {href: ['roster']}">» Full Roster</a>
-    </p>
-  </div>
-  <div class="col-md-3 col-sm-4 col-xs-6">
-    <h3>League Leaders</h3>
-    <p>
-      <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.pts.pid]}, text: leagueLeaders.pts.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.pts.abbrev]}, text: leagueLeaders.pts.abbrev"></a>: <span data-bind="round: [leagueLeaders.pts.stat, 1]"></span> pts<br>
-      <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.trb.pid]}, text: leagueLeaders.trb.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.trb.abbrev]}, text: leagueLeaders.trb.abbrev"></a>: <span data-bind="round: [leagueLeaders.trb.stat, 1]"></span> reb<br>
-      <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.ast.pid]}, text: leagueLeaders.ast.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.ast.abbrev]}, text: leagueLeaders.ast.abbrev"></a>: <span data-bind="round: [leagueLeaders.ast.stat, 1]"></span> ast<br>
-      <a data-bind="attrLeagueUrl: {href: ['leaders']}">» League Leaders</a><br>
-      <a data-bind="attrLeagueUrl: {href: ['player_stats']}">» Player Stats</a>
-    </p>
-  </div>
-  <div class="visible-lg visible-md visible-xs clearfix"></div>
-  <div class="col-md-3 col-sm-4 col-xs-6">
-    <h3>Finances</h3>
-    <p>
-      Avg Attendance: <span data-bind="numberWithCommas: att"></span><br>
-      Revenue (YTD): <span data-bind="currency: [revenue, 'M']"></span><br>
-      Profit (YTD): <span data-bind="currency: [profit, 'M']"></span><br>
-      Cash: <span data-bind="currency: [cash, 'M']"></span><br>
-      Payroll: <span data-bind="currency: [payroll, 'M']"></span><br>
-      Salary Cap: <span data-bind="currency: [salaryCap, 'M']"></span><br>
-      <a data-bind="attrLeagueUrl: {href: ['league_finances']}">» League Finances</a>
     </p>
   </div>
 </div>

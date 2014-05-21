@@ -1,13 +1,20 @@
 <h1><span data-bind="text: region"></span> <span data-bind="text: name"></span> Dashboard <span data-bind="newWindow: []"></span></h1>
 
 <div class="row">
-  <div class="col-md-3 col-sm-4 col-xs-6">
-    <h3>Current Record</h3>
-    <p>
-      <span data-bind="text: won"></span>-<span data-bind="text: lost"></span><!-- ko if: !playoffsStarted() && streakLong() -->, <span data-bind="text: streakLong"></span><!-- /ko --><br>
-      <a data-bind="attrLeagueUrl: {href: ['standings']}">» Standings</a>
-    </p>
+  <div class="col-md-8">
+    <div style="text-align: center">
+      <span style="font-size: 48px"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></span><br>
+      <span style="font-size: 24px">3rd in conference</span>
+    </div>
   </div>
+  <div class="col-md-4">
+    <h2>Upcoming Games</h2>
+    <h2>Completed Games</h2>
+  </div>
+</div>
+
+
+<div class="row">
   <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Playoffs</h3>
     <p>
@@ -107,30 +114,6 @@
       Payroll: <span data-bind="currency: [payroll, 'M']"></span><br>
       Salary Cap: <span data-bind="currency: [salaryCap, 'M']"></span><br>
       <a data-bind="attrLeagueUrl: {href: ['league_finances']}">» League Finances</a>
-    </p>
-  </div>
-  <div class="visible-sm clearfix"></div>
-  <div class="col-md-3 col-sm-4 col-xs-6">
-    <h3>Top Free Agents</h3>
-    <p>
-      <span data-bind="visible: freeAgents().length === 0">None.<br></span>
-      <!-- ko foreach: freeAgents -->
-        <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a>: <span data-bind="text: age"></span> yo, <span data-bind="text: ovr"></span> ovr, <span data-bind="text: pot"></span> pot</span><br>
-      <!-- /ko -->
-      (You have <span data-bind="text: numRosterSpots"></span> open roster spots)<br>
-      <a data-bind="attrLeagueUrl: {href: ['free_agents']}">» Free Agents</a>
-    </p>
-  </div>
-  <div class="visible-xs clearfix"></div>
-  <div class="col-md-3 col-sm-4 col-xs-6">
-    <h3>Expiring Contracts</h3>
-    <p>
-      <span data-bind="visible: expiring().length === 0">None.<br></span>
-      <!-- ko foreach: expiring -->
-        <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a>: <span data-bind="text: age"></span> yo, <span data-bind="currency: [contractAmount, 'M']"></span><br>
-        <span style="margin-left: 2em"><span data-bind="round: [pts, 1]"></span> pts, <span data-bind="text: ovr"></span> ovr, <span data-bind="text: pot"></span> pot</span><br>
-      <!-- /ko -->
-      <a data-bind="attrLeagueUrl: {href: ['roster']}">» Full Roster</a>
     </p>
   </div>
 </div>

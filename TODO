@@ -1,6 +1,14 @@
 DB CHANGES SINCE 3.3.0
 ----------------------
 
+DASHBOARD REDESIGN
+------------------
+
+Need inbox link somewhere
+Show playoffs box instead of standings if team makes the playoffs
+"3rd in conference" should show real value
+  in playoffs, change to "status" like in roster
+
 TEAM.VALUECHANGE REVAMP
 -----------------------
 

@@ -385,18 +385,6 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                         } else if (tsa.streak < 0) {
                             ft.streak = "Lost " + Math.abs(tsa.streak);
                         }
-                    } else if (options.seasonAttrs[j] === "streakLong") {  // For dashboard
-                        if (tsa.streak === 0) {
-                            ft.streakLong = null;
-                        } else if (tsa.streak === 1) {
-                            ft.streakLong = "won last game";
-                        } else if (tsa.streak > 1) {
-                            ft.streakLong = "won last " + tsa.streak + " games";
-                        } else if (tsa.streak === -1) {
-                            ft.streakLong = "lost last game";
-                        } else if (tsa.streak < -1) {
-                            ft.streakLong = "lost last " + Math.abs(tsa.streak) + " games";
-                        }
                     } else {
                         ft[options.seasonAttrs[j]] = tsa[options.seasonAttrs[j]];
                     }

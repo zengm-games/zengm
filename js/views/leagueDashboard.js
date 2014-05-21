@@ -100,7 +100,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
             stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
             team.filter({
                 attrs: ["tid", "cid"],
-                seasonAttrs: ["won", "lost", "winp", "streakLong", "att", "revenue", "profit"],
+                seasonAttrs: ["won", "lost", "winp", "att", "revenue", "profit"],
                 stats: stats,
                 season: g.season,
                 sortBy: ["winp", "-lost", "won"]
@@ -118,7 +118,6 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                             vars.trb = teams[i].trb;
                             vars.ast = teams[i].ast;
 
-                            vars.streakLong = teams[i].streakLong;
                             vars.att = teams[i].att;
                             vars.revenue = teams[i].revenue;
                             vars.profit = teams[i].profit;
@@ -283,47 +282,6 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                         };
                     }
                 }
-
-                // Expiring contracts
-                userPlayers.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
-                vars.expiring = [];
-                for (i = 0; i < userPlayers.length; i++) {
-                    // Show contracts expiring this year, or next year if we're already in free agency
-                    if (userPlayers[i].contract.exp === g.season || (g.phase >= g.PHASE.RESIGN_PLAYERS && userPlayers[i].contract.exp === g.season + 1)) {
-                        vars.expiring.push({
-                            pid: userPlayers[i].pid,
-                            name: userPlayers[i].name,
-                            age: userPlayers[i].age,
-                            pts: userPlayers[i].stats.pts,
-                            contractAmount: userPlayers[i].contract.amount,
-                            ovr: userPlayers[i].ratings.ovr,
-                            pot: userPlayers[i].ratings.pot
-                        });
-                    }
-                }
-
-                // Free agents
-                freeAgents = _.filter(players, function (p) { return p.tid === g.PLAYER.FREE_AGENT; });
-                freeAgents.sort(function (a, b) {  return (b.ratings.ovr + b.ratings.pot) - (a.ratings.ovr + a.ratings.pot); });
-                vars.freeAgents = [];
-                if (freeAgents.length > 0) {
-                    i = 0;
-                    while (true) {
-                        vars.freeAgents.push({
-                            pid: freeAgents[i].pid,
-                            name: freeAgents[i].name,
-                            age: freeAgents[i].age,
-                            ovr: freeAgents[i].ratings.ovr,
-                            pot: freeAgents[i].ratings.pot
-                        });
-
-                        i += 1;
-                        if (i === 3 || i === freeAgents.length) {
-                            break;
-                        }
-                    }
-                }
-                vars.numRosterSpots = 15 - userPlayers.length;
 
                 deferred.resolve(vars);
             };

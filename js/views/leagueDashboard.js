@@ -55,6 +55,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                 vars.cash = userTeamSeason.cash / 1000;  // [millions of dollars]
                 vars.salaryCap = g.salaryCap / 1000;  // [millions of dollars]
                 vars.season = g.season;
+                vars.playoffRoundsWon = userTeamSeason.playoffRoundsWon;
 
                 vars.recentHistory = [];
                 // 3 most recent years

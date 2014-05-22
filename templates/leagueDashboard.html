@@ -4,7 +4,26 @@
   <div class="col-md-8">
     <div style="text-align: center">
       <span style="font-size: 48px"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></span><br>
-      <span style="font-size: 24px"><span data-bind="ordinal: rank"></span> in conference</span>
+      <span style="font-size: 24px">
+        <!-- ko if: playoffRoundsWon() < 0 -->
+          <span data-bind="ordinal: rank"></span> in conference
+        <!-- /ko -->
+        <!-- ko if: playoffRoundsWon() === 0 -->
+          <span>Made playoffs</span>
+        <!-- /ko -->
+        <!-- ko if: playoffRoundsWon() === 1 -->
+          <span>Made second round</span>
+        <!-- /ko -->
+        <!-- ko if: playoffRoundsWon() === 2 -->
+          <span>Made conference finals</span>
+        <!-- /ko -->
+        <!-- ko if: playoffRoundsWon() === 3 -->
+          <span>Conference champs</span>
+        <!-- /ko -->
+        <!-- ko if: playoffRoundsWon() === 4 -->
+          <span>League champs</span>
+        <!-- /ko -->
+      </span>
     </div>
 
     <div class="row">

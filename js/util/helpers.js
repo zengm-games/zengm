@@ -709,6 +709,11 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         };
     }
 
+    // Calculate the number of games that team is behind team0
+    function gb(team0, team) {
+        return ((team0.won - team0.lost) - (team.won - team.lost)) / 2;
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -735,6 +740,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         draftAbbrev: draftAbbrev,
         pickDesc: pickDesc,
         ordinal: ordinal,
-        gameLogList: gameLogList
+        gameLogList: gameLogList,
+        gb: gb
     };
 });

@@ -337,13 +337,58 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
         }
     }
 
+    function updateStandings(inputs, updateEvents, vm) {
+        var deferred;
+
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
+            deferred = $.Deferred();
+
+            team.filter({
+                attrs: ["tid", "cid", "abbrev", "region"],
+                seasonAttrs: ["won", "lost"],
+                season: g.season,
+                sortBy: ["winp", "-lost", "won"]
+            }, function (teams) {
+                var cid, confTeams, i, k, l;
+
+                // Find user's conference
+                for (i = 0; i < teams.length; i++) {
+                    if (teams[i].tid === g.userTid) {
+                        cid = teams[i].cid;
+                        break;
+                    }
+                }
+
+                confTeams = [];
+                l = 0;
+                for (k = 0; k < teams.length; k++) {
+                    if (cid === teams[k].cid) {
+                        confTeams.push(helpers.deepCopy(teams[k]));
+                        confTeams[l].rank = l + 1;
+                        if (l === 0) {
+                            confTeams[l].gb = 0;
+                        } else {
+                            confTeams[l].gb = helpers.gb(confTeams[0], confTeams[l]);
+                        }
+                        l += 1;
+                    }
+                }
+
+                deferred.resolve({
+                    confTeams: confTeams
+                });
+            });
+            return deferred.promise();
+        }
+    }
+
     function uiFirst() {
         ui.title("Dashboard");
     }
 
     return bbgmView.init({
         id: "leagueDashboard",
-        runBefore: [updateInbox, updateTeam, updatePayroll, updateTeams, updateGames, updateSchedule, updatePlayers, updatePlayoffs],
+        runBefore: [updateInbox, updateTeam, updatePayroll, updateTeams, updateGames, updateSchedule, updatePlayers, updatePlayoffs, updateStandings],
         uiFirst: uiFirst
     });
 });

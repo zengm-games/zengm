@@ -7,11 +7,6 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
 
     var mapping;
 
-    // Calculate the number of games that team is behind team0
-    function gb(team0, team) {
-        return ((team0.won - team0.lost) - (team.won - team.lost)) / 2;
-    }
-
     function get(req) {
         return {
             season: helpers.validateSeason(req.params.season)
@@ -59,7 +54,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
                 season: inputs.season,
                 sortBy: ["winp", "-lost", "won"]
             }, function (teams) {
-                var confs, confRanks, confTeams, data, divTeams, i, j, k, l, lastTenLost, lastTenWon;
+                var confs, confRanks, confTeams, divTeams, i, j, k, l;
 
                 confs = [];
                 for (i = 0; i < g.confs.length; i++) {
@@ -74,14 +69,13 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
                             if (l === 0) {
                                 confTeams[l].gb = 0;
                             } else {
-                                confTeams[l].gb = gb(confTeams[0], confTeams[l]);
+                                confTeams[l].gb = helpers.gb(confTeams[0], confTeams[l]);
                             }
                             l += 1;
                         }
                     }
 
                     confs.push({name: g.confs[i].name, divs: [], teams: confTeams});
-console.log(confRanks);
 
                     for (j = 0; j < g.divs.length; j++) {
                         if (g.divs[j].cid === g.confs[i].cid) {
@@ -93,7 +87,7 @@ console.log(confRanks);
                                     if (l === 0) {
                                         divTeams[l].gb = 0;
                                     } else {
-                                        divTeams[l].gb = gb(divTeams[0], divTeams[l]);
+                                        divTeams[l].gb = helpers.gb(divTeams[0], divTeams[l]);
                                     }
                                     divTeams[l].confRank = confRanks[divTeams[l].tid];
                                     l += 1;

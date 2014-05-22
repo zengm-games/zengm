@@ -71,11 +71,30 @@
               <a data-bind="attrLeagueUrl: {href: ['league_finances']}">» League Finances</a>
             </p>
           </div>
+          <div class="clearfix"></div>
+          <div class="col-xs-6">
+            <h3>Inbox</h3>
+            <table class="table table-bordered table-condensed" id="messages">
+              <tbody data-bind="foreach: messages">
+                  <tr data-bind="css: {unread: !read()}"><td class="year"><a data-bind="text: year, attrLeagueUrl: {href: ['message', mid]}"></td><td class="from"><a data-bind="text: from, attrLeagueUrl: {href: ['message', mid]}"></a></td></tr>
+              </tbody>
+            </table>
+            <p>
+              <a data-bind="attrLeagueUrl: {href: ['inbox']}">» All Messages</a>
+            </p>
+          </div>
         </div>
       </div>
       <div class="col-sm-4">
-        <h3>STANDINGS HERE</h3>
-        <a data-bind="attrLeagueUrl: {href: ['standings']}">» Full Standings</a><br>
+        <table class="table table-striped table-bordered table-condensed">
+          <thead>
+            <tr><th width="100%">Team</th><th align="right">GB</th></tr>
+          </thead>
+          <tbody data-bind="foreach: confTeams">
+            <tr data-bind="attr: {class: $index() === 7 ? 'separator' : ''}"><td><span data-bind="text: rank"></span>. <a data-bind="attrLeagueUrl: {href: ['roster', abbrev]}, text: region"></a></td><td align="right" data-bind="text: gb"></td></tr>
+          </tbody>
+        </table>
+        <a data-bind="attrLeagueUrl: {href: ['standings']}">» League Standings</a><br>
       </div>
     </div>
   </div>
@@ -100,17 +119,6 @@
   <div class="col-md-3 col-sm-4 col-xs-6">
   </div>
   <div class="visible-xs clearfix"></div>
-  <div class="col-md-3 col-sm-4 col-xs-6">
-    <h3>Inbox</h3>
-    <table class="table table-bordered table-condensed" id="messages">
-      <tbody data-bind="foreach: messages">
-          <tr data-bind="css: {unread: !read()}"><td class="year"><a data-bind="text: year, attrLeagueUrl: {href: ['message', mid]}"></td><td class="from"><a data-bind="text: from, attrLeagueUrl: {href: ['message', mid]}"></a></td></tr>
-      </tbody>
-    </table>
-    <p>
-      <a data-bind="attrLeagueUrl: {href: ['inbox']}">» All Messages</a>
-    </p>
-  </div>
   <div class="visible-sm clearfix"></div>
   <div class="col-md-3 col-sm-4 col-xs-6">
     <h3>Recent Games</h3>

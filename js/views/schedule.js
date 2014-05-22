@@ -2,7 +2,7 @@
  * @name views.schedule
  * @namespace Show current schedule for user's team.
  */
-define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/gameLog"], function (db, g, ui, season, $, ko, bbgmView, helpers, viewHelpers, gameLog) {
+define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, season, $, ko, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;

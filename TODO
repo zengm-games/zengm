@@ -4,16 +4,15 @@ DB CHANGES SINCE 3.3.0
 DASHBOARD REDESIGN
 ------------------
 
-standings
 roster (just starters)
-Need inbox link somewhere
-  just to the left of upcomign games?
-  below completed games?
+schedule
 check responsive
+  on sm, show completed and upcoming in adjacent columns
 
 changes from design
   inbox
   upcoming games changes to playoff series after season ends
+  standings start higher
 
 TEAM.VALUECHANGE REVAMP
 -----------------------

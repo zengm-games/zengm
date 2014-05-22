@@ -1,7 +1,7 @@
 <h1><span data-bind="text: region"></span> <span data-bind="text: name"></span> Dashboard <span data-bind="newWindow: []"></span></h1>
 
 <div class="row">
-  <div class="col-md-8">
+  <div class="col-md-5 col-sm-8">
     <div style="text-align: center">
       <span style="font-size: 48px"><span data-bind="text: won"></span>-<span data-bind="text: lost"></span></span><br>
       <span style="font-size: 24px">
@@ -27,77 +27,68 @@
     </div>
 
     <div class="row">
-      <div class="col-sm-8">
-        <div class="row">
-          <div class="col-xs-6">
-            <h3>Team Leaders</h3>
-            <p>
-              <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.pts.pid]}, text: teamLeaders.pts.name"></a>: <span data-bind="round: [teamLeaders.pts.stat, 1]"></span> pts<br>
-              <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.trb.pid]}, text: teamLeaders.trb.name"></a>: <span data-bind="round: [teamLeaders.trb.stat, 1]"></span> reb<br>
-              <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.ast.pid]}, text: teamLeaders.ast.name"></a>: <span data-bind="round: [teamLeaders.ast.stat, 1]"></span> ast<br>
-              <a data-bind="attrLeagueUrl: {href: ['roster']}">» Full Roster</a>
-            </p>
-          </div>
-          <div class="col-xs-6">
-            <h3>League Leaders</h3>
-            <p>
-              <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.pts.pid]}, text: leagueLeaders.pts.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.pts.abbrev]}, text: leagueLeaders.pts.abbrev"></a>: <span data-bind="round: [leagueLeaders.pts.stat, 1]"></span> pts<br>
-              <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.trb.pid]}, text: leagueLeaders.trb.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.trb.abbrev]}, text: leagueLeaders.trb.abbrev"></a>: <span data-bind="round: [leagueLeaders.trb.stat, 1]"></span> reb<br>
-              <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.ast.pid]}, text: leagueLeaders.ast.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.ast.abbrev]}, text: leagueLeaders.ast.abbrev"></a>: <span data-bind="round: [leagueLeaders.ast.stat, 1]"></span> ast<br>
-              <a data-bind="attrLeagueUrl: {href: ['leaders']}">» League Leaders</a><br>
-              <a data-bind="attrLeagueUrl: {href: ['player_stats']}">» Player Stats</a>
-            </p>
-          </div>
-          <div class="clearfix"></div>
-          <div class="col-xs-6">
-            <h3>Team Stats</h3>
-            <p>
-              Points: <span data-bind="round: [pts, 1]"></span> (<span data-bind="ordinal: ptsRank"></span>)<br>
-              Allowed: <span data-bind="round: [oppPts, 1]"></span> (<span data-bind="ordinal: oppPtsRank"></span>)<br>
-              Rebounds: <span data-bind="round: [trb, 1]"></span> (<span data-bind="ordinal: trbRank"></span>)<br>
-              Assists: <span data-bind="round: [ast, 1]"></span> (<span data-bind="ordinal: astRank"></span>)<br>
-              <a data-bind="attrLeagueUrl: {href: ['team_stats']}">» Team Stats</a>
-            </p>
-          </div>
-          <div class="col-xs-6">
-            <h3>Finances</h3>
-            <p>
-              Avg Attendance: <span data-bind="numberWithCommas: att"></span><br>
-              Revenue (YTD): <span data-bind="currency: [revenue, 'M']"></span><br>
-              Profit (YTD): <span data-bind="currency: [profit, 'M']"></span><br>
-              Cash: <span data-bind="currency: [cash, 'M']"></span><br>
-              Payroll: <span data-bind="currency: [payroll, 'M']"></span><br>
-              Salary Cap: <span data-bind="currency: [salaryCap, 'M']"></span><br>
-              <a data-bind="attrLeagueUrl: {href: ['league_finances']}">» League Finances</a>
-            </p>
-          </div>
-          <div class="clearfix"></div>
-          <div class="col-xs-6">
-            <h3>Inbox</h3>
-            <table class="table table-bordered table-condensed" id="messages">
-              <tbody data-bind="foreach: messages">
-                  <tr data-bind="css: {unread: !read()}"><td class="year"><a data-bind="text: year, attrLeagueUrl: {href: ['message', mid]}"></td><td class="from"><a data-bind="text: from, attrLeagueUrl: {href: ['message', mid]}"></a></td></tr>
-              </tbody>
-            </table>
-            <p>
-              <a data-bind="attrLeagueUrl: {href: ['inbox']}">» All Messages</a>
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <table class="table table-striped table-bordered table-condensed">
-          <thead>
-            <tr><th width="100%">Team</th><th align="right">GB</th></tr>
-          </thead>
-          <tbody data-bind="foreach: confTeams">
-            <tr data-bind="attr: {class: $index() === 7 ? 'separator' : ''}"><td><span data-bind="text: rank"></span>. <a data-bind="attrLeagueUrl: {href: ['roster', abbrev]}, text: region"></a></td><td align="right" data-bind="text: gb"></td></tr>
+      <div class="col-xs-6">
+        <h3>Team Leaders</h3>
+        <p>
+          <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.pts.pid]}, text: teamLeaders.pts.name"></a>: <span data-bind="round: [teamLeaders.pts.stat, 1]"></span> pts<br>
+          <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.trb.pid]}, text: teamLeaders.trb.name"></a>: <span data-bind="round: [teamLeaders.trb.stat, 1]"></span> reb<br>
+          <a data-bind="attrLeagueUrl: {href: ['player', teamLeaders.ast.pid]}, text: teamLeaders.ast.name"></a>: <span data-bind="round: [teamLeaders.ast.stat, 1]"></span> ast<br>
+          <a data-bind="attrLeagueUrl: {href: ['roster']}">» Full Roster</a>
+        </p>
+        <h3>League Leaders</h3>
+        <p>
+          <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.pts.pid]}, text: leagueLeaders.pts.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.pts.abbrev]}, text: leagueLeaders.pts.abbrev"></a>: <span data-bind="round: [leagueLeaders.pts.stat, 1]"></span> pts<br>
+          <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.trb.pid]}, text: leagueLeaders.trb.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.trb.abbrev]}, text: leagueLeaders.trb.abbrev"></a>: <span data-bind="round: [leagueLeaders.trb.stat, 1]"></span> reb<br>
+          <a data-bind="attrLeagueUrl: {href: ['player', leagueLeaders.ast.pid]}, text: leagueLeaders.ast.name"></a>, <a data-bind="attrLeagueUrl: {href: ['roster', leagueLeaders.ast.abbrev]}, text: leagueLeaders.ast.abbrev"></a>: <span data-bind="round: [leagueLeaders.ast.stat, 1]"></span> ast<br>
+          <a data-bind="attrLeagueUrl: {href: ['leaders']}">» League Leaders</a><br>
+          <a data-bind="attrLeagueUrl: {href: ['player_stats']}">» Player Stats</a>
+        </p>
+        <h3>Inbox</h3>
+        <table class="table table-bordered table-condensed" id="messages">
+          <tbody data-bind="foreach: messages">
+              <tr data-bind="css: {unread: !read()}"><td class="year"><a data-bind="text: year, attrLeagueUrl: {href: ['message', mid]}"></td><td class="from"><a data-bind="text: from, attrLeagueUrl: {href: ['message', mid]}"></a></td></tr>
           </tbody>
         </table>
-        <a data-bind="attrLeagueUrl: {href: ['standings']}">» League Standings</a><br>
+        <p>
+          <a data-bind="attrLeagueUrl: {href: ['inbox']}">» All Messages</a>
+        </p>
+      </div>
+      <div class="col-xs-6">
+        <h3>Team Stats</h3>
+        <p>
+          Points: <span data-bind="round: [pts, 1]"></span> (<span data-bind="ordinal: ptsRank"></span>)<br>
+          Allowed: <span data-bind="round: [oppPts, 1]"></span> (<span data-bind="ordinal: oppPtsRank"></span>)<br>
+          Rebounds: <span data-bind="round: [trb, 1]"></span> (<span data-bind="ordinal: trbRank"></span>)<br>
+          Assists: <span data-bind="round: [ast, 1]"></span> (<span data-bind="ordinal: astRank"></span>)<br>
+          <a data-bind="attrLeagueUrl: {href: ['team_stats']}">» Team Stats</a>
+        </p>
+        <h3>Finances</h3>
+        <p>
+          Avg Attendance: <span data-bind="numberWithCommas: att"></span><br>
+          Revenue (YTD): <span data-bind="currency: [revenue, 'M']"></span><br>
+          Profit (YTD): <span data-bind="currency: [profit, 'M']"></span><br>
+          Cash: <span data-bind="currency: [cash, 'M']"></span><br>
+          Payroll: <span data-bind="currency: [payroll, 'M']"></span><br>
+          Salary Cap: <span data-bind="currency: [salaryCap, 'M']"></span><br>
+          <a data-bind="attrLeagueUrl: {href: ['team_finances']}">» Team Finances</a><br>
+          <a data-bind="attrLeagueUrl: {href: ['league_finances']}">» League Finances</a>
+        </p>
       </div>
     </div>
   </div>
+  <div class="col-md-3 col-sm-4">
+    <h3></h3>
+    <table class="table table-striped table-bordered table-condensed">
+      <thead>
+        <tr><th width="100%">Team</th><th align="right">GB</th></tr>
+      </thead>
+      <tbody data-bind="foreach: confTeams">
+        <tr data-bind="attr: {class: $index() === 7 ? 'separator' : ''}"><td><span data-bind="text: rank"></span>. <a data-bind="attrLeagueUrl: {href: ['roster', abbrev]}, text: region"></a></td><td align="right" data-bind="text: gb"></td></tr>
+      </tbody>
+    </table>
+    <a data-bind="attrLeagueUrl: {href: ['standings']}">» League Standings</a><br>
+  </div>
+  <div class="clearfix visible-sm"></div>
   <div class="col-md-4">
     <!-- ko if: showPlayoffSeries -->
       <h3>Playoffs</h3>

@@ -4,13 +4,12 @@ DB CHANGES SINCE 3.3.0
 DASHBOARD REDESIGN
 ------------------
 
-roster (just starters)
 schedule
   option 1
     move formatGame to helpers.formatCompletedGame
     copy/paste from schedule.js
   option 2
-    share update functions completely. is it possible? maybe in views/components
+    share update functions completely. is it possible? maybe in views/components. but how to limit number of games returned?
 check responsive
   on sm, show completed and upcoming in adjacent columns
 

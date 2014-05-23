@@ -287,7 +287,6 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                 // Roster
                 // Find starting 5
                 vars.starters = userPlayers.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; }).splice(5);
-console.log(vars.starters[0]);
 
                 deferred.resolve(vars);
             };

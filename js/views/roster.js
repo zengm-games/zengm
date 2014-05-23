@@ -253,7 +253,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                                 fuzz: true,
                                 numGamesRemaining: numGamesRemaining
                             });
-                            players.sort(function (a, b) {  return a.rosterOrder - b.rosterOrder; });
+                            players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
 
                             for (i = 0; i < players.length; i++) {
                                 if (inputs.tid === g.userTid) {

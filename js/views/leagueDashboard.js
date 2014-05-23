@@ -239,13 +239,12 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
             vars = {};
 
             g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
-                var i, freeAgents, leagueLeaders, players, stats, userPlayers;
+                var i, players, stats, userPlayers;
 
-                stats = ["pts", "trb", "ast"];  // This is also used later to find team/league leaders for these player stats
                 players = player.filter(event.target.result, {
-                    attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder"],
-                    ratings: ["ovr", "pot"],
-                    stats: stats,
+                    attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch", "pos", "yearsWithTeam"],
+                    ratings: ["ovr", "pot", "dovr", "dpot", "skills"],
+                    stats: ["gp", "min", "pts", "trb", "ast", "per"],
                     season: g.season,
                     showNoStats: true,
                     showRookies: true,
@@ -254,6 +253,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
 
                 // League leaders
                 vars.leagueLeaders = {};
+                stats = ["pts", "trb", "ast"]; // Categories for leaders
                 for (i = 0; i < stats.length; i++) {
                     players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
                     vars.leagueLeaders[stats[i]] = {
@@ -283,6 +283,11 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                         };
                     }
                 }
+
+                // Roster
+                // Find starting 5
+                vars.starters = userPlayers.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; }).splice(5);
+console.log(vars.starters[0]);
 
                 deferred.resolve(vars);
             };

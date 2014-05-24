@@ -5,11 +5,7 @@ DASHBOARD REDESIGN
 ------------------
 
 schedule
-  option 1
-    move formatGame to helpers.formatCompletedGame
-    copy/paste from schedule.js
-  option 2
-    share update functions completely. is it possible? maybe in views/components. but how to limit number of games returned?
+  use cursor to smart search
 check responsive
   on sm, show completed and upcoming in adjacent columns
 

@@ -5,6 +5,13 @@
 define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, player, season, team, $, ko, mapping, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
+    function InitViewModel() {
+        this.abbrev = g.teamAbbrevsCache[g.userTid];
+        this.season = g.season;
+        this.completed = ko.observableArray([]);
+        this.upcoming = ko.observableArray([]);
+    }
+
     function updateInbox(inputs, updateEvents) {
         var deferred, vars;
 
@@ -56,17 +63,6 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                 vars.salaryCap = g.salaryCap / 1000;  // [millions of dollars]
                 vars.season = g.season;
                 vars.playoffRoundsWon = userTeamSeason.playoffRoundsWon;
-
-                vars.recentHistory = [];
-                // 3 most recent years
-                for (i = userTeam.seasons.length - 2; i > userTeam.seasons.length - 5 && i >= 0; i--) {
-                    vars.recentHistory.push({
-                        season: userTeam.seasons[i].season,
-                        won: userTeam.seasons[i].won,
-                        lost: userTeam.seasons[i].lost,
-                        playoffRoundsWon: userTeam.seasons[i].playoffRoundsWon
-                    });
-                }
 
                 deferred.resolve(vars);
             };
@@ -146,87 +142,101 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
         }
     }
 
-    function updateGames(inputs, updateEvents) {
-        var deferred, vars;
+    function updateGames(inputs, updateEvents, vm) {
+        var deferred, numShowCompleted, vars;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
             deferred = $.Deferred();
             vars = {};
 
-            g.dbl.transaction("games").objectStore("games").index("season").getAll(g.season).onsuccess = function (event) {
-                var games, i, overtime;
+            numShowCompleted = 4;
+            vars.completed = [];
+            // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
+            g.dbl.transaction("games").objectStore("games").index("season").openCursor(g.season, "prev").onsuccess = function (event) {
+                var cursor, game, i, overtime;
 
-                games = event.target.result;
-                games.reverse();  // Look through most recent games first
+                cursor = event.target.result;
+                if (cursor && vars.completed.length < numShowCompleted) {
+                    game = cursor.value;
 
-                vars.recentGames = [];
-                for (i = 0; i < games.length; i++) {
-                    if (games[i].overtimes === 1) {
+                    if (game.overtimes === 1) {
                         overtime = " (OT)";
-                    } else if (games[i].overtimes > 1) {
-                        overtime = " (" + games[i].overtimes + "OT)";
+                    } else if (game.overtimes > 1) {
+                        overtime = " (" + game.overtimes + "OT)";
                     } else {
                         overtime = "";
                     }
 
                     // Check tid
-                    if (games[i].teams[0].tid === g.userTid) {
-                        vars.recentGames.push({
-                            gid: games[i].gid,
-                            home: true,
-                            pts: games[i].teams[0].pts,
-                            oppPts: games[i].teams[1].pts,
-                            oppAbbrev: helpers.getAbbrev(games[i].teams[1].tid),
-                            won: games[i].teams[0].pts > games[i].teams[1].pts,
+                    if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
+                        vars.completed.push({
+                            gid: game.gid,
                             overtime: overtime
                         });
-                    } else if (games[i].teams[1].tid === g.userTid) {
-                        vars.recentGames.push({
-                            gid: games[i].gid,
-                            home: false,
-                            pts: games[i].teams[1].pts,
-                            oppPts: games[i].teams[0].pts,
-                            oppAbbrev: helpers.getAbbrev(games[i].teams[0].tid),
-                            won: games[i].teams[1].pts > games[i].teams[0].pts,
-                            overtime: overtime
-                        });
+
+                        i = vars.completed.length - 1;
+                        if (game.teams[0].tid === g.userTid) {
+                            vars.completed[i].home = true;
+                            vars.completed[i].pts = game.teams[0].pts;
+                            vars.completed[i].oppPts = game.teams[1].pts;
+                            vars.completed[i].oppTid = game.teams[1].tid;
+                            vars.completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
+                            vars.completed[i].won = game.teams[0].pts > game.teams[1].pts;
+                        } else if (game.teams[1].tid === g.userTid) {
+                            vars.completed[i].home = false;
+                            vars.completed[i].pts = game.teams[1].pts;
+                            vars.completed[i].oppPts = game.teams[0].pts;
+                            vars.completed[i].oppTid = game.teams[0].tid;
+                            vars.completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
+                            vars.completed[i].won = game.teams[1].pts > game.teams[0].pts;
+                        }
+
+                        vars.completed[i] = helpers.formatCompletedGame(vars.completed[i]);
                     }
 
-                    if (vars.recentGames.length === 3) {
-                        break;
-                    }
+                    cursor.continue();
+                } else {
+                    vm.completed(vars.completed);
+                    deferred.resolve();
                 }
-
-                deferred.resolve(vars);
             };
             return deferred.promise();
         }
     }
 
-    function updateSchedule(inputs, updateEvents) {
+    function updateSchedule(inputs, updateEvents, vm) {
         var deferred, vars;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
             deferred = $.Deferred();
             vars = {};
 
-            season.getSchedule(null, 0, function (schedule) {
-                var i;
+            season.getSchedule(null, 0, function (schedule_) {
+                var game, games, i, numShowUpcoming, row, team0, team1;
 
-                vars.nextGameAbbrev = "";
-                vars.nextGameHome = false;
-                for (i = 0; i < schedule.length; i++) {
-                    if (schedule[i].homeTid === g.userTid) {
-                        vars.nextGameAbbrev = g.teamAbbrevsCache[schedule[i].awayTid];
-                        vars.nextGameHome = true;
-                        break;
-                    } else if (schedule[i].awayTid === g.userTid) {
-                        vars.nextGameAbbrev = g.teamAbbrevsCache[schedule[i].homeTid];
+                games = [];
+                numShowUpcoming = 3;
+                for (i = 0; i < schedule_.length; i++) {
+                    game = schedule_[i];
+                    if (g.userTid === game.homeTid || g.userTid === game.awayTid) {
+                        team0 = {tid: game.homeTid, abbrev: g.teamAbbrevsCache[game.homeTid], region: g.teamRegionsCache[game.homeTid], name: g.teamNamesCache[game.homeTid]};
+                        team1 = {tid: game.awayTid, abbrev: g.teamAbbrevsCache[game.awayTid], region: g.teamRegionsCache[game.awayTid], name: g.teamNamesCache[game.awayTid]};
+                        if (g.userTid === game.homeTid) {
+                            row = {teams: [team1, team0], vsat: "at"};
+                        } else {
+                            row = {teams: [team1, team0], vsat: "at"};
+                        }
+                        games.push(row);
+                    }
+
+                    if (games.length >= numShowUpcoming) {
                         break;
                     }
                 }
-                deferred.resolve(vars);
+                vm.upcoming(games);
+                deferred.resolve();
             });
+
             return deferred.promise();
         }
     }
@@ -392,6 +402,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
 
     return bbgmView.init({
         id: "leagueDashboard",
+        InitViewModel: InitViewModel,
         runBefore: [updateInbox, updateTeam, updatePayroll, updateTeams, updateGames, updateSchedule, updatePlayers, updatePlayoffs, updateStandings],
         uiFirst: uiFirst
     });

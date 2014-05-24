@@ -55,32 +55,6 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
         }
     }
 
-    function formatGame(game) {
-        var output, team0, team1;
-
-        // team0 and team1 are different than they are above! Here it refers to user and opponent, not home and away
-        team0 = {tid: g.userTid, abbrev: g.teamAbbrevsCache[g.userTid], region: g.teamRegionsCache[g.userTid], name: g.teamNamesCache[g.userTid], pts: game.pts};
-        team1 = {tid: game.oppTid, abbrev: g.teamAbbrevsCache[game.oppTid], region: g.teamRegionsCache[game.oppTid], name: g.teamNamesCache[game.oppTid], pts: game.oppPts};
-
-        output = {
-            gid: game.gid,
-            overtime: game.overtime,
-            won: game.won
-        };
-        if (game.home) {
-            output.teams = [team1, team0];
-        } else {
-            output.teams = [team0, team1];
-        }
-        if (game.won) {
-            output.score = team0.pts + "-" + team1.pts;
-        } else {
-            output.score = team1.pts + "-" + team0.pts;
-        }
-
-        return output;
-    }
-
     // Based on views.gameLog.updateGamesList
     function updateCompleted(inputs, updateEvents, vm) {
         var deferred;
@@ -95,7 +69,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
                 var i;
 
                 for (i = 0; i < games.length; i++) {
-                    games[i] = formatGame(games[i]);
+                    games[i] = helpers.formatCompletedGame(games[i]);
                 }
 
                 vm.completed.games(games);
@@ -106,10 +80,10 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
         }
         if (updateEvents.indexOf("gameSim") >= 0) {
             // Partial update of only new games
-            helpers.gameLogList(inputs.abbrev, inputs.season, -1, vm.completed.games(), function (games) {
+            helpers.gameLogList(g.teamAbbrevsCache[g.userTid], g.season, -1, vm.completed.games(), function (games) {
                 var i;
                 for (i = games.length - 1; i >= 0; i--) {
-                    games[i] = formatGame(games[i]);
+                    games[i] = helpers.formatCompletedGame(games[i]);
                     vm.completed.games.unshift(games[i]);
                 }
                 deferred.resolve();

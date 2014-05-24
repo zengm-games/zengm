@@ -709,6 +709,33 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         };
     }
 
+    function formatCompletedGame(game) {
+        var output, team0, team1;
+
+        // team0 and team1 are different than they are above! Here it refers to user and opponent, not home and away
+        team0 = {tid: g.userTid, abbrev: g.teamAbbrevsCache[g.userTid], region: g.teamRegionsCache[g.userTid], name: g.teamNamesCache[g.userTid], pts: game.pts};
+        team1 = {tid: game.oppTid, abbrev: g.teamAbbrevsCache[game.oppTid], region: g.teamRegionsCache[game.oppTid], name: g.teamNamesCache[game.oppTid], pts: game.oppPts};
+
+        output = {
+            gid: game.gid,
+            overtime: game.overtime,
+            won: game.won
+        };
+        if (game.home) {
+            output.teams = [team1, team0];
+        } else {
+            output.teams = [team0, team1];
+        }
+        if (game.won) {
+            output.score = team0.pts + "-" + team1.pts;
+        } else {
+            output.score = team1.pts + "-" + team0.pts;
+        }
+
+        return output;
+    }
+
+
     // Calculate the number of games that team is behind team0
     function gb(team0, team) {
         return ((team0.won - team0.lost) - (team.won - team.lost)) / 2;
@@ -741,6 +768,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         pickDesc: pickDesc,
         ordinal: ordinal,
         gameLogList: gameLogList,
+        formatCompletedGame: formatCompletedGame,
         gb: gb
     };
 });

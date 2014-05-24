@@ -382,6 +382,11 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                         } else {
                             confTeams[l].gb = helpers.gb(confTeams[0], confTeams[l]);
                         }
+                        if (confTeams[l].tid === g.userTid) {
+                            confTeams[l].highlight = true;
+                        } else {
+                            confTeams[l].highlight = false;
+                        }
                         l += 1;
                     }
                 }

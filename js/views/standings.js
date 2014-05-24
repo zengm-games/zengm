@@ -71,6 +71,11 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
                             } else {
                                 confTeams[l].gb = helpers.gb(confTeams[0], confTeams[l]);
                             }
+                            if (confTeams[l].tid === g.userTid) {
+                                confTeams[l].highlight = true;
+                            } else {
+                                confTeams[l].highlight = false;
+                            }
                             l += 1;
                         }
                     }
@@ -90,6 +95,11 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
                                         divTeams[l].gb = helpers.gb(divTeams[0], divTeams[l]);
                                     }
                                     divTeams[l].confRank = confRanks[divTeams[l].tid];
+                                    if (divTeams[l].tid === g.userTid) {
+                                        divTeams[l].highlight = true;
+                                    } else {
+                                        divTeams[l].highlight = false;
+                                    }
                                     l += 1;
                                 }
                             }

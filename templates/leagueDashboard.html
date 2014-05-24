@@ -113,6 +113,7 @@
               <a data-bind="attrLeagueUrl: {href: ['roster', teams[1].abbrev]}"><span data-bind="text: teams[1].region"></span></span></a>
             </li>
           </ul>
+          <p data-bind="visible: upcoming().length === 0">None</p>
           <a data-bind="attrLeagueUrl: {href: ['schedule']}">» Schedule</a>
         <!-- /ko -->
       </div>
@@ -129,6 +130,7 @@
             <a data-bind="attrLeagueUrl: {href: ['roster', teams[1].abbrev]}"><span data-bind="text: teams[1].abbrev"></span></span></a>
           </li>
         </ul>
+        <p data-bind="visible: completed().length === 0">None</p>
         <a data-bind="attrLeagueUrl: {href: ['schedule']}">» Game Log</a>
       </div>
     </div>

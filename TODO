@@ -4,10 +4,7 @@ DB CHANGES SINCE 3.3.0
 DASHBOARD REDESIGN
 ------------------
 
-schedule
-  use cursor to smart search
-check responsive
-  on sm, show completed and upcoming in adjacent columns
+highlight user team in standings
 
 changes from design
   inbox

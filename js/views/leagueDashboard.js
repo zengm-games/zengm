@@ -6,8 +6,6 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
     "use strict";
 
     function InitViewModel() {
-        this.abbrev = g.teamAbbrevsCache[g.userTid];
-        this.season = g.season;
         this.completed = ko.observableArray([]);
         this.upcoming = ko.observableArray([]);
     }

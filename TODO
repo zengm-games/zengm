@@ -1,14 +1,6 @@
 DB CHANGES SINCE 3.3.0
 ----------------------
 
-DASHBOARD REDESIGN
-------------------
-
-changes from design
-  inbox
-  upcoming games changes to playoff series after season ends
-  standings start higher
-
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
@@ -44,13 +36,13 @@ Eventually:
 CURRENT
 -------
 
+event log for trades
 with createObjectURL, can I export entire leagues easily?
 make scoring a little more uneven, so league leaders have higher PPG
 upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page
 account
-  add promo stuff to welcome email (twitter, reddit, feedback request)
   widget
     get rid of right margin somehow, like for logo? most visible on small screens
   somehow periodically run util.account.check, which will check for login and for local achievements to send to cloud
@@ -250,6 +242,7 @@ fuzz should affect potential more than other variables, when pot is different th
 MINOR FIXES
 -----------
 
+most improved player
 assist leaders too low
 Number of years in college should depend on talent level
 DataTables - fix default sort order on column click

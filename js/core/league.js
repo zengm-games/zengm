@@ -197,12 +197,15 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                             // Does the player want the rosters randomized?
                             if (randomizeRosters) {
                                 // Assign the team ID of all players to the 'playerTids' array.
-                                playerTids = _.pluck(players, "tid");
+                                // Check tid to prevent draft prospects from being swapped with established players
+                                playerTids = _.pluck(players.filter(function (p) { return p.tid >= g.PLAYER.FREE_AGENT; }), "tid");
+
                                 // Shuffle the teams that players are assigned to.
                                 random.shuffle(playerTids);
                                 for (i = 0; i < players.length; i++) {
-                                    p = players[i];
-                                    p.tid = playerTids[i];
+                                    if (players[i].tid >= g.PLAYER.FREE_AGENT) {
+                                        players[i].tid = playerTids.pop();
+                                    }
                                 }
                             }
 

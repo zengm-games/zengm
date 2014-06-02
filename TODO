@@ -36,9 +36,17 @@ Eventually:
 CURRENT
 -------
 
-event log for trades
 with createObjectURL, can I export entire leagues easily?
-make scoring a little more uneven, so league leaders have higher PPG
+  on import, check for presence of each one
+    how to handle "metadata"? does it need to be included in export?
+  export_rosters -> export_league
+  handle import of league with userTid set
+  how does team info import handle this?
+edit/delete player
+  share code with create a player
+    contract?
+  do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
+event log for trades
 upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page
@@ -59,10 +67,6 @@ Achievements to add
 mobile UI
   slide in full height menu from right, like facebook or android's DrawerLayout
 option to keep your player stats in improve performance http://www.reddit.com/r/BasketballGM/comments/1xgo2q/delete_old_player_stats_keep_your_teams_old/
-edit/delete player
-  share code with create a player
-    contract?
-  do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
 move manual to wordpress
   " < Basketball GM Manual" in title
   search for any manual links

@@ -180,7 +180,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
 
                                     helpers.bbgmPing("league");
                                 });
-                            }
+                            };
                         };
 
                         cbAfterEachPlayer = function () {
@@ -378,46 +378,37 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
 
 
     /**
-     * Export an existing league.
+     * Export existing active league.
      * 
      * @memberOf core.league
-     * @param {number} lid League ID.
+     * @param {string[]} stores Array of names of objectStores to include in export
      * @param {function(Object)} cb Callback whose first argument contains all the exported league data.
      */
-    function export_(lid, cb) {
-        if (g.dbl !== undefined) {
-            g.dbl.close();
-        }
-
-        g.dbm.transaction("leagues").objectStore("leagues").get(lid).onsuccess = function (event) {
-            var exportedLeague;
+    function export_(stores, cb) {
+        g.dbm.transaction("leagues").objectStore("leagues").get(g.lid).onsuccess = function (event) {
+            var exportedLeague,  exportStore;
 
             exportedLeague = {};
 
             // Row from leagueStore
-            exportedLeague.metadata = event.target.result;
+            exportedLeague.meta = event.target.result;
+console.log(exportedLeague.meta);
 
-            db.connectLeague(lid, function () {
-                var exportStore, stores;
+            exportStore = function (i, cb) {
+                console.log("Exporting " + stores[i] + "...");
+                g.dbl.transaction(stores[i]).objectStore(stores[i]).getAll().onsuccess = function (event) {
+                    exportedLeague[stores[i]] = event.target.result;
 
-                stores = ["players", "teams", "games", "schedule", "playoffSeries", "releasedPlayers", "awards", "trade", "draftOrder", "negotiations", "gameAttributes"];
-
-                exportStore = function (i, cb) {
-                    console.log("Exporting " + stores[i] + "...");
-                    g.dbl.transaction(stores[i]).objectStore(stores[i]).getAll().onsuccess = function (event) {
-                        exportedLeague[stores[i]] = event.target.result;
-
-                        if (i > 0) {
-                            exportStore(i - 1, cb);
-                        } else {
-                            cb(exportedLeague);
-                        }
-                    };
+                    if (i > 0) {
+                        exportStore(i - 1, cb);
+                    } else {
+                        cb(exportedLeague);
+                    }
                 };
+            };
 
-                // Iterate through all the stores
-                exportStore(stores.length - 1, cb);
-            });
+            // Iterate through all the stores
+            exportStore(stores.length - 1, cb);
         };
     }
 

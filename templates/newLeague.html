@@ -21,12 +21,12 @@
 
     <div class="col-md-4 col-sm-5">
       <div class="form-group" data-bind="visible: !inCordova()">
-        <label for="new-league-rosters">Players</label>
+        <label for="new-league-rosters">Customize</label>
         <select class="form-control" id="new-league-rosters" name="rosters">
           <option value="random" selected="selected">Random Players</option>
-          <option value="custom-rosters">Upload Custom Rosters</option>
+          <option value="custom-rosters">Upload League File</option>
         </select>
-        <span class="help-block">Rosters of the teams in your new league can either be filled by randomly-generated players or by players from a <a href="/manual/custom_rosters">custom roster file</a> you upload.</span>
+        <span class="help-block">Teams in your new league can either be filled by randomly-generated players or by players from a <a href="http://basketball-gm.com/manual/customization/">custom League File</a> you upload.</span>
       </div>
       <div id="custom-rosters" style="display: none">
         <input type="file" name="custom-rosters" id="custom-rosters-file">

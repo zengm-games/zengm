@@ -89,7 +89,10 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                 skipNewPhase = false;
                 if (leagueFile.hasOwnProperty("gameAttributes")) {
                     for (i = 0; i < leagueFile.gameAttributes.length; i++) {
-                        gameAttributes[leagueFile.gameAttributes[i].key] = leagueFile.gameAttributes[i].value;
+                        // Set default for anything except team ID, since that could have been changed.
+                        if (leagueFile.gameAttributes[i].key !== "userTid") {
+                            gameAttributes[leagueFile.gameAttributes[i].key] = leagueFile.gameAttributes[i].value;
+                        }
 
                         if (leagueFile.gameAttributes[i].key === "phase") {
                             skipNewPhase = true;

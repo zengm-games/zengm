@@ -28,25 +28,25 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
                 reader = new window.FileReader();
                 reader.readAsText(file);
                 reader.onload = function (event) {
-                    var rosters, randomizeRosters;
+                    var leagueFile, randomizeRosters;
 
-                    rosters = JSON.parse(event.target.result);
+                    leagueFile = JSON.parse(event.target.result);
 
-                    startingSeason = rosters.startingSeason !== undefined ? rosters.startingSeason : startingSeason;
+                    startingSeason = leagueFile.startingSeason !== undefined ? leagueFile.startingSeason : startingSeason;
 
                     randomizeRosters = req.params.hasOwnProperty("randomize-rosters");
 
-                    league.create(req.params.name, tid, rosters.players, rosters.teams, startingSeason, randomizeRosters, function (lid) {
+                    league.create(req.params.name, tid, leagueFile, startingSeason, randomizeRosters, function (lid) {
                         ui.realtimeUpdate([], "/l/" + lid, cb);
                     });
                 };
             } else {
-                league.create(req.params.name, tid, undefined, undefined, startingSeason, false, function (lid) {
+                league.create(req.params.name, tid, null, startingSeason, false, function (lid) {
                     ui.realtimeUpdate([], "/l/" + lid, cb);
                 });
             }
         } else {
-            league.create(req.params.name, tid, undefined, undefined, startingSeason, false, function (lid) {
+            league.create(req.params.name, tid, null, startingSeason, false, function (lid) {
                 ui.realtimeUpdate([], "/l/" + lid, cb);
             });
         }

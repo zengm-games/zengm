@@ -5,30 +5,39 @@
 define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "core/season", "core/team", "lib/underscore", "util/helpers", "util/random"], function (db, g, ui, draft, finances, player, season, team, _, helpers, random) {
     "use strict";
 
+    // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
+    function merge(x, y) {
+        var i, prop;
+
+        for (i = 0; i < x.length; i++) {
+            // Fill in default values as needed
+            for (prop in y[i]) {
+                if (y[i].hasOwnProperty(prop) && !x[i].hasOwnProperty(prop)) {
+                    x[i][prop] = y[i][prop];
+                }
+            }
+        }
+
+        return x;
+    }
+
     /**
      * Create a new league.
      * 
      * @memberOf core.league
      * @param {string} name The name of the league.
      * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
-     * @param {Array.<Object>?} players Either an array of pre-generated player objects to use in the new league or undefined. If undefined, then random players will be generated.
      */
-    function create(name, tid, players, teams, startingSeason, randomizeRosters, cb) {
-        var i, l, leagueStore, prop, teamsDefault;
+    function create(name, tid, leagueFile, startingSeason, randomizeRosters, cb) {
+        var l, leagueStore, teams, teamsDefault;
 
         // Default teams
         teamsDefault = helpers.getTeamsDefault();
 
         // Any custom teams?
-        if (teams !== undefined) {
-            for (i = 0; i < teams.length; i++) {
-                // Fill in default values as needed
-                for (prop in teamsDefault[i]) {
-                    if (teamsDefault[i].hasOwnProperty(prop) && !teams[i].hasOwnProperty(prop)) {
-                        teams[i][prop] = teamsDefault[i][prop];
-                    }
-                }
-            }
+        if (leagueFile.hasOwnProperty("teams")) {
+            teams = merge(leagueFile.teams, teamsDefault);
+
             // Add in popRanks
             teams = helpers.addPopRank(teams);
         } else {
@@ -48,8 +57,9 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
 
             // Create new league database
             db.connectLeague(g.lid, function () {
-                var gameAttributes;
+                var gameAttributes, i, skipNewPhase;
 
+                // Default values
                 gameAttributes = {
                     userTid: tid,
                     season: startingSeason,
@@ -75,35 +85,58 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                     numTeams: teams.length // Will be 30 if the user doesn't supply custom rosters
                 };
 
+                // gameAttributes from input
+                skipNewPhase = false;
+                if (leagueFile.hasOwnProperty("gameAttributes")) {
+                    for (i = 0; i < leagueFile.gameAttributes.length; i++) {
+                        gameAttributes[leagueFile.gameAttributes[i].key] = leagueFile.gameAttributes[i].value;
+
+                        if (leagueFile.gameAttributes[i].key === "phase") {
+                            skipNewPhase = true;
+                        }
+                    }
+                }
+
                 // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
                 helpers.resetG();
 
                 db.setGameAttributes(gameAttributes, function () {
-                    var draftPickStore, i, t, round, scoutingRank, teamStore, tx;
+                    var i, j, t, round, scoutingRank, teamStore, toMaybeAdd, tx;
 
                     // Probably is fastest to use this transaction for everything done to create a new league
-                    tx = g.dbl.transaction(["draftPicks", "draftOrder", "players", "teams", "trade"], "readwrite");
+                    tx = g.dbl.transaction(["draftPicks", "draftOrder", "players", "teams", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games"], "readwrite");
 
-                    // Generate draft picks for the first 4 years, as those are the ones can be traded initially
-                    draftPickStore = tx.objectStore("draftPicks");
-                    for (i = 0; i < 4; i++) {
-                        for (t = 0; t < g.numTeams; t++) {
-                            for (round = 1; round <= 2; round++) {
-                                draftPickStore.add({
-                                    tid: t,
-                                    originalTid: t,
-                                    round: round,
-                                    season: g.startingSeason + i
-                                });
+                    // Draft picks for the first 4 years, as those are the ones can be traded initially
+                    if (leagueFile.hasOwnProperty("draftPicks")) {
+                        for (i = 0; i < leagueFile.draftPicks.length; i++) {
+                            tx.objectStore("draftPicks").add(leagueFile.draftPicks[i]);
+                        }
+                    } else {
+                        for (i = 0; i < 4; i++) {
+                            for (t = 0; t < g.numTeams; t++) {
+                                for (round = 1; round <= 2; round++) {
+                                    tx.objectStore("draftPicks").add({
+                                        tid: t,
+                                        originalTid: t,
+                                        round: round,
+                                        season: g.startingSeason + i
+                                    });
+                                }
                             }
                         }
                     }
 
                     // Initialize draft order object store for later use
-                    tx.objectStore("draftOrder").add({
-                        rid: 1,
-                        draftOrder: []
-                    });
+                    if (leagueFile.hasOwnProperty("draftOrder")) {
+                        for (i = 0; i < leagueFile.draftOrder.length; i++) {
+                            tx.objectStore("draftOrder").add(leagueFile.draftOrder[i]);
+                        }
+                    } else {
+                        tx.objectStore("draftOrder").add({
+                            rid: 1,
+                            draftOrder: []
+                        });
+                    }
 
                     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
                     teamStore = tx.objectStore("teams");
@@ -117,24 +150,40 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                         }
                     }
 
-                    tx.objectStore("trade").add({
-                        rid: 0,
-                        teams: [
-                            {
-                                tid: tid,
-                                pids: [],
-                                dpids: []
-                            },
-                            {
-                                tid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1).
-                                pids: [],
-                                dpids: []
+                    if (leagueFile.hasOwnProperty("trade")) {
+                        for (i = 0; i < leagueFile.trade.length; i++) {
+                            tx.objectStore("trade").add(leagueFile.trade[i]);
+                        }
+                    } else {
+                        tx.objectStore("trade").add({
+                            rid: 0,
+                            teams: [
+                                {
+                                    tid: tid,
+                                    pids: [],
+                                    dpids: []
+                                },
+                                {
+                                    tid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1).
+                                    pids: [],
+                                    dpids: []
+                                }
+                            ]
+                        });
+                    }
+
+                    // These object stores are blank by default
+                    toMaybeAdd = ["releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games"];
+                    for (j = 0; j < toMaybeAdd.length; j++) {
+                        if (leagueFile.hasOwnProperty(toMaybeAdd[j])) {
+                            for (i = 0; i < leagueFile[toMaybeAdd[j]].length; i++) {
+                                tx.objectStore(toMaybeAdd[j]).add(leagueFile[toMaybeAdd[j]][i]);
                             }
-                        ]
-                    });
+                        }
+                    }
 
                     player.genBaseMoods(tx, function (baseMoods) {
-                        var afterPlayerCreation, age, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, pg, playerStore, pots, profile, profiles, randomizeExpiration, simpleDefaults, t, t2, playerTids;
+                        var afterPlayerCreation, age, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, pg, playerStore, players, pots, profile, profiles, randomizeExpiration, simpleDefaults, t, t2, playerTids;
 
                         afterPlayerCreation = function () {
                             var createUndrafted1, createUndrafted2, createUndrafted3, i;
@@ -167,19 +216,24 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                             }
 
                             tx.oncomplete = function () {
-                                // Make schedule, start season
-                                season.newPhase(g.PHASE.REGULAR_SEASON, function () {
-                                    var lid;
+                                if (skipNewPhase) {
+                                    // Game already in progress, just start it
+                                    cb(g.lid);
+                                } else {
+                                    // Make schedule, start season
+                                    season.newPhase(g.PHASE.REGULAR_SEASON, function () {
+                                        var lid;
 
-                                    ui.updateStatus("Idle");
+                                        ui.updateStatus("Idle");
 
-                                    lid = g.lid;  // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
+                                        lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
-                                    // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
-                                    team.rosterAutoSort(null, g.userTid, function () { cb(lid); });
+                                        // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
+                                        team.rosterAutoSort(null, g.userTid, function () { cb(lid); });
 
-                                    helpers.bbgmPing("league");
-                                });
+                                        helpers.bbgmPing("league");
+                                    });
+                                }
                             };
                         };
 
@@ -190,7 +244,9 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                             }
                         };
 
-                        if (players !== undefined) {
+                        if (leagueFile.hasOwnProperty("players")) {
+                            players = leagueFile.players;
+
                             // Use pre-generated players, filling in attributes as needed
                             playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
 
@@ -260,7 +316,9 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                                 } else if (p.tid === g.PLAYER.UNDRAFTED_3) {
                                     p.ratings[0].season = g.startingSeason + 2;
                                 } else {
-                                    p.ratings[0].season = g.startingSeason;
+                                    if (!p.ratings[0].hasOwnProperty("season")) {
+                                        p.ratings[0].season = g.startingSeason;
+                                    }
                                 }
                                 if (!p.hasOwnProperty("stats")) {
                                     p.stats = [];
@@ -392,10 +450,8 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
 
             // Row from leagueStore
             exportedLeague.meta = event.target.result;
-console.log(exportedLeague.meta);
 
             exportStore = function (i, cb) {
-                console.log("Exporting " + stores[i] + "...");
                 g.dbl.transaction(stores[i]).objectStore(stores[i]).getAll().onsuccess = function (event) {
                     exportedLeague[stores[i]] = event.target.result;
 

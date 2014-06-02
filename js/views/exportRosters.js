@@ -17,6 +17,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         league.export_(objectStores, function (data) {
             var a, blob, fileName, json, url;
 
+console.log(data);
             json = JSON.stringify(data, undefined, 2);
             blob = new Blob([json], {type: "application/json"});
             url = window.URL.createObjectURL(blob);

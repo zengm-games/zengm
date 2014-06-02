@@ -116,6 +116,12 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "lib/underscore", "uti
                         console.log("ROSTER ERROR: Invalid abbrev, team " + i);
                         return;
                     }
+
+                    // Check for pop in either the root or the most recent season
+                    if (!newTeams[i].hasOwnProperty("pop") && newTeams[i].hasOwnProperty("seasons")) {
+                        newTeams[i].pop = newTeams[i].seasons[newTeams[i].seasons.length - 1].pop;
+                    }
+
                     if (typeof newTeams[i].pop !== "number") {
                         console.log("ROSTER ERROR: Invalid pop, team " + i);
                         return;

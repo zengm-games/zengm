@@ -37,11 +37,20 @@ CURRENT
 -------
 
 with createObjectURL, can I export entire leagues easily?
-  on import, check for presence of each one
-    how to handle "metadata"? does it need to be included in export?
-  export_rosters -> export_league
   handle import of league with userTid set
-  how does team info import handle this?
+    default to that team on dropdown, but let user input override
+    same with name
+  how to handle "metadata"? does it need to be included in export?
+  how to handle current roster files with "startingSeason" in root?
+  how to set phase? (and phaseText)
+    try in draft (make sure pick order persists) and playoffs (make sure series persists)
+  new league message suppress? only if skipNewPhase
+  export_rosters -> export_league
+  doc notes
+    gameAttributes: any missing get default
+    setting "phase" means no welcome message
+    update all links to custom_rosters page
+    "pop" can be defined in root of team object if no season data is supplied
 edit/delete player
   share code with create a player
     contract?

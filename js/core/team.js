@@ -169,7 +169,13 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
      * @return {Object} Team object to insert in the database.
      */
     function generate(tm) {
-        var t;
+        var strategy, t;
+
+        if (tm.hasOwnProperty("strategy")) {
+            strategy = tm.strategy;
+        } else {
+            strategy = Math.random() > 0.5 ? "contending" : "rebuilding";
+        }
 
         t = {
             tid: tm.tid,
@@ -179,37 +185,40 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
             name: tm.name,
             abbrev: tm.abbrev,
             imgURL: tm.imgURL !== undefined ? tm.imgURL : "",
-            stats: [],
-            seasons: [],
+            stats: tm.hasOwnProperty("stats") ? tm.stats : [],
+            seasons: tm.hasOwnProperty("seasons") ? tm.seasons : [],
             budget: {
                 ticketPrice: {
-                    amount: helpers.round(25 + 25 * (g.numTeams - tm.popRank) / (g.numTeams - 1), 2),
-                    rank: tm.popRank
+                    amount: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.amount : helpers.round(25 + 25 * (g.numTeams - tm.popRank) / (g.numTeams - 1), 2),
+                    rank: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.rank : tm.popRank
                 },
                 scouting: {
-                    amount: helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
-                    rank: tm.popRank
+                    amount: tm.hasOwnProperty("budget") ? tm.budget.scouting.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                    rank: tm.hasOwnProperty("budget") ? tm.budget.scouting.rank : tm.popRank
                 },
                 coaching: {
-                    amount: helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
-                    rank: tm.popRank
+                    amount: tm.hasOwnProperty("budget") ? tm.budget.coaching.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                    rank: tm.hasOwnProperty("budget") ? tm.budget.coaching.rank : tm.popRank
                 },
                 health: {
-                    amount: helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
-                    rank: tm.popRank
+                    amount: tm.hasOwnProperty("budget") ? tm.budget.health.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                    rank: tm.hasOwnProperty("budget") ? tm.budget.health.rank : tm.popRank
                 },
                 facilities: {
-                    amount: helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
-                    rank: tm.popRank
+                    amount: tm.hasOwnProperty("budget") ? tm.budget.facilities.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                    rank: tm.hasOwnProperty("budget") ? tm.budget.facilities.rank : tm.popRank
                 }
             },
-            strategy: Math.random() > 0.5 ? "contending" : "rebuilding"
+            strategy: strategy
         };
 
-        t = addSeasonRow(t);
-        t = addStatsRow(t);
-
-        t.seasons[0].pop = tm.pop;
+        if (!tm.hasOwnProperty("seasons")) {
+            t = addSeasonRow(t);
+            t.seasons[0].pop = tm.pop;
+        }
+        if (!tm.hasOwnProperty("stats")) {
+            t = addStatsRow(t);
+        }
 
         return t;
     }

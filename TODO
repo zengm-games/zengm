@@ -36,11 +36,6 @@ Eventually:
 CURRENT
 -------
 
-with createObjectURL, can I export entire leagues easily?
-  how to set phase? (and phaseText)
-    try in draft (make sure pick order persists) and playoffs (make sure series persists)
-  new league message suppress? only if skipNewPhase
-  export_rosters -> export_league
 edit/delete player
   share code with create a player
     contract?

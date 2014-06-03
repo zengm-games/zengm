@@ -143,6 +143,8 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
                     if (!newTeam.hasOwnProperty("pop") && newTeam.hasOwnProperty("seasons")) {
                         newTeam.pop = newTeam.seasons[newTeam.seasons.length - 1].pop;
                     }
+
+                    newTeam.pop = helpers.round(newTeam.pop, 2);
                 });
 
                 // Add popRanks

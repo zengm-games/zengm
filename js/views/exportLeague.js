@@ -17,7 +17,6 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         league.export_(objectStores, function (data) {
             var a, blob, fileName, json, url;
 
-console.log(data);
             json = JSON.stringify(data, undefined, 2);
             blob = new Blob([json], {type: "application/json"});
             url = window.URL.createObjectURL(blob);
@@ -27,7 +26,7 @@ console.log(data);
             a = document.createElement("a");
             a.download = "BBGM - " + fileName + ".json";
             a.href = url;
-            a.textContent = "Download Exported Rosters";
+            a.textContent = "Download Exported League File";
             a.dataset.noDavis = "true";
 //                a.click(); // Works in Chrome to auto-download, but not Firefox
 
@@ -42,7 +41,7 @@ console.log(data);
         });
     }
 
-    function updateExportRosters(inputs, updateEvents, vm) {
+    function updateExportLeague(inputs, updateEvents, vm) {
         var categories;
 
         if (updateEvents.indexOf("firstRun") >= 0) {
@@ -89,13 +88,13 @@ console.log(data);
     }
 
     function uiFirst() {
-        ui.title("Export Rosters");
+        ui.title("Export League");
     }
 
     return bbgmView.init({
-        id: "exportRosters",
+        id: "exportLeague",
         post: post,
-        runBefore: [updateExportRosters],
+        runBefore: [updateExportLeague],
         uiFirst: uiFirst
     });
 });

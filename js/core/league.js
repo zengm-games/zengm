@@ -29,7 +29,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
      * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
      */
     function create(name, tid, leagueFile, startingSeason, randomizeRosters, cb) {
-        var l, leagueStore, teams, teamsDefault;
+        var l, leagueStore, phaseText, teams, teamsDefault;
 
         // Default teams
         teamsDefault = helpers.getTeamsDefault();
@@ -49,8 +49,14 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
             tid = random.randInt(0, teams.length - 1);
         }
 
+        if (leagueFile.hasOwnProperty("meta") && leagueFile.meta.hasOwnProperty("phaseText")) {
+            phaseText = leagueFile.meta.phaseText;
+        } else {
+            phaseText =  "";
+        }
+
         // Record in meta db
-        l = {name: name, tid: tid, phaseText: "", teamName: teams[tid].name, teamRegion: teams[tid].region};
+        l = {name: name, tid: tid, phaseText: phaseText, teamName: teams[tid].name, teamRegion: teams[tid].region};
         leagueStore = g.dbm.transaction("leagues", "readwrite").objectStore("leagues");
         leagueStore.add(l).onsuccess = function (event) {
             g.lid = event.target.result;
@@ -89,8 +95,8 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                 skipNewPhase = false;
                 if (leagueFile.hasOwnProperty("gameAttributes")) {
                     for (i = 0; i < leagueFile.gameAttributes.length; i++) {
-                        // Set default for anything except team ID, since that could have been changed.
-                        if (leagueFile.gameAttributes[i].key !== "userTid") {
+                        // Set default for anything except team ID and name, since they can be overwritten by form input.
+                        if (leagueFile.gameAttributes[i].key !== "userTid" && leagueFile.gameAttributes[i].key !== "leagueName") {
                             gameAttributes[leagueFile.gameAttributes[i].key] = leagueFile.gameAttributes[i].value;
                         }
 
@@ -446,29 +452,29 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
      * @param {function(Object)} cb Callback whose first argument contains all the exported league data.
      */
     function export_(stores, cb) {
-        g.dbm.transaction("leagues").objectStore("leagues").get(g.lid).onsuccess = function (event) {
-            var exportedLeague,  exportStore;
+        var exportedLeague,  exportStore;
 
-            exportedLeague = {};
+        exportedLeague = {};
 
-            // Row from leagueStore
-            exportedLeague.meta = event.target.result;
+        // Row from leagueStore in meta db.
+        // phaseText is needed if a phase is set in gameAttributes.
+        // name is only used for the file name of the exported roster file.
+        exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
 
-            exportStore = function (i, cb) {
-                g.dbl.transaction(stores[i]).objectStore(stores[i]).getAll().onsuccess = function (event) {
-                    exportedLeague[stores[i]] = event.target.result;
+        exportStore = function (i, cb) {
+            g.dbl.transaction(stores[i]).objectStore(stores[i]).getAll().onsuccess = function (event) {
+                exportedLeague[stores[i]] = event.target.result;
 
-                    if (i > 0) {
-                        exportStore(i - 1, cb);
-                    } else {
-                        cb(exportedLeague);
-                    }
-                };
+                if (i > 0) {
+                    exportStore(i - 1, cb);
+                } else {
+                    cb(exportedLeague);
+                }
             };
-
-            // Iterate through all the stores
-            exportStore(stores.length - 1, cb);
         };
+
+        // Iterate through all the stores
+        exportStore(stores.length - 1, cb);
     }
 
     return {

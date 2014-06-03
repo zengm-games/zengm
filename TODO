@@ -37,9 +37,6 @@ CURRENT
 -------
 
 with createObjectURL, can I export entire leagues easily?
-  handle import of league with name set
-  how to handle "metadata"? does it need to be included in export?
-    gameAttributes.leagueName too
   how to set phase? (and phaseText)
     try in draft (make sure pick order persists) and playoffs (make sure series persists)
   new league message suppress? only if skipNewPhase

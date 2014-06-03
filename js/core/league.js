@@ -31,6 +31,11 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
     function create(name, tid, leagueFile, startingSeason, randomizeRosters, cb) {
         var l, leagueStore, phaseText, teams, teamsDefault;
 
+        // Any user input?
+        if (!leagueFile) {
+            leagueFile = {}; // Allow checking of properties
+        }
+
         // Default teams
         teamsDefault = helpers.getTeamsDefault();
 

@@ -137,6 +137,14 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
         // Handle custom roster teams
         setTeams = function (newTeams) {
             if (newTeams !== undefined) {
+
+                newTeams.forEach(function (newTeam) {
+                    // Is pop hidden in season, like in editTeamInfo import?
+                    if (!newTeam.hasOwnProperty("pop") && newTeam.hasOwnProperty("seasons")) {
+                        newTeam.pop = newTeam.seasons[newTeam.seasons.length - 1].pop;
+                    }
+                });
+
                 // Add popRanks
                 newTeams = helpers.addPopRank(newTeams);
 
@@ -161,11 +169,23 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
                 reader = new window.FileReader();
                 reader.readAsText(file);
                 reader.onload = function (event) {
-                    var newTeams, rosters;
+                    var newTeams, leagueFile;
 
-                    rosters = JSON.parse(event.target.result);
-                    newTeams = rosters.teams;
+                    leagueFile = JSON.parse(event.target.result);
+                    newTeams = leagueFile.teams;
                     setTeams(newTeams);
+
+                    // Is a userTid specified?
+                    if (leagueFile.hasOwnProperty("gameAttributes")) {
+                        leagueFile.gameAttributes.some(function (attribute) {
+                            if (attribute.key === "userTid") {
+                                // Set it to select the userTid entry
+                                document.getElementById("new-league-tid").value = attribute.value;
+                                updatePopText(); // Not caught by event handlers for some reason
+                                return true;
+                            }
+                        });
+                    }
                 };
             }
         };
@@ -177,7 +197,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
             if (this.value === "custom-rosters") {
                 useCustomTeams();
             } else {
-                setTeams(helpers.getTeamsDefault())
+                setTeams(helpers.getTeamsDefault());
             }
         });
     }

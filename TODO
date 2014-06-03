@@ -37,9 +37,7 @@ CURRENT
 -------
 
 with createObjectURL, can I export entire leagues easily?
-  handle import of league with userTid set
-    default to that team on dropdown, but let user input override
-    same with name
+  handle import of league with name set
   how to handle "metadata"? does it need to be included in export?
     gameAttributes.leagueName too
   how to set phase? (and phaseText)

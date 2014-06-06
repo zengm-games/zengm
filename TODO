@@ -36,7 +36,17 @@ Eventually:
 CURRENT
 -------
 
-cordova: accoutns?
+cordova
+  top bar overflow while playing
+  only allow account. not *., so links open in browser
+  downloading exported league file seems to hang
+blog about cordova/web hybrid
+  base URL prefix - do in JS
+  davisjs: preprocess
+  images: data URLs
+  upload roster files problem
+firefox market
+windows 8
 blog about export league
   introduce
   docs

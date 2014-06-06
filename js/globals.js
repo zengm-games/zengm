@@ -65,8 +65,14 @@ define(["lib/knockout"], function (ko) {
 
     g.enableLogging = window.enableLogging;
 
-    splitUrl = window.location.hostname.split(".");
-    g.tld = splitUrl[splitUrl.length - 1]; // .com or .dev TLD
+    // .com or .dev TLD
+    if (!window.inCordova) {
+        splitUrl = window.location.hostname.split(".");
+        g.tld = splitUrl[splitUrl.length - 1];
+    } else {
+        // From within Cordova, window.location.hostname is not set, so always use .com
+        g.tld = "com";
+    }
 
     g.sport = "basketball"; // For account ajax stuff
 

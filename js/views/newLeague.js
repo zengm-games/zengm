@@ -76,8 +76,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
 
             deferred.resolve({
                 name: "League " + newLid,
-                teams: teams,
-                inCordova: window.inCordova
+                teams: teams
             });
         };
 

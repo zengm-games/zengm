@@ -12,7 +12,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
         season = helpers.validateSeason(req.params.season);
 
-        if (g.phase < g.PHASE.RESIGN_PLAYERS) {
+        if (g.phase <= g.PHASE.RESIGN_PLAYERS) {
             if (season < g.season) {
                 season = g.season;
             }
@@ -55,7 +55,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             } else {
                 // Done before filter so full player object can be passed to player.genContract.
                 for (i = 0; i < playersAll.length; i++) {
-                    playersAll[i].contractDesired = player.genContract(playersAll[i]);
+                    playersAll[i].contractDesired = player.genContract(playersAll[i], false, false); // No randomization
                     playersAll[i].contractDesired.amount /= 1000;
                     playersAll[i].contractDesired.exp += inputs.season - g.season;
                 }

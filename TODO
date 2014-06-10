@@ -36,6 +36,10 @@ Eventually:
 CURRENT
 -------
 
+show upcoming FAs during re-signing phase
+  TEST dual phase AI re-signing
+  make new FAs show up in upcoming FAs list - can use the FA years variable tracker?
+    show with yearsFreeAgent 0
 cordova
   top bar overflow while playing
   only allow account. not *., so links open in browser
@@ -189,6 +193,10 @@ options:
 BIG NEW FEATURES
 ----------------
 
+options
+  disable injuries
+  disable ratings display
+  disable salary cap
 trading block should allow for multiple (different) offers from the same team
 display of relative ratings like https://mail.google.com/mail/u/0/#inbox/144a4a04330edf3d
 trade improvements

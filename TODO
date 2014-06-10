@@ -36,10 +36,6 @@ Eventually:
 CURRENT
 -------
 
-show upcoming FAs during re-signing phase
-  TEST dual phase AI re-signing
-  make new FAs show up in upcoming FAs list - can use the FA years variable tracker?
-    show with yearsFreeAgent 0
 cordova
   top bar overflow while playing
   only allow account. not *., so links open in browser
@@ -322,6 +318,7 @@ gamesim shot distribution - less people shooting 3s really poorly, especially ta
 LOW PRIORITY
 ------------
 
+upcoming free agents page should show at least some information about signings (or non-signings) during re-sign phase
 tanking is too easy http://www.reddit.com/r/BasketballGM/comments/20038f/too_easy_to_tank/
 contractNegotiation
   young players should only want short deals if they have really high pot-ovr

@@ -104,6 +104,7 @@ footer {
 .user-menu {
   display: block;
   padding: 16px 15px;
+  margin-right: -15px; /* No right margin, like navbar-brand's left margin */
 }
 .user-menu:hover {
   text-decoration: none;

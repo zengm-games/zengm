@@ -37,7 +37,7 @@ CURRENT
 -------
 
 cordova
-  top bar overflow while playing
+  top bar overflow while playing - still a problem?
   only allow account. not *., so links open in browser
   downloading exported league file seems to hang
 blog about cordova/web hybrid
@@ -67,8 +67,6 @@ upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page
 account
-  widget
-    get rid of right margin somehow, like for logo? most visible on small screens
   somehow periodically run util.account.check, which will check for login and for local achievements to send to cloud
     is this necessary?
   more pages

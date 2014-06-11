@@ -37,9 +37,9 @@ CURRENT
 -------
 
 cordova
-  top bar overflow while playing - still a problem?
-  only allow account. not *., so links open in browser
-  downloading exported league file seems to hang
+  upgrade http://cordova.apache.org/#news
+  in portrait, games in dashboard looks like shit
+  downloading exported league file seems to do nothing
 blog about cordova/web hybrid
   base URL prefix - do in JS
   davisjs: preprocess

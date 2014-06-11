@@ -22,7 +22,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/game", "core/season", "l
             }
 
             if (g.phase <= g.PHASE.PLAYOFFS) {
-                ui.updateStatus("Playing games"); // For quick UI updating, before game.play
+                ui.updateStatus("Playing..."); // For quick UI updating, before game.play
                 // Start playing games
                 game.play(numDays, true);
             } else if (g.phase === g.PHASE.FREE_AGENCY) {
@@ -33,7 +33,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/game", "core/season", "l
             }
         } else if (amount === "untilPlayoffs") {
             if (g.phase < g.PHASE.PLAYOFFS) {
-                ui.updateStatus("Playing games"); // For quick UI updating, before game.play
+                ui.updateStatus("Playing..."); // For quick UI updating, before game.play
                 season.getDaysLeftSchedule(function (numDays) {
                     game.play(numDays, true);
                 });

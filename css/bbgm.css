@@ -118,6 +118,11 @@ footer {
     display: inline-block !important;
   }
 }
+@media (max-width: 767px) {
+  .user-menu {
+    margin-left: -15px; /* Move closer to hamburger menu */
+  }
+}
 
 /* These colors are copied from the default "success" button. */
 #play-button-link {

@@ -2,42 +2,29 @@
  * @name views.exportRosters
  * @namespace Export rosters.
  */
-define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, ko, bbgmView, helpers, viewHelpers) {
     "use strict";
 
+    function InitViewModel() {
+        this.generating = ko.observable(false);
+        this.generated = ko.observable(false);
+        this.expired = ko.observable(false);
+
+        this.fileName = ko.observable("");
+        this.url = ko.observable("");
+    }
+
+    function get(req) {
+        if (req.raw.hasOwnProperty("objectStores")) {
+            return {
+                objectStores: req.raw.objectStores
+            };
+        }
+    }
+
     function post(req) {
-        var downloadLink, objectStores;
-
-        downloadLink = document.getElementById("download-link");
-        downloadLink.innerHTML = "Generating...";
-
-        // Get array of object stores to export
-        objectStores = req.params.objectStores.join(",").split(",");
-
-        league.export_(objectStores, function (data) {
-            var a, blob, fileName, json, url;
-
-            json = JSON.stringify(data, undefined, 2);
-            blob = new Blob([json], {type: "application/json"});
-            url = window.URL.createObjectURL(blob);
-
-            fileName = data.meta !== undefined ? data.meta.name : "League";
-
-            a = document.createElement("a");
-            a.download = "BBGM - " + fileName + ".json";
-            a.href = url;
-            a.textContent = "Download Exported League File";
-            a.dataset.noDavis = "true";
-//                a.click(); // Works in Chrome to auto-download, but not Firefox
-
-            downloadLink.innerHTML = ""; // Clear "Generating..."
-            downloadLink.appendChild(a);
-
-            // Delete object, eventually
-            window.setTimeout(function () {
-                window.URL.revokeObjectURL(url);
-                downloadLink.innerHTML = "Download link expired."; // Remove expired link
-            }, 60 * 1000);
+        ui.realtimeUpdate([], helpers.leagueUrl(["export_league"]), undefined, {
+            objectStores: req.params.objectStores.join(",").split(",")
         });
     }
 
@@ -85,6 +72,40 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
             ];
             return {categories: categories};
         }
+
+        if (inputs.hasOwnProperty("objectStores")) {
+            vm.generated(false);
+            vm.generating(true);
+            vm.expired(false);
+
+            league.export_(inputs.objectStores, function (data) {
+                var blob, fileName, json, url;
+
+                json = JSON.stringify(data, undefined, 2);
+                blob = new Blob([json], {type: "application/json"});
+                url = window.URL.createObjectURL(blob);
+
+                fileName = data.meta !== undefined ? data.meta.name : "League";
+                vm.fileName("BBGM - " + fileName + ".json");
+                vm.url(url);
+
+                vm.generating(false);
+                vm.generated(true);
+                vm.expired(false);
+
+                // Delete object, eventually
+                window.setTimeout(function () {
+                    window.URL.revokeObjectURL(url);
+                    json = null;
+                    blob = null;
+                    vm.url("");
+
+                    vm.generated(false);
+                    vm.expired(true);
+                    downloadLink.innerHTML = "Download link expired."; // Remove expired link
+                }, 60 * 1000);
+            });
+        }
     }
 
     function uiFirst() {
@@ -93,6 +114,8 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
 
     return bbgmView.init({
         id: "exportLeague",
+        InitViewModel: InitViewModel,
+        get: get,
         post: post,
         runBefore: [updateExportLeague],
         uiFirst: uiFirst

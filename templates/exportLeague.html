@@ -11,7 +11,26 @@
       </label>
     </div>
   <!-- /ko -->
-  <button type="submit" class="btn btn-primary" id="create-new-league">Export League</button>
+  <button type="submit" class="btn btn-default" id="create-new-league">Export League</button>
 </form>
 
-<p id="download-link" style="margin-top: 1em"></p>
+<p style="margin-top: 1em" data-bind="visible: generating">Generating...</p>
+
+<div class="row" data-bind="visible: generated">
+  <div class="col-sm-6">
+    <h2>Download</h2>
+
+    <p>Save your league to a file on your computer:</p>
+
+    <a class="btn btn-primary" data-bind="attr: {download: fileName, href: url}" data-no-davis="true">Download File</a>
+  </div>
+  <div class="col-sm-6">
+    <h2>Google Drive</h2>
+
+    <p>Save your league to the cloud on Google Drive:</p>
+
+    <a class="btn btn-primary">Save to Google Drive</a>
+  </div>
+</div>
+
+<p style="margin-top: 1em" data-bind="visible: expired">Download link expired. Please export again.</p>

@@ -347,6 +347,7 @@ league settings
   enable buy out button or not
   set salary cap, luxury tax, exceptions, etc
   enable/disable trading rules
+  enable/disable +/- minutes setting for AI teams
 cross-league play
 mobile UI, bootstrap 3
   do something about hover tooltips

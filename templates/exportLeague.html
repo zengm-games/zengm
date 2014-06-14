@@ -22,14 +22,20 @@
 
     <p>Save your league to a file on your computer:</p>
 
-    <a class="btn btn-primary" data-bind="attr: {download: fileName, href: url}" data-no-davis="true">Download File</a>
+    <p><a class="btn btn-primary" data-bind="attr: {download: fileName, href: url}" data-no-davis="true">Download File</a></p>
   </div>
   <div class="col-sm-6">
     <h2>Google Drive</h2>
 
     <p>Save your league to the cloud on Google Drive:</p>
 
-    <a class="btn btn-primary">Save to Google Drive</a>
+    <p>
+      <button id="authorize" class="btn btn-primary" data-bind="visible: !authorized()" data-no-davis="true">Authorize</button>
+      <button id="save" class="btn btn-primary" data-bind="visible: authorized, disable: gdSaving" data-no-davis="true">Save to Google Drive</button>
+    </p>
+
+    <p data-bind="visible: gdSaving">Saving... (could take a while depending on your league size and your connection)</p>
+    <p data-bind="visible: gdSaved">Complete!</p>
   </div>
 </div>
 

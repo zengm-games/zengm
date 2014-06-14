@@ -38,6 +38,13 @@ Eventually:
 CURRENT
 -------
 
+google drive export
+  test on large league!
+  async load gapi
+    if relying on remote resource, make sure it works offline
+  should be robust to google failing (still allow download)
+  test on mobile browser
+  test in cordova
 cordova
   in portrait, games in dashboard looks like shit
   downloading exported league file seems to do nothing

@@ -5,6 +5,85 @@
 define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, ko, bbgmView, helpers, viewHelpers) {
     "use strict";
 
+    // Google Drive stuff based on https://developers.google.com/drive/web/quickstart/quickstart-js
+    var CLIENT_ID = '366669155555-p808mqgci64di9ir366q5lpo82n6umj8.apps.googleusercontent.com';
+    var SCOPES = 'https://www.googleapis.com/auth/drive';
+
+    function checkAndHandleAuth(vm, blob, fileName) {
+      var checkAuth, handleAuthResult;
+
+      // Google Drive stuff based on https://developers.google.com/drive/web/quickstart/quickstart-js
+      checkAuth = function() {
+        gapi.auth.authorize(
+            {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': true},
+            handleAuthResult);
+      };
+      handleAuthResult = function(authResult) {
+        if (authResult && !authResult.error) {
+          // Access token has been successfully retrieved, requests can be sent to the API.
+          vm.authorized(true);
+          document.getElementById("save").onclick = function() {
+            vm.gdSaving(true);
+            vm.gdSaved(false);
+            insertBlob(vm, blob, fileName);
+          };
+        } else {
+          // No access token could be retrieved, show the button to start the authorization flow.
+          vm.authorized(false);
+          document.getElementById("authorize").onclick = function() {
+              gapi.auth.authorize(
+                  {'client_id': CLIENT_ID, 'scope': SCOPES, 'immediate': false},
+                  handleAuthResult);
+          };
+        }
+      };
+
+      checkAuth();
+    }
+
+    function insertBlob(vm, blob, fileName) {
+      var boundary = '-------314159265358979323846';
+      var delimiter = "\r\n--" + boundary + "\r\n";
+      var close_delim = "\r\n--" + boundary + "--";
+
+      var reader = new FileReader();
+      reader.readAsBinaryString(blob);
+      reader.onload = function(e) {
+        var contentType = blob.type || 'application/octet-stream';
+        var metadata = {
+          'title': fileName,
+          'mimeType': contentType
+        };
+
+        var base64Data = btoa(reader.result);
+        var multipartRequestBody =
+            delimiter +
+            'Content-Type: application/json\r\n\r\n' +
+            JSON.stringify(metadata) +
+            delimiter +
+            'Content-Type: ' + contentType + '\r\n' +
+            'Content-Transfer-Encoding: base64\r\n' +
+            '\r\n' +
+            base64Data +
+            close_delim;
+
+        var request = gapi.client.request({
+            'path': '/upload/drive/v2/files',
+            'method': 'POST',
+            'params': {'uploadType': 'multipart'},
+            'headers': {
+              'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+            },
+            'body': multipartRequestBody});
+
+        request.execute(function (file) {
+          // After it's all done
+          vm.gdSaving(false);
+          vm.gdSaved(true);
+        });
+      }
+    }
+
     function InitViewModel() {
         this.generating = ko.observable(false);
         this.generated = ko.observable(false);
@@ -12,6 +91,11 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout", "util/bbgm
 
         this.fileName = ko.observable("");
         this.url = ko.observable("");
+
+        this.gdSaving = ko.observable(false);
+        this.gdSaved = ko.observable(false);
+
+        this.authorized = ko.observable(false);
     }
 
     function get(req) {
@@ -77,6 +161,8 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout", "util/bbgm
             vm.generated(false);
             vm.generating(true);
             vm.expired(false);
+            vm.gdSaving(false);
+            vm.gdSaved(false);
 
             league.export_(inputs.objectStores, function (data) {
                 var blob, fileName, json, url;
@@ -85,9 +171,13 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout", "util/bbgm
                 blob = new Blob([json], {type: "application/json"});
                 url = window.URL.createObjectURL(blob);
 
+                // First set the download link
                 fileName = data.meta !== undefined ? data.meta.name : "League";
                 vm.fileName("BBGM - " + fileName + ".json");
                 vm.url(url);
+
+                // Then do the Google Drive stuff
+                checkAndHandleAuth(vm, blob, fileName);
 
                 vm.generating(false);
                 vm.generated(true);
@@ -102,14 +192,15 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout", "util/bbgm
 
                     vm.generated(false);
                     vm.expired(true);
-                    downloadLink.innerHTML = "Download link expired."; // Remove expired link
                 }, 60 * 1000);
             });
         }
     }
 
-    function uiFirst() {
+    function uiFirst(vm) {
         ui.title("Export League");
+
+        checkAndHandleAuth(vm);
     }
 
     return bbgmView.init({

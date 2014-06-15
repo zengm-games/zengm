@@ -38,9 +38,8 @@ CURRENT
 -------
 
 cordova
-  upgrade http://cordova.apache.org/#news
   in portrait, games in dashboard looks like shit
-  downloading exported league file seems to do nothing
+  hide export link
 blog about cordova/web hybrid
   base URL prefix - do in JS
   davisjs: preprocess

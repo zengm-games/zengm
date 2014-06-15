@@ -95,7 +95,34 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         }
     }
 
+    function customDraftClassHandler(e) {
+        var file, reader, seasonOffset;
+
+        seasonOffset = parseInt(e.target.dataset.index, 10);
+        file = e.target.files[0];
+
+        reader = new window.FileReader();
+        reader.readAsText(file);
+        reader.onload = function (event) {
+            var players;
+
+            // Get all players from uploaded files
+            players = JSON.parse(event.target.result).players;
+
+            // Filter out any that are not draft prospects
+            players = players.filter(function (p) {
+                return p.tid === g.PLAYER.UNDRAFTED;
+            });
+
+console.log(players);
+        };
+
+console.log("OFFSET: " + seasonOffset);
+console.log(e);
+    }
+
     function uiFirst(vm) {
+        var i, uploadFileButtons;
 
         ui.title("Draft Scouting");
 
@@ -110,6 +137,12 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         }).extend({throttle: 1});
 
         ui.tableClickableRows($("#draft-scouting"));
+
+        // Handle custom roster buttons
+        uploadFileButtons = document.getElementsByClassName("custom-draft-class");
+        for (i = 0; i < uploadFileButtons.length; i++) {
+            uploadFileButtons[i].addEventListener("change", customDraftClassHandler);
+        }
     }
 
     return bbgmView.init({

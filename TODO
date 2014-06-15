@@ -45,6 +45,7 @@ custom draft class importing
   UI
     basically the same as in Edit Team Info, but on Draft Scouting page
     need article in manual explaining all this, and link from Draft Scouting
+    hide by default?
   wiring
     data-bind="attr: {id: 'custom-draft-class-' + $index()}"
     -or-

@@ -37,6 +37,20 @@ Eventually:
 CURRENT
 -------
 
+custom draft class importing
+  file format
+    anything except players is ignored
+    must have >0 players (less than 70? generate)
+    any players with a PID besides -2 is ignored
+  UI
+    basically the same as in Edit Team Info, but on Draft Scouting page
+    need article in manual explaining all this, and link from Draft Scouting
+  wiring
+    data-bind="attr: {id: 'custom-draft-class-' + $index()}"
+    -or-
+    all with same id, data attribute for $index
+  checking
+    some code already for importing leagues, right? abstract
 cordova
   in portrait, games in dashboard looks like shit
   hide export link
@@ -101,8 +115,6 @@ show prospects before draft
     movement between draft classes
       allow promising to draft a player at certain position to influence decision
 customization
-  allow import of team info or draft classes from roster files
-  allow upload of just these files from the "new league" screen, somehow
   popRank/difficulty being set correctly for uploaded rosters, on new league screen and elsewhere?
 career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year

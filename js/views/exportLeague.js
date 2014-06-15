@@ -22,11 +22,13 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout", "util/bbgm
         if (authResult && !authResult.error) {
           // Access token has been successfully retrieved, requests can be sent to the API.
           vm.authorized(true);
-          document.getElementById("save").onclick = function() {
-            vm.gdSaving(true);
-            vm.gdSaved(false);
-            insertBlob(vm, blob, fileName);
-          };
+          if (blob && fileName) {
+            document.getElementById("save").onclick = function() {
+              vm.gdSaving(true);
+              vm.gdSaved(false);
+              insertBlob(vm, blob, fileName);
+            };
+          }
         } else {
           // No access token could be retrieved, show the button to start the authorization flow.
           vm.authorized(false);
@@ -38,7 +40,12 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout", "util/bbgm
         }
       };
 
-      checkAuth();
+      // Only proceed if gapi is loaded
+      if (window.hasOwnProperty("gapi")) {
+        checkAuth();
+      } else {
+        console.log("gapi not loaded");
+      }
     }
 
     function insertBlob(vm, blob, fileName) {

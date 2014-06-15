@@ -2,7 +2,7 @@
  * @name views.draftScouting
  * @namespace Scouting prospects in future drafts.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, draft, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -96,15 +96,27 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     }
 
     function customDraftClassHandler(e) {
-        var file, reader, seasonOffset;
+        var draftClassTid, file, reader, seasonOffset;
+console.log(e);
 
         seasonOffset = parseInt(e.target.dataset.index, 10);
         file = e.target.files[0];
 
+        // What tid to replace?
+        if (seasonOffset === 0) {
+            draftClassTid = g.PLAYER.UNDRAFTED;
+        } else if (seasonOffset === 1) {
+            draftClassTid = g.PLAYER.UNDRAFTED_2;
+        } else if (seasonOffset === 2) {
+            draftClassTid = g.PLAYER.UNDRAFTED_3;
+        } else {
+            throw new Error("Invalid draft class index");
+        }
+
         reader = new window.FileReader();
         reader.readAsText(file);
         reader.onload = function (event) {
-            var players;
+            var players, playerStore, tx;
 
             // Get all players from uploaded files
             players = JSON.parse(event.target.result).players;
@@ -113,12 +125,37 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             players = players.filter(function (p) {
                 return p.tid === g.PLAYER.UNDRAFTED;
             });
-
 console.log(players);
-        };
 
-console.log("OFFSET: " + seasonOffset);
-console.log(e);
+            // Make sure player objects are fully defined
+
+
+            // Delete old players from draft class
+            tx = g.dbl.transaction(["players", "teams"], "readwrite");
+            playerStore = tx.objectStore("players");
+            playerStore.openCursor(IDBKeyRange.only(draftClassTid)).onsuccess = function (event) {
+                var cursor;
+                cursor = event.target.result;
+                if (cursor) {
+                    playerStore.delete(cursor.primaryKey);
+                    cursor.continue();
+                }
+            };
+
+            // Add new players to database
+            players.forEach(function (p) {
+                playerStore.add(p);
+            });
+
+            // "Top off" the draft class if <70 players imported
+            if (players.length < 70) {
+                draft.genPlayers(tx, draftClassTid, null, 70 - players.length);
+            }
+
+            tx.oncomplete = function () {
+                ui.realtimeUpdate();
+            };
+        };
     }
 
     function uiFirst(vm) {

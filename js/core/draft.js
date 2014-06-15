@@ -48,7 +48,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
      * This is called after draft classes are moved up a year, to create the new UNDRAFTED_3 class. It's also called 3 times when a new league starts, to create all 3 draft classes.
      *
      * @memberOf core.draft
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on players, readwrite; if null is passed, then a new transaction will be used.
+     * @param {IDBTransaction|null} ot An IndexedDB transaction on players (and teams if scoutingRank is not set), readwrite; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID number for the generated draft class. Should be g.PLAYER.UNDRAFTED, g.PLAYER.UNDRAFTED_2, or g.PLAYER.UNDRAFTED_3.
      * @param {number?} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
      * @param {number?} numPlayers The number of prospects to generate. Default value is 70.

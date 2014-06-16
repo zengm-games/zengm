@@ -211,7 +211,6 @@ random events
   like.. player gets suspended, out X games. or player gets into fight, fan support drops. etc.
   need a notification system first
 more detailed draft - slower picks, trades, etc.
-  custom draft classes http://www.reddit.com/r/BasketballGM/comments/1r0ftx/nba_2k2/cdj769w
   slower picks http://www.reddit.com/r/BasketballGM/comments/1r70dv/trade_picks_during_draft
   sort by generic value (current) or team-specific value
   trade picks - note that the code in teamValue will need to be modified to account for the lottery and available players in the draft class

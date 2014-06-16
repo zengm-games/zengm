@@ -2,7 +2,7 @@
  * @name views.draftScouting
  * @namespace Scouting prospects in future drafts.
  */
-define(["globals", "ui", "core/draft", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, draft, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/draft", "core/finances", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, draft, finances, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -112,11 +112,12 @@ console.log(e);
         } else {
             throw new Error("Invalid draft class index");
         }
+console.log("draftClassTid: " + draftClassTid)
 
         reader = new window.FileReader();
         reader.readAsText(file);
         reader.onload = function (event) {
-            var players, playerStore, tx;
+            var players;
 
             // Get all players from uploaded files
             players = JSON.parse(event.target.result).players;
@@ -126,34 +127,54 @@ console.log(e);
                 return p.tid === g.PLAYER.UNDRAFTED;
             });
 console.log(players);
+console.log(players.length);
 
-            // Make sure player objects are fully defined
+            // Get scouting rank, which is used in a couple places below
+            g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
+                var playerStore, scoutingRank, t, tx;
 
+                t = event.target.result;
+                scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
 
-            // Delete old players from draft class
-            tx = g.dbl.transaction(["players", "teams"], "readwrite");
-            playerStore = tx.objectStore("players");
-            playerStore.openCursor(IDBKeyRange.only(draftClassTid)).onsuccess = function (event) {
-                var cursor;
-                cursor = event.target.result;
-                if (cursor) {
-                    playerStore.delete(cursor.primaryKey);
-                    cursor.continue();
-                }
-            };
+                // Delete old players from draft class
+                tx = g.dbl.transaction("players", "readwrite");
+                playerStore = tx.objectStore("players");
+                playerStore.index("tid").openCursor(IDBKeyRange.only(draftClassTid)).onsuccess = function (event) {
+                    var cursor;
+                    cursor = event.target.result;
+                    if (cursor) {
+                        playerStore.delete(cursor.primaryKey);
+                        cursor.continue();
+                    } else {
+                        // Everything else proceeds after deletes have finished
+                        
+                        // Add new players to database
+                        players.forEach(function (p) {
+                            // Make sure player object is fully defined
+                            p = player.augmentPartialPlayer(p, scoutingRank);
 
-            // Add new players to database
-            players.forEach(function (p) {
-                playerStore.add(p);
-            });
+                            // Manually set TID, since at this point it is always g.PLAYER.UNDRAFTED
+                            p.tid = draftClassTid;
 
-            // "Top off" the draft class if <70 players imported
-            if (players.length < 70) {
-                draft.genPlayers(tx, draftClassTid, null, 70 - players.length);
-            }
+                            // Manually remove PID, since all it can do is cause trouble
+                            if (p.hasOwnProperty("pid")) {
+                                delete p.pid;
+                            }
 
-            tx.oncomplete = function () {
-                ui.realtimeUpdate();
+                            playerStore.add(p);
+                            console.log(p.name);
+                        });
+
+                        // "Top off" the draft class if <70 players imported
+                        if (players.length < 70) {
+                            draft.genPlayers(tx, draftClassTid, scoutingRank, 70 - players.length);
+                        }
+                    }
+                };
+
+                tx.oncomplete = function () {
+                    ui.realtimeUpdate(["dbChange"]);
+                };
             };
         };
     }

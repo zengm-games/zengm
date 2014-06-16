@@ -38,6 +38,8 @@ CURRENT
 -------
 
 custom draft class importing
+  TEST
+    seems to not work if i try again, until page reload?
   file format
     anything except players is ignored
     must have >0 players (less than 70? generate)

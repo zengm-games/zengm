@@ -1618,6 +1618,77 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         };
     }
 
+    /**
+     * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
+     * 
+     * @memberOf core.player
+     * @param {Object} p Partial player object.
+     * @return {Object} p Full player object.
+     */
+    function augmentPartialPlayer(p, scoutingRank) {
+        var age, j, pg, simpleDefaults;
+
+        if (!p.hasOwnProperty("born")) {
+            age = random.randInt(19, 35);
+        } else {
+            age = g.startingSeason - p.born.year;
+        }
+
+        // This is used to get at default values for various attributes
+        pg = generate(p.tid, age, "", 0, 0, g.startingSeason - age, true, scoutingRank);
+
+        // Optional things
+        simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "hgt", "imgURL", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "weight", "yearsFreeAgent"];
+        for (j = 0; j < simpleDefaults.length; j++) {
+            if (!p.hasOwnProperty(simpleDefaults[j])) {
+                p[simpleDefaults[j]] = pg[simpleDefaults[j]];
+            }
+        }
+        if (!p.hasOwnProperty("salaries")) {
+            p.salaries = [];
+            if (p.contract.exp < g.startingSeason) {
+                p.contract.exp = g.startingSeason;
+            }
+            if (p.tid >= 0) {
+                p = setContract(p, p.contract, true);
+            }
+        }
+        if (!p.hasOwnProperty("statsTids")) {
+            p.statsTids = [];
+        }
+        if (!p.ratings[0].hasOwnProperty("fuzz")) {
+            p.ratings[0].fuzz = pg.ratings[0].fuzz;
+        }
+        if (!p.ratings[0].hasOwnProperty("skills")) {
+            p.ratings[0].skills = skills(p.ratings[0]);
+        }
+        if (!p.ratings[0].hasOwnProperty("ovr")) {
+            p.ratings[0].ovr = ovr(p.ratings[0]);
+        }
+        if (p.ratings[0].pot < p.ratings[0].ovr) {
+            p.ratings[0].pot = p.ratings[0].ovr;
+        }
+
+        // Fix always-missing info
+        if (p.tid === g.PLAYER.UNDRAFTED_2) {
+            p.ratings[0].season = g.startingSeason + 1;
+        } else if (p.tid === g.PLAYER.UNDRAFTED_3) {
+            p.ratings[0].season = g.startingSeason + 2;
+        } else {
+            if (!p.ratings[0].hasOwnProperty("season")) {
+                p.ratings[0].season = g.startingSeason;
+            }
+        }
+        if (!p.hasOwnProperty("stats")) {
+            p.stats = [];
+            if (p.tid >= 0) {
+                p = addStatsRow(p, false);
+            }
+        }
+
+        return p;
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1638,6 +1709,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         retire: retire,
         name: name,
         contractSeasonsRemaining: contractSeasonsRemaining,
-        moodColorText: moodColorText
+        moodColorText: moodColorText,
+        augmentPartialPlayer: augmentPartialPlayer
     };
 });

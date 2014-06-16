@@ -8,7 +8,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
     describe("util/account", function () {
         before(function (done) {
             db.connectMeta(function () {
-                league.create("Test", 7, undefined, undefined, 2013, false, function () {
+                league.create("Test", 7, undefined, 2013, false, function () {
                     done();
                 });
             });

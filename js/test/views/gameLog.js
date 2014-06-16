@@ -52,7 +52,7 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
     describe("views/gameLog", function () {
         before(function (done) {
             db.connectMeta(function () {
-                league.create("Test", 0, undefined, undefined, 2013, false, function () {
+                league.create("Test", 0, undefined, 2013, false, function () {
                     var i, tx;
 
                     tx = g.dbl.transaction("games", "readwrite");

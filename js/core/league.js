@@ -197,7 +197,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                     }
 
                     player.genBaseMoods(tx, function (baseMoods) {
-                        var afterPlayerCreation, age, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, pg, playerStore, players, pots, profile, profiles, randomizeExpiration, simpleDefaults, t, t2, playerTids;
+                        var afterPlayerCreation, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, playerStore, players, pots, profile, profiles, randomizeExpiration, t, t2, playerTids;
 
                         afterPlayerCreation = function () {
                             var createUndrafted1, createUndrafted2, createUndrafted3, i;
@@ -243,6 +243,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                                         lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
                                         // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
+debugger;
                                         team.rosterAutoSort(null, g.userTid, function () { cb(lid); });
 
                                         helpers.bbgmPing("league");

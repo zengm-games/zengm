@@ -37,32 +37,6 @@ Eventually:
 CURRENT
 -------
 
-custom draft class importing
-  TEST
-  file format
-    anything except players is ignored
-    must have >0 players (less than 70? generate)
-    any players with a PID besides -2 is ignored
-  UI
-    need article in manual explaining all this, and link from Draft Scouting
-  wiring
-    data-bind="attr: {id: 'custom-draft-class-' + $index()}"
-    -or-
-    all with same id, data attribute for $index
-  checking
-    some code already for importing leagues, right? abstract
-      ensure player object is full
-      ensure >=70 players
-cordova
-  in portrait, games in dashboard looks like shit
-  hide export link
-blog about cordova/web hybrid
-  base URL prefix - do in JS
-  davisjs: preprocess
-  images: data URLs
-  upload roster files problem
-firefox market
-windows 8
 blog about export league
   introduce
   docs
@@ -74,6 +48,17 @@ blog about export league
     include your own message from the owner to display right when someone uses your file
     probably some more stuff i'm not thinking of
   step towards hosting game in "the cloud" - technically it's already there, just copy the file to dropbox or whatever
+  also custom draft classes
+cordova
+  in portrait, games in dashboard looks like shit
+  hide export link
+blog about cordova/web hybrid
+  base URL prefix - do in JS
+  davisjs: preprocess
+  images: data URLs
+  upload roster files problem
+firefox market
+windows 8
 edit/delete player
   share code with create a player
     contract?

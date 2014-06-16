@@ -204,6 +204,23 @@ console.log(players.length);
         for (i = 0; i < uploadFileButtons.length; i++) {
             uploadFileButtons[i].addEventListener("change", customDraftClassHandler);
         }
+
+        // Same uiEvery rationale as above
+        document.getElementById("toggle-0").addEventListener("click", function (e) {
+            e.preventDefault();
+            this.style.display = "none";
+            document.getElementById("form-0").style.display = "block";
+        });
+        document.getElementById("toggle-1").addEventListener("click", function (e) {
+            e.preventDefault();
+            this.style.display = "none";
+            document.getElementById("form-1").style.display = "block";
+        });
+        document.getElementById("toggle-2").addEventListener("click", function (e) {
+            e.preventDefault();
+            this.style.display = "none";
+            document.getElementById("form-2").style.display = "block";
+        });
     }
 
     return bbgmView.init({

@@ -180,8 +180,6 @@ console.log(players.length);
     }
 
     function uiFirst(vm) {
-        var i, uploadFileButtons;
-
         ui.title("Draft Scouting");
 
         ko.computed(function () {
@@ -195,8 +193,13 @@ console.log(players.length);
         }).extend({throttle: 1});
 
         ui.tableClickableRows($("#draft-scouting"));
+    }
 
-        // Handle custom roster buttons
+    function uiEvery() {
+        var i, uploadFileButtons;
+
+        // Handle custom roster buttons - this needs to be in uiEvery or it's lost when page reloads
+        // This could somehow lead to double calling customDraftClassHandler, but that doesn't seem to actually happen
         uploadFileButtons = document.getElementsByClassName("custom-draft-class");
         for (i = 0; i < uploadFileButtons.length; i++) {
             uploadFileButtons[i].addEventListener("change", customDraftClassHandler);
@@ -207,6 +210,7 @@ console.log(players.length);
         id: "draftScouting",
         mapping: mapping,
         runBefore: [updateDraftScouting],
-        uiFirst: uiFirst
+        uiFirst: uiFirst,
+        uiEvery: uiEvery
     });
 });

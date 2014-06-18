@@ -10,6 +10,8 @@ number or not.
 - New trade AI, fixing a ton of loopholes
 - Achievements
 - Upcoming Free Agents page
+- Export of entire league data
+- Easy import of custom draft classes
 
 # 3.3.0 (2014-01-21)
 

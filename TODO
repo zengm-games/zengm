@@ -436,6 +436,7 @@ draft lottery
   do a dramatic presentation?
   increase hype for teams that exceed expectations
   tied records?
+  should happen in "before draft" phase to allow trading early
 how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
   for roster, want just a player's stats with this team this season
     this currently works, just pass a tid

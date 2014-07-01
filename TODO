@@ -37,6 +37,11 @@ Eventually:
 CURRENT
 -------
 
+trade UI
+  email
+  http://datatables.net/extensions/fixedcolumns/
+  http://www.reddit.com/r/BasketballGM/comments/28tzek/trade_ui_redesign_concept_what_do_you_all_think/
+move retired players to separate object store - does it help performance?
 cordova
   in portrait, games in dashboard looks like shit
   hide export link
@@ -157,9 +162,8 @@ PLAYER DEVELOPMENT REVAMP
 -------------------------
 
 player development revamp
-  something needs to be done. still too many 3 point shooting centers.
+  something needs to be done. still too many 3 point shooting centers
   are ovr/pot combos reasonable, since ovr is weighted now?
-  low ovr high pot players should pan out more?
   old stars should exist
   reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
   really high ovr/pot is handled poorly, rapid declines if there is a gap
@@ -250,6 +254,7 @@ fuzz should affect potential more than other variables, when pot is different th
 MINOR FIXES
 -----------
 
+don't allow players to be released in playoffs, otherwise minimum roster limit can leave game in unplayable state
 most improved player
 assist leaders too low
 Number of years in college should depend on talent level

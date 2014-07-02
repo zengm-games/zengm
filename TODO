@@ -254,7 +254,9 @@ fuzz should affect potential more than other variables, when pot is different th
 MINOR FIXES
 -----------
 
-don't allow players to be released in playoffs, otherwise minimum roster limit can leave game in unplayable state
+smoother multi-window updates
+  instead of dbChange, cache previous updateEvents and pass them
+    cache expiration?
 most improved player
 assist leaders too low
 Number of years in college should depend on talent level
@@ -381,6 +383,10 @@ some UI indicating how players developed over the offseason
   integrated into roster, or separate page?
 player search page
   show stats, ratings, contract, etc. (customizable); allow filters to be applied. also filter by skill icon
+  search by stats, ratings, or attributes
+  trade for button, or sign button if free agent, or draft button if draft prospect
+    same contextual buttons for watch list
+    can this become main UI for drafting (at least fantasy draft)
 finances
   too easy to make big $$$
     owner should take profits each year
@@ -500,10 +506,6 @@ AI modules that contain functions which are called to determine actions
     trades
     budget items (like from team finances view)
     releasing/buying out players when over limit
-player finder
-  search by stats, ratings, or attributes
-  trade for button, or sign button if free agent, or draft button if draft prospect
-    can this become main UI for drafting (at least fantasy draft)
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
   http://datatables.net/extras/colvis/
   would it be better just to toggle displays? http://www.reddit.com/r/BasketballGM/comments/1ygzlt/idea_watch_list_toggle_between_stats_and/
@@ -587,8 +589,6 @@ tv revenue as a variable
       "random event" - competition between two networks, Sports TV and The Basketball Channel
     when renegotiating and really bad, the guy pretends not to know you - "Atlanta Herons? Is that the team from the Mexican/Canadian/Arena/Indoor/Xtreme Volleyball/Soccer/Tennis/Racing/Curling/MudWrestling League?"
 stat views
-  add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
-    could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
   playoff/regular season toggle in team/player stats, league leaders
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed
 AI teams should have to deal with fuzz too

@@ -124,14 +124,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         this.p = {
             face: ko.observable()
         };
+        this.positions = [];
     }
 
     mapping = {
-        positions: {
-            create: function (options) {
-                return options.data;
-            }
-        },
         teams: {
             create: function (options) {
                 return options.data;
@@ -177,7 +173,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                     text: "Free Agent"
                 });
 
-                positions = [{pos: "PG"}, {pos: "SG"}, {pos: "SF"}, {pos: "PF"}, {pos: "C"}, {pos: "G"}, {pos: "GF"}, {pos: "F"}, {pos: "FC"}];
+                positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];
 
                 g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
                     var p, scoutingRank, t;

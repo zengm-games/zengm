@@ -29,9 +29,7 @@
       </div>
       <div class="col-sm-3 col-xs-6 form-group">
         <label for="cap-pos">Position</label>
-        <select class="form-control" id="cap-pos" name="pos" data-bind="foreach: positions">
-          <option data-bind="attr: {value: pos}, text: pos"></option>
-        </select>
+        <select class="form-control" id="cap-pos" name="pos" data-bind="options: positions, value: p.pos"></select>
       </div>
       <div class="col-sm-3 col-xs-6 form-group">
         <label for="cap-born-loc">Hometown</label>

@@ -42,6 +42,7 @@ edit/delete player
     contract?
   do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
   do ratings need to be observable? probably
+  numeric inputs converted to strings? http://stackoverflow.com/questions/7395946/knockout-js-json-has-numeric-but-knockout-changes-it-to-string-any-suggestions or post-processing
   UI processing
     bound ratings, some face stuff
   post processing

@@ -88,7 +88,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             p.watch = true;
             p.weight = parseInt(req.params.weight, 10);
 
-            p.face.color = req.params["face-color"];
+            p.face().color = req.params["face-color"];
             p.face.fatness = parseFloat(req.params["face-fatness"]);
             p.face.eyes[0].id = parseInt(req.params["face-eyes"], 10);
             p.face.eyes[1].id = parseInt(req.params["face-eyes"], 10);
@@ -121,7 +121,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
     }
 
     function InitViewModel() {
-        this.face = ko.observable();
+        this.p = {
+            face: ko.observable()
+        };
     }
 
     mapping = {
@@ -224,18 +226,16 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
     function uiFirst(vm) {
         ui.title("Create A Player");
 
-        //faces.display("picture", ko.toJS(vm.face()));
-
-        document.getElementById("randomize-face").addEventListener("click", function (event) {
-            vm.p.face = komapping.fromJS(generateFace());
+        document.getElementById("randomize-face").addEventListener("click", function () {
+            vm.p.face(komapping.fromJS(generateFace()));
         });
 
         // Since there are two eyes and the updated observable is the first one, update the second in parallel
         ko.computed(function () {
-            vm.p.face.eyes()[1].id(vm.p.face.eyes()[0].id());
+            vm.p.face().eyes()[1].id(vm.p.face().eyes()[0].id());
         }).extend({throttle: 1});
         ko.computed(function () {
-            vm.p.face.eyes()[1].angle(vm.p.face.eyes()[0].angle());
+            vm.p.face().eyes()[1].angle(vm.p.face().eyes()[0].angle());
         }).extend({throttle: 1});
 
         // Set born.year based on age input

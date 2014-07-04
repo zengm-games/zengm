@@ -180,20 +180,41 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                 face = generateFace();
 
-                deferred.resolve({
-                    appearanceOption: "",
-                    appearanceOptions: ["Cartoon Face", "Image URL"],
-                    face: face,
-                    faceOptions: {
-                        eyes: [0, 1, 2, 3],
-                        nose: [0, 1, 2],
-                        mouth: [0, 1, 2, 3, 4],
-                        hair: [0, 1, 2, 3, 4, 5]
-                    },
-                    name: player.name(),
-                    positions: positions,
-                    teams: teams
-                });
+
+                g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
+                    var p, scoutingRank, t;
+
+                    t = event.target.result;
+                    scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
+
+                    p = player.generate(g.PLAYER.FREE_AGENT,
+                                    20,
+                                    null,
+                                    50,
+                                    50,
+                                    g.season,
+                                    false,
+                                    scoutingRank);
+
+                    p.face.fatness = helpers.round(face.fatness, 2);
+                    p.face.eyes[0].angle = helpers.round(face.eyes[0].angle, 1);
+                    p.face.eyes[1].angle = helpers.round(face.eyes[1].angle, 1);
+
+                    deferred.resolve({
+                        age: 20, // Needed because p contains born.year, not age directly. Computed observable set below.
+                        appearanceOption: "",
+                        appearanceOptions: ["Cartoon Face", "Image URL"],
+                        p: p,
+                        faceOptions: {
+                            eyes: [0, 1, 2, 3],
+                            nose: [0, 1, 2],
+                            mouth: [0, 1, 2, 3, 4],
+                            hair: [0, 1, 2, 3, 4, 5]
+                        },
+                        positions: positions,
+                        teams: teams
+                    });
+                };
             });
         }
 
@@ -206,20 +227,30 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         //faces.display("picture", ko.toJS(vm.face()));
 
         document.getElementById("randomize-face").addEventListener("click", function (event) {
-            event.preventDefault();
-            vm.face(komapping.fromJS(generateFace()));
+            vm.p.face = komapping.fromJS(generateFace());
         });
 
+        // Since there are two eyes and the updated observable is the first one, update the second in parallel
         ko.computed(function () {
-            vm.face().eyes()[1].id(vm.face().eyes()[0].id());
+            vm.p.face.eyes()[1].id(vm.p.face.eyes()[0].id());
         }).extend({throttle: 1});
         ko.computed(function () {
-            vm.face().eyes()[1].angle(vm.face().eyes()[0].angle());
+            vm.p.face.eyes()[1].angle(vm.p.face.eyes()[0].angle());
         }).extend({throttle: 1});
 
+        // Set born.year based on age input
         ko.computed(function () {
-            faces.display("picture", ko.toJS(vm.face()));
+            vm.p.born.year(g.season - vm.age());
         }).extend({throttle: 1});
+
+        // Update picture display
+        ko.computed(function () {
+            faces.display("picture", ko.toJS(vm.p.face));
+        }).extend({throttle: 1});
+
+        document.getElementById("create-a-player").addEventListener("click", function () {
+console.log(vm.p.born.year());
+        });
     }
 
     return bbgmView.init({

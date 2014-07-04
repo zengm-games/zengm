@@ -2,8 +2,6 @@
 
 <p>Here, you can create a custom player with whatever attributes and ratings you want. If you want to make a whole league of custom players, you should probably create a <a href="http://basketball-gm.com/manual/customization/">custom League File</a>.</p>
 
-<form method="POST" data-bind="attrLeagueUrl: {action: ['create_a_player']}">
-
 <div class="row">
   <div class="col-md-7">
     <h2>Attributes</h2>
@@ -11,11 +9,11 @@
     <div class="row">
       <div class="col-sm-6 form-group">
         <label for="cap-name">Name</label>
-        <input type="text" class="form-control" id="cap-name" name="name" data-bind="value: name"></input>
+        <input type="text" class="form-control" id="cap-name" name="name" data-bind="value: p.name"></input>
       </div>
       <div class="col-sm-3 col-xs-6 form-group">
         <label for="cap-age">Age</label>
-        <input type="text" class="form-control" id="cap-age" name="age" value="19"></input>
+        <input type="text" class="form-control" id="cap-age" name="age" data-bind="value: age"></input>
       </div>
       <div class="col-sm-3 col-xs-6 form-group">
         <label for="cap-tid">Team</label>
@@ -61,35 +59,35 @@
         <div class="row">
           <div class="col-xs-6 form-group">
             <label for="cap-face-fatness">Width (0 to 1)</label>
-            <input type="text" class="form-control" id="cap-face-fatness" name="face-fatness" data-bind="value: face().fatness"></input>
+            <input type="text" class="form-control" id="cap-face-fatness" name="face-fatness" data-bind="value: p.face.fatness"></input>
           </div>
           <div class="col-xs-6 form-group">
             <label for="cap-face-color">Skin Color</label>
-            <input type="text" class="form-control" id="cap-face-color" name="face-color" data-bind="value: face().color"></input>
+            <input type="text" class="form-control" id="cap-face-color" name="face-color" data-bind="value: p.face.color"></input>
           </div>
           <div class="col-xs-6 form-group">
             <label for="cap-face-eyes">Eyes</label>
-            <select class="form-control" id="cap-eyes" name="face-eyes" data-bind="options: faceOptions.eyes, value: face().eyes()[0].id"></select>
+            <select class="form-control" id="cap-eyes" name="face-eyes" data-bind="options: faceOptions.eyes, value: p.face.eyes()[0].id"></select>
           </div>
           <div class="col-xs-6 form-group">
             <label for="cap-face-eyes-angle">Eye Angle (-20 to 30)</label>
-            <input type="text" class="form-control" id="cap-face-eyes-angle" name="face-eyes-angle" data-bind="value: face().eyes()[0].angle"></input>
+            <input type="text" class="form-control" id="cap-face-eyes-angle" name="face-eyes-angle" data-bind="value: p.face.eyes()[0].angle"></input>
           </div>
           <div class="col-xs-6 form-group">
             <label for="cap-face-nose">Nose</label>
-            <select class="form-control" id="cap-nose" name="face-nose" data-bind="options: faceOptions.nose, value: face().nose.id"></select>
+            <select class="form-control" id="cap-nose" name="face-nose" data-bind="options: faceOptions.nose, value: p.face.nose.id"></select>
           </div>
           <div class="col-xs-6 form-group">
             <label for="cap-face-nose-flip">Nose Flip</label>
-            <input type="checkbox" class="form-control" id="cap-face-nose-flip" name="face-nose-flip" data-bind="checked: face().nose.flip"></input>
+            <input type="checkbox" class="form-control" id="cap-face-nose-flip" name="face-nose-flip" data-bind="checked: p.face.nose.flip"></input>
           </div>
           <div class="col-xs-6 form-group">
             <label for="cap-face-mouth">Mouth</label>
-            <select class="form-control" id="cap-mouth" name="face-mouth" data-bind="options: faceOptions.mouth, value: face().mouth.id"></select>
+            <select class="form-control" id="cap-mouth" name="face-mouth" data-bind="options: faceOptions.mouth, value: p.face.mouth.id"></select>
           </div>
           <div class="col-xs-6 form-group">
             <label for="cap-face-hair">Hair</label>
-            <select class="form-control" id="cap-hair" name="face-hair" data-bind="options: faceOptions.hair, value: face().hair.id"></select>
+            <select class="form-control" id="cap-hair" name="face-hair" data-bind="options: faceOptions.hair, value: p.face.hair.id"></select>
           </div>
         </div>
       </div>
@@ -195,6 +193,5 @@
 
 <br>
 <center>
-  <button type="submit" class="btn btn-primary btn-lg" id="create-a-player">Create Player</button>
+  <button class="btn btn-primary btn-lg" id="create-a-player">Create Player</button>
 </center>
-</form>

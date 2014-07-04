@@ -37,6 +37,15 @@ Eventually:
 CURRENT
 -------
 
+edit/delete player
+  share code with create a player
+    contract?
+  do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
+  p.face needs to be observable, otherwise the "randomize" button is glitchy
+  UI processing
+    bound ratings, some face stuff
+  post processing
+    only set image url if it's active
 trade UI
   email
   http://datatables.net/extensions/fixedcolumns/
@@ -52,10 +61,6 @@ blog about cordova/web hybrid
   upload roster files problem
 firefox market
 windows 8
-edit/delete player
-  share code with create a player
-    contract?
-  do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
 event log for trades
 upcoming free agents
   off by one contract year?

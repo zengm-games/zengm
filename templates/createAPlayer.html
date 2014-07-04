@@ -33,7 +33,7 @@
       </div>
       <div class="col-sm-3 col-xs-6 form-group">
         <label for="cap-born-loc">Hometown</label>
-        <input type="text" class="form-control" id="cap-born-loc" name="born-loc" value="USA"></input>
+        <input type="text" class="form-control" id="cap-born-loc" name="born-loc" data-bind="value: p.born.loc"></input>
       </div>
     </div>
 
@@ -91,7 +91,7 @@
 
     <div class="form-group" data-bind="visible: appearanceOption() === 'Image URL'">
       <label for="cap-image-url">Image URL</label>
-      <input type="text" class="form-control" id="cap-image-url" name="image-url" value="http://"></input>
+      <input type="text" class="form-control" id="cap-image-url" data-bind="value: p.imgURL"></input>
       <span class="help-block">Your image must be hosted externally. If you need to upload an image, try using <a href="http://imgur.com/">imgur</a>. For ideal display, crop your image so it has a 2:3 aspect ratio (such as 100px wide and 150px tall).</span>
     </div>
   </div>

@@ -43,11 +43,10 @@ edit/delete player
   do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
   do ratings need to be observable? probably
   numeric inputs converted to strings? http://stackoverflow.com/questions/7395946/knockout-js-json-has-numeric-but-knockout-changes-it-to-string-any-suggestions or post-processing
-  UI processing
-    bound ratings, some face stuff
+  bound ratings, some face stuff
   post processing
-    only set image url if it's active
-    anything in old post?
+    only keep image url if selected in dropdown, otherwise set to empty string
+    anything in old POST?
 trade UI
   email
   http://datatables.net/extensions/fixedcolumns/

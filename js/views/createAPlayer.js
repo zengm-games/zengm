@@ -194,6 +194,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                     p.face.eyes[0].angle = helpers.round(p.face.eyes[0].angle, 1);
                     p.face.eyes[1].angle = helpers.round(p.face.eyes[1].angle, 1);
 
+                    p.imgURL = "http://";
+
                     deferred.resolve({
                         age: 20, // Needed because p contains born.year, not age directly. Computed observable set below.
                         appearanceOption: "",

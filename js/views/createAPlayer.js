@@ -148,7 +148,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 attrs: ["tid", "region", "name"],
                 season: g.season
             }, function (teams) {
-                var face, positions, seasonOffset;
+                var i, positions, seasonOffset;
 
                 // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
                 if (g.phase < g.PHASE.FREE_AGENCY) {
@@ -157,31 +157,27 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                     seasonOffset = 1;
                 }
 
+                for (i = 0; i < teams.length; i++) {
+                    teams[i].text = teams[i].region + " " + teams[i].name;
+                }
                 teams.unshift({
                     tid: g.PLAYER.UNDRAFTED_3,
-                    region: "",
-                    name: (g.season + seasonOffset + 2) + " Draft Prospect"
+                    text: (g.season + seasonOffset + 2) + " Draft Prospect"
                 });
                 teams.unshift({
                     tid: g.PLAYER.UNDRAFTED_2,
-                    region: "",
-                    name: (g.season + seasonOffset + 1) + " Draft Prospect"
+                    text: (g.season + seasonOffset + 1) + " Draft Prospect"
                 });
                 teams.unshift({
                     tid: g.PLAYER.UNDRAFTED,
-                    region: "",
-                    name: (g.season + seasonOffset) + " Draft Prospect"
+                    text: (g.season + seasonOffset) + " Draft Prospect"
                 });
                 teams.unshift({
                     tid: g.PLAYER.FREE_AGENT,
-                    region: "",
-                    name: "Free Agent"
+                    text: "Free Agent"
                 });
 
                 positions = [{pos: "PG"}, {pos: "SG"}, {pos: "SF"}, {pos: "PF"}, {pos: "C"}, {pos: "G"}, {pos: "GF"}, {pos: "F"}, {pos: "FC"}];
-
-                face = generateFace();
-
 
                 g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
                     var p, scoutingRank, t;
@@ -198,9 +194,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                                     false,
                                     scoutingRank);
 
-                    p.face.fatness = helpers.round(face.fatness, 2);
-                    p.face.eyes[0].angle = helpers.round(face.eyes[0].angle, 1);
-                    p.face.eyes[1].angle = helpers.round(face.eyes[1].angle, 1);
+                    p.face.fatness = helpers.round(p.face.fatness, 2);
+                    p.face.eyes[0].angle = helpers.round(p.face.eyes[0].angle, 1);
+                    p.face.eyes[1].angle = helpers.round(p.face.eyes[1].angle, 1);
 
                     deferred.resolve({
                         age: 20, // Needed because p contains born.year, not age directly. Computed observable set below.
@@ -249,7 +245,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         }).extend({throttle: 1});
 
         document.getElementById("create-a-player").addEventListener("click", function () {
-console.log(vm.p.born.year());
+console.log(vm.teams())
+console.log(komapping.toJS(vm.p));
         });
     }
 

@@ -17,9 +17,7 @@
       </div>
       <div class="col-sm-3 col-xs-6 form-group">
         <label for="cap-tid">Team</label>
-        <select class="form-control" id="cap-tid" name="tid" data-bind="foreach: teams">
-          <option data-bind="attr: {value: tid}, text: region + ' ' + name"></option>
-        </select>
+        <select class="form-control" id="cap-tid" name="tid" data-bind="options: teams, optionsText: 'text', value: p.tid, optionsValue: 'tid'"></select>
       </div>
       <div class="col-sm-3 col-xs-6 form-group">
         <label for="cap-hgt">Height (inches)</label>

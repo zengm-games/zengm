@@ -41,6 +41,7 @@ edit/delete player
   share code with create a player
     contract?
   do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
+  do ratings need to be observable? probably
   UI processing
     bound ratings, some face stuff
   post processing

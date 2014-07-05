@@ -204,7 +204,13 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
         // Update picture display
         ko.computed(function () {
-            faces.display("picture", ko.toJS(vm.p.face));
+            // This ensures it's not drawn when not visible (like if defaulting to Image URL for a
+            // player), and it also ensures that this computed is called when appearanceOption
+            // changes. Without this "if", it hows a corrupted display for some reason if Image URL
+            // is default and the face is switched to.
+            if (vm.appearanceOption() === "Cartoon Face") {
+                faces.display("picture", ko.toJS(vm.p.face));
+            }
         }).extend({throttle: 1});
 
         document.getElementById("create-a-player").addEventListener("click", function () {

@@ -121,10 +121,35 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
     }
 
     function InitViewModel() {
+        var i, ratingKeys;
+
         this.p = {
-            face: ko.observable()
+            face: ko.observable(),
+            ratings: ko.observableArray()
         };
         this.positions = [];
+
+        // Easy access to ratings array, since it could have any number of entries and we only want the last one
+        this.ratings = {};
+        ratingKeys = ["pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
+        for (i = 0; i < ratingKeys.length; i++) {
+            (function (i) {
+                this.ratings[ratingKeys[i]] = ko.computed({
+                    read: function () {
+                        // Critical: this will always call p.ratings() so it knows to update after player is loaded
+                        if (this.p.ratings().length > 0) {
+                            return this.p.ratings()[this.p.ratings().length - 1][ratingKeys[i]]();
+                        } else {
+                            return 0;
+                        }
+                    },
+                    write: function (value) {
+                        this.p.ratings()[this.p.ratings().length - 1][ratingKeys[i]](helpers.bound(parseInt(value, 10), 0, 100));
+                    },
+                    owner: this
+                });
+            }.bind(this))(i);
+        }
     }
 
     mapping = {
@@ -243,8 +268,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         }).extend({throttle: 1});
 
         document.getElementById("create-a-player").addEventListener("click", function () {
-console.log(vm.teams())
+console.log(vm.ratings)
 console.log(komapping.toJS(vm.p));
+vm.ratings.hgt(5);
         });
     }
 

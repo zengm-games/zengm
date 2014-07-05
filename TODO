@@ -41,12 +41,13 @@ edit/delete player
   share code with create a player
     contract?
   do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
-  do ratings need to be observable? probably
   numeric inputs converted to strings? http://stackoverflow.com/questions/7395946/knockout-js-json-has-numeric-but-knockout-changes-it-to-string-any-suggestions or post-processing
+    already done for ratings!
   bound ratings, some face stuff
   post processing
     only keep image url if selected in dropdown, otherwise set to empty string
     anything in old POST?
+  delete excessive name and id properties from createAPlayer.html
 trade UI
   email
   http://datatables.net/extensions/fixedcolumns/

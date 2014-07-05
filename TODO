@@ -40,6 +40,11 @@ CURRENT
 convert create a player to knockout, add ability to edit players
   contract?
   implement editing
+    edit player with image url, default to showing that
+    don't add new stats row unless team changed
+    update UI so the title and button are for "Edit" not "Create"
+    change URL
+    add link to access it somewhere? maybe ask first
 trade UI
   email
   http://datatables.net/extensions/fixedcolumns/

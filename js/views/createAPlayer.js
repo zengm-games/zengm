@@ -19,6 +19,18 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         return face;
     }
 
+    function get(req) {
+        if (req.params.hasOwnProperty("pid")) {
+            return {
+                pid: parseInt(req.params.pid, 10)
+            };
+        }
+
+        return {
+            pid: null
+        };
+    }
+
     function InitViewModel() {
         var i, ratingKeys;
 
@@ -82,7 +94,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 attrs: ["tid", "region", "name"],
                 season: g.season
             }, function (teams) {
-                var i, positions, seasonOffset;
+                var i, positions, seasonOffset, vars;
 
                 // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
                 if (g.phase < g.PHASE.FREE_AGENCY) {
@@ -113,42 +125,62 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                 positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];
 
-                // Generate new player as basis
-                g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
-                    var p, scoutingRank, t;
-
-                    t = event.target.result;
-                    scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
-
-                    p = player.generate(g.PLAYER.FREE_AGENT,
-                                    20,
-                                    null,
-                                    50,
-                                    50,
-                                    g.season,
-                                    false,
-                                    scoutingRank);
-
-                    p.face.fatness = helpers.round(p.face.fatness, 2);
-                    p.face.eyes[0].angle = helpers.round(p.face.eyes[0].angle, 1);
-                    p.face.eyes[1].angle = helpers.round(p.face.eyes[1].angle, 1);
-
-                    p.imgURL = "http://";
-
-                    deferred.resolve({
-                        appearanceOption: "",
-                        appearanceOptions: ["Cartoon Face", "Image URL"],
-                        p: p,
-                        faceOptions: {
-                            eyes: [0, 1, 2, 3],
-                            nose: [0, 1, 2],
-                            mouth: [0, 1, 2, 3, 4],
-                            hair: [0, 1, 2, 3, 4, 5]
-                        },
-                        positions: positions,
-                        teams: teams
-                    });
+                vars = {
+                    appearanceOptions: ["Cartoon Face", "Image URL"],
+                    faceOptions: {
+                        eyes: [0, 1, 2, 3],
+                        nose: [0, 1, 2],
+                        mouth: [0, 1, 2, 3, 4],
+                        hair: [0, 1, 2, 3, 4, 5]
+                    },
+                    positions: positions,
+                    teams: teams
                 };
+
+                if (inputs.pid === null) {
+                    // Generate new player as basis
+                    g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
+                        var p, scoutingRank, t;
+
+                        t = event.target.result;
+                        scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
+
+                        p = player.generate(g.PLAYER.FREE_AGENT,
+                                        20,
+                                        null,
+                                        50,
+                                        50,
+                                        g.season,
+                                        false,
+                                        scoutingRank);
+
+                        p.face.fatness = helpers.round(p.face.fatness, 2);
+                        p.face.eyes[0].angle = helpers.round(p.face.eyes[0].angle, 1);
+                        p.face.eyes[1].angle = helpers.round(p.face.eyes[1].angle, 1);
+
+                        vars.appearanceOption = "Cartoon Face";
+                        p.imgURL = "http://";
+
+                        vars.p = p;
+                        deferred.resolve(vars);
+                    };
+                } else {
+                    g.dbl.transaction("players").objectStore("players").get(inputs.pid).onsuccess = function (event) {
+                        var p;
+
+                        p = event.target.result;
+
+                        if (p.imgURL.length > 0) {
+                            vars.appearanceOption = "Image URL";
+                        } else {
+                            vars.appearanceOption = "Cartoon Face";
+                            p.imgURL = "http://";
+                        }
+
+                        vars.p = p;
+                        deferred.resolve(vars);
+                    };
+                }
             });
         }
 
@@ -245,6 +277,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
     return bbgmView.init({
         id: "createAPlayer",
+        get: get,
         InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateCreateAPlayer],

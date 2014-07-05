@@ -90,9 +90,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
     function updateCustomizePlayer(inputs, updateEvents) {
         var deferred;
-        deferred = $.Deferred();
 
         if (updateEvents.indexOf("firstRun") >= 0) {
+            deferred = $.Deferred();
+
             team.filter({
                 attrs: ["tid", "region", "name"],
                 season: g.season
@@ -186,9 +187,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                     };
                 }
             });
-        }
 
-        return deferred.promise();
+            return deferred.promise();
+        }
     }
 
     function uiFirst(vm) {

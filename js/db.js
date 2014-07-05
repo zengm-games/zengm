@@ -915,7 +915,20 @@ console.log(event);
         gameAttributesStore = getObjectStore(ot, "gameAttributes", "gameAttributes");
 
         gameAttributesStore.get(key).onsuccess = function (event) {
-            g[key] = event.target.result.value;
+            if (event.target.result === undefined) {
+                // Default values for old leagues - see also loadGameAttributes
+                if (key === "numTeams") {
+                    g.numTeams = 30;
+                } else if (key === "godMode") {
+                    g.godMode = false;
+                } else if (key === "godModeInPast") {
+                    g.godModeInPast = false;
+                } else {
+                    throw new Error("Unknown game attribute: " + key);
+                }
+            } else {
+                g[key] = event.target.result.value;
+            }
 
             if (cb !== undefined) {
                 cb();
@@ -943,9 +956,15 @@ console.log(event);
                 g[gameAttributes[i].key] = gameAttributes[i].value;
             }
 
-            // Default values for old leagues
+            // Default values for old leagues - see also loadGameAttribute
             if (g.numTeams === undefined) {
                 g.numTeams = 30;
+            }
+            if (g.godMode === undefined) {
+                g.godMode = false;
+            }
+            if (g.godModeInPast === undefined) {
+                g.godModeInPast = false;
             }
 
             if (cb !== undefined) {

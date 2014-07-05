@@ -125,7 +125,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
         this.p = {
             face: ko.observable(),
-            ratings: ko.observableArray()
+            ratings: ko.observableArray(),
+            born: {
+                year: ko.observable()
+            }
         };
         this.positions = [];
 
@@ -150,6 +153,17 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 });
             }.bind(this))(i);
         }
+
+        // Set born.year based on age input
+        this.age = ko.computed({
+            read: function () {
+                return g.season - this.p.born.year();
+            },
+            write: function (value) {
+                this.p.born.year(g.season - parseInt(value, 10));
+            },
+            owner: this
+        });
     }
 
     mapping = {
@@ -222,7 +236,6 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                     p.imgURL = "http://";
 
                     deferred.resolve({
-                        age: 20, // Needed because p contains born.year, not age directly. Computed observable set below.
                         appearanceOption: "",
                         appearanceOptions: ["Cartoon Face", "Image URL"],
                         p: p,
@@ -255,11 +268,6 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         }).extend({throttle: 1});
         ko.computed(function () {
             vm.p.face().eyes()[1].angle(vm.p.face().eyes()[0].angle());
-        }).extend({throttle: 1});
-
-        // Set born.year based on age input
-        ko.computed(function () {
-            vm.p.born.year(g.season - vm.age());
         }).extend({throttle: 1});
 
         // Update picture display

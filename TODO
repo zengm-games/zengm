@@ -41,11 +41,7 @@ convert create a player to knockout, add ability to edit players
   contract?
   after testing, add to changes
 god mode
-  "Force Trade" checkbox
-    when checked
-      proposed trade always goes through
-      trade can be proposed regardless of salary cap rules
-        did UI, but does it actually work?
+  add to changes
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade
   email

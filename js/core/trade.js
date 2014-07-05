@@ -330,8 +330,11 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
      * 
      * @memberOf core.trade
      * @param {function(boolean, string)} cb Callback function. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
+     * @param {boolean} forceTrade When true (like in God Mode), this trade is accepted regardless of the AI
      */
-    function propose(cb) {
+    function propose(cb, forceTrade) {
+        forceTrade = forceTrade !== undefined ? forceTrade : false;
+
         if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
             cb(false, "Error! You're not allowed to make trades now.");
             return;
@@ -350,7 +353,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
             summary(teams, function (s) {
                 var outcome;
 
-                if (s.warning) {
+                if (s.warning && !forceTrade) {
                     cb(false, null);
                     return;
                 }
@@ -364,7 +367,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                     draftPickStore = tx.objectStore("draftPicks");
                     playerStore = tx.objectStore("players");
 
-                    if (dv > 0) {
+                    if (dv > 0 || forceTrade) {
                         // Trade players
                         outcome = "accepted";
                         for (j = 0; j < 2; j++) {

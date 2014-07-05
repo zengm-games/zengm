@@ -110,7 +110,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             // Propose trade
             trade.propose(function (accepted, message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
-            });
+            }, req.params.hasOwnProperty("force-trade"));
         } else if (req.params.ask !== undefined) {
             // What would make this deal work?
             askButtonEl = document.getElementById("ask-button");

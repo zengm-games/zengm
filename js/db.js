@@ -930,6 +930,11 @@ console.log(event);
                 g[key] = event.target.result.value;
             }
 
+            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
+            if (key === "godMode") {
+                g.vm.topMenu.godMode(g.godMode);
+            }
+
             if (cb !== undefined) {
                 cb();
             }
@@ -966,6 +971,9 @@ console.log(event);
             if (g.godModeInPast === undefined) {
                 g.godModeInPast = false;
             }
+
+            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
+            g.vm.topMenu.godMode(g.godMode);
 
             if (cb !== undefined) {
                 cb();

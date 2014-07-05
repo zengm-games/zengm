@@ -43,6 +43,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         };
         this.positions = [];
 
+        // Used to kepe track of the TID for an edited player
+        this.originalTid = ko.observable(null);
+
         // Easy access to ratings array, since it could have any number of entries and we only want the last one
         this.ratings = {};
         ratingKeys = ["pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
@@ -177,6 +180,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                             p.imgURL = "http://";
                         }
 
+                        vars.originalTid = p.tid;
                         vars.p = p;
                         deferred.resolve(vars);
                     };
@@ -249,7 +253,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             }
 
             // Add regular season or playoffs stat row, if necessary
-            if (p.tid >= 0) {
+            if (p.tid >= 0 && p.tid !== vm.originalTid()) {
                 if (g.phase < g.PHASE.PLAYOFFS) {
                     p = player.addStatsRow(p, false);
                 } else if (g.phase === g.PHASE.PLAYOFFS) {

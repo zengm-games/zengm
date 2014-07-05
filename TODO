@@ -39,10 +39,7 @@ CURRENT
 
 convert create a player to knockout, add ability to edit players
   contract?
-  create a player
-    add to end of roster, not beginning
   implement editing
-    change URL
     add link to access it somewhere? maybe ask first
 trade UI
   email

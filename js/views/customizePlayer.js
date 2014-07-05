@@ -1,6 +1,6 @@
 /**
- * @name views.editTeamInfo
- * @namespace Edit Team Info.
+ * @name views.customizePlayer
+ * @namespace Create a new custom player or customize an existing one.
  */
 define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/helpers"], function (db, g, ui, finances, player, team, faces, $, ko, komapping, bbgmView, helpers) {
     "use strict";
@@ -88,7 +88,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         }
     };
 
-    function updateCreateAPlayer(inputs, updateEvents) {
+    function updateCustomizePlayer(inputs, updateEvents) {
         var deferred;
         deferred = $.Deferred();
 
@@ -290,11 +290,11 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
     }
 
     return bbgmView.init({
-        id: "createAPlayer",
+        id: "customizePlayer",
         get: get,
         InitViewModel: InitViewModel,
         mapping: mapping,
-        runBefore: [updateCreateAPlayer],
+        runBefore: [updateCustomizePlayer],
         uiFirst: uiFirst
     });
 });

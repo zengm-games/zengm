@@ -39,13 +39,13 @@ CURRENT
 
 convert create a player to knockout, add ability to edit players
   contract?
-  what about retired players?
   after testing, add to changes
 god mode
-  disable achievements
   hard disable within player customization view, so even going to URL directly will fail without god mode
   "Force Trade" button?
+  Never Get Fired
 trade UI
+  "Don't include in trade" checkbox column for asking AI to propose trade
   email
   http://datatables.net/extensions/fixedcolumns/
   http://www.reddit.com/r/BasketballGM/comments/28tzek/trade_ui_redesign_concept_what_do_you_all_think/

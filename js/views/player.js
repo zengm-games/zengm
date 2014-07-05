@@ -64,7 +64,8 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jqu
                     freeAgent: p.tid === g.PLAYER.FREE_AGENT,
                     retired: p.tid === g.PLAYER.RETIRED,
                     showContract: p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && p.tid !== g.PLAYER.UNDRAFTED_FANTASY_TEMP && p.tid !== g.PLAYER.RETIRED,
-                    injured: p.injury.type !== "Healthy"
+                    injured: p.injury.type !== "Healthy",
+                    godMode: g.godMode
                 });
             };
 

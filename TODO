@@ -39,12 +39,12 @@ CURRENT
 
 convert create a player to knockout, add ability to edit players
   contract?
-  implement editing
-    add link to access it somewhere? maybe ask first
-      god mode?
-    changes
+  what about retired players?
+  after testing, add to changes
 god mode
-  "Force Trade" button
+  disable achievements
+  hard disable within player customization view, so even going to URL directly will fail without god mode
+  "Force Trade" button?
 trade UI
   email
   http://datatables.net/extensions/fixedcolumns/

@@ -111,6 +111,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                     teams[i].text = teams[i].region + " " + teams[i].name;
                 }
                 teams.unshift({
+                    tid: g.PLAYER.RETIRED,
+                    text: "Retired"
+                });
+                teams.unshift({
                     tid: g.PLAYER.UNDRAFTED_3,
                     text: (g.season + seasonOffset + 2) + " Draft Prospect"
                 });

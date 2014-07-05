@@ -82,6 +82,7 @@
     <center>
       <form method="POST" id="propose-trade" data-bind="attrLeagueUrl: {action: ['trade']}">
         <input type="hidden" name="propose" value="1">
+        <label class="god-mode god-mode-text" data-bind="visible: godMode"><input type="checkbox" name="force-trade">Force Trade</label><br>
         <button type="submit" class="btn btn-large btn-primary" data-bind="enable: summary.enablePropose">Propose Trade</button>
       </form>
 

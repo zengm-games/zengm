@@ -275,7 +275,8 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                                     strategy: t.strategy,
                                     won: t.seasons[t.seasons.length - 1].won,
                                     lost: t.seasons[t.seasons.length - 1].lost,
-                                    showResigningMsg: showResigningMsg
+                                    showResigningMsg: showResigningMsg,
+                                    godMode: g.godMode
                                 };
 
                                 updateSummary(vars, function (vars) {

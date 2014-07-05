@@ -18,7 +18,7 @@
         <span data-bind="visible: freeAgent">Asking for</span><span data-bind="visible: !freeAgent()">Contract</span>: <span data-bind="currency: [player.contract.amount, 'M']"></span>/yr thru <span data-bind="text: player.contract.exp"></span><br>
       <!-- /ko -->
       <!-- ko if: godMode -->
-        <a data-bind="attrLeagueUrl: {href: ['customize_player', player.pid]}" class="god-mode">Edit Player</a><br>
+        <a data-bind="attrLeagueUrl: {href: ['customize_player', player.pid]}" class="god-mode god-mode-text">Edit Player</a><br>
       <!-- /ko -->
       <!-- ko if: !retired() -->
         <span class="label label-danger label-injury" style="margin-left: 0" data-bind="visible: injured, text: player.injury.gamesRemaining, attr: {title: player.injury.type() + ' (out ' + player.injury.gamesRemaining() + ' more games)'}"></span><span data-bind="visible: injured, skillsBlock: currentRatings.skills"></span>

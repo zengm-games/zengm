@@ -107,6 +107,9 @@ footer {
 .god-mode:hover, .god-mode:focus {
   background-color: #4a356b !important;
 }
+.god-mode-text {
+  padding: 0 3px;
+}
 
 /* For the user/login widget */
 .user-menu {

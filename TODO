@@ -42,7 +42,9 @@ convert create a player to knockout, add ability to edit players
   after testing, add to changes
 god mode
   "Force Trade" checkbox
-    purple
+    when checked
+      proposed trade always goes through
+      trade can be proposed regardless of salary cap rules
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade
   email

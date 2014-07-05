@@ -20,6 +20,12 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
     }
 
     function get(req) {
+        if (!g.godMode) {
+            return {
+                errorMessage: 'You can\'t customize players unless you enable <a href="' + helpers.leagueUrl(["god_mode"]) + '">God Mode</a>.'
+            };
+        }
+
         if (req.params.hasOwnProperty("pid")) {
             return {
                 pid: parseInt(req.params.pid, 10)

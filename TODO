@@ -41,8 +41,8 @@ convert create a player to knockout, add ability to edit players
   contract?
   after testing, add to changes
 god mode
-  hard disable within player customization view, so even going to URL directly will fail without god mode
-  "Force Trade" button?
+  hide "Create A Player" menu entry
+  "Force Trade" checkbox
   Never Get Fired
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade

@@ -251,7 +251,9 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
 
     checkAchievement.fo_fo_fo = function (cb) {
         if (g.godModeInPast) {
-            cb(false);
+            if (cb !== undefined) {
+                cb(false);
+            }
             return;
         }
 
@@ -291,7 +293,9 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
 
     checkAchievement.septuawinarian = function (cb) {
         if (g.godModeInPast) {
-            cb(false);
+            if (cb !== undefined) {
+                cb(false);
+            }
             return;
         }
 
@@ -316,7 +320,9 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
 
     checkAchievement["98_degrees"] = function (cb) {
         if (g.godModeInPast) {
-            cb(false);
+            if (cb !== undefined) {
+                cb(false);
+            }
             return;
         }
 
@@ -349,7 +355,9 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
 
     function checkDynasty(titles, years, slug, cb) {
         if (g.godModeInPast) {
-            cb(false);
+            if (cb !== undefined) {
+                cb(false);
+            }
             return;
         }
 
@@ -400,7 +408,9 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
 
     function checkMoneyball(maxPayroll, slug, cb) {
         if (g.godModeInPast) {
-            cb(false);
+            if (cb !== undefined) {
+                cb(false);
+            }
             return;
         }
 
@@ -425,7 +435,9 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
 
     checkAchievement.moneyball = function (cb) {
         if (g.godModeInPast) {
-            cb(false);
+            if (cb !== undefined) {
+                cb(false);
+            }
             return;
         }
 
@@ -434,7 +446,9 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
 
     checkAchievement.moneyball_2 = function (cb) {
         if (g.godModeInPast) {
-            cb(false);
+            if (cb !== undefined) {
+                cb(false);
+            }
             return;
         }
 
@@ -443,7 +457,9 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
 
     checkAchievement.hardware_store = function (cb) {
         if (g.godModeInPast) {
-            cb(false);
+            if (cb !== undefined) {
+                cb(false);
+            }
             return;
         }
 
@@ -468,7 +484,9 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
 
     checkAchievement.small_market = function (cb) {
         if (g.godModeInPast) {
-            cb(false);
+            if (cb !== undefined) {
+                cb(false);
+            }
             return;
         }
 
@@ -493,7 +511,9 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
 
     checkAchievement.sleeper_pick = function (cb) {
         if (g.godModeInPast) {
-            cb(false);
+            if (cb !== undefined) {
+                cb(false);
+            }
             return;
         }
 

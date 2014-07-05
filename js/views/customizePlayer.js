@@ -282,8 +282,12 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 p.imgURL = "";
             }
 
+            // If we are *creating* a player who is not a draft prospect, make sure he won't show up in the draft this year
             if (p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && g.phase < g.PHASE.FREE_AGENCY) {
-                p.draft.year -= 1; // Otherwise he'll show up in this year's draft
+                // This makes sure it's only for created players, not edited players
+                if (!p.hasOwnProperty("pid")) {
+                    p.draft.year -= 1;
+                }
             }
 
             tx = g.dbl.transaction("players", "readwrite");

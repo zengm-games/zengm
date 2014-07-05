@@ -192,7 +192,11 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
     }
 
     function uiFirst(vm) {
-        ui.title("Create A Player");
+        if (vm.originalTid() === null) {
+            ui.title("Create A Player");
+        } else {
+            ui.title("Edit Player");
+        }
 
         document.getElementById("randomize-face").addEventListener("click", function () {
             vm.p.face(komapping.fromJS(generateFace()));

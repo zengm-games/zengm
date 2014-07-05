@@ -42,7 +42,6 @@ convert create a player to knockout, add ability to edit players
   create a player
     add to end of roster, not beginning
   implement editing
-    update UI so the title and button are for "Edit" not "Create"
     change URL
     add link to access it somewhere? maybe ask first
 trade UI

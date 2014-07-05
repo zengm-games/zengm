@@ -45,6 +45,7 @@ god mode
     when checked
       proposed trade always goes through
       trade can be proposed regardless of salary cap rules
+        did UI, but does it actually work?
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade
   email

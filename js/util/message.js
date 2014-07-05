@@ -240,8 +240,8 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
         tx.oncomplete = function () {
             if (ownerMoodSum > -1) {
                 cb();
-            } else if (g.season < g.gracePeriodEnd) {
-                // Can't get fired yet...
+            } else if (g.season < g.gracePeriodEnd || g.godMode) {
+                // Can't get fired yet... or because of God Mode
                 cb();
             } else {
                 // Fired!

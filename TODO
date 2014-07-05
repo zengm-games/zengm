@@ -41,8 +41,11 @@ convert create a player to knockout, add ability to edit players
   contract?
   after testing, add to changes
 god mode
+  god mode stuff in purple or some other color?
+    Create A Player menu link
+    Edit Player link
+    force trade checkbox
   "Force Trade" checkbox
-  Never Get Fired
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade
   email

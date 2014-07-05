@@ -19,107 +19,6 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         return face;
     }
 
-    function post(req) {
-        var button;
-
-        button = document.getElementById("create-a-player");
-        button.disabled = true;
-
-        g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
-            var draftYear, p, pid, scoutingRank, seasonOffset, t, tid, tx;
-
-            t = event.target.result;
-            scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
-
-            tid = parseInt(req.params.tid, 10);
-
-            draftYear = g.season;
-
-            if (tid === g.PLAYER.UNDRAFTED || tid === g.PLAYER.UNDRAFTED_2 || tid === g.PLAYER.UNDRAFTED_3) {
-                if (tid === g.PLAYER.UNDRAFTED_2) {
-                    draftYear += 1;
-                } else if (tid === g.PLAYER.UNDRAFTED_3) {
-                    draftYear += 2;
-                }
-
-                // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-                if (g.phase < g.PHASE.FREE_AGENCY) {
-                    seasonOffset = 0;
-                } else {
-                    seasonOffset = 1;
-                }
-                draftYear += seasonOffset;
-            }
-
-            p = player.generate(tid,
-                            helpers.bound(parseInt(req.params.age, 10), 0, 100),
-                            null,
-                            50,
-                            parseInt(req.params["rating-pot"], 10),
-                            draftYear,
-                            false,
-                            scoutingRank);
-
-            p.ratings[0].hgt = helpers.bound(parseInt(req.params["rating-hgt"], 10), 0, 100);
-            p.ratings[0].stre = helpers.bound(parseInt(req.params["rating-stre"], 10), 0, 100);
-            p.ratings[0].spd = helpers.bound(parseInt(req.params["rating-spd"], 10), 0, 100);
-            p.ratings[0].jmp = helpers.bound(parseInt(req.params["rating-jmp"], 10), 0, 100);
-            p.ratings[0].endu = helpers.bound(parseInt(req.params["rating-endu"], 10), 0, 100);
-            p.ratings[0].ins = helpers.bound(parseInt(req.params["rating-ins"], 10), 0, 100);
-            p.ratings[0].dnk = helpers.bound(parseInt(req.params["rating-dnk"], 10), 0, 100);
-            p.ratings[0].ft = helpers.bound(parseInt(req.params["rating-ft"], 10), 0, 100);
-            p.ratings[0].fg = helpers.bound(parseInt(req.params["rating-fg"], 10), 0, 100);
-            p.ratings[0].tp = helpers.bound(parseInt(req.params["rating-tp"], 10), 0, 100);
-            p.ratings[0].blk = helpers.bound(parseInt(req.params["rating-blk"], 10), 0, 100);
-            p.ratings[0].stl = helpers.bound(parseInt(req.params["rating-stl"], 10), 0, 100);
-            p.ratings[0].drb = helpers.bound(parseInt(req.params["rating-drb"], 10), 0, 100);
-            p.ratings[0].pss = helpers.bound(parseInt(req.params["rating-pss"], 10), 0, 100);
-            p.ratings[0].reb = helpers.bound(parseInt(req.params["rating-reb"], 10), 0, 100);
-            p.ratings[0].ovr = player.ovr(p.ratings[0]);
-            p.ratings[0].skills = player.skills(p.ratings[0]);
-            if (p.ratings[0].ovr > p.ratings[0].pot) {
-                p.ratings[0].pot = p.ratings[0].ovr;
-            }
-
-            p.born.loc = req.params["born-loc"];
-            p.hgt = parseInt(req.params.hgt, 10);
-            p.name = req.params.name;
-            p.pos = req.params.pos;
-            p.watch = true;
-            p.weight = parseInt(req.params.weight, 10);
-
-            p.face().color = req.params["face-color"];
-            p.face.fatness = parseFloat(req.params["face-fatness"]);
-            p.face.eyes[0].id = parseInt(req.params["face-eyes"], 10);
-            p.face.eyes[1].id = parseInt(req.params["face-eyes"], 10);
-            p.face.eyes[0].angle = parseFloat(req.params["face-eyes"]);
-            p.face.eyes[1].angle = parseFloat(req.params["face-eyes"]);
-            p.face.hair.id = parseInt(req.params["face-hair"], 10);
-            p.face.mouth.id = parseInt(req.params["face-mouth"], 10);
-            p.face.nose.id = parseInt(req.params["face-nose"], 10);
-            p.face.nose.flip = req.params["face-nose-flip"] === "on";
-
-            if (req.params["appearance-option"] === "Image URL") {
-                p.imgURL = req.params["image-url"];
-            }
-
-            if (tid !== g.PLAYER.UNDRAFTED && tid !== g.PLAYER.UNDRAFTED_2 && tid !== g.PLAYER.UNDRAFTED_3 && g.phase < g.PHASE.FREE_AGENCY) {
-                p.draft.year -= 1; // Otherwise he'll show up in this year's draft
-            }
-
-            tx = g.dbl.transaction("players", "readwrite");
-            tx.objectStore("players").add(p).onsuccess = function (event) {
-                // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
-                pid = event.target.result;
-            };
-            tx.oncomplete = function () {
-                db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                    ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
-                });
-            };
-        };
-    }
-
     function InitViewModel() {
         var i, ratingKeys;
 
@@ -214,6 +113,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                 positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];
 
+                // Generate new player as basis
                 g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
                     var p, scoutingRank, t;
 
@@ -276,15 +176,75 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         }).extend({throttle: 1});
 
         document.getElementById("create-a-player").addEventListener("click", function () {
-console.log(vm.ratings)
-console.log(komapping.toJS(vm.p));
-vm.ratings.hgt(5);
+            var p, pid, r, tx;
+
+            p = komapping.toJS(vm.p);
+
+            // Fix integers that Knockout may have mangled
+            p.tid = parseInt(p.tid, 10);
+            p.hgt = parseInt(p.hgt, 10);
+            p.weight = parseInt(p.weight, 10);
+            p.face.fatness = parseFloat(p.face.fatness);
+            p.face.eyes[0].angle = parseFloat(p.face.eyes[0].angle);
+            p.face.eyes[1].angle = parseFloat(p.face.eyes[1].angle);
+
+            // Fix draft season
+            if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3) {
+                if (p.tid === g.PLAYER.UNDRAFTED_2) {
+                    p.draft.year += 1;
+                } else if (p.tid === g.PLAYER.UNDRAFTED_3) {
+                    p.draft.year += 2;
+                }
+
+                // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
+                if (g.phase >= g.PHASE.FREE_AGENCY) {
+                    p.draft.year += 1;
+                }
+            }
+
+            // Set ovr, skills, and bound pot by ovr
+            r = p.ratings.length - 1;
+            p.ratings[r].ovr = player.ovr(p.ratings[r]);
+            p.ratings[r].skills = player.skills(p.ratings[r]);
+            if (p.ratings[r].ovr > p.ratings[r].pot) {
+                p.ratings[r].pot = p.ratings[r].ovr;
+            }
+
+            // Add regular season or playoffs stat row, if necessary
+            if (p.tid >= 0) {
+                if (g.phase < g.PHASE.PLAYOFFS) {
+                    p = player.addStatsRow(p, false);
+                } else if (g.phase === g.PHASE.PLAYOFFS) {
+                    // This is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
+                    p = player.addStatsRow(p, true);
+                }
+            }
+
+            // Only save image URL if it's selected
+            if (vm.appearanceOption() !== "Image URL") {
+                p.imgURL = "";
+            }
+
+            if (p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && g.phase < g.PHASE.FREE_AGENCY) {
+                p.draft.year -= 1; // Otherwise he'll show up in this year's draft
+            }
+
+            tx = g.dbl.transaction("players", "readwrite");
+            // put will either add or update entry
+            tx.objectStore("players").put(p).onsuccess = function (event) {
+                // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
+                pid = event.target.result;
+            };
+            tx.oncomplete = function () {
+                db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                    ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
+                });
+            };
         });
     }
 
     return bbgmView.init({
         id: "createAPlayer",
-        post: post,
         InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateCreateAPlayer],

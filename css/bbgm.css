@@ -100,6 +100,14 @@ footer {
   border-bottom-color: #777777;
 }
 
+.god-mode {
+  background-color: #563d7c !important;
+  color: #fff !important;
+}
+.god-mode:hover, .god-mode:focus {
+  background-color: #4a356b !important;
+}
+
 /* For the user/login widget */
 .user-menu {
   display: block;

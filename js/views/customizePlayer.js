@@ -247,10 +247,12 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
             // Fix draft season
             if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3) {
-                if (p.tid === g.PLAYER.UNDRAFTED_2) {
-                    p.draft.year += 1;
+                if (p.tid === g.PLAYER.UNDRAFTED) {
+                    p.draft.year = g.season;
+                } else if (p.tid === g.PLAYER.UNDRAFTED_2) {
+                    p.draft.year = g.season + 1;
                 } else if (p.tid === g.PLAYER.UNDRAFTED_3) {
-                    p.draft.year += 2;
+                    p.draft.year = g.season + 2;
                 }
 
                 // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
@@ -286,8 +288,12 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             if (p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && g.phase < g.PHASE.FREE_AGENCY) {
                 // This makes sure it's only for created players, not edited players
                 if (!p.hasOwnProperty("pid")) {
-                    p.draft.year -= 1;
+                    p.draft.year = g.season - 1;
                 }
+            }
+            // Similarly, if we are editing a draft prospect and moving him to a team, make his draft year in the past
+            if ((p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3) && (vm.originalTid() === g.PLAYER.UNDRAFTED || vm.originalTid() === g.PLAYER.UNDRAFTED_2 || vm.originalTid() === g.PLAYER.UNDRAFTED_3) && g.phase < g.PHASE.FREE_AGENCY) {
+                p.draft.year = g.season - 1;
             }
 
             tx = g.dbl.transaction("players", "readwrite");

@@ -73,6 +73,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2014-06-17",
         msg: 'New customization features: <a href="http://basketball-gm.com/blog/2014/06/new-customization-features-full-league-importexport-and-draft-class-import/">full league import/export and custom draft class import</a>.'
+    }, {
+        date: "2014-07-05",
+        msg: 'New "God Mode" allows you to create players, edit players, and force trades. Enable it by going to Tools > God Mode within a league.'
     }];
 
     function check() {

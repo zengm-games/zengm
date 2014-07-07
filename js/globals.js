@@ -55,6 +55,7 @@ define(["lib/knockout"], function (ko) {
     g.vm = {
         topMenu: {
             lid: ko.observable(),
+            godMode: ko.observable(),
             options: ko.observable([]),
             phaseText: ko.observable(),
             statusText: ko.observable(),

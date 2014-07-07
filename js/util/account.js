@@ -250,6 +250,13 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
     checkAchievement = {};
 
     checkAchievement.fo_fo_fo = function (cb) {
+        if (g.godModeInPast) {
+            if (cb !== undefined) {
+                cb(false);
+            }
+            return;
+        }
+
         g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
             var found, i, playoffSeries, round, series;
 
@@ -285,6 +292,13 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
     };
 
     checkAchievement.septuawinarian = function (cb) {
+        if (g.godModeInPast) {
+            if (cb !== undefined) {
+                cb(false);
+            }
+            return;
+        }
+
         team.filter({
             seasonAttrs: ["won"],
             season: g.season,
@@ -305,6 +319,13 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
     };
 
     checkAchievement["98_degrees"] = function (cb) {
+        if (g.godModeInPast) {
+            if (cb !== undefined) {
+                cb(false);
+            }
+            return;
+        }
+
         checkAchievement.fo_fo_fo(function (awarded) {
             if (awarded) {
                 team.filter({
@@ -333,6 +354,13 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
     };
 
     function checkDynasty(titles, years, slug, cb) {
+        if (g.godModeInPast) {
+            if (cb !== undefined) {
+                cb(false);
+            }
+            return;
+        }
+
         g.dbl.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
             var i, t, titlesFound;
 
@@ -379,6 +407,13 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
     };
 
     function checkMoneyball(maxPayroll, slug, cb) {
+        if (g.godModeInPast) {
+            if (cb !== undefined) {
+                cb(false);
+            }
+            return;
+        }
+
         team.filter({
             seasonAttrs: ["expenses", "playoffRoundsWon"],
             season: g.season,
@@ -399,14 +434,35 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
     }
 
     checkAchievement.moneyball = function (cb) {
+        if (g.godModeInPast) {
+            if (cb !== undefined) {
+                cb(false);
+            }
+            return;
+        }
+
         checkMoneyball(40000, "moneyball", cb);
     };
 
     checkAchievement.moneyball_2 = function (cb) {
+        if (g.godModeInPast) {
+            if (cb !== undefined) {
+                cb(false);
+            }
+            return;
+        }
+
         checkMoneyball(30000, "moneyball_2", cb);
     };
 
     checkAchievement.hardware_store = function (cb) {
+        if (g.godModeInPast) {
+            if (cb !== undefined) {
+                cb(false);
+            }
+            return;
+        }
+
         g.dbl.transaction("awards").objectStore("awards").get(g.season).onsuccess = function (event) {
             var awards;
 
@@ -427,6 +483,13 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
     };
 
     checkAchievement.small_market = function (cb) {
+        if (g.godModeInPast) {
+            if (cb !== undefined) {
+                cb(false);
+            }
+            return;
+        }
+
         team.filter({
             seasonAttrs: ["playoffRoundsWon", "pop"],
             season: g.season,
@@ -447,6 +510,13 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
     };
 
     checkAchievement.sleeper_pick = function (cb) {
+        if (g.godModeInPast) {
+            if (cb !== undefined) {
+                cb(false);
+            }
+            return;
+        }
+
         g.dbl.transaction("awards").objectStore("awards").get(g.season).onsuccess = function (event) {
             var awards;
 

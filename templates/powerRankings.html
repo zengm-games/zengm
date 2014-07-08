@@ -1,17 +1,17 @@
-<h1>Power Rankings<span data-bind="newWindow: []"></span></h1>
+<h1>Power Rankings <span data-bind="newWindow: []"></span></h1>
 
 <h2 data-bind="text: name"></h2>
 <div class="row">
 <div class="col-sm-9">
   <div class="table-responsive">
-    <table class="table table-striped table-bordered table-condensed rankings-division">
+    <table class="table table-striped table-bordered table-condensed" id="power-rankings">
       <thead>
-        <tr><th width="100%" data-bind="text: name"></th><th>Ratings Rank</th><th>Stats Rank</th><th>Performance Rank</th><th>W</th><th>L</th><th>Pct</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>
+        <tr><th></th><th width="100%" data-bind="text: name"></th><th title="Player Ratings rank">Ratings</th><th title="Team Statistics Rank">Stats</th><th title="Team Performance Rank">Perf</th><th title="Games Won">W</th><th title="Games Lost">L</th><th title="Winning Percentage">Pct</th><th title="Winning Streak">Streak</th><th title="Last Ten Games">L10</th></tr>
       </thead>
       <tbody data-bind="foreach: teams">
-        <tr><td>
+        <tr><td data-bind="text: overallRank"><td>
           <a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $parents[0].season]}, text: region() + ' ' + name()"></a>
-        </td><td data-bind="text: ratingRank"><td data-bind="text: statsRank"><td data-bind="text: recordRank"><td data-bind="text: won"></td><td data-bind="text: lost"></td><td data-bind="roundWinp: winp"></td><td data-bind="text: wonHome() + '-' + lostHome()"></td><td data-bind="text: wonAway() + '-' + lostAway()"></td><td data-bind="text: wonDiv() + '-' + lostDiv()"></td><td data-bind="text: wonConf() + '-' + lostConf()"></td><td data-bind="text: streak"></td><td data-bind="text: lastTen"></td></tr>
+        </td><td data-bind="text: ratingRank"><td data-bind="text: statsRank"><td data-bind="text: recordRank"><td data-bind="text: won"></td><td data-bind="text: lost"></td><td data-bind="roundWinp: winp"></td><td data-bind="text: streak"></td><td data-bind="text: lastTen"></td></tr>
       </tbody>
     </table>
   </div>

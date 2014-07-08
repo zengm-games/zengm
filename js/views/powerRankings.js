@@ -14,7 +14,6 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
     }
 
     function InitViewModel() {
-        console.log("power rankings");
         this.season = ko.observable();
         this.teams = ko.observable([]);
     }
@@ -46,12 +45,8 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
     function updatePowerRankings(inputs, updateEvents, vm) {
         var deferred, vars, tx;
 
-        console.log("Updating power rankings");
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.season !== vm.season()) {
             deferred = $.Deferred();
-
-            console.log("deferred");
 
             vars = {
                 season: inputs.season
@@ -71,14 +66,10 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
 
                 teamRatings = {};
 
-                console.log("teams");
-                console.log(teams);
-
                 tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
                     var i, players;
 
                     players = event.target.result;
-                    console.log("Found "+players.length+" players");
 
                     for (i = 0; i < players.length; i++) {
                         var player = players[i];
@@ -100,7 +91,7 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
                     });
 
                     for (i = 0; i < weightedRatings.length; i++)
-                        weightedRatings[i].ratingRank = i;
+                        weightedRatings[i].ratingRank = i+1;
 
                     // Rank by weighted team stats
                     weightedStats = _.sortBy(teams, function(team){
@@ -109,7 +100,7 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
                     });
 
                     for (i = 0; i < weightedStats.length; i++)
-                        weightedStats[i].statsRank = i;
+                        weightedStats[i].statsRank = i+1;
 
                     // Rank by weighted team performance
                     weightedRecord = _.sortBy(teams, function(team){
@@ -120,11 +111,14 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
                     });
 
                     for (i = 0; i < weightedRecord.length; i++)
-                        weightedRecord[i].recordRank = i;
+                        weightedRecord[i].recordRank = i+1;
 
                     sortedTeams = _.sortBy(teams, function(team){
                         return team.ratingRank+team.statsRank+team.recordRank;
                     });
+
+                    for (i = 0; i < sortedTeams.length; i++)
+                        sortedTeams[i].overallRank = i+1;
 
                     deferred.resolve({
                         season: inputs.season,
@@ -142,7 +136,7 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
             ui.title("Power Rankings - " + vm.season());
         }).extend({throttle: 1});
 
-        ui.tableClickableRows($(".rankings-division"));
+        ui.tableClickableRows($("#power-rankings"));
     }
 
     return bbgmView.init({

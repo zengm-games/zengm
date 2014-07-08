@@ -113,6 +113,10 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
                         weightedRecord[i].recordRank = i+1;
 
                     sortedTeams = _.sortBy(teams, function(team){
+                        if (team.tid === g.userTid)
+                            team.highlight = true;
+                        else
+                            team.highlight = false;
                         return team.ratingRank+team.statsRank+team.recordRank;
                     });
 

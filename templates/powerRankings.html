@@ -11,7 +11,7 @@
         <tr><th></th><th width="100%" data-bind="text: name"></th><th title="Player Ratings rank">Ratings</th><th title="Team Statistics Rank">Stats</th><th title="Team Performance Rank">Perf</th><th title="Games Won">W</th><th title="Games Lost">L</th><th title="Winning Percentage">Pct</th><th title="Winning Streak">Streak</th><th title="Last Ten Games">L10</th></tr>
       </thead>
       <tbody data-bind="foreach: teams">
-        <tr><td data-bind="text: overallRank"><td>
+        <tr data-bind="css: {info: highlight}"><td data-bind="text: overallRank"><td>
           <a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $parents[0].season]}, text: region() + ' ' + name()"></a>
         </td><td data-bind="text: ratingRank"><td data-bind="text: statsRank"><td data-bind="text: recordRank"><td data-bind="text: won"></td><td data-bind="text: lost"></td><td data-bind="roundWinp: winp"></td><td data-bind="text: streak"></td><td data-bind="text: lastTen"></td></tr>
       </tbody>

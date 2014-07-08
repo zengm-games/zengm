@@ -75,7 +75,7 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
                 console.log(teams);
 
                 tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                    var i, j, players;
+                    var i, players;
 
                     players = event.target.result;
                     console.log("Found "+players.length+" players");
@@ -93,13 +93,38 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
                         teamRatings[player.tid] = (teamRatings[player.tid] ? teamRatings[player.tid] + weightedRating : weightedRating);
                     }
 
-                    sortedTeams = _.sortBy(teams, function(team){
+                    // Rank by weighted player ratings
+                    weightedRatings = _.sortBy(teams, function(team){
                         team.weightedRating = teamRatings[team.tid];
-                        return -teamRatings[team.tid];
+                        return -team.weightedRating;
                     });
 
-                    console.log("sorted teams");
-                    console.log(sortedTeams);
+                    for (i = 0; i < weightedRatings.length; i++)
+                        weightedRatings[i].ratingRank = i;
+
+                    // Rank by weighted team stats
+                    weightedStats = _.sortBy(teams, function(team){
+                        team.weightedStats = team.pts+(2*team.trb)+(2*team.ast)+(3*team.stl)+(3*team.blk)-(2*team.pf)-team.oppPts+(2*team.diff)+(2*team.fgp)+team.ftp;
+                        return -team.weightedStats;
+                    });
+
+                    for (i = 0; i < weightedStats.length; i++)
+                        weightedStats[i].statsRank = i;
+
+                    // Rank by weighted team performance
+                    weightedRecord = _.sortBy(teams, function(team){
+                        var lastTenWon = team.lastTen.split("-")[0];
+                        var lastTenLost = team.lastTen.split("-")[1];
+                        team.weightedRecord = team.won-team.lost+lastTenWon-lastTenLost;
+                        return -team.weightedRecord;
+                    });
+
+                    for (i = 0; i < weightedRecord.length; i++)
+                        weightedRecord[i].recordRank = i;
+
+                    sortedTeams = _.sortBy(teams, function(team){
+                        return team.ratingRank+team.statsRank+team.recordRank;
+                    });
 
                     deferred.resolve({
                         season: inputs.season,

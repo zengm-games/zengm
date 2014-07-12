@@ -116,9 +116,9 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
                 fnRowCallback: function (nRow, aData) {
                     // Show point differential in green or red for positive or negative
                     if (aData[aData.length - 2] > 0) {
-                        nRow.childNodes[nRow.childNodes.length - 2].classList.add("text-success");
+                        nRow.childNodes[nRow.childNodes.length - 1].classList.add("text-success");
                     } else if (aData[aData.length - 2] < 0) {
-                        nRow.childNodes[nRow.childNodes.length - 2].classList.add("text-danger");
+                        nRow.childNodes[nRow.childNodes.length - 1].classList.add("text-danger");
                     }
 
                     // Highlight user team

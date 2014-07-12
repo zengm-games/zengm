@@ -37,6 +37,10 @@ Eventually:
 CURRENT
 -------
 
+power rankings
+  cache values for preseason and after season
+    teamSeason.powerRankings = {overall, performance, talent, preseason}
+  only show live during regular season
 convert create a player to knockout, add ability to edit players
   contract?
   after testing, add to changes

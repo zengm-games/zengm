@@ -7,37 +7,10 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
 
     var mapping;
 
-    function get(req) {
-        return {
-            season: helpers.validateSeason(req.params.season)
-        };
-    }
-
-    function InitViewModel() {
-        this.season = ko.observable();
-        this.teams = ko.observable([]);
-    }
-
     mapping = {
-        confs: {
+        teams: {
             create: function (options) {
-                return new function () {
-                    komapping.fromJS(options.data, {
-                        divs: {
-                            key: function (data) {
-                                return ko.utils.unwrapObservable(data.name);
-                            }
-                        },
-                        teams: {
-                            key: function (data) {
-                                return ko.utils.unwrapObservable(data.tid);
-                            }
-                        }
-                    }, this);
-                }();
-            },
-            key: function (data) {
-                return ko.utils.unwrapObservable(data.name);
+                return options.data;
             }
         }
     };
@@ -45,89 +18,86 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
     function updatePowerRankings(inputs, updateEvents, vm) {
         var deferred, tx;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.season !== vm.season()) {
+        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
             deferred = $.Deferred();
 
-            tx = g.dbl.transaction(["players", "teams", "releasedPlayers"]);
+            tx = g.dbl.transaction(["players", "teams"]);
 
             team.filter({
-                attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
-                seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
-                stats: ["gp", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts", "diff"],
-                season: inputs.season,
+                attrs: ["tid", "abbrev", "region", "name"],
+                seasonAttrs: ["won", "lost", "lastTen"],
+                stats: ["gp", "pts", "oppPts", "diff"],
+                season: g.season,
                 ot: tx
             }, function (teams) {
-                // var confs, confRanks, confTeams, divTeams, i, j, k, l;
-                var sortedTeams, teamRatings, weightedRatings, weightedStats, weightedRecord, i, j;
-
-                teamRatings = {};
 
                 tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                    var i, players;
+                    var i, j, overallRanks, overallRankMetric, performanceRanks, players, playerValuesByTid, talentRanks, weights;
 
                     players = event.target.result;
 
-                    // Get player ratings for all teams
-                    for (i = 0; i < players.length; i++) {
-                        var player = players[i];
-                        var weightedRating = 0;
-                        var rating = player.ratings[player.ratings.length-1].ovr;
+                    // Array of arrays, containing the values for each player on each team
+                    playerValuesByTid = [];
 
-                        if (player.rosterOrder < 5)
-                            weightedRating = 0.12*rating;
-                        else if (player.rosterOrder < 7)
-                            weightedRating = 0.10*rating;
-                        else if (player.rosterOrder < 10)
-                            weightedRating = 0.05*rating;
-
-                        teamRatings[player.tid] = (teamRatings[player.tid] ? teamRatings[player.tid] + weightedRating : weightedRating);
+                    for (i = 0; i < g.numTeams; i++) {
+                        playerValuesByTid[i] = [];
+                        teams[i].talent = 0;
                     }
 
-                    // Rank by weighted player ratings
-                    weightedRatings = _.sortBy(teams, function(team){
-                        team.weightedRating = teamRatings[team.tid];
-                        return -team.weightedRating;
+                    // TALENT
+                    // Get player values and sort by tid
+                    for (i = 0; i < players.length; i++) {
+                        playerValuesByTid[players[i].tid].push(player.value(players[i]));
+                    }
+                    // Sort and weight the values - doesn't matter how good your 12th man is
+                    weights = [2, 1.5, 1.25, 1.1, 1, 0.9, 0.8, 0.7, 0.6, 0.4, 0.2, 0.1];
+                    for (i = 0; i < playerValuesByTid.length; i++) {
+                        playerValuesByTid[i].sort(function (a, b) { return b - a; });
+
+                        for (j = 0; j < playerValuesByTid[i].length; j++) {
+                            if (j < weights.length) {
+                                teams[i].talent += weights[j] * playerValuesByTid[i][j];
+                            }
+                        }
+                    }
+
+                    // PERFORMANCE
+                    for (i = 0; i < g.numTeams; i++) {
+                        playerValuesByTid[i] = [];
+                        // Modulate point differential by recent record: +5 for 10-0 in last 10 and -5 for 0-10
+                        teams[i].performance = teams[i].diff - 5 + 5 * (parseInt(teams[i].lastTen.split("-")[0], 10)) / 10;
+                    }
+
+                    // RANKS
+                    teams.sort(function (a, b) { return b.talent - a.talent; });
+                    for (i = 0; i < teams.length; i++) {
+                        teams[i].talentRank = i + 1;
+                    }
+                    teams.sort(function (a, b) { return b.performance - a.performance; });
+                    for (i = 0; i < teams.length; i++) {
+                        teams[i].performanceRank = i + 1;
+                    }
+
+                    // OVERALL RANK
+                    // Weighted average depending on GP
+                    overallRankMetric = function (t) {
+                        if (t.gp < 10) {
+                            return t.performanceRank * 4 * t.gp / 10 + t.talentRank * (30 - t.gp) / 10;
+                        }
+
+                        return t.performanceRank * 4 + t.talentRank * 2;
+                    };
+                    teams.sort(function (a, b) {
+                        return overallRankMetric(a) - overallRankMetric(b);
                     });
-
-                    for (i = 0; i < weightedRatings.length; i++)
-                        weightedRatings[i].ratingRank = i+1;
-
-                    // Rank by weighted team stats
-                    weightedStats = _.sortBy(teams, function(team){
-                        team.weightedStats = team.pts+(2*team.trb)+(2*team.ast)+(3*team.stl)+(3*team.blk)-(2*team.pf)-team.oppPts+(2*team.diff);
-                        return -team.weightedStats;
-                    });
-
-                    for (i = 0; i < weightedStats.length; i++)
-                        weightedStats[i].statsRank = i+1;
-
-                    // Rank by weighted team performance
-                    weightedRecord = _.sortBy(teams, function(team){
-                        var lastTenWon = team.lastTen.split("-")[0];
-                        var lastTenLost = team.lastTen.split("-")[1];
-                        team.weightedRecord = team.won-team.lost+lastTenWon-lastTenLost;
-                        return -team.weightedRecord;
-                    });
-
-                    for (i = 0; i < weightedRecord.length; i++)
-                        weightedRecord[i].recordRank = i+1;
-
-                    sortedTeams = _.sortBy(teams, function(team){
-                        if (team.tid === g.userTid)
-                            team.highlight = true;
-                        else
-                            team.highlight = false;
-                        return team.ratingRank+team.statsRank+team.recordRank;
-                    });
-
-                    for (i = 0; i < sortedTeams.length; i++)
-                        sortedTeams[i].overallRank = i+1;
+                    for (i = 0; i < teams.length; i++) {
+                        teams[i].overallRank = i + 1;
+                    }
 
                     deferred.resolve({
-                        season: inputs.season,
-                        teams: sortedTeams
+                        teams: teams
                     });
-                }
+                };
             });
 
             return deferred.promise();
@@ -135,24 +105,37 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
     }
 
     function uiFirst(vm) {
+        ui.title("Power Rankings");
+
         ko.computed(function () {
-            ui.title("Power Rankings - " + vm.season());
+            ui.datatableSinglePage($("#power-rankings"), 0, _.map(vm.teams(), function (t) {
+                var performanceRank;
+                performanceRank = t.gp > 0 ? String(t.performanceRank) : "-";
+                return [String(t.overallRank), performanceRank, String(t.talentRank), '<a href="' + helpers.leagueUrl(["roster", t.abbrev]) + '">' + t.region + ' ' + t.name + '</a>', String(t.won), String(t.lost), t.lastTen, helpers.round(t.diff, 1), t.tid === g.userTid];
+            }), {
+                fnRowCallback: function (nRow, aData) {
+                    // Show point differential in green or red for positive or negative
+                    if (aData[aData.length - 2] > 0) {
+                        nRow.childNodes[nRow.childNodes.length - 2].classList.add("text-success");
+                    } else if (aData[aData.length - 2] < 0) {
+                        nRow.childNodes[nRow.childNodes.length - 2].classList.add("text-danger");
+                    }
+
+                    // Highlight user team
+                    if (aData[aData.length - 1]) {
+                        nRow.classList.add("info");
+                    }
+                }
+            });
         }).extend({throttle: 1});
 
         ui.tableClickableRows($("#power-rankings"));
     }
 
-    function uiEvery(updateEvents, vm) {
-        components.dropdown("power-rankings-dropdown", ["seasons"], [vm.season()], updateEvents);
-    }
-
     return bbgmView.init({
         id: "powerRankings",
-        get: get,
-        InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updatePowerRankings],
-        uiFirst: uiFirst,
-        uiEvery: uiEvery
+        uiFirst: uiFirst
     });
 });

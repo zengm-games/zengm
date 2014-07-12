@@ -226,7 +226,6 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "ut
             this.get("/l/:lid/upcoming_free_agents/:season", views.upcomingFreeAgents.get);
             this.get("/l/:lid/god_mode", views.godMode.get);
             this.get("/l/:lid/power_rankings", views.powerRankings.get);
-            this.get("/l/:lid/power_rankings/:season", views.powerRankings.get);
         });
 
         app.start();

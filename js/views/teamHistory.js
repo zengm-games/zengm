@@ -40,11 +40,15 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
             deferred = $.Deferred();
 
             g.dbl.transaction("teams").objectStore("teams").get(inputs.tid).onsuccess = function (event) {
-                var abbrev, history, i, userTeam, userTeamSeason;
+                var abbrev, championships, history, i, playoffAppearances, totalWon, totalLost, userTeam, userTeamSeason;
 
                 userTeam = event.target.result;
 
                 history = [];
+                totalWon = 0;
+                totalLost = 0;
+                playoffAppearances = 0;
+                championships = 0;
                 for (i = 0; i < userTeam.seasons.length; i++) {
                     history.push({
                         season: userTeam.seasons[i].season,
@@ -52,6 +56,10 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
                         lost: userTeam.seasons[i].lost,
                         playoffRoundsWon: userTeam.seasons[i].playoffRoundsWon
                     });
+                    totalWon += userTeam.seasons[i].won;
+                    totalLost += userTeam.seasons[i].lost;
+                    if (userTeam.seasons[i].playoffRoundsWon >= 0) { playoffAppearances += 1; }
+                    if (userTeam.seasons[i].playoffRoundsWon === 4) { championships += 1; }
                 }
                 history.reverse(); // Show most recent season first
 
@@ -77,7 +85,11 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
                             name: userTeam.name,
                             region: userTeam.region,
                             tid: inputs.tid
-                        }
+                        },
+                        totalWon: totalWon,
+                        totalLost: totalLost,
+                        playoffAppearances: playoffAppearances,
+                        championships: championships
                     });
                 };
             };

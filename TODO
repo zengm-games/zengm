@@ -81,6 +81,7 @@ Achievements to add
 mobile UI
   slide in full height menu from right, like facebook or android's DrawerLayout
 option to keep your player stats in improve performance http://www.reddit.com/r/BasketballGM/comments/1xgo2q/delete_old_player_stats_keep_your_teams_old/
+  maybe also other notable players - award winners, HoF members
 move manual to wordpress
   " < Basketball GM Manual" in title
   search for any manual links
@@ -260,6 +261,8 @@ fuzz should affect potential more than other variables, when pot is different th
 MINOR FIXES
 -----------
 
+documentation
+  http://www.reddit.com/r/BasketballGM/comments/2agxoe/questions_and_suggestions_from_a_new_player/
 smoother multi-window updates
   instead of dbChange, cache previous updateEvents and pass them
     cache expiration?

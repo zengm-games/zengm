@@ -52,13 +52,17 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
                 }
 
                 g.dbl.transaction("players").objectStore("players").index("retiredYear").getAll(inputs.season).onsuccess = function (event) {
-                    var retiredPlayers;
+                    var i, retiredPlayers;
 
                     retiredPlayers = player.filter(event.target.result, {
                         attrs: ["pid", "name", "age", "hof"],
                         season: inputs.season,
                         fuzz: true
                     });
+                    for (i = 0; i < retiredPlayers.length; i++) {
+                        // Show age at retirement, not current age
+                        retiredPlayers[i].age -= g.season - inputs.season;
+                    }
                     retiredPlayers.sort(function (a, b) { return b.age - a.age; });
 
                     team.filter({

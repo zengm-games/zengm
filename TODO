@@ -318,6 +318,8 @@ gamesim shot distribution - less people shooting 3s really poorly, especially ta
 LOW PRIORITY
 ------------
 
+use compound index on season + team for games obectStore in helpers.gameLogList
+  this will make it fast enough to add "real" prev/next links to box score
 upcoming free agents page should show at least some information about signings (or non-signings) during re-sign phase
 tanking is too easy http://www.reddit.com/r/BasketballGM/comments/20038f/too_easy_to_tank/
 contractNegotiation

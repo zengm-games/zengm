@@ -72,7 +72,9 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
     function InitViewModel(inputs) {
         this.boxScore = {
-            gid: ko.observable(-1)
+            gid: ko.observable(-1),
+            prevGid: ko.observable(null),
+            nextGid: ko.observable(null)
         };
         this.gamesList = {
             abbrev: ko.observable(),
@@ -104,6 +106,26 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
             }
         }
     };*/
+
+    function updatePrevNextLinks(vm) {
+        var games, i;
+
+        games = vm.gamesList.games();
+        vm.boxScore.prevGid(null);
+        vm.boxScore.nextGid(null);
+
+        for (i = 0; i < games.length; i++) {
+            if (games[i].gid === vm.boxScore.gid()) {
+                if (i > 0) {
+                    vm.boxScore.nextGid(games[i - 1].gid);
+                }
+                if (i < games.length - 1) {
+                    vm.boxScore.prevGid(games[i + 1].gid);
+                }
+                break;
+            }
+        }
+    }
 
     function updateTeamSeason(inputs, updateEvents, vm) {
         var deferred;
@@ -169,6 +191,10 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                 vm.gamesList.abbrev(inputs.abbrev);
                 vm.gamesList.season(inputs.season);
                 vm.gamesList.loading(false);
+
+                // Update prev/next links, in case box score loaded before games list
+                updatePrevNextLinks(vm);
+
                 deferred.resolve();
 /* This doesn't work for some reason.
                 deferred.resolve({
@@ -189,6 +215,10 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                 for (i = games.length - 1; i >= 0; i--) {
                     vm.gamesList.games.unshift(games[i]);
                 }
+
+                // Update prev/next links, in case box score loaded before games list
+                updatePrevNextLinks(vm);
+
                 deferred.resolve();
             });
             return deferred.promise();
@@ -200,10 +230,11 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
             ui.title("Game Log - " + vm.season());
         }).extend({throttle: 1});
 
-        // Game log list dynamic highlighting
-        $("#game-log-list").on("click", "tbody tr", function (event) {
-            $(this).addClass("info").siblings().removeClass("info");
-        });
+        // Update prev/next links whenever box score gid is changed
+        ko.computed(function () {
+            vm.boxScore.gid();
+            updatePrevNextLinks(vm);
+        }).extend({throttle: 1});
     }
 
     function uiEvery(updateEvents, vm) {

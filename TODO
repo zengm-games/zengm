@@ -37,6 +37,11 @@ Eventually:
 CURRENT
 -------
 
+season preview
+  overview of user's players ratings changes
+  overview of notable ratings changes in other players
+  MVP race preview
+  power rankings
 power rankings
   cache values for preseason and after season
     teamSeason.powerRankings = {overall, performance, talent, preseason}
@@ -185,6 +190,9 @@ options:
 BIG NEW FEATURES
 ----------------
 
+unlimited draft class support
+  http://www.reddit.com/r/BasketballGM/comments/2ajw7c/about_custom_draft/civz0n6
+  take this opportunity to add some stuff to gameAttributes too
 options
   disable injuries
   disable ratings display
@@ -319,7 +327,6 @@ LOW PRIORITY
 ------------
 
 use compound index on season + team for games obectStore in helpers.gameLogList
-  this will make it fast enough to add "real" prev/next links to box score
 upcoming free agents page should show at least some information about signings (or non-signings) during re-sign phase
 tanking is too easy http://www.reddit.com/r/BasketballGM/comments/20038f/too_easy_to_tank/
 contractNegotiation

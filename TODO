@@ -37,6 +37,7 @@ Eventually:
 CURRENT
 -------
 
+ADD ACCOUNT LINK BACK!!!
 season preview
   overview of user's players ratings changes
   overview of notable ratings changes in other players
@@ -50,7 +51,10 @@ convert create a player to knockout, add ability to edit players
   contract?
   after testing, add to changes
 god mode
-  add to changes
+  options
+    disable injuries
+    disable ratings display
+    disable salary cap
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade
   email
@@ -193,10 +197,6 @@ BIG NEW FEATURES
 unlimited draft class support
   http://www.reddit.com/r/BasketballGM/comments/2ajw7c/about_custom_draft/civz0n6
   take this opportunity to add some stuff to gameAttributes too
-options
-  disable injuries
-  disable ratings display
-  disable salary cap
 trading block should allow for multiple (different) offers from the same team
 display of relative ratings like https://mail.google.com/mail/u/0/#inbox/144a4a04330edf3d
 trade improvements
@@ -243,6 +243,7 @@ fix contracts, signing
 revamp position assignment algorithm
   until a player is ~28 (whenever ratings decline starts), recalculate every year
 gameSim
+  big men should score more, shoot more FTs http://www.reddit.com/r/BasketballGM/comments/2amqpo/how_come_all_of_the_top_scorers_are_always_3_guys/
   pos/neg effects add on like civ4 defensive bonuses?
   balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbfzr43?context=3 http://www.reddit.com/r/BasketballGM/comments/1k1881/pf_stands_for_powerful/

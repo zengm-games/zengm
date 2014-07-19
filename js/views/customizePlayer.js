@@ -45,6 +45,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             ratings: ko.observableArray(),
             born: {
                 year: ko.observable()
+            },
+            contract: {
+                amount: ko.observable(),
+                exp: ko.observable()
             }
         };
         this.positions = [];
@@ -67,7 +71,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                         }
                     },
                     write: function (value) {
-                        this.p.ratings()[this.p.ratings().length - 1][ratingKeys[i]](helpers.bound(parseInt(value, 10), 0, 100));
+                        var rating;
+                        rating = helpers.bound(parseInt(value, 10), 0, 100);
+                        if (isNaN(rating)) { rating = 0; }
+                        this.p.ratings()[this.p.ratings().length - 1][ratingKeys[i]](rating);
                     },
                     owner: this
                 });
@@ -84,6 +91,46 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             },
             owner: this
         });
+
+        // Contract stuff
+        this.contract = {
+            amount: ko.computed({
+                read: function () {
+                    return this.p.contract.amount() / 1000;
+                },
+                write: function (value) {
+                    var amount;
+                    // Allow any value, even above or below normal limits, but round to $10k
+                    amount = helpers.round(100 * parseFloat(value)) * 10;
+                    if (isNaN(amount)) { amount = g.minContract; }
+                    this.p.contract.amount(amount);
+                },
+                owner: this
+            }),
+            exp: ko.computed({
+                read: function () {
+                    return this.p.contract.exp();
+                },
+                write: function (value) {
+                    var season;
+                    season = parseInt(value, 10);
+                    if (isNaN(season)) { season = g.season; }
+
+                    // No contracts expiring in the past
+                    if (season < g.season) {
+                        season = g.season;
+                    }
+
+                    // If current season contracts already expired, then current season can't be allowed for new contract
+                    if (season === g.season && g.phase >= g.PHASE.RESIGN_PLAYERS) {
+                        season += 1;
+                    }
+
+                    this.p.contract.exp(season);
+                },
+                owner: this
+            })
+        };
     }
 
     mapping = {

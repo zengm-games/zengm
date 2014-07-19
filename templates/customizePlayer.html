@@ -35,6 +35,18 @@
         <label for="cap-born-loc">Hometown</label>
         <input type="text" class="form-control" name="born-loc" data-bind="value: p.born.loc"></input>
       </div>
+      <div class="col-sm-6 form-group">
+        <label for="cap-born-loc">Contract Amount</label>
+        <div class="input-group">
+          <span class="input-group-addon">$</span>
+          <input type="text" class="form-control" name="contract-amount" data-bind="value: contract.amount">
+          <span class="input-group-addon">M per year</span>
+        </div>
+      </div>
+      <div class="col-sm-6 form-group">
+        <label for="cap-born-loc">Contract Expiration</label>
+        <input type="text" class="form-control" name="contract-exp" data-bind="value: contract.exp">
+      </div>
     </div>
 
     <h2>Appearance</h2>

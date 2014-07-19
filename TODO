@@ -38,6 +38,8 @@ CURRENT
 -------
 
 ADD ACCOUNT LINK BACK!!!
+edit player
+  contract
 season preview
   overview of user's players ratings changes
   overview of notable ratings changes in other players
@@ -55,6 +57,7 @@ god mode
     disable injuries
     disable ratings display
     disable salary cap
+  allow user to switch teams
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade
   email
@@ -270,6 +273,7 @@ fuzz should affect potential more than other variables, when pot is different th
 MINOR FIXES
 -----------
 
+TS%
 documentation
   http://www.reddit.com/r/BasketballGM/comments/2agxoe/questions_and_suggestions_from_a_new_player/
 smoother multi-window updates

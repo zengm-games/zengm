@@ -23,6 +23,9 @@ define(["globals", "ui", "core/draft", "core/finances", "core/player", "lib/jque
             for (i = 0; i < playersAll.length; i++) {
                 pa = playersAll[i];
 
+                // Abbrevaite first name to prevent overflows
+                pa.name = pa.name.split(" ")[0].substr(0, 1) + ". " + pa.name.split(" ")[1]
+
                 // Attributes
                 p = {pid: pa.pid, name: pa.name, pos: pa.pos, age: pa.age, watch: pa.watch};
 

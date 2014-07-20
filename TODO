@@ -166,9 +166,6 @@ notification system
     retire
   colors/icons for good/bad things http://www.reddit.com/r/BasketballGM/comments/22bpwm/suggestion_notification_improvements/
 NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
-Team name shows up as BOLD or is highlighted in some other way in all League lists (playoffs, standings)
-  wrap abbrev in function before display
-  maybe allow wrapping of arbitrary strings, not just abbrevs? then pass tid or abbrev as second param
 gracefully handle disk space errors
 
 PLAYER DEVELOPMENT REVAMP

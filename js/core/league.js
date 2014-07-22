@@ -197,7 +197,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                     }
 
                     player.genBaseMoods(tx, function (baseMoods) {
-                        var afterPlayerCreation, age, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, pg, playerStore, players, pots, profile, profiles, randomizeExpiration, simpleDefaults, t, t2, playerTids;
+                        var afterPlayerCreation, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, playerStore, players, pots, profile, profiles, randomizeExpiration, t, t2, playerTids;
 
                         afterPlayerCreation = function () {
                             var createUndrafted1, createUndrafted2, createUndrafted3, i;
@@ -283,63 +283,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                             for (i = 0; i < players.length; i++) {
                                 p = players[i];
 
-                                if (!p.hasOwnProperty("born")) {
-                                    age = random.randInt(19, 35);
-                                } else {
-                                    age = g.startingSeason - p.born.year;
-                                }
-
-                                // This is used to get at default values for various attributes
-                                pg = player.generate(p.tid, age, "", 0, 0, g.startingSeason - age, true, scoutingRank);
-
-                                // Optional things
-                                simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "hgt", "imgURL", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "weight", "yearsFreeAgent"];
-                                for (j = 0; j < simpleDefaults.length; j++) {
-                                    if (!p.hasOwnProperty(simpleDefaults[j])) {
-                                        p[simpleDefaults[j]] = pg[simpleDefaults[j]];
-                                    }
-                                }
-                                if (!p.hasOwnProperty("salaries")) {
-                                    p.salaries = [];
-                                    if (p.contract.exp < g.startingSeason) {
-                                        p.contract.exp = g.startingSeason;
-                                    }
-                                    if (p.tid >= 0) {
-                                        p = player.setContract(p, p.contract, true);
-                                    }
-                                }
-                                if (!p.hasOwnProperty("statsTids")) {
-                                    p.statsTids = [];
-                                }
-                                if (!p.ratings[0].hasOwnProperty("fuzz")) {
-                                    p.ratings[0].fuzz = pg.ratings[0].fuzz;
-                                }
-                                if (!p.ratings[0].hasOwnProperty("skills")) {
-                                    p.ratings[0].skills = player.skills(p.ratings[0]);
-                                }
-                                if (!p.ratings[0].hasOwnProperty("ovr")) {
-                                    p.ratings[0].ovr = player.ovr(p.ratings[0]);
-                                }
-                                if (p.ratings[0].pot < p.ratings[0].ovr) {
-                                    p.ratings[0].pot = p.ratings[0].ovr;
-                                }
-
-                                // Fix always-missing info
-                                if (p.tid === g.PLAYER.UNDRAFTED_2) {
-                                    p.ratings[0].season = g.startingSeason + 1;
-                                } else if (p.tid === g.PLAYER.UNDRAFTED_3) {
-                                    p.ratings[0].season = g.startingSeason + 2;
-                                } else {
-                                    if (!p.ratings[0].hasOwnProperty("season")) {
-                                        p.ratings[0].season = g.startingSeason;
-                                    }
-                                }
-                                if (!p.hasOwnProperty("stats")) {
-                                    p.stats = [];
-                                    if (p.tid >= 0) {
-                                        p = player.addStatsRow(p, false);
-                                    }
-                                }
+                                p = player.augmentPartialPlayer(p, scoutingRank);
 
                                 if (p.tid === g.PLAYER.FREE_AGENT) {
                                     player.addToFreeAgents(playerStore, p, null, baseMoods, cbAfterEachPlayer);

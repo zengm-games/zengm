@@ -9,7 +9,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
         describe("#filter()", function () {
             before(function (done) {
                 db.connectMeta(function () {
-                    league.create("Test", 0, undefined, undefined, 2013, false, function () {
+                    league.create("Test", 0, undefined, 2013, false, function () {
                         g.dbl.transaction("teams", "readwrite").objectStore("teams").openCursor(4).onsuccess = function (event) {
                             var cursor, t;
 
@@ -197,7 +197,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
         describe("#checkRosterSizes()", function () {
             before(function (done) {
                 db.connectMeta(function () {
-                    league.create("Test", 0, undefined, undefined, 2013, false, function () {
+                    league.create("Test", 0, undefined, 2013, false, function () {
                         done();
                     });
                 });

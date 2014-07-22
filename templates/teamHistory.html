@@ -5,6 +5,13 @@
 
 <div class="row">
   <div class="col-sm-3">
+    <h2>Overall</h2>
+    <p>
+      Record: <span data-bind="text: totalWon"></span>-<span data-bind="text: totalLost"></span><br>
+      Playoff Appearances: <span data-bind="text: playoffAppearances"></span><br>
+      Championships: <span data-bind="text: championships"></span>
+    </p>
+
     <h2>Seasons</h2>
     <p style="-moz-column-width: 15em; -moz-columns: 15em; -webkit-columns: 15em; columns: 15em;">
       <!-- ko foreach: history -->

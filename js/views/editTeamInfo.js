@@ -160,7 +160,7 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "lib/underscore", "uti
                             teamRegionsCache: _.pluck(newTeams, "region"),
                             teamNamesCache: _.pluck(newTeams, "name")
                         }, function () {
-                            ui.realtimeUpdate();
+                            ui.realtimeUpdate(["dbChange"]);
                         });
                     }
                 };

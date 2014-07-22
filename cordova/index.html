@@ -3,15 +3,12 @@
   <head>
     <meta charset="utf-8">
     <title>Basketball GM</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
     <link rel="shortcut icon" href="/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
-
-    <script src="http://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
-      data-apikey="c10b95290070cb8888a7a79cc5408555"></script>
 
     <script type="text/javascript">
       window.inCordova = document.URL.indexOf('file://') === 0;
@@ -46,6 +43,14 @@
           ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
+
+        // Bugsnag
+        (function () {
+          var bs = document.createElement('script'); bs.type = 'text/javascript'; bs.async = true;
+          bs.src = "http://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js";
+          bs.dataset.apikey = "c10b95290070cb8888a7a79cc5408555";
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
+        })
       }
     </script>
   </head>
@@ -72,8 +77,19 @@
 
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="top-menu">
       <div class="container">
+        <div class="pull-right">
+            <a class="navbar-link user-menu" href="/account/login_or_register" data-bind="visible: !username()">
+              <span class="glyphicon glyphicon-user"></span>
+              <span class="visible-lg">Login/Register</span>
+            </a>
+            <a class="navbar-link user-menu" href="/account" data-bind="visible: username" style="display: none">
+              <span class="glyphicon glyphicon-user"></span>
+              <span class="visible-lg" data-bind="text: username"></span>
+            </a>
+        </div>
+
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#top-menu-collapse">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -82,7 +98,7 @@
           <a class="navbar-brand" href="/"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAN1wAADdcBQiibeAAAAAd0SU1FB9wIFRUXBgiS2qAAAAN8SURBVDjLbZRdTFtlGMd/b885PaXfYOk2vqHODWFsZIqySGLMdJsx2SQGdZk3uzIaL4war0282LUX3ng7WLLdSEzcZqJxKmXOSLbBBoJaoBDWQktLP0/POT1etHSV7E3e5D0neX75///P+7yCJ6zeVuW9Vwc9r4eCSo9TtgVspo1Mzty+fi+bWUro1/6Na1/vrRH1H8+F3P2vHHdcOjPkfi2eNBSbBacH3LhtNtAADcandvTx31Nzq1vWxQebubu7tdLuYeSo69SH53zjn5x/aqirTZH6QirPtNm5OZMDAQGPDMBAiyp1+pQDflWMysKa/yepL9VAve32/o/fbJq4cNrfjR2wAzLYJMHhNpX1LYNbD/L0taoIoMOvsJY0XIMHHCPRtPnLelrfkAAuvOy//NlY4DgyoFRBSlWqBft9MgGXxNXwDh1NCk7FxtaOwYl2py+a0HvCq4XL0vBB5xtfng9+GvBLMjao7SqEMmCCW7Ux2O5geqHAXFQjUyzz7f0MA/scndGUMS8/36W+3aRKju/CGewNAkkVIINVbUPQK9HZpOBXJIQNTh5xVYIvglwWnDvokW4vF0bl7Ux5aGapwMkBNw0e8dhWtQ3xpMFfyyVSaRMMKGvQ5lE40qzW+t7hV7rlYy0O6dQhd8VGsWrFqIIEBJ0ywZBc+acDJVjd0Pl+Nks4kqfTreCyi2bZJYmK1Lo8aopEXVZmFWRUuqa0CholCQm4s1Zwytm8FUcjVIOYdYr2hB7bNphayIMBkbjOR8NN2E1BX8ARlZc3SxGKDNcgZhVSBW3nTW7MZdF1aPHJnDnsoUEIvvopyfWHWc4+7WE1U1qUp9e0a5GYPtYdUORdNUXL4lYkx6OMQaNLYrTPiyqJivUybCQMjgYdbGdNFh5p2p1V7aoAeKffGx7t9Q5bgIGFqgpe6nGyzys/tgc10MSfad7t97EYK/HFz5vTV+bSJ2SASMp830JMjj3r6aJ+CovVwOtCv71SYLDZgTDgj/XCym8ruc9rs7a+o8eSudKsJWwjx/Y7Gvfe6t29ENNI5E2GWhqYmE0tfzOT+uB+XPvxf9MfSRuR+U3th8Wt0qGeRntrwCnJ9U/Mjb+zZEoWoUa7fmkqcfPKvdzF6fVc+Inv0e56ocV59sX2hrfavErXwpbWrpmW6PAp0UTBXPw1mp18GCtN7q35D5RXZnIkhyKSAAAAAElFTkSuQmCC" width="18" height="18"><span class="hidden-md hidden-sm hidden-xs">Basketball GM</span><span class="visible-md visible-sm visible-xs" data-bind="if: lid() === undefined">Basketball GM</span></a>
           <ul class="nav navbar-nav-no-collapse" id="play-menu" data-no-collapse="true" data-bind="visible: lid() !== undefined" style="display: none">
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="play-button-link" class="play-button">Play <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="play-button-link" class="play-button"><span class="hidden-xs">Play</span> <b class="caret"></b></a>
               <ul class="dropdown-menu" data-bind="foreach: options" id="play-menu-options">
                 <li><a data-bind="attr: {href: url, id: id}, html: label"></a></li>
               </ul>
@@ -93,9 +109,10 @@
             <span data-bind="text: statusText"></span>
           </p>
         </div>
-        <div class="collapse navbar-collapse navbar-ex1-collapse" id="top-menu-collapse">
-          <ul class="nav navbar-nav navbar-right" id="nav-primary">
-            <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: []}">Dashboard</a></li>
+
+        <div class="collapse navbar-collapse navbar-right" id="top-menu-collapse">
+          <ul class="nav navbar-nav" id="nav-primary">
+            <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: []}"><span class="glyphicon glyphicon-home"></span></a></li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">League <b class="caret"></b></span><span class="visible-sm">L <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
@@ -143,10 +160,11 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Tools <b class="caret"></b></span><span class="visible-sm">X <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header visible-sm">Tools</li>
+                <li><a href="/account">Achievements</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['create_a_player']}">Create A Player</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['edit_team_info']}">Edit Team Info</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['event_log']}">Event Log</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['export_rosters']}">Export Rosters</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['export_league']}">Export League</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['fantasy_draft']}">Fantasy Draft</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['delete_old_data']}">Improve Performance</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none" role="presentation" class="divider"></li>
@@ -191,28 +209,9 @@
           <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> · 
           <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> · 
           <a href="http://basketball-gm.com/share/" target="_blank">Share</a><br>
-          <p class="rev">v3.3 · <!--rev-->2014.02.27.1387</p>
+          <p class="rev">v3.3 · <!--rev-->2014.06.10.1152</p>
         </p>
       </footer>
-    </div>
-
-    <div class="slide-out hidden-xs" id="share">
-      <button class="slide-out-handle btn btn-danger">Share</button>
-      <a href="https://twitter.com/basketball_gm" class="twitter-follow-button" data-show-count="true">Follow @basketball_gm</a>
-
-      <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.basketball-gm.com/" data-text="Free basketball management simulation game" data-via="basketball_gm">Tweet</a>
-
-      <div id="fb-root"></div>
-      <div class="fb-like" data-href="http://www.basketball-gm.com/" data-send="false" data-layout="button_count" data-width="90" data-show-faces="false"></div>
-      <br>
-      <div style="margin-bottom: 4px"></div>
-
-      <div class="g-plusone" data-size="medium" data-href="http://www.basketball-gm.com/"></div>
-      <br>
-
-      <div id="subreddit-btn"></div>
-
-      <div id="chrome-web-store"></div>
     </div>
 
     <iframe style="display: none;" src="/manifest_hack"></iframe> 

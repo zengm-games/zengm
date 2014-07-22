@@ -256,7 +256,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                             players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
 
                             for (i = 0; i < players.length; i++) {
-                                if (inputs.tid === g.userTid) {
+                                // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
+                                if (inputs.tid === g.userTid && g.phase !== g.PHASE.PLAYOFFS) {
                                     players[i].canRelease = true;
                                 } else {
                                     players[i].canRelease = false;

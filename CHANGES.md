@@ -6,10 +6,13 @@ number or not.
 
 ## Gameplay and UI
 
-- Create A Player page
+- "God Mode" including Create A Player, Edit Player, and Force Trade
 - New trade AI, fixing a ton of loopholes
 - Achievements
 - Upcoming Free Agents page
+- Export of entire league data
+- Easy import of custom draft classes
+- Whole league export
 
 # 3.3.0 (2014-01-21)
 

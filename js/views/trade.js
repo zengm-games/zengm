@@ -110,7 +110,7 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
             // Propose trade
             trade.propose(function (accepted, message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
-            });
+            }, req.params.hasOwnProperty("force-trade"));
         } else if (req.params.ask !== undefined) {
             // What would make this deal work?
             askButtonEl = document.getElementById("ask-button");
@@ -275,7 +275,9 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                                     strategy: t.strategy,
                                     won: t.seasons[t.seasons.length - 1].won,
                                     lost: t.seasons[t.seasons.length - 1].lost,
-                                    showResigningMsg: showResigningMsg
+                                    showResigningMsg: showResigningMsg,
+                                    godMode: g.godMode,
+                                    forceTrade: false
                                 };
 
                                 updateSummary(vars, function (vars) {

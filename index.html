@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Basketball GM</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
     <link rel="shortcut icon" href="/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
@@ -121,6 +121,7 @@
                 <li><a data-bind="attrLeagueUrl: {href: ['playoffs']}">Playoffs</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['league_finances']}">Finances</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['history_all']}">History</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['power_rankings']}">Power Rankings</a></li>
               </ul>
             </li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
@@ -161,12 +162,14 @@
               <ul class="dropdown-menu">
                 <li class="dropdown-header visible-sm">Tools</li>
                 <li><a href="/account">Achievements</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['create_a_player']}">Create A Player</a></li>
+                <li data-bind="visible: lid() !== undefined && godMode" style="display: none"><a data-bind="attrLeagueUrl: {href: ['customize_player']}" class="god-mode">Create A Player</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['edit_team_info']}">Edit Team Info</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['event_log']}">Event Log</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['export_league']}">Export League</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['fantasy_draft']}">Fantasy Draft</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['god_mode']}">God Mode</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['delete_old_data']}">Improve Performance</a></li>
+                <li data-bind="visible: lid() !== undefined && godMode" style="display: none"><a data-bind="attrLeagueUrl: {href: ['new_team']}" class="god-mode">Switch Team</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none" role="presentation" class="divider"></li>
                 <li role="presentation" class="dropdown-header">Use at your own risk!</li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PLAYOFFS); }())">Skip To Playoffs</a></li>
@@ -184,7 +187,7 @@
                 <li class="dropdown-header visible-sm">Help</li>
                 <li><a href="/manual">Overview</a></li>
                 <li><a href="/changes">Changes</a></li>
-                <li><a href="/manual/custom_rosters">Custom Rosters</a></li>
+                <li><a href="http://basketball-gm.com/manual/customization/">Custom Rosters</a></li>
                 <li><a href="http://basketball-gm.com/manual/debugging/" target="_blank">Debugging</a></li>
               </ul>
             </li>
@@ -209,7 +212,7 @@
           <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> · 
           <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> · 
           <a href="http://basketball-gm.com/share/" target="_blank">Share</a><br>
-          <p class="rev">v3.3 · <!--rev-->2014.06.03.678</p>
+          <p class="rev">v3.3 · <!--rev-->2014.07.20.1367</p>
         </p>
       </footer>
     </div>

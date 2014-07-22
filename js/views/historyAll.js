@@ -40,7 +40,7 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
                 }
 
                 tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                    var cursor, found, i, j, t;
+                    var championshipsByTid, cursor, found, i, j, t;
 
                     cursor = event.target.result;
                     if (cursor) {
@@ -62,6 +62,7 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
 
                             if (t.seasons[j].playoffRoundsWon === 4) {
                                 seasons[i].champ = {
+                                    tid: t.tid,
                                     abbrev: t.abbrev,
                                     region: t.region,
                                     name: t.name,
@@ -81,6 +82,19 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
 
                         cursor.continue();
                     } else {
+                        // Count up number of championships per team
+                        championshipsByTid = [];
+                        for (i = 0; i < g.numTeams; i++) {
+                            championshipsByTid.push(0);
+                        }
+                        for (i = 0; i < seasons.length; i++) {
+                            if (seasons[i].champ) {
+                                championshipsByTid[seasons[i].champ.tid] += 1;
+                                seasons[i].champ.count = championshipsByTid[seasons[i].champ.tid];
+                                delete seasons[i].champ.tid;
+                            }
+                        }
+
                         deferred.resolve({
                             seasons: seasons
                         });
@@ -116,16 +130,18 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
 
         ko.computed(function () {
             ui.datatable($("#history-all"), 0, _.map(vm.seasons(), function (s) {
-                var seasonLink;
+                var countText, seasonLink;
 
                 if (s.champ) {
                     seasonLink = '<a href="' + helpers.leagueUrl(["history", s.season]) + '">' + s.season + '</a>';
+                    countText = ' - ' + helpers.ordinal(s.champ.count) + ' title';
                 } else {
                     // This happens if there is missing data, such as from Improve Performance
                     seasonLink = String(s.season);
+                    countText = '';
                 }
 
-                return [seasonLink, teamName(s.champ, s.season), teamName(s.runnerUp, s.season), awardName(s.finalsMvp, s.season), awardName(s.mvp, s.season), awardName(s.dpoy, s.season), awardName(s.roy, s.season)];
+                return [seasonLink, teamName(s.champ, s.season) + countText, teamName(s.runnerUp, s.season), awardName(s.finalsMvp, s.season), awardName(s.mvp, s.season), awardName(s.dpoy, s.season), awardName(s.roy, s.season)];
             }));
         }).extend({throttle: 1});
     }

@@ -6,11 +6,11 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
     "use strict";
 
     function get(req) {
-        /*if (!g.gameOver) {
+        if (!g.gameOver && !g.godMode) {
             return {
-                errorMessage: "You may only switch to another team after you're fired."
+                errorMessage: "You may only switch to another team after you're fired or when you're in <a href=\"" + helpers.leagueUrl(["god_mode"]) + "\">God Mode</a>."
             };
-        }*/
+        }
     }
 
     function post(req) {
@@ -41,16 +41,23 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
         team.filter({
             attrs: ["tid", "region", "name"],
             seasonAttrs: ["winp"],
-            season: g.season - 1
+            season: g.season
         }, function (teams) {
             // Remove user's team (no re-hiring immediately after firing)
             teams.splice(g.userTid, 1);
 
-            // Order by worst record
-            teams.sort(function (a, b) { return a.winp - b.winp; });
+            // If not in god mode, user must have been fired
+            if (!g.godMode) {
+                // Order by worst record
+                teams.sort(function (a, b) { return a.winp - b.winp; });
+
+                // Only get option of 5 worst
+                teams = teams.slice(0, 5);
+            }
 
             deferred.resolve({
-                teams: teams.slice(0, 5) // Show top 5 worst teams
+                godMode: g.godMode,
+                teams: teams
             });
         });
 

@@ -41,7 +41,7 @@ define(["lib/knockout"], function (ko) {
         RETIRED: -3,
         UNDRAFTED_2: -4, // Next year's draft class
         UNDRAFTED_3: -5, // Next next year's draft class
-        UNDRAFTED_FANTASY_TEMP: -6 // Store current draft class hear during fantasy draft
+        UNDRAFTED_FANTASY_TEMP: -6 // Store current draft class here during fantasy draft
     };
 
 /*    // Web workers - create only if we're not already inside a web worker!
@@ -55,6 +55,7 @@ define(["lib/knockout"], function (ko) {
     g.vm = {
         topMenu: {
             lid: ko.observable(),
+            godMode: ko.observable(),
             options: ko.observable([]),
             phaseText: ko.observable(),
             statusText: ko.observable(),
@@ -65,8 +66,14 @@ define(["lib/knockout"], function (ko) {
 
     g.enableLogging = window.enableLogging;
 
-    splitUrl = window.location.hostname.split(".");
-    g.tld = splitUrl[splitUrl.length - 1]; // .com or .dev TLD
+    // .com or .dev TLD
+    if (!window.inCordova) {
+        splitUrl = window.location.hostname.split(".");
+        g.tld = splitUrl[splitUrl.length - 1];
+    } else {
+        // From within Cordova, window.location.hostname is not set, so always use .com
+        g.tld = "com";
+    }
 
     g.sport = "basketball"; // For account ajax stuff
 

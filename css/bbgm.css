@@ -100,10 +100,22 @@ footer {
   border-bottom-color: #777777;
 }
 
+.god-mode {
+  background-color: #563d7c !important;
+  color: #fff !important;
+}
+.god-mode:hover, .god-mode:focus {
+  background-color: #4a356b !important;
+}
+.god-mode-text {
+  padding: 0 3px;
+}
+
 /* For the user/login widget */
 .user-menu {
   display: block;
   padding: 16px 15px;
+  margin-right: -15px; /* No right margin, like navbar-brand's left margin */
 }
 .user-menu:hover {
   text-decoration: none;
@@ -115,6 +127,11 @@ footer {
 @media (min-width: 1200px) {
   .navbar-link .visible-lg {
     display: inline-block !important;
+  }
+}
+@media (max-width: 767px) {
+  .user-menu {
+    margin-left: -15px; /* Move closer to hamburger menu */
   }
 }
 

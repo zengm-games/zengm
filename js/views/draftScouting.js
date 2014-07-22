@@ -2,7 +2,7 @@
  * @name views.draftScouting
  * @namespace Scouting prospects in future drafts.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/draft", "core/finances", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, draft, finances, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -22,6 +22,9 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             players = [];
             for (i = 0; i < playersAll.length; i++) {
                 pa = playersAll[i];
+
+                // Abbrevaite first name to prevent overflows
+                pa.name = pa.name.split(" ")[0].substr(0, 1) + ". " + pa.name.split(" ")[1]
 
                 // Attributes
                 p = {pid: pa.pid, name: pa.name, pos: pa.pos, age: pa.age, watch: pa.watch};
@@ -95,8 +98,91 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         }
     }
 
-    function uiFirst(vm) {
+    function customDraftClassHandler(e) {
+        var draftClassTid, file, reader, seasonOffset;
+console.log(e);
 
+        seasonOffset = parseInt(e.target.dataset.index, 10);
+        file = e.target.files[0];
+
+        // What tid to replace?
+        if (seasonOffset === 0) {
+            draftClassTid = g.PLAYER.UNDRAFTED;
+        } else if (seasonOffset === 1) {
+            draftClassTid = g.PLAYER.UNDRAFTED_2;
+        } else if (seasonOffset === 2) {
+            draftClassTid = g.PLAYER.UNDRAFTED_3;
+        } else {
+            throw new Error("Invalid draft class index");
+        }
+console.log("draftClassTid: " + draftClassTid)
+
+        reader = new window.FileReader();
+        reader.readAsText(file);
+        reader.onload = function (event) {
+            var players;
+
+            // Get all players from uploaded files
+            players = JSON.parse(event.target.result).players;
+
+            // Filter out any that are not draft prospects
+            players = players.filter(function (p) {
+                return p.tid === g.PLAYER.UNDRAFTED;
+            });
+console.log(players);
+console.log(players.length);
+
+            // Get scouting rank, which is used in a couple places below
+            g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
+                var playerStore, scoutingRank, t, tx;
+
+                t = event.target.result;
+                scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
+
+                // Delete old players from draft class
+                tx = g.dbl.transaction("players", "readwrite");
+                playerStore = tx.objectStore("players");
+                playerStore.index("tid").openCursor(IDBKeyRange.only(draftClassTid)).onsuccess = function (event) {
+                    var cursor;
+                    cursor = event.target.result;
+                    if (cursor) {
+                        playerStore.delete(cursor.primaryKey);
+                        cursor.continue();
+                    } else {
+                        // Everything else proceeds after deletes have finished
+                        
+                        // Add new players to database
+                        players.forEach(function (p) {
+                            // Make sure player object is fully defined
+                            p = player.augmentPartialPlayer(p, scoutingRank);
+
+                            // Manually set TID, since at this point it is always g.PLAYER.UNDRAFTED
+                            p.tid = draftClassTid;
+
+                            // Manually remove PID, since all it can do is cause trouble
+                            if (p.hasOwnProperty("pid")) {
+                                delete p.pid;
+                            }
+
+                            playerStore.add(p);
+                            console.log(p.name);
+                        });
+
+                        // "Top off" the draft class if <70 players imported
+                        if (players.length < 70) {
+                            draft.genPlayers(tx, draftClassTid, scoutingRank, 70 - players.length);
+                        }
+                    }
+                };
+
+                tx.oncomplete = function () {
+                    ui.realtimeUpdate(["dbChange"]);
+                };
+            };
+        };
+    }
+
+    function uiFirst(vm) {
         ui.title("Draft Scouting");
 
         ko.computed(function () {
@@ -112,10 +198,39 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         ui.tableClickableRows($("#draft-scouting"));
     }
 
+    function uiEvery() {
+        var i, uploadFileButtons;
+
+        // Handle custom roster buttons - this needs to be in uiEvery or it's lost when page reloads
+        // This could somehow lead to double calling customDraftClassHandler, but that doesn't seem to actually happen
+        uploadFileButtons = document.getElementsByClassName("custom-draft-class");
+        for (i = 0; i < uploadFileButtons.length; i++) {
+            uploadFileButtons[i].addEventListener("change", customDraftClassHandler);
+        }
+
+        // Same uiEvery rationale as above
+        document.getElementById("toggle-0").addEventListener("click", function (e) {
+            e.preventDefault();
+            this.style.display = "none";
+            document.getElementById("form-0").style.display = "block";
+        });
+        document.getElementById("toggle-1").addEventListener("click", function (e) {
+            e.preventDefault();
+            this.style.display = "none";
+            document.getElementById("form-1").style.display = "block";
+        });
+        document.getElementById("toggle-2").addEventListener("click", function (e) {
+            e.preventDefault();
+            this.style.display = "none";
+            document.getElementById("form-2").style.display = "block";
+        });
+    }
+
     return bbgmView.init({
         id: "draftScouting",
         mapping: mapping,
         runBefore: [updateDraftScouting],
-        uiFirst: uiFirst
+        uiFirst: uiFirst,
+        uiEvery: uiEvery
     });
 });

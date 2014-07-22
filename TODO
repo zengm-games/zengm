@@ -17,6 +17,7 @@ ovr changes should impact player.value, somehow
   http://www.reddit.com/r/BasketballGM/comments/1ydtpd/seems_much_more_random_now/cfjxhj6
     teams do overvalue their own players in trades, generally
 second round draft picks are undervalued. also, giving away a pick should never make a trade worse, but sometimes it does now.
+trade for tons of cheap second round picks, then use that to trade for good asset: www.reddit.com/r/BasketballGM/comments/27wjnp/33_pennies_for_a_dollar/
 release and resign pick exploit http://www.reddit.com/r/BasketballGM/comments/1zn61h/finances/cfvzr35\
 some limit on trades so people can't make 1000 slightly beneficial trades: http://www.reddit.com/r/BasketballGM/comments/1zzwbs/suggestions_on_trades/cg0e0dg
   probably make opposing owners less likely to trade as the number of proposed trades increases in a season
@@ -36,28 +37,41 @@ Eventually:
 CURRENT
 -------
 
-blog about export league
-  introduce
-  docs
-  ideas for custom rosters
-    traded draft picks
-    define the schedule
-    start mid-season, or even in other phases like the draft or free agency
-    include historical stats
-    include your own message from the owner to display right when someone uses your file
-    probably some more stuff i'm not thinking of
-  step towards hosting game in "the cloud" - technically it's already there, just copy the file to dropbox or whatever
-edit/delete player
-  share code with create a player
-    contract?
-  do the whole thing through knockout, based dynamically on player object? would allow for some nice things like easily computing ovr
+season preview
+  overview of user's players ratings changes
+  overview of notable ratings changes in other players
+  MVP race preview
+  power rankings
+power rankings
+  cache values for preseason and after season
+    teamSeason.powerRankings = {overall, performance, talent, preseason}
+  only show live during regular season
+god mode
+  options
+    disable injuries
+    disable ratings display
+    disable salary cap
+trade UI
+  "Don't include in trade" checkbox column for asking AI to propose trade
+  email
+  http://datatables.net/extensions/fixedcolumns/
+  http://www.reddit.com/r/BasketballGM/comments/28tzek/trade_ui_redesign_concept_what_do_you_all_think/
+move retired players to separate object store - does it help performance?
+cordova
+  in portrait, games in dashboard looks like shit
+  hide export link
+blog about cordova/web hybrid
+  base URL prefix - do in JS
+  davisjs: preprocess
+  images: data URLs
+  upload roster files problem
+firefox market
+windows 8
 event log for trades
 upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page
 account
-  widget
-    get rid of right margin somehow, like for logo? most visible on small screens
   somehow periodically run util.account.check, which will check for login and for local achievements to send to cloud
     is this necessary?
   more pages
@@ -72,6 +86,7 @@ Achievements to add
 mobile UI
   slide in full height menu from right, like facebook or android's DrawerLayout
 option to keep your player stats in improve performance http://www.reddit.com/r/BasketballGM/comments/1xgo2q/delete_old_player_stats_keep_your_teams_old/
+  maybe also other notable players - award winners, HoF members
 move manual to wordpress
   " < Basketball GM Manual" in title
   search for any manual links
@@ -92,8 +107,6 @@ show prospects before draft
     movement between draft classes
       allow promising to draft a player at certain position to influence decision
 customization
-  allow import of team info or draft classes from roster files
-  allow upload of just these files from the "new league" screen, somehow
   popRank/difficulty being set correctly for uploaded rosters, on new league screen and elsewhere?
 career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year
@@ -152,18 +165,14 @@ notification system
     retire
   colors/icons for good/bad things http://www.reddit.com/r/BasketballGM/comments/22bpwm/suggestion_notification_improvements/
 NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
-Team name shows up as BOLD or is highlighted in some other way in all League lists (playoffs, standings)
-  wrap abbrev in function before display
-  maybe allow wrapping of arbitrary strings, not just abbrevs? then pass tid or abbrev as second param
 gracefully handle disk space errors
 
 PLAYER DEVELOPMENT REVAMP
 -------------------------
 
 player development revamp
-  something needs to be done. still too many 3 point shooting centers.
+  something needs to be done. still too many 3 point shooting centers
   are ovr/pot combos reasonable, since ovr is weighted now?
-  low ovr high pot players should pan out more?
   old stars should exist
   reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
   really high ovr/pot is handled poorly, rapid declines if there is a gap
@@ -178,6 +187,9 @@ options:
 BIG NEW FEATURES
 ----------------
 
+unlimited draft class support
+  http://www.reddit.com/r/BasketballGM/comments/2ajw7c/about_custom_draft/civz0n6
+  take this opportunity to add some stuff to gameAttributes too
 trading block should allow for multiple (different) offers from the same team
 display of relative ratings like https://mail.google.com/mail/u/0/#inbox/144a4a04330edf3d
 trade improvements
@@ -199,7 +211,6 @@ random events
   like.. player gets suspended, out X games. or player gets into fight, fan support drops. etc.
   need a notification system first
 more detailed draft - slower picks, trades, etc.
-  custom draft classes http://www.reddit.com/r/BasketballGM/comments/1r0ftx/nba_2k2/cdj769w
   slower picks http://www.reddit.com/r/BasketballGM/comments/1r70dv/trade_picks_during_draft
   sort by generic value (current) or team-specific value
   trade picks - note that the code in teamValue will need to be modified to account for the lottery and available players in the draft class
@@ -225,6 +236,7 @@ fix contracts, signing
 revamp position assignment algorithm
   until a player is ~28 (whenever ratings decline starts), recalculate every year
 gameSim
+  big men should score more, shoot more FTs http://www.reddit.com/r/BasketballGM/comments/2amqpo/how_come_all_of_the_top_scorers_are_always_3_guys/
   pos/neg effects add on like civ4 defensive bonuses?
   balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbfzr43?context=3 http://www.reddit.com/r/BasketballGM/comments/1k1881/pf_stands_for_powerful/
@@ -251,6 +263,12 @@ fuzz should affect potential more than other variables, when pot is different th
 MINOR FIXES
 -----------
 
+TS%
+documentation
+  http://www.reddit.com/r/BasketballGM/comments/2agxoe/questions_and_suggestions_from_a_new_player/
+smoother multi-window updates
+  instead of dbChange, cache previous updateEvents and pass them
+    cache expiration?
 most improved player
 assist leaders too low
 Number of years in college should depend on talent level
@@ -303,6 +321,8 @@ gamesim shot distribution - less people shooting 3s really poorly, especially ta
 LOW PRIORITY
 ------------
 
+use compound index on season + team for games obectStore in helpers.gameLogList
+upcoming free agents page should show at least some information about signings (or non-signings) during re-sign phase
 tanking is too easy http://www.reddit.com/r/BasketballGM/comments/20038f/too_easy_to_tank/
 contractNegotiation
   young players should only want short deals if they have really high pot-ovr
@@ -376,6 +396,10 @@ some UI indicating how players developed over the offseason
   integrated into roster, or separate page?
 player search page
   show stats, ratings, contract, etc. (customizable); allow filters to be applied. also filter by skill icon
+  search by stats, ratings, or attributes
+  trade for button, or sign button if free agent, or draft button if draft prospect
+    same contextual buttons for watch list
+    can this become main UI for drafting (at least fantasy draft)
 finances
   too easy to make big $$$
     owner should take profits each year
@@ -436,6 +460,7 @@ draft lottery
   do a dramatic presentation?
   increase hype for teams that exceed expectations
   tied records?
+  should happen in "before draft" phase to allow trading early
 how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
   for roster, want just a player's stats with this team this season
     this currently works, just pass a tid
@@ -494,10 +519,6 @@ AI modules that contain functions which are called to determine actions
     trades
     budget items (like from team finances view)
     releasing/buying out players when over limit
-player finder
-  search by stats, ratings, or attributes
-  trade for button, or sign button if free agent, or draft button if draft prospect
-    can this become main UI for drafting (at least fantasy draft)
 customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
   http://datatables.net/extras/colvis/
   would it be better just to toggle displays? http://www.reddit.com/r/BasketballGM/comments/1ygzlt/idea_watch_list_toggle_between_stats_and/
@@ -581,8 +602,6 @@ tv revenue as a variable
       "random event" - competition between two networks, Sports TV and The Basketball Channel
     when renegotiating and really bad, the guy pretends not to know you - "Atlanta Herons? Is that the team from the Mexican/Canadian/Arena/Indoor/Xtreme Volleyball/Soccer/Tennis/Racing/Curling/MudWrestling League?"
 stat views
-  add team dropdown to ratings and stats views - but should this refresh the view, or just filter the DataTable?
-    could use something like http://www.datatables.net/extras/thirdparty/ColumnFilterWidgets/DataTables/extras/ColumnFilterWidgets/ to also filter on positions
   playoff/regular season toggle in team/player stats, league leaders
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed
 AI teams should have to deal with fuzz too

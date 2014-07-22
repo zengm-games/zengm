@@ -66,7 +66,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                 } else if (fields[i] === "seasonsUpcoming") {
                     options = [];
                     // For upcomingFreeAgents, bump up 1 if we're past the season
-                    offset = g.phase < g.PHASE.RESIGN_PLAYERS ? 0 : 1;
+                    offset = g.phase <= g.PHASE.RESIGN_PLAYERS ? 0 : 1;
                     for (j = 0 + offset; j < 5 + offset; j++) {
                         options.push({
                             key: g.season + j,

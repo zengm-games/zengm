@@ -322,7 +322,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                 var tx;
 
                 if (!negotiation.resigning && (payroll + negotiation.player.amount > g.salaryCap && negotiation.player.amount !== g.minContract)) {
-                    return cb("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
+                    return cb("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");
                 }
 
                 // Adjust to account for in-season signings;

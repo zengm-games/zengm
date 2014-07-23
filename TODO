@@ -37,6 +37,9 @@ Eventually:
 CURRENT
 -------
 
+total control mode
+  select draft pick for every team http://www.reddit.com/r/BasketballGM/comments/2b8g1d/new_multiplayer_league/cj31706
+  AI doesn't change roster http://www.reddit.com/message/messages/23pano
 default new team should be the last one used http://www.reddit.com/r/BasketballGM/comments/2bcl12/request_lock_in_the_team_you_always_want_to_play/
 season preview
   overview of user's players ratings changes
@@ -48,7 +51,6 @@ power rankings
     teamSeason.powerRankings = {overall, performance, talent, preseason}
   only show live during regular season
 god mode
-  select draft pick for every team http://www.reddit.com/r/BasketballGM/comments/2b8g1d/new_multiplayer_league/cj31706
   options
     disable injuries
     disable ratings display

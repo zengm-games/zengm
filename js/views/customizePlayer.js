@@ -192,7 +192,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                         eyes: [0, 1, 2, 3],
                         nose: [0, 1, 2],
                         mouth: [0, 1, 2, 3, 4],
-                        hair: [0, 1, 2, 3, 4, 5]
+                        hair: [0, 1, 2, 3, 4]
                     },
                     positions: positions,
                     teams: teams

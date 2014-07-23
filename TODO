@@ -37,6 +37,7 @@ Eventually:
 CURRENT
 -------
 
+default new team should be the last one used http://www.reddit.com/r/BasketballGM/comments/2bcl12/request_lock_in_the_team_you_always_want_to_play/
 season preview
   overview of user's players ratings changes
   overview of notable ratings changes in other players
@@ -47,6 +48,7 @@ power rankings
     teamSeason.powerRankings = {overall, performance, talent, preseason}
   only show live during regular season
 god mode
+  select draft pick for every team http://www.reddit.com/r/BasketballGM/comments/2b8g1d/new_multiplayer_league/cj31706
   options
     disable injuries
     disable ratings display
@@ -236,6 +238,7 @@ fix contracts, signing
 revamp position assignment algorithm
   until a player is ~28 (whenever ratings decline starts), recalculate every year
 gameSim
+  smart substitutions http://www.reddit.com/r/BasketballGM/comments/2b9w78/went_7012_with_this_roster_is_this_really_that/cj3zgui
   big men should score more, shoot more FTs http://www.reddit.com/r/BasketballGM/comments/2amqpo/how_come_all_of_the_top_scorers_are_always_3_guys/
   pos/neg effects add on like civ4 defensive bonuses?
   balance http://www.reddit.com/r/BasketballGM/comments/1jfcjw/game_imbalance_fc_with_rdi/ http://www.reddit.com/message/messages/1097mj

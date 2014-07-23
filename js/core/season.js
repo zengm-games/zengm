@@ -642,8 +642,13 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     newPhaseCb(g.PHASE.PRESEASON, cb, undefined, ["playerMovement"]);
 
                     if (g.enableLogging && !window.inCordova) {
-                        // Google Consumer Surveys
-                        TriggerPrompt("http://www.basketball-gm.com/", (new Date()).getTime());
+                        if (Math.random() < 0.85) {
+                            // Google Consumer Surveys
+                            TriggerPrompt("http://www.basketball-gm.com/", (new Date()).getTime());
+                        } else {
+                            // Amazon ads
+                            $("#modal-ads").modal("show");
+                        }
                     }
                 };
             });

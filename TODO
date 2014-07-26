@@ -16,7 +16,7 @@ ovr changes should impact player.value, somehow
     but are past years ratings always available from player.value? or is it sometimes done with fake player objects? need to check
   http://www.reddit.com/r/BasketballGM/comments/1ydtpd/seems_much_more_random_now/cfjxhj6
     teams do overvalue their own players in trades, generally
-second round draft picks are undervalued. also, giving away a pick should never make a trade worse, but sometimes it does now.
+second round draft picks are undervalued. also, giving away a pick should never make a trade worse, but sometimes it does now. http://www.reddit.com/r/BasketballGM/comments/2bg3zx/simple_feature_mark_players_as_offlimits_when_we/cj5ap89
 trade for tons of cheap second round picks, then use that to trade for good asset: www.reddit.com/r/BasketballGM/comments/27wjnp/33_pennies_for_a_dollar/
 release and resign pick exploit http://www.reddit.com/r/BasketballGM/comments/1zn61h/finances/cfvzr35\
 some limit on trades so people can't make 1000 slightly beneficial trades: http://www.reddit.com/r/BasketballGM/comments/1zzwbs/suggestions_on_trades/cg0e0dg
@@ -191,6 +191,7 @@ options:
 BIG NEW FEATURES
 ----------------
 
+player stat summaries http://www.reddit.com/r/BasketballGM/comments/2bf4z0/functionality_of_the_game_vs_2k/cj5ir16
 unlimited draft class support
   http://www.reddit.com/r/BasketballGM/comments/2ajw7c/about_custom_draft/civz0n6
   take this opportunity to add some stuff to gameAttributes too

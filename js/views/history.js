@@ -78,12 +78,16 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
                                 break;
                             }
                         }
+                        champ.tid = g.teamAbbrevsCache.indexOf(champ.abbrev);
 
+console.log(awards);
+console.log(champ);
                         deferred.resolve({
                             awards: awards,
                             champ: champ,
                             retiredPlayers: retiredPlayers,
-                            season: inputs.season
+                            season: inputs.season,
+                            userTid: g.userTid
                         });
                     });
                 };

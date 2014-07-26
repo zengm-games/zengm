@@ -27,7 +27,8 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
                 playoffs: 0,
                 money: 0
             },
-            gracePeriodEnd: g.season + 3 // +3 is the same as +2 when staring a new league, since this happens at the end of a season
+            gracePeriodEnd: g.season + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
+            lastDbChange: Date.now()
         }, function () {
             db.updateMetaNameRegion(g.lid, g.teamNamesCache[g.userTid], g.teamRegionsCache[g.userTid]);
             ui.realtimeUpdate([], helpers.leagueUrl([]));

@@ -388,11 +388,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
      * @param {function(Array.<Object>, Array.<number>)} cb Callback function. First argument is the list of draft picks (from getOrder). Second argument is a list of player IDs who were drafted during this function call, in order.
      */
     function untilUserOrEnd(cb) {
-        var pids, season;
+        var pids;
 
         pids = [];
-
-        season = require("core/season");
 
         g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
             var playersAll;
@@ -473,7 +471,8 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
                 autoSelectPlayer = function () {
                     if (draftOrder.length > 0) {
                         pick = draftOrder.shift();
-                        if (pick.tid === g.userTid) {
+                        
+                        if (pick.tid === g.userTid || localStorage.noAutoPick) {
                             draftOrder.unshift(pick);
                             cbAfterDoneAuto(draftOrder, pids);
                             return;

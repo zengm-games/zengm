@@ -80,8 +80,6 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
                         }
                         champ.tid = g.teamAbbrevsCache.indexOf(champ.abbrev);
 
-console.log(awards);
-console.log(champ);
                         deferred.resolve({
                             awards: awards,
                             champ: champ,

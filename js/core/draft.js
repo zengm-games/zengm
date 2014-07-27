@@ -471,7 +471,10 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
                 autoSelectPlayer = function () {
                     if (draftOrder.length > 0) {
                         pick = draftOrder.shift();
-                        
+
+                        // noAutoPick is for people who want to switch to each AI team and control
+                        // their selection, like someone manually running a multiplayer league.
+                        // Eventually this should have a better implementation.
                         if (pick.tid === g.userTid || localStorage.noAutoPick) {
                             draftOrder.unshift(pick);
                             cbAfterDoneAuto(draftOrder, pids);

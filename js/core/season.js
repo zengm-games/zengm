@@ -989,7 +989,24 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
     function newPhaseDraft(cb) {
         draft.genOrder(function () {
-            newPhaseCb(g.PHASE.DRAFT, cb, helpers.leagueUrl(["draft"]));
+            var tx;
+
+            // This is a hack to handle weird cases where players have draft.year set to the current season, which fucks up the draft UI
+            tx = g.dbl.transaction("players", "readwrite");
+            tx.objectStore("players").index("draft.year").openCursor(g.season).onsuccess = function (event) {
+                var cursor = event.target.result;
+                if (cursor) {
+                    var p = cursor.value;
+                    if (p.tid >= 0) {
+                        p.draft.year -= 1;
+                        cursor.update(p);
+                    }
+                    cursor.continue();
+                }
+            };
+            tx.oncomplete = function () {
+                newPhaseCb(g.PHASE.DRAFT, cb, helpers.leagueUrl(["draft"]));
+            };
         });
     }
 

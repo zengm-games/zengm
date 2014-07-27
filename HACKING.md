@@ -47,7 +47,7 @@ Debug Mode, which removes the need for any compile step during development.
 # Adding a new page
 
 ...is kind of a bitch. You need to explicitly include the template file in
-js/templates.js, and explicitly include the view in js.views.js. Beyond that,
+js/templates.js, and explicitly include the view in js/views.js. Beyond that,
 my best guidance is to copy from an existing page and use that as a starting
 point.
 

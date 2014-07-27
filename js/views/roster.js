@@ -257,7 +257,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                             for (i = 0; i < players.length; i++) {
                                 // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
-                                if (inputs.tid === g.userTid && g.phase !== g.PHASE.PLAYOFFS) {
+                                if (inputs.tid === g.userTid && (g.phase !== g.PHASE.PLAYOFFS || players.length > 15)) {
                                     players[i].canRelease = true;
                                 } else {
                                     players[i].canRelease = false;

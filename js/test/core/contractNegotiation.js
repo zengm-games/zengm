@@ -199,7 +199,7 @@ define(["db", "globals", "core/contractNegotiation", "core/league", "core/player
 
                 tx.oncomplete = function () {
                     contractNegotiation.accept(8, function (error) {
-                        error.should.equal("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract, buy out a player currently on your roster, or cancel the negotiation.");
+                        error.should.equal("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");
 
                         done();
                     });

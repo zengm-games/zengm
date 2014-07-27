@@ -13472,7 +13472,7 @@ define([], function () {
         ["Dehn", 73.227],
         ["Dawley", 73.227],
         ["D'Arbonne", 73.228],
-        ["Damore", 73.229],
+        ["D'Amore", 73.229],
         ["Damm", 73.23],
         ["Crosley", 73.231],
         ["Cron", 73.232],

@@ -1056,7 +1056,7 @@ define([], function () {
         ["Barrett", 89.336],
         ["Whitney", 89.341],
         ["Teodoro", 89.345],
-        ["Mckinley", 89.35],
+        ["McKinley", 89.35],
         ["Maximo", 89.355],
         ["Garfield", 89.359],
         ["Sol", 89.364],

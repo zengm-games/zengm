@@ -280,7 +280,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
         }).extend({throttle: 1});
 
         document.getElementById("create-a-player").addEventListener("click", function () {
-            var p, pid, r, tx;
+            var numSeasons, p, pid, r, tx;
 
             p = komapping.toJS(vm.p);
 
@@ -323,6 +323,16 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 } else if (g.phase === g.PHASE.PLAYOFFS) {
                     // This is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
                     p = player.addStatsRow(p, true);
+                }
+            }
+
+            // If player was retired, update ratings
+            if (vm.originalTid() === g.PLAYER.RETIRED) {
+                numSeasons = g.season - p.ratings[r].season;
+                if (numSeasons > 0) {
+                    p = player.addRatingsRow(p, 15);
+                    // Don't actually want to develop, as that just changes ratings
+                    // p = player.develop(p, numSeasons, false, 15);
                 }
             }
 

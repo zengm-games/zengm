@@ -12,7 +12,7 @@
     <div class="form-group col-md-4 col-sm-5">
       <label for="new-league-tid">Which team do you want to manage?</label>
       <select class="form-control" id="new-league-tid" name="tid" data-bind="foreach: teams">
-        <option data-bind="attr: {value: tid}, text: region() + ' ' + name()"></option>
+        <option data-bind="attr: {value: tid, selected: tid() === $root.lastSelectedTid()}, text: region() + ' ' + name()"></option>
       </select>
       <span class="help-block" id="pop-text"></span>
     </div>

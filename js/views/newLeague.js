@@ -19,7 +19,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
             }
         };
 
-        tid = Math.floor(req.params.tid);
+        tid = parseInt(req.params.tid, 10);
 
         // Davis.js can't handle file uploads, so do this manually first
         if (req.params.rosters === "custom-rosters") {
@@ -37,16 +37,19 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
                     randomizeRosters = req.params.hasOwnProperty("randomize-rosters");
 
                     league.create(req.params.name, tid, leagueFile, startingSeason, randomizeRosters, function (lid) {
+                        localStorage.lastSelectedTid = tid;
                         ui.realtimeUpdate([], "/l/" + lid, cb);
                     });
                 };
             } else {
                 league.create(req.params.name, tid, null, startingSeason, false, function (lid) {
+                    localStorage.lastSelectedTid = tid;
                     ui.realtimeUpdate([], "/l/" + lid, cb);
                 });
             }
         } else {
             league.create(req.params.name, tid, null, startingSeason, false, function (lid) {
+                localStorage.lastSelectedTid = tid;
                 ui.realtimeUpdate([], "/l/" + lid, cb);
             });
         }
@@ -76,7 +79,8 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
 
             deferred.resolve({
                 name: "League " + newLid,
-                teams: teams
+                teams: teams,
+                lastSelectedTid: parseInt(localStorage.lastSelectedTid, 10)
             });
         };
 

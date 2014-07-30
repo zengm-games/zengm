@@ -680,6 +680,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
                 if (game.teams[0].tid === tid || game.teams[1].tid === tid) {
                     games.push({
                         gid: game.gid,
+                        tid: tid,
                         selected: game.gid === gid,
                         overtime: overtime
                     });
@@ -712,8 +713,11 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
     function formatCompletedGame(game) {
         var output, team0, team1;
 
+        // If not specified, assume user's team is playing
+        game.tid = game.tid !== undefined ? game.tid : game.tid;
+
         // team0 and team1 are different than they are above! Here it refers to user and opponent, not home and away
-        team0 = {tid: g.userTid, abbrev: g.teamAbbrevsCache[g.userTid], region: g.teamRegionsCache[g.userTid], name: g.teamNamesCache[g.userTid], pts: game.pts};
+        team0 = {tid: game.tid, abbrev: g.teamAbbrevsCache[game.tid], region: g.teamRegionsCache[game.tid], name: g.teamNamesCache[game.tid], pts: game.pts};
         team1 = {tid: game.oppTid, abbrev: g.teamAbbrevsCache[game.oppTid], region: g.teamRegionsCache[game.oppTid], name: g.teamNamesCache[game.oppTid], pts: game.oppPts};
 
         output = {

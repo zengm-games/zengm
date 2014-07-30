@@ -161,6 +161,7 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "ut
             this.get("/l/:lid/roster/:abbrev", views.roster.get);
             this.get("/l/:lid/roster/:abbrev/:season", views.roster.get);
             this.get("/l/:lid/schedule", views.schedule.get);
+            this.get("/l/:lid/schedule/:abbrev", views.schedule.get);
             this.get("/l/:lid/team_finances", views.teamFinances.get);
             this.post("/l/:lid/team_finances", views.teamFinances.post);
             this.get("/l/:lid/team_finances/:abbrev", views.teamFinances.get);

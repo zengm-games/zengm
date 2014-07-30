@@ -37,7 +37,6 @@ Eventually:
 CURRENT
 -------
 
-add teams dropdown to schedule
 draft pick order for playoff teams http://www.reddit.com/r/BasketballGM/comments/2brdw5/something_small_about_draft_order/
 total control mode
   select draft pick for every team http://www.reddit.com/r/BasketballGM/comments/2b8g1d/new_multiplayer_league/cj31706
@@ -471,6 +470,7 @@ draft lottery
   increase hype for teams that exceed expectations
   tied records?
   should happen in "before draft" phase to allow trading early
+increase hype for big free agent signings
 how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
   for roster, want just a player's stats with this team this season
     this currently works, just pass a tid

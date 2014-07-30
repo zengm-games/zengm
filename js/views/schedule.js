@@ -2,14 +2,25 @@
  * @name views.schedule
  * @namespace Show current schedule for user's team.
  */
-define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, season, $, ko, bbgmView, helpers, viewHelpers) {
+define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, season, $, ko, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     var mapping;
 
+    function get(req) {
+        var inputs, out;
+
+        inputs = {};
+
+        out = helpers.validateAbbrev(req.params.abbrev);
+        inputs.tid = out[0];
+        inputs.abbrev = out[1];
+
+        return inputs;
+    }
+
     function InitViewModel() {
-        this.abbrev = g.teamAbbrevsCache[g.userTid];
-        this.season = g.season;
+        this.abbrev = ko.observable();
 
         this.completed = {
             loading: ko.observable(true), // Needed because this isn't really set until updateCompleted, which could be after first render
@@ -28,7 +39,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
     function updateUpcoming(inputs, updateEvents, vm) {
         var deferred;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
             deferred = $.Deferred();
 
             season.getSchedule(null, 0, function (schedule_) {
@@ -37,10 +48,10 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
                 games = [];
                 for (i = 0; i < schedule_.length; i++) {
                     game = schedule_[i];
-                    if (g.userTid === game.homeTid || g.userTid === game.awayTid) {
+                    if (inputs.tid === game.homeTid || inputs.tid === game.awayTid) {
                         team0 = {tid: game.homeTid, abbrev: g.teamAbbrevsCache[game.homeTid], region: g.teamRegionsCache[game.homeTid], name: g.teamNamesCache[game.homeTid]};
                         team1 = {tid: game.awayTid, abbrev: g.teamAbbrevsCache[game.awayTid], region: g.teamRegionsCache[game.awayTid], name: g.teamNamesCache[game.awayTid]};
-                        if (g.userTid === game.homeTid) {
+                        if (inputs.tid === game.homeTid) {
                             row = {teams: [team1, team0], vsat: "at"};
                         } else {
                             row = {teams: [team1, team0], vsat: "at"};
@@ -48,7 +59,10 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
                         games.push(row);
                     }
                 }
-                deferred.resolve({upcoming: games});
+                deferred.resolve({
+                    abbrev: inputs.abbrev,
+                    upcoming: games
+                });
             });
 
             return deferred.promise();
@@ -61,11 +75,11 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
 
         deferred = $.Deferred();
 
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.abbrev !== vm.abbrev()) {
             // Load all games in list
             vm.completed.loading(true);
             vm.completed.games([]);
-            helpers.gameLogList(g.teamAbbrevsCache[g.userTid], g.season, -1, vm.completed.games(), function (games) {
+            helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games(), function (games) {
                 var i;
 
                 for (i = 0; i < games.length; i++) {
@@ -80,7 +94,7 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
         }
         if (updateEvents.indexOf("gameSim") >= 0) {
             // Partial update of only new games
-            helpers.gameLogList(g.teamAbbrevsCache[g.userTid], g.season, -1, vm.completed.games(), function (games) {
+            helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games(), function (games) {
                 var i;
                 for (i = games.length - 1; i >= 0; i--) {
                     games[i] = helpers.formatCompletedGame(games[i]);
@@ -96,12 +110,18 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
         ui.title("Schedule");
     }
 
+    function uiEvery(updateEvents, vm) {
+        components.dropdown("schedule-dropdown", ["teams"], [vm.abbrev()], updateEvents);
+    }
+
     return bbgmView.init({
         id: "schedule",
+        get: get,
         InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateUpcoming],
         runWhenever: [updateCompleted],
-        uiFirst: uiFirst
+        uiFirst: uiFirst,
+        uiEvery: uiEvery
     });
 });

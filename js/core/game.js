@@ -879,6 +879,7 @@ if (playerStats === undefined) {
                                 });
                             });
                         } else {
+                            ui.updateStatus("Idle");
                             helpers.errorNotify(userTeamSizeError);
                         }
                     });

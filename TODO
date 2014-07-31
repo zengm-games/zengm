@@ -37,6 +37,7 @@ Eventually:
 CURRENT
 -------
 
+newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
 draft pick order for playoff teams http://www.reddit.com/r/BasketballGM/comments/2brdw5/something_small_about_draft_order/
 total control mode
   select draft pick for every team http://www.reddit.com/r/BasketballGM/comments/2b8g1d/new_multiplayer_league/cj31706

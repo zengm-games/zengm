@@ -656,50 +656,40 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseRegularSeason(cb) {
-        team.checkRosterSizes(function (userTeamSizeError) {
-            var tx;
+        setSchedule(newSchedule(), function () {
+            var nagged;
 
-            // Only move to the next phase if the user's team size is ok
-            if (userTeamSizeError === null) {
-                setSchedule(newSchedule(), function () {
-                    var nagged;
-
-                    if (g.showFirstOwnerMessage) {
-                        message.generate({wins: 0, playoffs: 0, money: 0}, function () {
-                            newPhaseCb(g.PHASE.REGULAR_SEASON, cb);
-                        });
-                    } else {
-                        if (localStorage.nagged === "true") {
-                            // This used to store a boolean, switch to number
-                            localStorage.nagged = "1";
-                        }
-
-                        tx = g.dbl.transaction("messages", "readwrite");
-                        if (g.season === g.startingSeason + 3 && g.lid > 3 && !localStorage.nagged) {
-                            tx.objectStore("messages").add({
-                                read: false,
-                                from: "The Commissioner",
-                                year: g.season,
-                                text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>'
-                            });
-                            localStorage.nagged = "1";
-                        } else if ((localStorage.nagged === "1" && Math.random() < 0.25) || (localStorage.nagged === "2" && Math.random < 0.025)) {
-                            tx.objectStore("messages").add({
-                                read: false,
-                                from: "The Commissioner",
-                                year: g.season,
-                                text: '<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a></p><p><a href="https://www.facebook.com/basketball.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/BasketballGM/">Discuss Basketball GM on Reddit</a></p><p>The more people that play Basketball GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@basketball-gm.com">email me</a>.</p>'
-                            });
-                            localStorage.nagged = "2";
-                        }
-                        tx.oncomplete = function () {
-                            newPhaseCb(g.PHASE.REGULAR_SEASON, cb);
-                        };
-                    }
+            if (g.showFirstOwnerMessage) {
+                message.generate({wins: 0, playoffs: 0, money: 0}, function () {
+                    newPhaseCb(g.PHASE.REGULAR_SEASON, cb);
                 });
             } else {
-                helpers.errorNotify(userTeamSizeError);
-                ui.updatePlayMenu(); // Otherwise the play menu will be blank
+                if (localStorage.nagged === "true") {
+                    // This used to store a boolean, switch to number
+                    localStorage.nagged = "1";
+                }
+
+                tx = g.dbl.transaction("messages", "readwrite");
+                if (g.season === g.startingSeason + 3 && g.lid > 3 && !localStorage.nagged) {
+                    tx.objectStore("messages").add({
+                        read: false,
+                        from: "The Commissioner",
+                        year: g.season,
+                        text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>'
+                    });
+                    localStorage.nagged = "1";
+                } else if ((localStorage.nagged === "1" && Math.random() < 0.25) || (localStorage.nagged === "2" && Math.random < 0.025)) {
+                    tx.objectStore("messages").add({
+                        read: false,
+                        from: "The Commissioner",
+                        year: g.season,
+                        text: '<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a></p><p><a href="https://www.facebook.com/basketball.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/BasketballGM/">Discuss Basketball GM on Reddit</a></p><p>The more people that play Basketball GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@basketball-gm.com">email me</a>.</p>'
+                    });
+                    localStorage.nagged = "2";
+                }
+                tx.oncomplete = function () {
+                    newPhaseCb(g.PHASE.REGULAR_SEASON, cb);
+                };
             }
         });
     }

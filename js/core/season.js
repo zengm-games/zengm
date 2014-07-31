@@ -743,89 +743,86 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             }
 
             row = {season: g.season, currentRound: 0, series: series};
-            tx = g.dbl.transaction("playoffSeries", "readwrite");
+            tx = g.dbl.transaction(["players", "playoffSeries", "teams"], "readwrite");
             tx.objectStore("playoffSeries").add(row);
-            tx.oncomplete = function () {
-                var tx;
 
-                if (tidPlayoffs.indexOf(g.userTid) >= 0) {
-                    eventLog.add(null, {
-                        type: "playoffs",
-                        text: 'Your team made <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
-                    });
-                } else {
-                    eventLog.add(null, {
-                        type: "playoffs",
-                        text: 'Your team didn\'t make <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
-                    });
-                }
+            if (tidPlayoffs.indexOf(g.userTid) >= 0) {
+                eventLog.add(null, {
+                    type: "playoffs",
+                    text: 'Your team made <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
+                });
+            } else {
+                eventLog.add(null, {
+                    type: "playoffs",
+                    text: 'Your team didn\'t make <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
+                });
+            }
 
-                // Add row to team stats and team season attributes
-                tx = g.dbl.transaction(["players", "teams"], "readwrite");
-                tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                    var cursor, i, key, playoffStats, t, teamSeason;
+            // Add row to team stats and team season attributes
+            tx.objectStore("teams").openCursor().onsuccess = function (event) {
+                var cursor, i, key, playoffStats, t, teamSeason;
 
-                    cursor = event.target.result;
-                    if (cursor) {
-                        t = cursor.value;
-                        teamSeason = _.last(t.seasons);
-                        if (tidPlayoffs.indexOf(t.tid) >= 0) {
-                            t = team.addStatsRow(t, true);
+                cursor = event.target.result;
+                if (cursor) {
+                    t = cursor.value;
+                    teamSeason = _.last(t.seasons);
+                    if (tidPlayoffs.indexOf(t.tid) >= 0) {
+                        t = team.addStatsRow(t, true);
 
-                            teamSeason.playoffRoundsWon = 0;
+                        teamSeason.playoffRoundsWon = 0;
 
-                            // More hype for making the playoffs
-                            teamSeason.hype += 0.05;
-                            if (teamSeason.hype > 1) {
-                                teamSeason.hype = 1;
-                            }
-
-                            cursor.update(t);
-
-                            // Add row to player stats
-                            tx.objectStore("players").index("tid").openCursor(t.tid).onsuccess = function (event) {
-                                var cursorP, key, p, playerPlayoffStats;
-
-                                cursorP = event.target.result;
-                                if (cursorP) {
-                                    p = cursorP.value;
-                                    p = player.addStatsRow(p, true);
-                                    cursorP.update(p);
-                                    cursorP.continue();
-                                }
-                            };
-                        } else {
-                            // Less hype for missing the playoffs
-                            teamSeason.hype -= 0.05;
-                            if (teamSeason.hype < 0) {
-                                teamSeason.hype = 0;
-                            }
-
-                            cursor.update(t);
+                        // More hype for making the playoffs
+                        teamSeason.hype += 0.05;
+                        if (teamSeason.hype > 1) {
+                            teamSeason.hype = 1;
                         }
-                        cursor.continue();
+
+                        cursor.update(t);
+
+                        // Add row to player stats
+                        tx.objectStore("players").index("tid").openCursor(t.tid).onsuccess = function (event) {
+                            var cursorP, key, p, playerPlayoffStats;
+
+                            cursorP = event.target.result;
+                            if (cursorP) {
+                                p = cursorP.value;
+                                p = player.addStatsRow(p, true);
+                                cursorP.update(p);
+                                cursorP.continue();
+                            }
+                        };
+                    } else {
+                        // Less hype for missing the playoffs
+                        teamSeason.hype -= 0.05;
+                        if (teamSeason.hype < 0) {
+                            teamSeason.hype = 0;
+                        }
+
+                        cursor.update(t);
                     }
-                };
-                tx.oncomplete = function () {
-                    finances.assesPayrollMinLuxury(function () {
-                        var url;
+                    cursor.continue();
+                }
+            };
 
-                        // Don't redirect if we're viewing a live game now
-                        if (location.pathname.indexOf("/live_game") === -1) {
-                            url = helpers.leagueUrl(["playoffs"]);
-                        }
+            tx.oncomplete = function () {
+                finances.assesPayrollMinLuxury(function () {
+                    var url;
 
-                        newSchedulePlayoffsDay(function () {
-                            newPhaseCb(g.PHASE.PLAYOFFS, cb, url, ["teamFinances"]);
-                        });
+                    // Don't redirect if we're viewing a live game now
+                    if (location.pathname.indexOf("/live_game") === -1) {
+                        url = helpers.leagueUrl(["playoffs"]);
+                    }
+
+                    newSchedulePlayoffsDay(function () {
+                        newPhaseCb(g.PHASE.PLAYOFFS, cb, url, ["teamFinances"]);
                     });
-                };
+                });
             };
         });
     }
 
     function newPhaseBeforeDraft(cb) {
-        var tx;
+        var releasedPlayersStore, tx;
 
         // Achievements after playoffs
         account.checkAchievement.fo_fo_fo();
@@ -837,7 +834,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         account.checkAchievement.moneyball_2();
         account.checkAchievement.small_market();
 
-        tx = g.dbl.transaction(["events", "messages", "players", "teams"], "readwrite");
+        tx = g.dbl.transaction(["events", "messages", "players", "releasedPlayers", "teams"], "readwrite");
 
         // Add award for each player on the championship team
         team.filter({
@@ -932,48 +929,45 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                 cursor.continue();
             }
         };
+
+        // Remove released players' salaries from payrolls if their contract expired this year
+        releasedPlayersStore = tx.objectStore("releasedPlayers");
+        releasedPlayersStore.index("contract.exp").getAll(IDBKeyRange.upperBound(g.season)).onsuccess = function (event) {
+            var i, releasedPlayers;
+
+            releasedPlayers = event.target.result;
+
+            for (i = 0; i < releasedPlayers.length; i++) {
+                releasedPlayersStore.delete(releasedPlayers[i].rid);
+            }
+        };
+
         tx.oncomplete = function () {
-            var releasedPlayersStore, tx;
+            // Select winners of the season's awards
+            awards(function () {
+                // Update strategies of AI teams (contending or rebuilding)
+                team.updateStrategies(function () {
+                    var url;
 
-            // Remove released players' salaries from payrolls if their contract expired this year
-            tx = g.dbl.transaction("releasedPlayers", "readwrite");
-            releasedPlayersStore = tx.objectStore("releasedPlayers");
-            releasedPlayersStore.index("contract.exp").getAll(IDBKeyRange.upperBound(g.season)).onsuccess = function (event) {
-                var i, releasedPlayers;
-
-                releasedPlayers = event.target.result;
-
-                for (i = 0; i < releasedPlayers.length; i++) {
-                    releasedPlayersStore.delete(releasedPlayers[i].rid);
-                }
-            };
-            tx.oncomplete = function () {
-                // Select winners of the season's awards
-                awards(function () {
-                    // Update strategies of AI teams (contending or rebuilding)
-                    team.updateStrategies(function () {
-                        var url;
-
-                        // Don't redirect if we're viewing a live game now
-                        if (location.pathname.indexOf("/live_game") === -1) {
-                            url = helpers.leagueUrl(["history"]);
-                        }
+                    // Don't redirect if we're viewing a live game now
+                    if (location.pathname.indexOf("/live_game") === -1) {
+                        url = helpers.leagueUrl(["history"]);
+                    }
 
 
-                        updateOwnerMood(function (deltas) {
-                            message.generate(deltas, function () {
-                                newPhaseCb(g.PHASE.BEFORE_DRAFT, function () {
-                                    if (cb !== undefined) {
-                                        cb();
-                                    }
+                    updateOwnerMood(function (deltas) {
+                        message.generate(deltas, function () {
+                            newPhaseCb(g.PHASE.BEFORE_DRAFT, function () {
+                                if (cb !== undefined) {
+                                    cb();
+                                }
 
-                                    helpers.bbgmPing("season");
-                                }, url, ["playerMovement"]);
-                            });
+                                helpers.bbgmPing("season");
+                            }, url, ["playerMovement"]);
                         });
                     });
                 });
-            };
+            });
         };
     }
 

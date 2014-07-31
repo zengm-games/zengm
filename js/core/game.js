@@ -38,54 +38,11 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
     };
 
     Game.prototype.writePlayerStats = function (tx, t, p, cb) {
-        var that;
+        var afterDonePlayer, that;
 
         that = this;
 
-//console.log('writePlayerStats');
-        tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
-            var cursor, i, keys, player_, playerStats;
-
-            cursor = event.target.result;
-//if (!cursor) { console.log("NO CURSOR " + that.team[t].player[p].id); console.log(that); console.log(event); console.log(cursor); }
-            player_ = cursor.value;
-
-            // Find the correct row of stats - should always be the last one, right?
-            playerStats = _.last(player_.stats);
-
-//gs bug stuff - eventually this can be deleted, after everyone affected has been "cured"
-if (playerStats === undefined) {
-    /*var errorMsg;
-    errorMsg = JSON.stringify(g) + "\n\n" + JSON.stringify(player_);
-    helpers.error("<p>You've run into a nasty bug that we're currently trying to diagnose. Please email the contents of the box below to commissioner@basketball-gm.com. Thank you, and sorry for the trouble.</p><textarea rows=15 cols=80>" + errorMsg + "</textarea>");*/
-    player_ = player.addStatsRow(player_);
-    playerStats = _.last(player_.stats);
-}
-
-            // Update stats
-            keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-            for (i = 0; i < keys.length; i++) {
-                playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
-            }
-            // Only count a game played if the player recorded minutes
-            if (that.team[t].player[p].stat.min > 0) {
-                playerStats.gp += 1;
-            }
-            playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;
-
-            // Injury crap - assign injury type if player does not already have an injury in the database
-            if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
-                player_.injury = player.injury(that.team[t].healthRank);
-                if (that.team[t].id === g.userTid) {
-                    eventLog.add(tx, {
-                        type: "injured",
-                        text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> was injured! (' + player_.injury.type + ', out for ' + player_.injury.gamesRemaining + ' games)'
-                    });
-                }
-            }
-
-            cursor.update(player_);
-
+        afterDonePlayer = function () {
             if (p < that.team[t].player.length - 1) {
                 that.writePlayerStats(tx, t, p + 1, cb);
             } else if (t === 0) {
@@ -94,6 +51,54 @@ if (playerStats === undefined) {
                 cb();
             }
         };
+
+//console.log('writePlayerStats');
+        // Only need to write stats if player got minutes
+        if (that.team[t].player[p].stat.min === 0) {
+            afterDonePlayer();
+        } else {
+            tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
+                var cursor, i, keys, player_, playerStats;
+
+                cursor = event.target.result;
+                player_ = cursor.value;
+
+                // Find the correct row of stats - should always be the last one, right?
+                playerStats = _.last(player_.stats);
+
+/*//gs bug stuff - eventually this can be deleted, after everyone affected has been "cured"
+if (playerStats === undefined) {
+    //var errorMsg;
+    //errorMsg = JSON.stringify(g) + "\n\n" + JSON.stringify(player_);
+    //helpers.error("<p>You've run into a nasty bug that we're currently trying to diagnose. Please email the contents of the box below to commissioner@basketball-gm.com. Thank you, and sorry for the trouble.</p><textarea rows=15 cols=80>" + errorMsg + "</textarea>");
+    player_ = player.addStatsRow(player_);
+    playerStats = _.last(player_.stats);
+}*/
+
+                // Update stats
+                keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+                for (i = 0; i < keys.length; i++) {
+                    playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
+                }
+                playerStats.gp += 1; // Already checked for non-zero minutes played above
+                playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;
+
+                // Injury crap - assign injury type if player does not already have an injury in the database
+                if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
+                    player_.injury = player.injury(that.team[t].healthRank);
+                    if (that.team[t].id === g.userTid) {
+                        eventLog.add(tx, {
+                            type: "injured",
+                            text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> was injured! (' + player_.injury.type + ', out for ' + player_.injury.gamesRemaining + ' games)'
+                        });
+                    }
+                }
+
+                cursor.update(player_);
+
+                afterDonePlayer();
+            };
+        }
     };
 
     Game.prototype.writeTeamStats = function (tx, t1, cb) {

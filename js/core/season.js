@@ -657,7 +657,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
 
     function newPhaseRegularSeason(cb) {
         setSchedule(newSchedule(), function () {
-            var nagged;
+            var nagged, tx;
 
             if (g.showFirstOwnerMessage) {
                 message.generate({wins: 0, playoffs: 0, money: 0}, function () {

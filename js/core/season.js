@@ -822,8 +822,6 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
     }
 
     function newPhaseBeforeDraft(cb) {
-        var releasedPlayersStore, tx;
-
         // Achievements after playoffs
         account.checkAchievement.fo_fo_fo();
         account.checkAchievement["98_degrees"]();
@@ -834,117 +832,119 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
         account.checkAchievement.moneyball_2();
         account.checkAchievement.small_market();
 
-        tx = g.dbl.transaction(["events", "messages", "players", "releasedPlayers", "teams"], "readwrite");
+        // Select winners of the season's awards
+        awards(function () {
+            var releasedPlayersStore, tx;
 
-        // Add award for each player on the championship team
-        team.filter({
-            attrs: ["tid"],
-            seasonAttrs: ["playoffRoundsWon"],
-            season: g.season,
-            ot: tx
-        }, function (teams) {
-            var i, tid;
+            tx = g.dbl.transaction(["events", "messages", "players", "releasedPlayers", "teams"], "readwrite");
 
-            for (i = 0; i < teams.length; i++) {
-                if (teams[i].playoffRoundsWon === 4) {
-                    tid = teams[i].tid;
-                    break;
+            // Add award for each player on the championship team
+            team.filter({
+                attrs: ["tid"],
+                seasonAttrs: ["playoffRoundsWon"],
+                season: g.season,
+                ot: tx
+            }, function (teams) {
+                var i, tid;
+
+                for (i = 0; i < teams.length; i++) {
+                    if (teams[i].playoffRoundsWon === 4) {
+                        tid = teams[i].tid;
+                        break;
+                    }
                 }
-            }
 
-            tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
-                var cursor, p;
+                tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
+
+                        p.awards.push({season: g.season, type: "Won Championship"});
+
+                        cursor.update(p);
+                        cursor.continue();
+                    }
+                };
+            });
+
+            // Do annual tasks for each player, like checking for retirement
+            tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) { // All non-retired players
+                var age, cont, cursor, excessAge, excessPot, maxAge, minPot, p, pot, update;
+
+                update = false;
+
+                // Players meeting one of these cutoffs might retire
+                maxAge = 34;
+                minPot = 40;
 
                 cursor = event.target.result;
                 if (cursor) {
                     p = cursor.value;
 
-                    p.awards.push({season: g.season, type: "Won Championship"});
+                    age = g.season - p.born.year;
+                    pot = _.last(p.ratings).pot;
 
-                    cursor.update(p);
+                    if (age > maxAge || pot < minPot) {
+                        excessAge = 0;
+                        if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
+                            if (age > 34) {
+                                excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
+                            }
+                            excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
+                            if (excessAge + excessPot + random.gauss(0, 1) > 0) {
+                                p = player.retire(tx, p);
+                                update = true;
+                            }
+                        }
+                    }
+
+                    // Update "free agent years" counter and retire players who have been free agents for more than one years
+                    if (p.tid === g.PLAYER.FREE_AGENT) {
+                        if (p.yearsFreeAgent >= 1) {
+                            p = player.retire(tx, p);
+                        } else {
+                            p.yearsFreeAgent += 1;
+                        }
+                        p.contract.exp += 1;
+                        update = true;
+                    } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
+                        p.yearsFreeAgent = 0;
+                        update = true;
+                    }
+
+                    // Heal injures
+                    if (p.injury.type !== "Healthy") {
+                        if (p.injury.gamesRemaining <= 82) {
+                            p.injury = {type: "Healthy", gamesRemaining: 0};
+                        } else {
+                            p.injury.gamesRemaining -= 82;
+                        }
+                        update = true;
+                    }
+
+                    // Update player in DB, if necessary
+                    if (update) {
+                        cursor.update(p);
+                    }
                     cursor.continue();
                 }
             };
-        });
 
-        // Do annual tasks for each player, like checking for retirement
-        tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) { // All non-retired players
-            var age, cont, cursor, excessAge, excessPot, maxAge, minPot, p, pot, update;
+            // Remove released players' salaries from payrolls if their contract expired this year
+            releasedPlayersStore = tx.objectStore("releasedPlayers");
+            releasedPlayersStore.index("contract.exp").getAll(IDBKeyRange.upperBound(g.season)).onsuccess = function (event) {
+                var i, releasedPlayers;
 
-            update = false;
+                releasedPlayers = event.target.result;
 
-            // Players meeting one of these cutoffs might retire
-            maxAge = 34;
-            minPot = 40;
-
-            cursor = event.target.result;
-            if (cursor) {
-                p = cursor.value;
-
-                age = g.season - p.born.year;
-                pot = _.last(p.ratings).pot;
-
-                if (age > maxAge || pot < minPot) {
-                    excessAge = 0;
-                    if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
-                        if (age > 34) {
-                            excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
-                        }
-                        excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
-                        if (excessAge + excessPot + random.gauss(0, 1) > 0) {
-                            p = player.retire(tx, p);
-                            update = true;
-                        }
-                    }
+                for (i = 0; i < releasedPlayers.length; i++) {
+                    releasedPlayersStore.delete(releasedPlayers[i].rid);
                 }
+            };
 
-                // Update "free agent years" counter and retire players who have been free agents for more than one years
-                if (p.tid === g.PLAYER.FREE_AGENT) {
-                    if (p.yearsFreeAgent >= 1) {
-                        p = player.retire(tx, p);
-                    } else {
-                        p.yearsFreeAgent += 1;
-                    }
-                    p.contract.exp += 1;
-                    update = true;
-                } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
-                    p.yearsFreeAgent = 0;
-                    update = true;
-                }
-
-                // Heal injures
-                if (p.injury.type !== "Healthy") {
-                    if (p.injury.gamesRemaining <= 82) {
-                        p.injury = {type: "Healthy", gamesRemaining: 0};
-                    } else {
-                        p.injury.gamesRemaining -= 82;
-                    }
-                    update = true;
-                }
-
-                // Update player in DB, if necessary
-                if (update) {
-                    cursor.update(p);
-                }
-                cursor.continue();
-            }
-        };
-
-        // Remove released players' salaries from payrolls if their contract expired this year
-        releasedPlayersStore = tx.objectStore("releasedPlayers");
-        releasedPlayersStore.index("contract.exp").getAll(IDBKeyRange.upperBound(g.season)).onsuccess = function (event) {
-            var i, releasedPlayers;
-
-            releasedPlayers = event.target.result;
-
-            for (i = 0; i < releasedPlayers.length; i++) {
-                releasedPlayersStore.delete(releasedPlayers[i].rid);
-            }
-        };
-
-        tx.oncomplete = function () {
-            // Select winners of the season's awards
-            awards(function () {
+            tx.oncomplete = function () {
                 // Update strategies of AI teams (contending or rebuilding)
                 team.updateStrategies(function () {
                     var url;
@@ -967,8 +967,8 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         });
                     });
                 });
-            });
-        };
+            };
+        });
     }
 
     function newPhaseDraft(cb) {

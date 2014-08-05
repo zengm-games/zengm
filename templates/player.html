@@ -9,7 +9,7 @@
       Age: <span data-bind="text: player.age"></span><br>
       Born: <span data-bind="text: player.born.year"></span> - <span data-bind="text: player.born.loc"></span><br>
       <!-- ko if: player.draft.round -->
-        Draft: <span data-bind="text: player.draft.year"></span> - Round <span data-bind="text: player.draft.round"></span> (Pick <span data-bind="text: player.draft.pick"></span>) by <span data-bind="text: player.draft.abbrev"></span><br>
+        Draft: <a data-bind="text: player.draft.year, attrLeagueUrl: {href: ['draft_summary', player.draft.year]}"></a> - Round <span data-bind="text: player.draft.round"></span> (Pick <span data-bind="text: player.draft.pick"></span>) by <span data-bind="text: player.draft.abbrev"></span><br>
       <!-- /ko -->
       <!-- ko if: !player.draft.round() -->
         Undrafted: <span data-bind="text: player.draft.year"></span><br>

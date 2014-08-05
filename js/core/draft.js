@@ -142,13 +142,13 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
         }, function (teams) {
             var chances, draw, firstThree, i, pick;
 
-            // Sort teams by playoffs and winp, for first round
+            // Sort teams by making playoffs (NOT playoff performance) and winp, for first round
             teams.sort(function (a, b) {
-                if (a.playoffRoundsWon < b.playoffRoundsWon) {
-                    return -1;
-                }
-                if (a.playoffRoundsWon > b.playoffRoundsWon) {
+                if ((a.playoffRoundsWon >= 0) && !(b.playoffRoundsWon >= 0)) {
                     return 1;
+                }
+                if (!(a.playoffRoundsWon >= 0) && (b.playoffRoundsWon >= 0)) {
+                    return -1;
                 }
                 return a.winp - b.winp;
             });

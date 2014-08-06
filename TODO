@@ -37,6 +37,7 @@ Eventually:
 CURRENT
 -------
 
++/- http://www.reddit.com/r/BasketballGM/comments/2cpdxg/both_individual_and_5man_units/
 newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
   done newPhasePlayoffs
 draft pick order for playoff teams http://www.reddit.com/r/BasketballGM/comments/2brdw5/something_small_about_draft_order/

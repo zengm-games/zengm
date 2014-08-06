@@ -572,11 +572,11 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         }
 
         // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
-        if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.4 && Math.random() < (0.35 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
+        if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.5 && Math.random() < (0.35 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
             // Three pointer
             type = "threePointer";
             probMissAndFoul = 0.02;
-            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.5 + 0.1;
+            probMake = this.team[this.o].player[p].compositeRating.shootingThreePointer * 0.35 + 0.24;
             probAndOne = 0.01;
         } else {
             r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingMidRange;

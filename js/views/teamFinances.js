@@ -268,7 +268,19 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
                     }
                 }
                 return output;
-            }));
+            }), {
+                // This is needed to update the totals at the bottom. Knockout can't do it directly because (apparently) DataTables handles the whole table, even the tfoot.
+                fnFooterCallback: function (nFoot, aData, iStart, iEnd, aiDisplay) {
+                    var cells, contractTotals, i;
+
+                    cells = nFoot.getElementsByTagName('th');
+                    contractTotals = vm.contractTotals();
+
+                    for (i = 0; i < contractTotals.length; i++) {
+                        cells[i + 1].innerHTML = helpers.formatCurrency(contractTotals[i], "M");
+                    }
+                }
+            });
         }).extend({throttle: 1});
 
         ui.tableClickableRows($("#player-salaries"));

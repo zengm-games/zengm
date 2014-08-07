@@ -42,7 +42,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
     function updateTeam(inputs, updateEvents) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
             deferred = $.Deferred();
             vars = {};
 
@@ -88,7 +88,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
     function updateTeams(inputs, updateEvents) {
         var deferred, stats, vars;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
             deferred = $.Deferred();
             vars = {};
 
@@ -143,7 +143,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
     function updateGames(inputs, updateEvents, vm) {
         var deferred, numShowCompleted, vars;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
             deferred = $.Deferred();
             vars = {};
 
@@ -205,7 +205,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
     function updateSchedule(inputs, updateEvents, vm) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
             deferred = $.Deferred();
             vars = {};
 
@@ -242,7 +242,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
     function updatePlayers(inputs, updateEvents) {
         var deferred, vars;
 
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON)) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
             deferred = $.Deferred();
             vars = {};
 

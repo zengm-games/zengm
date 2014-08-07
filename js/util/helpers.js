@@ -714,7 +714,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         var output, team0, team1;
 
         // If not specified, assume user's team is playing
-        game.tid = game.tid !== undefined ? game.tid : game.tid;
+        game.tid = game.tid !== undefined ? game.tid : g.userTid;
 
         // team0 and team1 are different than they are above! Here it refers to user and opponent, not home and away
         team0 = {tid: game.tid, abbrev: g.teamAbbrevsCache[game.tid], region: g.teamRegionsCache[game.tid], name: g.teamNamesCache[game.tid], pts: game.pts};

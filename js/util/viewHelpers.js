@@ -50,38 +50,45 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
             // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
             helpers.resetG();
 
-            // Connect to league database
-            db.connectLeague(g.lid, function () {
-                db.loadGameAttributes(null, function () {
-                    var css, teams;
+            // Make sure this league exists before proceeding
+            g.dbm.transaction("leagues").objectStore("leagues").get(g.lid).onsuccess = function (event) {
+                if (event.target.result === undefined) {
+                    helpers.error('League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!', reqCb, true)
+                } else {
+                    // Connect to league database
+                    db.connectLeague(g.lid, function () {
+                        db.loadGameAttributes(null, function () {
+                            var css;
 
-                    ui.update({
-                        container: "content",
-                        template: "leagueLayout"
+                            ui.update({
+                                container: "content",
+                                template: "leagueLayout"
+                            });
+                            ko.applyBindings(g.vm.topMenu, document.getElementById("left-menu"));
+
+                            // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
+                            if (popup) {
+                                $("#top-menu").hide();
+                                $("body").css("padding-top", "0");
+
+                                css = document.createElement("style");
+                                css.type = "text/css";
+                                css.innerHTML = ".new_window { display: none }";
+                                document.body.appendChild(css);
+                            }
+
+                            // Update play menu
+                            ui.updateStatus();
+                            ui.updatePhase();
+                            ui.updatePlayMenu(null, function () {
+                                g.vm.topMenu.lid(g.lid);
+                                cb(updateEvents, reqCb);
+                                checkDbChange(g.lid);
+                            });
+                        });
                     });
-                    ko.applyBindings(g.vm.topMenu, document.getElementById("left-menu"));
-
-                    // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
-                    if (popup) {
-                        $("#top-menu").hide();
-                        $("body").css("padding-top", "0");
-
-                        css = document.createElement("style");
-                        css.type = "text/css";
-                        css.innerHTML = ".new_window { display: none }";
-                        document.body.appendChild(css);
-                    }
-
-                    // Update play menu
-                    ui.updateStatus();
-                    ui.updatePhase();
-                    ui.updatePlayMenu(null, function () {
-                        g.vm.topMenu.lid(g.lid);
-                        cb(updateEvents, reqCb);
-                        checkDbChange(g.lid);
-                    });
-                });
-            });
+                }
+            }
         } else {
             cb(updateEvents, reqCb);
         }

@@ -329,14 +329,17 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * @memberOf util.helpers
      * @param {string} error Text of the error message to be displayed.
      * @param {function()} cb Optional callback function.
+     * @param {boolean} forceGlobal If true, always call globalError (needed if league/global distinction can't be inferred from URL).
      */
-    function error(errorText, cb) {
+    function error(errorText, cb, forceGlobal) {
         var lid, req;
+
+        forceGlobal = forceGlobal !== undefined ? forceGlobal : false;
 
         req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : function () {}}};
 
         lid = location.pathname.split("/")[2]; // lid derived from URL
-        if (/^\d+$/.test(lid) && typeof indexedDB !== "undefined") { // Show global error of no IndexedDB
+        if (/^\d+$/.test(lid) && typeof indexedDB !== "undefined" && !forceGlobal) { // Show global error of no IndexedDB
             req.params.lid = parseInt(lid, 10);
             leagueError(req);
         } else {

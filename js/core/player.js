@@ -965,13 +965,13 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     // Count non-playoff seasons starting from the current one
                     for (j = p.stats.length - 1; j >= 0; j--) {
                         if (p.stats[j].playoffs === false) { // Can do this because any playoff entry follows a regular season entry with the same team
-                            if (p.stats[j].tid === options.tid && options.season === p.stats[j].season) {
+                            if (p.stats[j].tid === p.tid && options.season === p.stats[j].season) {
                                 // Find season requested
                                 fp.yearsWithTeam = 1;
                             } else {
                                 if (fp.yearsWithTeam) {
                                     // We found the season requested, so now count back until you find another team
-                                    if (p.stats[j].tid === options.tid) {
+                                    if (p.stats[j].tid === p.tid) {
                                         fp.yearsWithTeam += 1;
                                     } else {
                                         break;

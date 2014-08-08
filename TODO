@@ -186,6 +186,7 @@ player development revamp
   too many rookies come in as instant stars. should be more gradual.
   career arcs for ratings - like low endurance/athleticism for old players, but skills remain
   make low ovr high pot players more likely to improve
+  should be much more likely to go from 50-100 than 0-100
 
 options:
   compute "pot" for each rating, use that to generate displayed pot

@@ -39,8 +39,10 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                 // Team metadata
                 game.won.region = g.teamRegionsCache[game.won.tid];
                 game.won.name = g.teamNamesCache[game.won.tid];
+                game.won.abbrev = g.teamAbbrevsCache[game.won.tid];
                 game.lost.region = g.teamRegionsCache[game.lost.tid];
                 game.lost.name = g.teamNamesCache[game.lost.tid];
+                game.lost.abbrev = g.teamAbbrevsCache[game.lost.tid];
 
                 if (game.overtimes === 1) {
                     game.overtime = " (OT)";

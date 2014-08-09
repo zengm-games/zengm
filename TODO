@@ -1,6 +1,38 @@
 DB CHANGES SINCE 3.3.0
 ----------------------
 
+PLAYER DEVELOPMENT REVAMP
+-------------------------
+
+player development revamp
+  something needs to be done. still too many 3 point shooting centers
+  are ovr/pot combos reasonable, since ovr is weighted now?
+  old stars should exist
+  reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
+  really high ovr/pot is handled poorly, rapid declines if there is a gap
+  too many rookies come in as instant stars. should be more gradual.
+  career arcs for ratings - like low endurance/athleticism for old players, but skills remain
+  make low ovr high pot players more likely to improve
+  should be much more likely to go from 50-100 than 0-100
+  smaller improvement per year, but more consistent
+    base improvement depends on potential difference and age
+    then add noise
+options:
+  compute "pot" for each rating, use that to generate displayed pot
+  somehow do it organically, with different rates of growth in different categories
+current beta issues:
+  not enough 3 shooters
+  too many B PS pgs
+  maybe solve these by adding more noise to the base ratings of new players?
+  players shouldn't so easily exceed potential
+  contract value is too low overall, maybe better players needed
+
+PERFORMANCE CRAP
+----------------
+
+normalize player ratings/stats so only latest year is in main player object store and the rest go in an archived place
+separate active and retired players into separate object stores
+
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
@@ -173,24 +205,6 @@ notification system
   colors/icons for good/bad things http://www.reddit.com/r/BasketballGM/comments/22bpwm/suggestion_notification_improvements/
 NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
 gracefully handle disk space errors
-
-PLAYER DEVELOPMENT REVAMP
--------------------------
-
-player development revamp
-  something needs to be done. still too many 3 point shooting centers
-  are ovr/pot combos reasonable, since ovr is weighted now?
-  old stars should exist
-  reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
-  really high ovr/pot is handled poorly, rapid declines if there is a gap
-  too many rookies come in as instant stars. should be more gradual.
-  career arcs for ratings - like low endurance/athleticism for old players, but skills remain
-  make low ovr high pot players more likely to improve
-  should be much more likely to go from 50-100 than 0-100
-
-options:
-  compute "pot" for each rating, use that to generate displayed pot
-  somehow do it organically, with different rates of growth in different categories
 
 BIG NEW FEATURES
 ----------------

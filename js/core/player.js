@@ -230,7 +230,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @return {Object} Updated player object.
      */
     function develop(p, years, generate, coachingRank) {
-        var age, baseChange, i, j, ratingKeys, r, sigma, sign;
+        var age, baseChange, calcBaseChange, i, j, ratingKeys, r, sigma, sign;
 
         years = years !== undefined ? years : 1;
         generate = generate !== undefined ? generate : false;
@@ -240,48 +240,52 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         age = g.season - p.born.year;
 
+        calcBaseChange = function (age, potentialDifference) {
+            var val;
+
+            // Average rating change if there is no potential difference
+            if (age <= 21) {
+                val = 2;
+            } else if (age <= 25) {
+                val = 1;
+            } else if (age <= 29) {
+                val = 0;
+            } else if (age <= 31) {
+                val = -1;
+            } else if (age <= 33) {
+                val = -2;
+            } else if (age <= 35) {
+                val = -3;
+            } else if (age <= 37) {
+                val = -4;
+            } else {
+                val = -5;
+            }
+
+            // Factor in potential difference
+            if (age <= 21) {
+                val += potentialDifference * random.uniform(0.2, 0.8);
+            } else if (age <= 25) {
+                val += potentialDifference * random.uniform(0.1, 0.2);
+            } else {
+                val += potentialDifference * random.uniform(0, 0.1);
+            }
+
+            // Noise
+            val += random.uniform(-2, 2);
+
+            return val;
+        };
+
         for (i = 0; i < years; i++) {
             age += 1;
 
             // Randomly make a big jump
-            if (Math.random() > 0.985 && age < 22) {
-                p.ratings[r].pot += 10;
+            if (Math.random() > 0.985 && age <= 21) {
+                p.ratings[r].pot += random.uniform(5, 25);
             }
 
-            // Variance of ratings change is proportional to the potential difference
-            sigma = (p.ratings[r].pot - p.ratings[r].ovr) / 10;
-
-            // 60% of the time, improve. 20%, regress. 20%, stay the same
-            baseChange = random.gauss(random.randInt(-1, 3), sigma);
-
-            // Bound possible changes
-            if (baseChange > 30) {
-                baseChange = 30;
-            } else if (baseChange < -5) {
-                baseChange = -5;
-            }
-            if (baseChange + p.ratings[r].pot > 95) {
-                baseChange = 95 - p.ratings[r].pot;
-            }
-
-            // Modulate by potential difference, but only for growth, not regression
-            if (baseChange > 0) {
-                baseChange *= 1 + (p.ratings[r].pot - p.ratings[r].ovr) / 8;
-            }
-
-            // Modulate by age
-            if (age > 23) {
-                baseChange /= 3;
-            }
-            if (age > 29) {
-                baseChange -= 1;
-            }
-            if (age > 31) {
-                baseChange -= 1;
-            }
-            if (age > 35) {
-                baseChange -= 1;
-            }
+            baseChange = calcBaseChange(age, p.ratings[r].pot - p.ratings[r].ovr);
 
             // Modulate by coaching
             sign = baseChange ? baseChange < 0 ? -1 : 1 : 0;
@@ -291,12 +295,44 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 baseChange *= ((coachingRank - 1) * (0.5) / (g.numTeams - 1) + 0.75);
             }
 
+            // Ratings that can only increase a little, and only when young. Decrease when old.
+            ratingKeys = ["spd", "jmp", "endu"];
+            for (j = 0; j < ratingKeys.length; j++) {
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChange * random.uniform(0.5, 1.5), -20, 10));
+            }
+
+            // Ratings that can only increase a little, and only when young. Decrease slowly when old.
+            ratingKeys = ["drb", "pss", "reb"];
+            for (j = 0; j < ratingKeys.length; j++) {
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChange * random.uniform(0.5, 1.5), -3, 10));
+            }
+
+            // Ratings that can increase a lot, but only when young. Decrease when old.
+            ratingKeys = ["stre", "dnk", "blk", "stl"];
+            for (j = 0; j < ratingKeys.length; j++) {
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChange * random.uniform(0.5, 1.5));
+            }
+
+            // Ratings that increase most when young, but can continue increasing for a while and only decrease very slowly.
+            ratingKeys = ["ins", "ft", "fg", "tp"];
+            for (j = 0; j < ratingKeys.length; j++) {
+                if (age <= 24) {
+                    p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChange * random.uniform(0.5, 1.5));
+                } else if (age <= 30) {
+                    p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + 1 + baseChange * random.uniform(0.5, 1.5));
+                } else {
+                    p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + 2 + baseChange * random.uniform(0.25, 0.5));
+                }
+            }
+
+            // 
+
             /*ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {
                 //increase = plusMinus
                 p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + random.gauss(1, 2) * baseChange);
             }*/
-            // Easy to improve
+            /*// Easy to improve
             ratingKeys = ['stre', 'endu', 'ins', 'ft', 'fg', 'tp', 'blk', 'stl'];
             for (j = 0; j < ratingKeys.length; j++) {
                 p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + random.gauss(2, 2) * baseChange);
@@ -310,7 +346,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             ratingKeys = ['drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {
                 p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.gauss(1, 2) * baseChange, -10, 20));
-            }
+            }*/
 
             // Update overall and potential
             p.ratings[r].ovr = ovr(p.ratings[r]);

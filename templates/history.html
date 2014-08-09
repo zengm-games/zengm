@@ -10,7 +10,7 @@
         <h4>League Champions</h4>
         <p><span data-bind="css: {'bg-info': champ.tid() === userTid()}"><strong><a data-bind="attrLeagueUrl: {href: ['roster', champ.abbrev, season]}"><span data-bind="text: champ.region"></span> <span data-bind="text: champ.name"></span></a></strong></span><br>
         <a data-bind="attrLeagueUrl: {href: ['playoffs', season]}">Playoffs Bracket</a></p>
-        <p>Finals MVP: <strong><a data-bind="attrLeagueUrl: {href: ['player', awards.finalsMvp.pid]}, text: awards.finalsMvp.name"></a></strong></span><br>
+        <p>Finals MVP: <strong><a data-bind="attrLeagueUrl: {href: ['player', awards.finalsMvp.pid]}, css: {'bg-info': champ.tid() === userTid()}, text: awards.finalsMvp.name"></a></strong></span><br>
           <span data-bind="round: [awards.finalsMvp.pts, 1]"></span> pts, <span data-bind="round: [awards.finalsMvp.trb, 1]"></span> reb, <span data-bind="round: [awards.finalsMvp.ast, 1]"></span> ast</p>
         <h4>Best Record</h4>
         <p>East: <span data-bind="css: {'bg-info': awards.bre.tid() === userTid()}"><a  data-bind="attrLeagueUrl: {href: ['roster', awards.bre.abbrev, season]}"><span data-bind="text: awards.bre.region"></span> <span data-bind="text: awards.bre.name"></span></a> (<span data-bind="text: awards.bre.won"></span>-<span data-bind="text: awards.bre.lost"></span>)</span><br>
@@ -47,7 +47,7 @@
     <!-- ko foreach: awards.allDefensive -->
       <h5 data-bind="text: title"></h5>
       <!-- ko foreach: players -->
-        <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev"></a>)<br>
+        <span data-bind="css: {'bg-info': tid() === $root.userTid()}"><a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev"></a>)</span><br>
       <!-- /ko -->
     <!-- /ko -->
     <br>

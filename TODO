@@ -4,7 +4,7 @@ DB CHANGES SINCE 3.3.0
 PLAYER DEVELOPMENT REVAMP
 -------------------------
 
-player development revamp
+player development revamp http://www.reddit.com/r/BasketballGM/comments/2cz7r6/player_development_code_has_kinda_ridiculous/
   something needs to be done. still too many 3 point shooting centers
   are ovr/pot combos reasonable, since ovr is weighted now?
   old stars should exist
@@ -26,6 +26,7 @@ current beta issues:
   maybe solve these by adding more noise to the base ratings of new players?
   players shouldn't so easily exceed potential
   contract value is too low overall, maybe better players needed
+  make sure exceptions exist, like it should be possible for there to be 7 foot lebrons once every 200 years
 
 PERFORMANCE CRAP
 ----------------

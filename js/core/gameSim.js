@@ -72,9 +72,9 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
         for (t = 0; t < 2; t++) {
             if (t === 0) {
-                factor = 1.025;  // Bonus for home team
+                factor = 1.01;  // Bonus for home team
             } else {
-                factor = 0.975;  // Penalty for away team
+                factor = 0.99;  // Penalty for away team
             }
 
             for (p = 0; p < this.team[t].player.length; p++) {

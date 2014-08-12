@@ -270,6 +270,9 @@ contract negotiation
   add free agent to the end of roster
   http://www.reddit.com/r/BasketballGM/comments/1ykybp/free_agent_signing_suggestion/
 fuzz should affect potential more than other variables, when pot is different than ovr
+mode with ratings hidden
+  implement like fuzz?
+  maybe use very rough letter grades like A/B/C/D/F to replace the ratings
 
 MINOR FIXES
 -----------

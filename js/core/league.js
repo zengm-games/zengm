@@ -285,12 +285,8 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
 
                                 p = player.augmentPartialPlayer(p, scoutingRank);
 
-                                if (p.tid === g.PLAYER.FREE_AGENT) {
-                                    player.addToFreeAgents(playerStore, p, null, baseMoods, cbAfterEachPlayer);
-                                } else {
-                                    playerStore.put(p);
-                                    cbAfterEachPlayer();
-                                }
+                                playerStore.put(p);
+                                cbAfterEachPlayer();
                             }
                         } else {
                             // Generate new players

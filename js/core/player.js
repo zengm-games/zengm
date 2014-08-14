@@ -245,34 +245,36 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
             // Average rating change if there is no potential difference
             if (age <= 21) {
-                val = 2;
-            } else if (age <= 25) {
                 val = 1;
+            } else if (age <= 25) {
+                val = 0;
             } else if (age <= 29) {
                 val = 0;
             } else if (age <= 31) {
-                val = -1;
+                val = -1.5;
             } else if (age <= 33) {
-                val = -2;
-            } else if (age <= 35) {
                 val = -3;
-            } else if (age <= 37) {
-                val = -4;
+            } else if (age <= 35) {
+                val = -4.5;
             } else {
-                val = -5;
+                val = -6;
             }
 
             // Factor in potential difference
             if (age <= 21) {
-                val += potentialDifference * random.uniform(0.2, 0.8);
+                val += potentialDifference * random.uniform(0.25, 0.9);
             } else if (age <= 25) {
-                val += potentialDifference * random.uniform(0.1, 0.2);
+                val += potentialDifference * random.uniform(0.1, 0.25);
             } else {
                 val += potentialDifference * random.uniform(0, 0.1);
             }
 
             // Noise
-            val += random.uniform(-2, 2);
+            if (age <= 25) {
+                val += helpers.bound(random.gauss(0, 3), -2, 10);
+            } else {
+                val += helpers.bound(random.gauss(0, 3), -2, 2);
+            }
 
             return val;
         };
@@ -572,7 +574,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @return {Object} Ratings object
      */
     function genRatings(profile, baseRating, pot, season, scoutingRank) {
-        var i, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
+        var i, j, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
 
         if (profile === "Point") {
             profileId = 1;
@@ -586,9 +588,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         // Each row should sum to ~150
         profiles = [[10,  10,  10,  10,  10,  10,  10,  10,  10,  25,  10,  10,  10,  10,  10],  // Base 
-                    [-30, -10, 40,  15,  0,   0,   0,   10,  15,  15,   0,   20,  40,  40,  0],   // Point Guard
+                    [-30, -10, 40,  15,  0,   0,   0,   10,  15,  25,   0,   30,  30,  30,  0],   // Point Guard
                     [10,  10,  15,  15,  0,   0,   25,  15,  15,  20,   0,   10,  15,  0,   15],  // Wing
-                    [45,  30,  -15, -15, -5,  30,  30,  -5,   -15, -20, 25,  -5,   -20, -20, 30]];  // Big
+                    [45,  30,  -15, -15, -5,  30,  30,  -5,   -15, -25, 30,  -5,   -20, -20, 30]];  // Big
         sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
         baseRating = random.gauss(baseRating, 5);
 
@@ -596,6 +598,15 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         for (i = 0; i < sigmas.length; i++) {
             rawRating = profiles[profileId][i] + baseRating;
             rawRatings[i] = limitRating(random.gauss(rawRating, sigmas[i]));
+        }
+
+        // Small chance of freakish ability in 2 categories
+        for (i = 0; i < 2; i++) {
+            if (Math.random() < 0.2) {
+                // Randomly pick a non-height rating to improve
+                j = random.randInt(1, 14);
+                rawRatings[j] = limitRating(rawRatings[j] + 50);
+            }
         }
 
         ratings = {};

@@ -34,6 +34,15 @@ Eventually:
     does this allow removal of fudge factor?
   population (i.e. richness) should influence opinion of contracts
 
+PERFORMANCE CRAP
+----------------
+
+normalize player ratings/stats so only latest year is in main player object store and the rest go in an archived place
+  alternative plan: anything that is written to after each game goes in own object store, index by (pid, season, playoffs). everything else goes in normal player objects.
+  alternative plan: everything needed for player.value is in its own object store (or split over multiple ones)
+  BENCHMARK THESE ALTERNATIVES!
+separate active and retired players into separate object stores
+
 CURRENT
 -------
 
@@ -42,7 +51,7 @@ newPhasePlayoffs (and similar functions) should do all important shit in one tra
   done newPhasePlayoffs
 total control mode
   select draft pick for every team http://www.reddit.com/r/BasketballGM/comments/2b8g1d/new_multiplayer_league/cj31706
-    localStorage.noAutoPick
+    localStorage.noAutoPick http://www.reddit.com/r/BasketballGM/comments/2dqt3v/i_want_to_start_an_online_league_with_a_faster/cjs51dj
   AI doesn't change roster http://www.reddit.com/message/messages/23pano
 season preview
   overview of user's players ratings changes
@@ -277,6 +286,7 @@ mode with ratings hidden
 MINOR FIXES
 -----------
 
+show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
 retired players should be eligible for season awards
 TS%
 documentation
@@ -332,6 +342,7 @@ not all ratings should deteriorate equally with age (e.g. 3 point shooting)
 http://code.google.com/p/htmlcompressor/ or something similar
 in playoffs, replace Week/Month in Play menu with Round http://www.reddit.com/r/BasketballGM/comments/1w55sb/suggestionplayoffs_simulate_by_round_instead_of/
 gamesim shot distribution - less people shooting 3s really poorly, especially tall players
+UI to easily switch between conference and division standings on small screens and dashboard http://www.reddit.com/r/BasketballGM/comments/2d4o9r/feature_requests_of_the_week_august_10_2014/cjqrwtf?context=3
 
 LOW PRIORITY
 ------------
@@ -343,7 +354,8 @@ contractNegotiation
   young players should only want short deals if they have really high pot-ovr
 box plots / distributions
   "it'd be great to overlay your roster to see where you stand. Maybe click on a name in a list to add or remove it from the display. Do I have a fast team? Do I have a three point shooting team? Are we big and bruising and slow?"
-ratings change during the season, especially young players (development)
+ratings change during the season, especially young playerUI to easily switch between conference and division standings on small screens and dashboard http://www.reddit.com/r/BasketballGM/comments/2d4o9r/feature_requests_of_the_week_august_10_2014/cjqrwtf?context=3
+s (development)
 show abbrev and highlight user's players in retired players list gavin.handley@gmail.com
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 awards

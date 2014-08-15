@@ -23,6 +23,13 @@ options:
 current beta issues:
   revisit logic about how ratings improve/decline, can it all be based on baseRating?
   revisit position labels - too many PGs?
+  reports of low ovr high pot players not panning out enough
+  different types of players should develop differently
+    maybe make it multiplicative?
+    or cutoff-based, like if you're below 20 you're never going to improve there?
+    or position-based? height-based?
+    ideal: skill-based, train them as a real coach would
+  maybe needs more high ovr players in general
 
 PERFORMANCE CRAP
 ----------------

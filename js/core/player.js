@@ -262,7 +262,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
             // Factor in potential difference
             if (age <= 21) {
-                val += potentialDifference * random.uniform(0.25, 0.9);
+                val += potentialDifference * random.uniform(0.3, 0.9);
             } else if (age <= 25) {
                 val += potentialDifference * random.uniform(0.1, 0.25);
             } else {
@@ -271,7 +271,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
             // Noise
             if (age <= 25) {
-                val += helpers.bound(random.gauss(0, 3), -2, 10);
+                val += helpers.bound(random.gauss(0, 3), -2, 15);
             } else {
                 val += helpers.bound(random.gauss(0, 3), -2, 2);
             }
@@ -283,7 +283,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             age += 1;
 
             // Randomly make a big jump
-            if (Math.random() > 0.985 && age <= 21) {
+            if (Math.random() > 0.985 && age <= 23) {
                 p.ratings[r].pot += random.uniform(5, 25);
             }
 
@@ -323,7 +323,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 } else if (age <= 30) {
                     p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + 1 + baseChange * random.uniform(0.5, 1.5));
                 } else {
-                    p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + 2 + baseChange * random.uniform(0.25, 0.5));
+                    p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + 2 + baseChange * random.uniform(0, 0.25));
                 }
             }
 

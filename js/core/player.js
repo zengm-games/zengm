@@ -138,7 +138,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         // Scale proportional to (ovr*2 + pot)*0.5 120-210
         //amount = ((3 * value(p)) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
         //amount = amount * (maxAmount - minAmount) + minAmount;
-        amount = ((value(p) - 1) / 100 - 0.45) * 3.5 * (maxAmount - minAmount) + minAmount;
+        amount = ((value(p) - 1) / 100 - 0.45) * 2.85 * (maxAmount - minAmount) + minAmount;
         if (randomizeAmount) {
             amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
         }
@@ -264,14 +264,18 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             if (age <= 21) {
                 val += potentialDifference * random.uniform(0.3, 0.9);
             } else if (age <= 25) {
-                val += potentialDifference * random.uniform(0.1, 0.25);
+                if (Math.random() < 0.25) {
+                    val += potentialDifference * random.uniform(0.3, 0.9);
+                } else {
+                    val += potentialDifference * random.uniform(0.1, 0.3);
+                }
             } else {
                 val += potentialDifference * random.uniform(0, 0.1);
             }
 
             // Noise
             if (age <= 25) {
-                val += helpers.bound(random.gauss(0, 3), -2, 15);
+                val += helpers.bound(random.gauss(0, 5), -3, 10);
             } else {
                 val += helpers.bound(random.gauss(0, 3), -2, 2);
             }
@@ -350,6 +354,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.gauss(1, 2) * baseChange, -10, 20));
             }*/
 
+console.log([age, p.ratings[r].pot - p.ratings[r].ovr, ovr(p.ratings[r]) - p.ratings[r].ovr])
             // Update overall and potential
             p.ratings[r].ovr = ovr(p.ratings[r]);
             p.ratings[r].pot += -2 + Math.round(random.gauss(0, 2));
@@ -588,7 +593,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         // Each row should sum to ~150
         profiles = [[10,  10,  10,  10,  10,  10,  10,  10,  10,  25,  10,  10,  10,  10,  10],  // Base 
-                    [-30, -10, 40,  15,  0,   0,   0,   10,  15,  25,   0,   30,  30,  30,  0],   // Point Guard
+                    [-30, -10, 40,  20,  15,   0,   0,   10,  15,  25,   0,   30,  20,  20,  0],   // Point Guard
                     [10,  10,  15,  15,  0,   0,   25,  15,  15,  20,   0,   10,  15,  0,   15],  // Wing
                     [45,  30,  -15, -15, -5,  30,  30,  -5,   -15, -25, 30,  -5,   -20, -20, 30]];  // Big
         sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];

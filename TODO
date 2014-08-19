@@ -1,4 +1,5 @@
 TOP DROPDOWNS SHOULD WORK WHEN LOADING IN PROGRESS!
+- problems on http://jsfiddle.net/x0sh6fjb/ are not exactly the same. on jsfiddle, routing doesn't wokr at all until image is loaded. but here, routing works but dropdown doesn't
 
 DB CHANGES SINCE 3.3.0
 ----------------------

@@ -11,9 +11,8 @@ wrapped in a .table-responsive div.
 jquery.dataTables.bootstrap.js (and DT_bootstrap.css) has been tweaked to play
 nice with Davis.js and Bootstrap 3.
 
-I'm using bootstrap-dropdown.js 2.0.2 because 2.1.0+ interferes with Davis.js
-handling normal links in the play menu. See
-https://github.com/olivernn/davis.js/issues/61
+bootstrap-dropdown.js needs a patch to work with davis.js. See
+https://github.com/olivernn/davis.js/issues/61#issuecomment-52713458
 
 knockout.mapping.js is changed to depend on lib/knockout, not knockout.
 

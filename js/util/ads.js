@@ -13,16 +13,24 @@ define(["lib/jquery"], function ($) {
         Survata.ready(function () {
             var s = Survata.createSurveywall({
                 brand: "Basketball GM",
-                explainer: "Please take this short survey to continue playing",
+                explainer: "Please take this short survey to support Basketball GM!",
                 disallowClose: true,
-                allowSkip: false
+                allowSkip: true
             });
 
             s.on("load", function (data) {
                 if (data.status === "monetizable") {
                     s.startInterview();
+                } else {
+                    // If Survata doesn't have a survey to show, try GCS
+                    showGCS();
                 }
             });
+        });
+
+        Survata.fail(function() {
+            // If Survata is down, try GCS
+            showGCS();
         });
     }
 

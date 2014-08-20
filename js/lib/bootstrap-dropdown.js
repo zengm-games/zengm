@@ -142,10 +142,10 @@
   // APPLY TO STANDARD DROPDOWN ELEMENTS
   // ===================================
 
-
-  $(function () {
+  // Don't wait for everything to load, because then a slow-loading script or image could prevent dropdowns from working. But since I always call this after all my HTML is ready, it's fine to do it like this.
+//  $(function () {
     $('html').on('click.bs.dropdown.data-api', clearMenus)
     $('body').on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
-  })
+//  })
 
 }(jQuery);

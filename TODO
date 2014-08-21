@@ -46,6 +46,7 @@ separate active and retired players into separate object stores
 CURRENT
 -------
 
+should be impossible to have a player average 0 assists in big minutes
 +/- http://www.reddit.com/r/BasketballGM/comments/2cpdxg/both_individual_and_5man_units/
 newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
   done newPhasePlayoffs

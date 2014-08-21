@@ -239,9 +239,46 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
         };
     }
 
+    function averageCareerArc(baseOvr, basePot) {
+        var averageOvr, averagePot, i, j, k, numPlayers, numSeasons, p, profiles;
+
+        numPlayers = 100; // Number of players per profile
+        numSeasons = 20;
+
+        averageOvr = [];
+        averagePot = [];
+        for (i = 0; i < numSeasons; i++) {
+            averageOvr[i] = 0;
+            averagePot[i] = 0;
+        }
+
+        profiles = ["Point", "Wing", "Big", ""];
+
+        for (i = 0; i < numPlayers; i++) {
+            for (j = 0; j < profiles.length; j++) {
+                p = player.generate(0, 19, profiles[j], baseOvr, basePot, 2013, true, 15);
+                for (k = 0; k < numSeasons; k++) {
+                    averageOvr[k] += p.ratings[0].ovr;
+                    averagePot[k] += p.ratings[0].pot;
+                    p = player.develop(p, 1, true);
+                }
+            }
+        }
+
+
+        for (i = 0; i < numSeasons; i++) {
+            averageOvr[i] /= numPlayers * profiles.length;
+            averagePot[i] /= numPlayers * profiles.length;
+        }
+
+        console.log(averageOvr)
+        console.log(averagePot)
+    }
+
     return {
         regressRatingsPer: regressRatingsPer,
         leagueAverageContract: leagueAverageContract,
-        exportPlayerInfo: exportPlayerInfo
+        exportPlayerInfo: exportPlayerInfo,
+        averageCareerArc: averageCareerArc
     };
 });

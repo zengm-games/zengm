@@ -31,6 +31,7 @@ current beta issues:
   newly-generated players don't have right skill labels http://localhost/l/22/player/327
   too many good players after a few seasons, accumulate as FAs
   ratings too high in general
+  tune with debug.averageCareerArc(30, 80)
 
 PERFORMANCE CRAP
 ----------------

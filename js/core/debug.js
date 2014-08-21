@@ -239,17 +239,19 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
         };
     }
 
-    function averageCareerArc(baseOvr, basePot) {
-        var averageOvr, averagePot, i, j, k, numPlayers, numSeasons, p, profiles;
+    function averageCareerArc(baseOvr, basePot, ratingToSave) {
+        var averageOvr, averagePot, averageRat, i, j, k, numPlayers, numSeasons, p, profiles;
 
-        numPlayers = 100; // Number of players per profile
+        numPlayers = 500; // Number of players per profile
         numSeasons = 20;
 
         averageOvr = [];
         averagePot = [];
+        averageRat = [];
         for (i = 0; i < numSeasons; i++) {
             averageOvr[i] = 0;
             averagePot[i] = 0;
+            averageRat[i] = 0;
         }
 
         profiles = ["Point", "Wing", "Big", ""];
@@ -260,6 +262,7 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
                 for (k = 0; k < numSeasons; k++) {
                     averageOvr[k] += p.ratings[0].ovr;
                     averagePot[k] += p.ratings[0].pot;
+                    if (ratingToSave) { averageRat[k] += p.ratings[0][ratingToSave]; }
                     p = player.develop(p, 1, true);
                 }
             }
@@ -269,10 +272,12 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
         for (i = 0; i < numSeasons; i++) {
             averageOvr[i] /= numPlayers * profiles.length;
             averagePot[i] /= numPlayers * profiles.length;
+            if (ratingToSave) { averageRat[i] /= numPlayers * profiles.length; }
         }
 
-        console.log(averageOvr)
-        console.log(averagePot)
+        console.log("ovr:"); console.log(averageOvr);
+        console.log("pot:"); console.log(averagePot);
+        if (ratingToSave) { console.log(ratingToSave + ":"); console.log(averageRat); }
     }
 
     return {

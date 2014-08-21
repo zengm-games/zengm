@@ -354,7 +354,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                 p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.gauss(1, 2) * baseChange, -10, 20));
             }*/
 
-console.log([age, p.ratings[r].pot - p.ratings[r].ovr, ovr(p.ratings[r]) - p.ratings[r].ovr])
+//console.log([age, p.ratings[r].pot - p.ratings[r].ovr, ovr(p.ratings[r]) - p.ratings[r].ovr])
             // Update overall and potential
             p.ratings[r].ovr = ovr(p.ratings[r]);
             p.ratings[r].pot += -2 + Math.round(random.gauss(0, 2));

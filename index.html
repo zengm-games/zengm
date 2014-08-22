@@ -30,7 +30,7 @@
         loadCSS("gen/bbgm.css");
       }
 
-      window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
+      window.enableLogging = true;//location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
 
       if (enableLogging) {
         // Google Analytics
@@ -50,7 +50,7 @@
           bs.src = "http://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js";
           bs.dataset.apikey = "c10b95290070cb8888a7a79cc5408555";
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
-        })
+        });
       }
     </script>
   </head>
@@ -73,6 +73,12 @@
               document.getElementsByTagName('body')[0];
           head.appendChild(el);
         };
+
+        // Callback for GCS if it fails to load a survey (rate limited, no inventory, etc)
+        function callbackGCS() {
+          require("util/ads").showSurvata();
+          require("util/helpers").bbgmPing("failGCS");
+        }
 
         // Survata
         (function(w, d, t, v) {

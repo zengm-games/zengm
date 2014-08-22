@@ -1,3 +1,13 @@
+restore enableLogging!
+why doesn't callbackGCS() get called when GCS fails to show?
+why did i see multiple surveys before TriggerPrompt stopped working? only stopped working on the long 7 day pass
+
+
+
+
+
+
+
 DB CHANGES SINCE 3.3.0
 ----------------------
 

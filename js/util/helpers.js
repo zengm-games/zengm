@@ -389,11 +389,20 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * @param {string} type Either "league" for a new league, or "season" for a completed season
      */
     function bbgmPing(type) {
+console.log(type)
         if (g.enableLogging) {
             if (type === "league") {
                 _gaq.push(["_trackEvent", "BBGM", "New league", g.lid.toString()]);
             } else if (type === "season") {
                 _gaq.push(["_trackEvent", "BBGM", "Completed season", g.season.toString()]);
+            } else if (type === "tryGCS") {
+                _gaq.push(["_trackEvent", "Ad", "Try GCS", g.season.toString()]);
+            } else if (type === "trySurvata") {
+                _gaq.push(["_trackEvent", "Ad", "Try Survata", g.season.toString()]);
+            } else if (type === "failGCS") {
+                _gaq.push(["_trackEvent", "Ad", "Fail GCS", g.season.toString()]);
+            } else if (type === "showSurvata") {
+                _gaq.push(["_trackEvent", "Ad", "Show Survata", g.season.toString()]);
             }
         }
     }

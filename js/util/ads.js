@@ -15,7 +15,7 @@ define(["lib/jquery"], function ($) {
                 brand: "Basketball GM",
                 explainer: "Please take this short survey to support Basketball GM!",
                 disallowClose: true,
-                allowSkip: true
+                allowSkip: false
             });
 
             s.on("load", function (data) {
@@ -41,14 +41,18 @@ define(["lib/jquery"], function ($) {
     function show() {
         var now, adTimer;
 
-        // This is all in milliseconds!
-        adTimer = localStorage.adTimer !== undefined ? parseInt(localStorage.adTimer, 10) : 0;
-        now = Date.now();
+        if (Math.random() < 0.75) {
+            showGCS();
+        } else {
+            // This is all in milliseconds!
+            adTimer = localStorage.adTimer !== undefined ? parseInt(localStorage.adTimer, 10) : 0;
+            now = Date.now();
 
-        // Only show ad once per 60 minutes, at most
-        if (now - adTimer > 1000 * 60 * 60) {
-            showSurvata();
-            localStorage.adTimer = now;
+            // Only show ad once per 60 minutes, at most
+            if (now - adTimer > 1000 * 60 * 60) {
+                showSurvata();
+                localStorage.adTimer = now;
+            }
         }
     }
 

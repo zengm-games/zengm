@@ -30,11 +30,9 @@ current beta issues:
     ideal: skill-based, train them as a real coach would
   newly-generated players don't have right skill labels http://localhost/l/22/player/327
   too many good players after a few seasons, accumulate as FAs
-  ratings too high in general
   tune with debug.averageCareerArc(30, 80)
-  bound pss better http://www.reddit.com/r/BasketballGM/comments/2e1jqv/improved_player_development_beta_updated_please/cjw87f7?context=3
-    do something similar to impose continued improved shooting
-  check player weights
+  reset contract algo?
+  USE REALGAUSS!
 
 PERFORMANCE CRAP
 ----------------

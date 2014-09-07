@@ -230,7 +230,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      * @return {Object} Updated player object.
      */
     function develop(p, years, generate, coachingRank) {
-        var age, baseChange, calcBaseChange, i, j, ratingKeys, r, sigma, sign;
+        var age, baseChange, baseChangeLocal, calcBaseChange, i, j, ratingKeys, r, sigma, sign;
 
         years = years !== undefined ? years : 1;
         generate = generate !== undefined ? generate : false;
@@ -245,19 +245,15 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
             // Average rating change if there is no potential difference
             if (age <= 21) {
-                val = 1;
+                val = 0;
             } else if (age <= 25) {
-                val = 0;
+                val = -1;
             } else if (age <= 29) {
-                val = 0;
+                val = -1;
             } else if (age <= 31) {
-                val = -1.5;
-            } else if (age <= 33) {
-                val = -3;
-            } else if (age <= 35) {
-                val = -4.5;
+                val = -2;
             } else {
-                val = -6;
+                val = -3;
             }
 
             // Factor in potential difference
@@ -275,7 +271,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
             // Noise
             if (age <= 25) {
-                val += helpers.bound(random.gauss(0, 5), -3, 10);
+                val += helpers.bound(random.gauss(0, 5), -4, 10);
             } else {
                 val += helpers.bound(random.gauss(0, 3), -2, 2);
             }
@@ -304,13 +300,20 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             // Ratings that can only increase a little, and only when young. Decrease when old.
             ratingKeys = ["spd", "jmp", "endu"];
             for (j = 0; j < ratingKeys.length; j++) {
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChange * random.uniform(0.5, 1.5), -20, 10));
+                if (age <= 24) {
+                    baseChangeLocal = baseChange;
+                } else if (age <= 30) {
+                    baseChangeLocal = baseChange - 1;
+                } else {
+                    baseChangeLocal = baseChange - 2;
+                }
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChangeLocal * random.uniform(0.5, 1.5), -20, 10));
             }
 
             // Ratings that can only increase a little, and only when young. Decrease slowly when old.
             ratingKeys = ["drb", "pss", "reb"];
             for (j = 0; j < ratingKeys.length; j++) {
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChange * random.uniform(0.5, 1.5), -3, 10));
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChange * random.uniform(0.5, 1.5), -1, 10));
             }
 
             // Ratings that can increase a lot, but only when young. Decrease when old.
@@ -323,12 +326,13 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             ratingKeys = ["ins", "ft", "fg", "tp"];
             for (j = 0; j < ratingKeys.length; j++) {
                 if (age <= 24) {
-                    p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChange * random.uniform(0.5, 1.5));
+                    baseChangeLocal = baseChange;
                 } else if (age <= 30) {
-                    p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + 1 + baseChange * random.uniform(0.5, 1.5));
+                    baseChangeLocal = baseChange + 2;
                 } else {
-                    p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + 2 + baseChange * random.uniform(0, 0.25));
+                    baseChangeLocal = baseChange + 4;
                 }
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChangeLocal * random.uniform(0.5, 1.5));
             }
 
             // 

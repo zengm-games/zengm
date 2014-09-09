@@ -28,8 +28,8 @@ current beta issues:
     or cutoff-based, like if you're below 20 you're never going to improve there?
     or position-based? height-based?
     ideal: skill-based, train them as a real coach would
-  newly-generated players don't have right skill labels http://localhost/l/22/player/327
-  too many good players after a few seasons, accumulate as FAs
+  newly-generated players don't have right skill labels
+  too many good players after a few seasons, accumulate as FAs?
   tune with debug.averageCareerArc(30, 80)
 
 PERFORMANCE CRAP

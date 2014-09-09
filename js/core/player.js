@@ -138,7 +138,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         // Scale proportional to (ovr*2 + pot)*0.5 120-210
         //amount = ((3 * value(p)) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
         //amount = amount * (maxAmount - minAmount) + minAmount;
-        amount = ((value(p) - 1) / 100 - 0.45) * 3.5 * (maxAmount - minAmount) + minAmount;
+        amount = ((value(p) - 1) / 100 - 0.45) * 3.4 * (maxAmount - minAmount) + minAmount;
         if (randomizeAmount) {
             amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
         }

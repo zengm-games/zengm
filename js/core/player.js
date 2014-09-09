@@ -138,7 +138,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         // Scale proportional to (ovr*2 + pot)*0.5 120-210
         //amount = ((3 * value(p)) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
         //amount = amount * (maxAmount - minAmount) + minAmount;
-        amount = ((value(p) - 1) / 100 - 0.45) * 2.85 * (maxAmount - minAmount) + minAmount;
+        amount = ((value(p) - 1) / 100 - 0.45) * 3.5 * (maxAmount - minAmount) + minAmount;
         if (randomizeAmount) {
             amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
         }
@@ -271,9 +271,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
             // Noise
             if (age <= 25) {
-                val += helpers.bound(random.gauss(0, 5), -4, 10);
+                val += helpers.bound(random.realGauss(0, 5), -4, 10);
             } else {
-                val += helpers.bound(random.gauss(0, 3), -2, 2);
+                val += helpers.bound(random.realGauss(0, 3), -2, 2);
             }
 
             return val;
@@ -340,28 +340,28 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             /*ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {
                 //increase = plusMinus
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + random.gauss(1, 2) * baseChange);
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + random.realGauss(1, 2) * baseChange);
             }*/
             /*// Easy to improve
             ratingKeys = ['stre', 'endu', 'ins', 'ft', 'fg', 'tp', 'blk', 'stl'];
             for (j = 0; j < ratingKeys.length; j++) {
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + random.gauss(2, 2) * baseChange);
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + random.realGauss(2, 2) * baseChange);
             }
             // In between
             ratingKeys = ['spd', 'jmp', 'dnk'];
             for (j = 0; j < ratingKeys.length; j++) {
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.gauss(1, 2) * baseChange, -100, 35));
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.realGauss(1, 2) * baseChange, -100, 35));
             }
             // Hard to improve
             ratingKeys = ['drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.gauss(1, 2) * baseChange, -10, 20));
+                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.realGauss(1, 2) * baseChange, -10, 20));
             }*/
 
 //console.log([age, p.ratings[r].pot - p.ratings[r].ovr, ovr(p.ratings[r]) - p.ratings[r].ovr])
             // Update overall and potential
             p.ratings[r].ovr = ovr(p.ratings[r]);
-            p.ratings[r].pot += -2 + Math.round(random.gauss(0, 2));
+            p.ratings[r].pot += -2 + Math.round(random.realGauss(0, 2));
             if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
                 p.ratings[r].pot = p.ratings[r].ovr;
             }

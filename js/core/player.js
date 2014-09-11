@@ -138,7 +138,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         // Scale proportional to (ovr*2 + pot)*0.5 120-210
         //amount = ((3 * value(p)) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
         //amount = amount * (maxAmount - minAmount) + minAmount;
-        amount = ((value(p) - 1) / 100 - 0.45) * 3.4 * (maxAmount - minAmount) + minAmount;
+        amount = ((value(p) - 1) / 100 - 0.45) * 3.3 * (maxAmount - minAmount) + minAmount;
         if (randomizeAmount) {
             amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
         }
@@ -247,21 +247,26 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             if (age <= 21) {
                 val = 0;
             } else if (age <= 25) {
-                val = -1;
+                val = 0;
             } else if (age <= 29) {
                 val = -1;
             } else if (age <= 31) {
                 val = -2;
             } else {
-                val = -3;
+                val = -2;
             }
 
             // Factor in potential difference
+            // This only matters for young players who have potentialDifference != 0
             if (age <= 21) {
-                val += potentialDifference * random.uniform(0.3, 0.9);
+                if (Math.random() < 0.75) {
+                    val += potentialDifference * random.uniform(0.2, 0.9);
+                } else {
+                    val += potentialDifference * random.uniform(0.1, 0.3);
+                }
             } else if (age <= 25) {
                 if (Math.random() < 0.25) {
-                    val += potentialDifference * random.uniform(0.3, 0.9);
+                    val += potentialDifference * random.uniform(0.2, 0.9);
                 } else {
                     val += potentialDifference * random.uniform(0.1, 0.3);
                 }
@@ -273,7 +278,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             if (age <= 25) {
                 val += helpers.bound(random.realGauss(0, 5), -4, 10);
             } else {
-                val += helpers.bound(random.realGauss(0, 3), -2, 2);
+                val += helpers.bound(random.realGauss(0, 3), -2, 10);
             }
 
             return val;
@@ -285,6 +290,11 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             // Randomly make a big jump
             if (Math.random() > 0.985 && age <= 23) {
                 p.ratings[r].pot += random.uniform(5, 25);
+            }
+
+            // Randomly regress
+            if (Math.random() > 0.995 && age <= 23) {
+                p.ratings[r].pot -= random.uniform(5, 25);
             }
 
             baseChange = calcBaseChange(age, p.ratings[r].pot - p.ratings[r].ovr);

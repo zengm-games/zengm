@@ -253,7 +253,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             } else if (age <= 31) {
                 val = -2;
             } else {
-                val = -2;
+                val = -3;
             }
 
             // Factor in potential difference

@@ -47,6 +47,11 @@ CURRENT
 -------
 
 should be impossible to have a player average 0 assists in big minutes
+Commissioner Mode - make multi-player stuff easy
+  don't auto sort AI lineups
+  draft stuff that is already implemented
+  something for free agents
+"My Career" page with GM stats across teams http://www.reddit.com/r/BasketballGM/comments/2gc4sf/gm_page/
 +/- http://www.reddit.com/r/BasketballGM/comments/2cpdxg/both_individual_and_5man_units/
 newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
   done newPhasePlayoffs

@@ -1,14 +1,16 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Mocha Tests</title>
-
-  <link rel="stylesheet" href="/css/mocha.css" />
-
-  <script src="/js/lib/mocha.js"></script>
-  <script data-main="/js/test/app.js" src="/js/lib/require.js"></script>
+  <title>Test</title>
+  <script type="text/javascript">
+  request = indexedDB.open("test", 7);
+  request.onupgradeneeded = function (event) {
+      document.getElementById("log").innerHTML = JSON.stringify(event);
+      console.log(JSON.stringify(event));
+  };
+  </script>
 </head>
 <body>
-  <div id="mocha"></div>
+  <div id="log"></div>
 </body>
 </html>

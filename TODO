@@ -29,7 +29,6 @@ current beta issues:
     or position-based? height-based?
     ideal: skill-based, train them as a real coach would
   newly-generated players don't have right skill labels
-  too many good players after a few seasons, accumulate as FAs?
   tune with debug.averageCareerArc(30, 80)
 
 PERFORMANCE CRAP

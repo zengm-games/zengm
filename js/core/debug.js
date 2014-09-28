@@ -239,9 +239,51 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
         };
     }
 
+    function averageCareerArc(baseOvr, basePot, ratingToSave) {
+        var averageOvr, averagePot, averageRat, i, j, k, numPlayers, numSeasons, p, profiles;
+
+        numPlayers = 1; // Number of players per profile
+        numSeasons = 20;
+
+        averageOvr = [];
+        averagePot = [];
+        averageRat = [];
+        for (i = 0; i < numSeasons; i++) {
+            averageOvr[i] = 0;
+            averagePot[i] = 0;
+            averageRat[i] = 0;
+        }
+
+        profiles = ["Point", "Wing", "Big", ""];
+
+        for (i = 0; i < numPlayers; i++) {
+            for (j = 0; j < profiles.length; j++) {
+                p = player.generate(0, 19, profiles[j], baseOvr, basePot, 2013, true, 15);
+                for (k = 0; k < numSeasons; k++) {
+                    averageOvr[k] += p.ratings[0].ovr;
+                    averagePot[k] += p.ratings[0].pot;
+                    if (ratingToSave) { averageRat[k] += p.ratings[0][ratingToSave]; }
+                    p = player.develop(p, 1, true);
+                }
+            }
+        }
+
+
+        for (i = 0; i < numSeasons; i++) {
+            averageOvr[i] /= numPlayers * profiles.length;
+            averagePot[i] /= numPlayers * profiles.length;
+            if (ratingToSave) { averageRat[i] /= numPlayers * profiles.length; }
+        }
+
+        console.log("ovr:"); console.log(averageOvr);
+        console.log("pot:"); console.log(averagePot);
+        if (ratingToSave) { console.log(ratingToSave + ":"); console.log(averageRat); }
+    }
+
     return {
         regressRatingsPer: regressRatingsPer,
         leagueAverageContract: leagueAverageContract,
-        exportPlayerInfo: exportPlayerInfo
+        exportPlayerInfo: exportPlayerInfo,
+        averageCareerArc: averageCareerArc
     };
 });

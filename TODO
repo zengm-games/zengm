@@ -9,22 +9,16 @@ player development revamp http://www.reddit.com/r/BasketballGM/comments/2cz7r6/p
   are ovr/pot combos reasonable, since ovr is weighted now?
   old stars should exist
   reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
-  really high ovr/pot is handled poorly, rapid declines if there is a gap
   too many rookies come in as instant stars. should be more gradual.
   career arcs for ratings - like low endurance/athleticism for old players, but skills remain
-  make low ovr high pot players more likely to improve
-  should be much more likely to go from 50-100 than 0-100
   smaller improvement per year, but more consistent
-    base improvement depends on potential difference and age
-    then add noise
 options:
   compute "pot" for each rating, use that to generate displayed pot
   somehow do it organically, with different rates of growth in different categories
 current beta issues:
   revisit position labels - too many PGs?
-  low pot high ovr players developing too slow after initial burst?
   different types of players should develop differently
-    maybe make it multiplicative?
+    maybe make it multiplicative? should be much more likely to go from 50-100 than 0-100
     or cutoff-based, like if you're below 20 you're never going to improve there?
     or position-based? height-based?
     ideal: skill-based, train them as a real coach would

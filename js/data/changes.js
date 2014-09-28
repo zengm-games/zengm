@@ -76,6 +76,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2014-07-05",
         msg: 'New "God Mode" allows you to create players, edit players, and force trades. Enable it by going to Tools > God Mode within a league.'
+    }, {
+        date: "2014-09-28",
+        msg: 'Player development should now be much more realistic. <a href="http://basketball-gm.com/blog/2014/09/revamped-player-development-algorithm/">Check out the blog for more.</a>'
     }];
 
     function check() {

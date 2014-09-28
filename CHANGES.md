@@ -13,6 +13,7 @@ number or not.
 - Export of entire league data
 - Easy import of custom draft classes
 - Whole league export
+- More realistic player development algorithm
 
 # 3.3.0 (2014-01-21)
 

@@ -357,7 +357,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
 
             team.filter({
                 attrs: ["tid", "cid", "abbrev", "region"],
-                seasonAttrs: ["won", "lost"],
+                seasonAttrs: ["won", "lost", "winp"],
                 season: g.season,
                 sortBy: ["winp", "-lost", "won"]
             }, function (teams) {

@@ -242,7 +242,7 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
     function averageCareerArc(baseOvr, basePot, ratingToSave) {
         var averageOvr, averagePot, averageRat, i, j, k, numPlayers, numSeasons, p, profiles;
 
-        numPlayers = 1; // Number of players per profile
+        numPlayers = 1000; // Number of players per profile
         numSeasons = 20;
 
         averageOvr = [];

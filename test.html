@@ -2,12 +2,46 @@
 <head>
   <meta charset="utf-8">
   <title>Test</title>
+  <script src="js/lib/IndexedDB-getAll-shim.js"></script>
   <script type="text/javascript">
-  request = indexedDB.open("test", 7);
-  request.onupgradeneeded = function (event) {
-      document.getElementById("log").innerHTML = JSON.stringify(event);
-      console.log(JSON.stringify(event));
-  };
+var db;
+
+request = indexedDB.open("test", 2);
+request.onerror = function (event) { console.log(event); };
+request.onupgradeneeded = function (event) {
+  var db, store;
+
+  db = event.target.result;
+  db.onerror = function (event) { console.log(event); };
+
+  store = db.createObjectStore("playerStats", {keyPath: "psid", autoIncrement: true});
+  store.createIndex("pid, season, tid, playoffs", ["pid", "season", "tid", "playoffs"], {unique: true});
+
+  store.add({pid: 1, season: 2014, tid: 0, playoffs: 0});
+  store.add({pid: 1, season: 2014, tid: 0, playoffs: 1});
+  store.add({pid: 1, season: 2015, tid: 0, playoffs: 0});
+  store.add({pid: 1, season: 2015, tid: 0, playoffs: 1});
+  store.add({pid: 1, season: 2016, tid: 0, playoffs: 0});
+  store.add({pid: 1, season: 2016, tid: 5, playoffs: 0});
+  store.add({pid: 1, season: 2016, tid: 5, playoffs: 1});
+  store.add({pid: 2, season: 2014, tid: 5, playoffs: 0});
+  store.add({pid: 2, season: 2015, tid: 5, playoffs: 0});
+  store.add({pid: 3, season: 2014, tid: 5, playoffs: 0});
+  store.add({pid: 4, season: 2014, tid: 5, playoffs: 0});
+};
+request.onsuccess = function (event) {
+  db = request.result;
+  db.onerror = function (event) { console.log(event); };
+
+  db.transaction("playerStats").objectStore("playerStats").index("pid, season, tid, playoffs").get([1, 2016, 0, 0]).onsuccess = function (event) { console.log(event.target.result); };
+  db.transaction("playerStats").objectStore("playerStats").index("pid, season, tid, playoffs").get([2, 2014, 5, 0]).onsuccess = function (event) { console.log(event.target.result); };
+  db.transaction("playerStats").objectStore("playerStats").index("pid, season, tid, playoffs").getAll(IDBKeyRange.bound([1, 2015, 0, 0], [1, 2015, 0, 1])).onsuccess = function (event) { console.log(event.target.result); };
+  db.transaction("playerStats").objectStore("playerStats").index("pid, season, tid, playoffs").getAll(IDBKeyRange.bound([1, 2016, 0, 0], [1, 2016, 30, 0])).onsuccess = function (event) { console.log(event.target.result); };
+  db.transaction("playerStats").objectStore("playerStats").index("pid, season, tid, playoffs").getAll(IDBKeyRange.only([1])).onsuccess = function (event) { console.log(event.target.result); };
+  //db.transaction("playerStats").objectStore("playerStats").index("pid, season").getAll(IDBKeyRange.bound([1, 0], [1, 3000])).onsuccess = function (event) { console.log(event.target.result); };
+  //db.close(); indexedDB.deleteDatabase("test");
+
+};
   </script>
 </head>
 <body>

@@ -2,7 +2,7 @@
  * @name views.history
  * @namespace Summaries of past seasons, leaguewide.
  */
-define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (g, ui, player, team, $, ko, bbgmView, helpers, viewHelpers, components) {
+define(["dao", "globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (dao, g, ui, player, team, $, ko, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     function get(req) {
@@ -51,10 +51,14 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
                     };
                 }
 
-                g.dbl.transaction("players").objectStore("players").index("retiredYear").getAll(inputs.season).onsuccess = function (event) {
-                    var i, retiredPlayers;
+                dao.players.getAll({
+                    index: "retiredYear",
+                    key: inputs.season,
+                    statSeasons: []
+                }, function (retiredPlayers) {
+                    var i;
 
-                    retiredPlayers = player.filter(event.target.result, {
+                    retiredPlayers = player.filter(retiredPlayers, {
                         attrs: ["pid", "name", "age", "hof"],
                         season: inputs.season
                     });
@@ -87,7 +91,7 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
                             userTid: g.userTid
                         });
                     });
-                };
+                });
             };
 
             return deferred.promise();

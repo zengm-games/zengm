@@ -9,6 +9,7 @@ build db abstraction function (maybe dao.player.getAll) that is flexible enough 
   replace all IDB calls to players object store prior to player.filter (see player.filter.txt)
     statSeasons: [g.season, g.season - 1], // For oldStats
     but oldStats can probably be disabled some places, it only helps for free agents, not with preseason
+    double check careerStats handling everywhere - done correctly in playerStats
   replace all IDB calls to players object store ANYWHERE
     objectStore("players")
 

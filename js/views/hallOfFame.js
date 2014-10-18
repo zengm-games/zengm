@@ -2,7 +2,7 @@
  * @name views.hallOfFame
  * @namespace Hall of fame table.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, player, $, ko, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -33,49 +33,46 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
 
             playersAll = [];
 
-            g.dbl.transaction("players").objectStore("players").index("tid").openCursor(g.PLAYER.RETIRED).onsuccess = function (event) {
-                var cursor, i, j, p, players;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-                    if (p.hof) {
-                        playersAll.push(p);
-                    }
-                    cursor.continue();
-                } else {
-                    players = player.filter(playersAll, {
-                        attrs: ["pid", "name", "pos", "draft", "retiredYear", "statsTids"],
-                        ratings: ["ovr"],
-                        stats: ["season", "abbrev", "gp", "min", "trb", "ast", "pts", "per", "ewa"]
-                    });
-
-                    // This stuff isn't in player.filter because it's only used here.
-                    for (i = 0; i < players.length; i++) {
-                        players[i].peakOvr = 0;
-                        for (j = 0; j < players[i].ratings.length; j++) {
-                            if (players[i].ratings[j].ovr > players[i].peakOvr) {
-                                players[i].peakOvr = players[i].ratings[j].ovr;
-                            }
-                        }
-
-                        players[i].bestStats = {
-                            gp: 0,
-                            min: 0,
-                            per: 0
-                        };
-                        for (j = 0; j < players[i].stats.length; j++) {
-                            if (players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per > players[i].bestStats.gp * players[i].bestStats.min * players[i].bestStats.per) {
-                                players[i].bestStats = players[i].stats[j];
-                            }
-                        }
-                    }
-
-                    deferred.resolve({
-                        players: players
-                    });
+            dao.players.getAll({
+                index: "tid",
+                key: g.PLAYER.RETIRED,
+                filter: function (p) {
+                    return p.hof;
                 }
-            };
+            }, function (players) {
+                var i, j;
+
+                players = player.filter(players, {
+                    attrs: ["pid", "name", "pos", "draft", "retiredYear", "statsTids"],
+                    ratings: ["ovr"],
+                    stats: ["season", "abbrev", "gp", "min", "trb", "ast", "pts", "per", "ewa"]
+                });
+
+                // This stuff isn't in player.filter because it's only used here.
+                for (i = 0; i < players.length; i++) {
+                    players[i].peakOvr = 0;
+                    for (j = 0; j < players[i].ratings.length; j++) {
+                        if (players[i].ratings[j].ovr > players[i].peakOvr) {
+                            players[i].peakOvr = players[i].ratings[j].ovr;
+                        }
+                    }
+
+                    players[i].bestStats = {
+                        gp: 0,
+                        min: 0,
+                        per: 0
+                    };
+                    for (j = 0; j < players[i].stats.length; j++) {
+                        if (players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per > players[i].bestStats.gp * players[i].bestStats.min * players[i].bestStats.per) {
+                            players[i].bestStats = players[i].stats[j];
+                        }
+                    }
+                }
+
+                deferred.resolve({
+                    players: players
+                });
+            });
             return deferred.promise();
         }
     }

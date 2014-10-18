@@ -2,7 +2,7 @@
  * @name views.leaders
  * @namespace League stat leaders.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (g, ui, player, $, ko, komapping, _, bbgmView, helpers, viewHelpers, components) {
+define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (dao, g, ui, player, $, ko, komapping, _, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     var mapping;
@@ -69,8 +69,19 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knock
                     }
                 }
 
-                tx.objectStore("players").getAll().onsuccess = function (event) {
-                    var categories, i, j, k, leader, pass, players, userAbbrev, playerValue, stats;
+
+                dao.players.getAll({
+                    ot: tx,
+                    statSeasons: [inputs.season]
+                }, function (players) {
+                    var categories, i, j, k, leader, pass, userAbbrev, playerValue, stats;
+
+                    players = player.filter(players, {
+                        attrs: ["pid", "name", "injury", "watch"],
+                        ratings: ["skills"],
+                        stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev", "tid"],
+                        season: inputs.season
+                    });
 
                     userAbbrev = helpers.getAbbrev(g.userTid);
 
@@ -88,13 +99,6 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knock
                     categories.push({name: "Player Efficiency Rating", stat: "PER", title: "Player Efficiency Rating", data: [], minStats: ["min"], minValue: [2000]});
                     categories.push({name: "Estimated Wins Added", stat: "EWA", title: "Estimated Wins Added", data: [], minStats: ["min"], minValue: [2000]});
                     stats = ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa"];
-
-                    players = player.filter(event.target.result, {
-                        attrs: ["pid", "name", "injury", "watch"],
-                        ratings: ["skills"],
-                        stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev", "tid"],
-                        season: inputs.season
-                    });
 
                     for (i = 0; i < categories.length; i++) {
                         players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
@@ -146,7 +150,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knock
                     };
 
                     deferred.resolve(vars);
-                };
+                });
             };
 
             return deferred.promise();

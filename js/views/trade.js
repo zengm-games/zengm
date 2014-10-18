@@ -2,7 +2,7 @@
  * @name views.trade
  * @namespace Trade.
  */
-define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers"], function (g, ui, player, trade, Davis, $, ko, komapping, _, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, trade, Davis, $, ko, komapping, _, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -177,18 +177,23 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
         deferred = $.Deferred();
 
         validateSavedPids(function (teams) {
-            var playerStore;
+            var tx;
 
-            playerStore = g.dbl.transaction("players").objectStore("players");
+            tx = g.dbl.transaction("players");
 
-            playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-                var attrs, i, ratings, stats, userRoster;
+            dao.players.getAll({
+                ot: tx,
+                index: "tid",
+                key: g.userTid,
+                statSeasons: [g.season]
+            }, function (userRoster) {
+                var attrs, i, ratings, stats;
 
                 attrs = ["pid", "name", "pos", "age", "contract", "injury", "watch", "gamesUntilTradable"];
                 ratings = ["ovr", "pot", "skills"];
                 stats = ["min", "pts", "trb", "ast", "per"];
 
-                userRoster = player.filter(event.target.result, {
+                userRoster = player.filter(userRoster, {
                     attrs: attrs,
                     ratings: ratings,
                     stats: stats,
@@ -208,10 +213,15 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                     }
                 }
 
-                playerStore.index("tid").getAll(teams[1].tid).onsuccess = function (event) {
-                    var draftPickStore, i, otherRoster, showResigningMsg;
+                dao.players.getAll({
+                    ot: tx,
+                    index: "tid",
+                    key: teams[1].tid,
+                    statSeasons: [g.season]
+                }, function (otherRoster) {
+                    var draftPickStore, i, showResigningMsg;
 
-                    otherRoster = player.filter(event.target.result, {
+                    otherRoster = player.filter(otherRoster, {
                         attrs: attrs,
                         ratings: ratings,
                         stats: stats,
@@ -292,8 +302,8 @@ define(["globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery",
                             };
                         };
                     };
-                };
-            };
+                });
+            });
         });
 
         return deferred.promise();

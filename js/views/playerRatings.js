@@ -2,7 +2,7 @@
  * @name views.playerRatings
  * @namespace Player ratings table.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, $, ko, _, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -41,13 +41,15 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("playerMovement") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) || inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev()) {
             deferred = $.Deferred();
 
-            g.dbl.transaction(["players"]).objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED)).onsuccess = function (event) {
-                var i, players, tid;
+            dao.players.getAll({
+                statSeasons: [inputs.season]
+            }, function (players) {
+                var i, tid;
 
                 tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
                 if (tid < 0) { tid = null; } // Show all teams
 
-                players = player.filter(event.target.result, {
+                players = player.filter(players, {
                     attrs: ["pid", "name", "abbrev", "pos", "age", "injury", "watch"],
                     ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],
                     stats: ["abbrev"],
@@ -58,14 +60,19 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                 });
 
                 // player.filter TID option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
-                if (tid !== null) {
-                    players = players.filter(function (p) { return p.abbrev === inputs.abbrev; });
-                }
-
                 // For the current season, use the current abbrev (including FA), not the last stats abbrev
+                // For other seasons, use the stats abbrev for filtering
                 if (g.season === inputs.season) {
+                    if (tid !== null) {
+                        players = players.filter(function (p) { return p.abbrev === inputs.abbrev; });
+                    }
+
                     for (i = 0; i < players.length; i++) {
                         players[i].stats.abbrev = players[i].abbrev;
+                    }
+                } else {
+                    if (tid !== null) {
+                        players = players.filter(function (p) { return p.stats.abbrev === inputs.abbrev; });
                     }
                 }
 
@@ -74,7 +81,8 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     season: inputs.season,
                     players: players
                 });
-            };
+            });
+
             return deferred.promise();
         }
     }

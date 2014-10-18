@@ -2,7 +2,7 @@
  * @name core.trade
  * @namespace Trades between the user's team and other teams.
  */
-define(["db", "globals", "core/player", "core/team", "lib/underscore"], function (db, g, player, team, _) {
+define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], function (dao, db, g, player, team, _) {
     "use strict";
 
     /**
@@ -210,8 +210,13 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
         players = [[], []];
         for (i = 0; i < 2; i++) {
             (function (i) {
-                transaction.objectStore("players").index("tid").getAll(tids[i]).onsuccess = function (event) {
-                    players[i] = player.filter(event.target.result, {
+                dao.players.getAll({
+                    ot: transaction,
+                    index: "tid",
+                    key: tids[i],
+                    statSeasons: []
+                }, function (playersTemp) {
+                    players[i] = player.filter(playersTemp, {
                         attrs: ["pid", "name", "contract"],
                         season: g.season,
                         tid: tids[i],
@@ -289,7 +294,7 @@ define(["db", "globals", "core/player", "core/team", "lib/underscore"], function
                             }
                         }
                     };
-                };
+                });
             }(i));
         }
     }

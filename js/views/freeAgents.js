@@ -2,7 +2,7 @@
  * @name views.freeAgents
  * @namespace List of free agents.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, freeAgents, player, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, db, g, ui, freeAgents, player, $, ko, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -44,7 +44,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
 
         deferred = $.Deferred();
 
-        db.getPayroll(null, g.userTid, function (payroll, contracts) {
+        db.getPayroll(null, g.userTid, function (payroll) {
             var capSpace;
 
             capSpace = (g.salaryCap - payroll) / 1000;
@@ -52,10 +52,14 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
                 capSpace = 0;
             }
 
-            g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                var i, players;
+            dao.players.getAll({
+                index: "tid",
+                key: g.PLAYER.FREE_AGENT,
+                statSeasons: [g.season, g.season - 1]
+            }, function (players) {
+                var i;
 
-                players = player.filter(event.target.result, {
+                players = player.filter(players, {
                     attrs: ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury", "watch"],
                     ratings: ["ovr", "pot", "skills"],
                     stats: ["min", "pts", "trb", "ast", "per"],
@@ -75,7 +79,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
                     capSpace: capSpace,
                     players: players
                 });
-            };
+            });
         });
 
         return deferred.promise();

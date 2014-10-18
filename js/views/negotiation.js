@@ -2,7 +2,7 @@
  * @name views.negotiation
  * @namespace Contract negotiation.
  */
-define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, contractNegotiation, player, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, db, g, ui, contractNegotiation, player, $, ko, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     // Show the negotiations list if there are more ongoing negotiations
@@ -103,10 +103,13 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
                 negotiation.player.expiration -= 1;
             }
 
-            g.dbl.transaction("players").objectStore("players").get(negotiation.pid).onsuccess = function (event) {
+            dao.players.getAll({
+                key: negotiation.pid,
+                statSeasons: []
+            }, function (players) {
                 var p;
 
-                p = player.filter(event.target.result, {
+                p = player.filter(players[0], {
                     attrs: ["pid", "name", "freeAgentMood"],
                     ratings: ["ovr", "pot"],
                     season: g.season,
@@ -149,7 +152,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/player", "lib/j
 
                     deferred.resolve(vars);
                 });
-            };
+            });
         };
 
         return deferred.promise();

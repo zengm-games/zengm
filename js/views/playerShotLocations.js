@@ -2,7 +2,7 @@
  * @name views.playerShotLocations
  * @namespace Player shot locations table.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, $, ko, _, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -31,10 +31,12 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
 
-            g.dbl.transaction(["players"]).objectStore("players").getAll().onsuccess = function (event) {
-                var players;
-
-                players = player.filter(event.target.result, {
+            dao.players.getAll({
+                index: "tid",
+                key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
+                statSeasons: [inputs.season]
+            }, function (players) {
+                players = player.filter(players, {
                     attrs: ["pid", "name", "pos", "age", "injury", "watch"],
                     ratings: ["skills"],
                     stats: ["abbrev", "gp", "gs", "min", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"],
@@ -45,7 +47,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     season: inputs.season,
                     players: players
                 });
-            };
+            });
             return deferred.promise();
         }
     }

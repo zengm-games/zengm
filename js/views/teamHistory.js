@@ -2,7 +2,7 @@
  * @name views.teamHistory
  * @namespace Team history.
  */
-define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, player, $, ko, _, bbgmView, helpers, viewHelpers, components) {
+define(["dao", "db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (dao, db, g, ui, player, $, ko, _, bbgmView, helpers, viewHelpers, components) {
     "use strict";
 
     var mapping;
@@ -63,10 +63,14 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
                 }
                 history.reverse(); // Show most recent season first
 
-                g.dbl.transaction("players").objectStore("players").index("statsTids").getAll(inputs.tid).onsuccess = function (event) {
-                    var i, players;
+                dao.players.getAll({
+                    index: "statsTids",
+                    key: inputs.tid,
+                    statTid: inputs.tid
+                }, function (players) {
+                    var i;
 
-                    players = player.filter(event.target.result, {
+                    players = player.filter(players, {
                         attrs: ["pid", "name", "pos", "injury", "tid", "hof", "watch"],
                         stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
                         tid: inputs.tid
@@ -91,7 +95,7 @@ define(["db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib
                         playoffAppearances: playoffAppearances,
                         championships: championships
                     });
-                };
+                });
             };
 
             return deferred.promise();

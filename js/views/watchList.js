@@ -2,7 +2,7 @@
  * @name views.watchList
  * @namespace List of players to watch.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (db, g, ui, freeAgents, player, $, ko, components, bbgmView, helpers) {
+define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, freeAgents, player, $, ko, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -28,54 +28,48 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "
     };
 
     function updatePlayers(inputs, updateEvents, vm) {
-        var deferred, playersUnfiltered;
+        var deferred;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
             deferred = $.Deferred();
 
-            playersUnfiltered = [];
-
-            // Can't index on a boolean in IndexedDB, so loop through them all
-            g.dbl.transaction("players").objectStore("players").openCursor().onsuccess = function (event) {
-                var cursor, i, p, players;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-                    if (p.watch && typeof p.watch !== "function") { // In Firefox, objects have a "watch" function
-                        playersUnfiltered.push(p);
-                    }
-                    cursor.continue();
-                } else {
-                    players = player.filter(playersUnfiltered, {
-                        attrs: ["pid", "name", "pos", "age", "injury", "tid", "abbrev", "watch", "contract", "freeAgentMood", "draft"],
-                        ratings: ["ovr", "pot", "skills"],
-                        stats: ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"],
-                        season: g.season,
-                        totals: inputs.statType === "totals",
-                        per36: inputs.statType === "per_36",
-                        playoffs: inputs.playoffs === "playoffs",
-                        fuzz: true,
-                        showNoStats: true,
-                        showRookies: true,
-                        showRetired: true,
-                        oldStats: true
-                    });
-
-                    // Add mood to free agent contracts
-                    for (i = 0; i < players.length; i++) {
-                        if (players[i].tid === g.PLAYER.FREE_AGENT) {
-                            players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
-                        }
-                    }
-
-                    deferred.resolve({
-                        players: players,
-                        statType: inputs.statType,
-                        playoffs: inputs.playoffs
-                    });
+            dao.players.getAll({
+                statSeasons: [g.season, g.season - 1], // For oldStats
+                statPlayoffs: inputs.playoffs === "playoffs",
+                filter: function (p) {
+                    return p.watch && typeof p.watch !== "function"; // In Firefox, objects have a "watch" function
                 }
-            };
+            }, function (players) {
+                var i;
+
+                players = player.filter(players, {
+                    attrs: ["pid", "name", "pos", "age", "injury", "tid", "abbrev", "watch", "contract", "freeAgentMood", "draft"],
+                    ratings: ["ovr", "pot", "skills"],
+                    stats: ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"],
+                    season: g.season,
+                    totals: inputs.statType === "totals",
+                    per36: inputs.statType === "per_36",
+                    playoffs: inputs.playoffs === "playoffs",
+                    fuzz: true,
+                    showNoStats: true,
+                    showRookies: true,
+                    showRetired: true,
+                    oldStats: true
+                });
+
+                // Add mood to free agent contracts
+                for (i = 0; i < players.length; i++) {
+                    if (players[i].tid === g.PLAYER.FREE_AGENT) {
+                        players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
+                    }
+                }
+
+                deferred.resolve({
+                    players: players,
+                    statType: inputs.statType,
+                    playoffs: inputs.playoffs
+                });
+            });
             return deferred.promise();
         }
     }

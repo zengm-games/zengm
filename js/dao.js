@@ -21,10 +21,10 @@ define(["db", "globals"], function (db, g) {
         options.ot = options.ot !== undefined ? options.ot : null;
         options.index = options.index !== undefined ? options.index : null;
         options.key = options.key !== undefined ? options.key : null;
-        options.filter = options.filter !== undefined ? options.filter : null;
         options.statSeasons = options.statSeasons !== undefined ? options.statSeasons : null;
         options.statPlayoffs = options.statPlayoffs !== undefined ? options.statPlayoffs : false;
         options.statTid = options.statTid !== undefined ? options.statTid : null;
+        options.filter = options.filter !== undefined ? options.filter : null;
 
         playerStore = db.getObjectStore(options.ot, "players", "players");
 

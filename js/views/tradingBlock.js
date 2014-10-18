@@ -2,7 +2,7 @@
  * @name views.tradingBlock
  * @namespace Trading block.
  */
-define(["globals", "ui", "core/player", "core/team", "core/trade", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/random"], function (g, ui, player, team, trade, $, ko, _, bbgmView, helpers, random) {
+define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/random"], function (dao, g, ui, player, team, trade, $, ko, _, bbgmView, helpers, random) {
     "use strict";
 
     var mapping;
@@ -137,10 +137,15 @@ define(["globals", "ui", "core/player", "core/team", "core/trade", "lib/jquery",
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
             deferred = $.Deferred();
 
-            g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.userTid).onsuccess = function (event) {
-                var i, userRoster;
+            dao.players.getAll({
+                index: "tid",
+                key: g.userTid,
+                statSeasons: [g.season],
+                statTid: g.userTid
+            }, function (userRoster) {
+                var i;
 
-                userRoster = player.filter(event.target.result, {
+                userRoster = player.filter(userRoster, {
                     attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch", "gamesUntilTradable"],
                     ratings: ["ovr", "pot", "skills"],
                     stats: ["min", "pts", "trb", "ast", "per"],
@@ -174,7 +179,7 @@ define(["globals", "ui", "core/player", "core/team", "core/trade", "lib/jquery",
                         userRoster: userRoster
                     });
                 };
-            };
+            });
 
             return deferred.promise();
         }
@@ -223,11 +228,16 @@ define(["globals", "ui", "core/player", "core/team", "core/trade", "lib/jquery",
                                 warning: inputs.offers[i].warning
                             };
 
-                            tx.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-                                var players;
-
-                                players = _.filter(event.target.result, function (p) { return inputs.offers[i].pids.indexOf(p.pid) >= 0; });
-
+                            dao.players.getAll({
+                                ot: tx,
+                                index: "tid",
+                                key: tid,
+                                statSeasons: [g.season],
+                                statTid: tid,
+                                filter: function (p) {
+                                    return inputs.offers[i].pids.indexOf(p.pid) >= 0;
+                                }
+                            }, function (players) {
                                 offers[i].players = player.filter(players, {
                                     attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch"],
                                     ratings: ["ovr", "pot", "skills"],
@@ -238,7 +248,7 @@ define(["globals", "ui", "core/player", "core/team", "core/trade", "lib/jquery",
                                     showRookies: true,
                                     fuzz: true
                                 });
-                            };
+                            });
 
                             tx.objectStore("draftPicks").index("tid").getAll(tid).onsuccess = function (event) {
                                 var j, picks;

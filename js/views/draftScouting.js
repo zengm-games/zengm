@@ -2,16 +2,20 @@
  * @name views.draftScouting
  * @namespace Scouting prospects in future drafts.
  */
-define(["globals", "ui", "core/draft", "core/finances", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, draft, finances, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, draft, finances, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
 
     function addSeason(seasons, season, tid, cb) {
-        g.dbl.transaction("players").objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-            var i, pa, p, players, playersAll;
+        dao.players.getAll({
+            index: "tid",
+            key: tid,
+            statSeasons: []
+        }, function (playersAll) {
+            var i, pa, p, players;
 
-            playersAll = player.filter(event.target.result, {
+            playersAll = player.filter(playersAll, {
                 attrs: ["pid", "name", "pos", "age", "watch"],
                 ratings: ["ovr", "pot", "skills", "fuzz"],
                 showNoStats: true,
@@ -51,7 +55,7 @@ define(["globals", "ui", "core/draft", "core/finances", "core/player", "lib/jque
             });
 
             cb();
-        };
+        });
     }
 
     mapping = {

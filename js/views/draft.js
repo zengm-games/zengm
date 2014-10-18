@@ -125,7 +125,7 @@ console.log("FIXING");
                 ot: tx,
                 index: "tid",
                 key: g.PLAYER.UNDRAFTED,
-                statSeasons: []
+                statSeasons: [g.season]
             }, function (undraftedAll) {
                 var undrafted;
 
@@ -137,15 +137,14 @@ console.log("FIXING");
                     season: g.season,
                     showNoStats: true,
                     showRookies: true,
-                    fuzz: true,
-                    oldStats: true
+                    fuzz: true
                 });
 
                 dao.players.getAll({
                     ot: tx,
                     index: "draft.year",
                     key: g.season,
-                    statSeasons: []
+                    statSeasons: [g.season]
                 }, function (players) {
                     var drafted, i, started;
 
@@ -155,8 +154,7 @@ console.log("FIXING");
                         stats: ["per", "ewa"],
                         season: g.season,
                         showRookies: true,
-                        fuzz: true,
-                        oldStats: true
+                        fuzz: true
                     });
 
                     drafted = [];

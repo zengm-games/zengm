@@ -1,52 +1,14 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Test</title>
-  <script src="js/lib/IndexedDB-getAll-shim.js"></script>
-  <script type="text/javascript">
-var db;
+  <title>Mocha Tests</title>
 
-request = indexedDB.open("test", 1);
-request.onerror = function (event) { console.log(event); };
+  <link rel="stylesheet" href="/css/mocha.css" />
 
-request.onupgradeneeded = function (event) {
-  var db = event.target.result;
-  db.onerror = function (event) { console.log(event); };
-
-  var store = db.createObjectStore("store", {keyPath: "id", autoIncrement: true});
-  store.createIndex("a, b", ["a", "b"], {unique: true});
-
-  store.add({a: 0, b: 0});
-  store.add({a: 0, b: 1});
-  store.add({a: 1, b: 0});
-  store.add({a: 1, b: 1});
-};
-
-request.onsuccess = function (event) {
-  db = request.result;
-  db.onerror = function (event) { console.log(event); };
-
-  console.log("Only [0, 0]");
-  db.transaction("store").objectStore("store").index("a, b").openCursor(IDBKeyRange.only([0, 0])).onsuccess = function (event) {
-    var cursor = event.target.result;
-    if (cursor) {
-      console.log(cursor.value);
-      cursor.continue();
-    } else {
-      console.log("Any [0, x]");
-      db.transaction("store").objectStore("store").index("a, b").openCursor(IDBKeyRange.only([0])).onsuccess = function (event) {
-        var cursor = event.target.result;
-        if (cursor) {
-          console.log(cursor.value);
-          cursor.continue();
-        }
-      };
-    }
-  };
-};
-  </script>
+  <script src="/js/lib/mocha.js"></script>
+  <script data-main="/js/test/app.js" src="/js/lib/require.js"></script>
 </head>
 <body>
-  <div id="log"></div>
+  <div id="mocha"></div>
 </body>
 </html>

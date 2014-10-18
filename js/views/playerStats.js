@@ -2,7 +2,7 @@
  * @name views.playerStats
  * @namespace Player stats table.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -45,13 +45,19 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
             deferred = $.Deferred();
 
-            g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED)).onsuccess = function (event) {
-                var gp, i, min, players, playersAll, tid;
+            dao.players.getAll({
+                index: "tid",
+                key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
+                statSeasons: [inputs.season],
+                statTid: null,
+                statPlayoffs: inputs.playoffs === "playoffs"
+            }, function (playersAll) {
+                var gp, i, min, players, tid;
 
                 tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
                 if (tid < 0) { tid = null; } // Show all teams
 
-                playersAll = player.filter(event.target.result, {
+                playersAll = player.filter(playersAll, {
                     attrs: ["pid", "name", "pos", "age", "injury", "tid", "hof", "watch"],
                     ratings: ["skills"],
                     stats: ["abbrev", "tid", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
@@ -106,7 +112,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
                     statType: inputs.statType,
                     playoffs: inputs.playoffs
                 });
-            };
+            });
             return deferred.promise();
         }
     }

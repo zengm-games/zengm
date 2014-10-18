@@ -2,7 +2,7 @@
  * @name views.player
  * @namespace View a single message.
  */
-define(["globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/viewHelpers"], function (g, ui, freeAgents, player, faces, $, ko, komapping, bbgmView, viewHelpers) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/viewHelpers"], function (dao, g, ui, freeAgents, player, faces, $, ko, komapping, bbgmView, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -37,10 +37,12 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jqu
         deferred = $.Deferred();
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
-            g.dbl.transaction("players").objectStore("players").get(inputs.pid).onsuccess = function (event) {
+            dao.players.getAll({
+                key: inputs.pid
+            }, function (players) {
                 var currentRatings, p;
 
-                p = player.filter(event.target.result, {
+                p = player.filter(players[0], {
                     attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch"],
                     ratings: ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],
                     stats: ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
@@ -67,7 +69,7 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jqu
                     injured: p.injury.type !== "Healthy",
                     godMode: g.godMode
                 });
-            };
+            });
 
             return deferred.promise();
         }

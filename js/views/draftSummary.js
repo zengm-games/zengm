@@ -2,7 +2,7 @@
  * @name views.draftSummary
  * @namespace Draft summary.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -44,10 +44,13 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
         deferred = $.Deferred();
         vars = {};
 
-        g.dbl.transaction("players").objectStore("players").index("draft.year").getAll(inputs.season).onsuccess = function (event) {
-            var currentPr, data, i, pa, p, players, playersAll;
+        dao.players.getAll({
+            index: "draft.year",
+            key: inputs.season
+        }, function (playersAll) {
+            var currentPr, i, pa, p, players;
 
-            playersAll = player.filter(event.target.result, {
+            playersAll = player.filter(playersAll, {
                 attrs: ["tid", "abbrev", "draft", "pid", "name", "pos", "age"],
                 ratings: ["ovr", "pot", "skills"],
                 stats: ["gp", "min", "pts", "trb", "ast", "per"],
@@ -89,7 +92,7 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
             };
 
             deferred.resolve(vars);
-        };
+        });
 
         return deferred.promise();
     }

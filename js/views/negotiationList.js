@@ -2,7 +2,7 @@
  * @name views.negotiationList
  * @namespace List of re-signing negotiations in progress.
  */
-define(["globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, freeAgents, player, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, freeAgents, player, $, ko, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -29,26 +29,24 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/kn
         deferred = $.Deferred();
 
         g.dbl.transaction("negotiations").objectStore("negotiations").getAll().onsuccess = function (event) {
-            var negotiations;
+            var negotiations, negotiationPids;
 
             negotiations = event.target.result;
+            negotiationPids = _.pluck(negotiations, "pid");
 
             // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
-            g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                var i, j, players, playersAll, playersSome;
-
-                playersAll = event.target.result;
-                playersSome = [];
-                for (i = 0; i < playersAll.length; i++) {
-                    for (j = 0; j < negotiations.length; j++) {
-                        if (playersAll[i].pid === negotiations[j].pid) {
-                            playersSome.push(playersAll[i]);
-                            break;
-                        }
-                    }
+            dao.players.getAll({
+                index: "tid",
+                key: g.PLAYER.FREE_AGENT,
+                statSeasons: [g.season],
+                statTid: g.userTid,
+                filter: function (p) {
+                    return negotiationPids.indexOf(p.pid) >= 0;
                 }
+            }, function (players) {
+                var i, j;
 
-                players = player.filter(playersSome, {
+                players = player.filter(players, {
                     attrs: ["pid", "name", "pos", "age", "freeAgentMood", "injury", "watch"],
                     ratings: ["ovr", "pot", "skills"],
                     stats: ["min", "pts", "trb", "ast", "per"],
@@ -74,7 +72,7 @@ define(["globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/kn
                 deferred.resolve({
                     players: players
                 });
-            };
+            });
         };
 
         return deferred.promise();

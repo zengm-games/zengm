@@ -2,7 +2,7 @@
  * @name core.debug
  * @namespace Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
  */
-define(["globals", "core/finances", "core/player", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (g, finances, player, injuries, names, faces, _, eventLog, helpers, random) {
+define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, g, finances, player, injuries, names, faces, _, eventLog, helpers, random) {
     "use strict";
 
     function regressRatingsPer() {
@@ -152,15 +152,15 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
             x_t = x.transpose();
 
             return x_t.mult(x).inverse().mult(x_t).mult(this);
-        }
+        };
 
-        g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
-            var c, i, j, k, p, pers, players, ratings, ratingLabels, x, y;
+        dao.players.getAll({}, function (players) {
+            var c, i, j, k, p, pers, ratings, ratingLabels, x, y;
 
             pers = [];
             ratings = [];
 
-            players = player.filter(event.target.result, {
+            players = player.filter(players, {
                 ratings: ["season", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
                 stats: ["season", "per", "min"],
                 totals: true
@@ -193,7 +193,7 @@ define(["globals", "core/finances", "core/player", "data/injuries", "data/names"
             for (i = 0; i < ratingLabels.length; i++) {
                 console.log(ratingLabels[i] + ": " + c.mtx[i][0] * 100);
             }
-        };
+        });
     }
 
     // Returns the average contract for the active players in the league

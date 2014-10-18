@@ -4,7 +4,10 @@ DB CHANGES SINCE 3.3.0
 PERFORMANCE CRAP
 ----------------
 
-build db abstraction function (maybe dao.player.findAll) that is flexible enough to handle all the cases described below and replace the IDB calls before every player.filter (and other player stats uses)
+build db abstraction function (maybe dao.player.getAll) that is flexible enough to handle all the cases described below and replace the IDB calls before every player.filter (and other player stats uses)
+  add options.statsEnoughForValue which supercetes other options.stats*
+  replace all IDB calls to players object store prior to player.filter (see player.filter.txt)
+  replace all IDB calls to players object store ANYWHERE
 
 rewrite player.filter to query db directly
   keep tests in mind

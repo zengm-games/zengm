@@ -2,7 +2,7 @@
  * @name views.roster
  * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
  */
-define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, finances, player, team, ko, $, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, db, g, ui, finances, player, team, ko, $, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -239,10 +239,16 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                             }
                         }
 
-                        tx.objectStore("players").index("tid").getAll(inputs.tid).onsuccess = function (event) {
-                            var i, players;
+                        // Needs all seasons because of YWT!
+                        dao.players.getAll({
+                            ot: tx,
+                            index: "tid",
+                            key: inputs.tid,
+                            statTid: inputs.tid
+                        }, function (players) {
+                            var i;
 
-                            players = player.filter(event.target.result, {
+                            players = player.filter(players, {
                                 attrs: attrs,
                                 ratings: ratings,
                                 stats: stats,
@@ -271,14 +277,20 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
 
                                 deferred.resolve(vars);
                             });
-                        };
+                        });
                     };
                 } else {
                     // Show all players with stats for the given team and year
-                    tx.objectStore("players").index("statsTids").getAll(inputs.tid).onsuccess = function (event) {
-                        var i, players;
+                    // Needs all seasons because of YWT!
+                    dao.players.getAll({
+                        ot: tx,
+                        index: "statsTids",
+                        key: inputs.tid,
+                        statTid: inputs.tid
+                    }, function (players) {
+                        var i;
 
-                        players = player.filter(event.target.result, {
+                        players = player.filter(players, {
                             attrs: attrs,
                             ratings: ratings,
                             stats: stats,
@@ -297,7 +309,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                         vars.payroll = null;
 
                         deferred.resolve(vars);
-                    };
+                    });
                 }
             });
             return deferred.promise();

@@ -199,15 +199,14 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
     // Returns the average contract for the active players in the league
     // Useful to run this while playing with the contract formula in core.player.genContract
     function leagueAverageContract() {
-        var total;
-
-        total = 0;
-
         // All non-retired players
-        g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
-            var contract, i, p, players;
+        dao.players.getAll({
+            index: "tid",
+            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
+        }, function (players) {
+            var contract, i, p, total;
 
-            players = event.target.result;
+            total = 0;
 
             for (i = 0; i < players.length; i++) {
                 p = players[i];
@@ -216,15 +215,16 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
             }
 
             console.log(total / players.length);
-        };
+        });
     }
 
     function exportPlayerInfo() {
         // All non-retired players
-        g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
-            var contract, i, output, p, players;
-
-            players = event.target.result;
+        dao.players.getAll({
+            index: "tid",
+            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
+        }, function (players) {
+            var contract, i, output, p;
 
             output = "<pre>value,contract.amount\n";
 
@@ -236,7 +236,7 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
             output += "</pre>";
 
             document.getElementById("league_content").innerHTML = output;
-        };
+        });
     }
 
     function averageCareerArc(baseOvr, basePot, ratingToSave) {

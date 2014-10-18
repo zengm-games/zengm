@@ -2,7 +2,7 @@
  * @name views.playerStatDists
  * @namespace Player stat distributions.
  */
-define(["globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, player, boxPlot, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, player, boxPlot, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var nbaQuartiles;
@@ -46,10 +46,14 @@ define(["globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib/knocko
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
             deferred = $.Deferred();
 
-            g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
-                var nbaQuartiles, players, statsAll;
+            dao.players.getAll({
+                index: "tid",
+                key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
+                statSeasons: [inputs.season]
+            }, function (players) {
+                var statsAll;
 
-                players = player.filter(event.target.result, {
+                players = player.filter(players, {
                     attrs: ["pid", "name", "pos", "age", "injury"],
                     ratings: ["skills"],
                     stats: ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"],
@@ -74,7 +78,7 @@ define(["globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib/knocko
                     season: inputs.season,
                     statsAll: statsAll
                 });
-            };
+            });
             return deferred.promise();
         }
     }

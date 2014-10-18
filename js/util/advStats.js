@@ -2,7 +2,7 @@
  * @name util.advStats
  * @namespace Advanced stats (PER, WS, etc) that require some nontrivial calculations and thus are calculated and cached once each day.
  */
-define(["globals", "core/player", "core/team", "lib/underscore"], function (g, player, team, _) {
+define(["dao", "globals", "core/player", "core/team", "lib/underscore"], function (dao, g, player, team, _) {
     "use strict";
 
     /**
@@ -53,10 +53,15 @@ define(["globals", "core/player", "core/team", "lib/underscore"], function (g, p
 
             // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
             // Active players have tid >= 0
-            g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                var aPER, drbp, EWA, factor, i, mins, PER, players, tid, uPER, vop, tx;
+            dao.players.getAll({
+                index: "tid",
+                key: IDBKeyRange.lowerBound(0),
+                statSeasons: [g.season],
+                statPlayoffs: g.PHASE.PLAYOFFS === g.phase
+            }, function (players) {
+                var aPER, drbp, EWA, factor, i, mins, PER, tid, uPER, vop, tx;
 
-                players = player.filter(event.target.result, {
+                players = player.filter(players, {
                     attrs: ["pid", "tid", "pos"],
                     stats: ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"],
                     season: g.season,
@@ -171,7 +176,7 @@ define(["globals", "core/player", "core/team", "lib/underscore"], function (g, p
                         cb();
                     }
                 };
-            };
+            });
         });
     }
 

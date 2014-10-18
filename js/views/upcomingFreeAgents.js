@@ -2,7 +2,7 @@
  * @name views.upcomingFreeAgents
  * @namespace List of upcoming free agents.
  */
-define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "views/components"], function (g, ui, player, $, ko, _, bbgmView, helpers, components) {
+define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "views/components"], function (dao, g, ui, player, $, ko, _, bbgmView, helpers, components) {
     "use strict";
 
     var mapping;
@@ -36,47 +36,42 @@ define(["globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/under
     };
 
     function updateUpcomingFreeAgents(inputs) {
-        var deferred, players, playersAll;
+        var deferred;
 
         deferred = $.Deferred();
 
-        playersAll = [];
-
-        g.dbl.transaction("players").objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-            var cursor, i, p;
-
-            cursor = event.target.result;
-            if (cursor) {
-                p = cursor.value;
-                if (p.contract.exp === inputs.season) {
-                    playersAll.push(p);
-                }
-                cursor.continue();
-            } else {
-                // Done before filter so full player object can be passed to player.genContract.
-                for (i = 0; i < playersAll.length; i++) {
-                    playersAll[i].contractDesired = player.genContract(playersAll[i], false, false); // No randomization
-                    playersAll[i].contractDesired.amount /= 1000;
-                    playersAll[i].contractDesired.exp += inputs.season - g.season;
-                }
-
-                players = player.filter(playersAll, {
-                    attrs: ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury", "watch", "contractDesired"],
-                    ratings: ["ovr", "pot", "skills"],
-                    stats: ["min", "pts", "trb", "ast", "per"],
-                    season: g.season,
-                    showNoStats: true,
-                    showRookies: true,
-                    fuzz: true,
-                    oldStats: true
-                });
-
-                deferred.resolve({
-                    players: players,
-                    season: inputs.season
-                });
+        dao.players.getAll({
+            index: "tid",
+            key: IDBKeyRange.lowerBound(0),
+            statSeasons: [g.season],
+            filter: function (p) {
+                return p.contract.exp === inputs.season;
             }
-        };
+        }, function (players) {
+            var i;
+
+            // Done before filter so full player object can be passed to player.genContract.
+            for (i = 0; i < players.length; i++) {
+                players[i].contractDesired = player.genContract(players[i], false, false); // No randomization
+                players[i].contractDesired.amount /= 1000;
+                players[i].contractDesired.exp += inputs.season - g.season;
+            }
+
+            players = player.filter(players, {
+                attrs: ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury", "watch", "contractDesired"],
+                ratings: ["ovr", "pot", "skills"],
+                stats: ["min", "pts", "trb", "ast", "per"],
+                season: g.season,
+                showNoStats: true,
+                showRookies: true,
+                fuzz: true
+            });
+
+            deferred.resolve({
+                players: players,
+                season: inputs.season
+            });
+        });
 
         return deferred.promise();
     }

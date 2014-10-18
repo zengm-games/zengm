@@ -8,6 +8,7 @@ build db abstraction function (maybe dao.player.getAll) that is flexible enough 
   add options.statsEnoughForValue which supercetes other options.stats*
   replace all IDB calls to players object store prior to player.filter (see player.filter.txt)
     statSeasons: [g.season, g.season - 1], // For oldStats
+    but oldStats can probably be disabled some places, it only helps for free agents, not with preseason
   replace all IDB calls to players object store ANYWHERE
 
 rewrite player.filter to query db directly

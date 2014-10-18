@@ -24,7 +24,23 @@ define(["db", "globals"], function (db, g) {
         options.statSeasons = options.statSeasons !== undefined ? options.statSeasons : null;
         options.statPlayoffs = options.statPlayoffs !== undefined ? options.statPlayoffs : false;
         options.statTid = options.statTid !== undefined ? options.statTid : null;
+        options.statEnoughForValue = options.statEnoughForValue !== undefined ? options.statEnoughForValue : false;
         options.filter = options.filter !== undefined ? options.filter : null;
+
+        // Overwrite options.stat* settings so that we have enough to call player.value correctly
+        if (options.statEnoughForValue) {
+            // Need last two seasons, at least
+            if (options.statSeasons === null) {
+                options.statSeasons = [];
+            }
+            options.statSeasons.push(g.season);
+            options.statSeasons.push(g.season - 1);
+
+            // Need stats from any team
+            if (options.statTid !== null) {
+                throw new Error("Can't define both statTid and statEnoughForValue");
+            }
+        }
 
         playerStore = db.getObjectStore(options.ot, "players", "players");
 

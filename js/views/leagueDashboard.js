@@ -2,7 +2,7 @@
  * @name views.leagueDashboard
  * @namespace League dashboard, displaying several bits of information about the league/team.
  */
-define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, player, season, team, $, ko, mapping, _, bbgmView, helpers, viewHelpers) {
+define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, db, g, ui, player, season, team, $, ko, mapping, _, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     function InitViewModel() {
@@ -246,10 +246,14 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
             deferred = $.Deferred();
             vars = {};
 
-            g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED)).onsuccess = function (event) {
-                var i, players, stats, userPlayers;
+            // Needs all seasons because of YWT!
+            dao.players.getAll({
+                index: "tid",
+                key: IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED)
+            }, function (players) {
+                var i, stats, userPlayers;
 
-                players = player.filter(event.target.result, {
+                players = player.filter(players, {
                     attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch", "pos", "yearsWithTeam"],
                     ratings: ["ovr", "pot", "dovr", "dpot", "skills"],
                     stats: ["gp", "min", "pts", "trb", "ast", "per"],
@@ -297,7 +301,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
                 vars.starters = userPlayers.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; }).slice(0, 5);
 
                 deferred.resolve(vars);
-            };
+            });
             return deferred.promise();
         }
     }

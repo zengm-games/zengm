@@ -247,7 +247,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
             ot: tx,
             index: "tid",
             key: tid,
-            statSeasons: []
+            statEnoughForValue: true
         }, function (players) {
             var i;
 
@@ -1167,8 +1167,7 @@ console.log(dv);*/
                     ot: tx,
                     index: "tid",
                     key: t.tid,
-                    statSeasons: [g.season],
-                    statTid: t.tid
+                    statEnoughForValue: true
                 }, function (players) {
                     var age, denominator, i, numerator, score, updated, youngStar;
 

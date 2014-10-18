@@ -6,12 +6,14 @@ PERFORMANCE CRAP
 
 build db abstraction function (maybe dao.player.getAll) that is flexible enough to handle all the cases described below and replace the IDB calls before every player.filter (and other player stats uses)
   add options.statsEnoughForValue which supercetes other options.stats*
+    go back and check core/team, core/trade, and core/season
   replace all IDB calls to players object store prior to player.filter (see player.filter.txt)
     statSeasons: [g.season, g.season - 1], // For oldStats
     but oldStats can probably be disabled some places, it only helps for free agents, not with preseason
     double check careerStats handling everywhere - done correctly in playerStats
   replace all IDB calls to players object store ANYWHERE
     objectStore("players")
+    player.value
 
 rewrite player.filter to query db directly
   keep tests in mind
@@ -48,8 +50,9 @@ rewrite player.filter to query db directly
       handle these by allowing a js filter function to be passed and applied before hitting playerStats?
   1. define options.playersQuery to take an IndexedDB query to return the players of interest, OR have an option to select based on above list
   2. can i auto-derive what stats rows to fetch based on (season, playoffs, tid, stats, oldStats) options?
-  benchmark!
     or should i get rid of oldStats?
+  benchmark!
+    leagueDashboard could select only current seasno
 
 normalize player ratings/stats so only latest year is in main player object store and the rest go in an archived place
   catalog all commonly used info, use to make schema for fast db

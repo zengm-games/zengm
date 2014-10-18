@@ -246,7 +246,7 @@ define(["db", "globals", "ui", "core/player", "core/season", "core/team", "lib/j
             deferred = $.Deferred();
             vars = {};
 
-            g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED, true)).onsuccess = function (event) {
+            g.dbl.transaction("players").objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED)).onsuccess = function (event) {
                 var i, players, stats, userPlayers;
 
                 players = player.filter(event.target.result, {

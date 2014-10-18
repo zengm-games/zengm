@@ -56,8 +56,7 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
 
                     retiredPlayers = player.filter(event.target.result, {
                         attrs: ["pid", "name", "age", "hof"],
-                        season: inputs.season,
-                        fuzz: true
+                        season: inputs.season
                     });
                     for (i = 0; i < retiredPlayers.length; i++) {
                         // Show age at retirement, not current age

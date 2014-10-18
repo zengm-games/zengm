@@ -10,6 +10,37 @@ rewrite player.filter to query db directly
     rename current player.filter to player.filterObject, don't call it from anywhere UNLESS stats are not needed
     make a new player.filter that somehow goes to the DB and constructs player objects as necessary
       what about cases where an array of players is passed to player.filter? need some way to define how the IDB query is generated to retrieve them all
+  things it needs to be able to handle...
+    all players, all stats
+    all players, individual season stats
+    all players, no stats
+    all players with tid >= FREE_AGENT, current season stats
+    all players with tid >= UNDRAFTED, current season stats
+    all players with tid >= RETIRED, all stats
+    all players with tid >= RETIRED, individual season stats
+    all players on any team, current season stats
+    players from one team, no stats
+    players from one team, individual season stats
+    players from one team, current season stats
+    players from one team, enough stats to calculate player.value
+    players with one draft.year, all stats
+    players with one draft.year, current season stats
+    players with team in statTids, all stats
+    players with team in statTids, individual season stats
+    players with retiredYear, no stats
+    individual player, all stats
+    individual player, no stats
+    special
+      watchList: watched players, current season stats
+      tradingBlock: players in current offer
+      hallOfFame: players in hof
+      upcomingFreeAgents: players on a team with contract expiring in certain year
+      negotiationList: players with pid in a list
+      handle these by allowing a js filter function to be passed and applied before hitting playerStats?
+  1. define options.playersQuery to take an IndexedDB query to return the players of interest, OR have an option to select based on above list
+  2. can i auto-derive what stats rows to fetch based on (season, playoffs, tid, stats, oldStats) options?
+  benchmark!
+    or should i get rid of oldStats?
 
 normalize player ratings/stats so only latest year is in main player object store and the rest go in an archived place
   catalog all commonly used info, use to make schema for fast db

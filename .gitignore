@@ -4,3 +4,4 @@
 *.sublime-workspace
 test_case.html
 data/nba*
+player.filter.txt

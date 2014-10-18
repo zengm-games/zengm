@@ -2,7 +2,7 @@
  * @name core.team
  * @namespace Functions operating on team objects, parts of team objects, or arrays of team objects.
  */
-define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/random"], function (db, g, player, _, helpers, random) {
+define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers", "util/random"], function (dao, db, g, player, _, helpers, random) {
     "use strict";
 
     /**
@@ -236,16 +236,22 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
      * @param {function()=} cb Optional callback.
      */
     function rosterAutoSort(ot, tid, cb) {
-        var players, playerStore, tx;
+        var playerStore, tx;
 
         tx = db.getObjectStore(ot, "players", null, true);
         playerStore = tx.objectStore("players");
 
         // Get roster and sort by value (no potential included)
-        playerStore.index("tid").getAll(tid).onsuccess = function (event) {
+//        playerStore.index("tid").getAll(tid).onsuccess = function (event) {
+        dao.players.getAll({
+            ot: tx,
+            index: "tid",
+            key: tid,
+            statSeasons: []
+        }, function (players) {
             var i;
 
-            players = player.filter(event.target.result, {
+            players = player.filter(players, {
                 attrs: ["pid", "valueNoPot"],
                 showNoStats: true,
                 showRookies: true,
@@ -281,7 +287,7 @@ define(["db", "globals", "core/player", "lib/underscore", "util/helpers", "util/
                     cb();
                 }
             }
-        };
+        });
 
         if (ot === null) {
             // This function has its own transaction, so wait until it finishes before calling the callback.
@@ -1156,10 +1162,17 @@ console.log(dv);*/
                     dWon = 0;
                 }
 
-                tx.objectStore("players").index("tid").getAll(t.tid).onsuccess = function (event) {
-                    var age, denominator, i, numerator, players, score, updated, youngStar;
+//                tx.objectStore("players").index("tid").getAll(t.tid).onsuccess = function (event) {
+                dao.players.getAll({
+                    ot: tx,
+                    index: "tid",
+                    key: t.tid,
+                    statSeasons: [g.season],
+                    statTid: t.tid
+                }, function (players) {
+                    var age, denominator, i, numerator, score, updated, youngStar;
 
-                    players = player.filter(event.target.result, {
+                    players = player.filter(players, {
                         season: g.season,
                         tid: t.tid,
                         attrs: ["age", "value", "contract"],
@@ -1202,7 +1215,7 @@ console.log(dv);*/
                     }
 
                     cursor.continue();
-                };
+                });
             }
         };
 

@@ -11,9 +11,9 @@ define(["db", "globals"], function (db, g) {
 
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
     // filter: Arbitrary JS function to run on output with array.filter
-    // statSeasons: if null, return all. otherwise, it's an array of seasons to return
-    // statPlayoffs: if null, return any. otherwise, filter
-    // statTid: if null, return any. otherwise, filter
+    // statSeasons: if undefined, return all. otherwise, it's an array of seasons to return
+    // statPlayoffs: if undefined, default is false. if true, include both. This is because player.filter doesn't like being given only playoff stats, for some reason.
+    // statTid: if undefined, return any. otherwise, filter
     players.getAll = function (options, cb) {
         var playerStore;
 
@@ -23,7 +23,7 @@ define(["db", "globals"], function (db, g) {
         options.key = options.key !== undefined ? options.key : null;
         options.filter = options.filter !== undefined ? options.filter : null;
         options.statSeasons = options.statSeasons !== undefined ? options.statSeasons : null;
-        options.statPlayoffs = options.statPlayoffs !== undefined ? options.statPlayoffs : null;
+        options.statPlayoffs = options.statPlayoffs !== undefined ? options.statPlayoffs : false;
         options.statTid = options.statTid !== undefined ? options.statTid : null;
 
         playerStore = db.getObjectStore(options.ot, "players", "players");
@@ -48,11 +48,12 @@ define(["db", "globals"], function (db, g) {
                         return false;
                     }
 
-                    if (options.statPlayoffs !== null && options.statPlayoffs !== ps.playoffs) {
+                    // If options.statPlayoffs is false, don't include playoffs. Otherwise, include both
+                    if (!options.statPlayoffs && options.statPlayoffs !== ps.playoffs) {
                         return false;
                     }
 
-                    if (options.statTid !== null && options.statTid !== ps.playoffs) {
+                    if (options.statTid !== null && options.statTid !== ps.tid) {
                         return false;
                     }
 

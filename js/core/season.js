@@ -2,7 +2,7 @@
  * @name core.season
  * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
  */
-define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/jquery", "lib/underscore", "util/account", "util/ads", "util/eventLog", "util/helpers", "util/message", "util/random"], function (db, g, ui, contractNegotiation, draft, finances, freeAgents, player, team, $, _, account, ads, eventLog, helpers, message, random) {
+define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/jquery", "lib/underscore", "util/account", "util/ads", "util/eventLog", "util/helpers", "util/message", "util/random"], function (dao, db, g, ui, contractNegotiation, draft, finances, freeAgents, player, team, $, _, account, ads, eventLog, helpers, message, random) {
     "use strict";
 
     var phaseText;
@@ -134,10 +134,16 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
             teams.sort(function (a, b) { return a.tid - b.tid; });
 
             // Any non-retired player can win an award
-            tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
-                var champTid, i, p, players, text, type;
+//            tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
+            dao.players.getAll({
+                ot: tx,
+                index: "tid",
+                key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                statSeasons: [g.season]
+            }, function (players) {
+                var champTid, i, p, text, type;
 
-                players = player.filter(event.target.result, {
+                players = player.filter(players, {
                     attrs: ["pid", "name", "tid", "abbrev", "draft"],
                     stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
                     season: g.season
@@ -237,8 +243,16 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                     }
                 }
                 // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
-                tx.objectStore("players").index("tid").getAll(champTid).onsuccess = function (event) {
-                    players = player.filter(event.target.result, { // Only the champions, only playoff stats
+//                tx.objectStore("players").index("tid").getAll(champTid).onsuccess = function (event) {
+                dao.players.getAll({
+                    ot: tx,
+                    index: "tid",
+                    key: champTid,
+                    statSeasons: [g.season],
+                    statTid: champTid,
+                    statPlayoffs: true
+                }, function (players) {
+                    players = player.filter(players, { // Only the champions, only playoff stats
                         attrs: ["pid", "name", "tid", "abbrev"],
                         stats: ["pts", "trb", "ast", "ewa"],
                         season: g.season,
@@ -276,12 +290,12 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                             // Achievements after awards
                             account.checkAchievement.hardware_store();
                             account.checkAchievement.sleeper_pick();
-                        }
+                        };
 
                         cbAwardsByPlayer(awardsByPlayer, cb);
                     };
-                };
-            };
+                });
+            });
         });
     }
 
@@ -1295,7 +1309,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         t = cursor.value;
                         teamSeason = _.last(t.seasons);
                         if (series[rnd][0].home.won === 4) {
-                            teamSeason.playoffRoundsWon += 1;
+                            teamSeason.playoffRoundsWon = 4;
                             teamSeason.hype += 0.05;
                             if (teamSeason.hype > 1) {
                                 teamSeason.hype = 1;
@@ -1310,7 +1324,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                         t = cursor.value;
                         teamSeason = _.last(t.seasons);
                         if (series[rnd][0].away.won === 4) {
-                            teamSeason.playoffRoundsWon += 1;
+                            teamSeason.playoffRoundsWon = 4;
                             teamSeason.hype += 0.1;
                             if (teamSeason.hype > 1) {
                                 teamSeason.hype = 1;
@@ -1364,6 +1378,7 @@ define(["db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/f
                             t = cursor.value;
                             teamSeason = _.last(t.seasons);
                             teamSeason.playoffRoundsWon += 1;
+console.log([playoffSeries.currentRound, teamSeason.playoffRoundsWon])
                             teamSeason.hype += 0.05;
                             if (teamSeason.hype > 1) {
                                 teamSeason.hype = 1;

@@ -73,7 +73,10 @@ separate stores of playerStats, index by pid and season
   player.value might need past two seasons - should be a function to call to get summed stats object from multiple seasons
     needs to handle case where player plays for multiple teams in one season - get all for (pid, season, !playoffs) but could probably get away with (pid, season) index and then manually check for playoffs
   same thing for all the annual vectors (team stats, player ratings, etc)?
-  addStatsRow needs to be changed
+  addStatsRow
+  deleteOldData
+  import/export
+    old league files?
 
 separate active and retired players into separate object stores?
 

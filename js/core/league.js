@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "core/season", "core/team", "lib/underscore", "util/helpers", "util/random"], function (db, g, ui, draft, finances, player, season, team, _, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/player", "core/season", "core/team", "lib/underscore", "util/helpers", "util/random"], function (dao, db, g, ui, draft, finances, player, season, team, _, helpers, random) {
     "use strict";
 
     // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
@@ -285,7 +285,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
 
                                 p = player.augmentPartialPlayer(p, scoutingRank);
 
-                                playerStore.put(p);
+                                dao.players.put({ot: playerStore, p: p});
                                 cbAfterEachPlayer();
                             }
                         } else {
@@ -325,7 +325,7 @@ define(["db", "globals", "ui", "core/draft", "core/finances", "core/player", "co
                                     if (t2 === g.PLAYER.FREE_AGENT) {
                                         player.addToFreeAgents(playerStore, p, null, baseMoods, cbAfterEachPlayer);
                                     } else {
-                                        playerStore.put(p);
+                                        dao.players.put({ot: playerStore, p: p});
                                         cbAfterEachPlayer();
                                     }
                                 }

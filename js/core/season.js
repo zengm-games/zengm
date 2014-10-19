@@ -134,7 +134,6 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             teams.sort(function (a, b) { return a.tid - b.tid; });
 
             // Any non-retired player can win an award
-//            tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
             dao.players.getAll({
                 ot: tx,
                 index: "tid",
@@ -243,7 +242,6 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     }
                 }
                 // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
-//                tx.objectStore("players").index("tid").getAll(champTid).onsuccess = function (event) {
                 dao.players.getAll({
                     ot: tx,
                     index: "tid",
@@ -1036,7 +1034,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
             // Re-sign players on user's team, and some AI players
             playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                var contract, cursor, factor, p;
+                var cursor, p;
 
                 cursor = event.target.result;
                 if (cursor) {

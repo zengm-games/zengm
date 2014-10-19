@@ -2,7 +2,7 @@
  * @name views.powerRankings
  * @namespace Power Rankings based on player ratings, stats, team performance
  */
-define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/underscore", "lib/knockout", "lib/knockout.mapping", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, team, player, $, _, ko, komapping, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/team", "core/player", "lib/jquery", "lib/underscore", "lib/knockout", "lib/knockout.mapping", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, team, player, $, _, ko, komapping, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -30,11 +30,13 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
                 season: g.season,
                 ot: tx
             }, function (teams) {
-
-                tx.objectStore("players").index("tid").getAll(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                    var i, j, overallRankMetric, players, playerValuesByTid, weights;
-
-                    players = event.target.result;
+                dao.players.getAll({
+                    ot: tx,
+                    index: "tid",
+                    key: IDBKeyRange.lowerBound(0),
+                    statSeasons: []
+                }, function (players) {
+                    var i, j, overallRankMetric, playerValuesByTid, weights;
 
                     // Array of arrays, containing the values for each player on each team
                     playerValuesByTid = [];
@@ -97,7 +99,7 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
                     deferred.resolve({
                         teams: teams
                     });
-                };
+                });
             });
 
             return deferred.promise();

@@ -2,7 +2,7 @@
  * @name core.freeAgents
  * @namespace Functions related to free agents that didn't make sense to put anywhere else.
  */
-define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "util/helpers", "util/lock", "util/random"], function (db, g, ui, player, team, _, helpers, lock, random) {
+define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/underscore", "util/helpers", "util/lock", "util/random"], function (dao, db, g, ui, player, team, _, helpers, lock, random) {
     "use strict";
 
     /**
@@ -96,7 +96,7 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
                                         }
                                         p = player.setContract(p, p.contract, true);
                                         p.gamesUntilTradable = 15;
-                                        transaction.objectStore("players").put(p);
+                                        dao.players.put({ot: transaction, p: p});
                                         team.rosterAutoSort(transaction, tid, function () {
                                             if (ti <= tids.length) {
                                                 signTeam(ti + 1);

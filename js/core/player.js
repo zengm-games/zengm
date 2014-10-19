@@ -2,7 +2,7 @@
  * @name core.player
  * @namespace Functions operating on player objects, parts of player objects, or arrays of player objects.
  */
-define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (g, finances, injuries, names, faces, _, eventLog, helpers, random) {
+define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, g, finances, injuries, names, faces, _, eventLog, helpers, random) {
     "use strict";
 
     /**
@@ -529,7 +529,7 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         p.ptModifier = 1; // Reset
 
         // The put doesn't always work in Chrome. No idea why.
-        require("db").getObjectStore(ot, "players", "players", true).put(p);
+        dao.players.put({ot: ot, p: p});
 
         if (cb !== undefined) {
             cb();

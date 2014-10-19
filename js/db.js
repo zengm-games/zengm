@@ -2,7 +2,7 @@
  * @name db
  * @namespace Creating, migrating, and connecting to databases; working with transactions.
  */
-define(["globals", "core/player", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (g, player, Davis, $, _, helpers) {
+define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (g, Davis, $, _, helpers) {
     "use strict";
 
     /**
@@ -488,7 +488,7 @@ console.log(event);
                     cursor = event.target.result;
                     if (cursor) {
                         p = cursor.value;
-                        if (p.tid === g.PLAYER.RETIRED && player.madeHof(p)) {
+                        if (p.tid === g.PLAYER.RETIRED && require("core/player").madeHof(p)) {
                             p.hof = true;
                             p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
                         } else {

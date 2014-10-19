@@ -850,9 +850,6 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         p.college = "";
         p.imgURL = ""; // Custom rosters can define player image URLs to be used rather than vector faces
 
-        p.salaries = [];
-        p = setContract(p, genContract(p), false);
-
         p.awards = [];
 
         p.freeAgentMood = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -881,12 +878,12 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         p.watch = false;
         p.gamesUntilTradable = 0;
 
-        // These should be set manually by player.updateValues after player is completely done (automatic in player.develop)
-        p.value = 0;
-        p.valueNoPot = 0;
-        p.valueFuzz = 0;
-        p.valueNoPotFuzz = 0;
-        p.valueWithContract = 0;
+        // These should be set again by player.updateValues after player is completely done (automatic in player.develop)
+        p = updateValues(p);
+
+        // Must be after value*s are set, because genContract depends on them
+        p.salaries = [];
+        p = setContract(p, genContract(p), false);
 
         return p;
     }

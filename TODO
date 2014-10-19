@@ -11,18 +11,9 @@ build db abstraction function (maybe dao.player.getAll) that is flexible enough 
   statSeasons default should be to return no stats. "all" should be a special option to return all
   replace all IDB calls to players object store ANYWHERE
     search for
-      player.value
-        indirectly called by
-          player.addToFreeAgents
-            deepcopy p, then call augmentWithStats within here if necessary? Maybe every time?
-            OR just make sure to get augmented player objects before input, like others
-          player.release
       objectStore("players")
-    PROBLEMS
-      needs statEnoughForValue
-        player.genContract is used in a readwrite cursor in core.season. need some way to do this - abstract cursor read/write to dao or have function to augment player object with stats?
-        player.bonus is used in core.league right after players are generated. need to make sure the input has 
-    double check careerStats handling everywhere - done correctly in playerStats
+        write wrapper for put/add so stats can be deleted if necessary
+    double check careerStats handling everywhere - done correctly in playerStats.js
     rename options.stat* to stats*
     options.statsEnoughForValue
     in player.value, throw error if statTids but no stats

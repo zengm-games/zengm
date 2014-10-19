@@ -11,8 +11,8 @@ build db abstraction function (maybe dao.player.getAll) that is flexible enough 
   statSeasons default should be to return no stats. "all" should be a special option to return all
   replace IDB calls to players object store if it reads from DB and uses stats. if it doesn't use stats, it's okay if left there. if it writes to db and uses stats, make a note of it.
     search for
-      objectStore("players")
-        write wrapper for put/add so stats can be deleted if necessary
+      .put
+      .add
       getObjectStore.*"players"
     double check careerStats handling everywhere - done correctly in playerStats.js
     rename options.stat* to stats*
@@ -73,10 +73,15 @@ separate stores of playerStats, index by pid and season
   player.value might need past two seasons - should be a function to call to get summed stats object from multiple seasons
     needs to handle case where player plays for multiple teams in one season - get all for (pid, season, !playoffs) but could probably get away with (pid, season) index and then manually check for playoffs
   same thing for all the annual vectors (team stats, player ratings, etc)?
-  addStatsRow
-  deleteOldData
-  import/export
-    old league files?
+  places stats are written
+    league creation
+    addStatsRow
+    deleteOldData
+    import/export
+    util.advStats
+    Game.prototype.writePlayerStats
+
+import/export of old league files?
 
 separate active and retired players into separate object stores?
 

@@ -599,12 +599,16 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
                 fudgeFactor = 1;
             }
 
-            tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
-                var cursor, p;
+            dao.players.getAll({
+                ot: tx,
+                index: "tid",
+                key: tid,
+                statEnoughForValue: true
+            }, function (players) {
+                var i, p;
 
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
+                for (i = 0; i < players.length; i++) {
+                    p = players[i];
 
                     if (pidsRemove.indexOf(p.pid) < 0) {
                         roster.push({
@@ -625,10 +629,8 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
                             age: g.season - p.born.year
                         });
                     }
-
-                    cursor.continue();
                 }
-            };
+            });
 
             for (i = 0; i < pidsAdd.length; i++) {
                 tx.objectStore("players").get(pidsAdd[i]).onsuccess = function (event) {

@@ -10,6 +10,7 @@ build db abstraction function (maybe dao.player.getAll) that is flexible enough 
       player.value
         indirectly called by
           player.genContract
+            what about usage in core.season, where player.value is calculated within a readwrite cursor??
           player.bonus
           player.addToFreeAgents
           player.release

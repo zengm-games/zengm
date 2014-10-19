@@ -12,45 +12,6 @@ build db abstraction function (maybe dao.player.getAll) that is flexible enough 
   replace IDB calls to players object store if it reads from DB and uses stats. if it doesn't use stats, it's okay if left there. if it writes to db and uses stats, make a note of it.
     rename options.stat* to stats*
 
-rewrite player.filter to query db directly
-  keep tests in mind
-  PLAN
-    rename current player.filter to player.filterObject, don't call it from anywhere UNLESS stats are not needed
-    make a new player.filter that somehow goes to the DB and constructs player objects as necessary
-      what about cases where an array of players is passed to player.filter? need some way to define how the IDB query is generated to retrieve them all
-  things it needs to be able to handle...
-    all players, all stats
-    all players, individual season stats
-    all players, no stats
-    all players with tid >= FREE_AGENT, current season stats
-    all players with tid >= UNDRAFTED, current season stats
-    all players with tid >= RETIRED, all stats
-    all players with tid >= RETIRED, individual season stats
-    all players on any team, current season stats
-    players from one team, no stats
-    players from one team, individual season stats
-    players from one team, current season stats
-    players from one team, enough stats to calculate player.value
-    players with one draft.year, all stats
-    players with one draft.year, current season stats
-    players with team in statTids, all stats
-    players with team in statTids, individual season stats
-    players with retiredYear, no stats
-    individual player, all stats
-    individual player, no stats
-    special
-      watchList: watched players, current season stats
-      tradingBlock: players in current offer
-      hallOfFame: players in hof
-      upcomingFreeAgents: players on a team with contract expiring in certain year
-      negotiationList: players with pid in a list
-      handle these by allowing a js filter function to be passed and applied before hitting playerStats?
-  1. define options.playersQuery to take an IndexedDB query to return the players of interest, OR have an option to select based on above list
-  2. can i auto-derive what stats rows to fetch based on (season, playoffs, tid, stats, oldStats) options?
-    or should i get rid of oldStats?
-  benchmark!
-    leagueDashboard could select only current seasno
-
 separate stores of playerStats, index by pid and season
   big question: is this going to make read performance too slow when reading stats for all players and merging with main player object?
     maybe cache player.value so stats are needed for less things? but that still has the same original problem of writing player.value somewhere...
@@ -73,6 +34,9 @@ separate stores of playerStats, index by pid and season
     import/export
     util.advStats
     Game.prototype.writePlayerStats
+
+benchmark!
+  leagueDashboard could select only current season stats if I got rid of YWT. does that make a difference?
 
 import/export of old league files?
 

@@ -185,7 +185,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
                 ot: tx,
                 index: "tid",
                 key: g.userTid,
-                statSeasons: [g.season]
+                statsSeasons: [g.season]
             }, function (userRoster) {
                 var attrs, i, ratings, stats;
 
@@ -217,7 +217,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
                     ot: tx,
                     index: "tid",
                     key: teams[1].tid,
-                    statSeasons: [g.season]
+                    statsSeasons: [g.season]
                 }, function (otherRoster) {
                     var draftPickStore, i, showResigningMsg;
 

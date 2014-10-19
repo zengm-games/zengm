@@ -56,8 +56,8 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
             dao.players.getAll({
                 index: "tid",
                 key: IDBKeyRange.lowerBound(0),
-                statSeasons: [g.season],
-                statPlayoffs: g.PHASE.PLAYOFFS === g.phase
+                statsSeasons: [g.season],
+                statsPlayoffs: g.PHASE.PLAYOFFS === g.phase
             }, function (players) {
                 var aPER, drbp, EWA, factor, i, mins, PER, tid, uPER, vop, tx;
 

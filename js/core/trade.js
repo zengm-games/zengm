@@ -214,7 +214,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
                     ot: transaction,
                     index: "tid",
                     key: tids[i],
-                    statSeasons: []
+                    statsSeasons: []
                 }, function (playersTemp) {
                     players[i] = player.filter(playersTemp, {
                         attrs: ["pid", "name", "contract"],

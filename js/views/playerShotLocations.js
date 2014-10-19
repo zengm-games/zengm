@@ -34,7 +34,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
             dao.players.getAll({
                 index: "tid",
                 key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
-                statSeasons: [inputs.season]
+                statsSeasons: [inputs.season]
             }, function (players) {
                 players = player.filter(players, {
                     attrs: ["pid", "name", "pos", "age", "injury", "watch"],

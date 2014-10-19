@@ -34,8 +34,8 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
             deferred = $.Deferred();
 
             dao.players.getAll({
-                statSeasons: [g.season, g.season - 1], // For oldStats
-                statPlayoffs: inputs.playoffs === "playoffs",
+                statsSeasons: [g.season, g.season - 1], // For oldStats
+                statsPlayoffs: inputs.playoffs === "playoffs",
                 filter: function (p) {
                     return p.watch && typeof p.watch !== "function"; // In Firefox, objects have a "watch" function
                 }

@@ -43,7 +43,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
         dao.players.getAll({
             index: "tid",
             key: IDBKeyRange.lowerBound(0),
-            statSeasons: [g.season],
+            statsSeasons: [g.season],
             filter: function (p) {
                 return p.contract.exp === inputs.season;
             }

@@ -138,7 +138,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 ot: tx,
                 index: "tid",
                 key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-                statSeasons: [g.season]
+                statsSeasons: [g.season]
             }, function (players) {
                 var champTid, i, p, text, type;
 
@@ -246,9 +246,9 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     ot: tx,
                     index: "tid",
                     key: champTid,
-                    statSeasons: [g.season],
-                    statTid: champTid,
-                    statPlayoffs: true
+                    statsSeasons: [g.season],
+                    statsTids: champTid,
+                    statsPlayoffs: true
                 }, function (players) {
                     players = player.filter(players, { // Only the champions, only playoff stats
                         attrs: ["pid", "name", "tid", "abbrev"],

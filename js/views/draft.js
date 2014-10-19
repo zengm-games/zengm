@@ -125,7 +125,7 @@ console.log("FIXING");
                 ot: tx,
                 index: "tid",
                 key: g.PLAYER.UNDRAFTED,
-                statSeasons: [g.season]
+                statsSeasons: [g.season]
             }, function (undraftedAll) {
                 var undrafted;
 
@@ -144,7 +144,7 @@ console.log("FIXING");
                     ot: tx,
                     index: "draft.year",
                     key: g.season,
-                    statSeasons: [g.season]
+                    statsSeasons: [g.season]
                 }, function (players) {
                     var drafted, i, started;
 

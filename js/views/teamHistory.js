@@ -66,7 +66,7 @@ define(["dao", "db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout
                 dao.players.getAll({
                     index: "statsTids",
                     key: inputs.tid,
-                    statTid: inputs.tid
+                    statsTids: inputs.tid
                 }, function (players) {
                     var i;
 

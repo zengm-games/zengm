@@ -54,7 +54,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/jquery", "lib/k
                 dao.players.getAll({
                     index: "retiredYear",
                     key: inputs.season,
-                    statSeasons: []
+                    statsSeasons: []
                 }, function (retiredPlayers) {
                     var i;
 

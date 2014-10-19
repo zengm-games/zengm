@@ -203,7 +203,7 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
         dao.players.getAll({
             index: "tid",
             key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-            statSeasons: []
+            statsSeasons: []
         }, function (players) {
             var contract, i, p, total;
 
@@ -224,7 +224,7 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
         dao.players.getAll({
             index: "tid",
             key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-            statSeasons: []
+            statsSeasons: []
         }, function (players) {
             var contract, i, output, p;
 

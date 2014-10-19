@@ -34,7 +34,7 @@ define(["dao", "globals", "ui", "core/team", "core/player", "lib/jquery", "lib/u
                     ot: tx,
                     index: "tid",
                     key: IDBKeyRange.lowerBound(0),
-                    statSeasons: []
+                    statsSeasons: []
                 }, function (players) {
                     var i, j, overallRankMetric, playerValuesByTid, weights;
 

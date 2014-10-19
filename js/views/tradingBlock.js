@@ -140,8 +140,8 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
             dao.players.getAll({
                 index: "tid",
                 key: g.userTid,
-                statSeasons: [g.season],
-                statTid: g.userTid
+                statsSeasons: [g.season],
+                statsTids: g.userTid
             }, function (userRoster) {
                 var i;
 
@@ -232,8 +232,8 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
                                 ot: tx,
                                 index: "tid",
                                 key: tid,
-                                statSeasons: [g.season],
-                                statTid: tid,
+                                statsSeasons: [g.season],
+                                statsTids: tid,
                                 filter: function (p) {
                                     return inputs.offers[i].pids.indexOf(p.pid) >= 0;
                                 }

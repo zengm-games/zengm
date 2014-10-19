@@ -38,8 +38,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", 
             dao.players.getAll({
                 index: "tid",
                 key: g.PLAYER.FREE_AGENT,
-                statSeasons: [g.season],
-                statTid: g.userTid,
+                statsSeasons: [g.season],
+                statsTids: g.userTid,
                 filter: function (p) {
                     return negotiationPids.indexOf(p.pid) >= 0;
                 }

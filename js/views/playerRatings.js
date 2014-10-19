@@ -42,7 +42,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
             deferred = $.Deferred();
 
             dao.players.getAll({
-                statSeasons: [inputs.season]
+                statsSeasons: [inputs.season]
             }, function (players) {
                 var i, tid;
 

@@ -49,7 +49,7 @@ define(["dao", "globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib
             dao.players.getAll({
                 index: "tid",
                 key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
-                statSeasons: [inputs.season]
+                statsSeasons: [inputs.season]
             }, function (players) {
                 var statsAll;
 

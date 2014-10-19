@@ -22,7 +22,7 @@ define(["dao", "globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib
             deferred = $.Deferred();
 
             dao.players.getAll({
-                statSeasons: [inputs.season]
+                statsSeasons: [inputs.season]
             }, function (players) {
                 var ratingsAll;
 

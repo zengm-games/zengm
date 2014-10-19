@@ -244,7 +244,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                             ot: tx,
                             index: "tid",
                             key: inputs.tid,
-                            statTid: inputs.tid
+                            statsTids: inputs.tid
                         }, function (players) {
                             var i;
 
@@ -286,7 +286,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                         ot: tx,
                         index: "statsTids",
                         key: inputs.tid,
-                        statTid: inputs.tid
+                        statsTids: inputs.tid
                     }, function (players) {
                         var i;
 

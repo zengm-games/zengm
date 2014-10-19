@@ -72,7 +72,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
 
                 dao.players.getAll({
                     ot: tx,
-                    statSeasons: [inputs.season]
+                    statsSeasons: [inputs.season]
                 }, function (players) {
                     var categories, i, j, k, leader, pass, userAbbrev, playerValue, stats;
 

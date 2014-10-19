@@ -55,7 +55,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
             dao.players.getAll({
                 index: "tid",
                 key: g.PLAYER.FREE_AGENT,
-                statSeasons: [g.season, g.season - 1]
+                statsSeasons: [g.season, g.season - 1]
             }, function (players) {
                 var i;
 

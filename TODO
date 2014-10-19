@@ -10,12 +10,7 @@ PERFORMANCE CRAP
 build db abstraction function (maybe dao.player.getAll) that is flexible enough to handle all the cases described below and replace the IDB calls before every player.filter (and other player stats uses)
   statSeasons default should be to return no stats. "all" should be a special option to return all
   replace IDB calls to players object store if it reads from DB and uses stats. if it doesn't use stats, it's okay if left there. if it writes to db and uses stats, make a note of it.
-    search for
-      getObjectStore.*"players"
-    double check careerStats handling everywhere - done correctly in playerStats.js
     rename options.stat* to stats*
-    options.statsEnoughForValue
-    in player.value, throw error if statTids but no stats
 
 rewrite player.filter to query db directly
   keep tests in mind

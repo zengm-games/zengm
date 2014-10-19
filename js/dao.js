@@ -7,13 +7,15 @@ define(["db", "globals"], function (db, g) {
 
     var players;
 
+    // This needs to be used for anything that reads player stats!!!
+    // Can also be used other places, but not essential
     players = {};
 
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
     // filter: Arbitrary JS function to run on output with array.filter
-    // statSeasons: if undefined, return all. otherwise, it's an array of seasons to return
-    // statPlayoffs: if undefined, default is false. if true, include both. This is because player.filter doesn't like being given only playoff stats, for some reason.
-    // statTid: if undefined, return any. otherwise, filter
+    // statSeasons: if undefined/null, return all (needed for career totals, listing all years stats, etc). otherwise, it's an array of seasons to return (usually just one year, but can be two for oldStats)
+    // statPlayoffs: if undefined/null, default is false. if true, include both. This is because player.filter doesn't like being given only playoff stats, for some reason.
+    // statTid: if undefined/null, return any. otherwise, filter
     players.getAll = function (options, cb) {
         var playerStore;
 

@@ -9,10 +9,11 @@ PERFORMANCE CRAP
 
 build db abstraction function (maybe dao.player.getAll) that is flexible enough to handle all the cases described below and replace the IDB calls before every player.filter (and other player stats uses)
   statSeasons default should be to return no stats. "all" should be a special option to return all
-  replace all IDB calls to players object store ANYWHERE
+  replace IDB calls to players object store if it reads from DB and uses stats. if it doesn't use stats, it's okay if left there. if it writes to db and uses stats, make a note of it.
     search for
       objectStore("players")
         write wrapper for put/add so stats can be deleted if necessary
+      getObjectStore.*"players"
     double check careerStats handling everywhere - done correctly in playerStats.js
     rename options.stat* to stats*
     options.statsEnoughForValue
@@ -57,26 +58,24 @@ rewrite player.filter to query db directly
   benchmark!
     leagueDashboard could select only current seasno
 
-normalize player ratings/stats so only latest year is in main player object store and the rest go in an archived place
-  catalog all commonly used info, use to make schema for fast db
-  abstract away ALL calls to players db so it can go to either fast or slow db as necessary
-    what about updating objects? do i need to handle the case where the slow db is updated? do i need to "know" which data is where at all times?
-  DO THIS! OPTIMIZES WRITE PERFORMANCE! alternative idea: separate stores of playerStats, index by pid and season
-    big question: is this going to make read performance too slow when reading stats for all players and merging with main player object?
-      maybe cache player.value so stats are needed for less things? but that still has the same original problem of writing player.value somewhere...
-    what about tid and playoffs? might need an index with just pid+season and another with all 4
-      also need a "current" marker to allow distinction between current team and prior team in the same season
-      is it possible to use an index on 4 things to query on 1 or 2 or 3 of them?
-        "An exception to the above exception is that you can query with an array that is a shorter length, such as IDBKeyRange.only(['josh','male']), because according to the spec's method, it can properly compare arrays of different lengths. Therefore you can partially achieve a partly-undefined key range if your undefined elements are at the end of the array and you truncate the array (slice out the undefined). Confusing but technically permissible." http://stackoverflow.com/questions/12084177/in-indexeddb-is-there-a-way-to-make-a-sorted-compound-query
-    compound index like http://stackoverflow.com/questions/16501459/javascript-searching-indexeddb-using-multiple-indexes
-      range selection is weird, maybe unuseable: http://stackoverflow.com/a/15625231/786644
-      can say "fix the first N elements of the index and let the other values be anything" http://stackoverflow.com/questions/26203075/querying-an-indexeddb-compound-index-with-a-shorter-array
-    should be able to use this to select for pid and do range of seasons: http://stackoverflow.com/a/23808891/786644
-    can i use the compound index for queries on only one of them?
-    player.value might need past two seasons - should be a function to call to get summed stats object from multiple seasons
-      needs to handle case where player plays for multiple teams in one season - get all for (pid, season, !playoffs) but could probably get away with (pid, season) index and then manually check for playoffs
-    same thing for all the annual vectors (team stats, player ratings, etc)?
-separate active and retired players into separate object stores
+separate stores of playerStats, index by pid and season
+  big question: is this going to make read performance too slow when reading stats for all players and merging with main player object?
+    maybe cache player.value so stats are needed for less things? but that still has the same original problem of writing player.value somewhere...
+  what about tid and playoffs? might need an index with just pid+season and another with all 4
+    also need a "current" marker to allow distinction between current team and prior team in the same season
+    is it possible to use an index on 4 things to query on 1 or 2 or 3 of them?
+      "An exception to the above exception is that you can query with an array that is a shorter length, such as IDBKeyRange.only(['josh','male']), because according to the spec's method, it can properly compare arrays of different lengths. Therefore you can partially achieve a partly-undefined key range if your undefined elements are at the end of the array and you truncate the array (slice out the undefined). Confusing but technically permissible." http://stackoverflow.com/questions/12084177/in-indexeddb-is-there-a-way-to-make-a-sorted-compound-query
+  compound index like http://stackoverflow.com/questions/16501459/javascript-searching-indexeddb-using-multiple-indexes
+    range selection is weird, maybe unuseable: http://stackoverflow.com/a/15625231/786644
+    can say "fix the first N elements of the index and let the other values be anything" http://stackoverflow.com/questions/26203075/querying-an-indexeddb-compound-index-with-a-shorter-array
+  should be able to use this to select for pid and do range of seasons: http://stackoverflow.com/a/23808891/786644
+  can i use the compound index for queries on only one of them?
+  player.value might need past two seasons - should be a function to call to get summed stats object from multiple seasons
+    needs to handle case where player plays for multiple teams in one season - get all for (pid, season, !playoffs) but could probably get away with (pid, season) index and then manually check for playoffs
+  same thing for all the annual vectors (team stats, player ratings, etc)?
+  addStatsRow needs to be changed
+
+separate active and retired players into separate object stores?
 
 db upgrade?
 

@@ -2,7 +2,7 @@
  * @name core.draft
  * @namespace The annual draft of new prospects.
  */
-define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "util/helpers", "util/random"], function (db, g, ui, finances, player, team, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team", "util/helpers", "util/random"], function (dao, db, g, ui, finances, player, team, helpers, random) {
     "use strict";
 
     /**
@@ -62,10 +62,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
         }
 
         withScoutingRank = function (scoutingRank) {
-            var agingYears, baseAge, baseRating, draftYear, i, p, playerStore, pot, profile, profiles, tx;
+            var agingYears, baseAge, baseRating, draftYear, i, p, pot, profile, profiles, tx;
 
             tx = db.getObjectStore(ot, "players", null, true);
-            playerStore = tx.objectStore("players");
 
             profiles = ["Point", "Wing", "Big", "Big", ""];
             for (i = 0; i < numPlayers; i++) {
@@ -95,7 +94,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
                 p = player.generate(tid, baseAge, profile, baseRating, pot, draftYear, false, scoutingRank);
                 p = player.develop(p, agingYears, true);
 
-                playerStore.put(p);
+                dao.players.put({ot: tx, p: p});
             }
 
             if (ot !== null) {

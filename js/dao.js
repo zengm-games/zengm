@@ -65,6 +65,26 @@ define(["db", "globals"], function (db, g) {
         };
     };
 
+    // This should ultimately delete stats before writing
+    players.put = function (options, cb) {
+        var playerStore;
+
+        options = options !== undefined ? options : {};
+        options.ot = options.ot !== undefined ? options.ot : null;
+
+        if (!options.hasOwnProperty("p")) {
+            throw new Error("Must supply player object p");
+        }
+
+        playerStore = db.getObjectStore(options.ot, "players", "players");
+
+        playerStore.put(options.p);
+
+        if (cb !== undefined) {
+            cb();
+        }
+    }
+
     return {
         players: players
     };

@@ -633,10 +633,14 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
             });
 
             for (i = 0; i < pidsAdd.length; i++) {
-                tx.objectStore("players").get(pidsAdd[i]).onsuccess = function (event) {
+                dao.players.getAll({
+                    ot: tx,
+                    key: pidsAdd[i],
+                    statEnoughForValue: true
+                }, function (players) {
                     var p;
 
-                    p = event.target.result;
+                    p = players[0];
 
                     add.push({
                         value: player.value(p, {withContract: true}),
@@ -646,7 +650,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
                         injury: p.injury,
                         age: g.season - p.born.year
                     });
-                };
+                });
             }
         };
 

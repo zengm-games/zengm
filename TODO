@@ -9,12 +9,12 @@ build db abstraction function (maybe dao.player.getAll) that is flexible enough 
     search for
       player.value
         indirectly called by
-          player.genContract
-            what about usage in core.season, where player.value is calculated within a readwrite cursor??
           player.bonus
           player.addToFreeAgents
           player.release
       objectStore("players")
+    PROBLEMS
+      genContract is used in a readwrite cursor in core.season. need some way to do this - abstract cursor read/write to dao or have function to augment player object with stats?
     double check careerStats handling everywhere - done correctly in playerStats
     rename options.stat* to stats*
     options.statsEnoughForValue

@@ -11,8 +11,6 @@ build db abstraction function (maybe dao.player.getAll) that is flexible enough 
   statSeasons default should be to return no stats. "all" should be a special option to return all
   replace IDB calls to players object store if it reads from DB and uses stats. if it doesn't use stats, it's okay if left there. if it writes to db and uses stats, make a note of it.
     search for
-      .put
-      .add
       getObjectStore.*"players"
     double check careerStats handling everywhere - done correctly in playerStats.js
     rename options.stat* to stats*

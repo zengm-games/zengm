@@ -2,7 +2,7 @@
  * @name views.draftScouting
  * @namespace Scouting prospects in future drafts.
  */
-define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, draft, finances, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, draft, finances, player, $, ko, _, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -102,7 +102,6 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
 
     function customDraftClassHandler(e) {
         var draftClassTid, file, reader, seasonOffset;
-console.log(e);
 
         seasonOffset = parseInt(e.target.dataset.index, 10);
         file = e.target.files[0];
@@ -117,7 +116,6 @@ console.log(e);
         } else {
             throw new Error("Invalid draft class index");
         }
-console.log("draftClassTid: " + draftClassTid)
 
         reader = new window.FileReader();
         reader.readAsText(file);
@@ -131,8 +129,6 @@ console.log("draftClassTid: " + draftClassTid)
             players = players.filter(function (p) {
                 return p.tid === g.PLAYER.UNDRAFTED;
             });
-console.log(players);
-console.log(players.length);
 
             // Get scouting rank, which is used in a couple places below
             g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
@@ -166,7 +162,7 @@ console.log(players.length);
                                 delete p.pid;
                             }
 
-                            playerStore.add(p);
+                            dao.players.put({ot: playerStore, p: p});
                             console.log(p.name);
                         });
 

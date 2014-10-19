@@ -1172,7 +1172,6 @@ console.log(dv);*/
                     dWon = 0;
                 }
 
-//                tx.objectStore("players").index("tid").getAll(t.tid).onsuccess = function (event) {
                 dao.players.getAll({
                     ot: tx,
                     index: "tid",

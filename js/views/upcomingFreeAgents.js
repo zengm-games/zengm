@@ -44,7 +44,6 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
             index: "tid",
             key: IDBKeyRange.lowerBound(0),
             statSeasons: [g.season],
-            statEnoughForValue: true,
             filter: function (p) {
                 return p.contract.exp === inputs.season;
             }

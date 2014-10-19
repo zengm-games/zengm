@@ -129,7 +129,7 @@ console.log("FIXING");
             }, function (undraftedAll) {
                 var undrafted;
 
-                undraftedAll.sort(function (a, b) { return player.value(b, {fuzz: true}) - player.value(a, {fuzz: true}); });
+                undraftedAll.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });
                 undrafted = player.filter(undraftedAll, {
                     attrs: ["pid", "name", "pos", "age", "injury", "contract", "watch"],
                     ratings: ["ovr", "pot", "skills"],

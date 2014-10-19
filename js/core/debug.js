@@ -202,7 +202,8 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
         // All non-retired players
         dao.players.getAll({
             index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
+            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+            statSeasons: []
         }, function (players) {
             var contract, i, p, total;
 
@@ -222,7 +223,8 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
         // All non-retired players
         dao.players.getAll({
             index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
+            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+            statSeasons: []
         }, function (players) {
             var contract, i, output, p;
 
@@ -231,7 +233,7 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
             for (i = 0; i < players.length; i++) {
                 p = players[i];
                 contract = player.genContract(p);
-                output += player.value(p) + "," + contract.amount + "," + _.last(p.ratings).ovr + "," + _.last(p.ratings).pot + "\n";
+                output += p.value + "," + contract.amount + "," + _.last(p.ratings).ovr + "," + _.last(p.ratings).pot + "\n";
             }
             output += "</pre>";
 

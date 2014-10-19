@@ -136,9 +136,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         maxAmount = 20000;
 
         // Scale proportional to (ovr*2 + pot)*0.5 120-210
-        //amount = ((3 * value(p)) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
+        //amount = ((3 * p.value) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
         //amount = amount * (maxAmount - minAmount) + minAmount;
-        amount = ((value(p) - 1) / 100 - 0.45) * 3.3 * (maxAmount - minAmount) + minAmount;
+        amount = ((p.value - 1) / 100 - 0.45) * 3.3 * (maxAmount - minAmount) + minAmount;
         if (randomizeAmount) {
             amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
         }
@@ -390,6 +390,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
             p.born.year = g.season - age;
         }
 
+        // Keep values updated
+        p = updateValues(p);
+
         return p;
     }
 
@@ -426,6 +429,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
 
         // Update contract based on development. Only write contract to log if not a free agent.
         p = setContract(p, genContract(p, randomizeExp), p.tid >= 0);
+
+        // Keep values updated
+        p = updateValues(p);
 
         return p;
     }
@@ -875,6 +881,13 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         p.watch = false;
         p.gamesUntilTradable = 0;
 
+        // These should be set manually by player.updateValues after player is completely done (automatic in player.develop)
+        p.value = 0;
+        p.valueNoPot = 0;
+        p.valueFuzz = 0;
+        p.valueNoPotFuzz = 0;
+        p.valueWithContract = 0;
+
         return p;
     }
 
@@ -1010,10 +1023,6 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
                     fp.salaries = _.map(p.salaries, function (salary) { salary.amount /= 1000; return salary; });
                 } else if (options.attrs[i] === "salariesTotal") {
                     fp.salariesTotal = _.reduce(fp.salaries, function (memo, salary) { return memo + salary.amount; }, 0);
-                } else if (options.attrs[i] === "value") {
-                    fp.value = value(p);
-                } else if (options.attrs[i] === "valueNoPot") {
-                    fp.valueNoPot = value(p, {noPot: true, fuzz: options.fuzz});
                 } else if (options.attrs[i] === "awardsGrouped") {
                     fp.awardsGrouped = [];
                     awardsGroupedTemp = _.groupBy(p.awards, function (award) { return award.type; });
@@ -1483,8 +1492,6 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
      *         ordering and game simulation). Default false.
      *     fuzz: When true, used fuzzed ratings (useful for roster ordering, draft prospect
      *         ordering). Default false.
-     *     age: If set, override the player's real age. This is only useful for draft prospects,
-     *         because you can use the age they will be at the draft.
      * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential
      *     ratings.
      */
@@ -1494,7 +1501,6 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         options = options !== undefined ? options : {};
         options.noPot = options.noPot !== undefined ? options.noPot : false;
         options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
-        options.age = options.age !== undefined ? options.age : null;
         options.withContract = options.withContract !== undefined ? options.withContract : false;
 
         // Current ratings
@@ -1558,8 +1564,9 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         }
 
         // Otherwise, combine based on age
-        if (options.age) {
-            age = options.age;
+        if (p.draft.year > g.season) {
+            // Draft prospect
+            age = p.draft.year - p.born.year;
         } else {
             age = g.season - p.born.year;
         }
@@ -1605,6 +1612,16 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         if (age > 33) {
             return 0.7 * current;
         }
+    }
+
+    function updateValues(p) {
+        p.value = value(p);
+        p.valueNoPot = value(p, {noPot: true});
+        p.valueFuzz = value(p, {fuzz: true});
+        p.valueNoPotFuzz = value(p, {noPot: true, fuzz: true});
+        p.valueWithContract = value(p, {withContract: true});
+
+        return p;
     }
 
     /**
@@ -1771,7 +1788,8 @@ define(["globals", "core/finances", "data/injuries", "data/names", "lib/faces", 
         skills: skills,
         filter: filter,
         madeHof: madeHof,
-        value: value,
+        //value: value,
+        updateValues: updateValues,
         retire: retire,
         name: name,
         contractSeasonsRemaining: contractSeasonsRemaining,

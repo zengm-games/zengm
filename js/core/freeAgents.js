@@ -29,7 +29,7 @@ define(["db", "globals", "ui", "core/player", "core/team", "lib/underscore", "ut
 
                 // List of free agents, sorted by value
                 players = event.target.result;
-                players.sort(function (a, b) { return player.value(b) - player.value(a); });
+                players.sort(function (a, b) { return b.value - a.value; });
 
                 if (players.length === 0) {
                     cb();

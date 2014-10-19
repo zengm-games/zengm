@@ -396,7 +396,7 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "uti
             var playersAll;
 
             playersAll = event.target.result;
-            playersAll.sort(function (a, b) { return player.value(b) - player.value(a); });
+            playersAll.sort(function (a, b) { return b.value - a.value; });
 
             getOrder(function (draftOrder) {
                 var autoSelectPlayer, cbAfterDoneAuto, pick, pid, selection;

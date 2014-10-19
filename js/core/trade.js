@@ -781,7 +781,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
 
                 if (players.length > 0) {
                     for (i = 0; i < players.length; i++) {
-                        players[i].value = player.value(players[i], {age: (g.season - players[i].born.year) + (players[i].draft.year - g.season)}) + 4; // +4 is to generally make picks more valued
+                        players[i].value += 4; // +4 is to generally make picks more valued
                     }
                     players.sort(function (a, b) { return b.value - a.value; });
                     estValues[players[0].draft.year] = _.pluck(players, "value");

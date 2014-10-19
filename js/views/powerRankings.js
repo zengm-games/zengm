@@ -47,7 +47,7 @@ define(["globals", "ui", "core/team", "core/player", "lib/jquery", "lib/undersco
                     // TALENT
                     // Get player values and sort by tid
                     for (i = 0; i < players.length; i++) {
-                        playerValuesByTid[players[i].tid].push(player.value(players[i], {noPot: true}));
+                        playerValuesByTid[players[i].tid].push(players[i].valueNoPot);
                     }
                     // Sort and weight the values - doesn't matter how good your 12th man is
                     weights = [2, 1.5, 1.25, 1.1, 1, 0.9, 0.8, 0.7, 0.6, 0.4, 0.2, 0.1];

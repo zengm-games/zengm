@@ -1101,7 +1101,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                                         factor = 0;
                                     }
 
-                                    if (Math.random() < player.value(p) / 100 - factor) { // Should eventually be smarter than a coin flip
+                                    if (Math.random() < p.value / 100 - factor) { // Should eventually be smarter than a coin flip
                                         contract = player.genContract(p);
                                         contract.exp += 1; // Otherwise contracts could expire this season
                                         p = player.setContract(p, contract, true);

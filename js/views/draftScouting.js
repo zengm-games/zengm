@@ -16,7 +16,7 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
             var i, pa, p, players;
 
             playersAll = player.filter(playersAll, {
-                attrs: ["pid", "name", "pos", "age", "watch"],
+                attrs: ["pid", "name", "pos", "age", "watch", "valueFuzz"],
                 ratings: ["ovr", "pot", "skills", "fuzz"],
                 showNoStats: true,
                 showRookies: true,
@@ -28,23 +28,21 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                 pa = playersAll[i];
 
                 // Abbrevaite first name to prevent overflows
-                pa.name = pa.name.split(" ")[0].substr(0, 1) + ". " + pa.name.split(" ")[1]
+                pa.name = pa.name.split(" ")[0].substr(0, 1) + ". " + pa.name.split(" ")[1];
 
                 // Attributes
-                p = {pid: pa.pid, name: pa.name, pos: pa.pos, age: pa.age, watch: pa.watch};
+                p = {pid: pa.pid, name: pa.name, pos: pa.pos, age: pa.age, watch: pa.watch, valueFuzz: pa.valueFuzz};
 
                 // Ratings - just take the only entry
                 p.ovr = pa.ratings[0].ovr;
                 p.pot = pa.ratings[0].pot;
                 p.skills = pa.ratings[0].skills;
 
-                p.value = player.value(pa, {age: p.age + (season - g.season)});
-
                 players.push(p);
             }
 
             // Rank prospects
-            players.sort(function (a, b) { return b.value - a.value; });
+            players.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });
             for (i = 0; i < players.length; i++) {
                 players[i].rank = i + 1;players[i].rank = i + 1;
             }

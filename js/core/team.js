@@ -247,17 +247,21 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
             ot: tx,
             index: "tid",
             key: tid,
-            statEnoughForValue: true
+            statSeasons: []
         }, function (players) {
             var i;
 
             players = player.filter(players, {
-                attrs: ["pid", "valueNoPot"],
+                attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
                 showNoStats: true,
-                showRookies: true,
-                fuzz: tid === g.userTid
+                showRookies: true
             });
-            players.sort(function (a, b) { return b.valueNoPot - a.valueNoPot; }); // This will be fuzzed based on player.filter
+            // Fuzz only for user's team
+            if (tid === g.userTid) {
+                players.sort(function (a, b) { return b.valueNoPotFuzz - a.valueNoPotFuzz; });
+            } else {
+                players.sort(function (a, b) { return b.valueNoPot - a.valueNoPot; });
+            }
 
             for (i = 0; i < players.length; i++) {
                 players[i].rosterOrder = i;
@@ -603,7 +607,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
                 ot: tx,
                 index: "tid",
                 key: tid,
-                statEnoughForValue: true
+                statSeasons: []
             }, function (players) {
                 var i, p;
 
@@ -612,7 +616,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
 
                     if (pidsRemove.indexOf(p.pid) < 0) {
                         roster.push({
-                            value: player.value(p),
+                            value: p.value,
                             skills: _.last(p.ratings).skills,
                             contract: p.contract,
                             worth: player.genContract(p, false, false, true),
@@ -621,7 +625,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
                         });
                     } else {
                         remove.push({
-                            value: player.value(p) * fudgeFactor,
+                            value: p.value * fudgeFactor,
                             skills: _.last(p.ratings).skills,
                             contract: p.contract,
                             worth: player.genContract(p, false, false, true),
@@ -636,14 +640,14 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
                 dao.players.getAll({
                     ot: tx,
                     key: pidsAdd[i],
-                    statEnoughForValue: true
+                    statSeasons: []
                 }, function (players) {
                     var p;
 
                     p = players[0];
 
                     add.push({
-                        value: player.value(p, {withContract: true}),
+                        value: p.valueWithContract,
                         skills: _.last(p.ratings).skills,
                         contract: p.contract,
                         worth: player.genContract(p, false, false, true),
@@ -1082,7 +1086,7 @@ console.log(payroll);
 
                             // List of free agents, sorted by value
                             players = event.target.result;
-                            players.sort(function (a, b) { return player.value(b) - player.value(a); });
+                            players.sort(function (a, b) { return b.value - a.value; });
 
                             for (i = 0; i < players.length; i++) {
                                 if (players[i].contract.amount + payroll <= g.salaryCap) {
@@ -1173,7 +1177,8 @@ console.log(dv);*/
                     ot: tx,
                     index: "tid",
                     key: t.tid,
-                    statEnoughForValue: true
+                    statSeasons: [g.season],
+                    statTid: t.tid
                 }, function (players) {
                     var age, denominator, i, numerator, score, updated, youngStar;
 
@@ -1256,7 +1261,7 @@ console.log(dv);*/
                         userTeamSizeError = 'Your team currently has more than the maximum number of players (15). You must remove players (by <a href="' + helpers.leagueUrl(["roster"]) + '">releasing them from your roster</a> or through <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
                     } else {
                         // Automatically drop lowest value players until we reach 15
-                        players.sort(function (a, b) { return player.value(a) - player.value(b); }); // Lowest first
+                        players.sort(function (a, b) { return a.value - b.value; }); // Lowest first
                         for (i = 0; i < (numPlayersOnRoster - 15); i++) {
                             player.release(tx, players[i], false);
                         }
@@ -1305,7 +1310,7 @@ console.log(dv);*/
                     minFreeAgents.push(players[i]);
                 }
             }
-            minFreeAgents.sort(function (a, b) { return player.value(b) - player.value(a); });
+            minFreeAgents.sort(function (a, b) { return b.value - a.value; });
 
             // Make sure teams are all within the roster limits
             for (i = 0; i < g.numTeams; i++) {

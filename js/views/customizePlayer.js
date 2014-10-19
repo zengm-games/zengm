@@ -353,6 +353,9 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
                 p.draft.year = g.season - 1;
             }
 
+            // Recalculate player values, since ratings may have changed
+            p = player.updateValues(p);
+
             tx = g.dbl.transaction("players", "readwrite");
             // put will either add or update entry
             tx.objectStore("players").put(p).onsuccess = function (event) {

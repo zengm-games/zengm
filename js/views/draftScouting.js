@@ -152,7 +152,7 @@ console.log(players.length);
                         cursor.continue();
                     } else {
                         // Everything else proceeds after deletes have finished
-                        
+
                         // Add new players to database
                         players.forEach(function (p) {
                             // Make sure player object is fully defined

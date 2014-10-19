@@ -1277,7 +1277,7 @@ console.log(dv);*/
                             p = player.addStatsRow(p);
                             p = player.setContract(p, p.contract, true);
                             p.gamesUntilTradable = 15;
-                            playerStore.put(p);
+                            dao.players.put({ot: playerStore, p: p});
 
                             numPlayersOnRoster += 1;
                         }

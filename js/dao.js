@@ -78,7 +78,11 @@ define(["db", "globals"], function (db, g) {
 
         playerStore = db.getObjectStore(options.ot, "players", "players");
 
-        playerStore.put(options.p);
+        if (options.hasOwnProperty("onsuccess")) {
+            playerStore.put(options.p).onsuccess = options.onsuccess;
+        } else {
+            playerStore.put(options.p);
+        }
 
         if (cb !== undefined) {
             cb();

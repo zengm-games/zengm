@@ -2,7 +2,7 @@
  * @name views.customizePlayer
  * @namespace Create a new custom player or customize an existing one.
  */
-define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/helpers"], function (db, g, ui, finances, player, team, faces, $, ko, komapping, bbgmView, helpers) {
+define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, finances, player, team, faces, $, ko, komapping, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -357,11 +357,13 @@ define(["db", "globals", "ui", "core/finances", "core/player", "core/team", "lib
             p = player.updateValues(p);
 
             tx = g.dbl.transaction("players", "readwrite");
+
             // put will either add or update entry
-            tx.objectStore("players").put(p).onsuccess = function (event) {
+            dao.players.put({ot: tx, p: p, onsuccess: function (event) {
                 // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
+                // When adding a player, this is the only way to know the pid
                 pid = event.target.result;
-            };
+            }});
             tx.oncomplete = function () {
                 db.setGameAttributes({lastDbChange: Date.now()}, function () {
                     ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));

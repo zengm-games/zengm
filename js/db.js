@@ -188,7 +188,7 @@ console.log(event);
         playerStore.createIndex("draft.year", "draft.year", {unique: false});
         playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
         playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
-        playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: true});
+        playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false}); // Would be unique if indexed on playoffs too, but that is a boolean and introduces complications... maybe worth fixing though?
 //        gameStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used because currently the season index is used. If multiple indexes are eventually supported, then use this too.
         gameStore.createIndex("season", "season", {unique: false});
         releasedPlayerStore.createIndex("tid", "tid", {unique: false});

@@ -319,7 +319,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
             // If this contract brings team over the salary cap, it"s not a minimum;
             // contract, and it's not re-signing a current player, ERROR!;
             db.getPayroll(null, g.userTid, function (payroll) {
-                var tx;
+                var afterAddStatsRow, tx;
 
                 if (!negotiation.resigning && (payroll + negotiation.player.amount > g.salaryCap && negotiation.player.amount !== g.minContract)) {
                     return cb("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");
@@ -333,21 +333,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
 /*                r = g.dbex("SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid", tid = g.userTid);
                 rosterOrder, = r.fetchone();*/
 
-                tx = g.dbl.transaction("players", "readwrite");
-                tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    p = cursor.value;
-
-                    p.tid = g.userTid;
-                    p.gamesUntilTradable = 15;
-
-                    // Handle stats if the season is in progress
-                    if (g.phase <= g.PHASE.PLAYOFFS) { // Re-signing your own players happens after this
-                        p = player.addStatsRow(p);
-                    }
-
+                afterAddStatsRow = function (p, cursor) {
                     p = player.setContract(p, {
                         amount: negotiation.player.amount,
                         exp: g.season + negotiation.player.years
@@ -368,10 +354,29 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                             showNotification: false
                         });
                     }
+                }
+
+                tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
+                tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
+                    var cursor, p;
+
+                    cursor = event.target.result;
+                    p = cursor.value;
+
+                    p.tid = g.userTid;
+                    p.gamesUntilTradable = 15;
+
+                    // Handle stats if the season is in progress
+                    if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                        player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                            afterAddStatsRow(p, cursor);
+                        });
+                    } else {
+                        afterAddStatsRow(p, cursor);
+                    }
                 };
                 tx.oncomplete = function () {
                     cancel(pid, function () {
-
                         db.setGameAttributes({lastDbChange: Date.now()}, function () {
                             cb();
                         });

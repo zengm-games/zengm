@@ -100,7 +100,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             };
         };
 
-        tx = g.dbl.transaction(["players", "releasedPlayers", "teams"]);
+        tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "teams"]);
 
         // Get teams for won/loss record for awards, as well as finding the teams with the best records
         team.filter({
@@ -639,11 +639,14 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
                                 // Add row to player stats if they are on a team
                                 if (p.tid >= 0) {
-                                    p = player.addStatsRow(p);
+                                    player.addStatsRow(tx, p, false, function (p) {
+                                        cursorP.update(p);
+                                        cursorP.continue();
+                                    });
+                                } else {
+                                    cursorP.update(p);
+                                    cursorP.continue();
                                 }
-
-                                cursorP.update(p);
-                                cursorP.continue();
                             }
                         };
                     }
@@ -749,7 +752,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             }
 
             row = {season: g.season, currentRound: 0, series: series};
-            tx = g.dbl.transaction(["players", "playoffSeries", "teams"], "readwrite");
+            tx = g.dbl.transaction(["players", "playerStats", "playoffSeries", "teams"], "readwrite");
             tx.objectStore("playoffSeries").add(row);
 
             if (tidPlayoffs.indexOf(g.userTid) >= 0) {
@@ -792,9 +795,10 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                             cursorP = event.target.result;
                             if (cursorP) {
                                 p = cursorP.value;
-                                p = player.addStatsRow(p, true);
-                                cursorP.update(p);
-                                cursorP.continue();
+                                player.addStatsRow(tx, p, true, function (p) {
+                                    cursorP.update(p);
+                                    cursorP.continue();
+                                });
                             }
                         };
                     } else {
@@ -1375,8 +1379,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                             cursor = event.target.result;
                             t = cursor.value;
                             teamSeason = _.last(t.seasons);
-                            teamSeason.playoffRoundsWon += 1;
-console.log([playoffSeries.currentRound, teamSeason.playoffRoundsWon])
+                            teamSeason.playoffRoundsWon = playoffSeries.currentRound;
                             teamSeason.hype += 0.05;
                             if (teamSeason.hype > 1) {
                                 teamSeason.hype = 1;

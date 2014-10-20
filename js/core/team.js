@@ -1151,7 +1151,7 @@ console.log(dv);*/
         var tx;
 
         // For
-        tx = g.dbl.transaction(["players", "teams"], "readwrite");
+        tx = g.dbl.transaction(["players", "playerStats", "teams"], "readwrite");
         tx.objectStore("teams").openCursor().onsuccess = function (event) {
             var dWon, cursor, s, t, won;
 

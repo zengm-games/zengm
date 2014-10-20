@@ -198,7 +198,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
                     offers: offers
                 });
             } else {
-                tx = g.dbl.transaction(["players", "draftPicks", "teams"]);
+                tx = g.dbl.transaction(["players", "playerStats", "draftPicks", "teams"]);
 
                 team.filter({
                     attrs: ["abbrev", "region", "name", "strategy"],

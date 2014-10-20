@@ -54,8 +54,6 @@ separate stores of playerStats, index by pid and season
         throttle to once every 10 games and on injuries?
       injury is same problem but rarer, since injuries usually don't happen
 
-everywhere that uses dbo.players.getAll and requests stats and defines a transaction on input needs to have playerStats in its transaction
-
 test!
   confirm player stats entries get added in fantasy draft correctly
     before playoffs

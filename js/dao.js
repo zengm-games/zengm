@@ -74,7 +74,7 @@ define(["db", "globals"], function (db, g) {
                     }*/
 
                     (function (i) {
-                        tx.objectStore("playerStats").index("pid, season, tid, playoffs").getAll(IDBKeyRange.bound([pid], [pid, ''])).onsuccess = function (event) {
+                        tx.objectStore("playerStats").index("pid, season, tid").getAll(IDBKeyRange.bound([pid], [pid, ''])).onsuccess = function (event) {
                             var playerStats;
 
                             playerStats = event.target.result;

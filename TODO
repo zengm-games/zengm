@@ -48,7 +48,13 @@ separate stores of playerStats, index by pid and season
     import/export
       augmentPartialPlayer used to create new stats entry if necessary. now it doesn't. need to do new async addStatsRow somewhere 
     util.advStats
+      implement
     Game.prototype.writePlayerStats
+      FUCK if I have to update player value every time here, i'm still writing to main player object!
+        throttle to once every 10 games and on injuries?
+      injury is same problem but rarer, since injuries usually don't happen
+
+everywhere that uses dbo.players.getAll and requests stats and defines a transaction on input needs to have playerStats in its transaction
 
 test!
   confirm player stats entries get added in fantasy draft correctly
@@ -56,6 +62,7 @@ test!
     during playoffs
     after playoffs
   make sure free agent auto sign players get the right stats row added
+  make sure adding/removing players to meet roster limits still works
 
 benchmark!
   leagueDashboard could select only current season stats if I got rid of YWT. does that make a difference?
@@ -70,8 +77,6 @@ db upgrade?
 import old league files?
 
 more normalization? team stats, team seasons, player ratings
-
-checkRosterSizes used to auto sort AI lineups. was that for beginning of season stuff? if so, add it somewhere
 
 PLAYER DEVELOPMENT REVAMP
 -------------------------

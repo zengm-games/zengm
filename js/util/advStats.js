@@ -146,7 +146,8 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
                     }
                 }());
 
-                // Save to database. Active players have tid >= 0
+cb();
+/*                // Save to database. Active players have tid >= 0
                 tx = g.dbl.transaction("players", "readwrite");
                 tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
                     var cursor, i, p, s;
@@ -175,7 +176,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
                     if (cb !== undefined) {
                         cb();
                     }
-                };
+                };*/
             });
         });
     }

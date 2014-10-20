@@ -1274,15 +1274,22 @@ console.log(dv);*/
                         while (numPlayersOnRoster < g.minRosterSize) {
                             p = minFreeAgents.shift();
                             p.tid = tid;
-                            p = player.addStatsRow(p);
-                            p = player.setContract(p, p.contract, true);
-                            p.gamesUntilTradable = 15;
-                            dao.players.put({ot: playerStore, p: p});
+                            player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                                p = player.setContract(p, p.contract, true);
+                                p.gamesUntilTradable = 15;
+                                dao.players.put({ot: playerStore, p: p});
+                            });
 
                             numPlayersOnRoster += 1;
                         }
 //console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
                     }
+                }
+
+                // Auto sort rosters (except player's team)
+                // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
+                if (tid !== g.userTid) {
+                    rosterAutoSort(playerStore, tid);
                 }
             };
         };

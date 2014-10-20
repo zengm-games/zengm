@@ -324,10 +324,16 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                     if (t2 === g.PLAYER.FREE_AGENT) {
                                         player.addToFreeAgents(tx, p, null, baseMoods, cbAfterEachPlayer);
                                     } else {
-                                        player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                                            dao.players.put({ot: tx, p: p});
-                                            cbAfterEachPlayer();
-                                        });
+                                        (function (p) {
+                                            dao.players.put({ot: tx, p: p, onsuccess: function (event) {
+                                                // When adding a player, this is the only way to know the pid
+                                                p.pid = event.target.result;
+
+                                                player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                                                    cbAfterEachPlayer();
+                                                });
+                                            }});
+                                        }(p));
                                     }
                                 }
 

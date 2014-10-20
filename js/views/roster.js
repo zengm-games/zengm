@@ -208,7 +208,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 ]
             };
 
-            tx = g.dbl.transaction(["players", "releasedPlayers", "schedule", "teams"]);
+            tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "schedule", "teams"]);
 
             team.filter({
                 season: inputs.season,

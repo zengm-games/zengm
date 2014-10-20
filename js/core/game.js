@@ -38,7 +38,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
     };
 
     Game.prototype.writePlayerStats = function (tx, t, p, cb) {
-        var afterDonePlayer, that;
+        var afterDonePlayer, key, that;
 
         that = this;
 
@@ -57,23 +57,18 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
         if (that.team[t].player[p].stat.min === 0) {
             afterDonePlayer();
         } else {
-            tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
-                var cursor, i, keys, player_, playerStats;
+            key = [that.team[t].player[p].id, g.season, that.team[t].id];
+            tx.objectStore("playerStats").index("pid, season, tid").openCursor(key).onsuccess = function (event) {
+                var cursor, i, keys, playerStats;
 
                 cursor = event.target.result;
-                player_ = cursor.value;
+//console.log(cursor);
+                playerStats = cursor.value;
 
-                // Find the correct row of stats - should always be the last one, right?
-                playerStats = _.last(player_.stats);
-
-/*//gs bug stuff - eventually this can be deleted, after everyone affected has been "cured"
-if (playerStats === undefined) {
-    //var errorMsg;
-    //errorMsg = JSON.stringify(g) + "\n\n" + JSON.stringify(player_);
-    //helpers.error("<p>You've run into a nasty bug that we're currently trying to diagnose. Please email the contents of the box below to commissioner@basketball-gm.com. Thank you, and sorry for the trouble.</p><textarea rows=15 cols=80>" + errorMsg + "</textarea>");
-    player_ = player.addStatsRow(player_);
-    playerStats = _.last(player_.stats);
-}*/
+                // Since index is not on playoffs, manually check
+                if (playerStats.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
+                    return cursor.continue();
+                }
 
                 // Update stats
                 keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
@@ -82,6 +77,16 @@ if (playerStats === undefined) {
                 }
                 playerStats.gp += 1; // Already checked for non-zero minutes played above
                 playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;
+
+                cursor.update(playerStats);
+
+                afterDonePlayer();
+            };
+/*            tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
+                var cursor, player_;
+
+                cursor = event.target.result;
+                player_ = cursor.value;
 
                 // Injury crap - assign injury type if player does not already have an injury in the database
                 if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
@@ -95,12 +100,13 @@ if (playerStats === undefined) {
                 }
 
                 // Player value
+// NEED STATS HERE DAMN IT
                 player_ = player.updateValues(player_);
 
                 cursor.update(player_);
 
                 afterDonePlayer();
-            };
+            };*/
         }
     };
 
@@ -642,7 +648,7 @@ if (playerStats === undefined) {
             gidsFinished = [];
             playoffs = g.phase === g.PHASE.PLAYOFFS;
 
-            tx = g.dbl.transaction(["events", "games", "players", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+            tx = g.dbl.transaction(["events", "games", "players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 //tx = g.dbl.transaction(["players", "schedule"], "readwrite");
 
             cbSaveResult = function (i) {

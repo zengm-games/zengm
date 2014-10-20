@@ -118,7 +118,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                     var i, j, t, round, scoutingRank, teamStore, toMaybeAdd, tx;
 
                     // Probably is fastest to use this transaction for everything done to create a new league
-                    tx = g.dbl.transaction(["draftPicks", "draftOrder", "players", "teams", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games"], "readwrite");
+                    tx = g.dbl.transaction(["draftPicks", "draftOrder", "players", "playerStats", "teams", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games"], "readwrite");
 
                     // Draft picks for the first 4 years, as those are the ones can be traded initially
                     if (leagueFile.hasOwnProperty("draftPicks")) {
@@ -197,7 +197,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                     }
 
                     player.genBaseMoods(tx, function (baseMoods) {
-                        var afterPlayerCreation, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, playerStore, players, pots, profile, profiles, randomizeExpiration, t, t2, playerTids;
+                        var afterPlayerCreation, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, players, pots, profile, profiles, randomizeExpiration, t, t2, playerTids;
 
                         afterPlayerCreation = function () {
                             var createUndrafted1, createUndrafted2, createUndrafted3, i;
@@ -262,7 +262,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                             players = leagueFile.players;
 
                             // Use pre-generated players, filling in attributes as needed
-                            playerStore = g.dbl.transaction("players", "readwrite").objectStore("players");  // Transaction used above is closed by now
+                            tx = g.dbl.transaction("players", "readwrite");  // Transaction used above is closed by now
 
                             // Does the player want the rosters randomized?
                             if (randomizeRosters) {
@@ -285,12 +285,11 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
                                 p = player.augmentPartialPlayer(p, scoutingRank);
 
-                                dao.players.put({ot: playerStore, p: p});
+                                dao.players.put({ot: tx, p: p});
                                 cbAfterEachPlayer();
                             }
                         } else {
                             // Generate new players
-                            playerStore = tx.objectStore("players");
                             profiles = ["Point", "Wing", "Big", ""];
                             baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
                             pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
@@ -323,10 +322,12 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                     }
 
                                     if (t2 === g.PLAYER.FREE_AGENT) {
-                                        player.addToFreeAgents(playerStore, p, null, baseMoods, cbAfterEachPlayer);
+                                        player.addToFreeAgents(tx, p, null, baseMoods, cbAfterEachPlayer);
                                     } else {
-                                        dao.players.put({ot: playerStore, p: p});
-                                        cbAfterEachPlayer();
+                                        player.addStatsRow(tx, p, false, function (p) {
+                                            dao.players.put({ot: tx, p: p});
+                                            cbAfterEachPlayer();
+                                        });
                                     }
                                 }
 

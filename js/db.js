@@ -161,7 +161,7 @@ console.log(event);
      * @param {number} lid Integer league ID number for new league.
      */
     function createLeague(event, lid) {
-        var dbl, draftPickStore, eventStore, gameStore, playerStore, releasedPlayersStore;
+        var dbl, draftPickStore, eventStore, gameStore, playerStatsStore, playerStore, releasedPlayerStore;
 
         console.log("Creating league" + lid + " database");
 
@@ -169,11 +169,12 @@ console.log(event);
 
         // rid ("row id") is used as the keyPath for objects without an innate unique identifier
         playerStore = dbl.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
+        playerStatsStore = dbl.createObjectStore("playerStats", {keyPath: "psid", autoIncrement: true});
         dbl.createObjectStore("teams", {keyPath: "tid"});
         gameStore = dbl.createObjectStore("games", {keyPath: "gid"});
         dbl.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
         dbl.createObjectStore("playoffSeries", {keyPath: "season"});
-        releasedPlayersStore = dbl.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
+        releasedPlayerStore = dbl.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
         dbl.createObjectStore("awards", {keyPath: "season"});
         dbl.createObjectStore("trade", {keyPath: "rid"});
         dbl.createObjectStore("draftOrder", {keyPath: "rid"});
@@ -187,10 +188,11 @@ console.log(event);
         playerStore.createIndex("draft.year", "draft.year", {unique: false});
         playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
         playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
+        playerStatsStore.createIndex("pid, season, tid, playoffs", ["pid", "season", "tid", "playoffs"], {unique: true});
 //        gameStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used because currently the season index is used. If multiple indexes are eventually supported, then use this too.
         gameStore.createIndex("season", "season", {unique: false});
-        releasedPlayersStore.createIndex("tid", "tid", {unique: false});
-        releasedPlayersStore.createIndex("contract.exp", "contract.exp", {unique: false});
+        releasedPlayerStore.createIndex("tid", "tid", {unique: false});
+        releasedPlayerStore.createIndex("contract.exp", "contract.exp", {unique: false});
         draftPickStore.createIndex("season", "season", {unique: false});
         draftPickStore.createIndex("tid", "tid", {unique: false});
         eventStore.createIndex("season", "season", {unique: false});

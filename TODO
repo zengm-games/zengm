@@ -7,6 +7,21 @@ stats separate object store
 PERFORMANCE CRAP
 ----------------
 
+dao.players.getAll playerStats port
+  what indexes do i need? maybe i should have kept that list...
+    without pid
+      get all stats for any combination of the other 3, really
+    with just pid
+      return all rows for season
+    with pid and season
+      if statsTids and playoffs===false, return single row
+      if statsTids and playoffs===true, return both the playoffs and non-playoffs row (so between 0 and 2 rows)
+      if no statsTids and playoffs===false, return all rows for that season with playoffs===false
+      if no statsTids and playoffs===true, return all rows for that season
+  how do i know what order i will get the rows in?
+
+rename statsTids to statsTid
+
 build db abstraction function (maybe dao.player.getAll) that is flexible enough to handle all the cases described below and replace the IDB calls before every player.filter (and other player stats uses)
   statSeasons default should be to return no stats? "all" should be a special option to return all?
   replace IDB calls to players object store if it reads from DB and uses stats. if it doesn't use stats, it's okay if left there. if it writes to db and uses stats, make a note of it.
@@ -27,8 +42,8 @@ separate stores of playerStats, index by pid and season
     needs to handle case where player plays for multiple teams in one season - get all for (pid, season, !playoffs) but could probably get away with (pid, season) index and then manually check for playoffs
   same thing for all the annual vectors (team stats, player ratings, etc)?
   places stats are written
-    league creation
     addStatsRow
+      done correctly in league.js
     deleteOldData
     import/export
     util.advStats
@@ -36,6 +51,7 @@ separate stores of playerStats, index by pid and season
 
 benchmark!
   leagueDashboard could select only current season stats if I got rid of YWT. does that make a difference?
+  record options passed to dao.players.getAll and see if an additional index (or two) would help
 
 import/export of old league files?
 
@@ -44,6 +60,8 @@ separate active and retired players into separate object stores?
 db upgrade?
 
 import old league files?
+
+more normalization? team stats, team seasons, player ratings
 
 PLAYER DEVELOPMENT REVAMP
 -------------------------

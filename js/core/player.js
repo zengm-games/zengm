@@ -2,7 +2,7 @@
  * @name core.player
  * @namespace Functions operating on player objects, parts of player objects, or arrays of player objects.
  */
-define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, g, finances, injuries, names, faces, _, eventLog, helpers, random) {
+define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, db, g, finances, injuries, names, faces, _, eventLog, helpers, random) {
     "use strict";
 
     /**
@@ -449,7 +449,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
 
         baseMoods = [];
 
-        teamStore = require("db").getObjectStore(ot, "teams", "teams");
+        teamStore = db.getObjectStore(ot, "teams", "teams");
         teamStore.getAll().onsuccess = function (event) {
             var i, s, teams;
 
@@ -793,14 +793,20 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
      * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
      * @return {Object} Updated player object.
      */
-    function addStatsRow(p, playoffs) {
+    function addStatsRow(ot, p, playoffs, cb) {
+        var statsRow, tx;
+
+        tx = db.getObjectStore(ot, "playerStats", null, true);
         playoffs = playoffs !== undefined ? playoffs : false;
 
-        p.stats.push({season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0});
+        statsRow = {pid: p.pid, season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0};
+
         p.statsTids.push(p.tid);
         p.statsTids = _.uniq(p.statsTids);
 
-        return p;
+        tx.objectStore("playerStats").add(statsRow);
+
+        cb(p);
     }
 
     function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scoutingRank) {
@@ -809,11 +815,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
         p = {}; // Will be saved to database
         p.tid = tid;
         p.statsTids = [];
-        p.stats = [];
-        if (tid >= 0) {
-            // This only happens when generating random players for a new league, as otherwis tid would be negative (draft prospect)
-            addStatsRow(p, false);
-        }
         p.rosterOrder = 666;  // Will be set later
         p.ratings = [];
         if (newLeague) {

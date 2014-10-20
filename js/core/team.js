@@ -1294,7 +1294,7 @@ console.log(dv);*/
             };
         };
 
-        tx = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
+        tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "teams"], "readwrite");
         playerStore = tx.objectStore("players");
 
         userTeamSizeError = null;

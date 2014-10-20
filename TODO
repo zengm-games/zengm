@@ -44,15 +44,16 @@ separate stores of playerStats, index by pid and season
   places stats are written
     addStatsRow
       done correctly in league.js
-    deleteOldData
-    import/export
-      augmentPartialPlayer used to create new stats entry if necessary. now it doesn't. need to do new async addStatsRow somewhere 
     util.advStats
       implement
+      IDEA: don't write to DB until next game a player plays? what about end of season/playoffs?
     Game.prototype.writePlayerStats
       FUCK if I have to update player value every time here, i'm still writing to main player object!
         throttle to once every 10 games and on injuries?
       injury is same problem but rarer, since injuries usually don't happen
+
+Once I fix the util.advStats and Game.prototype.writePlayerStats issues above, BENCHMARK!
+  first season vs 20th season for localhost and play.basketball-gm.com
 
 test!
   confirm player stats entries get added in fantasy draft correctly
@@ -61,14 +62,17 @@ test!
     after playoffs
   make sure free agent auto sign players get the right stats row added
   make sure adding/removing players to meet roster limits still works
+  confirm undrafted players are being added to free agents list
 
 benchmark!
   leagueDashboard could select only current season stats if I got rid of YWT. does that make a difference?
   record options passed to dao.players.getAll and see if an additional index (or two) would help
 
-import/export of old league files?
+import/export
+  augmentPartialPlayer used to create new stats entry if necessary. now it doesn't. need to do new async addStatsRow somewhere 
+  import/export of old league files?
 
-separate active and retired players into separate object stores?
+deleteOldData shouldn't be necessary anymore
 
 db upgrade?
 

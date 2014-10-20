@@ -600,7 +600,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
                 coachingRanks = [];
 
-                tx = g.dbl.transaction(["players", "teams"], "readwrite");
+                tx = g.dbl.transaction(["players", "playerStats", "teams"], "readwrite");
 
                 // Add row to team stats and season attributes
                 tx.objectStore("teams").openCursor().onsuccess = function (event) {

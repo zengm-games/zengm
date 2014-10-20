@@ -22,7 +22,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/underscor
 
             strategies = _.pluck(teams, "strategy");
 
-            transaction = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
+            transaction = g.dbl.transaction(["players", "playerStats", "releasedPlayers"], "readwrite");
 
             transaction.objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
                 var i, players, signTeam, tids;
@@ -83,7 +83,19 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/underscor
                         numPlayersOnRoster = event.target.result;
 
                         db.getPayroll(transaction, tid, function (payroll) {
-                            var i, foundPlayer, p;
+                            var afterPickPlayer, i, foundPlayer, p;
+
+                            afterPickPlayer = function (p) {
+                                p = player.setContract(p, p.contract, true);
+                                p.gamesUntilTradable = 15;
+                                dao.players.put({ot: transaction, p: p});
+                                team.rosterAutoSort(transaction, tid, function () {
+                                    if (ti <= tids.length) {
+                                        signTeam(ti + 1);
+                                    }
+                                });
+//console.log(p.tid + ' sign ' + p.name + ' - ' + numPlayersOnRoster);
+                            };
 
                             if (numPlayersOnRoster < 15) {
                                 for (i = 0; i < players.length; i++) {
@@ -92,16 +104,12 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/underscor
                                         p = players[i];
                                         p.tid = tid;
                                         if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                                            p = player.addStatsRow(p);
+                                            player.addStatsRow(transaction, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                                                afterPickPlayer(p);
+                                            });
+                                        } else {
+                                            afterPickPlayer(p);
                                         }
-                                        p = player.setContract(p, p.contract, true);
-                                        p.gamesUntilTradable = 15;
-                                        dao.players.put({ot: transaction, p: p});
-                                        team.rosterAutoSort(transaction, tid, function () {
-                                            if (ti <= tids.length) {
-                                                signTeam(ti + 1);
-                                            }
-                                        });
                                         numPlayersOnRoster += 1;
                                         payroll += p.contract.amount;
                                         foundPlayer = true;

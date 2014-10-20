@@ -324,7 +324,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                     if (t2 === g.PLAYER.FREE_AGENT) {
                                         player.addToFreeAgents(tx, p, null, baseMoods, cbAfterEachPlayer);
                                     } else {
-                                        player.addStatsRow(tx, p, false, function (p) {
+                                        player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
                                             dao.players.put({ot: tx, p: p});
                                             cbAfterEachPlayer();
                                         });

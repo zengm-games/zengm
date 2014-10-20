@@ -48,30 +48,31 @@ define(["db", "globals"], function (db, g) {
 
             done = 0;
 
-            for (i = 0; i < players.length; i++) {
-                pid = players[i].pid;
 
-                /*if (options.statsSeasons === null) {
-                    // All seasons!
-                    // http://stackoverflow.com/a/26218219/786644
-                    playerStatsStore.index("pid, season, tid, playoffs").getAll(IDBKeyRange.bound([pid], [pid, '']);
-                } else {
-                    // One season at a time!
-                    for (j = 0; j < options.statsSeasons.length; j++) {
-                        season = options.statsSeasons[j];
+            // Hacky way: always get all seasons for pid, then filter in JS
+            if (options.statsSeasons === null || options.statsSeasons.length > 0) {
+                for (i = 0; i < players.length; i++) {
+                    pid = players[i].pid;
 
-                        if (tid === null) {
-                            // One team!
-                            playerStatsStore.index("pid, season, tid, playoffs").getAll(IDBKeyRange.bound([pid, season, tid], [pid, season, tid, '']);
-                        } else {
-                            // All teams!
-                            playerStatsStore.index("pid, season, tid, playoffs").getAll(IDBKeyRange.bound([pid, season], [pid, season, '']);
+                    /*if (options.statsSeasons === null) {
+                        // All seasons!
+                        // http://stackoverflow.com/a/26218219/786644
+                        playerStatsStore.index("pid, season, tid, playoffs").getAll(IDBKeyRange.bound([pid], [pid, '']);
+                    } else {
+                        // One season at a time!
+                        for (j = 0; j < options.statsSeasons.length; j++) {
+                            season = options.statsSeasons[j];
+
+                            if (tid === null) {
+                                // One team!
+                                playerStatsStore.index("pid, season, tid, playoffs").getAll(IDBKeyRange.bound([pid, season, tid], [pid, season, tid, '']);
+                            } else {
+                                // All teams!
+                                playerStatsStore.index("pid, season, tid, playoffs").getAll(IDBKeyRange.bound([pid, season], [pid, season, '']);
+                            }
                         }
-                    }
-                }*/
+                    }*/
 
-                // Hacky way: always get all seasons for pid, then filter in JS
-                if (options.statsSeasons === null || options.statsSeasons.length > 0) {
                     (function (i) {
                         tx.objectStore("playerStats").index("pid, season, tid, playoffs").getAll(IDBKeyRange.bound([pid], [pid, ''])).onsuccess = function (event) {
                             var playerStats;
@@ -105,10 +106,10 @@ define(["db", "globals"], function (db, g) {
                             }
                         };
                     }(i));
-                } else {
-                    // No stats needed! Yay!
-                    cb(players);
                 }
+            } else {
+                // No stats needed! Yay!
+                cb(players);
             }
         };
     };

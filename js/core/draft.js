@@ -364,11 +364,12 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             }
 
             // Add stats row if necessary (fantasy draft in ongoing season)
-            if (g.phase === g.PHASE.FANTASY_DRAFT && g.phase <= g.PHASE.PLAYOFFS) {
+            if (g.phase === g.PHASE.FANTASY_DRAFT && g.nextPhase <= g.PHASE.PLAYOFFS) {
                 p = player.addStatsRow(p);
+                player.addStatsRow(tx, p, g.nextPhase === g.PHASE.PLAYOFFS, function (p) {
+                    cursor.update(p);
+                });
             }
-
-            cursor.update(p);
         };
 
         tx.oncomplete = function () {

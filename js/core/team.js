@@ -1284,11 +1284,6 @@ console.log(dv);*/
 //console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
                     }
                 }
-
-                // Auto sort rosters (except player's team)
-                if (tid !== g.userTid) {
-                    rosterAutoSort(playerStore, tid);
-                }
             };
         };
 

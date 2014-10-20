@@ -46,8 +46,16 @@ separate stores of playerStats, index by pid and season
       done correctly in league.js
     deleteOldData
     import/export
+      augmentPartialPlayer used to create new stats entry if necessary. now it doesn't. need to do new async addStatsRow somewhere 
     util.advStats
     Game.prototype.writePlayerStats
+
+test!
+  confirm player stats entries get added in fantasy draft correctly
+    before playoffs
+    during playoffs
+    after playoffs
+  make sure free agent auto sign players get the right stats row added
 
 benchmark!
   leagueDashboard could select only current season stats if I got rid of YWT. does that make a difference?
@@ -62,6 +70,8 @@ db upgrade?
 import old league files?
 
 more normalization? team stats, team seasons, player ratings
+
+checkRosterSizes used to auto sort AI lineups. was that for beginning of season stuff? if so, add it somewhere
 
 PLAYER DEVELOPMENT REVAMP
 -------------------------

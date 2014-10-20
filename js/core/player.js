@@ -784,14 +784,17 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
     }
 
     /**
-     * Add a new row of stats to a player object.
+     * Add a new row of stats to the playerStats database.
      * 
-     * A row contains stats for unique values of (team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
+     * A row contains stats for unique values of (pid, team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid and player ID in p.pid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
+     *
+     * The callback function takes the player object with an updated statsTids as its argument. This is NOT written to the database within addStatsRow because it is often updated in several different ways before being written. Only the entry to playerStats is actually written to the databse by this function.
      *
      * @memberOf core.player
+     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on playerStats readwrite; if null is passed, then a new transaction will be used.
      * @param {Object} p Player object.
      * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
-     * @return {Object} Updated player object.
+     * @return {function(Object)} Callback function whose argument the updated player object.
      */
     function addStatsRow(ot, p, playoffs, cb) {
         var statsRow, tx;
@@ -1758,12 +1761,6 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
         } else {
             if (!p.ratings[0].hasOwnProperty("season")) {
                 p.ratings[0].season = g.startingSeason;
-            }
-        }
-        if (!p.hasOwnProperty("stats")) {
-            p.stats = [];
-            if (p.tid >= 0) {
-                p = addStatsRow(p, false);
             }
         }
 

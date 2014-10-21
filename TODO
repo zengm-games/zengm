@@ -27,8 +27,6 @@ build db abstraction function (maybe dao.player.getAll) that is flexible enough 
   replace IDB calls to players object store if it reads from DB and uses stats. if it doesn't use stats, it's okay if left there. if it writes to db and uses stats, make a note of it.
 
 separate stores of playerStats, index by pid and season
-  big question: is this going to make read performance too slow when reading stats for all players and merging with main player object?
-    maybe cache player.value so stats are needed for less things? but that still has the same original problem of writing player.value somewhere...
   what about tid and playoffs? might need an index with just pid+season and another with all 4
     also need a "current" marker to allow distinction between current team and prior team in the same season
     is it possible to use an index on 4 things to query on 1 or 2 or 3 of them?
@@ -37,10 +35,6 @@ separate stores of playerStats, index by pid and season
     range selection is weird, maybe unuseable: http://stackoverflow.com/a/15625231/786644
     can say "fix the first N elements of the index and let the other values be anything" http://stackoverflow.com/questions/26203075/querying-an-indexeddb-compound-index-with-a-shorter-array
   should be able to use this to select for pid and do range of seasons: http://stackoverflow.com/a/23808891/786644
-  can i use the compound index for queries on only one of them?
-  player.value might need past two seasons - should be a function to call to get summed stats object from multiple seasons
-    needs to handle case where player plays for multiple teams in one season - get all for (pid, season, !playoffs) but could probably get away with (pid, season) index and then manually check for playoffs
-  same thing for all the annual vectors (team stats, player ratings, etc)?
   places stats are written
     addStatsRow
       done correctly in league.js

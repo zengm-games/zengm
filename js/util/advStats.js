@@ -146,37 +146,37 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
                     }
                 }());
 
-cb();
-/*                // Save to database. Active players have tid >= 0
-                tx = g.dbl.transaction("players", "readwrite");
-                tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                    var cursor, i, p, s;
+                // Save to database
+                tx = g.dbl.transaction("playerStats", "readwrite");
+                for (i = 0; i < players.length; i++) {
+                    if (players[i].active) {
+                        (function (i) {
+                            var key;
+                            key = [players[i].pid, g.season, players[i].tid];
+                            tx.objectStore("playerStats").index("pid, season, tid").openCursor(key).onsuccess = function (event) {
+                                var cursor, playerStats;
 
-                    cursor = event.target.result;
-                    if (cursor) {
-                        p = cursor.value;
+                                cursor = event.target.result;
+                                playerStats = cursor.value;
 
-                        for (i = 0; i < players.length; i++) {
-                            if (PER[i] !== undefined && !isNaN(PER[i]) && players[i].pid === p.pid) {
-                                s = p.stats.length - 1;
-                                // This will be either playoffs or regular season, as appropriate
-                                p.stats[s].per = PER[i];
-                                p.stats[s].ewa = EWA[i];
+                                // Since index is not on playoffs, manually check
+                                if (playerStats.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
+                                    return cursor.continue();
+                                }
 
-                                cursor.update(p);
+                                playerStats.per = PER[i];
+                                playerStats.ewa = EWA[i];
 
-                                break;
-                            }
-                        }
-
-                        cursor.continue();
+                                cursor.update(playerStats);
+                            };
+                        }(i));
                     }
-                };
+                }
                 tx.oncomplete = function () {
                     if (cb !== undefined) {
                         cb();
                     }
-                };*/
+                };
             });
         });
     }

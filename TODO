@@ -47,7 +47,14 @@ separate stores of playerStats, index by pid and season
     Game.prototype.writePlayerStats
       FUCK if I have to update player value every time here, i'm still writing to main player object!
         throttle to once every 10 games and on injuries?
+        only need min and per, can they be cached in player object for easy value generation?
       injury is same problem but rarer, since injuries usually don't happen
+
+updateValues
+  should take two arguments, raw player object and array of last two regular seasons stats
+  fix calls elsewhere
+
+dao.players.put shouldn't take callback, it doesn't guarantee anything
 
 Once I fix the util.advStats and Game.prototype.writePlayerStats issues above, BENCHMARK!
   first season vs 20th season for localhost and play.basketball-gm.com

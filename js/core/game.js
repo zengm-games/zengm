@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "core/team", "lib/underscore", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (db, g, ui, freeAgents, finances, gameSim, player, season, team, _, advStats, eventLog, lock, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "core/team", "lib/underscore", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, db, g, ui, freeAgents, finances, gameSim, player, season, team, _, advStats, eventLog, lock, helpers, random) {
     "use strict";
 
     function Game() {
@@ -38,7 +38,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
     };
 
     Game.prototype.writePlayerStats = function (tx, t, p, cb) {
-        var afterDonePlayer, key, that;
+        var afterDonePlayer, done, key, that;
 
         that = this;
 
@@ -57,6 +57,8 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
         if (that.team[t].player[p].stat.min === 0) {
             afterDonePlayer();
         } else {
+            done = 0;
+
             key = [that.team[t].player[p].id, g.season, that.team[t].id];
             tx.objectStore("playerStats").index("pid, season, tid").openCursor(key).onsuccess = function (event) {
                 var cursor, i, keys, playerStats;
@@ -80,9 +82,47 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
 
                 cursor.update(playerStats);
 
-                afterDonePlayer();
+                done += 1;
+                if (done === 2) {
+                    afterDonePlayer();
+                }
             };
-/*            tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
+
+/*            dao.players.getAll({
+                ot: tx,
+                key: that.team[t].player[p].id,
+                statsSeasons: [g.season, g.season - 1]
+            }, function (players) {
+                var player_, ps;
+
+                // Convert to real player object, separate stats
+                player_ = players[0];
+                ps = player_.stats.reverse();
+                delete player_.stats;
+
+                // Injury crap - assign injury type if player does not already have an injury in the database
+                if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
+                    player_.injury = player.injury(that.team[t].healthRank);
+                    if (that.team[t].id === g.userTid) {
+                        eventLog.add(tx, {
+                            type: "injured",
+                            text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> was injured! (' + player_.injury.type + ', out for ' + player_.injury.gamesRemaining + ' games)'
+                        });
+                    }
+                }
+
+                // Player value
+                player_ = player.updateValues(player_, ps);
+
+                dao.players.put({ot: tx, p: player_});
+
+                done += 1;
+                if (done === 2) {
+                    afterDonePlayer();
+                }
+
+            });*/
+            tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
                 var cursor, player_;
 
                 cursor = event.target.result;
@@ -99,14 +139,13 @@ define(["db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim
                     }
                 }
 
-                // Player value
-// NEED STATS HERE DAMN IT
-                player_ = player.updateValues(player_);
-
                 cursor.update(player_);
 
-                afterDonePlayer();
-            };*/
+                done += 1;
+                if (done === 2) {
+                    afterDonePlayer();
+                }
+            };
         }
     };
 

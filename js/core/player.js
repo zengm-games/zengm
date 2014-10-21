@@ -1488,6 +1488,7 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
      *
      * @memberOf core.player
      * @param {Object} p Player object.
+     * @param {Array.<Object>} Array of playerStats objects, regular season only, starting with most recent. Only the first 1 or 2 will be used.
      * @param {Object=} options Object containing several optional options:
      *     noPot: When true, don't include potential in the value calcuation (useful for roster
      *         ordering and game simulation). Default false.
@@ -1496,13 +1497,15 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
      * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential
      *     ratings.
      */
-    function value(p, options) {
+    function value(p, ps, options) {
         var age, current, i, potential, pr, ps, ps1, ps2, s, worth, worthFactor;
 
         options = options !== undefined ? options : {};
         options.noPot = options.noPot !== undefined ? options.noPot : false;
         options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
         options.withContract = options.withContract !== undefined ? options.withContract : false;
+
+if (ps === undefined) { console.log("NO STATS"); ps = []; }
 
         // Current ratings
         pr = {}; // Start blank, add what we need (efficiency, wow!)
@@ -1515,17 +1518,6 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
         } else {
             pr.ovr = p.ratings[s].ovr;
             pr.pot = p.ratings[s].pot;
-        }
-
-        // Regular season stats ONLY, in order starting with most recent
-        ps = [];
-        if (p.stats !== undefined) { // Filtered player objects might not include it, for rookies
-            for (i = 0; i < p.stats.length; i++) {
-                if (!p.stats[i].playoffs) {
-                    ps.push(p.stats[i]); // Okay that it's not deep copied, because this isn't modified
-                }
-            }
-            ps.reverse();
         }
 
         // 1. Account for stats (and current ratings if not enough stats)
@@ -1615,12 +1607,12 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
         }
     }
 
-    function updateValues(p) {
-        p.value = value(p);
-        p.valueNoPot = value(p, {noPot: true});
-        p.valueFuzz = value(p, {fuzz: true});
-        p.valueNoPotFuzz = value(p, {noPot: true, fuzz: true});
-        p.valueWithContract = value(p, {withContract: true});
+    function updateValues(p, ps) {
+        p.value = value(p, ps);
+        p.valueNoPot = value(p, ps, {noPot: true});
+        p.valueFuzz = value(p, ps, {fuzz: true});
+        p.valueNoPotFuzz = value(p, ps, {noPot: true, fuzz: true});
+        p.valueWithContract = value(p, ps, {withContract: true});
 
         return p;
     }

@@ -693,6 +693,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     });
                     localStorage.nagged = "2";
                 } else if ((localStorage.nagged === "2" && Math.random() < 0.25) || (localStorage.nagged === "3" && Math.random < 0.025)) {
+                    _gaq.push(["_trackEvent", "Ad Display", "DraftKings"]);
                     tx.objectStore("messages").add({
                         read: false,
                         from: "The Commissioner",

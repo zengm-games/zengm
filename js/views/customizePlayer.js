@@ -280,7 +280,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
         }).extend({throttle: 1});
 
         document.getElementById("create-a-player").addEventListener("click", function () {
-            var numSeasons, p, pid, r, tx;
+            var p, pid, r, tx;
 
             p = komapping.toJS(vm.p);
 
@@ -326,13 +326,10 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 }
             }
 
-            // If player was retired, update ratings
+            // If player was retired, add ratings (but don't develop, because that would change ratings)
             if (vm.originalTid() === g.PLAYER.RETIRED) {
-                numSeasons = g.season - p.ratings[r].season;
-                if (numSeasons > 0) {
+                if (g.season - p.ratings[r].season > 0) {
                     p = player.addRatingsRow(p, 15);
-                    // Don't actually want to develop, as that just changes ratings
-                    // p = player.develop(p, numSeasons, false, 15);
                 }
             }
 

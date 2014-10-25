@@ -45,8 +45,7 @@ separate stores of playerStats, index by pid and season
           ps passed to updateValues is assumed to contain the most recent regular seasons. if we need more, get it
           in playoffs, don't call updateValues after games play because it can't change
           fix updateValues calls to be async
-            these are all in core.player, but might be tricky...
-              player.bonus and player.develop, which are both sync
+            only remaining: in player.develop
       injury is same problem but rarer, since injuries usually don't happen
         need a better way to detect when an injury occurred. Now just know if a player is injured, not if it happened this game
 

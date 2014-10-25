@@ -221,6 +221,8 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
 
     /**
      * Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
+     *
+     * Make sure to call player.updateValues after this! Otherwise, player values will be out of sync.
      * 
      * @memberOf core.player
      * @param {Object} p Player object.
@@ -389,10 +391,6 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
             age = g.season - p.born.year + years;
             p.born.year = g.season - age;
         }
-
-        // Keep values updated
-
-// FIX THIS        p = updateValues(p);
 
         return p;
     }

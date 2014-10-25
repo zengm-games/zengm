@@ -82,8 +82,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
                 cursor.update(playerStats);
 
-// This will run for any injured player, even ones that weren't injured this game. Need to cache injury.type to improve this.
-//                if (that.team[t].player[p].injured) {
+                // This could be throttled to happen like every ~10 games or when there is an injury. Need to benchmark potential performance increase
                 tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
                     var cursor, player_;
 
@@ -112,9 +111,6 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         afterDonePlayer();
                     }
                 };
-//                } else {
-//                    afterDonePlayer();
-//                }
             };
         }
     };

@@ -637,16 +637,19 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                                 p = player.addRatingsRow(p, scoutingRank);
                                 p = player.develop(p, 1, false, coachingRanks[p.tid]);
 
-                                // Add row to player stats if they are on a team
-                                if (p.tid >= 0) {
-                                    player.addStatsRow(tx, p, false, function (p) {
+                                // Update player values after ratings changes
+                                player.updateValues(tx, p, [], function (p) {
+                                    // Add row to player stats if they are on a team
+                                    if (p.tid >= 0) {
+                                        player.addStatsRow(tx, p, false, function (p) {
+                                            cursorP.update(p);
+                                            cursorP.continue();
+                                        });
+                                    } else {
                                         cursorP.update(p);
                                         cursorP.continue();
-                                    });
-                                } else {
-                                    cursorP.update(p);
-                                    cursorP.continue();
-                                }
+                                    }
+                                });
                             }
                         };
                     }

@@ -94,7 +94,10 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 p = player.generate(tid, baseAge, profile, baseRating, pot, draftYear, false, scoutingRank);
                 p = player.develop(p, agingYears, true);
 
-                dao.players.put({ot: tx, p: p});
+                // Update player values after ratings changes
+                player.updateValues(ot, p, [], function (p) {
+                    dao.players.put({ot: tx, p: p});
+                });
             }
 
             if (ot !== null) {

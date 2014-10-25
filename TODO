@@ -38,20 +38,6 @@ separate stores of playerStats, index by pid and season
   places stats are written
     addStatsRow
       done correctly in league.js
-    Game.prototype.writePlayerStats
-      FUCK if I have to update player value every time here, i'm still writing to main player object!
-        throttle to once every 10 games and on injuries?
-        dynamically retrieve old stats row only if needed in player.value() or player.updateValues()?
-          ps passed to updateValues is assumed to contain the most recent regular seasons. if we need more, get it
-          in playoffs, don't call updateValues after games play because it can't change
-          fix updateValues calls to be async
-            only remaining: in player.develop
-      injury is same problem but rarer, since injuries usually don't happen
-        need a better way to detect when an injury occurred. Now just know if a player is injured, not if it happened this game
-
-updateValues
-  should take two arguments, raw player object and array of last two regular seasons stats
-  fix calls elsewhere
 
 dao.players.put shouldn't take callback, it doesn't guarantee anything
 

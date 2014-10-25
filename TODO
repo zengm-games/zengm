@@ -35,9 +35,6 @@ separate stores of playerStats, index by pid and season
     range selection is weird, maybe unuseable: http://stackoverflow.com/a/15625231/786644
     can say "fix the first N elements of the index and let the other values be anything" http://stackoverflow.com/questions/26203075/querying-an-indexeddb-compound-index-with-a-shorter-array
   should be able to use this to select for pid and do range of seasons: http://stackoverflow.com/a/23808891/786644
-  places stats are written
-    addStatsRow
-      done correctly in league.js
 
 dao.players.put shouldn't take callback, it doesn't guarantee anything
 

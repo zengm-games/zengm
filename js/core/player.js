@@ -391,7 +391,8 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
         }
 
         // Keep values updated
-        p = updateValues(p);
+
+// FIX THIS        p = updateValues(p);
 
         return p;
     }
@@ -399,15 +400,14 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
     /**
      * Add or subtract amount from all current ratings and update the player's contract appropriately.
      * 
-     * This should only be called when generating players for a new league. Otherwise, develop should be used. 
+     * This should only be called when generating players for a new league. Otherwise, develop should be used. Also, make sure you call player.updateValues and player.setContract after this, because ratings are changed!
      * 
      * @memberOf core.player
      * @param {Object} p Player object.
      * @param {number} amount Number to be added to each rating (can be negative).
-     * @param {boolean} randomizeExp Should the number of years on the player's contract be randomized?.
      * @return {Object} Updated player object.
      */
-    function bonus(p, amount, randomizeExp) {
+    function bonus(p, amount) {
         var age, i, key, r, ratingKeys;
 
         // Make sure age is always defined
@@ -426,12 +426,6 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
         if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
             p.ratings[r].pot = p.ratings[r].ovr;
         }
-
-        // Update contract based on development. Only write contract to log if not a free agent.
-        p = setContract(p, genContract(p, randomizeExp), p.tid >= 0);
-
-        // Keep values updated
-        p = updateValues(p);
 
         return p;
     }
@@ -1630,7 +1624,11 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
 
         // Start at season and look backwards until we hit
         getStats = function (season, cb) {
-            g = require("globals");
+            // New player objects don't have pids let alone stats, so just skip
+            if (!p.hasOwnProperty("pid")) {
+                return cb();
+            }
+
             playerStatsStore.index("pid, season, tid").openCursor(IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]), "prev").onsuccess = function (event) {
                 var cursor, psTemp;
 

@@ -313,18 +313,28 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                     p = player.generate(t2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
                                     p = player.develop(p, agingYears, true);
                                     if (n < 5) {
-                                        p = player.bonus(p, goodNeutralBad * random.randInt(0, 20), true);
+                                        p = player.bonus(p, goodNeutralBad * random.randInt(0, 20));
                                     } else {
-                                        p = player.bonus(p, 0, true);
+                                        p = player.bonus(p, 0);
                                     }
                                     if (t2 === g.PLAYER.FREE_AGENT) {  // Free agents
-                                        p = player.bonus(p, -15, false);
+                                        p = player.bonus(p, -15);
                                     }
 
-                                    if (t2 === g.PLAYER.FREE_AGENT) {
-                                        player.addToFreeAgents(tx, p, null, baseMoods, cbAfterEachPlayer);
-                                    } else {
-                                        (function (p) {
+                                    // Update player values after ratings changes
+                                    player.updateValues(tx, p, [], function (p) {
+                                        var randomizeExp;
+
+                                        // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
+                                        randomizeExp = (p.tid !== g.PLAYER.FREE_AGENT);
+
+                                        // Update contract based on development. Only write contract to player log if not a free agent.
+                                        p = player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
+
+                                        // Save to database
+                                        if (t2 === g.PLAYER.FREE_AGENT) {
+                                            player.addToFreeAgents(tx, p, null, baseMoods, cbAfterEachPlayer);
+                                        } else {
                                             dao.players.put({ot: tx, p: p, onsuccess: function (event) {
                                                 // When adding a player, this is the only way to know the pid
                                                 p.pid = event.target.result;
@@ -333,8 +343,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                                     cbAfterEachPlayer();
                                                 });
                                             }});
-                                        }(p));
-                                    }
+                                        }
+                                    });
                                 }
 
                                 // Initialize rebuilding/contending, when possible

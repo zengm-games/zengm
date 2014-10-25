@@ -130,6 +130,7 @@ define(["db", "globals"], function (db, g) {
     };
 
     // This should ultimately delete stats before writing
+    // options.onsuccess defines a callback function to be run on put.onsuccess. This does NOT mean the data is actually written to the database, just that it will be (no key errors or whatever). This should probably only be used to get the player ID from event.target.result when inserting/upserting a player.
     players.put = function (options, cb) {
         var playerStore;
 

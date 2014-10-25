@@ -247,7 +247,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     index: "tid",
                     key: champTid,
                     statsSeasons: [g.season],
-                    statsTids: champTid,
+                    statsTid: champTid,
                     statsPlayoffs: true
                 }, function (players) {
                     players = player.filter(players, { // Only the champions, only playoff stats

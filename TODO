@@ -7,8 +7,6 @@ stats separate object store
 PERFORMANCE CRAP
 ----------------
 
-rename statsTids to statsTid
-
 dao.players.put shouldn't take callback, it doesn't guarantee anything
 
 statSeasons default should be to return no stats? "all" should be a special option to return all?

@@ -1177,7 +1177,7 @@ console.log(dv);*/
                     index: "tid",
                     key: t.tid,
                     statsSeasons: [g.season],
-                    statsTids: t.tid
+                    statsTid: t.tid
                 }, function (players) {
                     var age, denominator, i, numerator, score, updated, youngStar;
 

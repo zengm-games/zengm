@@ -15,7 +15,7 @@ define(["db", "globals"], function (db, g) {
     // filter: Arbitrary JS function to run on output with array.filter
     // statsSeasons: if undefined/null, return all (needed for career totals, listing all years stats, etc). otherwise, it's an array of seasons to return (usually just one year, but can be two for oldStats)
     // statsPlayoffs: if undefined/null, default is false. if true, include both regular season and playffs, otherwise just regular season. This is because player.filter doesn't like being given only playoff stats, for some reason.
-    // statsTids: if undefined/null, return any. otherwise, filter
+    // statsTid: if undefined/null, return any. otherwise, filter
     // 
     // Relevant SO links:
     // http://stackoverflow.com/questions/16501459/javascript-searching-indexeddb-using-multiple-indexes
@@ -32,7 +32,7 @@ define(["db", "globals"], function (db, g) {
         options.key = options.key !== undefined ? options.key : null;
         options.statsSeasons = options.statsSeasons !== undefined ? options.statsSeasons : null;
         options.statsPlayoffs = options.statsPlayoffs !== undefined ? options.statsPlayoffs : false;
-        options.statsTids = options.statsTids !== undefined ? options.statsTids : null;
+        options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
         options.filter = options.filter !== undefined ? options.filter : null;
 
         playerStore = db.getObjectStore(options.ot, ["players", "playerStats"], "players"); // Doesn't really need playerStats all the time
@@ -51,7 +51,7 @@ define(["db", "globals"], function (db, g) {
                 players = players.filter(options.filter);
             }
 
-            tid = options.statsTids;
+            tid = options.statsTid;
 
             done = 0;
 
@@ -98,7 +98,7 @@ define(["db", "globals"], function (db, g) {
                                     return false;
                                 }
 
-                                if (options.statsTids !== null && options.statsTids !== ps.tid) {
+                                if (options.statsTid !== null && options.statsTid !== ps.tid) {
                                     return false;
                                 }
 

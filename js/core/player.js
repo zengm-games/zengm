@@ -882,8 +882,12 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
         p.watch = false;
         p.gamesUntilTradable = 0;
 
-        // These should be set again by player.updateValues after player is completely done (automatic in player.develop)
-        p = updateValues(p);
+        // These should be set by player.updateValues after player is completely done (automatic in player.develop)
+        p.value = 0;
+        p.valueNoPot = 0;
+        p.valueFuzz = 0;
+        p.valueNoPotFuzz = 0;
+        p.valueWithContract = 0;
 
         // Must be after value*s are set, because genContract depends on them
         p.salaries = [];
@@ -1607,14 +1611,70 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
         }
     }
 
-    function updateValues(p, ps) {
-        p.value = value(p, ps);
-        p.valueNoPot = value(p, ps, {noPot: true});
-        p.valueFuzz = value(p, ps, {fuzz: true});
-        p.valueNoPotFuzz = value(p, ps, {noPot: true, fuzz: true});
-        p.valueWithContract = value(p, ps, {withContract: true});
+    // ps: player stats objects, regular season only, most recent first
+    // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
+    function updateValues(ot, p, ps, cb) {
+        var getStats, playerStatsStore, season, withPs;
 
-        return p;
+        playerStatsStore = db.getObjectStore(ot, "playerStats", "playerStats");
+
+        withPs = function () {
+            p.value = value(p, ps);
+            p.valueNoPot = value(p, ps, {noPot: true});
+            p.valueFuzz = value(p, ps, {fuzz: true});
+            p.valueNoPotFuzz = value(p, ps, {noPot: true, fuzz: true});
+            p.valueWithContract = value(p, ps, {withContract: true});
+
+            cb(p);
+        };
+
+        // Start at season and look backwards until we hit
+        getStats = function (season, cb) {
+            g = require("globals");
+            playerStatsStore.index("pid, season, tid").openCursor(IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]), "prev").onsuccess = function (event) {
+                var cursor, psTemp;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    psTemp = cursor.value;
+
+                    // Skip playoff stats
+                    if (psTemp.playoffs) {
+                        return cursor.continue();
+                    }
+
+                    // Store stats
+                    ps.push(psTemp);
+
+                    // Continue only if we need another row
+                    if (ps.length === 1 && ps[0].min < 2000) {
+                        cursor.continue();
+                    } else {
+                        cb();
+                    }
+                } else {
+                    // We ran out of values, just do the best with what we have
+                    cb();
+                }
+            };
+        };
+
+        // Require up to the two most recent regular season stats entries, unless the current season has 2000+ minutes
+        if (ps.length === 0 || (ps.length === 1 && ps[0].min < 2000)) {
+            // Start search for past stats either at this season or at the most recent ps season
+            // This assumes ps[0].season is the most recent entry for this player!
+            if (ps.length === 0) {
+                season = g.season;
+            } else {
+                season = ps[0].season - 1;
+            }
+
+            getStats(season, function () {
+                withPs();
+            });
+        } else {
+            withPs();
+        }
     }
 
     /**

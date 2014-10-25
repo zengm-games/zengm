@@ -41,9 +41,12 @@ separate stores of playerStats, index by pid and season
     Game.prototype.writePlayerStats
       FUCK if I have to update player value every time here, i'm still writing to main player object!
         throttle to once every 10 games and on injuries?
-        only need min and per, can they be cached in player object for easy value generation?
-          this would probably work, just need to append every time a regular season PER is finalized (how to define that? can't be just addStatsRow because that doesn't work for cutting players)
+        dynamically retrieve old stats row only if needed in player.value() or player.updateValues()?
+          ps passed to updateValues is assumed to contain the most recent regular seasons. if we need more, get it
+          in playoffs, don't call updateValues after games play because it can't change
+          fix updateValues calls to be async
       injury is same problem but rarer, since injuries usually don't happen
+        need a better way to detect when an injury occurred. Now just know if a player is injured, not if it happened this game
 
 updateValues
   should take two arguments, raw player object and array of last two regular seasons stats

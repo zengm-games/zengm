@@ -82,10 +82,39 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
                 cursor.update(playerStats);
 
-                done += 1;
-                if (done === 2) {
-                    afterDonePlayer();
-                }
+// This will run for any injured player, even ones that weren't injured this game. Need to cache injury.type to improve this.
+//                if (that.team[t].player[p].injured) {
+                tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
+                    var cursor, player_;
+
+                    cursor = event.target.result;
+                    player_ = cursor.value;
+
+                    // Injury crap - assign injury type if player does not already have an injury in the database
+                    if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
+                        player_.injury = player.injury(that.team[t].healthRank);
+                        if (that.team[t].id === g.userTid) {
+                            eventLog.add(tx, {
+                                type: "injured",
+                                text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> was injured! (' + player_.injury.type + ', out for ' + player_.injury.gamesRemaining + ' games)'
+                            });
+                        }
+                    }
+
+                    // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
+                    if (g.phase !== g.PHASE.PLAYOFFS) {
+                        player.updateValues(tx, player_, [playerStats], function (player_) {
+                            cursor.update(player_);
+                            afterDonePlayer();
+                        });
+                    } else {
+                        cursor.update(player_);
+                        afterDonePlayer();
+                    }
+                };
+//                } else {
+//                    afterDonePlayer();
+//                }
             };
 
 /*            dao.players.getAll({
@@ -122,30 +151,6 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 }
 
             });*/
-            tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
-                var cursor, player_;
-
-                cursor = event.target.result;
-                player_ = cursor.value;
-
-                // Injury crap - assign injury type if player does not already have an injury in the database
-                if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
-                    player_.injury = player.injury(that.team[t].healthRank);
-                    if (that.team[t].id === g.userTid) {
-                        eventLog.add(tx, {
-                            type: "injured",
-                            text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> was injured! (' + player_.injury.type + ', out for ' + player_.injury.gamesRemaining + ' games)'
-                        });
-                    }
-                }
-
-                cursor.update(player_);
-
-                done += 1;
-                if (done === 2) {
-                    afterDonePlayer();
-                }
-            };
         }
     };
 

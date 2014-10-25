@@ -116,41 +116,6 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 //                    afterDonePlayer();
 //                }
             };
-
-/*            dao.players.getAll({
-                ot: tx,
-                key: that.team[t].player[p].id,
-                statsSeasons: [g.season, g.season - 1]
-            }, function (players) {
-                var player_, ps;
-
-                // Convert to real player object, separate stats
-                player_ = players[0];
-                ps = player_.stats.reverse();
-                delete player_.stats;
-
-                // Injury crap - assign injury type if player does not already have an injury in the database
-                if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
-                    player_.injury = player.injury(that.team[t].healthRank);
-                    if (that.team[t].id === g.userTid) {
-                        eventLog.add(tx, {
-                            type: "injured",
-                            text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> was injured! (' + player_.injury.type + ', out for ' + player_.injury.gamesRemaining + ' games)'
-                        });
-                    }
-                }
-
-                // Player value
-                player_ = player.updateValues(player_, ps);
-
-                dao.players.put({ot: tx, p: player_});
-
-                done += 1;
-                if (done === 2) {
-                    afterDonePlayer();
-                }
-
-            });*/
         }
     };
 

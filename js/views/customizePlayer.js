@@ -354,21 +354,21 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             }
 
             // Recalculate player values, since ratings may have changed
-            p = player.updateValues(p);
+            player.updateValues(null, p, [], function (p) {
+                tx = g.dbl.transaction("players", "readwrite");
 
-            tx = g.dbl.transaction("players", "readwrite");
-
-            // put will either add or update entry
-            dao.players.put({ot: tx, p: p, onsuccess: function (event) {
-                // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
-                // When adding a player, this is the only way to know the pid
-                pid = event.target.result;
-            }});
-            tx.oncomplete = function () {
-                db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                    ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
-                });
-            };
+                // put will either add or update entry
+                dao.players.put({ot: tx, p: p, onsuccess: function (event) {
+                    // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
+                    // When adding a player, this is the only way to know the pid
+                    pid = event.target.result;
+                }});
+                tx.oncomplete = function () {
+                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
+                    });
+                };
+            });
         });
     }
 

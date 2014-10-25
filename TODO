@@ -45,6 +45,8 @@ separate stores of playerStats, index by pid and season
           ps passed to updateValues is assumed to contain the most recent regular seasons. if we need more, get it
           in playoffs, don't call updateValues after games play because it can't change
           fix updateValues calls to be async
+            these are all in core.player, but might be tricky...
+              player.bonus and player.develop, which are both sync
       injury is same problem but rarer, since injuries usually don't happen
         need a better way to detect when an injury occurred. Now just know if a player is injured, not if it happened this game
 
@@ -66,6 +68,8 @@ test!
   make sure adding/removing players to meet roster limits still works
   confirm undrafted players are being added to free agents list
   advStats in playoffs
+  make sure stats don't get accidentally added to player object
+    throw error in .put
 
 benchmark!
   leagueDashboard could select only current season stats if I got rid of YWT. does that make a difference?

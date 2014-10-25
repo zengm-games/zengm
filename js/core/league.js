@@ -201,8 +201,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
                         afterPlayerCreation = function () {
                             var createUndrafted1, createUndrafted2, createUndrafted3, i;
+
                             // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
-                            tx = g.dbl.transaction("players", "readwrite");
+                            tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
 
                             // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
                             createUndrafted1 = Math.round(70 * g.numTeams / 30);

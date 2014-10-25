@@ -13,7 +13,7 @@ define(["db", "globals"], function (db, g) {
 
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
     // filter: Arbitrary JS function to run on output with array.filter
-    // statsSeasons: if undefined/null, return all (needed for career totals, listing all years stats, etc). otherwise, it's an array of seasons to return (usually just one year, but can be two for oldStats)
+    // statsSeasons: if "all", return all (needed for career totals, listing all years stats, etc). if undefined/null, return none (same as empty array input). otherwise, it's an array of seasons to return (usually just one year, but can be two for oldStats)
     // statsPlayoffs: if undefined/null, default is false. if true, include both regular season and playffs, otherwise just regular season. This is because player.filter doesn't like being given only playoff stats, for some reason.
     // statsTid: if undefined/null, return any. otherwise, filter
     // 
@@ -30,10 +30,14 @@ define(["db", "globals"], function (db, g) {
         options.ot = options.ot !== undefined ? options.ot : null;
         options.index = options.index !== undefined ? options.index : null;
         options.key = options.key !== undefined ? options.key : null;
-        options.statsSeasons = options.statsSeasons !== undefined ? options.statsSeasons : null;
         options.statsPlayoffs = options.statsPlayoffs !== undefined ? options.statsPlayoffs : false;
         options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
         options.filter = options.filter !== undefined ? options.filter : null;
+
+        // By default, return no stats
+        if (options.statsSeasons === undefined || options.statsSeasons === null) {
+            options.statsSeasons = [];
+        }
 
         playerStore = db.getObjectStore(options.ot, ["players", "playerStats"], "players"); // Doesn't really need playerStats all the time
         tx = playerStore.transaction;
@@ -55,9 +59,8 @@ define(["db", "globals"], function (db, g) {
 
             done = 0;
 
-
             // Hacky way: always get all seasons for pid, then filter in JS
-            if (options.statsSeasons === null || options.statsSeasons.length > 0) {
+            if (options.statsSeasons === "all" || options.statsSeasons.length > 0) {
                 for (i = 0; i < players.length; i++) {
                     pid = players[i].pid;
 
@@ -89,7 +92,7 @@ define(["db", "globals"], function (db, g) {
                             // Due to indexes not necessarily handling all cases, still need to filter
                             players[i].stats = playerStats.filter(function (ps) {
                                 // statsSeasons is defined, but this season isn't in it
-                                if (options.statsSeasons !== null && options.statsSeasons.indexOf(ps.season) < 0) {
+                                if (options.statsSeasons !== "all" && options.statsSeasons.indexOf(ps.season) < 0) {
                                     return false;
                                 }
 

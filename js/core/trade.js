@@ -213,8 +213,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
                 dao.players.getAll({
                     ot: transaction,
                     index: "tid",
-                    key: tids[i],
-                    statsSeasons: []
+                    key: tids[i]
                 }, function (playersTemp) {
                     players[i] = player.filter(playersTemp, {
                         attrs: ["pid", "name", "contract"],

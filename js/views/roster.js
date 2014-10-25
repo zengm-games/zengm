@@ -244,6 +244,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                             ot: tx,
                             index: "tid",
                             key: inputs.tid,
+                            statsSeasons: "all",
                             statsTid: inputs.tid
                         }, function (players) {
                             var i;
@@ -286,6 +287,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                         ot: tx,
                         index: "statsTids",
                         key: inputs.tid,
+                        statsSeasons: "all",
                         statsTid: inputs.tid
                     }, function (players) {
                         var i;

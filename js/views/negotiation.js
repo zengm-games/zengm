@@ -104,8 +104,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/player",
             }
 
             dao.players.getAll({
-                key: negotiation.pid,
-                statsSeasons: []
+                key: negotiation.pid
             }, function (players) {
                 var p;
 

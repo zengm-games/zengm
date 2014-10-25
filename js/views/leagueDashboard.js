@@ -249,7 +249,8 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
             // Needs all seasons because of YWT!
             dao.players.getAll({
                 index: "tid",
-                key: IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED)
+                key: IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED),
+                statsSeasons: "all"
             }, function (players) {
                 var i, stats, userPlayers;
 

@@ -10,8 +10,7 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
     function addSeason(seasons, season, tid, cb) {
         dao.players.getAll({
             index: "tid",
-            key: tid,
-            statsSeasons: []
+            key: tid
         }, function (playersAll) {
             var i, pa, p, players;
 

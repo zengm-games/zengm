@@ -48,7 +48,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
             dao.players.getAll({
                 index: "tid",
                 key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
-                statsSeasons: inputs.season !== null ? [inputs.season] : null, // If no season is input, get all stats for career totals
+                statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
                 statsPlayoffs: inputs.playoffs === "playoffs"
             }, function (playersAll) {
                 var gp, i, min, players, tid;

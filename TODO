@@ -9,8 +9,6 @@ PERFORMANCE CRAP
 
 dao.players.put shouldn't take callback, it doesn't guarantee anything
 
-statSeasons default should be to return no stats? "all" should be a special option to return all?
-
 test!
   benchmark overall
   confirm player stats entries get added in fantasy draft correctly
@@ -24,6 +22,7 @@ test!
   make sure stats don't get accidentally added to player object
     throw error in .put
   fix unit tests!
+  write unit tests for dao.players.getAll
 
 benchmark!
   leagueDashboard could select only current season stats if I got rid of YWT. does that make a difference?

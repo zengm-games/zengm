@@ -246,8 +246,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
         dao.players.getAll({
             ot: tx,
             index: "tid",
-            key: tid,
-            statsSeasons: []
+            key: tid
         }, function (players) {
             var i;
 
@@ -606,8 +605,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
             dao.players.getAll({
                 ot: tx,
                 index: "tid",
-                key: tid,
-                statsSeasons: []
+                key: tid
             }, function (players) {
                 var i, p;
 
@@ -639,8 +637,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
             for (i = 0; i < pidsAdd.length; i++) {
                 dao.players.getAll({
                     ot: tx,
-                    key: pidsAdd[i],
-                    statsSeasons: []
+                    key: pidsAdd[i]
                 }, function (players) {
                     var p;
 

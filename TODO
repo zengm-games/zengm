@@ -7,41 +7,14 @@ stats separate object store
 PERFORMANCE CRAP
 ----------------
 
-dao.players.getAll playerStats port
-  what indexes do i need? maybe i should have kept that list...
-    without pid
-      get all stats for any combination of the other 3, really
-    with just pid
-      return all rows for season
-    with pid and season
-      if statsTids and playoffs===false, return single row
-      if statsTids and playoffs===true, return both the playoffs and non-playoffs row (so between 0 and 2 rows)
-      if no statsTids and playoffs===false, return all rows for that season with playoffs===false
-      if no statsTids and playoffs===true, return all rows for that season
-  how do i know what order i will get the rows in?
-
 rename statsTids to statsTid
-
-build db abstraction function (maybe dao.player.getAll) that is flexible enough to handle all the cases described below and replace the IDB calls before every player.filter (and other player stats uses)
-  statSeasons default should be to return no stats? "all" should be a special option to return all?
-  replace IDB calls to players object store if it reads from DB and uses stats. if it doesn't use stats, it's okay if left there. if it writes to db and uses stats, make a note of it.
-
-separate stores of playerStats, index by pid and season
-  what about tid and playoffs? might need an index with just pid+season and another with all 4
-    also need a "current" marker to allow distinction between current team and prior team in the same season
-    is it possible to use an index on 4 things to query on 1 or 2 or 3 of them?
-      "An exception to the above exception is that you can query with an array that is a shorter length, such as IDBKeyRange.only(['josh','male']), because according to the spec's method, it can properly compare arrays of different lengths. Therefore you can partially achieve a partly-undefined key range if your undefined elements are at the end of the array and you truncate the array (slice out the undefined). Confusing but technically permissible." http://stackoverflow.com/questions/12084177/in-indexeddb-is-there-a-way-to-make-a-sorted-compound-query
-  compound index like http://stackoverflow.com/questions/16501459/javascript-searching-indexeddb-using-multiple-indexes
-    range selection is weird, maybe unuseable: http://stackoverflow.com/a/15625231/786644
-    can say "fix the first N elements of the index and let the other values be anything" http://stackoverflow.com/questions/26203075/querying-an-indexeddb-compound-index-with-a-shorter-array
-  should be able to use this to select for pid and do range of seasons: http://stackoverflow.com/a/23808891/786644
 
 dao.players.put shouldn't take callback, it doesn't guarantee anything
 
-Once I fix the util.advStats and Game.prototype.writePlayerStats issues above, BENCHMARK!
-  first season vs 20th season for localhost and play.basketball-gm.com
+statSeasons default should be to return no stats? "all" should be a special option to return all?
 
 test!
+  benchmark overall
   confirm player stats entries get added in fantasy draft correctly
     before playoffs
     during playoffs

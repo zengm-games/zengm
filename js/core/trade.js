@@ -368,7 +368,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
                 team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null, function (dv) {
                     var draftPickStore, j, playerStore, tx;
 
-                    tx = g.dbl.transaction(["draftPicks", "players"], "readwrite");
+                    tx = g.dbl.transaction(["draftPicks", "players", "playerStats"], "readwrite");
                     draftPickStore = tx.objectStore("draftPicks");
                     playerStore = tx.objectStore("players");
 
@@ -397,9 +397,12 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
                                             //p.gamesUntilTradable = 15;
                                             p.ptModifier = 1; // Reset
                                             if (g.phase <= g.PHASE.PLAYOFFS) {
-                                                p = player.addStatsRow(p);
+                                                player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                                                    cursor.update(p);
+                                                });
+                                            } else {
+                                                cursor.update(p);
                                             }
-                                            cursor.update(p);
                                         };
                                     }(l));
                                 }

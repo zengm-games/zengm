@@ -14,8 +14,15 @@ define(["db", "globals"], function (db, g) {
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
     // filter: Arbitrary JS function to run on output with array.filter
     // statsSeasons: if undefined/null, return all (needed for career totals, listing all years stats, etc). otherwise, it's an array of seasons to return (usually just one year, but can be two for oldStats)
-    // statsPlayoffs: if undefined/null, default is false. if true, include both. This is because player.filter doesn't like being given only playoff stats, for some reason.
+    // statsPlayoffs: if undefined/null, default is false. if true, include both regular season and playffs, otherwise just regular season. This is because player.filter doesn't like being given only playoff stats, for some reason.
     // statsTids: if undefined/null, return any. otherwise, filter
+    // 
+    // Relevant SO links:
+    // http://stackoverflow.com/questions/16501459/javascript-searching-indexeddb-using-multiple-indexes
+    // http://stackoverflow.com/a/15625231/786644
+    // can say "fix the first N elements of the index and let the other values be anything" http://stackoverflow.com/questions/26203075/querying-an-indexeddb-compound-index-with-a-shorter-array
+    // http://stackoverflow.com/a/23808891/786644
+    // http://stackoverflow.com/questions/12084177/in-indexeddb-is-there-a-way-to-make-a-sorted-compound-query
     players.getAll = function (options, cb) {
         var playerStore, tx;
 
@@ -96,7 +103,12 @@ define(["db", "globals"], function (db, g) {
                                 }
 
                                 return true;
+                            }).sort(function (a, b) {
+                                // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
+                                return a.psid - b.psid;
                             });
+
+
 
                             done += 1;
 

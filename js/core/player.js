@@ -1621,6 +1621,7 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
         };
 
         // Start at season and look backwards until we hit
+        // This will not work totally right if a player played for multiple teams in a season. It should be ordered by psid, instead it's ordered by tid because of the index used
         getStats = function (season, cb) {
             // New player objects don't have pids let alone stats, so just skip
             if (!p.hasOwnProperty("pid")) {

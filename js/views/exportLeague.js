@@ -49,7 +49,13 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                 {
                     objectStores: "players,releasedPlayers,awards",
                     name: "Players",
-                    desc: "All player info, stats, ratings, and awards.",
+                    desc: "All player info, ratings, and awards - but not stats!",
+                    checked: true
+                },
+                {
+                    objectStores: "playerStats",
+                    name: "Player Stats",
+                    desc: "All player stats.",
                     checked: true
                 },
                 {

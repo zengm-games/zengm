@@ -317,6 +317,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                             for (i = 0; i < playerStats.length; i++) {
                                                 // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
                                                 playerStats[i].pid = p.pid;
+
+                                                // Delete psid because it can cause problems due to interaction addStatsRow above
+                                                delete playerStats[i].psid;
+
                                                 tx.objectStore("playerStats").add(playerStats[i]).onsuccess = function (event) {
                                                     done += 1;
                                                     if (done === playerStats.length) {
@@ -454,7 +458,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
      * @param {function(Object)} cb Callback whose first argument contains all the exported league data.
      */
     function export_(stores, cb) {
-        var exportedLeague,  exportStore;
+        var exportedLeague,  exportStore, movePlayerStats;
 
         exportedLeague = {};
 
@@ -463,17 +467,47 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
         // name is only used for the file name of the exported roster file.
         exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
 
-        exportStore = function (i, cb) {
+        exportStore = function (i) {
             g.dbl.transaction(stores[i]).objectStore(stores[i]).getAll().onsuccess = function (event) {
                 exportedLeague[stores[i]] = event.target.result;
 
                 if (i > 0) {
-                    exportStore(i - 1, cb);
+                    exportStore(i - 1);
                 } else {
-                    cb(exportedLeague);
+                    movePlayerStats();
                 }
             };
         };
+
+        // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
+        movePlayerStats = function () {
+            var i, j, pid;
+
+            if (stores.indexOf("playerStats") >= 0) {
+                for (i = 0; i < exportedLeague.playerStats.length; i++) {
+                    pid = exportedLeague.playerStats[i].pid;
+
+                    // Find player corresponding with that stats row
+                    for (j = 0; j < exportedLeague.players.length; j++) {
+                        if (exportedLeague.players[j].pid === pid) {
+                            if (!exportedLeague.players[j].hasOwnProperty("stats")) {
+                                exportedLeague.players[j].stats = [];
+                            }
+
+                            exportedLeague.players[j].stats.push(exportedLeague.playerStats[i]);
+
+                            break;
+                        }
+                    }
+                }
+
+                delete exportedLeague.playerStats;
+
+                cb(exportedLeague);
+            } else {
+                cb(exportedLeague);
+            }
+        }
 
         // Iterate through all the stores
         exportStore(stores.length - 1, cb);

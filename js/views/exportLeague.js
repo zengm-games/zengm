@@ -14,6 +14,12 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         // Get array of object stores to export
         objectStores = req.params.objectStores.join(",").split(",");
 
+        // Can't export player stats without players
+        if (objectStores.indexOf("playerStats") >= 0 && objectStores.indexOf("players") === -1) {
+            downloadLink.innerHTML = '<span class="text-danger">You can\'t export player stats without exporting players!</span>';
+            return;
+        }
+
         league.export_(objectStores, function (data) {
             var a, blob, fileName, json, url;
 

@@ -162,7 +162,6 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                             }
 
                             dao.players.put({ot: playerStore, p: p});
-                            console.log(p.name);
                         });
 
                         // "Top off" the draft class if <70 players imported

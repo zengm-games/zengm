@@ -1,19 +1,22 @@
 DB CHANGES SINCE 3.3.0
 ----------------------
 
-value properties on player object
-stats separate object store
+players
+  value properties
+  no stats
+playerStats
+  copied from players.stats
+  added pid
+  ywt?
 
 PERFORMANCE CRAP
 ----------------
 
 import/export: keep format the same, player stats within player object
   import
-    add player values
-      make sure they don't change much on first day of sim (this means it's working correctly)
   export
     put player stats under player. maybe can just use dao.players.getAll
-  check importing draft class
+  check importing draft class from draft scouting page
 
 if put is called before addStatsRow, then statsTids is never updated
   if this happens only rarely, then just double put

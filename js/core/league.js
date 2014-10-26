@@ -285,43 +285,47 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                 p = players[i];
 
                                 (function (p) {
-                                    var done, ps;
+                                    var done, playerStats;
 
                                     p = player.augmentPartialPlayer(p, scoutingRank);
 
                                     // Separate out stats
-                                    ps = players[i].stats;
-                                    delete players[i].stats;
+                                    playerStats = p.stats;
+                                    delete p.stats;
 
                                     done = 0;
 
-                                    dao.players.put({ot: tx, p: p, onsuccess: function (event) {
-                                        // When adding a player, this is the only way to know the pid
-                                        p.pid = event.target.result;
+                                    player.updateValues(tx, p, playerStats.reverse(), function (p) {
+                                        dao.players.put({ot: tx, p: p, onsuccess: function (event) {
+                                            var i;
 
-                                        // If no stats in League File, create blank stats rows for active players if necessary
-                                        if (ps.length === 0) {
-                                            if (p.tid >= 0) {
-                                                player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                                                    cbAfterEachPlayer();
-                                                });
-                                            } else {
-                                                cbAfterEachPlayer();
-                                            }
-                                        }
+                                            // When adding a player, this is the only way to know the pid
+                                            p.pid = event.target.result;
 
-                                        // If there are stats in the League File, add them to the database
-                                        for (i = 0; i < ps.length; i++) {
-                                            // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
-                                            ps[i].pid = p.pid;
-                                            tx.objectStore("playerStats").add(ps[i]).onsuccess = function (event) {
-                                                done += 1;
-                                                if (done === ps.length) {
+                                            // If no stats in League File, create blank stats rows for active players if necessary
+                                            if (playerStats.length === 0) {
+                                                if (p.tid >= 0) {
+                                                    player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                                                        cbAfterEachPlayer();
+                                                    });
+                                                } else {
                                                     cbAfterEachPlayer();
                                                 }
-                                            };
-                                        }
-                                    }});
+                                            }
+
+                                            // If there are stats in the League File, add them to the database
+                                            for (i = 0; i < playerStats.length; i++) {
+                                                // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
+                                                playerStats[i].pid = p.pid;
+                                                tx.objectStore("playerStats").add(playerStats[i]).onsuccess = function (event) {
+                                                    done += 1;
+                                                    if (done === playerStats.length) {
+                                                        cbAfterEachPlayer();
+                                                    }
+                                                };
+                                            }
+                                        }});
+                                    });
                                 }(p));
                             }
                         } else {

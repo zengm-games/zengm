@@ -45,6 +45,7 @@ benchmark!
   leagueDashboard could select only current season stats if I got rid of YWT. does that make a difference?
     leagueDashboard seems pretty slow in new version, similar to old
     cache YWT in player stats?
+      if so, need to handle YWT in import
   record options passed to dao.players.getAll and see if an additional index (or two) would help
   could throttle writing value/injury to players after games
 

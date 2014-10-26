@@ -263,7 +263,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                             players = leagueFile.players;
 
                             // Use pre-generated players, filling in attributes as needed
-                            tx = g.dbl.transaction("players", "readwrite");  // Transaction used above is closed by now
+                            tx = g.dbl.transaction(["players", "playerStats"], "readwrite");  // Transaction used above is closed by now
 
                             // Does the player want the rosters randomized?
                             if (randomizeRosters) {
@@ -284,10 +284,45 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                             for (i = 0; i < players.length; i++) {
                                 p = players[i];
 
-                                p = player.augmentPartialPlayer(p, scoutingRank);
+                                (function (p) {
+                                    var done, ps;
 
-                                dao.players.put({ot: tx, p: p});
-                                cbAfterEachPlayer();
+                                    p = player.augmentPartialPlayer(p, scoutingRank);
+
+                                    // Separate out stats
+                                    ps = players[i].stats;
+                                    delete players[i].stats;
+
+                                    done = 0;
+
+                                    dao.players.put({ot: tx, p: p, onsuccess: function (event) {
+                                        // When adding a player, this is the only way to know the pid
+                                        p.pid = event.target.result;
+
+                                        // If no stats in League File, create blank stats rows for active players if necessary
+                                        if (ps.length === 0) {
+                                            if (p.tid >= 0) {
+                                                player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                                                    cbAfterEachPlayer();
+                                                });
+                                            } else {
+                                                cbAfterEachPlayer();
+                                            }
+                                        }
+
+                                        // If there are stats in the League File, add them to the database
+                                        for (i = 0; i < ps.length; i++) {
+                                            // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
+                                            ps[i].pid = p.pid;
+                                            tx.objectStore("playerStats").add(ps[i]).onsuccess = function (event) {
+                                                done += 1;
+                                                if (done === ps.length) {
+                                                    cbAfterEachPlayer();
+                                                }
+                                            };
+                                        }
+                                    }});
+                                }(p));
                             }
                         } else {
                             // Generate new players

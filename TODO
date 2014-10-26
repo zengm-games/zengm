@@ -7,6 +7,19 @@ stats separate object store
 PERFORMANCE CRAP
 ----------------
 
+import/export: keep format the same, player stats within player object
+  import
+    add player values
+      make sure they don't change much on first day of sim (this means it's working correctly)
+  export
+    put player stats under player. maybe can just use dao.players.getAll
+  check importing draft class
+
+if put is called before addStatsRow, then statsTids is never updated
+  if this happens only rarely, then just double put
+
+in league creation, is player.put updating right p? because loop?
+
 test!
   benchmark overall
   confirm player stats entries get added in fantasy draft correctly
@@ -29,10 +42,6 @@ benchmark!
   leagueDashboard could select only current season stats if I got rid of YWT. does that make a difference?
   record options passed to dao.players.getAll and see if an additional index (or two) would help
   could throttle writing value/injury to players after games
-
-import/export
-  augmentPartialPlayer used to create new stats entry if necessary. now it doesn't. need to do new async addStatsRow somewhere 
-  import/export of old league files?
 
 deleteOldData shouldn't be necessary anymore
 

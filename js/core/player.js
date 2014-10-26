@@ -1787,6 +1787,9 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
                 p = setContract(p, p.contract, true);
             }
         }
+        if (!p.hasOwnProperty("stats")) {
+            p.stats = [];
+        }
         if (!p.hasOwnProperty("statsTids")) {
             p.statsTids = [];
         }

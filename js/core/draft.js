@@ -333,7 +333,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             app.logger.debug('WARNING: Team %d tried to draft out of order' % (tid,));
             return;*/
 
-        tx = g.dbl.transaction("players", "readwrite");
+        tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
         tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
             var cursor, i, p, rookieSalaries, years;
 

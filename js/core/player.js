@@ -1628,6 +1628,7 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
                 return cb();
             }
 
+            // Iterate over player stats records, most recent first
             playerStatsStore.index("pid, season, tid").openCursor(IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]), "prev").onsuccess = function (event) {
                 var cursor, psTemp;
 

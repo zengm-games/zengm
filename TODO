@@ -10,7 +10,7 @@ PERFORMANCE CRAP
 test!
   benchmark overall
   confirm player stats entries get added in fantasy draft correctly
-    before playoffs
+    before playoffs - WORKS
     during playoffs
     after playoffs
   make sure free agent auto sign players get the right stats row added
@@ -21,10 +21,14 @@ test!
     throw error in .put
   fix unit tests!
   write unit tests for dao.players.getAll
+    if you request a stats season that doesn't exist, does the callback still get executed?
+    if no players are returned by query, does the callback still get executed?
+    if filter removes all players, does the callback still get executed?
 
 benchmark!
   leagueDashboard could select only current season stats if I got rid of YWT. does that make a difference?
   record options passed to dao.players.getAll and see if an additional index (or two) would help
+  could throttle writing value/injury to players after games
 
 import/export
   augmentPartialPlayer used to create new stats entry if necessary. now it doesn't. need to do new async addStatsRow somewhere 

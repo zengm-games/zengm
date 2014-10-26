@@ -60,7 +60,7 @@ define(["db", "globals"], function (db, g) {
             done = 0;
 
             // Hacky way: always get all seasons for pid, then filter in JS
-            if (options.statsSeasons === "all" || options.statsSeasons.length > 0) {
+            if ((options.statsSeasons === "all" || options.statsSeasons.length > 0) && players.length > 0) {
                 for (i = 0; i < players.length; i++) {
                     pid = players[i].pid;
 

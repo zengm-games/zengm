@@ -5,6 +5,27 @@
 define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, komapping, bbgmView, helpers, viewHelpers) {
     "use strict";
 
+    // Keep only relevant information, otherwise Knockout has to do extra work creating all kinds of observables
+    function removeUnneededTeamProps(teams) {
+        var i, prop, propsToKeep;
+
+        // These are used in newLeague.html and updatePopText
+        propsToKeep = ["name", "pop", "popRank", "region", "tid"];
+
+        for (i = 0; i < teams.length; i++) {
+            // Remove unneeded properties
+            for (prop in teams[i]) {
+                if (teams[i].hasOwnProperty(prop)) {
+                    if (propsToKeep.indexOf(prop) === -1) {
+                        delete teams[i][prop];
+                    }
+                }
+            }
+        }
+
+        return teams;
+    }
+
     function post(req) {
         var cb, file, reader, startingSeason, tid;
 
@@ -70,7 +91,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
                 newLid = 1;
             }
 
-            teams = helpers.getTeamsDefault();
+            teams = removeUnneededTeamProps(helpers.getTeamsDefault());
             teams.unshift({
                 tid: -1,
                 region: "Random",
@@ -139,19 +160,21 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
 
         // Handle custom roster teams
         setTeams = function (newTeams) {
-            if (newTeams !== undefined) {
+            var i, propsToKeep;
 
-                newTeams.forEach(function (newTeam) {
+            if (newTeams !== undefined) {
+                for (i = 0; i < newTeams.length; i++) {
                     // Is pop hidden in season, like in editTeamInfo import?
-                    if (!newTeam.hasOwnProperty("pop") && newTeam.hasOwnProperty("seasons")) {
-                        newTeam.pop = newTeam.seasons[newTeam.seasons.length - 1].pop;
+                    if (!newTeams[i].hasOwnProperty("pop") && newTeams[i].hasOwnProperty("seasons")) {
+                        newTeams[i].pop = newTeams[i].seasons[newTeams[i].seasons.length - 1].pop;
                     }
 
-                    newTeam.pop = helpers.round(newTeam.pop, 2);
-                });
+                    newTeams[i].pop = helpers.round(newTeams[i].pop, 2);
+                }
 
-                // Add popRanks
                 newTeams = helpers.addPopRank(newTeams);
+
+                newTeams = removeUnneededTeamProps(newTeams);
 
                 // Add random team
                 newTeams.unshift({

@@ -48,6 +48,7 @@ benchmark!
       if so, need to handle YWT in import
   record options passed to dao.players.getAll and see if an additional index (or two) would help
   could throttle writing value/injury to players after games
+  is Improve Performance data deleting still necessary?
 
 deleteOldData shouldn't be necessary anymore
 
@@ -134,6 +135,7 @@ separate active and retired players into separate object stores
 CURRENT
 -------
 
+when uploading league file, no need to read whole thing in just to show teams menu. only need to read up to teams. but how?
 simulate in multiple tabs -> NaN
 should be impossible to have a player average 0 assists in big minutes
 Commissioner Mode - make multi-player stuff easy

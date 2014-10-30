@@ -15,6 +15,10 @@ number or not.
 - Whole league export
 - More realistic player development algorithm
 
+## Technical details
+
+- Separated playerStats object store from players object store for performance
+
 # 3.3.0 (2014-01-21)
 
 ## Gameplay and UI

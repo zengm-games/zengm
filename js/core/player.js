@@ -1792,6 +1792,9 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
         }
         if (!p.hasOwnProperty("statsTids")) {
             p.statsTids = [];
+            if (p.tid >= 0 && g.phase <= g.PHASE.PLAYOFFS) {
+                p.statsTids.push(p.tid);
+            }
         }
         if (!p.ratings[0].hasOwnProperty("fuzz")) {
             p.ratings[0].fuzz = pg.ratings[0].fuzz;

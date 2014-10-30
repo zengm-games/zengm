@@ -12,11 +12,6 @@ playerStats
 PERFORMANCE CRAP
 ----------------
 
-check importing draft class from draft scouting page
-
-if put is called before addStatsRow, then statsTids is never updated
-  if this happens only rarely, then just double put
-
 in league creation, is player.put updating right p? because loop?
 
 test!
@@ -50,6 +45,8 @@ deleteOldData shouldn't be necessary anymore
   no... we're far away from that...
 
 db upgrade?
+
+version 3.4
 
 more normalization? team stats, team seasons, player ratings
 

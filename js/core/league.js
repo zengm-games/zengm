@@ -305,6 +305,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                             // If no stats in League File, create blank stats rows for active players if necessary
                                             if (playerStats.length === 0) {
                                                 if (p.tid >= 0) {
+                                                    // Needs pid, so must be called after put. It's okay, statsTid was already set in player.augmentPartialPlayer
                                                     player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
                                                         cbAfterEachPlayer();
                                                     });
@@ -365,6 +366,11 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                         p = player.bonus(p, -15);
                                     }
 
+                                    // Hack to account for player.addStatsRow being called after dao.players.put - manually assign statsTids
+                                    if (p.tid >= 0) {
+                                        p.statsTids = [p.tid];
+                                    }
+
                                     // Update player values after ratings changes
                                     player.updateValues(tx, p, [], function (p) {
                                         var randomizeExp;
@@ -383,6 +389,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                                 // When adding a player, this is the only way to know the pid
                                                 p.pid = event.target.result;
 
+                                                // Needs pid, so must be called after put. It's okay, statsTid was already set above
                                                 player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
                                                     cbAfterEachPlayer();
                                                 });

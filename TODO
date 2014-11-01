@@ -17,17 +17,8 @@ minor improvements
 PERFORMANCE CRAP
 ----------------
 
-player stats page is really fucking slow
-
-league import
-  ywt not working
-
-show "loading" indicator when uploading large file, otherwise seems to hang and not allow you to click
-
 this will break IE...
   how can i polyfill or detect feature limitation?
-
-in league creation, is player.put updating right p? because loop?
 
 test!
   benchmark overall
@@ -54,6 +45,9 @@ benchmark!
       if so, need to handle YWT in import
   record options passed to dao.players.getAll and see if an additional index (or two) would help
   could throttle writing value/injury to players after games
+
+show "loading" indicator when uploading large file, otherwise seems to hang and not allow you to click
+  should be some generic one, thin bar at top like youtube
 
 deleteOldData
   is playerStats still most important? benchmark

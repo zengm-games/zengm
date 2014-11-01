@@ -84,7 +84,20 @@ define(["db", "globals"], function (db, g) {
                     }*/
 
                     (function (i) {
-                        tx.objectStore("playerStats").index("pid, season, tid").getAll(IDBKeyRange.bound([pid], [pid, ''])).onsuccess = function (event) {
+                        var key;
+
+                        if (options.statsSeasons === "all") {
+                            // All seasons
+                            key = IDBKeyRange.bound([pid], [pid, '']);
+                        } else if (options.statsSeasons.length === 1) {
+                            // Restrict to one season
+                            key = IDBKeyRange.bound([pid, options.statsSeasons[0]], [pid, options.statsSeasons[0], '']);
+                        } else if (options.statsSeasons.length > 1) {
+                            // Restrict to range between seasons
+                            key = IDBKeyRange.bound([pid, Math.min.apply(null, options.statsSeasons)], [pid, Math.max.apply(null, options.statsSeasons), '']);
+                        }
+
+                        tx.objectStore("playerStats").index("pid, season, tid").getAll(key).onsuccess = function (event) {
                             var playerStats;
 
                             playerStats = event.target.result;

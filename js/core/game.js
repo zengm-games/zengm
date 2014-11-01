@@ -106,7 +106,6 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
                         if (g.phase !== g.PHASE.PLAYOFFS) {
                             player.updateValues(tx, player_, [playerStats], function (player_) {
-console.log([that.team[t].player[p].id, "updating value"])
                                 cursor.update(player_);
                                 afterDonePlayer();
                             });
@@ -116,7 +115,6 @@ console.log([that.team[t].player[p].id, "updating value"])
                         }
                     };
                 } else {
-                    console.log([that.team[t].player[p].id, "skipping player object update"])
                     afterDonePlayer();
                 }
             };

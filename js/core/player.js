@@ -789,19 +789,69 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
      * @return {function(Object)} Callback function whose argument the updated player object.
      */
     function addStatsRow(ot, p, playoffs, cb) {
-        var statsRow, tx;
+        var ps, statsRow, tx, withPs;
 
         tx = db.getObjectStore(ot, "playerStats", null, true);
         playoffs = playoffs !== undefined ? playoffs : false;
 
-        statsRow = {pid: p.pid, season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0};
+        statsRow = {pid: p.pid, season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0, yearsWithTeam: 0};
 
         p.statsTids.push(p.tid);
         p.statsTids = _.uniq(p.statsTids);
 
-        tx.objectStore("playerStats").add(statsRow);
+        // Run this after getting previous stats rows to calculate yearsWithTeam
+        withPs = function () {
+            var i;
 
-        cb(p);
+            ps = ps.sort(function (a, b) {
+                // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
+                return a.psid - b.psid;
+            });
+            // Count non-playoff seasons starting from the current one
+            for (i = 0; i < ps.length; i++) {
+                if (ps[i].tid === p.tid) {
+                    statsRow.yearsWithTeam += 1;
+                } else {
+                    break;
+                }
+            }
+
+            tx.objectStore("playerStats").add(statsRow);
+            cb(p);
+        };
+
+        // Calculate yearsWithTeam
+        // Iterate over player stats objects, most recent first
+        ps = [];
+        if (!playoffs) {
+            tx.objectStore("playerStats").index("pid, season, tid").openCursor(IDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]), "prev").onsuccess = function (event) {
+                var cursor, psTemp;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    psTemp = cursor.value;
+
+                    // Skip playoff stats
+                    if (psTemp.playoffs) {
+                        return cursor.continue();
+                    }
+
+                    // Store stats
+                    ps.push(psTemp);
+
+                    // Continue only if we haven't hit a season with another team yet
+                    if (ps.tid !== p.tid) {
+                        cursor.continue();
+                    } else {
+                        withPs();
+                    }
+                } else {
+                    withPs();
+                }
+            };
+        } else {
+            withPs();
+        }
     }
 
     function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scoutingRank) {
@@ -1031,33 +1081,6 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
                                 seasons: _.pluck(awardsGroupedTemp[award], "season")
                             });
                         }
-                    }
-                } else if (options.attrs[i] === "yearsWithTeam") {
-                    fp.yearsWithTeam = 0;
-                    // Count non-playoff seasons starting from the current one
-                    for (j = p.stats.length - 1; j >= 0; j--) {
-                        if (p.stats[j].playoffs === false) { // Can do this because any playoff entry follows a regular season entry with the same team
-                            if (p.stats[j].tid === p.tid && options.season === p.stats[j].season) {
-                                // Find season requested
-                                fp.yearsWithTeam = 1;
-                            } else {
-                                if (fp.yearsWithTeam) {
-                                    // We found the season requested, so now count back until you find another team
-                                    if (p.stats[j].tid === p.tid) {
-                                        fp.yearsWithTeam += 1;
-                                    } else {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else if (options.attrs[i] === "watch") {
-                    // This is needed for old player objects without the watch property
-                    if (p.watch !== undefined && typeof p.watch !== "function") { // In Firefox, objects have a "watch" function
-                        fp.watch = p.watch;
-                    } else {
-                        fp.watch = false;
                     }
                 } else {
                     fp[options.attrs[i]] = p[options.attrs[i]];
@@ -1307,6 +1330,8 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
                         row.per = s.per;
                     } else if (stats[j] === "ewa") {
                         row.ewa = s.ewa;
+                    } else if (stats[j] === "yearsWithTeam") {
+                        row.yearsWithTeam = s.yearsWithTeam;
                     } else {
                         if (options.totals) {
                             row[stats[j]] = s[stats[j]];
@@ -1325,6 +1350,8 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
                         row.age = s.season - p.born.year;
                     } else if (stats[j] === "abbrev") {
                         row.abbrev = helpers.getAbbrev(s.tid);
+                    } else if (stats[j] === "yearsWithTeam") {
+                        row.yearsWithTeam = s.yearsWithTeam;
                     } else {
                         row[stats[j]] = 0;
                     }
@@ -1628,7 +1655,7 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
                 return cb();
             }
 
-            // Iterate over player stats records, most recent first
+            // Iterate over player stats objects, most recent first
             playerStatsStore.index("pid, season, tid").openCursor(IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]), "prev").onsuccess = function (event) {
                 var cursor, psTemp;
 
@@ -1754,6 +1781,8 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
 
     /**
      * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
+     *
+     * This doesn't add the things from player.updateValues!
      * 
      * @memberOf core.player
      * @param {Object} p Partial player object.
@@ -1772,7 +1801,7 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
         pg = generate(p.tid, age, "", 0, 0, g.startingSeason - age, true, scoutingRank);
 
         // Optional things
-        simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "hgt", "imgURL", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "weight", "yearsFreeAgent"];
+        simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "gamesUntilTradable", "hgt", "hof", "imgURL", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "watch", "weight", "yearsFreeAgent"];
         for (j = 0; j < simpleDefaults.length; j++) {
             if (!p.hasOwnProperty(simpleDefaults[j])) {
                 p[simpleDefaults[j]] = pg[simpleDefaults[j]];

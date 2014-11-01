@@ -111,8 +111,6 @@ define(["db", "globals"], function (db, g) {
                                 return a.psid - b.psid;
                             });
 
-
-
                             done += 1;
 
                             if (done === players.length) {

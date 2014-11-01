@@ -4,13 +4,17 @@ DB CHANGES SINCE 3.3.0
 players
   value properties
   no stats
+  put "watch=false" on every player so i don't have to manually check for it
 playerStats
   copied from players.stats
   added pid
-  ywt?
+  yearsWithTeam (can just initialize to 0 if lazy)
 
 PERFORMANCE CRAP
 ----------------
+
+this will break IE...
+  how can i polyfill or detect feature limitation?
 
 in league creation, is player.put updating right p? because loop?
 
@@ -418,6 +422,7 @@ http://code.google.com/p/htmlcompressor/ or something similar
 in playoffs, replace Week/Month in Play menu with Round http://www.reddit.com/r/BasketballGM/comments/1w55sb/suggestionplayoffs_simulate_by_round_instead_of/
 gamesim shot distribution - less people shooting 3s really poorly, especially tall players
 UI to easily switch between conference and division standings on small screens and dashboard http://www.reddit.com/r/BasketballGM/comments/2d4o9r/feature_requests_of_the_week_august_10_2014/cjqrwtf?context=3
+schedule page (and dashboard and maybe gamelog) should show opponent records
 
 LOW PRIORITY
 ------------

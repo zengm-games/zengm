@@ -285,7 +285,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                 p = players[i];
 
                                 (function (p) {
-                                    var done, playerStats;
+                                    var playerStats;
 
                                     p = player.augmentPartialPlayer(p, scoutingRank);
 
@@ -293,11 +293,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                     playerStats = p.stats;
                                     delete p.stats;
 
-                                    done = 0;
-
                                     player.updateValues(tx, p, playerStats.reverse(), function (p) {
                                         dao.players.put({ot: tx, p: p, onsuccess: function (event) {
-                                            var i;
+                                            var addStatsRows, i;
 
                                             // When adding a player, this is the only way to know the pid
                                             p.pid = event.target.result;
@@ -312,22 +310,27 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                                 } else {
                                                     cbAfterEachPlayer();
                                                 }
-                                            }
+                                            } else {
+                                                // If there are stats in the League File, add them to the database
+                                                addStatsRows = function () {
+                                                    var ps;
 
-                                            // If there are stats in the League File, add them to the database
-                                            for (i = 0; i < playerStats.length; i++) {
-                                                // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
-                                                playerStats[i].pid = p.pid;
+                                                    ps = playerStats.shift();
 
-                                                // Delete psid because it can cause problems due to interaction addStatsRow above
-                                                delete playerStats[i].psid;
+                                                    // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
+                                                    ps.pid = p.pid;
 
-                                                tx.objectStore("playerStats").add(playerStats[i]).onsuccess = function (event) {
-                                                    done += 1;
-                                                    if (done === playerStats.length) {
-                                                        cbAfterEachPlayer();
-                                                    }
+                                                    // Delete psid because it can cause problems due to interaction addStatsRow above
+                                                    delete ps.psid;
+
+                                                    tx.objectStore("playerStats").add(ps).onsuccess = function () {
+                                                        // On to the next one
+                                                        if (playerStats.length > 0) {
+                                                            addStatsRows();
+                                                        }
+                                                    };
                                                 };
+                                                addStatsRows();
                                             }
                                         }});
                                     });

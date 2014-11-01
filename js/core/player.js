@@ -1789,7 +1789,7 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
      * @return {Object} p Full player object.
      */
     function augmentPartialPlayer(p, scoutingRank) {
-        var age, j, pg, simpleDefaults;
+        var age, i, pg, simpleDefaults;
 
         if (!p.hasOwnProperty("born")) {
             age = random.randInt(19, 35);
@@ -1802,9 +1802,9 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
 
         // Optional things
         simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "gamesUntilTradable", "hgt", "hof", "imgURL", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "watch", "weight", "yearsFreeAgent"];
-        for (j = 0; j < simpleDefaults.length; j++) {
-            if (!p.hasOwnProperty(simpleDefaults[j])) {
-                p[simpleDefaults[j]] = pg[simpleDefaults[j]];
+        for (i = 0; i < simpleDefaults.length; i++) {
+            if (!p.hasOwnProperty(simpleDefaults[i])) {
+                p[simpleDefaults[i]] = pg[simpleDefaults[i]];
             }
         }
         if (!p.hasOwnProperty("salaries")) {

@@ -38,7 +38,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
     };
 
     Game.prototype.writePlayerStats = function (tx, t, p, cb) {
-        var afterDonePlayer, done, key, that;
+        var afterDonePlayer, key, that;
 
         that = this;
 
@@ -57,8 +57,6 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         if (that.team[t].player[p].stat.min === 0) {
             afterDonePlayer();
         } else {
-            done = 0;
-
             key = [that.team[t].player[p].id, g.season, that.team[t].id];
             tx.objectStore("playerStats").index("pid, season, tid").openCursor(key).onsuccess = function (event) {
                 var cursor, i, keys, playerStats;

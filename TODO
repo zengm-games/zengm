@@ -13,7 +13,10 @@ playerStats
 PERFORMANCE CRAP
 ----------------
 
-on import, stats are backwards by psid
+league import
+  ywt not working
+
+show "loading" indicator when uploading large file, otherwise seems to hang and not allow you to click
 
 this will break IE...
   how can i polyfill or detect feature limitation?

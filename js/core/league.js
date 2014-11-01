@@ -315,10 +315,13 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                                 addStatsRows = function () {
                                                     var ps;
 
-                                                    ps = playerStats.shift();
+                                                    ps = playerStats.pop();
 
                                                     // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
                                                     ps.pid = p.pid;
+
+                                                    // Could be calculated correctly if I wasn't lazy
+                                                    ps.yearsWithTeam = 0;
 
                                                     // Delete psid because it can cause problems due to interaction addStatsRow above
                                                     delete ps.psid;

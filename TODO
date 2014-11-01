@@ -13,6 +13,8 @@ playerStats
 PERFORMANCE CRAP
 ----------------
 
+on import, stats are backwards by psid
+
 this will break IE...
   how can i polyfill or detect feature limitation?
 
@@ -43,10 +45,10 @@ benchmark!
       if so, need to handle YWT in import
   record options passed to dao.players.getAll and see if an additional index (or two) would help
   could throttle writing value/injury to players after games
-  is Improve Performance data deleting still necessary?
 
-deleteOldData shouldn't be necessary anymore
-  no... we're far away from that...
+deleteOldData
+  is playerStats still most important? benchmark
+  add option to delete old player ratings?
 
 db upgrade?
 

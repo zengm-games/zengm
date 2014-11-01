@@ -327,6 +327,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                                         // On to the next one
                                                         if (playerStats.length > 0) {
                                                             addStatsRows();
+                                                        } else {
+                                                            cbAfterEachPlayer();
                                                         }
                                                     };
                                                 };

@@ -239,12 +239,11 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                             }
                         }
 
-                        // Needs all seasons because of YWT!
                         dao.players.getAll({
                             ot: tx,
                             index: "tid",
                             key: inputs.tid,
-                            statsSeasons: "all",
+                            statsSeasons: [inputs.season],
                             statsTid: inputs.tid
                         }, function (players) {
                             var i;

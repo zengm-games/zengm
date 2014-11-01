@@ -10,8 +10,14 @@ playerStats
   added pid
   yearsWithTeam (can just initialize to 0 if lazy)
 
+minor improvements
+  box scores show real injuries, not just generic "Injured"
+  YWT accurate in past seasons
+
 PERFORMANCE CRAP
 ----------------
+
+player stats page is really fucking slow
 
 league import
   ywt not working

@@ -59,7 +59,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         } else {
             key = [that.team[t].player[p].id, g.season, that.team[t].id];
             tx.objectStore("playerStats").index("pid, season, tid").openCursor(key).onsuccess = function (event) {
-                var cursor, i, keys, playerStats;
+                var cursor, i, injuredThisGame, keys, playerStats;
 
                 cursor = event.target.result;
 //console.log(cursor);
@@ -80,35 +80,45 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
                 cursor.update(playerStats);
 
-                // This could be throttled to happen like every ~10 games or when there is an injury. Need to benchmark potential performance increase
-                tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
-                    var cursor, player_;
+                injuredThisGame = that.team[t].player[p].injured && that.team[t].player[p].injury.type === "Healthy";
 
-                    cursor = event.target.result;
-                    player_ = cursor.value;
+                // Only update player object (values and injuries) every 10 regular season games or on injury
+                if ((playerStats.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || (injuredThisGame)) {
+                    // This could be throttled to happen like every ~10 games or when there is an injury. Need to benchmark potential performance increase
+                    tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
+                        var cursor, player_;
 
-                    // Injury crap - assign injury type if player does not already have an injury in the database
-                    if (that.team[t].player[p].injured && player_.injury.type === "Healthy") {
-                        player_.injury = player.injury(that.team[t].healthRank);
-                        if (that.team[t].id === g.userTid) {
-                            eventLog.add(tx, {
-                                type: "injured",
-                                text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> was injured! (' + player_.injury.type + ', out for ' + player_.injury.gamesRemaining + ' games)'
-                            });
+                        cursor = event.target.result;
+                        player_ = cursor.value;
+
+                        // Injury crap - assign injury type if player does not already have an injury in the database
+                        if (injuredThisGame) {
+                            player_.injury = player.injury(that.team[t].healthRank);
+                            that.team[t].player[p].injury = player_.injury; // So it gets written to box score
+                            if (that.team[t].id === g.userTid) {
+                                eventLog.add(tx, {
+                                    type: "injured",
+                                    text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> was injured! (' + player_.injury.type + ', out for ' + player_.injury.gamesRemaining + ' games)'
+                                });
+                            }
                         }
-                    }
 
-                    // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
-                    if (g.phase !== g.PHASE.PLAYOFFS) {
-                        player.updateValues(tx, player_, [playerStats], function (player_) {
+                        // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
+                        if (g.phase !== g.PHASE.PLAYOFFS) {
+                            player.updateValues(tx, player_, [playerStats], function (player_) {
+console.log([that.team[t].player[p].id, "updating value"])
+                                cursor.update(player_);
+                                afterDonePlayer();
+                            });
+                        } else {
                             cursor.update(player_);
                             afterDonePlayer();
-                        });
-                    } else {
-                        cursor.update(player_);
-                        afterDonePlayer();
-                    }
-                };
+                        }
+                    };
+                } else {
+                    console.log([that.team[t].player[p].id, "skipping player object update"])
+                    afterDonePlayer();
+                }
             };
         }
     };
@@ -323,11 +333,13 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 gameStats.teams[t].players[p].trb = this.team[t].player[p].stat.orb + this.team[t].player[p].stat.drb;
                 gameStats.teams[t].players[p].pid = this.team[t].player[p].id;
                 gameStats.teams[t].players[p].skills = this.team[t].player[p].skills;
-                if (this.team[t].player[p].injured) {
-                    gameStats.teams[t].players[p].injury = {type: "Injured", gamesRemaining: -1};
-                } else {
-                    gameStats.teams[t].players[p].injury = {type: "Healthy", gamesRemaining: 0};
-                }
+                gameStats.teams[t].players[p].injury = this.team[t].player[p].injury;
+// Not needed any more? Real injureis saved?
+//                if (this.team[t].player[p].injured) {
+//                    gameStats.teams[t].players[p].injury = {type: "Injured", gamesRemaining: -1};
+//                } else {
+//                    gameStats.teams[t].players[p].injury = {type: "Healthy", gamesRemaining: 0};
+//                }
             }
         }
 
@@ -540,7 +552,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                     t.healthRank = teamSeason.expenses.health.rank;
 
                     for (i = 0; i < players.length; i++) {
-                        p = {id: players[i].pid, name: players[i].name, pos: players[i].pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
+                        p = {id: players[i].pid, name: players[i].name, pos: players[i].pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
 
                         for (j = 0; j < players[i].ratings.length; j++) {
                             if (players[i].ratings[j].season === g.season) {

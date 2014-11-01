@@ -1,24 +1,18 @@
 DB CHANGES SINCE 3.3.0
 ----------------------
 
-players
-  value properties
-  no stats
-  put "watch=false" on every player so i don't have to manually check for it
-playerStats
-  copied from players.stats
-  added pid
-  yearsWithTeam (can just initialize to 0 if lazy)
+PERFORMANCE CRAP
+----------------
 
 minor improvements
   box scores show real injuries, not just generic "Injured"
   YWT accurate in past seasons
-
-PERFORMANCE CRAP
-----------------
+  faster loading of large league files
 
 this will break IE...
   how can i polyfill or detect feature limitation?
+
+changes, version
 
 test!
   benchmark overall
@@ -52,8 +46,6 @@ show "loading" indicator when uploading large file, otherwise seems to hang and 
 deleteOldData
   is playerStats still most important? benchmark
   add option to delete old player ratings?
-
-db upgrade?
 
 version 3.4
 

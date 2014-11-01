@@ -188,7 +188,7 @@ console.log(event);
         playerStore.createIndex("draft.year", "draft.year", {unique: false});
         playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
         playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
-        playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false}); // Would be unique if indexed on playoffs too, but that is a boolean and introduces complications... maybe worth fixing though?
+        playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false}); // Would be unique if indexed on playoffs too, but that is a boolean and introduces complications... maybe worth fixing though? No, player could get traded back to same team in one season
 //        gameStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used because currently the season index is used. If multiple indexes are eventually supported, then use this too.
         gameStore.createIndex("season", "season", {unique: false});
         releasedPlayerStore.createIndex("tid", "tid", {unique: false});
@@ -206,6 +206,8 @@ console.log(event);
      */
     function migrateLeague(event, lid) {
         var dbl, teams, tx;
+
+        document.getElementById("content").innerHTML = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="http://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
 
         console.log("Upgrading league" + lid + " database from version " + event.oldVersion + " to version " + event.newVersion);
 
@@ -687,6 +689,66 @@ console.log(event);
                     });
                 }());
             }
+            if (event.oldVersion <= 10) {
+                (function () {
+                    var playerStatsStore;
+
+                    // Create new playerStats object store
+                    playerStatsStore = dbl.createObjectStore("playerStats", {keyPath: "psid", autoIncrement: true});
+                    playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false});
+
+                    // For each player, add all his stats to playerStats store, delete his stats from player object, and rewrite player object
+                    tx.objectStore("players").openCursor().onsuccess = function (event) {
+                        var addStatsRows, afterStatsRows, cursor, p;
+
+                        cursor = event.target.result;
+                        if (cursor) {
+                            p = cursor.value;
+
+                            // watch is now mandatory!
+                            if (!p.hasOwnProperty("watch")) {
+                                p.watch = false;
+                            }
+
+                            afterStatsRows = function () {
+                                // Save player object without stats and with values
+                                delete p.stats;
+                                require("core/player").updateValues(tx, p, [], function (p) {
+                                    cursor.update(p);
+
+                                    cursor.continue();
+                                });
+                            };
+
+                            addStatsRows = function () {
+                                var ps;
+
+                                ps = p.stats.shift();
+
+                                ps.pid = p.pid;
+
+                                // Could be calculated correctly if I wasn't lazy
+                                ps.yearsWithTeam = 0;
+
+                                tx.objectStore("playerStats").add(ps).onsuccess = function () {
+                                    // On to the next one
+                                    if (p.stats.length > 0) {
+                                        addStatsRows();
+                                    } else {
+                                        afterStatsRows();
+                                    }
+                                };
+                            };
+
+                            if (p.stats.length > 0) {
+                                addStatsRows();
+                            } else {
+                                afterStatsRows();
+                            }
+                        }
+                    }
+                }());
+            }
         });
     }
 
@@ -694,7 +756,7 @@ console.log(event);
         var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 10);
+        request = indexedDB.open("league" + lid, 11);
         request.onerror = function (event) {
             throw new Error("League connection error");
         };

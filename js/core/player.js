@@ -1446,11 +1446,11 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
      * @param {Object} p Player object.
      * @return {boolean} Hall of Fame worthy?
      */
-    function madeHof(p) {
+    function madeHof(p, playerStats) {
         var df, ewa, ewas, fudgeSeasons, i, mins, pers, prls, va;
 
-        mins = _.pluck(p.stats, "min");
-        pers = _.pluck(p.stats, "per");
+        mins = _.pluck(playerStats, "min");
+        pers = _.pluck(playerStats, "per");
 
         // Position Replacement Levels http://insider.espn.go.com/nba/hollinger/statistics
         prls = {
@@ -1712,7 +1712,7 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
      * @param {Object} p Player object.
      * @return {Object} p Updated (retired) player object.
      */
-    function retire(tx, p) {
+    function retire(tx, p, playerStats) {
         if (p.tid === g.userTid) {
             eventLog.add(tx, {
                 type: "retired",
@@ -1724,7 +1724,7 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
         p.retiredYear = g.season;
 
         // Add to Hall of Fame?
-        if (madeHof(p)) {
+        if (madeHof(p, playerStats)) {
             p.hof = true;
             p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
             if (p.statsTids.indexOf(g.userTid) >= 0) {

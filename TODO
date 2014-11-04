@@ -4,10 +4,16 @@ DB CHANGES SINCE 3.3.0
 PERFORMANCE CRAP
 ----------------
 
+where to show injured players in box score http://www.reddit.com/r/BasketballGM/comments/2l03b5/20_faster_game_simulation_try_the_beta_now/clrh1j4
+
 minor improvements
   box scores show real injuries, not just generic "Injured"
   YWT accurate in past seasons
   faster loading of large league files
+
+benchmark other browsers
+
+newly injured players used to get put at bottom of box score - is this an issue?
 
 this will break IE...
   how can i polyfill or detect feature limitation?

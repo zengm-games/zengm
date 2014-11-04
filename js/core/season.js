@@ -849,7 +849,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         awards(function () {
             var releasedPlayersStore, tx;
 
-            tx = g.dbl.transaction(["events", "messages", "players", "releasedPlayers", "teams"], "readwrite");
+            tx = g.dbl.transaction(["events", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
 
             // Add award for each player on the championship team
             team.filter({
@@ -896,52 +896,59 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 if (cursor) {
                     p = cursor.value;
 
-                    age = g.season - p.born.year;
-                    pot = _.last(p.ratings).pot;
+                    // Get player stats, used for HOF calculation
+                    tx.objectStore("playerStats").index("pid, season, tid").getAll(IDBKeyRange.bound([p.pid], [p.pid, ''])).onsuccess = function (event) {
+                        var playerStats;
 
-                    if (age > maxAge || pot < minPot) {
-                        excessAge = 0;
-                        if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
-                            if (age > 34) {
-                                excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
+                        playerStats = event.target.result;
+
+                        age = g.season - p.born.year;
+                        pot = _.last(p.ratings).pot;
+
+                        if (age > maxAge || pot < minPot) {
+                            excessAge = 0;
+                            if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
+                                if (age > 34) {
+                                    excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
+                                }
+                                excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
+                                if (excessAge + excessPot + random.gauss(0, 1) > 0) {
+                                    p = player.retire(tx, p, playerStats);
+                                    update = true;
+                                }
                             }
-                            excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
-                            if (excessAge + excessPot + random.gauss(0, 1) > 0) {
-                                p = player.retire(tx, p);
-                                update = true;
+                        }
+
+                        // Update "free agent years" counter and retire players who have been free agents for more than one years
+                        if (p.tid === g.PLAYER.FREE_AGENT) {
+                            if (p.yearsFreeAgent >= 1) {
+                                p = player.retire(tx, p, playerStats);
+                            } else {
+                                p.yearsFreeAgent += 1;
                             }
+                            p.contract.exp += 1;
+                            update = true;
+                        } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
+                            p.yearsFreeAgent = 0;
+                            update = true;
                         }
-                    }
 
-                    // Update "free agent years" counter and retire players who have been free agents for more than one years
-                    if (p.tid === g.PLAYER.FREE_AGENT) {
-                        if (p.yearsFreeAgent >= 1) {
-                            p = player.retire(tx, p);
-                        } else {
-                            p.yearsFreeAgent += 1;
+                        // Heal injures
+                        if (p.injury.type !== "Healthy") {
+                            if (p.injury.gamesRemaining <= 82) {
+                                p.injury = {type: "Healthy", gamesRemaining: 0};
+                            } else {
+                                p.injury.gamesRemaining -= 82;
+                            }
+                            update = true;
                         }
-                        p.contract.exp += 1;
-                        update = true;
-                    } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
-                        p.yearsFreeAgent = 0;
-                        update = true;
-                    }
 
-                    // Heal injures
-                    if (p.injury.type !== "Healthy") {
-                        if (p.injury.gamesRemaining <= 82) {
-                            p.injury = {type: "Healthy", gamesRemaining: 0};
-                        } else {
-                            p.injury.gamesRemaining -= 82;
+                        // Update player in DB, if necessary
+                        if (update) {
+                            cursor.update(p);
                         }
-                        update = true;
-                    }
-
-                    // Update player in DB, if necessary
-                    if (update) {
-                        cursor.update(p);
-                    }
-                    cursor.continue();
+                        cursor.continue();
+                    };
                 }
             };
 

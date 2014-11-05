@@ -251,9 +251,10 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 teamStats.trb += that.team[t1].stat.orb + that.team[t1].stat.drb;
                 teamStats.oppPts += that.team[t2].stat.pts;
 
-                if (teamSeason.lastTen.length === 10) {
+                if (teamSeason.lastTen.length === 10 && !that.playoffs) {
                     teamSeason.lastTen.pop();
                 }
+
                 if (won && !that.playoffs) {
                     teamSeason.won += 1;
                     if (that.sameDiv) {

@@ -4,6 +4,8 @@ DB CHANGES SINCE 3.3.0
 PERFORMANCE CRAP
 ----------------
 
+benchmark new league
+
 minor improvements
   box scores show real injuries, not just generic "Injured"
   YWT accurate in past seasons
@@ -13,6 +15,7 @@ newly injured players used to get put at bottom of box score - is this an issue?
 
 this will break IE...
   how can i polyfill or detect feature limitation?
+  safari too!
 
 changes, version
 

@@ -23,18 +23,17 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
             g.dbl.transaction("gameAttributes").objectStore("gameAttributes").get("lastDbChange").onsuccess = function (event) {
                 if (g.lastDbChange !== event.target.result.value) {
                     db.loadGameAttributes(null, function () {
-                        document.getElementById("league_content").dataset.id = "";
                         //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
                         ui.realtimeUpdate(["dbChange"], undefined, function () {
                             ui.updatePlayMenu(null, function () {
                                 ui.updatePhase();
                                 ui.updateStatus();
-                                setTimeout(function () { checkDbChange(g.lid); }, 3000); // g.lid can't be passed as third argument when using Bugsnag
+                                setTimeout(function () { checkDbChange(lid); }, 3000); // g.lid can't be passed as third argument when using Bugsnag
                             });
                         });
                     });
                 } else {
-                    setTimeout(function () { checkDbChange(g.lid); }, 3000); // g.lid can't be passed as third argument when using Bugsnag
+                    setTimeout(function () { checkDbChange(lid); }, 3000); // g.lid can't be passed as third argument when using Bugsnag
                 }
             };
         };

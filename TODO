@@ -5,7 +5,6 @@ PERFORMANCE CRAP
 ----------------
 
 knockout upgrade
-  ko.utils.unwrapObservable -> ko.unwrap
   http://www.knockmeout.net/2014/10/knockout-cleaning-up.html
   http://www.knockmeout.net/2014/03/knockout-3-1-released.html
   http://knockoutjs.com/documentation/computed-pure.html

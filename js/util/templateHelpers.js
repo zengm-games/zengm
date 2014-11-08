@@ -9,7 +9,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var args = valueAccessor();
             return ko.bindingHandlers.text.update(element, function () {
-                return helpers.round(ko.utils.unwrapObservable(args[0]), args[1]);
+                return helpers.round(ko.unwrap(args[0]), args[1]);
             });
         }
     };
@@ -18,7 +18,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var arg, output;
 
-            arg = ko.utils.unwrapObservable(valueAccessor());
+            arg = ko.unwrap(valueAccessor());
 
             output = parseFloat(arg).toFixed(3);
 
@@ -93,7 +93,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var arg = valueAccessor();
             return ko.bindingHandlers.html.update(element, function () {
-                return helpers.skillsBlock(ko.utils.unwrapObservable(arg));
+                return helpers.skillsBlock(ko.unwrap(arg));
             });
         }
     };
@@ -102,7 +102,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var args = valueAccessor();
             return ko.bindingHandlers.html.update(element, function () {
-                return helpers.watchBlock(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]));
+                return helpers.watchBlock(ko.unwrap(args[0]), ko.unwrap(args[1]));
             });
         }
     };
@@ -111,7 +111,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var args = valueAccessor();
             return ko.bindingHandlers.text.update(element, function () {
-                return helpers.formatCurrency(ko.utils.unwrapObservable(args[0]), args[1]);
+                return helpers.formatCurrency(ko.unwrap(args[0]), args[1]);
             });
         }
     };
@@ -120,7 +120,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var args = valueAccessor();
             return ko.bindingHandlers.text.update(element, function () {
-                return helpers.numberWithCommas(ko.utils.unwrapObservable(args));
+                return helpers.numberWithCommas(ko.unwrap(args));
             });
         }
     };
@@ -130,12 +130,12 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             var args, injury;
 
             args = valueAccessor();
-            injury = ko.utils.unwrapObservable(args[2]);
-            injury.type = ko.utils.unwrapObservable(injury.type);
-            injury.gamesRemaining = ko.utils.unwrapObservable(injury.gamesRemaining);
+            injury = ko.unwrap(args[2]);
+            injury.type = ko.unwrap(injury.type);
+            injury.gamesRemaining = ko.unwrap(injury.gamesRemaining);
 
             return ko.bindingHandlers.html.update(element, function () {
-                return helpers.playerNameLabels(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]), injury, ko.utils.unwrapObservable(args[3]), ko.utils.unwrapObservable(args[4]));
+                return helpers.playerNameLabels(ko.unwrap(args[0]), ko.unwrap(args[1]), injury, ko.unwrap(args[3]), ko.unwrap(args[4]));
             });
         }
     };
@@ -193,12 +193,12 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             var abbrev, args, extraText, lost, option, output, playoffRoundsWon, season, won;
 
             args = valueAccessor();
-            abbrev = ko.utils.unwrapObservable(args[0]);
-            season = ko.utils.unwrapObservable(args[1]);
-            won = ko.utils.unwrapObservable(args[2]);
-            lost = ko.utils.unwrapObservable(args[3]);
-            playoffRoundsWon = ko.utils.unwrapObservable(args[4]);
-            option = args.length > 5 ? ko.utils.unwrapObservable(args[5]) : null;
+            abbrev = ko.unwrap(args[0]);
+            season = ko.unwrap(args[1]);
+            won = ko.unwrap(args[2]);
+            lost = ko.unwrap(args[3]);
+            playoffRoundsWon = ko.unwrap(args[4]);
+            option = args.length > 5 ? ko.unwrap(args[5]) : null;
 
             extraText = "";
             if (playoffRoundsWon === 4) {
@@ -232,7 +232,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var args = valueAccessor();
             return ko.bindingHandlers.html.update(element, function () {
-                return helpers.draftAbbrev(ko.utils.unwrapObservable(args[0]), ko.utils.unwrapObservable(args[1]));
+                return helpers.draftAbbrev(ko.unwrap(args[0]), ko.unwrap(args[1]));
             });
         }
     };
@@ -241,7 +241,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         update: function (element, valueAccessor) {
             var arg = valueAccessor();
             return ko.bindingHandlers.html.update(element, function () {
-                return helpers.ordinal(parseInt(ko.utils.unwrapObservable(arg), 10));
+                return helpers.ordinal(parseInt(ko.unwrap(arg), 10));
             });
         }
     };

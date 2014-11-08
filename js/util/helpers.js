@@ -442,12 +442,12 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         var i, url;
 
         options = options !== undefined ? options : {};
-        lid = lid !== undefined ? ko.utils.unwrapObservable(lid) : g.lid;
+        lid = lid !== undefined ? ko.unwrap(lid) : g.lid;
 
         url = "/l/" + lid;
         for (i = 0; i < components.length; i++) {
             if (components[i] !== undefined) {
-                url += "/" + ko.utils.unwrapObservable(components[i]);
+                url += "/" + ko.unwrap(components[i]);
             }
         }
         if (!options.noQueryString) {

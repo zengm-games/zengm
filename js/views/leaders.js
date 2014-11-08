@@ -25,14 +25,14 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
                     komapping.fromJS(options.data, {
                         data: {
                             key: function (data) {
-                                return ko.utils.unwrapObservable(data.pid);
+                                return ko.unwrap(data.pid);
                             }
                         }
                     }, this);
                 }();
             },
             key: function (data) {
-                return ko.utils.unwrapObservable(data.name);
+                return ko.unwrap(data.name);
             }
         }
     };

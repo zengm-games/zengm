@@ -182,7 +182,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
     mapping = {
         players: {
             key: function (data) {
-                return ko.utils.unwrapObservable(data.pid);
+                return ko.unwrap(data.pid);
             }
         }
     };

@@ -4,6 +4,13 @@ DB CHANGES SINCE 3.3.0
 PERFORMANCE CRAP
 ----------------
 
+knockout upgrade
+  ko.utils.unwrapObservable -> ko.unwrap
+  http://www.knockmeout.net/2014/10/knockout-cleaning-up.html
+  http://www.knockmeout.net/2014/03/knockout-3-1-released.html
+  http://knockoutjs.com/documentation/computed-pure.html
+  http://knockoutjs.com/documentation/component-overview.html
+
 confirm new error messages for safari
 
 confirm Bugsnag is re-enabled and working

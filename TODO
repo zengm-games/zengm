@@ -4,6 +4,8 @@ DB CHANGES SINCE 3.3.0
 PERFORMANCE CRAP
 ----------------
 
+dovr bug
+
 confirm new error messages for safari
 
 confirm Bugsnag is re-enabled and working

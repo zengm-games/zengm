@@ -322,7 +322,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
                                                     // Could be calculated correctly if I wasn't lazy
                                                     if (!ps.hasOwnProperty("yearsWithTeam")) {
-                                                        ps.yearsWithTeam = 0;
+                                                        ps.yearsWithTeam = 1;
                                                     }
 
                                                     // Delete psid because it can cause problems due to interaction addStatsRow above

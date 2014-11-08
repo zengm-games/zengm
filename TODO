@@ -17,21 +17,13 @@ confirm Bugsnag is re-enabled and working
 
 playing time (values not set?): http://www.reddit.com/r/BasketballGM/comments/2lbp6q/please_test_the_beta_its_faster_i_promise_but_im/clu79kq
 
-benchmark new league simulation performance
-
-make sure player values are getting updated when ratings change
-
 minor improvements
   box scores show real injuries, not just generic "Injured"
-  YWT accurate in past seasons
-  faster loading of large league files
-
-newly injured players used to get put at bottom of box score - is this an issue?
+  faster importing of large league files
 
 changes, version
 
 test!
-  benchmark overall
   confirm player stats entries get added in fantasy draft correctly
     before playoffs - WORKS
     during playoffs

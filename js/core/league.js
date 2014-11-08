@@ -321,7 +321,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                                     ps.pid = p.pid;
 
                                                     // Could be calculated correctly if I wasn't lazy
-                                                    ps.yearsWithTeam = 0;
+                                                    if (!ps.hasOwnProperty("yearsWithTeam")) {
+                                                        ps.yearsWithTeam = 0;
+                                                    }
 
                                                     // Delete psid because it can cause problems due to interaction addStatsRow above
                                                     delete ps.psid;

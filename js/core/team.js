@@ -365,6 +365,8 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
                     }
                 }
 
+// Sometimes get an error when switching to team finances page
+//if (tsa.revenues === undefined) { debugger; }
                 // Revenue and expenses calculation
                 tsa.revenue = _.reduce(tsa.revenues, function (memo, revenue) { return memo + revenue.amount; }, 0);
                 tsa.expense = _.reduce(tsa.expenses, function (memo, expense) { return memo + expense.amount; }, 0);

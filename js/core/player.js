@@ -789,7 +789,7 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
      * @return {function(Object)} Callback function whose argument the updated player object.
      */
     function addStatsRow(ot, p, playoffs, cb) {
-        var ps, statsRow, tx, withPs;
+        var ps, statsRow, stopOnSeason, tx, withPs;
 
         tx = db.getObjectStore(ot, "playerStats", null, true);
         playoffs = playoffs !== undefined ? playoffs : false;
@@ -804,8 +804,8 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
             var i;
 
             ps = ps.sort(function (a, b) {
-                // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
-                return a.psid - b.psid;
+                // Sort seasons in descending order. This is necessary because otherwise the index will cause ordering to be by tid within a season, which is probably not what is ever wanted.
+                return b.psid - a.psid;
             });
             // Count non-playoff seasons starting from the current one
             for (i = 0; i < ps.length; i++) {
@@ -824,6 +824,13 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
         // Iterate over player stats objects, most recent first
         ps = [];
         if (!playoffs) {
+
+            // Because the "pid, season, tid" index does not order by psid, the first time we see a tid !== p.tid could
+            // be the same season a player was traded to that team, and there still could be one more with tid ===
+            // p.tid. So when we se tid !== p.tid, set stopOnSeason to the previous (next... I mean lower) season so we
+            // can stop storing stats when it's totally safe.
+            stopOnSeason = 0;
+
             tx.objectStore("playerStats").index("pid, season, tid").openCursor(IDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]), "prev").onsuccess = function (event) {
                 var cursor, psTemp;
 
@@ -836,14 +843,19 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
                         return cursor.continue();
                     }
 
-                    // Store stats
-                    ps.push(psTemp);
-
                     // Continue only if we haven't hit a season with another team yet
-                    if (ps.tid !== p.tid) {
-                        cursor.continue();
-                    } else {
+                    if (psTemp.season === stopOnSeason) {
                         withPs();
+                    } else {
+                        if (psTemp.tid !== p.tid) {
+                            // Hit another team! Stop after this season is exhausted
+                            stopOnSeason = psTemp.season - 1;
+                        }
+
+                        // Store stats
+                        ps.push(psTemp);
+
+                        cursor.continue();
                     }
                 } else {
                     withPs();
@@ -1350,7 +1362,8 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
                         row.age = s.season - p.born.year;
                     } else if (stats[j] === "abbrev") {
                         row.abbrev = helpers.getAbbrev(s.tid);
-                    } else if (stats[j] === "yearsWithTeam") {
+                    } else if (stats[j] === "yearsWithTeam" && !_.isEmpty(s)) {
+                        // Everyone but players acquired in the offseason should be here
                         row.yearsWithTeam = s.yearsWithTeam;
                     } else {
                         row[stats[j]] = 0;

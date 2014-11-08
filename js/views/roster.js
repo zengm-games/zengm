@@ -1,4 +1,4 @@
-/**
+/**get
  * @name views.roster
  * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
  */

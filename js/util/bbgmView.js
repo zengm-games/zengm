@@ -13,7 +13,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         container = g.lid !== null ? "league_content" : "content";
         containerEl = document.getElementById(container);
 
-        if (containerEl.dataset.idLoaded !== args.id) {
+        if (containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading === args.id) {
 //console.log('draw from scratch')
             ui.update({
                 container: container,
@@ -57,7 +57,9 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
             // This will be called after every runBefore and runWhenever function is finished.
             afterEverything = _.after(args.runWhenever.length + 1, function () {
-                containerEl.dataset.idLoading = ""; // Done loading
+                if (containerEl.dataset.idLoading === containerEl.dataset.idLoaded) {
+                    containerEl.dataset.idLoading = ""; // Done loading
+                }
 
                 // Scroll to top
                 if (_.isEqual(updateEvents, ["firstRun"])) {

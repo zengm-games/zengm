@@ -213,7 +213,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             team.filter({
                 season: inputs.season,
                 tid: inputs.tid,
-                attrs: ["region", "name", "strategy", "imgURL"],
+                attrs: ["tid", "region", "name", "strategy", "imgURL"],
                 seasonAttrs: ["profit", "won", "lost", "playoffRoundsWon"],
                 ot: tx
             }, function (t) {
@@ -388,6 +388,12 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             var backgroundColor, color, pid, ptModifier;
 
             // Update select color
+
+            // NEVER UPDATE AI TEAMS
+            // This shouldn't be necessary, but sometimes it gets triggered
+            if (vm.team.tid() !== g.userTid) {
+                return;
+            }
 
             // These don't work in Firefox, so do it manually
 //            backgroundColor = $('option:selected', this).css('background-color');

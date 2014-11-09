@@ -14,18 +14,12 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
 
     // Random activities the owner claims to be doing
     activities = [
-        "learning how to windsurf while carrying a naked girl on my back",
         "working on my new \"mountaintop removal\" mining company (it's fascinating stuff)",
-        "having sex with half the freshman girls at the local university (it's hard work, believe me)",
-        "working on my charity, Sugar Daddies for Disadvantaged Hotties",
-        "lobbying the government to invade Peru (those bastards)",
-        "organizing orgies at the governor's mansion (he's a very particular gentleman)",
-        "working with my new PR agency on that whole \"child slave sweatshop\" scandal",
+        "lobbying the government to invade Peru",
         "lobbying the FDA to allow me to market ground horse meat as \"ground beeef\" (I already trademarked \"beeef\")",
         "arguing with my fourth wife's lawyer",
         "defending my real estate business from entirely frivolous lawsuits (can you believe they called me a \"slum lord\"?)",
         "managing my Ponzi scheme... I mean hedge fund, hedge fund, it's a hedge fund",
-        "fighting that ridiculous sexual harassment lawsuit (it's not that bad, my lawyer is a total babe)",
         "bribing the mayor to build a new lane on the highway just for me",
         "running my baseball team (baseball is a religion, basketball is a game)",
         "trying to patent the gene for height so I can sue our competition to pieces",
@@ -33,14 +27,12 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
         "bribing the commissioner to rig the draft for us",
         "buying cars and jewelry for middle school basketball prospects so they'll sign here when they turn pro",
         "flying to every country in the world on my private jet (except Peru)",
-        "promoting my chain of brothels in Cambodia",
         "working on my golf game with Kim Jong Il (no, he's not dead)",
         "lobbying the Senate to eliminate the minimum wage",
         "lobbying the state government for more subsidies",
         "figuring out how to fit in more courtside seats for celebrities",
         "coming up with a way to slightly shrink or expand the hoop, depending on which one we're shooting at",
-        "perfecting my money laundering infrastructure (owning this team is very helpful)",
-        "making sure my \"girlfriends\" aren't posting pictures with black people on Instagram (how many times do I have to tell them??)"
+        "perfecting my money laundering infrastructure (owning this team is very helpful)"
     ];
 
     // Intro of annual message
@@ -62,7 +54,7 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
         "I need some wins. Fans hate losers. Free agents hate losers. What's your strategy? Keep on losing until I fire you? You're making good progress, then."
     ];
     wins[1] = [
-        "I recognize we're getting better and our team has some potential for growth, but don't fuck this up. You've already used up most of my patience.",
+        "I recognize we're getting better and our team has some potential for growth, but don't mess this up. You've already used up most of my patience.",
         "You keep telling me we have \"potential\", but potential doesn't win games."
     ];
     wins[2] = [
@@ -131,8 +123,7 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
     ovr = [];
     ovr[0] = [
         "Bye.",
-        "Please, don't bother me until you have some good news.",
-        "I'm watching you. Seriously, one of your assistant coaches is a spy. Don't fuck up."
+        "Please, don't bother me until you have some good news."
     ];
     ovr[1] = [
         "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships.",
@@ -208,7 +199,7 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
                     "<p>" + random.choice(ovr[indOvr]).replace("{{activity}}", activity2) + "</p>";
             } else if (g.season < g.gracePeriodEnd || g.godMode) {
                 if (deltas.wins < 0 && deltas.playoffs < 0 && deltas.money < 0) {
-                    m = "<p>What the hell did you do to my franchise?! I'd fire you, but I can't find anyone who wants to clean up your mess.</p>";
+                    m = "<p>What did you do to my franchise?! I'd fire you, but I can't find anyone who wants to clean up your mess.</p>";
                 } else if (deltas.money < 0 && deltas.wins >= 0 && deltas.playoffs >= 0) {
                     m = "<p>I don't care what our colors are. I need to see some green! I won't wait forever. MAKE ME MONEY.</p>";
                 } else if (deltas.money >= 0 && deltas.wins < 0 && deltas.playoffs < 0) {

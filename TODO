@@ -6,6 +6,20 @@ PERFORMANCE CRAP
 
 nan checker
   check every object before it is written to db (add, put, cursor.update)
+  ewa can be set to NaN
+    https://bugsnag.com/dumbmatter/basketball-gm/errors/545f10adc3d637ae2288a7ec?event_id=545f717979622ace3326377d#details
+    happens on line 170 in advStat.js when saving EWA and PER
+    maybe because of PER being 0?
+    when i was trying to abuse it into a NaN, i got one where PER and EWA for a player were both set to NaN
+    happened due to 0 gp in latest season due to inappropriately adding team stats rows
+    should be fixed!
+  contract can be set to NaN
+    https://bugsnag.com/dumbmatter/basketball-gm/errors/545f10adc3d637ae2288a7ec?event_id=545f787379622ace33266e88#last%20event
+    https://mail.google.com/mail/u/0/#inbox/14994f4f9c07b19e
+    phase is still regular season (although could be changing)
+    player is free agent and has never been on a team
+    js/core/freeAgents.js:186 - decreaseDemands
+    must be something weird on contract amount before then? maybe from either random.realGauss or p.value in player.genContract?
 
 knockout upgrade
   http://www.knockmeout.net/2014/10/knockout-cleaning-up.html
@@ -22,6 +36,8 @@ minor improvements
   faster importing of large league files
 
 changes, version
+
+some kind of loading indicator on page loads
 
 test!
   confirm player stats entries get added in fantasy draft correctly
@@ -54,6 +70,8 @@ show "loading" indicator when uploading large file, otherwise seems to hang and 
 deleteOldData
   is playerStats still most important? benchmark
   add option to delete old player ratings?
+
+player.updateValues.getStats doesn't really make sense. Should get all from past 2 seasons, sort by PSID, and take stats up to 2000 minutes
 
 version 3.4
 

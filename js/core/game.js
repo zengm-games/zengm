@@ -219,6 +219,14 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         winpOld = 0.5;  // Default for new games
                     }
 
+                    // It should never happen, but winp and winpOld sometimes turn up as NaN due to a duplicate season entry or the user skipping seasons
+                    if (winp !== winp) {
+                        winp = 0;
+                    }
+                    if (winpOld !== winpOld) {
+                        winpOld = 0;
+                    }
+
                     teamSeason.hype = teamSeason.hype + 0.01 * (winp - 0.55) + 0.015 * (winp - winpOld);
                     if (teamSeason.hype > 1) {
                         teamSeason.hype = 1;

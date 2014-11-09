@@ -790,7 +790,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
                     delete gSend.teamRegionsCache;
                     delete gSend.teamNamesCache;
 
-                    output = "<h1>Crap</h1><p>You ran into the infamous NaN bug. But there's good news! You can help fix it! Please email the following information to <a href=\"mailto:commissioner@basketball-gm.com\">commissioner@basketball-gm.com</a> along with any information about what you think might have caused this glitch. Thanks!</p>";
+                    output = "<h1>Critical Error</h1><p>You ran into the infamous NaN bug. But there's good news! You can help fix it! Please email the following information to <a href=\"mailto:commissioner@basketball-gm.com\">commissioner@basketball-gm.com</a> along with any information about what you think might have caused this glitch. If you want to be extra helpful, <a href=\"" + leagueUrl(["export_league"]) + "\">export your league</a> and send that too (if it's huge, upload to Google Drive or Dropbox or whatever). Thanks!</p>";
 
                     output += '<textarea class="form-control" style="height: 300px">';
                     output += JSON.stringify({
@@ -800,7 +800,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
                         gSend: gSend
                     }, function (key, value) {
                         if (value != value) {
-                            return "FUCKING NaN RIGHT HERE";
+                            return "NaN RIGHT HERE";
                         }
 
                         return value;

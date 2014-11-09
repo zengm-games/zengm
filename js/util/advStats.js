@@ -40,13 +40,18 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
                 return memo;
             }, {});
 
+            // If no games have been played, somehow, don't continue. But why would no games be played?
+            if (league.gp === 0) {
+                return cb();
+            }
+
             // Calculate pace for each team, using the "estimated pace adjustment" formula rather than the "pace adjustment" formula because it's simpler and ends up at nearly the same result. To do this the real way, I'd probably have to store the number of possessions from core.gameSim.
             for (i = 0; i < teams.length; i++) {
                 //estimated pace adjustment = 2 * lg_PPG / (team_PPG + opp_PPG)
                 teams[i].pace = 2 * (league.pts / league.gp) / (teams[i].pts / teams[i].gp + teams[i].oppPts / teams[i].gp);
 
-                // Handle divide by 0 error
-                if (isNaN(teams[i].pace)) {
+                // Handle divide by 0 error - check for NaN
+                if (teams[i].pace !== teams[i].pace) {
                     teams[i].pace = 1;
                 }
             }
@@ -167,6 +172,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
                                 playerStats.per = PER[i];
                                 playerStats.ewa = EWA[i];
 
+if (EWA[i] != EWA[i]) { debugger; }
                                 cursor.update(playerStats);
                             };
                         }(i));

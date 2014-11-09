@@ -4,6 +4,9 @@ DB CHANGES SINCE 3.3.0
 PERFORMANCE CRAP
 ----------------
 
+nan checker
+  check every object before it is written to db (add, put, cursor.update)
+
 knockout upgrade
   http://www.knockmeout.net/2014/10/knockout-cleaning-up.html
   http://www.knockmeout.net/2014/03/knockout-3-1-released.html

@@ -117,6 +117,9 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "ut
         return helpers.error(errorMsg);
     }
 
+    // NaN detection
+    helpers.checkNaNs();
+
     // Any news?
     changes.check();
 

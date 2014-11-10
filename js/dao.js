@@ -151,6 +151,9 @@ define(["db", "globals"], function (db, g) {
         if (!options.hasOwnProperty("p")) {
             throw new Error("Must supply player object p");
         }
+        if (options.p.hasOwnProperty("stats")) {
+            throw new Error("stats property on player object");
+        }
 
         playerStore = db.getObjectStore(options.ot, "players", "players");
 

@@ -51,8 +51,6 @@ test!
   make sure adding/removing players to meet roster limits still works
   confirm undrafted players are being added to free agents list
   advStats in playoffs
-  make sure stats don't get accidentally added to player object
-    throw error in .put
   fix unit tests!
   write unit tests for dao.players.getAll
     if you request a stats season that doesn't exist, does the callback still get executed?

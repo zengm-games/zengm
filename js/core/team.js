@@ -20,7 +20,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
         s = t.seasons.length - 1; // Most recent season
 
         // Make sure this isn't a duplicate season
-        if (t.seasons[s].season === g.season) {
+        if (s >= 0 && t.seasons[s].season === g.season) {
             console.log("Attempting to add duplicate team season record!");
             return t;
         }

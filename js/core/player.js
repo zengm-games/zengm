@@ -737,6 +737,7 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
         if ((pf || sf) && g) {
             position = 'GF';
         } else if (c && (pf || sf)) {
+            // This means that anyone with c=true and height >=70 will NOT be labeled just a C. only pure Cs are short guys!
             position = 'FC';
         } else if (pg && sg) {
             position = 'G';

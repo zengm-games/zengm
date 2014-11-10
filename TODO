@@ -358,6 +358,7 @@ fix contracts, signing
   player contract amounts http://www.reddit.com/r/BasketballGM/comments/1kj0p0/can_i_turn_off_firing/cbpxjyj?context=3
 revamp position assignment algorithm
   until a player is ~28 (whenever ratings decline starts), recalculate every year
+  center labeling is poor (only short guys can be centers, taller ones get FC)
 gameSim
   mediocre three point shooters should shoot it less http://www.reddit.com/r/BasketballGM/comments/2bwvpj/psa_players_who_shouldnt_shoot_3s_continue_to/
   smart substitutions http://www.reddit.com/r/BasketballGM/comments/2b9w78/went_7012_with_this_roster_is_this_really_that/cj3zgui

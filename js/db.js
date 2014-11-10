@@ -128,7 +128,11 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
 //        console.log('Connecting to database "meta"');
         request = indexedDB.open("meta", 7);
         request.onerror = function (event) {
-            throw new Error("Meta connection error");
+            if (event.target.webkitErrorMessage) {
+                throw new Error("Meta connection error: " + event.target.webkitErrorMessage);
+            } else {
+                throw new Error("Meta connection error: " + event.target.error.name + " - " + event.target.error.message);
+            }
         };
         request.onblocked = function () {
             alert("Please close all other tabs with this site open!");
@@ -758,7 +762,11 @@ console.log(event);
 //        console.log('Connecting to database "league' + lid + '"');
         request = indexedDB.open("league" + lid, 11);
         request.onerror = function (event) {
-            throw new Error("League connection error");
+            if (event.target.webkitErrorMessage) {
+                throw new Error("League connection error: " + event.target.webkitErrorMessage);
+            } else {
+                throw new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message);
+            }
         };
         request.onblocked = function () {
             alert("Please close all other tabs with this site open!");

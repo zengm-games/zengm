@@ -127,7 +127,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
                 // Estimated Wins Added http://insider.espn.go.com/nba/hollinger/statistics
                 EWA = [];
                 (function () {
-                    var i, prls, va;
+                    var i, prl, prls, va;
 
                     // Position Replacement Levels
                     prls = {
@@ -144,7 +144,14 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
 
                     for (i = 0; i < players.length; i++) {
                         if (players[i].active) {
-                            va = players[i].stats.min * (PER[i] - prls[players[i].pos]) / 67;
+                            if (prls.hasOwnProperty(players[i].pos)) {
+                                prl = prls[players[i].pos];
+                            } else {
+                                // This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
+                                prl = 10.75;
+                            }
+
+                            va = players[i].stats.min * (PER[i] - prl) / 67;
 
                             EWA[i] = va / 30 * 0.8; // 0.8 is a fudge factor to approximate the difference between (BBGM) EWA and (real) win shares
                         }

@@ -4,6 +4,9 @@ DB CHANGES SINCE 3.3.0
 PERFORMANCE CRAP
 ----------------
 
+allow IE users to export, somehow
+  separate page with separate JS opening old version of DB
+
 requirejs error related to bugsnag i think: https://bugsnag.com/dumbmatter/basketball-gm/errors/52e89bb183a277d9f7f88b00
   but shouldn't be happening because i load bugsnag sync https://github.com/bugsnag/bugsnag-js/#amdcommonjs-support
 

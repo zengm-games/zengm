@@ -35,8 +35,6 @@ knockout upgrade
 
 confirm new error messages for safari
 
-playing time (values not set?): http://www.reddit.com/r/BasketballGM/comments/2lbp6q/please_test_the_beta_its_faster_i_promise_but_im/clu79kq
-
 minor improvements
   box scores show real injuries, not just generic "Injured"
   faster importing of large league files
@@ -53,7 +51,6 @@ test!
   make sure free agent auto sign players get the right stats row added
   make sure adding/removing players to meet roster limits still works
   confirm undrafted players are being added to free agents list
-  advStats in playoffs
   fix unit tests!
   write unit tests for dao.players.getAll
     if you request a stats season that doesn't exist, does the callback still get executed?

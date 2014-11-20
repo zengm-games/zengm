@@ -177,6 +177,32 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
         this.isCurrentSeason = ko.computed(function () {
             return g.season === this.season();
         }, this);
+
+        this.ptChange = function (p) {
+            var pid, ptModifier;
+
+            // NEVER UPDATE AI TEAMS
+            // This shouldn't be necessary, but sometimes it gets triggered
+            if (this.team.tid() !== g.userTid) {
+                return;
+            }
+
+            // Update ptModifier in database
+            pid = p.pid();
+            ptModifier = parseFloat(p.ptModifier());
+            g.dbl.transaction("players", "readwrite").objectStore("players").openCursor(pid).onsuccess = function (event) {
+                var cursor, p;
+
+                cursor = event.target.result;
+                p = cursor.value;
+                if (p.ptModifier !== ptModifier) {
+                    p.ptModifier = ptModifier;
+                    cursor.update(p);
+
+                    db.setGameAttributes({lastDbChange: Date.now()});
+                }
+            };
+        }.bind(this);
     }
 
     mapping = {
@@ -200,11 +226,11 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 salaryCap: g.salaryCap / 1000,
                 showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid,
                 ptModifiers: [
-                    {text: "0", ptModifier: 0},
-                    {text: "-", ptModifier: 0.75},
-                    {text: " ", ptModifier: 1},
-                    {text: "+", ptModifier: 1.25},
-                    {text: "++", ptModifier: 1.75}
+                    {text: "0", ptModifier: "0"},
+                    {text: "-", ptModifier: "0.75"},
+                    {text: " ", ptModifier: "1"},
+                    {text: "+", ptModifier: "1.25"},
+                    {text: "++", ptModifier: "1.75"}
                 ]
             };
 
@@ -268,6 +294,9 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                                 } else {
                                     players[i].canRelease = false;
                                 }
+
+                                // Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
+                                players[i].ptModifier = String(players[i].ptModifier);
                             }
 
                             vars.players = players;
@@ -384,6 +413,23 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             }
         }).extend({throttle: 1});
 
+        $("#help-roster-pt").popover({
+            title: "Playing Time Modifier",
+            html: true,
+            content: "<p>Your coach will divide up playing time based on ability and stamina. If you want to influence his judgement, your options are:</p>" +
+                '<span style="background-color: #a00; color: #fff">0 No Playing Time</span><br>' +
+                '<span style="background-color: #ff0">- Less Playing Time</span><br>' +
+                '<span style="background-color: #ccc">&nbsp;&nbsp;&nbsp; Let Coach Decide</span><br>' +
+                '<span style="background-color: #0f0">+ More Playing Time</span><br>' +
+                '<span style="background-color: #070; color: #fff">++ Even More Playing Time</span>'
+        });
+
+        $("#help-roster-release").popover({
+            title: "Release Player",
+            html: true,
+            content: "<p>To free up a roster spot, you can release a player from your team. You will still have to pay his salary (and have it count against the salary cap) until his contract expires (you can view your released players' contracts in your <a href=\"" + helpers.leagueUrl(["team_finances"]) + "\">Team Finances</a>).</p>However, if you just drafted a player and the regular season has not started yet, his contract is not guaranteed and you can release him for free."
+        });
+
         $("#roster").on("change", "select", function () {
             var backgroundColor, color, pid, ptModifier;
 
@@ -417,39 +463,6 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
 
             this.style.color = color;
             this.style.backgroundColor = backgroundColor;
-
-            // Update ptModifier in database
-            pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
-            ptModifier = parseFloat(this.value);
-            g.dbl.transaction("players", "readwrite").objectStore("players").openCursor(pid).onsuccess = function (event) {
-                var cursor, p;
-
-                cursor = event.target.result;
-                p = cursor.value;
-                if (p.ptModifier !== ptModifier) {
-                    p.ptModifier = ptModifier;
-                    cursor.update(p);
-
-                    db.setGameAttributes({lastDbChange: Date.now()});
-                }
-            };
-        });
-
-        $("#help-roster-pt").popover({
-            title: "Playing Time Modifier",
-            html: true,
-            content: "<p>Your coach will divide up playing time based on ability and stamina. If you want to influence his judgement, your options are:</p>" +
-                '<span style="background-color: #a00; color: #fff">0 No Playing Time</span><br>' +
-                '<span style="background-color: #ff0">- Less Playing Time</span><br>' +
-                '<span style="background-color: #ccc">&nbsp;&nbsp;&nbsp; Let Coach Decide</span><br>' +
-                '<span style="background-color: #0f0">+ More Playing Time</span><br>' +
-                '<span style="background-color: #070; color: #fff">++ Even More Playing Time</span>'
-        });
-
-        $("#help-roster-release").popover({
-            title: "Release Player",
-            html: true,
-            content: "<p>To free up a roster spot, you can release a player from your team. You will still have to pay his salary (and have it count against the salary cap) until his contract expires (you can view your released players' contracts in your <a href=\"" + helpers.leagueUrl(["team_finances"]) + "\">Team Finances</a>).</p>However, if you just drafted a player and the regular season has not started yet, his contract is not guaranteed and you can release him for free."
         });
 
         ui.tableClickableRows($("#roster"));

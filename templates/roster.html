@@ -41,7 +41,7 @@
         <td data-bind="round: [stats.ast, 1]"></td>
         <td data-bind="round: [stats.per, 1]"></td>
         <td data-bind="if: $parent.editable, visible: $parent.editable">
-          <select class="form-control" data-bind="options: $root.ptModifiers, optionsText: 'text', optionsValue: 'ptModifier', value: ptModifier"></select>
+          <select class="form-control" data-bind="options: $root.ptModifiers, optionsText: 'text', optionsValue: 'ptModifier', value: ptModifier, event: {change: $root.ptChange}"></select>
         </td>
         <td data-bind="visible: $parent.editable">
           <button class="btn btn-default btn-xs" data-action="release" data-bind="enable: canRelease">Release</button>

@@ -8,7 +8,8 @@ define(["globals", "core/player"], function (g, player) {
     describe("core/player", function () {
         describe("#generate()", function () {
             it("should add stats row only for players generated on teams, not free agents or undrafted players", function () {
-                var p;
+// Needs DB to check since stats are not in player object anymore
+/*                var p;
 
                 p = player.generate(-2, 19, "", 25, 55, 2012, false, 15.5);
                 p.stats.length.should.equal(0);
@@ -20,7 +21,7 @@ define(["globals", "core/player"], function (g, player) {
                 p.stats.length.should.equal(1);
 
                 p = player.generate(15, 19, "", 25, 55, 2012, false, 15.5);
-                p.stats.length.should.equal(1);
+                p.stats.length.should.equal(1);*/
             });
         });
 
@@ -30,7 +31,6 @@ define(["globals", "core/player"], function (g, player) {
 
                 // Like player from http://www.reddit.com/r/BasketballGM/comments/222k8b/so_a_10x_dpoy_apparently_doesnt_have_what_it/
                 p = player.generate(0, 19, "", 25, 55, 2012, false, 15.5);
-                p.stats.length.should.equal(1);
                 p.pos = "C";
                 p.stats = [{
                     min: 1 * 2.6,
@@ -111,6 +111,7 @@ define(["globals", "core/player"], function (g, player) {
                 p.tid = 4;
 
                 g.season = 2012;
+// Replace with static array of stats row in helper function addStatsRow
                 p = player.addStatsRow(p);
                 p = player.addRatingsRow(p, 15);
 

@@ -43,21 +43,30 @@
           ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         }());
-
-        // Bugsnag
-        (function () {
-          var bs = document.createElement('script'); bs.type = 'text/javascript';// bs.async = true;
-          bs.src = "http://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js";
-          bs.addEventListener("load", function () {
-            // Passing in data attribute doesn't work for some reason
-            if (Bugsnag) {
-              Bugsnag.apiKey = "c10b95290070cb8888a7a79cc5408555";
-              Bugsnag.appVersion = "2014.11.26.765";
-            }
-          });
-          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
-        }());
       }
+
+      // Bugsnag
+      (function () {
+        var bs = document.createElement('script'); bs.type = 'text/javascript';// bs.async = true;
+        bs.src = "http://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js";
+        bs.addEventListener("load", function () {
+          // Passing in data attribute doesn't work for some reason
+          if (Bugsnag) {
+            Bugsnag.apiKey = "c10b95290070cb8888a7a79cc5408555";
+            Bugsnag.appVersion = "2014.11.26.765";
+            if (location.host.indexOf("localhost") === 0) {
+              Bugsnag.releaseStage = "development";
+            } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
+              Bugsnag.releaseStage = "beta";
+            } else if (location.host.indexOf("play.basketball-gm.com") === 0) {
+              Bugsnag.releaseStage = "production";
+            } else {
+              Bugsnag.releaseStage = "unknown";
+            }
+          }
+        });
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
+      }());
     </script>
   </head>
 

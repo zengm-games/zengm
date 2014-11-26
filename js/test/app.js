@@ -29,6 +29,7 @@ requirejs(["ui", "views", "lib/chai", "lib/jquery", "lib/html5-dataset", "lib/In
         globals: ["console"],
         timeout: 2000000000
     });
+console.log(chai);
     should = chai.should();
 
     require(["test/core/contractNegotiation", "test/core/draft", "test/core/finances", "test/core/league", "test/core/player", "test/core/season", "test/core/team", "test/core/trade", "test/util/account", "test/util/helpers", "test/views/components", "test/views/gameLog"], function () {

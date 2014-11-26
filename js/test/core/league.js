@@ -26,7 +26,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                 };
             });
             it("should create all necessary object stores", function () {
-                g.dbl.objectStoreNames.should.have.length(14);
+                g.dbl.objectStoreNames.should.have.length(15);
                 g.dbl.objectStoreNames.contains("awards").should.equal(true);
                 g.dbl.objectStoreNames.contains("events").should.equal(true);
                 g.dbl.objectStoreNames.contains("draftOrder").should.equal(true);
@@ -35,6 +35,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                 g.dbl.objectStoreNames.contains("messages").should.equal(true);
                 g.dbl.objectStoreNames.contains("negotiations").should.equal(true);
                 g.dbl.objectStoreNames.contains("players").should.equal(true);
+                g.dbl.objectStoreNames.contains("playerStats").should.equal(true);
                 g.dbl.objectStoreNames.contains("playoffSeries").should.equal(true);
                 g.dbl.objectStoreNames.contains("releasedPlayers").should.equal(true);
                 g.dbl.objectStoreNames.contains("schedule").should.equal(true);

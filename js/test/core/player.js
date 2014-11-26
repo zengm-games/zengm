@@ -7,7 +7,7 @@ define(["globals", "core/player"], function (g, player) {
 
     describe("core/player", function () {
         describe("#generate()", function () {
-            it("should add stats row only for players generated on teams, not free agents or undrafted players", function () {
+            it.skip("should add stats row only for players generated on teams, not free agents or undrafted players", function () {
 // Needs DB to check since stats are not in player object anymore
 /*                var p;
 

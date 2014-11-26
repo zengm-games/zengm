@@ -2,14 +2,29 @@
  * @name test.core.player
  * @namespace Tests for core.player.
  */
-define(["globals", "core/player"], function (g, player) {
+define(["globals", "core/player", "lib/underscore", "util/helpers"], function (g, player, _, helpers) {
     "use strict";
+
+    // Synchronous version of player.addStatsRow which does not require IndexedDB
+    function addStatsRow(p, playoffs) {
+        playoffs = playoffs !== undefined ? playoffs : false;
+
+        p.stats.push({season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0});
+        p.statsTids.push(p.tid);
+        p.statsTids = _.uniq(p.statsTids);
+
+        return p;
+    }
+
+    // Default values needed
+    g.teamAbbrevsCache = _.pluck(helpers.getTeamsDefault(), "abbrev");
+    g.numTeams = 30;
 
     describe("core/player", function () {
         describe("#generate()", function () {
             it.skip("should add stats row only for players generated on teams, not free agents or undrafted players", function () {
 // Needs DB to check since stats are not in player object anymore
-/*                var p;
+                var p;
 
                 p = player.generate(-2, 19, "", 25, 55, 2012, false, 15.5);
                 p.stats.length.should.equal(0);
@@ -21,7 +36,7 @@ define(["globals", "core/player"], function (g, player) {
                 p.stats.length.should.equal(1);
 
                 p = player.generate(15, 19, "", 25, 55, 2012, false, 15.5);
-                p.stats.length.should.equal(1);*/
+                p.stats.length.should.equal(1);
             });
         });
 
@@ -108,21 +123,22 @@ define(["globals", "core/player"], function (g, player) {
             before(function () {
                 g.season = 2011;
                 p = player.generate(g.PLAYER.UNDRAFTED, 19, "", 50, 60, 2011, false, 28);
+                p.stats = []; // Fake it being here
                 p.tid = 4;
 
                 g.season = 2012;
 // Replace with static array of stats row in helper function addStatsRow
-                p = player.addStatsRow(p);
+                p = addStatsRow(p);
                 p = player.addRatingsRow(p, 15);
 
                 p.contract.exp = g.season + 1;
 
                 p.stats[0].gp = 5;
                 p.stats[0].fg = 20;
-                p = player.addStatsRow(p, true);
+                p = addStatsRow(p, true);
                 p.stats[1].gp = 3;
                 p.stats[1].fg = 30;
-                p = player.addStatsRow(p);
+                p = addStatsRow(p);
                 p.stats[2].season = 2013;
                 p.stats[2].tid = 0;
                 p.stats[2].gp = 8;

@@ -21,7 +21,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
 
         if (tid < 0) {
             tid = g.userTid;
-            abbrev = g.teamAbbrevsCache[tid];
+            abbrev = g.tgeamAbbrevsCache[tid];
         }
 
         return [tid, abbrev];
@@ -780,7 +780,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
 
         wrapperNaNChecker = function (_super) {
             return function () {
-                var err, gSend, output;
+                var contentNode, err, gSend, output;
 
                 if (checkObject(arguments[0])) {
                     err = new Error("NaN found before writing to IndexedDB");
@@ -807,7 +807,15 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
                     }, 2);
                     output += "</textarea>";
 
-                    document.getElementById("league_content").innerHTML = output;
+                    // Find somewhere to show output
+                    contentNode = document.getElementById("league_content");
+                    if (!contentNode) {
+                        contentNode = document.getElementById("content");
+                    }
+                    if (!contentNode) {
+                        contentNode = document.body;
+                    }
+                    contentNode.innerHTML = output;
 
                     if (window.Bugsnag) {
                         window.Bugsnag.notifyException(err, "NaNFound", {

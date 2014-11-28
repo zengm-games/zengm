@@ -282,7 +282,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error".
      */
     function globalError(req) {
-        var data, ui, viewHelpers;
+        var contentEl, data, ui, viewHelpers;
 
         ui = require("ui");
         viewHelpers = require("util/viewHelpers");
@@ -293,7 +293,10 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
             container: "content",
             template: "error"
         });
-        ko.applyBindings({error: req.params.error}, document.getElementById("content"));
+
+        contentEl = document.getElementById("content");
+        ko.cleanNode(contentEl);
+        ko.applyBindings({error: req.params.error}, contentEl);
         ui.title("Error");
         req.raw.cb();
     }
@@ -311,11 +314,16 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         viewHelpers = require("util/viewHelpers");
 
         viewHelpers.beforeLeague(req, function () {
+            var contentEl;
+
             ui.update({
                 container: "league_content",
                 template: "error"
             });
-            ko.applyBindings({error: req.params.error}, document.getElementById("league_content"));
+
+            contentEl = document.getElementById("league_content");
+            ko.cleanNode(contentEl);
+            ko.applyBindings({error: req.params.error}, contentEl);
             ui.title("Error");
             req.raw.cb();
         });

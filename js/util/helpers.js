@@ -21,7 +21,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
 
         if (tid < 0) {
             tid = g.userTid;
-            abbrev = g.tgeamAbbrevsCache[tid];
+            abbrev = g.teamAbbrevsCache[tid];
         }
 
         return [tid, abbrev];

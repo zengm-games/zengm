@@ -220,7 +220,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                     }
                                 }
                             }
-                            if (createUndrafted1) {
+                            // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any g.PLAYER.UNDRAFTED
+                            if (createUndrafted1 && (g.phase <= g.PHASE.BEFORE_DRAFT || g.phase >= g.PHASE.FREE_AGENCY)) {
                                 draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1);
                             }
                             if (createUndrafted2) {

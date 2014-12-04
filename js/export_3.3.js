@@ -326,28 +326,15 @@ console.log(event);
                     }
 
                     export_(objectStores, function (data) {
-                        var a, blob, fileName, json, url;
+                        var a, fileName, json, url;
 
                         json = JSON.stringify(data, undefined, 2);
-                        blob = new Blob([json], {type: "application/json"});
-                        url = window.URL.createObjectURL(blob);
+                        window.blob = new Blob([json], {type: "application/json"});
 
                         fileName = data.meta !== undefined ? data.meta.name : "League";
 
-                        a = document.createElement("a");
-                        a.download = "BBGM - " + fileName + ".json";
-                        a.href = url;
-                        a.textContent = "Download Exported League File";
-                        a.dataset.noDavis = "true";
-
+                        window.navigator.msSaveOrOpenBlob(window.blob, "BBGM - " + fileName + ".json");
                         downloadLink.innerHTML = ""; // Clear "Generating..."
-                        downloadLink.appendChild(a);
-
-                        // Delete object, eventually
-                        window.setTimeout(function () {
-                            window.URL.revokeObjectURL(url);
-                            downloadLink.innerHTML = "Download link expired."; // Remove expired link
-                        }, 60 * 1000);
                     });
                 });
             }

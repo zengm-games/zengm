@@ -282,64 +282,68 @@ console.log(event);
     connectMeta(function () {
         var vm = {};
 
-        g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
-            var i, leagues;
+        // Silence error related to meta database not existing
+        try {
+            g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
+                var i, leagues;
 
-            leagues = event.target.result;
+                leagues = event.target.result;
 
-            for (i = 0; i < leagues.length; i++) {
-                if (leagues[i].teamRegion === undefined) {
-                    leagues[i].teamRegion = "???";
-                }
-                if (leagues[i].teamName === undefined) {
-                    leagues[i].teamName = "???";
-                }
-                
-                leagues[i].longName = leagues[i].name + " - " + leagues[i].teamRegion + " " + leagues[i].teamName + " - " + leagues[i].phaseText;
-                delete leagues[i].tid;
-                delete leagues[i].teamRegion;
-                delete leagues[i].teamName;
-            }
-
-            vm.leagues = leagues;
-
-            vm.lid = null;
-
-            vm.onSubmit = function () {
-                var downloadLink, objectStores;
-
-                console.log(vm);
-
-                downloadLink = document.getElementById("download-link");
-                downloadLink.innerHTML = "Generating...";
-
-                objectStores = ["players", "releasedPlayers", "awards", "teams", "schedule", "playoffSeries", "draftPicks", "trade", "negotiations", "gameAttributes", "draftOrder", "messages", "events"];
-
-                connectLeague(vm.lid, function () {
-                    g.lid = vm.lid;
-                    for (i = 0; i < vm.leagues.length; i++) {
-                        if (vm.leagues[i].lid === g.lid) {
-                            g.leagueName = vm.leagues[i].name;
-                            g.phaseText = vm.leagues[i].phaseText;
-                            break;
-                        }
+                for (i = 0; i < leagues.length; i++) {
+                    if (leagues[i].teamRegion === undefined) {
+                        leagues[i].teamRegion = "???";
                     }
+                    if (leagues[i].teamName === undefined) {
+                        leagues[i].teamName = "???";
+                    }
+                    
+                    leagues[i].longName = leagues[i].name + " - " + leagues[i].teamRegion + " " + leagues[i].teamName + " - " + leagues[i].phaseText;
+                    delete leagues[i].tid;
+                    delete leagues[i].teamRegion;
+                    delete leagues[i].teamName;
+                }
 
-                    export_(objectStores, function (data) {
-                        var a, fileName, json, url;
+                vm.leagues = leagues;
 
-                        json = JSON.stringify(data, undefined, 2);
-                        window.blob = new Blob([json], {type: "application/json"});
+                vm.lid = null;
 
-                        fileName = data.meta !== undefined ? data.meta.name : "League";
+                vm.onSubmit = function () {
+                    var downloadLink, objectStores;
 
-                        window.navigator.msSaveOrOpenBlob(window.blob, "BBGM - " + fileName + ".json");
-                        downloadLink.innerHTML = ""; // Clear "Generating..."
+                    console.log(vm);
+
+                    downloadLink = document.getElementById("download-link");
+                    downloadLink.innerHTML = "Generating...";
+
+                    objectStores = ["players", "releasedPlayers", "awards", "teams", "schedule", "playoffSeries", "draftPicks", "trade", "negotiations", "gameAttributes", "draftOrder", "messages", "events"];
+
+                    connectLeague(vm.lid, function () {
+                        g.lid = vm.lid;
+                        for (i = 0; i < vm.leagues.length; i++) {
+                            if (vm.leagues[i].lid === g.lid) {
+                                g.leagueName = vm.leagues[i].name;
+                                g.phaseText = vm.leagues[i].phaseText;
+                                break;
+                            }
+                        }
+
+                        export_(objectStores, function (data) {
+                            var a, fileName, json, url;
+
+                            json = JSON.stringify(data, undefined, 2);
+                            window.blob = new Blob([json], {type: "application/json"});
+
+                            fileName = data.meta !== undefined ? data.meta.name : "League";
+
+                            window.navigator.msSaveOrOpenBlob(window.blob, "BBGM - " + fileName + ".json");
+                            downloadLink.innerHTML = ""; // Clear "Generating..."
+                        });
                     });
-                });
-            }
+                }
 
-            ko.applyBindings(vm, document.getElementById("content"));
-        };
+                ko.applyBindings(vm, document.getElementById("content"));
+            };
+        }
+        catch (e) {}
     });
 }());

@@ -22,28 +22,6 @@
       }
 
       loadCSS("gen/bbgm.css");
-
-      // Bugsnag
-      (function () {
-        var bs = document.createElement('script'); bs.type = 'text/javascript';// bs.async = true;
-        bs.src = "http://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js";
-        bs.addEventListener("load", function () {
-          // Passing in data attribute doesn't work for some reason
-          if (Bugsnag) {
-            Bugsnag.apiKey = "c10b95290070cb8888a7a79cc5408555";
-            if (location.host.indexOf("localhost") === 0) {
-              Bugsnag.releaseStage = "development";
-            } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
-              Bugsnag.releaseStage = "beta";
-            } else if (location.host.indexOf("play.basketball-gm.com") === 0) {
-              Bugsnag.releaseStage = "production";
-            } else {
-              Bugsnag.releaseStage = "unknown";
-            }
-          }
-        });
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
-      }());
     </script>
   </head>
 
@@ -65,7 +43,10 @@
     <div class="container">
       <div id="content" data-id-loading="" data-id-loaded="">
         <h3>The latest version of Basketball GM no longer supports your browser</h3>
-        <p>Use the form below to export your old leagues. Then you can play in a supported browser (Firefox or Chrome) or on <a href="http://parkway.basketball-gm.com/">an old version of Basketball GM</a>.</p>
+
+        <p>You can play in a supported browser (<a href="http://www.firefox.com/">Firefox</a> or <a href="http://www.google.com/chrome/">Chrome</a>) or play <a href="http://parkway.basketball-gm.com/">an old version of Basketball GM that still works in IE</a>.</p>
+
+        <p>If you had any old leagues here, use the form below to export them.</p>
 
         <form method="POST" data-bind="submit: onSubmit">
           <select name="lid" class="form-control" data-bind="options: leagues, optionsText: 'longName', optionsValue: 'lid', value: lid"></select><br>

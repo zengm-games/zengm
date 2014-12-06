@@ -760,18 +760,22 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         var checkObject, wrap, wrapperNaNChecker;
 
         // Check all properties of an object for NaN
-        checkObject = function (obj, foundNaN) {
+        checkObject = function (obj, foundNaN, replace) {
             var prop;
 
             foundNaN = foundNaN !== undefined ? foundNaN : false;
+            replace = replace !== undefined ? replace : false;
 
             for (prop in obj) {
                 if (obj.hasOwnProperty(prop)) {
                     if (typeof obj[prop] === "object" && obj[prop] !== null) {
-                        foundNaN = checkObject(obj[prop], foundNaN);
+                        foundNaN = checkObject(obj[prop], foundNaN, replace);
                     } else if (obj[prop] != obj[prop]) {
                         // NaN check from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
                         foundNaN = true;
+                        if (replace) {
+                            obj[prop] = 0;
+                        }
                     }
                 }
             }
@@ -787,13 +791,28 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         };
 
         wrapperNaNChecker = function (_super) {
-            return function () {
+            return function (obj) {
                 var contentNode, err, gSend, output;
 
-                if (checkObject(arguments[0])) {
+                if (checkObject(obj)) {
                     err = new Error("NaN found before writing to IndexedDB");
 
-                    gSend = JSON.parse(JSON.stringify(g)); // deepCopy fails for some reason
+                    if (window.Bugsnag) {
+                        window.Bugsnag.notifyException(err, "NaNFound", {
+                            details: {
+                                objectWithNaN: JSON.stringify(obj, function (key, value) {
+                                    if (value != value) {
+                                        return "FUCKING NaN RIGHT HERE";
+                                    }
+
+                                    return value;
+                                })
+                            }
+                        });
+                    }
+
+                    // Hard crash
+/*                    gSend = JSON.parse(JSON.stringify(g)); // deepCopy fails for some reason
                     delete gSend.teamAbbrevsCache;
                     delete gSend.teamRegionsCache;
                     delete gSend.teamNamesCache;
@@ -803,7 +822,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
                     output += '<textarea class="form-control" style="height: 300px">';
                     output += JSON.stringify({
                         stack: err.stack,
-                        input: arguments[0],
+                        input: obj,
                         "this": this,
                         gSend: gSend
                     }, function (key, value) {
@@ -825,21 +844,11 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
                     }
                     contentNode.innerHTML = output;
 
-                    if (window.Bugsnag) {
-                        window.Bugsnag.notifyException(err, "NaNFound", {
-                            details: {
-                                objectWithNaN: JSON.stringify(arguments[0], function (key, value) {
-                                    if (value != value) {
-                                        return "FUCKING NaN RIGHT HERE";
-                                    }
+                    throw err;*/
 
-                                    return value;
-                                })
-                            }
-                        });
-                    }
-
-                    throw err;
+                    // Try to recover gracefully
+                    checkObject(obj, false, true); // This will update obj
+                    return _super.call(this, obj);
                 } else {
                     return _super.apply(this, arguments);
                 }

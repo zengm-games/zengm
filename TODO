@@ -27,12 +27,6 @@ knockout upgrade
 
 confirm new error messages for safari
 
-minor improvements
-  box scores show real injuries, not just generic "Injured"
-  faster importing of large league files
-
-changes, version
-
 test!
   write unit tests for dao.players.getAll
     if you request a stats season that doesn't exist, does the callback still get executed?

@@ -79,6 +79,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2014-09-28",
         msg: 'Player development should now be much more realistic. <a href="http://basketball-gm.com/blog/2014/09/revamped-player-development-algorithm/">Check out the blog for more.</a>'
+    }, {
+        date: "2014-12-05",
+        msg: 'Game simulation is about 20% faster now. This is most visible after you\'re many seasons into a league.'
     }];
 
     function check() {

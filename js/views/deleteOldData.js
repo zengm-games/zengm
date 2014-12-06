@@ -20,7 +20,7 @@ define(["db", "globals", "ui", "util/bbgmView"], function (db, g, ui, bbgmView) 
         deleteOldDataSuccessEl = document.getElementById("delete-old-data-success");
         deleteOldDataSuccessEl.style.visibility = "hidden";
 
-        tx = g.dbl.transaction(["games", "teams", "players"], "readwrite");
+        tx = g.dbl.transaction(["games", "teams", "players", "playerStats"], "readwrite");
 
         if (req.params.hasOwnProperty("boxScores")) {
             tx.objectStore("games").openCursor().onsuccess = function (event) {
@@ -73,10 +73,20 @@ define(["db", "globals", "ui", "util/bbgmView"], function (db, g, ui, bbgmView) 
                 if (cursor) {
                     p = cursor.value;
                     p.ratings = [p.ratings[p.ratings.length - 1]];
-                    if (p.stats.length > 0) {
-                        p.stats = [p.stats[p.stats.length - 1]];
-                    }
                     cursor.update(p);
+                    cursor.continue();
+                }
+            };
+            tx.objectStore("playerStats").openCursor().onsuccess = function (event) {
+                var cursor, ps;
+
+                cursor = event.target.result;
+
+                if (cursor) {
+                    ps = cursor.value;
+                    if (ps.season < g.season) {
+                        cursor.delete();
+                    }
                     cursor.continue();
                 }
             };

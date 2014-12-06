@@ -40,13 +40,18 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
                 return memo;
             }, {});
 
+            // If no games have been played, somehow, don't continue. But why would no games be played?
+            if (league.gp === 0) {
+                return cb();
+            }
+
             // Calculate pace for each team, using the "estimated pace adjustment" formula rather than the "pace adjustment" formula because it's simpler and ends up at nearly the same result. To do this the real way, I'd probably have to store the number of possessions from core.gameSim.
             for (i = 0; i < teams.length; i++) {
                 //estimated pace adjustment = 2 * lg_PPG / (team_PPG + opp_PPG)
                 teams[i].pace = 2 * (league.pts / league.gp) / (teams[i].pts / teams[i].gp + teams[i].oppPts / teams[i].gp);
 
-                // Handle divide by 0 error
-                if (isNaN(teams[i].pace)) {
+                // Handle divide by 0 error - check for NaN
+                if (teams[i].pace !== teams[i].pace) {
                     teams[i].pace = 1;
                 }
             }
@@ -122,7 +127,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
                 // Estimated Wins Added http://insider.espn.go.com/nba/hollinger/statistics
                 EWA = [];
                 (function () {
-                    var i, prls, va;
+                    var i, prl, prls, va;
 
                     // Position Replacement Levels
                     prls = {
@@ -139,38 +144,47 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
 
                     for (i = 0; i < players.length; i++) {
                         if (players[i].active) {
-                            va = players[i].stats.min * (PER[i] - prls[players[i].pos]) / 67;
+                            if (prls.hasOwnProperty(players[i].pos)) {
+                                prl = prls[players[i].pos];
+                            } else {
+                                // This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
+                                prl = 10.75;
+                            }
+
+                            va = players[i].stats.min * (PER[i] - prl) / 67;
 
                             EWA[i] = va / 30 * 0.8; // 0.8 is a fudge factor to approximate the difference between (BBGM) EWA and (real) win shares
                         }
                     }
                 }());
 
-                // Save to database. Active players have tid >= 0
-                tx = g.dbl.transaction("players", "readwrite");
-                tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                    var cursor, i, p, s;
+                // Save to database
+                tx = g.dbl.transaction("playerStats", "readwrite");
+                for (i = 0; i < players.length; i++) {
+                    if (players[i].active) {
+                        (function (i) {
+                            var key;
+                            key = [players[i].pid, g.season, players[i].tid];
+                            tx.objectStore("playerStats").index("pid, season, tid").openCursor(key).onsuccess = function (event) {
+                                var cursor, playerStats;
 
-                    cursor = event.target.result;
-                    if (cursor) {
-                        p = cursor.value;
+                                cursor = event.target.result;
+                                playerStats = cursor.value;
 
-                        for (i = 0; i < players.length; i++) {
-                            if (PER[i] !== undefined && !isNaN(PER[i]) && players[i].pid === p.pid) {
-                                s = p.stats.length - 1;
-                                // This will be either playoffs or regular season, as appropriate
-                                p.stats[s].per = PER[i];
-                                p.stats[s].ewa = EWA[i];
+                                // Since index is not on playoffs, manually check
+                                if (playerStats.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
+                                    return cursor.continue();
+                                }
 
-                                cursor.update(p);
+                                playerStats.per = PER[i];
+                                playerStats.ewa = EWA[i];
 
-                                break;
-                            }
-                        }
-
-                        cursor.continue();
+if (EWA[i] != EWA[i]) { debugger; }
+                                cursor.update(playerStats);
+                            };
+                        }(i));
                     }
-                };
+                }
                 tx.oncomplete = function () {
                     if (cb !== undefined) {
                         cb();

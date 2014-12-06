@@ -4,15 +4,15 @@
 <p>More: <a data-bind="attrLeagueUrl: {href: ['team_finances', abbrev]}">Finances</a> | <a data-bind="attrLeagueUrl: {href: ['game_log', abbrev, season]}">Game Log</a> | <a data-bind="attrLeagueUrl: {href: ['team_history', abbrev]}">History</a></p>
 <div id="picture" class="team-picture"></div>
 <div id="teamInfo">
-    <h3>Record: <span data-bind="recordAndPlayoffs: [abbrev, season, team.won, team.lost, team.playoffRoundsWon, 'noSeason']"></span></h3>
+  <h3>Record: <span data-bind="recordAndPlayoffs: [abbrev, season, team.won, team.lost, team.playoffRoundsWon, 'noSeason']"></span></h3>
 
-    <p data-bind="visible: isCurrentSeason">
-      <span data-bind="text: numRosterSpots"></span> open roster spots<br>
-      Payroll: <span data-bind="currency: [payroll, 'M']"></span><br>
-      Salary cap: <span data-bind="currency: [salaryCap, 'M']"></span><br>
-      Profit: <span data-bind="currency: [team.profit, 'M']"></span><br>
-      <span data-bind="visible: showTradeFor">Strategy: <span data-bind="text: team.strategy"></span></span>
-    </p>
+  <p data-bind="visible: isCurrentSeason">
+    <span data-bind="text: numRosterSpots"></span> open roster spots<br>
+    Payroll: <span data-bind="currency: [payroll, 'M']"></span><br>
+    Salary cap: <span data-bind="currency: [salaryCap, 'M']"></span><br>
+    Profit: <span data-bind="currency: [team.profit, 'M']"></span><br>
+    <span data-bind="visible: showTradeFor">Strategy: <span data-bind="text: team.strategy"></span></span>
+  </p>
 </div>
 <p data-bind="visible: editable" id="instructions">Drag and drop row handles to move players between the starting lineup (<span class="roster-starter">&#9632;</span>) and the bench (<span class="roster-bench">&#9632;</span>).</p>
 <p data-bind="visible: editable"><button class="btn btn-default" id="roster-auto-sort">Auto sort roster</button></p>
@@ -28,7 +28,7 @@
         <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills, watch]"></td>
         <td data-bind="text: pos"></td>
         <td data-bind="text: age"></td>
-        <td data-bind="text: yearsWithTeam"></td>
+        <td data-bind="text: stats.yearsWithTeam"></td>
         <td><span data-bind="text: ratings.ovr"></span><span data-bind="visible: ratings.dovr() !== 0, css: { 'text-success': ratings.dovr() > 0, 'text-danger': ratings.dovr() < 0 }"> (<span data-bind="text: ratings.dovr() > 0 ? '+' : ''"></span><span data-bind="text: ratings.dovr"></span>)</span></td>
         <td><span data-bind="text: ratings.pot"></span><span data-bind="visible: ratings.dpot() !== 0, css: { 'text-success': ratings.dpot() > 0, 'text-danger': ratings.dpot() < 0 }"> (<span data-bind="text: ratings.dpot() > 0 ? '+' : ''"></span><span data-bind="text: ratings.dpot"></span>)</span></td>
         <td data-bind="visible: $parent.isCurrentSeason">
@@ -40,8 +40,8 @@
         <td data-bind="round: [stats.trb, 1]"></td>
         <td data-bind="round: [stats.ast, 1]"></td>
         <td data-bind="round: [stats.per, 1]"></td>
-        <td data-bind="if: $parent.editable">
-          <select class="form-control" data-bind="options: $root.ptModifiers, optionsText: 'text', optionsValue: 'ptModifier', value: ptModifier"></select>
+        <td data-bind="if: $parent.editable, visible: $parent.editable">
+          <select class="form-control" data-bind="options: $root.ptModifiers, optionsText: 'text', optionsValue: 'ptModifier', value: ptModifier, event: {change: $root.ptChange}"></select>
         </td>
         <td data-bind="visible: $parent.editable">
           <button class="btn btn-default btn-xs" data-action="release" data-bind="enable: canRelease">Release</button>

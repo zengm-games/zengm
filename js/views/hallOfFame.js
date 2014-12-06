@@ -36,6 +36,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
             dao.players.getAll({
                 index: "tid",
                 key: g.PLAYER.RETIRED,
+                statsSeasons: "all",
                 filter: function (p) {
                     return p.hof;
                 }

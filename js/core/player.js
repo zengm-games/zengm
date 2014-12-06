@@ -2,7 +2,7 @@
  * @name core.player
  * @namespace Functions operating on player objects, parts of player objects, or arrays of player objects.
  */
-define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, g, finances, injuries, names, faces, _, eventLog, helpers, random) {
+define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, db, g, finances, injuries, names, faces, _, eventLog, helpers, random) {
     "use strict";
 
     /**
@@ -221,6 +221,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
 
     /**
      * Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
+     *
+     * Make sure to call player.updateValues after this! Otherwise, player values will be out of sync.
      * 
      * @memberOf core.player
      * @param {Object} p Player object.
@@ -390,24 +392,20 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
             p.born.year = g.season - age;
         }
 
-        // Keep values updated
-        p = updateValues(p);
-
         return p;
     }
 
     /**
      * Add or subtract amount from all current ratings and update the player's contract appropriately.
      * 
-     * This should only be called when generating players for a new league. Otherwise, develop should be used. 
+     * This should only be called when generating players for a new league. Otherwise, develop should be used. Also, make sure you call player.updateValues and player.setContract after this, because ratings are changed!
      * 
      * @memberOf core.player
      * @param {Object} p Player object.
      * @param {number} amount Number to be added to each rating (can be negative).
-     * @param {boolean} randomizeExp Should the number of years on the player's contract be randomized?.
      * @return {Object} Updated player object.
      */
-    function bonus(p, amount, randomizeExp) {
+    function bonus(p, amount) {
         var age, i, key, r, ratingKeys;
 
         // Make sure age is always defined
@@ -427,12 +425,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
             p.ratings[r].pot = p.ratings[r].ovr;
         }
 
-        // Update contract based on development. Only write contract to log if not a free agent.
-        p = setContract(p, genContract(p, randomizeExp), p.tid >= 0);
-
-        // Keep values updated
-        p = updateValues(p);
-
         return p;
     }
 
@@ -449,7 +441,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
 
         baseMoods = [];
 
-        teamStore = require("db").getObjectStore(ot, "teams", "teams");
+        teamStore = db.getObjectStore(ot, "teams", "teams");
         teamStore.getAll().onsuccess = function (event) {
             var i, s, teams;
 
@@ -745,6 +737,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
         if ((pf || sf) && g) {
             position = 'GF';
         } else if (c && (pf || sf)) {
+            // This means that anyone with c=true and height >=70 will NOT be labeled just a C. only pure Cs are short guys!
             position = 'FC';
         } else if (pg && sg) {
             position = 'G';
@@ -784,23 +777,94 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
     }
 
     /**
-     * Add a new row of stats to a player object.
+     * Add a new row of stats to the playerStats database.
      * 
-     * A row contains stats for unique values of (team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
+     * A row contains stats for unique values of (pid, team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid and player ID in p.pid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
+     *
+     * The callback function takes the player object with an updated statsTids as its argument. This is NOT written to the database within addStatsRow because it is often updated in several different ways before being written. Only the entry to playerStats is actually written to the databse by this function.
      *
      * @memberOf core.player
+     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on playerStats readwrite; if null is passed, then a new transaction will be used.
      * @param {Object} p Player object.
      * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
-     * @return {Object} Updated player object.
+     * @return {function(Object)} Callback function whose argument the updated player object.
      */
-    function addStatsRow(p, playoffs) {
+    function addStatsRow(ot, p, playoffs, cb) {
+        var ps, statsRow, stopOnSeason, tx, withPs;
+
+        tx = db.getObjectStore(ot, "playerStats", null, true);
         playoffs = playoffs !== undefined ? playoffs : false;
 
-        p.stats.push({season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0});
+        statsRow = {pid: p.pid, season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0, yearsWithTeam: 1};
+
         p.statsTids.push(p.tid);
         p.statsTids = _.uniq(p.statsTids);
 
-        return p;
+        // Run this after getting previous stats rows to calculate yearsWithTeam
+        withPs = function () {
+            var i;
+
+            ps = ps.sort(function (a, b) {
+                // Sort seasons in descending order. This is necessary because otherwise the index will cause ordering to be by tid within a season, which is probably not what is ever wanted.
+                return b.psid - a.psid;
+            });
+            // Count non-playoff seasons starting from the current one
+            for (i = 0; i < ps.length; i++) {
+                if (ps[i].tid === p.tid) {
+                    statsRow.yearsWithTeam += 1;
+                } else {
+                    break;
+                }
+            }
+
+            tx.objectStore("playerStats").add(statsRow);
+            cb(p);
+        };
+
+        // Calculate yearsWithTeam
+        // Iterate over player stats objects, most recent first
+        ps = [];
+        if (!playoffs) {
+
+            // Because the "pid, season, tid" index does not order by psid, the first time we see a tid !== p.tid could
+            // be the same season a player was traded to that team, and there still could be one more with tid ===
+            // p.tid. So when we se tid !== p.tid, set stopOnSeason to the previous (next... I mean lower) season so we
+            // can stop storing stats when it's totally safe.
+            stopOnSeason = 0;
+
+            tx.objectStore("playerStats").index("pid, season, tid").openCursor(IDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]), "prev").onsuccess = function (event) {
+                var cursor, psTemp;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    psTemp = cursor.value;
+
+                    // Skip playoff stats
+                    if (psTemp.playoffs) {
+                        return cursor.continue();
+                    }
+
+                    // Continue only if we haven't hit a season with another team yet
+                    if (psTemp.season === stopOnSeason) {
+                        withPs();
+                    } else {
+                        if (psTemp.tid !== p.tid) {
+                            // Hit another team! Stop after this season is exhausted
+                            stopOnSeason = psTemp.season - 1;
+                        }
+
+                        // Store stats
+                        ps.push(psTemp);
+
+                        cursor.continue();
+                    }
+                } else {
+                    withPs();
+                }
+            };
+        } else {
+            withPs();
+        }
     }
 
     function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scoutingRank) {
@@ -809,11 +873,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
         p = {}; // Will be saved to database
         p.tid = tid;
         p.statsTids = [];
-        p.stats = [];
-        if (tid >= 0) {
-            // This only happens when generating random players for a new league, as otherwis tid would be negative (draft prospect)
-            addStatsRow(p, false);
-        }
         p.rosterOrder = 666;  // Will be set later
         p.ratings = [];
         if (newLeague) {
@@ -878,8 +937,12 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
         p.watch = false;
         p.gamesUntilTradable = 0;
 
-        // These should be set again by player.updateValues after player is completely done (automatic in player.develop)
-        p = updateValues(p);
+        // These should be set by player.updateValues after player is completely done (automatic in player.develop)
+        p.value = 0;
+        p.valueNoPot = 0;
+        p.valueFuzz = 0;
+        p.valueNoPotFuzz = 0;
+        p.valueWithContract = 0;
 
         // Must be after value*s are set, because genContract depends on them
         p.salaries = [];
@@ -1031,33 +1094,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
                                 seasons: _.pluck(awardsGroupedTemp[award], "season")
                             });
                         }
-                    }
-                } else if (options.attrs[i] === "yearsWithTeam") {
-                    fp.yearsWithTeam = 0;
-                    // Count non-playoff seasons starting from the current one
-                    for (j = p.stats.length - 1; j >= 0; j--) {
-                        if (p.stats[j].playoffs === false) { // Can do this because any playoff entry follows a regular season entry with the same team
-                            if (p.stats[j].tid === p.tid && options.season === p.stats[j].season) {
-                                // Find season requested
-                                fp.yearsWithTeam = 1;
-                            } else {
-                                if (fp.yearsWithTeam) {
-                                    // We found the season requested, so now count back until you find another team
-                                    if (p.stats[j].tid === p.tid) {
-                                        fp.yearsWithTeam += 1;
-                                    } else {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else if (options.attrs[i] === "watch") {
-                    // This is needed for old player objects without the watch property
-                    if (p.watch !== undefined && typeof p.watch !== "function") { // In Firefox, objects have a "watch" function
-                        fp.watch = p.watch;
-                    } else {
-                        fp.watch = false;
                     }
                 } else {
                     fp[options.attrs[i]] = p[options.attrs[i]];
@@ -1307,6 +1343,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
                         row.per = s.per;
                     } else if (stats[j] === "ewa") {
                         row.ewa = s.ewa;
+                    } else if (stats[j] === "yearsWithTeam") {
+                        row.yearsWithTeam = s.yearsWithTeam;
                     } else {
                         if (options.totals) {
                             row[stats[j]] = s[stats[j]];
@@ -1325,6 +1363,9 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
                         row.age = s.season - p.born.year;
                     } else if (stats[j] === "abbrev") {
                         row.abbrev = helpers.getAbbrev(s.tid);
+                    } else if (stats[j] === "yearsWithTeam" && !_.isEmpty(s)) {
+                        // Everyone but players acquired in the offseason should be here
+                        row.yearsWithTeam = s.yearsWithTeam;
                     } else {
                         row[stats[j]] = 0;
                     }
@@ -1419,11 +1460,11 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
      * @param {Object} p Player object.
      * @return {boolean} Hall of Fame worthy?
      */
-    function madeHof(p) {
+    function madeHof(p, playerStats) {
         var df, ewa, ewas, fudgeSeasons, i, mins, pers, prls, va;
 
-        mins = _.pluck(p.stats, "min");
-        pers = _.pluck(p.stats, "per");
+        mins = _.pluck(playerStats, "min");
+        pers = _.pluck(playerStats, "per");
 
         // Position Replacement Levels http://insider.espn.go.com/nba/hollinger/statistics
         prls = {
@@ -1484,6 +1525,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
      *
      * @memberOf core.player
      * @param {Object} p Player object.
+     * @param {Array.<Object>} Array of playerStats objects, regular season only, starting with most recent. Only the first 1 or 2 will be used.
      * @param {Object=} options Object containing several optional options:
      *     noPot: When true, don't include potential in the value calcuation (useful for roster
      *         ordering and game simulation). Default false.
@@ -1492,13 +1534,15 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
      * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential
      *     ratings.
      */
-    function value(p, options) {
+    function value(p, ps, options) {
         var age, current, i, potential, pr, ps, ps1, ps2, s, worth, worthFactor;
 
         options = options !== undefined ? options : {};
         options.noPot = options.noPot !== undefined ? options.noPot : false;
         options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
         options.withContract = options.withContract !== undefined ? options.withContract : false;
+
+if (ps === undefined) { console.log("NO STATS"); ps = []; }
 
         // Current ratings
         pr = {}; // Start blank, add what we need (efficiency, wow!)
@@ -1511,17 +1555,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
         } else {
             pr.ovr = p.ratings[s].ovr;
             pr.pot = p.ratings[s].pot;
-        }
-
-        // Regular season stats ONLY, in order starting with most recent
-        ps = [];
-        if (p.stats !== undefined) { // Filtered player objects might not include it, for rookies
-            for (i = 0; i < p.stats.length; i++) {
-                if (!p.stats[i].playoffs) {
-                    ps.push(p.stats[i]); // Okay that it's not deep copied, because this isn't modified
-                }
-            }
-            ps.reverse();
         }
 
         // 1. Account for stats (and current ratings if not enough stats)
@@ -1611,14 +1644,76 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
         }
     }
 
-    function updateValues(p) {
-        p.value = value(p);
-        p.valueNoPot = value(p, {noPot: true});
-        p.valueFuzz = value(p, {fuzz: true});
-        p.valueNoPotFuzz = value(p, {noPot: true, fuzz: true});
-        p.valueWithContract = value(p, {withContract: true});
+    // ps: player stats objects, regular season only, most recent first
+    // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
+    function updateValues(ot, p, ps, cb) {
+        var getStats, playerStatsStore, season, withPs;
 
-        return p;
+        playerStatsStore = db.getObjectStore(ot, "playerStats", "playerStats");
+
+        withPs = function () {
+            p.value = value(p, ps);
+            p.valueNoPot = value(p, ps, {noPot: true});
+            p.valueFuzz = value(p, ps, {fuzz: true});
+            p.valueNoPotFuzz = value(p, ps, {noPot: true, fuzz: true});
+            p.valueWithContract = value(p, ps, {withContract: true});
+
+            cb(p);
+        };
+
+        // Start at season and look backwards until we hit
+        // This will not work totally right if a player played for multiple teams in a season. It should be ordered by psid, instead it's ordered by tid because of the index used
+        getStats = function (season, cb) {
+            // New player objects don't have pids let alone stats, so just skip
+            if (!p.hasOwnProperty("pid")) {
+                return cb();
+            }
+
+            // Iterate over player stats objects, most recent first
+            playerStatsStore.index("pid, season, tid").openCursor(IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]), "prev").onsuccess = function (event) {
+                var cursor, psTemp;
+
+                cursor = event.target.result;
+                if (cursor) {
+                    psTemp = cursor.value;
+
+                    // Skip playoff stats
+                    if (psTemp.playoffs) {
+                        return cursor.continue();
+                    }
+
+                    // Store stats
+                    ps.push(psTemp);
+
+                    // Continue only if we need another row
+                    if (ps.length === 1 && ps[0].min < 2000) {
+                        cursor.continue();
+                    } else {
+                        cb();
+                    }
+                } else {
+                    // We ran out of values, just do the best with what we have
+                    cb();
+                }
+            };
+        };
+
+        // Require up to the two most recent regular season stats entries, unless the current season has 2000+ minutes
+        if (ps.length === 0 || (ps.length === 1 && ps[0].min < 2000)) {
+            // Start search for past stats either at this season or at the most recent ps season
+            // This assumes ps[0].season is the most recent entry for this player!
+            if (ps.length === 0) {
+                season = g.season;
+            } else {
+                season = ps[0].season - 1;
+            }
+
+            getStats(season, function () {
+                withPs();
+            });
+        } else {
+            withPs();
+        }
     }
 
     /**
@@ -1631,7 +1726,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
      * @param {Object} p Player object.
      * @return {Object} p Updated (retired) player object.
      */
-    function retire(tx, p) {
+    function retire(tx, p, playerStats) {
         if (p.tid === g.userTid) {
             eventLog.add(tx, {
                 type: "retired",
@@ -1643,7 +1738,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
         p.retiredYear = g.season;
 
         // Add to Hall of Fame?
-        if (madeHof(p)) {
+        if (madeHof(p, playerStats)) {
             p.hof = true;
             p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
             if (p.statsTids.indexOf(g.userTid) >= 0) {
@@ -1700,13 +1795,15 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
 
     /**
      * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
+     *
+     * This doesn't add the things from player.updateValues!
      * 
      * @memberOf core.player
      * @param {Object} p Partial player object.
      * @return {Object} p Full player object.
      */
     function augmentPartialPlayer(p, scoutingRank) {
-        var age, j, pg, simpleDefaults;
+        var age, i, pg, simpleDefaults;
 
         if (!p.hasOwnProperty("born")) {
             age = random.randInt(19, 35);
@@ -1718,10 +1815,10 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
         pg = generate(p.tid, age, "", 0, 0, g.startingSeason - age, true, scoutingRank);
 
         // Optional things
-        simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "hgt", "imgURL", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "weight", "yearsFreeAgent"];
-        for (j = 0; j < simpleDefaults.length; j++) {
-            if (!p.hasOwnProperty(simpleDefaults[j])) {
-                p[simpleDefaults[j]] = pg[simpleDefaults[j]];
+        simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "gamesUntilTradable", "hgt", "hof", "imgURL", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "watch", "weight", "yearsFreeAgent"];
+        for (i = 0; i < simpleDefaults.length; i++) {
+            if (!p.hasOwnProperty(simpleDefaults[i])) {
+                p[simpleDefaults[i]] = pg[simpleDefaults[i]];
             }
         }
         if (!p.hasOwnProperty("salaries")) {
@@ -1733,8 +1830,14 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
                 p = setContract(p, p.contract, true);
             }
         }
+        if (!p.hasOwnProperty("stats")) {
+            p.stats = [];
+        }
         if (!p.hasOwnProperty("statsTids")) {
             p.statsTids = [];
+            if (p.tid >= 0 && g.phase <= g.PHASE.PLAYOFFS) {
+                p.statsTids.push(p.tid);
+            }
         }
         if (!p.ratings[0].hasOwnProperty("fuzz")) {
             p.ratings[0].fuzz = pg.ratings[0].fuzz;
@@ -1757,12 +1860,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/f
         } else {
             if (!p.ratings[0].hasOwnProperty("season")) {
                 p.ratings[0].season = g.startingSeason;
-            }
-        }
-        if (!p.hasOwnProperty("stats")) {
-            p.stats = [];
-            if (p.tid >= 0) {
-                p = addStatsRow(p, false);
             }
         }
 

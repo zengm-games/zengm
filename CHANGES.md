@@ -2,7 +2,7 @@ Don't read much into the release dates. Changes are pushed live as often as
 possible, regardless of whether I make an official release with a new version
 number or not.
 
-# 3.4.0 (???)
+# 3.4.0 (2014-12-05)
 
 ## Gameplay and UI
 
@@ -14,6 +14,10 @@ number or not.
 - Easy import of custom draft classes
 - Whole league export
 - More realistic player development algorithm
+
+## Technical details
+
+- Separated playerStats object store from players object store for performance
 
 # 3.3.0 (2014-01-21)
 

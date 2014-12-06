@@ -20,6 +20,13 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                 var i, game;
 
                 game = event.target.result;
+
+                // If game doesn't exist (bad gid or deleted box scores), show nothing
+                if (!game) {
+                    return cb({});
+                }
+
+
                 for (i = 0; i < game.teams.length; i++) {
                     // Team metadata
                     game.teams[i].abbrev = g.teamAbbrevsCache[game.teams[i].tid];
@@ -31,8 +38,8 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
                     // Put injured players at the bottom, then sort by GS and roster position
                     game.teams[i].players.sort(function (a, b) {
-                        // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed third, since .injury.gamesRemaining is 0 for healthy and -1 for injured.
-                        return (b.gs * 1000 + b.min + b.injury.gamesRemaining * 1000) - (a.gs * 1000 + a.min + a.injury.gamesRemaining * 1000);
+                        // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed at the end, if they didn't play.
+                        return (b.gs * 100000 + b.min * 1000 - b.injury.gamesRemaining) - (a.gs * 100000 + a.min * 1000 - a.injury.gamesRemaining);
                     });
                 }
 
@@ -158,10 +165,16 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.gid !== vm.boxScore.gid()) {
             boxScore(inputs.gid, function (game) {
                 vars.boxScore = game;
-                vars.boxScore.gid = inputs.gid;
 
-                // Force scroll to top, which otherwise wouldn't happen because this is an internal link
-                window.scrollTo(window.pageXOffset, 0);
+                // Either update the box score if we found one, or show placeholder
+                if (!game.hasOwnProperty("teams")) {
+                    vars.boxScore.gid = -1;
+                } else {
+                    vars.boxScore.gid = inputs.gid;
+
+                    // Force scroll to top, which otherwise wouldn't happen because this is an internal link
+                    window.scrollTo(window.pageXOffset, 0);
+                }
 
                 deferred.resolve(vars);
             });

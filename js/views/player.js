@@ -39,6 +39,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
             dao.players.getAll({
                 key: inputs.pid,
+                statsSeasons: "all",
                 statsPlayoffs: true
             }, function (players) {
                 var currentRatings, p;

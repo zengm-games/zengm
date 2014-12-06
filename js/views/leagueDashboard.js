@@ -246,17 +246,17 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
             deferred = $.Deferred();
             vars = {};
 
-            // Needs all seasons because of YWT!
             dao.players.getAll({
                 index: "tid",
-                key: IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED)
+                key: IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED),
+                statsSeasons: [g.season]
             }, function (players) {
                 var i, stats, userPlayers;
 
                 players = player.filter(players, {
-                    attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch", "pos", "yearsWithTeam"],
+                    attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch", "pos"],
                     ratings: ["ovr", "pot", "dovr", "dpot", "skills"],
-                    stats: ["gp", "min", "pts", "trb", "ast", "per"],
+                    stats: ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"],
                     season: g.season,
                     showNoStats: true,
                     showRookies: true,

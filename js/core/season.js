@@ -100,7 +100,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             };
         };
 
-        tx = g.dbl.transaction(["players", "releasedPlayers", "teams"]);
+        tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "teams"]);
 
         // Get teams for won/loss record for awards, as well as finding the teams with the best records
         team.filter({
@@ -247,7 +247,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     index: "tid",
                     key: champTid,
                     statsSeasons: [g.season],
-                    statsTids: champTid,
+                    statsTid: champTid,
                     statsPlayoffs: true
                 }, function (players) {
                     players = player.filter(players, { // Only the champions, only playoff stats
@@ -600,7 +600,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
                 coachingRanks = [];
 
-                tx = g.dbl.transaction(["players", "teams"], "readwrite");
+                tx = g.dbl.transaction(["players", "playerStats", "teams"], "readwrite");
 
                 // Add row to team stats and season attributes
                 tx.objectStore("teams").openCursor().onsuccess = function (event) {
@@ -637,13 +637,19 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                                 p = player.addRatingsRow(p, scoutingRank);
                                 p = player.develop(p, 1, false, coachingRanks[p.tid]);
 
-                                // Add row to player stats if they are on a team
-                                if (p.tid >= 0) {
-                                    p = player.addStatsRow(p);
-                                }
-
-                                cursorP.update(p);
-                                cursorP.continue();
+                                // Update player values after ratings changes
+                                player.updateValues(tx, p, [], function (p) {
+                                    // Add row to player stats if they are on a team
+                                    if (p.tid >= 0) {
+                                        player.addStatsRow(tx, p, false, function (p) {
+                                            cursorP.update(p);
+                                            cursorP.continue();
+                                        });
+                                    } else {
+                                        cursorP.update(p);
+                                        cursorP.continue();
+                                    }
+                                });
                             }
                         };
                     }
@@ -758,7 +764,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             }
 
             row = {season: g.season, currentRound: 0, series: series};
-            tx = g.dbl.transaction(["players", "playoffSeries", "teams"], "readwrite");
+            tx = g.dbl.transaction(["players", "playerStats", "playoffSeries", "teams"], "readwrite");
             tx.objectStore("playoffSeries").add(row);
 
             if (tidPlayoffs.indexOf(g.userTid) >= 0) {
@@ -801,9 +807,10 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                             cursorP = event.target.result;
                             if (cursorP) {
                                 p = cursorP.value;
-                                p = player.addStatsRow(p, true);
-                                cursorP.update(p);
-                                cursorP.continue();
+                                player.addStatsRow(tx, p, true, function (p) {
+                                    cursorP.update(p);
+                                    cursorP.continue();
+                                });
                             }
                         };
                     } else {
@@ -851,7 +858,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         awards(function () {
             var releasedPlayersStore, tx;
 
-            tx = g.dbl.transaction(["events", "messages", "players", "releasedPlayers", "teams"], "readwrite");
+            tx = g.dbl.transaction(["events", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
 
             // Add award for each player on the championship team
             team.filter({
@@ -898,52 +905,59 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 if (cursor) {
                     p = cursor.value;
 
-                    age = g.season - p.born.year;
-                    pot = _.last(p.ratings).pot;
+                    // Get player stats, used for HOF calculation
+                    tx.objectStore("playerStats").index("pid, season, tid").getAll(IDBKeyRange.bound([p.pid], [p.pid, ''])).onsuccess = function (event) {
+                        var playerStats;
 
-                    if (age > maxAge || pot < minPot) {
-                        excessAge = 0;
-                        if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
-                            if (age > 34) {
-                                excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
+                        playerStats = event.target.result;
+
+                        age = g.season - p.born.year;
+                        pot = _.last(p.ratings).pot;
+
+                        if (age > maxAge || pot < minPot) {
+                            excessAge = 0;
+                            if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
+                                if (age > 34) {
+                                    excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
+                                }
+                                excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
+                                if (excessAge + excessPot + random.gauss(0, 1) > 0) {
+                                    p = player.retire(tx, p, playerStats);
+                                    update = true;
+                                }
                             }
-                            excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
-                            if (excessAge + excessPot + random.gauss(0, 1) > 0) {
-                                p = player.retire(tx, p);
-                                update = true;
+                        }
+
+                        // Update "free agent years" counter and retire players who have been free agents for more than one years
+                        if (p.tid === g.PLAYER.FREE_AGENT) {
+                            if (p.yearsFreeAgent >= 1) {
+                                p = player.retire(tx, p, playerStats);
+                            } else {
+                                p.yearsFreeAgent += 1;
                             }
+                            p.contract.exp += 1;
+                            update = true;
+                        } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
+                            p.yearsFreeAgent = 0;
+                            update = true;
                         }
-                    }
 
-                    // Update "free agent years" counter and retire players who have been free agents for more than one years
-                    if (p.tid === g.PLAYER.FREE_AGENT) {
-                        if (p.yearsFreeAgent >= 1) {
-                            p = player.retire(tx, p);
-                        } else {
-                            p.yearsFreeAgent += 1;
+                        // Heal injures
+                        if (p.injury.type !== "Healthy") {
+                            if (p.injury.gamesRemaining <= 82) {
+                                p.injury = {type: "Healthy", gamesRemaining: 0};
+                            } else {
+                                p.injury.gamesRemaining -= 82;
+                            }
+                            update = true;
                         }
-                        p.contract.exp += 1;
-                        update = true;
-                    } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
-                        p.yearsFreeAgent = 0;
-                        update = true;
-                    }
 
-                    // Heal injures
-                    if (p.injury.type !== "Healthy") {
-                        if (p.injury.gamesRemaining <= 82) {
-                            p.injury = {type: "Healthy", gamesRemaining: 0};
-                        } else {
-                            p.injury.gamesRemaining -= 82;
+                        // Update player in DB, if necessary
+                        if (update) {
+                            cursor.update(p);
                         }
-                        update = true;
-                    }
-
-                    // Update player in DB, if necessary
-                    if (update) {
-                        cursor.update(p);
-                    }
-                    cursor.continue();
+                        cursor.continue();
+                    };
                 }
             };
 
@@ -1384,8 +1398,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                             cursor = event.target.result;
                             t = cursor.value;
                             teamSeason = _.last(t.seasons);
-                            teamSeason.playoffRoundsWon += 1;
-console.log([playoffSeries.currentRound, teamSeason.playoffRoundsWon])
+                            teamSeason.playoffRoundsWon = playoffSeries.currentRound;
                             teamSeason.hype += 0.05;
                             if (teamSeason.hype > 1) {
                                 teamSeason.hype = 1;

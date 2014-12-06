@@ -14,6 +14,12 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         // Get array of object stores to export
         objectStores = req.params.objectStores.join(",").split(",");
 
+        // Can't export player stats without players
+        if (objectStores.indexOf("playerStats") >= 0 && objectStores.indexOf("players") === -1) {
+            downloadLink.innerHTML = '<span class="text-danger">You can\'t export player stats without exporting players!</span>';
+            return;
+        }
+
         league.export_(objectStores, function (data) {
             var a, blob, fileName, json, url;
 
@@ -49,7 +55,13 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
                 {
                     objectStores: "players,releasedPlayers,awards",
                     name: "Players",
-                    desc: "All player info, stats, ratings, and awards.",
+                    desc: "All player info, ratings, and awards - but not stats!",
+                    checked: true
+                },
+                {
+                    objectStores: "playerStats",
+                    name: "Player Stats",
+                    desc: "All player stats.",
                     checked: true
                 },
                 {

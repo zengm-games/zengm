@@ -40,7 +40,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "util/he
                 };
             } else if (inputs.season === g.season) { // Can't update old seasons!
                 // Update by adding any new events to the top of the list
-                maxEid = ko.utils.unwrapObservable(vm.events()[0].eid); // unwrap shouldn't be necessary
+                maxEid = ko.unwrap(vm.events()[0].eid); // unwrap shouldn't be necessary
                 newEvents = [];
                 g.dbl.transaction("events").objectStore("events").index("season").openCursor(inputs.season, "prev").onsuccess = function (event) {
                     var cursor, i;

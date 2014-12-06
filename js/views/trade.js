@@ -179,7 +179,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
         validateSavedPids(function (teams) {
             var tx;
 
-            tx = g.dbl.transaction("players");
+            tx = g.dbl.transaction(["players", "playerStats"]);
 
             dao.players.getAll({
                 ot: tx,

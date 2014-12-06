@@ -74,9 +74,15 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/player",
             // Make an offer to the player;
             teamAmountNew = parseInt(req.params.teamAmount * 1000, 10);
             teamYearsNew = parseInt(req.params.teamYears, 10);
-            contractNegotiation.offer(pid, teamAmountNew, teamYearsNew, function () {
+
+            // Any NaN?
+            if (teamAmountNew !== teamAmountNew || teamYearsNew !== teamYearsNew) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
-            });
+            } else {
+                contractNegotiation.offer(pid, teamAmountNew, teamYearsNew, function () {
+                    ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
+                });
+            }
         }
     }
 
@@ -104,8 +110,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/player",
             }
 
             dao.players.getAll({
-                key: negotiation.pid,
-                statsSeasons: []
+                key: negotiation.pid
             }, function (players) {
                 var p;
 

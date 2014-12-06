@@ -154,7 +154,7 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
             return x_t.mult(x).inverse().mult(x_t).mult(this);
         };
 
-        dao.players.getAll({}, function (players) {
+        dao.players.getAll({statsSeasons: "all"}, function (players) {
             var c, i, j, k, p, pers, ratings, ratingLabels, x, y;
 
             pers = [];
@@ -202,8 +202,7 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
         // All non-retired players
         dao.players.getAll({
             index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-            statsSeasons: []
+            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
         }, function (players) {
             var contract, i, p, total;
 
@@ -223,8 +222,7 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
         // All non-retired players
         dao.players.getAll({
             index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-            statsSeasons: []
+            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
         }, function (players) {
             var contract, i, output, p;
 

@@ -280,7 +280,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
         }).extend({throttle: 1});
 
         document.getElementById("create-a-player").addEventListener("click", function () {
-            var numSeasons, p, pid, r, tx;
+            var p, pid, r;
 
             p = komapping.toJS(vm.p);
 
@@ -316,23 +316,10 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 p.ratings[r].pot = p.ratings[r].ovr;
             }
 
-            // Add regular season or playoffs stat row, if necessary
-            if (p.tid >= 0 && p.tid !== vm.originalTid()) {
-                if (g.phase < g.PHASE.PLAYOFFS) {
-                    p = player.addStatsRow(p, false);
-                } else if (g.phase === g.PHASE.PLAYOFFS) {
-                    // This is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-                    p = player.addStatsRow(p, true);
-                }
-            }
-
-            // If player was retired, update ratings
+            // If player was retired, add ratings (but don't develop, because that would change ratings)
             if (vm.originalTid() === g.PLAYER.RETIRED) {
-                numSeasons = g.season - p.ratings[r].season;
-                if (numSeasons > 0) {
+                if (g.season - p.ratings[r].season > 0) {
                     p = player.addRatingsRow(p, 15);
-                    // Don't actually want to develop, as that just changes ratings
-                    // p = player.develop(p, numSeasons, false, 15);
                 }
             }
 
@@ -354,21 +341,37 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             }
 
             // Recalculate player values, since ratings may have changed
-            p = player.updateValues(p);
+            player.updateValues(null, p, [], function (p) {
+                var putPlayer, tx;
 
-            tx = g.dbl.transaction("players", "readwrite");
+                tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
 
-            // put will either add or update entry
-            dao.players.put({ot: tx, p: p, onsuccess: function (event) {
-                // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
-                // When adding a player, this is the only way to know the pid
-                pid = event.target.result;
-            }});
-            tx.oncomplete = function () {
-                db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                    ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
-                });
-            };
+
+                // put will either add or update entry
+                putPlayer = function (p) {
+                    dao.players.put({ot: tx, p: p, onsuccess: function (event) {
+                        // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
+                        // When adding a player, this is the only way to know the pid
+                        pid = event.target.result;
+                    }});
+                };
+
+                // Add regular season or playoffs stat row, if necessary
+                if (p.tid >= 0 && p.tid !== vm.originalTid() && g.phase <= g.PHASE.PLAYOFFS) {
+                    // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
+                    player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                        putPlayer(p);
+                    });
+                } else {
+                    putPlayer(p);
+                }
+
+                tx.oncomplete = function () {
+                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
+                    });
+                };
+            });
         });
     }
 

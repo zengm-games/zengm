@@ -1,3 +1,75 @@
+// IndexedDB-getAll-shim v1.1 - https://github.com/jdscheff/IndexedDB-getAll-shim
+
+(function () {
+    "use strict";
+
+    var Event, getAll, IDBIndex, IDBObjectStore, IDBRequest;
+
+    IDBObjectStore = window.IDBObjectStore || window.webkitIDBObjectStore || window.mozIDBObjectStore || window.msIDBObjectStore;
+    IDBIndex = window.IDBIndex || window.webkitIDBIndex || window.mozIDBIndex || window.msIDBIndex;
+
+    if (typeof IDBObjectStore === "undefined" || typeof IDBIndex === "undefined" || (IDBObjectStore.prototype.getAll !== undefined && IDBIndex.prototype.getAll !== undefined)) {
+        return;
+    }
+
+    if (IDBObjectStore.prototype.mozGetAll !== undefined && IDBIndex.prototype.mozGetAll !== undefined) {
+        IDBObjectStore.prototype.getAll = IDBObjectStore.prototype.mozGetAll;
+        IDBIndex.prototype.getAll = IDBIndex.prototype.mozGetAll;
+        return;
+    }
+
+    // https://github.com/axemclion/IndexedDBShim/blob/gh-pages/src/IDBRequest.js
+    IDBRequest = function () {
+        this.onsuccess = null;
+        this.readyState = "pending";
+    };
+    // https://github.com/axemclion/IndexedDBShim/blob/gh-pages/src/Event.js
+    Event = function (type, debug) {
+        return {
+            "type": type,
+            debug: debug,
+            bubbles: false,
+            cancelable: false,
+            eventPhase: 0,
+            timeStamp: new Date()
+        };
+    };
+
+    getAll = function (key) {
+        var request, result;
+
+        key = key !== undefined ? key : null;
+
+        request = new IDBRequest();
+        result = [];
+
+        // this is either an IDBObjectStore or an IDBIndex, depending on the context.
+        this.openCursor(key).onsuccess = function (event) {
+            var cursor, e, target;
+
+            cursor = event.target.result;
+            if (cursor) {
+                result.push(cursor.value);
+                cursor.continue();
+            } else {
+                if (typeof request.onsuccess === "function") {
+                    e = new Event("success");
+                    e.target = {
+                        readyState: "done",
+                        result: result
+                    };
+                    request.onsuccess(e);
+                }
+            }
+        };
+
+        return request;
+    };
+
+    IDBObjectStore.prototype.getAll = getAll;
+    IDBIndex.prototype.getAll = getAll;
+}());
+
 /*!
  * Knockout JavaScript library v3.2.0
  * (c) Steven Sanderson - http://knockoutjs.com/
@@ -109,3 +181,169 @@ l),h&&a.k.B(h,null,[g,l,k]));f.length=0;a.a.ga(f,l)},null,{o:b,Ia:function(){ret
 t,G);!x.ic&&k&&(k(x.sa,x.$,x.Na),x.ic=!0)}m(h.beforeRemove,e);m(h.afterMove,A);m(h.afterAdd,n);a.a.e.set(c,d,s)}})();a.b("utils.setDomNodeChildrenFromArrayMapping",a.a.Za);a.O=function(){this.allowTemplateRewriting=!1};a.O.prototype=new a.H;a.O.prototype.renderTemplateSource=function(b){var d=(9>a.a.L?0:b.nodes)?b.nodes():null;if(d)return a.a.S(d.cloneNode(!0).childNodes);b=b.text();return a.a.ba(b)};a.O.Oa=new a.O;a.ab(a.O.Oa);a.b("nativeTemplateEngine",a.O);(function(){a.Sa=function(){var a=this.kc=
 function(){if(!w||!w.tmpl)return 0;try{if(0<=w.tmpl.tag.tmpl.open.toString().indexOf("__"))return 2}catch(a){}return 1}();this.renderTemplateSource=function(b,e,g){g=g||{};if(2>a)throw Error("Your version of jQuery.tmpl is too old. Please upgrade to jQuery.tmpl 1.0.0pre or later.");var h=b.data("precompiled");h||(h=b.text()||"",h=w.template(null,"{{ko_with $item.koBindingContext}}"+h+"{{/ko_with}}"),b.data("precompiled",h));b=[e.$data];e=w.extend({koBindingContext:e},g.templateOptions);e=w.tmpl(h,
 b,e);e.appendTo(v.createElement("div"));w.fragments={};return e};this.createJavaScriptEvaluatorBlock=function(a){return"{{ko_code ((function() { return "+a+" })()) }}"};this.addTemplate=function(a,b){v.write("<script type='text/html' id='"+a+"'>"+b+"\x3c/script>")};0<a&&(w.tmpl.tag.ko_code={open:"__.push($1 || '');"},w.tmpl.tag.ko_with={open:"with($1) {",close:"} "})};a.Sa.prototype=new a.H;var b=new a.Sa;0<b.kc&&a.ab(b);a.b("jqueryTmplTemplateEngine",a.Sa)})()})})();})();
+
+
+(function () {
+    "use strict";
+
+    var g = {};
+
+    function connectMeta(cb) {
+        var request;
+
+//        console.log('Connecting to database "meta"');
+        request = indexedDB.open("meta", 7);
+        request.onerror = function (event) {
+            if (event.target.webkitErrorMessage) {
+                throw new Error("Meta connection error: " + event.target.webkitErrorMessage);
+            } else {
+                throw new Error("Meta connection error: " + event.target.error.name + " - " + event.target.error.message);
+            }
+        };
+        request.onblocked = function () {
+            alert("Please close all other tabs with this site open!");
+        };
+        request.onupgradeneeded = function (event) {
+            console.log("meta onupgradeneeded");
+        };
+        request.onsuccess = function (event) {
+            g.dbm = request.result;
+            g.dbm.onerror = function (event) {
+console.log(event);
+                if (event.target.webkitErrorMessage) {
+                    throw new Error("Meta database error: " + event.target.webkitErrorMessage);
+                } else {
+                    throw new Error("Meta database error: " + event.target.error.name + " - " + event.target.error.message);
+                }
+            };
+            cb();
+        };
+    }
+
+    function connectLeague(lid, cb) {
+        var request;
+
+        console.log('Connecting to database "league' + lid + '"');
+        request = indexedDB.open("league" + lid, 10);
+        request.onerror = function (event) {
+            if (event.target.webkitErrorMessage) {
+                throw new Error("League connection error: " + event.target.webkitErrorMessage);
+            } else {
+                throw new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message);
+            }
+        };
+        request.onblocked = function () {
+            alert("Please close all other tabs with this site open!");
+        };
+        request.onupgradeneeded = function (event) {
+            console.log("league onupgradeneeded");
+        };
+        request.onsuccess = function (event) {
+            g.dbl = request.result;
+            g.dbl.onerror = function (event) {
+console.log(event);
+                if (event.target.webkitErrorMessage) {
+                    throw new Error("League database error: " + event.target.webkitErrorMessage);
+                } else {
+                    throw new Error("League database error: " + event.target.error.name + " - " + event.target.error.message);
+                }
+            };
+            cb();
+        };
+    }
+
+    function export_(stores, cb) {
+        var exportedLeague,  exportStore, movePlayerStats;
+
+        exportedLeague = {};
+
+        // Row from leagueStore in meta db.
+        // phaseText is needed if a phase is set in gameAttributes.
+        // name is only used for the file name of the exported roster file.
+        exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
+
+        exportStore = function (i) {
+            g.dbl.transaction(stores[i]).objectStore(stores[i]).getAll().onsuccess = function (event) {
+                exportedLeague[stores[i]] = event.target.result;
+
+                if (i > 0) {
+                    exportStore(i - 1);
+                } else {
+                    cb(exportedLeague);
+                }
+            };
+        };
+
+        // Iterate through all the stores
+        exportStore(stores.length - 1, cb);
+    }
+
+
+    connectMeta(function () {
+        var vm = {};
+
+        // Silence error related to meta database not existing
+        try {
+            g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
+                var i, leagues;
+
+                leagues = event.target.result;
+
+                for (i = 0; i < leagues.length; i++) {
+                    if (leagues[i].teamRegion === undefined) {
+                        leagues[i].teamRegion = "???";
+                    }
+                    if (leagues[i].teamName === undefined) {
+                        leagues[i].teamName = "???";
+                    }
+                    
+                    leagues[i].longName = leagues[i].name + " - " + leagues[i].teamRegion + " " + leagues[i].teamName + " - " + leagues[i].phaseText;
+                    delete leagues[i].tid;
+                    delete leagues[i].teamRegion;
+                    delete leagues[i].teamName;
+                }
+
+                vm.leagues = leagues;
+
+                vm.lid = null;
+
+                vm.onSubmit = function () {
+                    var downloadLink, objectStores;
+
+                    console.log(vm);
+
+                    downloadLink = document.getElementById("download-link");
+                    downloadLink.innerHTML = "Generating...";
+
+                    objectStores = ["players", "releasedPlayers", "awards", "teams", "schedule", "playoffSeries", "draftPicks", "trade", "negotiations", "gameAttributes", "draftOrder", "messages", "events"];
+
+                    connectLeague(vm.lid, function () {
+                        g.lid = vm.lid;
+                        for (i = 0; i < vm.leagues.length; i++) {
+                            if (vm.leagues[i].lid === g.lid) {
+                                g.leagueName = vm.leagues[i].name;
+                                g.phaseText = vm.leagues[i].phaseText;
+                                break;
+                            }
+                        }
+
+                        export_(objectStores, function (data) {
+                            var a, fileName, json, url;
+
+                            json = JSON.stringify(data, undefined, 2);
+                            window.blob = new Blob([json], {type: "application/json"});
+
+                            fileName = data.meta !== undefined ? data.meta.name : "League";
+
+                            window.navigator.msSaveOrOpenBlob(window.blob, "BBGM - " + fileName + ".json");
+                            downloadLink.innerHTML = ""; // Clear "Generating..."
+                        });
+                    });
+                }
+
+                ko.applyBindings(vm, document.getElementById("content"));
+            };
+        }
+        catch (e) {}
+    });
+}());

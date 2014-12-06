@@ -128,7 +128,11 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
 //        console.log('Connecting to database "meta"');
         request = indexedDB.open("meta", 7);
         request.onerror = function (event) {
-            throw new Error("Meta connection error");
+            if (event.target.webkitErrorMessage) {
+                throw new Error("Meta connection error: " + event.target.webkitErrorMessage);
+            } else {
+                throw new Error("Meta connection error: " + event.target.error.name + " - " + event.target.error.message);
+            }
         };
         request.onblocked = function () {
             alert("Please close all other tabs with this site open!");
@@ -161,7 +165,7 @@ console.log(event);
      * @param {number} lid Integer league ID number for new league.
      */
     function createLeague(event, lid) {
-        var dbl, draftPickStore, eventStore, gameStore, playerStore, releasedPlayersStore;
+        var dbl, draftPickStore, eventStore, gameStore, playerStatsStore, playerStore, releasedPlayerStore;
 
         console.log("Creating league" + lid + " database");
 
@@ -169,11 +173,12 @@ console.log(event);
 
         // rid ("row id") is used as the keyPath for objects without an innate unique identifier
         playerStore = dbl.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
+        playerStatsStore = dbl.createObjectStore("playerStats", {keyPath: "psid", autoIncrement: true});
         dbl.createObjectStore("teams", {keyPath: "tid"});
         gameStore = dbl.createObjectStore("games", {keyPath: "gid"});
         dbl.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
         dbl.createObjectStore("playoffSeries", {keyPath: "season"});
-        releasedPlayersStore = dbl.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
+        releasedPlayerStore = dbl.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
         dbl.createObjectStore("awards", {keyPath: "season"});
         dbl.createObjectStore("trade", {keyPath: "rid"});
         dbl.createObjectStore("draftOrder", {keyPath: "rid"});
@@ -187,10 +192,11 @@ console.log(event);
         playerStore.createIndex("draft.year", "draft.year", {unique: false});
         playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
         playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
+        playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false}); // Would be unique if indexed on playoffs too, but that is a boolean and introduces complications... maybe worth fixing though? No, player could get traded back to same team in one season
 //        gameStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used because currently the season index is used. If multiple indexes are eventually supported, then use this too.
         gameStore.createIndex("season", "season", {unique: false});
-        releasedPlayersStore.createIndex("tid", "tid", {unique: false});
-        releasedPlayersStore.createIndex("contract.exp", "contract.exp", {unique: false});
+        releasedPlayerStore.createIndex("tid", "tid", {unique: false});
+        releasedPlayerStore.createIndex("contract.exp", "contract.exp", {unique: false});
         draftPickStore.createIndex("season", "season", {unique: false});
         draftPickStore.createIndex("tid", "tid", {unique: false});
         eventStore.createIndex("season", "season", {unique: false});
@@ -204,6 +210,8 @@ console.log(event);
      */
     function migrateLeague(event, lid) {
         var dbl, teams, tx;
+
+        document.getElementById("content").innerHTML = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="http://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
 
         console.log("Upgrading league" + lid + " database from version " + event.oldVersion + " to version " + event.newVersion);
 
@@ -685,6 +693,66 @@ console.log(event);
                     });
                 }());
             }
+            if (event.oldVersion <= 10) {
+                (function () {
+                    var playerStatsStore;
+
+                    // Create new playerStats object store
+                    playerStatsStore = dbl.createObjectStore("playerStats", {keyPath: "psid", autoIncrement: true});
+                    playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false});
+
+                    // For each player, add all his stats to playerStats store, delete his stats from player object, and rewrite player object
+                    tx.objectStore("players").openCursor().onsuccess = function (event) {
+                        var addStatsRows, afterStatsRows, cursor, p;
+
+                        cursor = event.target.result;
+                        if (cursor) {
+                            p = cursor.value;
+
+                            // watch is now mandatory!
+                            if (!p.hasOwnProperty("watch")) {
+                                p.watch = false;
+                            }
+
+                            afterStatsRows = function () {
+                                // Save player object without stats and with values
+                                delete p.stats;
+                                require("core/player").updateValues(tx, p, [], function (p) {
+                                    cursor.update(p);
+
+                                    cursor.continue();
+                                });
+                            };
+
+                            addStatsRows = function () {
+                                var ps;
+
+                                ps = p.stats.shift();
+
+                                ps.pid = p.pid;
+
+                                // Could be calculated correctly if I wasn't lazy
+                                ps.yearsWithTeam = 0;
+
+                                tx.objectStore("playerStats").add(ps).onsuccess = function () {
+                                    // On to the next one
+                                    if (p.stats.length > 0) {
+                                        addStatsRows();
+                                    } else {
+                                        afterStatsRows();
+                                    }
+                                };
+                            };
+
+                            if (p.stats.length > 0) {
+                                addStatsRows();
+                            } else {
+                                afterStatsRows();
+                            }
+                        }
+                    }
+                }());
+            }
         });
     }
 
@@ -692,9 +760,13 @@ console.log(event);
         var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 10);
+        request = indexedDB.open("league" + lid, 11);
         request.onerror = function (event) {
-            throw new Error("League connection error");
+            if (event.target.webkitErrorMessage) {
+                throw new Error("League connection error: " + event.target.webkitErrorMessage);
+            } else {
+                throw new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message);
+            }
         };
         request.onblocked = function () {
             alert("Please close all other tabs with this site open!");

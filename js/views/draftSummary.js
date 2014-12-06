@@ -46,7 +46,8 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
 
         dao.players.getAll({
             index: "draft.year",
-            key: inputs.season
+            key: inputs.season,
+            statsSeasons: "all"
         }, function (playersAll) {
             var currentPr, i, pa, p, players;
 

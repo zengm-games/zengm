@@ -141,7 +141,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
                 index: "tid",
                 key: g.userTid,
                 statsSeasons: [g.season],
-                statsTids: g.userTid
+                statsTid: g.userTid
             }, function (userRoster) {
                 var i;
 
@@ -198,7 +198,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
                     offers: offers
                 });
             } else {
-                tx = g.dbl.transaction(["players", "draftPicks", "teams"]);
+                tx = g.dbl.transaction(["players", "playerStats", "draftPicks", "teams"]);
 
                 team.filter({
                     attrs: ["abbrev", "region", "name", "strategy"],
@@ -228,27 +228,29 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
                                 warning: inputs.offers[i].warning
                             };
 
-                            dao.players.getAll({
-                                ot: tx,
-                                index: "tid",
-                                key: tid,
-                                statsSeasons: [g.season],
-                                statsTids: tid,
-                                filter: function (p) {
-                                    return inputs.offers[i].pids.indexOf(p.pid) >= 0;
-                                }
-                            }, function (players) {
-                                offers[i].players = player.filter(players, {
-                                    attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch"],
-                                    ratings: ["ovr", "pot", "skills"],
-                                    stats: ["min", "pts", "trb", "ast", "per"],
-                                    season: g.season,
-                                    tid: tid,
-                                    showNoStats: true,
-                                    showRookies: true,
-                                    fuzz: true
+                            (function (i) {
+                                dao.players.getAll({
+                                    ot: tx,
+                                    index: "tid",
+                                    key: tid,
+                                    statsSeasons: [g.season],
+                                    statsTid: tid,
+                                    filter: function (p) {
+                                        return inputs.offers[i].pids.indexOf(p.pid) >= 0;
+                                    }
+                                }, function (players) {
+                                    offers[i].players = player.filter(players, {
+                                        attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch"],
+                                        ratings: ["ovr", "pot", "skills"],
+                                        stats: ["min", "pts", "trb", "ast", "per"],
+                                        season: g.season,
+                                        tid: tid,
+                                        showNoStats: true,
+                                        showRookies: true,
+                                        fuzz: true
+                                    });
                                 });
-                            });
+                            }(i));
 
                             tx.objectStore("draftPicks").index("tid").getAll(tid).onsuccess = function (event) {
                                 var j, picks;

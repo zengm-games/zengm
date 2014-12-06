@@ -10,8 +10,7 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
     function addSeason(seasons, season, tid, cb) {
         dao.players.getAll({
             index: "tid",
-            key: tid,
-            statsSeasons: []
+            key: tid
         }, function (playersAll) {
             var i, pa, p, players;
 
@@ -120,10 +119,12 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
         reader = new window.FileReader();
         reader.readAsText(file);
         reader.onload = function (event) {
-            var players;
+            var players, uploadedFile;
+
+            uploadedFile = JSON.parse(event.target.result);
 
             // Get all players from uploaded files
-            players = JSON.parse(event.target.result).players;
+            players = uploadedFile.players;
 
             // Filter out any that are not draft prospects
             players = players.filter(function (p) {
@@ -138,16 +139,29 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                 scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
 
                 // Delete old players from draft class
-                tx = g.dbl.transaction("players", "readwrite");
+                tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
                 playerStore = tx.objectStore("players");
                 playerStore.index("tid").openCursor(IDBKeyRange.only(draftClassTid)).onsuccess = function (event) {
-                    var cursor;
+                    var cursor, i, uploadedSeason;
+
                     cursor = event.target.result;
                     if (cursor) {
                         playerStore.delete(cursor.primaryKey);
                         cursor.continue();
                     } else {
                         // Everything else proceeds after deletes have finished
+
+                        // Find season from uploaded file, for age adjusting
+                        if (uploadedFile.hasOwnProperty("gameAttributes")) {
+                            for (i = 0; i < uploadedFile.gameAttributes.length; i++) {
+                                if (uploadedFile.gameAttributes[i].key === "season") {
+                                    uploadedSeason = uploadedFile.gameAttributes[i].value;
+                                    break;
+                                }
+                            }
+                        } else if (uploadedFile.hasOwnProperty("startingSeason")) {
+                            uploadedSeason = uploadedFile.startingSeason;
+                        }
 
                         // Add new players to database
                         players.forEach(function (p) {
@@ -162,8 +176,12 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                                 delete p.pid;
                             }
 
+                            // Adjust age
+                            if (uploadedSeason !== undefined) {
+                                p.born.year += g.season - uploadedSeason;
+                            }
+
                             dao.players.put({ot: playerStore, p: p});
-                            console.log(p.name);
                         });
 
                         // "Top off" the draft class if <70 players imported

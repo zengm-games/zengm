@@ -17,7 +17,13 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
     function addSeasonRow(t) {
         var newSeason, s;
 
-        s = t.seasons.length - 1; // Most recent ratings
+        s = t.seasons.length - 1; // Most recent season
+
+        // Make sure this isn't a duplicate season
+        if (s >= 0 && t.seasons[s].season === g.season) {
+            console.log("Attempting to add duplicate team season record!");
+            return t;
+        }
 
         // Initial entry
         newSeason = {
@@ -246,8 +252,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
         dao.players.getAll({
             ot: tx,
             index: "tid",
-            key: tid,
-            statsSeasons: []
+            key: tid
         }, function (players) {
             var i;
 
@@ -366,6 +371,8 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
                     }
                 }
 
+// Sometimes get an error when switching to team finances page
+//if (tsa.revenues === undefined) { debugger; }
                 // Revenue and expenses calculation
                 tsa.revenue = _.reduce(tsa.revenues, function (memo, revenue) { return memo + revenue.amount; }, 0);
                 tsa.expense = _.reduce(tsa.expenses, function (memo, expense) { return memo + expense.amount; }, 0);
@@ -606,8 +613,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
             dao.players.getAll({
                 ot: tx,
                 index: "tid",
-                key: tid,
-                statsSeasons: []
+                key: tid
             }, function (players) {
                 var i, p;
 
@@ -639,8 +645,7 @@ define(["dao", "db", "globals", "core/player", "lib/underscore", "util/helpers",
             for (i = 0; i < pidsAdd.length; i++) {
                 dao.players.getAll({
                     ot: tx,
-                    key: pidsAdd[i],
-                    statsSeasons: []
+                    key: pidsAdd[i]
                 }, function (players) {
                     var p;
 
@@ -1151,7 +1156,7 @@ console.log(dv);*/
         var tx;
 
         // For
-        tx = g.dbl.transaction(["players", "teams"], "readwrite");
+        tx = g.dbl.transaction(["players", "playerStats", "teams"], "readwrite");
         tx.objectStore("teams").openCursor().onsuccess = function (event) {
             var dWon, cursor, s, t, won;
 
@@ -1177,7 +1182,7 @@ console.log(dv);*/
                     index: "tid",
                     key: t.tid,
                     statsSeasons: [g.season],
-                    statsTids: t.tid
+                    statsTid: t.tid
                 }, function (players) {
                     var age, denominator, i, numerator, score, updated, youngStar;
 
@@ -1274,10 +1279,11 @@ console.log(dv);*/
                         while (numPlayersOnRoster < g.minRosterSize) {
                             p = minFreeAgents.shift();
                             p.tid = tid;
-                            p = player.addStatsRow(p);
-                            p = player.setContract(p, p.contract, true);
-                            p.gamesUntilTradable = 15;
-                            dao.players.put({ot: playerStore, p: p});
+                            player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                                p = player.setContract(p, p.contract, true);
+                                p.gamesUntilTradable = 15;
+                                dao.players.put({ot: playerStore, p: p});
+                            });
 
                             numPlayersOnRoster += 1;
                         }
@@ -1286,13 +1292,14 @@ console.log(dv);*/
                 }
 
                 // Auto sort rosters (except player's team)
+                // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
                 if (tid !== g.userTid) {
                     rosterAutoSort(playerStore, tid);
                 }
             };
         };
 
-        tx = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
+        tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "teams"], "readwrite");
         playerStore = tx.objectStore("players");
 
         userTeamSizeError = null;

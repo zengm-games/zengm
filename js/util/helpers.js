@@ -282,7 +282,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error".
      */
     function globalError(req) {
-        var data, ui, viewHelpers;
+        var contentEl, data, ui, viewHelpers;
 
         ui = require("ui");
         viewHelpers = require("util/viewHelpers");
@@ -293,7 +293,10 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
             container: "content",
             template: "error"
         });
-        ko.applyBindings({error: req.params.error}, document.getElementById("content"));
+
+        contentEl = document.getElementById("content");
+        ko.cleanNode(contentEl);
+        ko.applyBindings({error: req.params.error}, contentEl);
         ui.title("Error");
         req.raw.cb();
     }
@@ -311,11 +314,16 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         viewHelpers = require("util/viewHelpers");
 
         viewHelpers.beforeLeague(req, function () {
+            var contentEl;
+
             ui.update({
                 container: "league_content",
                 template: "error"
             });
-            ko.applyBindings({error: req.params.error}, document.getElementById("league_content"));
+
+            contentEl = document.getElementById("league_content");
+            ko.cleanNode(contentEl);
+            ko.applyBindings({error: req.params.error}, contentEl);
             ui.title("Error");
             req.raw.cb();
         });
@@ -442,12 +450,12 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         var i, url;
 
         options = options !== undefined ? options : {};
-        lid = lid !== undefined ? ko.utils.unwrapObservable(lid) : g.lid;
+        lid = lid !== undefined ? ko.unwrap(lid) : g.lid;
 
         url = "/l/" + lid;
         for (i = 0; i < components.length; i++) {
             if (components[i] !== undefined) {
-                url += "/" + ko.utils.unwrapObservable(components[i]);
+                url += "/" + ko.unwrap(components[i]);
             }
         }
         if (!options.noQueryString) {
@@ -748,6 +756,101 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         return ((team0.won - team0.lost) - (team.won - team.lost)) / 2;
     }
 
+    function checkNaNs() {
+        var checkObject, wrap, wrapperNaNChecker;
+
+        // Check all properties of an object for NaN
+        checkObject = function (obj, foundNaN) {
+            var prop;
+
+            foundNaN = foundNaN !== undefined ? foundNaN : false;
+
+            for (prop in obj) {
+                if (obj.hasOwnProperty(prop)) {
+                    if (typeof obj[prop] === "object" && obj[prop] !== null) {
+                        foundNaN = checkObject(obj[prop], foundNaN);
+                    } else if (obj[prop] != obj[prop]) {
+                        // NaN check from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
+                        foundNaN = true;
+                    }
+                }
+            }
+
+            return foundNaN;
+        };
+
+        wrap = function (parent, name, wrapper) {
+            var original;
+
+            original = parent[name];
+            parent[name] = wrapper(original);
+        };
+
+        wrapperNaNChecker = function (_super) {
+            return function () {
+                var contentNode, err, gSend, output;
+
+                if (checkObject(arguments[0])) {
+                    err = new Error("NaN found before writing to IndexedDB");
+
+                    gSend = JSON.parse(JSON.stringify(g)); // deepCopy fails for some reason
+                    delete gSend.teamAbbrevsCache;
+                    delete gSend.teamRegionsCache;
+                    delete gSend.teamNamesCache;
+
+                    output = "<h1>Critical Error</h1><p>You ran into the infamous NaN bug. But there's good news! You can help fix it! Please email the following information to <a href=\"mailto:commissioner@basketball-gm.com\">commissioner@basketball-gm.com</a> along with any information about what you think might have caused this glitch. If you want to be extra helpful, <a href=\"" + leagueUrl(["export_league"]) + "\">export your league</a> and send that too (if it's huge, upload to Google Drive or Dropbox or whatever). Thanks!</p>";
+
+                    output += '<textarea class="form-control" style="height: 300px">';
+                    output += JSON.stringify({
+                        stack: err.stack,
+                        input: arguments[0],
+                        "this": this,
+                        gSend: gSend
+                    }, function (key, value) {
+                        if (value != value) {
+                            return "NaN RIGHT HERE";
+                        }
+
+                        return value;
+                    }, 2);
+                    output += "</textarea>";
+
+                    // Find somewhere to show output
+                    contentNode = document.getElementById("league_content");
+                    if (!contentNode) {
+                        contentNode = document.getElementById("content");
+                    }
+                    if (!contentNode) {
+                        contentNode = document.body;
+                    }
+                    contentNode.innerHTML = output;
+
+                    if (window.Bugsnag) {
+                        window.Bugsnag.notifyException(err, "NaNFound", {
+                            details: {
+                                objectWithNaN: JSON.stringify(arguments[0], function (key, value) {
+                                    if (value != value) {
+                                        return "FUCKING NaN RIGHT HERE";
+                                    }
+
+                                    return value;
+                                })
+                            }
+                        });
+                    }
+
+                    throw err;
+                } else {
+                    return _super.apply(this, arguments);
+                }
+            };
+        };
+
+        wrap(IDBObjectStore.prototype, "add", wrapperNaNChecker);
+        wrap(IDBObjectStore.prototype, "put", wrapperNaNChecker);
+        wrap(IDBCursor.prototype, "update", wrapperNaNChecker);
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -776,6 +879,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         ordinal: ordinal,
         gameLogList: gameLogList,
         formatCompletedGame: formatCompletedGame,
-        gb: gb
+        gb: gb,
+        checkNaNs: checkNaNs
     };
 });

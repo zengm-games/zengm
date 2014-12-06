@@ -94,7 +94,10 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 p = player.generate(tid, baseAge, profile, baseRating, pot, draftYear, false, scoutingRank);
                 p = player.develop(p, agingYears, true);
 
-                dao.players.put({ot: tx, p: p});
+                // Update player values after ratings changes
+                player.updateValues(ot, p, [], function (p) {
+                    dao.players.put({ot: tx, p: p});
+                });
             }
 
             if (ot !== null) {
@@ -330,7 +333,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             app.logger.debug('WARNING: Team %d tried to draft out of order' % (tid,));
             return;*/
 
-        tx = g.dbl.transaction("players", "readwrite");
+        tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
         tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
             var cursor, i, p, rookieSalaries, years;
 
@@ -364,8 +367,10 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             }
 
             // Add stats row if necessary (fantasy draft in ongoing season)
-            if (g.phase === g.PHASE.FANTASY_DRAFT && g.phase <= g.PHASE.PLAYOFFS) {
-                p = player.addStatsRow(p);
+            if (g.phase === g.PHASE.FANTASY_DRAFT && g.nextPhase <= g.PHASE.PLAYOFFS) {
+                player.addStatsRow(tx, p, g.nextPhase === g.PHASE.PLAYOFFS, function (p) {
+                    cursor.update(p);
+                });
             }
 
             cursor.update(p);

@@ -25,19 +25,19 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
                     komapping.fromJS(options.data, {
                         divs: {
                             key: function (data) {
-                                return ko.utils.unwrapObservable(data.name);
+                                return ko.unwrap(data.name);
                             }
                         },
                         teams: {
                             key: function (data) {
-                                return ko.utils.unwrapObservable(data.tid);
+                                return ko.unwrap(data.tid);
                             }
                         }
                     }, this);
                 }();
             },
             key: function (data) {
-                return ko.utils.unwrapObservable(data.name);
+                return ko.unwrap(data.name);
             }
         }
     };

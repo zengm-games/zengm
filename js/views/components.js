@@ -28,6 +28,12 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
         var fieldId, formEl, i, j, offset, options;
 
         formEl = document.getElementById(formId);
+
+        // If formEl can't be found, user quickly clicked away from page
+        if (formEl === null) {
+            return;
+        }
+
         if (formEl.dataset.idLoaded !== formId) {
             // Build initial values
             vm.formId(formId);

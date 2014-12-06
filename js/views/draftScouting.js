@@ -181,6 +181,9 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                                 p.born.year += g.season - uploadedSeason;
                             }
 
+                            // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
+                            delete p.stats;
+
                             dao.players.put({ot: playerStore, p: p});
                         });
 

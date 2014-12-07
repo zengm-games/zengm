@@ -4,6 +4,9 @@ DB CHANGES SINCE 3.3.0
 PERFORMANCE CRAP
 ----------------
 
+license
+  http://www.reddit.com/r/gamedev/comments/2ogq7b/very_niche_webbased_video_game_with_a_stable/cmnhpd8
+
 allow IE users to export, somehow
   TEST after going live!
 
@@ -408,7 +411,6 @@ show four factors somewhere
 security
   validate any user-added content, like custom team names (both in file and through form), custom players, and league names
 in playoffs, replace "play week" with "play until end of round"
-IE11 testing
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
 reorganize top menu
 not all ratings should deteriorate equally with age (e.g. 3 point shooting)

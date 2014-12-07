@@ -1649,7 +1649,10 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
     function updateValues(ot, p, ps, cb) {
         var getStats, playerStatsStore, season, withPs;
 
-        playerStatsStore = db.getObjectStore(ot, "playerStats", "playerStats");
+        // New player objects don't have pids or stats, so we don't need to hit the database
+        if (p.hasOwnProperty("pid")) {
+            playerStatsStore = db.getObjectStore(ot, "playerStats", "playerStats");
+        }
 
         withPs = function () {
             p.value = value(p, ps);

@@ -184,7 +184,9 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                             // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
                             delete p.stats;
 
-                            dao.players.put({ot: playerStore, p: p});
+                            player.updateValues(tx, p, [], function (p) {
+                                dao.players.put({ot: playerStore, p: p});
+                            });
                         });
 
                         // "Top off" the draft class if <70 players imported

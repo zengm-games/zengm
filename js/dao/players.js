@@ -32,9 +32,10 @@ define(["db", "lib/bluebird"], function (db, Promise) {
         return new Promise(function (resolve, reject) {
             var playerStore, tx;
 
-            if (cb !== undefined) {
-                resolve = cb;
-            }
+// HACK
+if (cb !== undefined) {
+    resolve = cb;
+}
 
             playerStore = db.getObjectStore(options.ot, ["players", "playerStats"], "players"); // Doesn't really need playerStats all the time
             tx = playerStore.transaction;

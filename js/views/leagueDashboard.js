@@ -63,21 +63,23 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
 
 
     function updateTeams(inputs, updateEvents) {
-        var deferred, stats, vars;
+        var stats, vars;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            deferred = $.Deferred();
             vars = {};
-
             stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
-            team.filter({
-                attrs: ["tid", "cid"],
-                seasonAttrs: ["won", "lost", "winp", "att", "revenue", "profit"],
-                stats: stats,
-                season: g.season,
-                sortBy: ["winp", "-lost", "won"]
-            }, function (teams) {
-                var cid, i, j, ranks;
+
+            return dao.teams.getAll().then(function (teams) {
+                return team.filter({
+                    t: teams,
+                    attrs: ["tid", "cid"],
+                    seasonAttrs: ["won", "lost", "winp", "att", "revenue", "profit"],
+                    stats: stats,
+                    season: g.season,
+                    sortBy: ["winp", "-lost", "won"]
+                });
+            }).then(function (teams) {
+                var cid, i, j;
 
                 cid = _.find(teams, function (t) { return t.tid === g.userTid; }).cid;
 
@@ -111,9 +113,8 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                 }
                 vars.oppPtsRank = 31 - vars.oppPtsRank;
 
-                deferred.resolve(vars);
+                return vars;
             });
-            return deferred.promise();
         }
     }
 
@@ -329,17 +330,16 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
     }
 
     function updateStandings(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
-            deferred = $.Deferred();
-
-            team.filter({
-                attrs: ["tid", "cid", "abbrev", "region"],
-                seasonAttrs: ["won", "lost", "winp"],
-                season: g.season,
-                sortBy: ["winp", "-lost", "won"]
-            }, function (teams) {
+            return dao.teams.getAll().then(function (teams) {
+                return team.filter({
+                    t: teams,
+                    attrs: ["tid", "cid", "abbrev", "region"],
+                    seasonAttrs: ["won", "lost", "winp"],
+                    season: g.season,
+                    sortBy: ["winp", "-lost", "won"]
+                });
+            }).then(function (teams) {
                 var cid, confTeams, i, k, l;
 
                 // Find user's conference
@@ -370,11 +370,10 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                     }
                 }
 
-                deferred.resolve({
+                return {
                     confTeams: confTeams
-                });
+                };
             });
-            return deferred.promise();
         }
     }
 

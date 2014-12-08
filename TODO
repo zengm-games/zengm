@@ -60,7 +60,7 @@ views
         dao.teams.get(tid).then(function (teams) { team.filter({}) }).then(function (team));
           this would be easier to harmonize with players
         but how to deal with the other objectstores used in team.filter besides teams? gets messy, doesn't it?
-
+          not really. team.filter can remain async because theres are all promises anyway!
 core
 
 fix as i go through

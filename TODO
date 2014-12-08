@@ -55,12 +55,8 @@ views
   leagueDashboard
     team.filter
       can return promise, but should have API similar to players, right?
-        dao.teams.get(tid).filter().then(function (team) {})
-        OR
-        dao.teams.get(tid).then(function (teams) { team.filter({}) }).then(function (team));
-          this would be easier to harmonize with players
-        but how to deal with the other objectstores used in team.filter besides teams? gets messy, doesn't it?
-          not really. team.filter can remain async because theres are all promises anyway!
+        dao.teams.get(tid).then(function (teams) { return team.filter({}) }).then(function (team));
+
 core
 
 fix as i go through
@@ -89,6 +85,9 @@ unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-jav
   https://code.google.com/p/v8/issues/detail?id=3093
 
 put bugsnag back
+
+after fully abstracting IndexedDB, could i improve performance by running it locally in node and using a relational database?
+  same with mobile on phonegap
 
 PERFORMANCE CRAP
 ----------------

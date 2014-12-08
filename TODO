@@ -1,4 +1,4 @@
-DB CHANGES SINCE 3.3.0
+DB CHANGES SINCE 3.4.0
 ----------------------
 
 PERFORMANCE CRAP
@@ -6,12 +6,6 @@ PERFORMANCE CRAP
 
 license
   http://www.reddit.com/r/gamedev/comments/2ogq7b/very_niche_webbased_video_game_with_a_stable/cmnhpd8
-
-allow IE users to export, somehow
-  TEST after going live!
-
-requirejs error related to bugsnag i think: https://bugsnag.com/dumbmatter/basketball-gm/errors/52e89bb183a277d9f7f88b00
-  but shouldn't be happening because i load bugsnag sync https://github.com/bugsnag/bugsnag-js/#amdcommonjs-support
 
 nan checker: check every object before it is written to db (add, put, cursor.update)
   contract can be set to NaN
@@ -44,8 +38,6 @@ deleteOldData
   break up deletion of old ratings and stats?
 
 player.updateValues.getStats doesn't really make sense. Should get all from past 2 seasons, sort by PSID, and take stats up to 2000 minutes
-
-version 3.4
 
 more normalization? team stats, team seasons, player ratings
 
@@ -413,7 +405,6 @@ security
 in playoffs, replace "play week" with "play until end of round"
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
 reorganize top menu
-not all ratings should deteriorate equally with age (e.g. 3 point shooting)
 http://code.google.com/p/htmlcompressor/ or something similar
 in playoffs, replace Week/Month in Play menu with Round http://www.reddit.com/r/BasketballGM/comments/1w55sb/suggestionplayoffs_simulate_by_round_instead_of/
 gamesim shot distribution - less people shooting 3s really poorly, especially tall players
@@ -526,10 +517,11 @@ trades between AI teams
   transaction log is necessary to keep tabs on this stuff
   also propose trades to the user, somehow
 "coaches" should factor in synergy in gameSim substitutions
-IE10 support
+IE support
   dropdowns disappear on refresh?
     unit tests fail too, seemingly for the same reason
   text in dashboard is messed up
+  compound indexes
 core.team.valueChange should be used to pick which free agents to sign in core.freeAgents.autoSign, but that would be a bitch beacuse of how transactions are set up
   also for resigning players in core.season
 trades

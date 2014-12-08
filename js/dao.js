@@ -2,10 +2,10 @@
  * @name dao
  * @namespace Wrapper around IndexedDB for easy access to data.
  */
-define(["db", "globals"], function (db, g) {
+define(["db", "globals", "lib/bluebird"], function (db, g, Promise) {
     "use strict";
 
-    var leagues, players;
+    var leagues, messages, players, teams;
 
     leagues = {};
     leagues.getAll = function () {
@@ -14,7 +14,16 @@ define(["db", "globals"], function (db, g) {
                 resolve(event.target.result);
             };
         });
-    }
+    };
+
+    messages = {};
+    messages.getAll = function () {
+        return new Promise(function(resolve, reject) {
+            g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) {
+                resolve(event.target.result);
+            };
+        });
+    };
 
     // This needs to be used for anything that reads player stats!!!
     // Can also be used other places, but not essential
@@ -175,10 +184,25 @@ define(["db", "globals"], function (db, g) {
         if (cb !== undefined) {
             cb();
         }
-    }
+    };
+
+    teams = {};
+    teams.get = function (options) {
+        options = options !== undefined ? options : {};
+        options.ot = options.ot !== undefined ? options.ot : null;
+        options.key = options.key !== undefined ? options.key : null;
+
+        return new Promise(function (resolve, reject) {
+            db.getObjectStore(options.ot, "teams", "teams").get(options.key).onsuccess = function (event) {
+                resolve(event.target.result);
+            };
+        });
+    };
 
     return {
         leagues: leagues,
-        players: players
+        messages: messages,
+        players: players,
+        teams: teams
     };
 });

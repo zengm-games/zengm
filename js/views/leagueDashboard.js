@@ -11,16 +11,10 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
     }
 
     function updateInbox(inputs, updateEvents) {
-        var deferred, vars;
-
-        deferred = $.Deferred();
-        vars = {};
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
-            g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) {
-                var i, messages;
+            dao.messages.getAll().then(function (messages) {
+                var i;
 
-                messages = event.target.result;
                 messages.reverse();
 
                 for (i = 0; i < messages.length; i++) {
@@ -28,43 +22,34 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
                 }
                 messages = messages.slice(0, 2);
 
-                vars = {
+console.log(1)
+                return {
                     messages: messages
                 };
-
-                deferred.resolve(vars);
-            };
-
-            return deferred.promise();
+            });
         }
     }
 
     function updateTeam(inputs, updateEvents) {
-        var deferred, vars;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            deferred = $.Deferred();
-            vars = {};
+            dao.teams.get({key: g.userTid}).then(function (t) {
+                var latestSeason;
 
-            g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
-                var i, userTeam, userTeamSeason;
+                latestSeason = t.seasons[t.seasons.length - 1];
 
-                userTeam = event.target.result;
-                userTeamSeason = _.last(userTeam.seasons);
-
-                vars.region = userTeam.region;
-                vars.name = userTeam.name;
-                vars.abbrev = userTeam.abbrev;
-                vars.won = userTeamSeason.won;
-                vars.lost = userTeamSeason.lost;
-                vars.cash = userTeamSeason.cash / 1000;  // [millions of dollars]
-                vars.salaryCap = g.salaryCap / 1000;  // [millions of dollars]
-                vars.season = g.season;
-                vars.playoffRoundsWon = userTeamSeason.playoffRoundsWon;
-
-                deferred.resolve(vars);
-            };
-            return deferred.promise();
+console.log(2)
+                return {
+                    region: t.region,
+                    name: t.name,
+                    abbrev: t.abbrev,
+                    won: latestSeason.won,
+                    lost: latestSeason.lost,
+                    cash: latestSeason.cash / 1000,  // [millions of dollars]
+                    salaryCap: g.salaryCap / 1000,  // [millions of dollars]
+                    season: g.season,
+                    playoffRoundsWon: latestSeason.playoffRoundsWon
+                };
+            });
         }
     }
 

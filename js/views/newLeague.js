@@ -29,7 +29,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
     function post(req) {
         var cb, file, reader, startingSeason, tid;
 
-        $("#create-new-league").attr("disabled", "disabled");
+        document.getElementById("create-new-league").disabled = true;
 
         startingSeason = 2013;
 

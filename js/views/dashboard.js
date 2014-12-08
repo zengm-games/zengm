@@ -5,7 +5,7 @@
 define(["dao", "ui", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, ui, bbgmView, helpers, viewHelpers) {
     "use strict";
 
-    function updateDashboard() {
+    function updateDashboard(inputs, updateEvents) {
         return dao.leagues.getAll().then(function (leagues) {
             var i;
 
@@ -25,7 +25,7 @@ define(["dao", "ui", "util/bbgmView", "util/helpers", "util/viewHelpers"], funct
         });
     }
 
-    function uiFirst() {
+    function uiFirst(vm) {
         ui.title("Dashboard");
     }
 

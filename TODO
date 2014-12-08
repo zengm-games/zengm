@@ -8,7 +8,6 @@ use promises pervasively
 
 leagueDashboard
   db.getPayroll
-    db.getContracts -> dao.contracts.getAll({key: TID})
     db.getPayroll -> dao.payrolls.get({key: TID})
     db.getPayrolls -> dao.payrolls.getAll()
   team.filter
@@ -19,6 +18,7 @@ leagueDashboard
 bbgmView
 
 dao
+  goal: NO INDEXEDDB ANYWHERE ELSE!
 
 what about browsers without promise support? make sure error is graceful
 
@@ -37,6 +37,7 @@ PERFORMANCE CRAP
 
 license
   http://www.reddit.com/r/gamedev/comments/2ogq7b/very_niche_webbased_video_game_with_a_stable/cmnhpd8
+  email draft
 
 nan checker: check every object before it is written to db (add, put, cursor.update)
   contract can be set to NaN

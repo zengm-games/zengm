@@ -839,89 +839,6 @@ console.log(event);
     }
 
     /**
-     * Gets all the contracts a team owes.
-     * 
-     * This includes contracts for players who have been released but are still owed money.
-     * 
-     * @memberOf db
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
-     * @param {number} tid Team ID.
-     * @param {function(Array)} cb Callback whose first argument is an array of objects containing contract information.
-     */
-    function getContracts(ot, tid, cb) {
-        var contracts, transaction;
-
-        transaction = getObjectStore(ot, ["players", "releasedPlayers"], null);
-
-        // First, get players currently on the roster
-        transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-            var i, players;
-
-            contracts = [];
-            players = event.target.result;
-            for (i = 0; i < players.length; i++) {
-                contracts.push({
-                    pid: players[i].pid,
-                    name: players[i].name,
-                    skills: _.last(players[i].ratings).skills,
-                    injury: players[i].injury,
-                    watch: players[i].watch !== undefined ? players[i].watch : false, // undefined check is for old leagues, can delete eventually
-                    amount: players[i].contract.amount,
-                    exp: players[i].contract.exp,
-                    released: false
-                });
-            }
-
-            // Then, get any released players still owed money
-            transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
-                var i, releasedPlayers;
-
-                releasedPlayers = event.target.result;
-
-                if (releasedPlayers.length === 0) {
-                    return cb(contracts);
-                }
-
-                for (i = 0; i < releasedPlayers.length; i++) {
-                    (function (i) {
-                        transaction.objectStore("players").get(releasedPlayers[i].pid).onsuccess = function (event) {
-                            var player;
-
-
-
-                            player = event.target.result;
-                            if (player !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
-                                contracts.push({
-                                    pid: releasedPlayers[i].pid,
-                                    name: player.name,
-                                    skills: _.last(player.ratings).skills,
-                                    injury: player.injury,
-                                    amount: releasedPlayers[i].contract.amount,
-                                    exp: releasedPlayers[i].contract.exp,
-                                    released: true
-                                });
-                            } else {
-                                contracts.push({
-                                    pid: releasedPlayers[i].pid,
-                                    name: "Deleted Player",
-                                    skills: [],
-                                    amount: releasedPlayers[i].contract.amount,
-                                    exp: releasedPlayers[i].contract.exp,
-                                    released: true
-                                });
-                            }
-
-                            if (contracts.length === players.length + releasedPlayers.length) {
-                                cb(contracts);
-                            }
-                        };
-                    }(i));
-                }
-            };
-        };
-    }
-
-    /**
      * Get the total current payroll for a team.
      * 
      * This includes players who have been released but are still owed money from their old contracts.
@@ -929,14 +846,14 @@ console.log(event);
      * @memberOf db
      * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
-     * @param {function(number, Array=)} cb Callback; first argument is the payroll in thousands of dollars, second argument is the list of contract objects from getContracts.
+     * @param {function(number, Array=)} cb Callback; first argument is the payroll in thousands of dollars, second argument is the list of contract objects from dao.contracts.getAll.
      */
     function getPayroll(ot, tid, cb) {
         if (tid === undefined) {
             cb(0, []);
             return console.log('ERROR: db.getPayroll needs a TID!');
         }
-        getContracts(ot, tid, function (contracts) {
+        require("dao/contracts").getAll({ot: ot, tid: tid}).then(function (contracts) {
             var i, payroll;
 
             payroll = 0;

@@ -838,31 +838,9 @@ console.log(event);
         return g.dbl.transaction(transactionObjectStores).objectStore(objectStore);
     }
 
-    /**
-     * Get the total current payroll for a team.
-     * 
-     * This includes players who have been released but are still owed money from their old contracts.
-     * 
-     * @memberOf db
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
-     * @param {number} tid Team ID.
-     * @param {function(number, Array=)} cb Callback; first argument is the payroll in thousands of dollars, second argument is the list of contract objects from dao.contracts.getAll.
-     */
+
     function getPayroll(ot, tid, cb) {
-        if (tid === undefined) {
-            cb(0, []);
-            return console.log('ERROR: db.getPayroll needs a TID!');
-        }
-        require("dao/contracts").getAll({ot: ot, tid: tid}).then(function (contracts) {
-            var i, payroll;
-
-            payroll = 0;
-            for (i = 0; i < contracts.length; i++) {
-                payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
-            }
-
-            cb(payroll, contracts);
-        });
+        require("dao/payrolls").get({ot: ot, tid: tid}).then(cb);
     }
 
     /**

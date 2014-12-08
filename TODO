@@ -9,7 +9,9 @@ use promises pervasively
 leagueDashboard
   db.getPayroll
     db.getPayroll -> dao.payrolls.get({key: TID})
+      grep -r getPayroll\( js
     db.getPayrolls -> dao.payrolls.getAll()
+      grep -r getPayrolls\( js
   team.filter
     can return promise, but should have API similar to players, right?
       dao.teams.get(tid).filter().then(function (team) {})

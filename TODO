@@ -6,18 +6,31 @@ THE FLATTENING
 
 use promises pervasively
 
-leagueDashboard
+switch dao.players.get to use promises
+  grep -R dao.players.get js
+  for retrieving one, implement dao.players.get on top of getAll
+  dao.players.getAll(tid).then(function (players) { return player.filter({}) }).then(function (players));
+
+views
+  leagueDashboard
+    team.filter
+      can return promise, but should have API similar to players, right?
+        dao.teams.get(tid).filter().then(function (team) {})
+        OR
+        dao.teams.get(tid).then(function (teams) { team.filter({}) }).then(function (team));
+          this would be easier to harmonize with players
+
+core
+
+fix as i go through
   db.getPayroll
-    db.getPayroll -> dao.payrolls.get({key: TID})
+    db.getPayroll -> dao.payrolls.get({tid: TID})
       grep -r getPayroll\( js
     db.getPayrolls -> dao.payrolls.getAll()
       grep -r getPayrolls\( js
-  team.filter
-    can return promise, but should have API similar to players, right?
-      dao.teams.get(tid).filter().then(function (team) {})
-      or keep filter in core?
 
-bbgmView
+util
+  bbgmView
 
 dao
   goal: NO INDEXEDDB ANYWHERE ELSE!
@@ -27,6 +40,8 @@ what about browsers without promise support? make sure error is graceful
 grep -r Deferred js/views
 
 get rid of $ and _ where possible
+
+unit tests
 
 unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-javascript-es6-promise-support-done-api https://code.google.com/p/v8/issues/detail?id=3093
   can customize build to save space https://github.com/petkaantonov/bluebird#custom-builds
@@ -448,7 +463,7 @@ schedule page (and dashboard and maybe gamelog) should show opponent records
 LOW PRIORITY
 ------------
 
-use compound index on season + team for games obectStore in helpers.gameLogList
+use compound index on season + team for games obectStore in helpers.gameLogList, views.leagueDashboard, maybe elsewhere
 upcoming free agents page should show at least some information about signings (or non-signings) during re-sign phase
 tanking is too easy http://www.reddit.com/r/BasketballGM/comments/20038f/too_easy_to_tank/
 contractNegotiation

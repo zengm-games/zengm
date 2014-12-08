@@ -301,7 +301,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
 
                             vars.players = players;
 
-                            db.getPayroll(tx, inputs.tid, function (payroll) {
+                            dao.payrolls.get({ot: tx, tid: inputs.tid}).spread(function (payroll) {
                                 vars.payroll = payroll / 1000;
 
                                 deferred.resolve(vars);

@@ -2,7 +2,7 @@
  * @name views.leagueDashboard
  * @namespace League dashboard, displaying several bits of information about the league/team.
  */
-define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, db, g, ui, player, season, team, $, ko, mapping, _, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, season, team, $, ko, _, bbgmView, helpers) {
     "use strict";
 
     function InitViewModel() {

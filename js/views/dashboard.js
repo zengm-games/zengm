@@ -2,18 +2,12 @@
  * @name views.dashboard
  * @namespace Dashboard.
  */
-define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, $, bbgmView, helpers, viewHelpers) {
+define(["dao", "ui", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, ui, bbgmView, helpers, viewHelpers) {
     "use strict";
 
-    function updateDashboard(inputs, updateEvents) {
-        var deferred;
-
-        deferred = $.Deferred();
-
-        g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
-            var i, leagues;
-
-            leagues = event.target.result;
+    function updateDashboard() {
+        return dao.leagues.getAll().then(function (leagues) {
+            var i;
 
             for (i = 0; i < leagues.length; i++) {
                 if (leagues[i].teamRegion === undefined) {
@@ -25,15 +19,13 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers", "util/vi
                 delete leagues[i].tid;
             }
 
-            deferred.resolve({
+            return {
                 leagues: leagues
-            });
-        };
-
-        return deferred.promise();
+            };
+        });
     }
 
-    function uiFirst(vm) {
+    function uiFirst() {
         ui.title("Dashboard");
     }
 

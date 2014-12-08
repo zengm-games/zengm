@@ -5,7 +5,16 @@
 define(["db", "globals"], function (db, g) {
     "use strict";
 
-    var players;
+    var leagues, players;
+
+    leagues = {};
+    leagues.getAll = function () {
+        return new Promise(function(resolve, reject) {
+            g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
+                resolve(event.target.result);
+            };
+        });
+    }
 
     // This needs to be used for anything that reads player stats!!!
     // Can also be used other places, but not essential
@@ -169,6 +178,7 @@ define(["db", "globals"], function (db, g) {
     }
 
     return {
+        leagues: leagues,
         players: players
     };
 });

@@ -31,7 +31,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
     function update(args) {
         return function (inputs, updateEvents, cb) {
-            var afterEverything, i, container, containerEl;
+            var afterEverything, i, container, containerEl, promises;
 
             container = g.lid !== null ? "league_content" : "content";
             containerEl = document.getElementById(container);
@@ -69,13 +69,14 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                 cb();
             });
 
-            $.when.apply(null, _.map(args.runBefore, function (fn) { return fn(inputs, updateEvents, vm); })).done(function () {
+            promises = args.runBefore.map(function (fn) { return fn(inputs, updateEvents, vm); });
+            Promise.all(promises).then(function (results) {
                 var vars;
 
-                if (arguments.length > 1) {
+                if (results.length > 1) {
                     vars = $.extend.apply(null, arguments);
                 } else {
-                    vars = arguments[0];
+                    vars = results[0];
                 }
 
                 if (vars !== undefined) {

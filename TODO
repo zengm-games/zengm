@@ -1,6 +1,18 @@
 DB CHANGES SINCE 3.4.0
 ----------------------
 
+THE FLATTENING
+--------------
+
+use promises pervasively
+
+bbgmView
+
+dao
+
+what about browsers without promise support? make sure error is graceful
+
+
 PERFORMANCE CRAP
 ----------------
 

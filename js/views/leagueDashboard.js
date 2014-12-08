@@ -52,18 +52,12 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
     }
 
     function updatePayroll(inputs, updateEvents) {
-        var deferred, vars;
-
-        deferred = $.Deferred();
-        vars = {};
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
-            db.getPayroll(null, g.userTid, function (payroll) {
-                vars.payroll = payroll / 1000;  // [millions of dollars]
-
-                deferred.resolve(vars);
+            return dao.payrolls.get({tid: g.userTid}).spread(function (payroll) {
+                return {
+                    payroll: payroll / 1000 // [millions of dollars]
+                };
             });
-            return deferred.promise();
         }
     }
 

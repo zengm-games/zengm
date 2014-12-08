@@ -1,4 +1,4 @@
-define(["db", "lib/bluebird"], function (db, Promise) {
+define([], function () {
     "use strict";
 
     /**
@@ -16,21 +16,19 @@ define(["db", "lib/bluebird"], function (db, Promise) {
         options.ot = options.ot !== undefined ? options.ot : null;
         options.tid = options.tid !== undefined ? options.tid : null;
 
-        return new Promise(function (resolve, reject) {
-            if (options.tid === null) {
-                reject("Need to supply a tid to dao.payrolls.getAll");
+        if (options.tid === null) {
+            throw new Error("Need to supply a tid to dao.payrolls.getAll");
+        }
+
+        return require("dao/contracts").getAll({ot: options.ot, tid: options.tid}).then(function (contracts) {
+            var i, payroll;
+
+            payroll = 0;
+            for (i = 0; i < contracts.length; i++) {
+                payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
             }
 
-            require("dao/contracts").getAll({ot: options.ot, tid: options.tid}).then(function (contracts) {
-                var i, payroll;
-
-                payroll = 0;
-                for (i = 0; i < contracts.length; i++) {
-                    payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
-                }
-
-                resolve(payroll, contracts);
-            });
+            return [payroll, contracts];
         });
     }
 

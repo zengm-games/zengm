@@ -10,6 +10,46 @@ switch dao.players.get to use promises
   grep -R dao.players.get js
   for retrieving one, implement dao.players.get on top of getAll
   dao.players.getAll(tid).then(function (players) { return player.filter({}) }).then(function (players));
+  to fix
+    js/core/debug.js:        dao.players.getAll({statsSeasons: "all"}, function (players) {
+    js/core/debug.js:        dao.players.getAll({
+    js/core/debug.js:        dao.players.getAll({
+    js/core/team.js:        dao.players.getAll({
+    js/core/team.js:            dao.players.getAll({
+    js/core/team.js:                dao.players.getAll({
+    js/core/team.js:                dao.players.getAll({
+    js/core/season.js:            dao.players.getAll({
+    js/core/season.js:                dao.players.getAll({
+    js/core/trade.js:                dao.players.getAll({
+    js/views/powerRankings.js:                dao.players.getAll({
+    js/views/player.js:            dao.players.getAll({
+    js/views/playerRatings.js:            dao.players.getAll({
+    js/views/playerShotLocations.js:            dao.players.getAll({
+    js/views/draft.js:            dao.players.getAll({
+    js/views/draft.js:                dao.players.getAll({
+    js/views/draftScouting.js:        dao.players.getAll({
+    js/views/playerStatDists.js:            dao.players.getAll({
+    js/views/freeAgents.js:            dao.players.getAll({
+    js/views/playerStats.js:            dao.players.getAll({
+    js/views/watchList.js:            dao.players.getAll({
+    js/views/tradingBlock.js:            dao.players.getAll({
+    js/views/tradingBlock.js:                                dao.players.getAll({
+    js/views/hallOfFame.js:            dao.players.getAll({
+    js/views/negotiation.js:            dao.players.getAll({
+    js/views/leaders.js:                dao.players.getAll({
+    js/views/roster.js:                        dao.players.getAll({
+    js/views/roster.js:                    dao.players.getAll({
+    js/views/negotiationList.js:            dao.players.getAll({
+    js/views/leagueDashboard.js:            dao.players.getAll({
+    js/views/teamHistory.js:                dao.players.getAll({
+    js/views/playerRatingDists.js:            dao.players.getAll({
+    js/views/draftSummary.js:        dao.players.getAll({
+    js/views/history.js:                dao.players.getAll({
+    js/views/upcomingFreeAgents.js:        dao.players.getAll({
+    js/views/trade.js:            dao.players.getAll({
+    js/views/trade.js:                dao.players.getAll({
+    js/util/advStats.js:            dao.players.getAll({
+  then remove cb hack in dao.players.getAll
 
 views
   leagueDashboard
@@ -19,6 +59,7 @@ views
         OR
         dao.teams.get(tid).then(function (teams) { team.filter({}) }).then(function (team));
           this would be easier to harmonize with players
+        but how to deal with the other objectstores used in team.filter besides teams? gets messy, doesn't it?
 
 core
 

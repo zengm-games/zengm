@@ -217,17 +217,16 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
     }
 
     function updatePlayers(inputs, updateEvents) {
-        var deferred, vars;
+        var vars;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            deferred = $.Deferred();
             vars = {};
 
-            dao.players.getAll({
+            return dao.players.getAll({
                 index: "tid",
                 key: IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED),
                 statsSeasons: [g.season]
-            }, function (players) {
+            }).then(function (players) {
                 var i, stats, userPlayers;
 
                 players = player.filter(players, {
@@ -277,9 +276,8 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                 // Find starting 5
                 vars.starters = userPlayers.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; }).slice(0, 5);
 
-                deferred.resolve(vars);
+                return vars;
             });
-            return deferred.promise();
         }
     }
 

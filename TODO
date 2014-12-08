@@ -6,6 +6,16 @@ THE FLATTENING
 
 use promises pervasively
 
+leagueDashboard
+  db.getPayroll
+    db.getContracts -> dao.contracts.getAll({key: TID})
+    db.getPayroll -> dao.payrolls.get({key: TID})
+    db.getPayrolls -> dao.payrolls.getAll()
+
+  team.filter
+    can return promise, but should have API similar to players, right?
+      dao.teams.get(tid).filter().then(function (team) {})
+
 bbgmView
 
 dao

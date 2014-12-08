@@ -74,12 +74,11 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
                 var vars;
 
                 if (results.length > 1) {
-                    vars = $.extend.apply(null, arguments);
+                    vars = $.extend.apply(null, results);
                 } else {
                     vars = results[0];
                 }
 
-return;
                 if (vars !== undefined) {
                     // Check for errors/redirects
                     if (vars.errorMessage !== undefined) {

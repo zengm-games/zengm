@@ -12,7 +12,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
 
     function updateInbox(inputs, updateEvents) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
-            dao.messages.getAll().then(function (messages) {
+            return dao.messages.getAll().then(function (messages) {
                 var i;
 
                 messages.reverse();
@@ -22,7 +22,6 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
                 }
                 messages = messages.slice(0, 2);
 
-console.log(1)
                 return {
                     messages: messages
                 };
@@ -32,12 +31,11 @@ console.log(1)
 
     function updateTeam(inputs, updateEvents) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            dao.teams.get({key: g.userTid}).then(function (t) {
+            return dao.teams.get({key: g.userTid}).then(function (t) {
                 var latestSeason;
 
                 latestSeason = t.seasons[t.seasons.length - 1];
 
-console.log(2)
                 return {
                     region: t.region,
                     name: t.name,

@@ -16,9 +16,10 @@ define(["db", "lib/bluebird"], function (db, Promise) {
     function getAll(options) {
         options = options !== undefined ? options : {};
         options.ot = options.ot !== undefined ? options.ot : null;
+        options.key = options.key !== undefined ? options.key : null;
 
         return new Promise(function (resolve, reject) {
-            db.getObjectStore(options.ot, "teams", "teams").getAll().onsuccess = function (event) {
+            db.getObjectStore(options.ot, "teams", "teams").getAll(options.key).onsuccess = function (event) {
                 resolve(event.target.result);
             };
         });

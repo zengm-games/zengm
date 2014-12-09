@@ -2,7 +2,7 @@
  * @name util.message
  * @namespace Messages from the owner of the team to the GM.
  */
-define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, ui, helpers, random) {
+define(["dao", "db", "globals", "util/helpers", "util/random"], function (dao, db, g, helpers, random) {
     "use strict";
 
     var activities, playoffs, intro, first, money, ovr, wins;
@@ -142,8 +142,8 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
         "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}."
     ];
 
-    function generate(deltas, cb) {
-        var activity1, activity2, indMoney, indOverall, indPlayoffs, indOvr, indWins, m, ownerMoodSum, tx;
+    function generate(deltas) {
+        var activity1, activity2, indMoney, indOverall, indPlayoffs, indOvr, indWins, m, ownerMoodSum;
 
         ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
 
@@ -230,27 +230,31 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
             }
         }
 
-        tx = g.dbl.transaction("messages", "readwrite");
-        tx.objectStore("messages").add({
-            read: false,
-            from: "The Owner",
-            year: g.season,
-            text: m
+        return new Promise(function (resolve, reject) {
+            var tx;
+
+            tx = g.dbl.transaction("messages", "readwrite");
+            tx.objectStore("messages").add({
+                read: false,
+                from: "The Owner",
+                year: g.season,
+                text: m
+            });
+            tx.oncomplete = function () {
+                if (ownerMoodSum > -1) {
+                    resolve();
+                } else if (g.season < g.gracePeriodEnd || g.godMode) {
+                    // Can't get fired yet... or because of God Mode
+                    resolve();
+                } else {
+                    // Fired!
+                    dao.gameAttributes.set({
+                        gameOver: true,
+                        showFirstOwnerMessage: true
+                    }).then(resolve);
+                }
+            };
         });
-        tx.oncomplete = function () {
-            if (ownerMoodSum > -1) {
-                cb();
-            } else if (g.season < g.gracePeriodEnd || g.godMode) {
-                // Can't get fired yet... or because of God Mode
-                cb();
-            } else {
-                // Fired!
-                db.setGameAttributes({
-                    gameOver: true,
-                    showFirstOwnerMessage: true
-                }, cb);
-            }
-        };
     }
 
     return {

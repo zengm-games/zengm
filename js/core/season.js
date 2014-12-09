@@ -2,7 +2,7 @@
  * @name core.season
  * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
  */
-define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/jquery", "lib/underscore", "util/account", "util/ads", "util/eventLog", "util/helpers", "util/message", "util/random"], function (dao, db, g, ui, contractNegotiation, draft, finances, freeAgents, player, team, $, _, account, ads, eventLog, helpers, message, random) {
+define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/bluebird", "lib/jquery", "lib/underscore", "util/account", "util/ads", "util/eventLog", "util/helpers", "util/message", "util/random"], function (dao, db, g, ui, contractNegotiation, draft, finances, freeAgents, player, team, Promise, $, _, account, ads, eventLog, helpers, message, random) {
     "use strict";
 
     var phaseText;
@@ -16,11 +16,11 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * @param {function(Object)} cb Callback function whose argument is an object containing the changes in g.ownerMood this season.
      */
     function updateOwnerMood(cb) {
-        team.filter({
+        return team.filter({
             seasonAttrs: ["won", "playoffRoundsWon", "profit"],
             season: g.season,
             tid: g.userTid
-        }, function (t) {
+        }).then(function (t) {
             var deltas, ownerMood;
 
             deltas = {};
@@ -34,24 +34,24 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             }
             deltas.money = (t.profit - 15) / 100;
 
-            // Only update owner mood if grace period is over
-            if (g.season >= g.gracePeriodEnd) {
-                ownerMood = {};
-                ownerMood.wins = g.ownerMood.wins + deltas.wins;
-                ownerMood.playoffs = g.ownerMood.playoffs + deltas.playoffs;
-                ownerMood.money = g.ownerMood.money + deltas.money;
+            Promise.try(function () {
+                // Only update owner mood if grace period is over
+                if (g.season >= g.gracePeriodEnd) {
+                    ownerMood = {};
+                    ownerMood.wins = g.ownerMood.wins + deltas.wins;
+                    ownerMood.playoffs = g.ownerMood.playoffs + deltas.playoffs;
+                    ownerMood.money = g.ownerMood.money + deltas.money;
 
-                // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
-                if (ownerMood.wins > 1) { ownerMood.wins = 1; }
-                if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
-                if (ownerMood.money > 1) { ownerMood.money = 1; }
+                    // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
+                    if (ownerMood.wins > 1) { ownerMood.wins = 1; }
+                    if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
+                    if (ownerMood.money > 1) { ownerMood.money = 1; }
 
-                db.setGameAttributes({ownerMood: ownerMood}, function () {
-                    cb(deltas);
-                });
-            } else {
-                cb(deltas);
-            }
+                    return dao.gameAttributes.set({ownerMood: ownerMood});
+                }
+            }).then(function () {
+                return deltas;
+            });
         });
     }
 
@@ -594,7 +594,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
     }
 
     function newPhasePreseason(cb) {
-        freeAgents.autoSign(function () { // Important: do this before changing the season or contracts and stats are fucked up
+        freeAgents.autoSign().then(function () { // Important: do this before changing the season or contracts and stats are fucked up
             db.setGameAttributes({season: g.season + 1}, function () {
                 var coachingRanks, scoutingRank, tx;
 
@@ -984,16 +984,14 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     }
 
 
-                    updateOwnerMood(function (deltas) {
-                        message.generate(deltas, function () {
-                            newPhaseCb(g.PHASE.BEFORE_DRAFT, function () {
-                                if (cb !== undefined) {
-                                    cb();
-                                }
+                    updateOwnerMood().then(message.generate).then(function () {
+                        newPhaseCb(g.PHASE.BEFORE_DRAFT, function () {
+                            if (cb !== undefined) {
+                                cb();
+                            }
 
-                                helpers.bbgmPing("season");
-                            }, url, ["playerMovement"]);
-                        });
+                            helpers.bbgmPing("season");
+                        }, url, ["playerMovement"]);
                     });
                 });
             };

@@ -2,7 +2,7 @@
  * @name core.freeAgents
  * @namespace Functions related to free agents that didn't make sense to put anywhere else.
  */
-define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/underscore", "util/helpers", "util/lock", "util/random"], function (dao, db, g, ui, player, team, _, helpers, lock, random) {
+define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/helpers", "util/lock", "util/random"], function (dao, db, g, ui, player, team, Promise, _, helpers, lock, random) {
     "use strict";
 
     /**
@@ -11,125 +11,127 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/underscor
      * Each team (in random order) will sign free agents up to their salary cap or roster size limit. This should eventually be made smarter
      *
      * @memberOf core.freeAgents
-     * @param {function()} cb Callback.
+     * @return {Promise}
      */
-    function autoSign(cb) {
-        team.filter({
+    function autoSign() {
+        return team.filter({
             attrs: ["strategy"],
             season: g.season
-        }, function (teams) {
-            var strategies, transaction;
+        }).then(function (teams) {
+            return new Promise(function (resolve, reject) {
+                var strategies, tx;
 
-            strategies = _.pluck(teams, "strategy");
+                strategies = _.pluck(teams, "strategy");
 
-            transaction = g.dbl.transaction(["players", "playerStats", "releasedPlayers"], "readwrite");
+                tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers"], "readwrite");
 
-            transaction.objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                var i, players, signTeam, tids;
+                tx.objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
+                    var i, players, signTeam, tids;
 
-                // List of free agents, sorted by value
-                players = event.target.result;
-                players.sort(function (a, b) { return b.value - a.value; });
+                    // List of free agents, sorted by value
+                    players = event.target.result;
+                    players.sort(function (a, b) { return b.value - a.value; });
 
-                if (players.length === 0) {
-                    cb();
-                    return;
-                }
-
-                // Randomly order teams
-                tids = [];
-                for (i = 0; i < g.numTeams; i++) {
-                    tids.push(i);
-                }
-                random.shuffle(tids);
-
-                signTeam = function (ti) {
-                    var tid;
-
-                    tid = tids[ti];
-
-                    // Run callback when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
-                    if (ti === tids.length) {
-                        cb();
+                    if (players.length === 0) {
+                        resolve();
                         return;
                     }
 
-                    // Skip the user's team
-                    if (tid === g.userTid) {
-                        signTeam(ti + 1);
-                        return;
+                    // Randomly order teams
+                    tids = [];
+                    for (i = 0; i < g.numTeams; i++) {
+                        tids.push(i);
                     }
+                    random.shuffle(tids);
 
-                    // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
-                    if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
-                        signTeam(ti + 1);
-                        return;
-                    }
+                    signTeam = function (ti) {
+                        var tid;
 
-                    // Skip rebuilding teams sometimes
-                    if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
-                        signTeam(ti + 1);
-                        return;
-                    }
+                        tid = tids[ti];
 
-/*                    // Randomly don't try to sign some players this day
-                    while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
-                        players.shift();
-                    }*/
+                        // Run callback when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
+                        if (ti === tids.length) {
+                            resolve();
+                            return;
+                        }
 
-                    transaction.objectStore("players").index("tid").count(tid).onsuccess = function (event) {
-                        var numPlayersOnRoster;
+                        // Skip the user's team
+                        if (tid === g.userTid) {
+                            signTeam(ti + 1);
+                            return;
+                        }
 
-                        numPlayersOnRoster = event.target.result;
+                        // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
+                        if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
+                            signTeam(ti + 1);
+                            return;
+                        }
 
-                        db.getPayroll(transaction, tid, function (payroll) {
-                            var afterPickPlayer, i, foundPlayer, p;
+                        // Skip rebuilding teams sometimes
+                        if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
+                            signTeam(ti + 1);
+                            return;
+                        }
 
-                            afterPickPlayer = function (p) {
-                                p = player.setContract(p, p.contract, true);
-                                p.gamesUntilTradable = 15;
-                                dao.players.put({ot: transaction, p: p});
-                                team.rosterAutoSort(transaction, tid, function () {
+    /*                    // Randomly don't try to sign some players this day
+                        while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
+                            players.shift();
+                        }*/
+
+                        tx.objectStore("players").index("tid").count(tid).onsuccess = function (event) {
+                            var numPlayersOnRoster;
+
+                            numPlayersOnRoster = event.target.result;
+
+                            db.getPayroll(tx, tid, function (payroll) {
+                                var afterPickPlayer, i, foundPlayer, p;
+
+                                afterPickPlayer = function (p) {
+                                    p = player.setContract(p, p.contract, true);
+                                    p.gamesUntilTradable = 15;
+                                    dao.players.put({ot: tx, p: p});
+                                    team.rosterAutoSort(tx, tid, function () {
+                                        if (ti <= tids.length) {
+                                            signTeam(ti + 1);
+                                        }
+                                    });
+    //console.log(p.tid + ' sign ' + p.name + ' - ' + numPlayersOnRoster);
+                                };
+
+                                if (numPlayersOnRoster < 15) {
+                                    for (i = 0; i < players.length; i++) {
+                                        // Don't sign minimum contract players to fill out the roster
+                                        if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
+                                            p = players[i];
+                                            p.tid = tid;
+                                            if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                                                player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                                                    afterPickPlayer(p);
+                                                });
+                                            } else {
+                                                afterPickPlayer(p);
+                                            }
+                                            numPlayersOnRoster += 1;
+                                            payroll += p.contract.amount;
+                                            foundPlayer = true;
+                                            players.splice(i, 1); // Remove from list of free agents
+                                            break;  // Only add one free agent
+                                        }
+                                    }
+                                }
+
+                                if (!foundPlayer) {
                                     if (ti <= tids.length) {
                                         signTeam(ti + 1);
                                     }
-                                });
-//console.log(p.tid + ' sign ' + p.name + ' - ' + numPlayersOnRoster);
-                            };
-
-                            if (numPlayersOnRoster < 15) {
-                                for (i = 0; i < players.length; i++) {
-                                    // Don't sign minimum contract players to fill out the roster
-                                    if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
-                                        p = players[i];
-                                        p.tid = tid;
-                                        if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                                            player.addStatsRow(transaction, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                                                afterPickPlayer(p);
-                                            });
-                                        } else {
-                                            afterPickPlayer(p);
-                                        }
-                                        numPlayersOnRoster += 1;
-                                        payroll += p.contract.amount;
-                                        foundPlayer = true;
-                                        players.splice(i, 1); // Remove from list of free agents
-                                        break;  // Only add one free agent
-                                    }
                                 }
-                            }
-
-                            if (!foundPlayer) {
-                                if (ti <= tids.length) {
-                                    signTeam(ti + 1);
-                                }
-                            }
-                        });
+                            });
+                        };
                     };
-                };
 
-                signTeam(0);
-            };
+                    signTeam(0);
+                };
+            });
         });
     }
 
@@ -262,7 +264,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/underscor
             // This is called if there are remaining days to simulate
             cbYetAnother = function () {
                 decreaseDemands(function () {
-                    autoSign(function () {
+                    autoSign().then(function () {
                         db.setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}, function () {
                             if (g.daysLeft > 0 && numDays > 0) {
                                 ui.realtimeUpdate(["playerMovement"], undefined, function () {

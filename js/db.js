@@ -957,50 +957,9 @@ console.log(event);
      * @param {function()=} cb Optional callback.
      */
     function setGameAttributes(gameAttributes, cb) {
-        var gameAttributesStore, i, key, toUpdate, tx;
-
-        toUpdate = [];
-        for (key in gameAttributes) {
-            if (gameAttributes.hasOwnProperty(key)) {
-                if (g[key] !== gameAttributes[key]) {
-                    toUpdate.push(key);
-                }
-            }
-        }
-
-        tx = g.dbl.transaction("gameAttributes", "readwrite");
-        gameAttributesStore = tx.objectStore("gameAttributes");
-
-        for (i = 0; i < toUpdate.length; i++) {
-            key = toUpdate[i];
-            (function (key) {
-                gameAttributesStore.put({key: key, value: gameAttributes[key]}).onsuccess = function (event) {
-                    g[key] = gameAttributes[key];
-                };
-
-                // Trigger a signal for the team finances view. This is stupid.
-                if (key === "gamesInProgress") {
-                    if (gameAttributes[key]) {
-                        $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-                    } else {
-                        $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-                    }
-                }
-            }(key));
-        }
-
-        tx.oncomplete = function () {
-            // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
-            if (gameAttributes.hasOwnProperty("gamesInProgress") && gameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-            } else if (gameAttributes.hasOwnProperty("gamesInProgress") && !gameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-            }
-
-            if (cb !== undefined) {
-                cb();
-            }
-        };
+        require("dao/gameAttributes").set(gameAttributes).then(function () {
+            cb();
+        });
     }
 
     function reset() {

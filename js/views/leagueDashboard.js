@@ -69,15 +69,12 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
             vars = {};
             stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
 
-            return dao.teams.getAll().then(function (teams) {
-                return team.filter({
-                    t: teams,
-                    attrs: ["tid", "cid"],
-                    seasonAttrs: ["won", "lost", "winp", "att", "revenue", "profit"],
-                    stats: stats,
-                    season: g.season,
-                    sortBy: ["winp", "-lost", "won"]
-                });
+            return team.filter({
+                attrs: ["tid", "cid"],
+                seasonAttrs: ["won", "lost", "winp", "att", "revenue", "profit"],
+                stats: stats,
+                season: g.season,
+                sortBy: ["winp", "-lost", "won"]
             }).then(function (teams) {
                 var cid, i, j;
 
@@ -331,14 +328,11 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
 
     function updateStandings(inputs, updateEvents, vm) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
-            return dao.teams.getAll().then(function (teams) {
-                return team.filter({
-                    t: teams,
-                    attrs: ["tid", "cid", "abbrev", "region"],
-                    seasonAttrs: ["won", "lost", "winp"],
-                    season: g.season,
-                    sortBy: ["winp", "-lost", "won"]
-                });
+            return team.filter({
+                attrs: ["tid", "cid", "abbrev", "region"],
+                seasonAttrs: ["won", "lost", "winp"],
+                season: g.season,
+                sortBy: ["winp", "-lost", "won"]
             }).then(function (teams) {
                 var cid, confTeams, i, k, l;
 

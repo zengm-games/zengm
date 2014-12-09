@@ -318,6 +318,7 @@ define(["dao", "db", "globals", "core/player", "lib/bluebird", "lib/underscore",
      * @memberOf core.team
      * @param {Object} options Options, as described below.
      * @param {number=} options.season Season to retrieve stats/ratings for. If undefined, return stats for all seasons in a list called "stats".
+     * @param {number=} options.tid Team ID. Set this if you want to return only one team object. If undefined, an array of all teams is returned, ordered by tid by default.
      * @param {Array.<string>=} options.attrs List of team attributes to include in output (e.g. region, abbrev, name, ...).
      * @param {Array.<string>=} options.seasonAttrs List of seasonal team attributes to include in output (e.g. won, lost, payroll, ...).
      * @param {Array.<string=>} options.stats List of team stats to include in output (e.g. fg, orb, ast, blk, ...).
@@ -333,8 +334,8 @@ define(["dao", "db", "globals", "core/player", "lib/bluebird", "lib/underscore",
 if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
         options = options !== undefined ? options : {};
-        options.t = options.t !== undefined ? options.t : [];
         options.season = options.season !== undefined ? options.season : null;
+        options.tid = options.tid !== undefined ? options.tid : null;
         options.attrs = options.attrs !== undefined ? options.attrs : [];
         options.seasonAttrs = options.seasonAttrs !== undefined ? options.seasonAttrs : [];
         options.stats = options.stats !== undefined ? options.stats : [];
@@ -524,14 +525,12 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
             }
         };
 
-        return new Promise(function (resolve, reject) {
-            var ft, fts, i, returnOneTeam, savePayroll, sortBy, t;
+        return dao.teams.getAll({ot: options.ot, key: options.tid}).then(function (t) {
+            var ft, fts, i, returnOneTeam, savePayroll, sortBy;
 
-            t = options.t;
-
+            // t will be an array of g.numTeams teams (if options.tid is null) or an array of 1 team. If 1, then we want to return just that team object at the end, not an array of 1 team.
             returnOneTeam = false;
-            if (!_.isArray(t)) {
-                t = [t]
+            if (t.length === 1) {
                 returnOneTeam = true;
             }
 
@@ -565,19 +564,19 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
             // If payroll for the current season was requested, find the current payroll for each team. Otherwise, don't.
             if (options.seasonAttrs.indexOf("payroll") < 0 || options.season !== g.season) {
-                resolve(returnOneTeam ? fts[0] : fts);
+                return returnOneTeam ? fts[0] : fts;
             } else {
                 savePayroll = function (i) {
                     db.getPayroll(options.ot, t[i].tid, function (payroll) {
                         fts[i].payroll = payroll / 1000;
                         if (i === fts.length - 1) {
-                            resolve(returnOneTeam ? fts[0] : fts);
+                            return returnOneTeam ? fts[0] : fts;
                         } else {
-                            savePayroll(i + 1);
+                            return savePayroll(i + 1);
                         }
                     });
                 };
-                savePayroll(0);
+                return savePayroll(0);
             }
         });
     }

@@ -242,7 +242,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 attrs: ["tid", "region", "name", "strategy", "imgURL"],
                 seasonAttrs: ["profit", "won", "lost", "playoffRoundsWon"],
                 ot: tx
-            }, function (t) {
+            }).then(function (t) {
                 var attrs, ratings, stats;
 
                 vars.team = t;

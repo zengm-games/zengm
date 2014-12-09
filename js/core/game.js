@@ -766,7 +766,8 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                     url = undefined;
                 }
 
-                advStats.calculateAll(function () {  // Update all advanced stats every day
+                // Update all advanced stats every day
+                advStats.calculateAll().then(function () {
                     ui.realtimeUpdate(["gameSim"], url, function () {
                         db.setGameAttributes({lastDbChange: Date.now()}, function () {
                             if (g.phase === g.PHASE.PLAYOFFS) {
@@ -785,44 +786,6 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
         cbSimGames = function (schedule, teams) {
             var doPlayByPlay, gs, i, results;
-/*            var cbWorker, data, numWorkersFinished, i, gs, numWorkers, results, schedules;
-
-            numWorkers = g.gameSimWorkers.length;
-            numWorkersFinished = 0;
-
-            // Separate results and schedules for each worker
-            schedules = [];
-            results = [];
-            for (i = 0; i < numWorkers; i++) {
-                schedules.push([]);
-                results.push([]);
-            }
-
-            // Divide schedule evenly among workers
-            for (i = 0; i < schedule.length; i++) {
-                // all the information needed to run gameSim.GameSim
-                schedules[i % numWorkers].push({
-                    gid: schedule[i].gid,
-                    homeTeam: teams[schedule[i].homeTid],
-                    awayTeam: teams[schedule[i].awayTid]
-                });
-            }
-
-            for (i = 0; i < numWorkers; i++) {
-                // Set callback for worker
-                g.gameSimWorkers[i].onmessage = (function (i) {
-                    return function (event) {
-                        results[i].push(event.data);
-                        numWorkersFinished += 1;
-                        if (numWorkersFinished === numWorkers) {
-                            cbSaveResults(_.flatten(results));
-                        }
-                    };
-                }(i));
-
-                // Send data to worker
-                g.gameSimWorkers[i].postMessage(schedules[i]);
-            }*/
 
             results = [];
             for (i = 0; i < schedule.length; i++) {
@@ -883,9 +846,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 if (g.phase !== g.PHASE.PLAYOFFS) {
                     // Decrease free agent demands and let AI teams sign them
                     freeAgents.decreaseDemands(function () {
-                        freeAgents.autoSign(function () {
-                            cbPlayGames();
-                        });
+                        freeAgents.autoSign().then(cbPlayGames);
                     });
                 } else {
                     cbPlayGames();

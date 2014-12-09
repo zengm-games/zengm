@@ -213,6 +213,7 @@ CURRENT
 -------
 
 career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/are_there_career_ending_injuries/
+if playoffSeries already exists, don't try to create again http://www.reddit.com/r/BasketballGM/comments/2on0ij/a_bug_will_not_advance_to_playoffs_errors_in_log/
 when uploading league file, no need to read whole thing in just to show teams menu. only need to read up to teams. but how?
 simulate in multiple tabs -> NaN
 should be impossible to have a player average 0 assists in big minutes

@@ -2,7 +2,7 @@
  * @name views.freeAgents
  * @namespace List of free agents.
  */
-define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, db, g, ui, freeAgents, player, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, freeAgents, player, Promise, $, ko, _, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -40,49 +40,42 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
     };
 
     function updateFreeAgents() {
-        var deferred;
-
-        deferred = $.Deferred();
-
-        db.getPayroll(null, g.userTid, function (payroll) {
-            var capSpace;
+        return Promise.all([
+            dao.payrolls.get({tid: g.userTid}).get(0),
+            dao.players.getAll({
+                index: "tid",
+                key: g.PLAYER.FREE_AGENT,
+                statsSeasons: [g.season, g.season - 1]
+            })
+        ]).spread(function (payroll, players) {
+            var capSpace, i;
 
             capSpace = (g.salaryCap - payroll) / 1000;
             if (capSpace < 0) {
                 capSpace = 0;
             }
 
-            dao.players.getAll({
-                index: "tid",
-                key: g.PLAYER.FREE_AGENT,
-                statsSeasons: [g.season, g.season - 1]
-            }, function (players) {
-                var i;
-
-                players = player.filter(players, {
-                    attrs: ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury", "watch"],
-                    ratings: ["ovr", "pot", "skills"],
-                    stats: ["min", "pts", "trb", "ast", "per"],
-                    season: g.season,
-                    showNoStats: true,
-                    showRookies: true,
-                    fuzz: true,
-                    oldStats: true
-                });
-
-                for (i = 0; i < players.length; i++) {
-                    players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
-                    players[i].mood = player.moodColorText(players[i]);
-                }
-
-                deferred.resolve({
-                    capSpace: capSpace,
-                    players: players
-                });
+            players = player.filter(players, {
+                attrs: ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury", "watch"],
+                ratings: ["ovr", "pot", "skills"],
+                stats: ["min", "pts", "trb", "ast", "per"],
+                season: g.season,
+                showNoStats: true,
+                showRookies: true,
+                fuzz: true,
+                oldStats: true
             });
-        });
 
-        return deferred.promise();
+            for (i = 0; i < players.length; i++) {
+                players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
+                players[i].mood = player.moodColorText(players[i]);
+            }
+
+            return {
+                capSpace: capSpace,
+                players: players
+            };
+        });
     }
 
     function uiFirst(vm) {

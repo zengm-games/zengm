@@ -6,6 +6,8 @@ THE FLATTENING
 
 use promises pervasively
 
+util/account
+
 switch dao.players.get to use promises
   grep -R dao.players.get js
   for retrieving one, implement dao.players.get on top of getAll
@@ -58,6 +60,9 @@ views
         dao.teams.get(tid).then(function (teams) { return team.filter({}) }).then(function (team));
 
 core
+
+advStats - need ability to cancel promise chain and return early, but it's not an error that needs to be logged
+  http://openmymind.net/Cancelling-Long-Promise-Chains/
 
 fix as i go through
   db.getPayroll
@@ -214,6 +219,7 @@ CURRENT
 
 career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/are_there_career_ending_injuries/
 if playoffSeries already exists, don't try to create again http://www.reddit.com/r/BasketballGM/comments/2on0ij/a_bug_will_not_advance_to_playoffs_errors_in_log/
+  use put, not add
 when uploading league file, no need to read whole thing in just to show teams menu. only need to read up to teams. but how?
 simulate in multiple tabs -> NaN
 should be impossible to have a player average 0 assists in big minutes

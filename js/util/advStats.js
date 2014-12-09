@@ -26,7 +26,6 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
         }).then(function (teams) {
             var i, league, leagueStats;
 
-console.log(teams);
             // Total league stats (not per game averages) - gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
             leagueStats = ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb"];
             league = _.reduce(teams, function (memo, team) {

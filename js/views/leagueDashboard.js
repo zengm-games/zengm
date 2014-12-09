@@ -280,21 +280,19 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
     }
 
     function updatePlayoffs(inputs, updateEvents) {
-        var deferred, vars;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
-            deferred = $.Deferred();
-            vars = {
-                showPlayoffSeries: false
-            };
 
-            g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
-                var found, i, playoffSeries, rnd, series;
+            return dao.playoffSeries.get({key: inputs.season}).then(function (playoffSeries) {
+                var found, i, rnd, series, vars;
 
-                playoffSeries = event.target.result;
+                vars = {
+                    showPlayoffSeries: false
+                };
+
                 if (playoffSeries !== undefined) {
                     series = playoffSeries.series;
                     found = false;
+
                     // Find the latest playoff series with the user's team in it
                     for (rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
                         for (i = 0; i < series[rnd].length; i++) {
@@ -320,9 +318,8 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                     }
                 }
 
-                deferred.resolve(vars);
-            };
-            return deferred.promise();
+                return vars;
+            });
         }
     }
 

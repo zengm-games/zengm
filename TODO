@@ -88,6 +88,7 @@ put bugsnag back
 
 after fully abstracting IndexedDB, could i improve performance by running it locally in node and using a relational database?
   same with mobile on phonegap
+  same with web - "turbo mode" where only one window (db connection) is allowed and caching is heavy
 
 PERFORMANCE CRAP
 ----------------
@@ -211,6 +212,7 @@ separate active and retired players into separate object stores
 CURRENT
 -------
 
+career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/are_there_career_ending_injuries/
 when uploading league file, no need to read whole thing in just to show teams menu. only need to read up to teams. but how?
 simulate in multiple tabs -> NaN
 should be impossible to have a player average 0 assists in big minutes

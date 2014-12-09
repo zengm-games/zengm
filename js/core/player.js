@@ -340,9 +340,9 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
                 if (age <= 24) {
                     baseChangeLocal = baseChange;
                 } else if (age <= 30) {
-                    baseChangeLocal = baseChange + 2;
+                    baseChangeLocal = baseChange + 1;
                 } else {
-                    baseChangeLocal = baseChange + 4;
+                    baseChangeLocal = baseChange + 3;
                 }
                 p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChangeLocal * random.uniform(0.5, 1.5));
             }

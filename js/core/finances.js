@@ -2,50 +2,50 @@
  * @name core.finances
  * @namespace Anything related to budget/finances.
  */
-define(["globals", "lib/underscore"], function (g, _) {
+define(["dao", "globals", "lib/bluebird", "lib/underscore"], function (dao, g, Promise, _) {
     "use strict";
 
     /**
      * Assess the payroll and apply minimum and luxury taxes.
      *
      * @memberOf core.finances
-     * @param {function()} cb Callback function.
+     * @return {Promise}
      */
-    function assesPayrollMinLuxury(cb) {
-        var i, getPayroll, payrolls, tx;
+    function assessPayrollMinLuxury() {
+        return dao.payrolls.getAll().then(function (payrolls) {
+            return new Promise(function (resolve, reject) {
+                var tx;
 
-        require("db").getPayrolls(function (payrolls) {
-            var tx;
+                // Update teams object store
+                tx = g.dbl.transaction("teams", "readwrite");
+                tx.objectStore("teams").openCursor().onsuccess = function (event) {
+                    var cursor, i, team;
 
-            // Update teams object store
-            tx = g.dbl.transaction("teams", "readwrite");
-            tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                var cursor, i, team;
+                    cursor = event.target.result;
+                    if (cursor) {
+                        team = cursor.value;
+                        i = team.seasons.length - 1;  // Relevant row is the last one
 
-                cursor = event.target.result;
-                if (cursor) {
-                    team = cursor.value;
-                    i = team.seasons.length - 1;  // Relevant row is the last one
+                        // Store payroll
+                        team.seasons[i].payrollEndOfSeason = payrolls[team.tid];
 
-                    // Store payroll
-                    team.seasons[i].payrollEndOfSeason = payrolls[team.tid];
+                        // Assess minimum payroll tax and luxury tax
+                        if (payrolls[team.tid] < g.minPayroll) {
+                            team.seasons[i].expenses.minTax.amount = g.minPayroll - payrolls[team.tid];
+                            team.seasons[i].cash -= team.seasons[i].expenses.minTax.amount;
+                        } else if (payrolls[team.tid] > g.luxuryPayroll) {
+                            team.seasons[i].expenses.luxuryTax.amount = g.luxuryTax * (payrolls[team.tid] - g.luxuryPayroll);
+                            team.seasons[i].cash -= team.seasons[i].expenses.luxuryTax.amount;
+                        }
 
-                    // Assess minimum payroll tax and luxury tax
-                    if (payrolls[team.tid] < g.minPayroll) {
-                        team.seasons[i].expenses.minTax.amount = g.minPayroll - payrolls[team.tid];
-                        team.seasons[i].cash -= team.seasons[i].expenses.minTax.amount;
-                    } else if (payrolls[team.tid] > g.luxuryPayroll) {
-                        team.seasons[i].expenses.luxuryTax.amount = g.luxuryTax * (payrolls[team.tid] - g.luxuryPayroll);
-                        team.seasons[i].cash -= team.seasons[i].expenses.luxuryTax.amount;
+                        cursor.update(team);
+                        cursor.continue();
                     }
-
-                    cursor.update(team);
-                    cursor.continue();
-                }
-            };
-            tx.oncomplete = function () {
-                cb();
-            };
+                };
+                tx.oncomplete = function () {
+                    resolve();
+                };
+            });
         });
     }
 
@@ -176,7 +176,7 @@ define(["globals", "lib/underscore"], function (g, _) {
     }
 
     return {
-        assesPayrollMinLuxury: assesPayrollMinLuxury,
+        assessPayrollMinLuxury: assessPayrollMinLuxury,
         updateRanks: updateRanks,
         getRankLastThree: getRankLastThree
     };

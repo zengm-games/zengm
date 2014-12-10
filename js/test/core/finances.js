@@ -17,9 +17,9 @@ define(["db", "globals", "core/league", "core/finances"], function (db, g, leagu
             league.remove(g.lid, done);
         });
 
-        describe("#assesPayrollMinLuxury()", function () {
+        describe("#assessPayrollMinLuxury()", function () {
             it("should store payroll and appropriately assess luxury and minimum payroll taxes for each team", function (done) {
-                finances.assesPayrollMinLuxury(function () {
+                finances.assessPayrollMinLuxury(function () {
                     g.dbl.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
                         var i, teams;
 

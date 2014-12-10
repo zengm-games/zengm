@@ -827,7 +827,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             };
 
             tx.oncomplete = function () {
-                finances.assesPayrollMinLuxury(function () {
+                finances.assessPayrollMinLuxury().then(function () {
                     var url;
 
                     // Don't redirect if we're viewing a live game now

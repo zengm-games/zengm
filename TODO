@@ -55,9 +55,6 @@ switch dao.players.get to use promises
 
 views
   leagueDashboard
-    team.filter
-      can return promise, but should have API similar to players, right?
-        dao.teams.get(tid).then(function (teams) { return team.filter({}) }).then(function (team));
 
 core
 
@@ -70,14 +67,14 @@ fix as i go through
       grep -r getPayroll\( js
     db.getPayrolls -> dao.payrolls.getAll()
       grep -r getPayrolls\( js
+  team.filter
 
 util
   bbgmView
 
-dao
-  goal: NO INDEXEDDB ANYWHERE ELSE!
-
-what about browsers without promise support? make sure error is graceful
+big goals
+  indexeddb only in dao
+  no "cb" anywhere
 
 grep -r Deferred js/views
 

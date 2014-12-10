@@ -59,10 +59,10 @@ define(["dao", "globals", "lib/bluebird", "lib/underscore"], function (dao, g, P
      * @memberOf core.finances
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on teams, readwrite; if null is passed, then a new transaction will be used.
      * @param {Array.<string>} type The types of ranks to update - some combination of "budget", "expenses", and "revenues"
-     * @param {function()=} cb Optional callback function.
+     * @param {Promise}
      */
-    function updateRanks(ot, types, cb) {
-        var getByItem, sortFn, teamStore, updateObj;
+    function updateRanks(ot, types) {
+        var getByItem, sortFn, updateObj;
 
         sortFn = function (a, b) {
             return b.amount - a.amount;
@@ -94,12 +94,8 @@ define(["dao", "globals", "lib/bluebird", "lib/underscore"], function (dao, g, P
             }
         };
 
-        teamStore = require("db").getObjectStore(ot, "teams", "teams", true);
-
-        teamStore.getAll().onsuccess = function (event) {
-            var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam, s, teams;
-
-            teams = event.target.result;
+        return dao.teams.getAll({ot: ot}).then(function (teams) {
+            var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam, s;
 
             if (types.indexOf("budget") >= 0) {
                 budgetsByTeam = _.pluck(teams, "budget");
@@ -122,31 +118,33 @@ define(["dao", "globals", "lib/bluebird", "lib/underscore"], function (dao, g, P
                 revenuesByItem = getByItem(revenuesByTeam);
             }
 
-            teamStore.openCursor().onsuccess = function (event) {
-                var cursor, i, item, t;
+            return new Promise(function (resolve, reject) {
+                require("db").getObjectStore(ot, "teams", "teams", true).openCursor().onsuccess = function (event) {
+                    var cursor, t;
 
-                cursor = event.target.result;
+                    cursor = event.target.result;
 
-                if (cursor) {
-                    t = cursor.value;
+                    if (cursor) {
+                        t = cursor.value;
 
-                    if (types.indexOf("budget") >= 0) {
-                        updateObj(t.budget, budgetsByItem);
+                        if (types.indexOf("budget") >= 0) {
+                            updateObj(t.budget, budgetsByItem);
+                        }
+                        if (types.indexOf("expenses") >= 0) {
+                            updateObj(t.seasons[s].expenses, expensesByItem);
+                        }
+                        if (types.indexOf("revenues") >= 0) {
+                            updateObj(t.seasons[s].revenues, revenuesByItem);
+                        }
+
+                        cursor.update(t);
+                        cursor.continue();
+                    } else {
+                        resolve();
                     }
-                    if (types.indexOf("expenses") >= 0) {
-                        updateObj(t.seasons[s].expenses, expensesByItem);
-                    }
-                    if (types.indexOf("revenues") >= 0) {
-                        updateObj(t.seasons[s].revenues, revenuesByItem);
-                    }
-
-                    cursor.update(t);
-                    cursor.continue();
-                } else if (cb !== undefined) {
-                    cb();
-                }
-            };
-        };
+                };
+            });
+        });
     }
 
     /**

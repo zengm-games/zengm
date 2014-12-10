@@ -553,13 +553,13 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                 return returnOneTeam ? fts[0] : fts;
             } else {
                 savePayroll = function (i) {
-                    db.getPayroll(options.ot, t[i].tid, function (payroll) {
+                    return dao.payrolls.get({ot: options.ot, tid: t[i].tid}).then(function (payroll) {
                         fts[i].payroll = payroll / 1000;
                         if (i === fts.length - 1) {
                             return returnOneTeam ? fts[0] : fts;
-                        } else {
-                            return savePayroll(i + 1);
                         }
+
+                        return savePayroll(i + 1);
                     });
                 };
                 return savePayroll(0);

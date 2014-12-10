@@ -2,7 +2,7 @@
  * @name views.teamFinances
  * @namespace Team finances.
  */
-define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, finances, team, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, db, g, ui, finances, team, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -70,7 +70,7 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
 
             cursor.update(t);
 
-            finances.updateRanks(tx, ["budget"], function () {
+            finances.updateRanks(tx, ["budget"]).then(function () {
                 ui.realtimeUpdate(["teamFinances"]);
             });
         };
@@ -111,12 +111,8 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
     };
 
     function updateTeamFinances(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || inputs.tid !== vm.tid() || inputs.show !== vm.show()) {
-            deferred = $.Deferred();
-
-            db.getPayroll(null, inputs.tid, function (payroll, contracts) {
+            return dao.payrolls.get({tid: inputs.tid}).spread(function (payroll, contracts) {
                 var contractTotals, i, j, salariesSeasons, season, showInt;
 
                 if (inputs.show === "all") {
@@ -149,11 +145,10 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
 
                 salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
-                g.dbl.transaction("teams").objectStore("teams").get(inputs.tid).onsuccess = function (event) {
-                    var barData, barSeasons, i, keys, t, teamAll, tempData;
+                return dao.teams.get({key: inputs.tid}).then(function (t) {
+                    var barData, barSeasons, i, keys, tempData;
 
-                    t = event.target.result;
-                    t.seasons.reverse();  // Most recent season first
+                    t.seasons.reverse(); // Most recent season first
 
                     keys = ["won", "hype", "pop", "att", "cash", "revenues", "expenses"];
                     barData = {};
@@ -190,13 +185,13 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
                     }
 
                     // Get stuff for the finances form
-                    team.filter({
+                    return team.filter({
                         attrs: ["region", "name", "abbrev", "budget"],
                         seasonAttrs: ["expenses", "payroll"],
                         season: g.season,
                         tid: inputs.tid
-                    }, function (t) {
-                        deferred.resolve({
+                    }).then(function (t) {
+                        return {
                             abbrev: inputs.abbrev,
                             tid: inputs.tid,
                             show: inputs.show,
@@ -207,12 +202,10 @@ define(["db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/
                             barSeasons: barSeasons,
                             team: t,
                             payroll: t.payroll // For above/below observables
-                        });
+                        };
                     });
-                };
+                });
             });
-
-            return deferred.promise();
         }
     }
 

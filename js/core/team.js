@@ -239,21 +239,19 @@ define(["dao", "db", "globals", "core/player", "lib/bluebird", "lib/underscore",
      * @memberOf core.team
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
-     * @param {function()=} cb Optional callback.
+     * @return {Promise}
      */
-    function rosterAutoSort(ot, tid, cb) {
-        var playerStore, tx;
+    function rosterAutoSort(ot, tid) {
+        var tx;
 
         tx = db.getObjectStore(ot, "players", null, true);
-        playerStore = tx.objectStore("players");
 
         // Get roster and sort by value (no potential included)
-//        playerStore.index("tid").getAll(tid).onsuccess = function (event) {
-        dao.players.getAll({
+        return dao.players.getAll({
             ot: tx,
             index: "tid",
             key: tid
-        }, function (players) {
+        }).then(function (players) {
             var i;
 
             players = player.filter(players, {
@@ -273,39 +271,27 @@ define(["dao", "db", "globals", "core/player", "lib/bluebird", "lib/underscore",
             }
 
             // Update rosterOrder
-            playerStore.index("tid").openCursor(tid).onsuccess = function (event) {
-                var cursor, i, p;
+            return new Promise(function (resolve, reject) {
+                tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
+                    var cursor, i, p;
 
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-                    for (i = 0; i < players.length; i++) {
-                        if (players[i].pid === p.pid) {
-                            p.rosterOrder = players[i].rosterOrder;
-                            break;
+                    cursor = event.target.result;
+                    if (cursor) {
+                        p = cursor.value;
+                        for (i = 0; i < players.length; i++) {
+                            if (players[i].pid === p.pid) {
+                                p.rosterOrder = players[i].rosterOrder;
+                                break;
+                            }
                         }
+                        cursor.update(p);
+                        cursor.continue();
+                    } else {
+                        resolve();
                     }
-                    cursor.update(p);
-                    cursor.continue();
-                }
-            };
-
-            if (ot !== null) {
-                // This function doesn't have its own transaction, so we need to call the callback now even though the update might not have been processed yet.
-                if (cb !== undefined) {
-                    cb();
-                }
-            }
+                };
+            });
         });
-
-        if (ot === null) {
-            // This function has its own transaction, so wait until it finishes before calling the callback.
-            tx.oncomplete = function () {
-                if (cb !== undefined) {
-                    cb();
-                }
-            };
-        }
     }
 
     /**

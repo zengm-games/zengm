@@ -426,7 +426,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
                     tx.oncomplete = function () {
                         if (outcome === "accepted") {
                             // Auto-sort CPU team roster
-                            team.rosterAutoSort(null, tids[1], function () {
+                            team.rosterAutoSort(null, tids[1]).then(function () {
                                 clear(function () { // This includes dbChange
                                     cb(true, 'Trade accepted! "Nice doing business with you!"');
                                 });

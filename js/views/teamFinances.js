@@ -2,7 +2,7 @@
  * @name views.teamFinances
  * @namespace Team finances.
  */
-define(["dao", "db", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, db, g, ui, finances, team, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, finances, team, $, ko, _, components, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     var mapping;
@@ -111,9 +111,17 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/team", "lib/jquery"
     };
 
     function updateTeamFinances(inputs, updateEvents, vm) {
+        var vars;
+
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || inputs.tid !== vm.tid() || inputs.show !== vm.show()) {
+            vars = {
+                abbrev: inputs.abbrev,
+                tid: inputs.tid,
+                show: inputs.show
+            };
+
             return dao.payrolls.get({tid: inputs.tid}).spread(function (payroll, contracts) {
-                var contractTotals, i, j, salariesSeasons, season, showInt;
+                var contractTotals, i, j, season, showInt;
 
                 if (inputs.show === "all") {
                     showInt = g.season - g.startingSeason + 1;
@@ -143,7 +151,9 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/team", "lib/jquery"
                     delete contracts[i].exp;
                 }
 
-                salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
+                vars.contracts = contracts;
+                vars.contractTotals = contractTotals;
+                vars.salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
                 return dao.teams.get({key: inputs.tid}).then(function (t) {
                     var barData, barSeasons, i, keys, tempData;
@@ -184,26 +194,21 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/team", "lib/jquery"
                         barSeasons[i] = g.season - i;
                     }
 
-                    // Get stuff for the finances form
-                    return team.filter({
-                        attrs: ["region", "name", "abbrev", "budget"],
-                        seasonAttrs: ["expenses", "payroll"],
-                        season: g.season,
-                        tid: inputs.tid
-                    }).then(function (t) {
-                        return {
-                            abbrev: inputs.abbrev,
-                            tid: inputs.tid,
-                            show: inputs.show,
-                            salariesSeasons: salariesSeasons,
-                            contracts: contracts,
-                            contractTotals: contractTotals,
-                            barData: barData,
-                            barSeasons: barSeasons,
-                            team: t,
-                            payroll: t.payroll // For above/below observables
-                        };
-                    });
+                    vars.barData = barData;
+                    vars.barSeasons = barSeasons;
+                });
+            }).then(function () {
+                // Get stuff for the finances form
+                return team.filter({
+                    attrs: ["region", "name", "abbrev", "budget"],
+                    seasonAttrs: ["expenses", "payroll"],
+                    season: g.season,
+                    tid: inputs.tid
+                }).then(function (t) {
+                    vars.team = t;
+                    vars.payroll = t.payroll; // For above/below observables
+
+                    return vars;
                 });
             });
         }

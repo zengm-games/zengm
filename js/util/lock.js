@@ -2,7 +2,7 @@
  * @name util.lock
  * @namespace These functions all deal with locking game state when there is some blocking action in progress. Like don't allow game simulations when a trade is being negotiated. For figuring out the current state, trust only the database.
  */
-define(["db", "globals"], function (db, g) {
+define(["dao", "db", "globals"], function (dao, db, g) {
     "use strict";
 
     /**
@@ -109,22 +109,20 @@ define(["db", "globals"], function (db, g) {
      * 
      * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on messages; if null is passed, then a new transaction will be used.
-     * @param {function(boolean)} cb Callback.
+     * @return {Promise}
      */
-    function unreadMessage(ot, cb) {
-        db.getObjectStore(ot, "messages", "messages").getAll().onsuccess = function (event) {
-            var i, messages;
-
-            messages = event.target.result;
+    function unreadMessage(ot) {
+        return dao.messages.getAll({ot: ot}).getAll().then(function (messages) {
+            var i;
 
             for (i = 0; i < messages.length; i++) {
                 if (!messages[i].read) {
-                    return cb(true);
+                    return true;
                 }
             }
 
-            return cb(false);
-        };
+            return false;
+        });
     }
 
     return {

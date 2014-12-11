@@ -1,9 +1,12 @@
 define(["globals", "lib/bluebird"], function (g, Promise) {
     "use strict";
 
-    function getAll() {
+    function getAll(options) {
+        options = options !== undefined ? options : {};
+        options.ot = options.ot !== undefined ? options.ot : null;
+
         return new Promise(function (resolve, reject) {
-            g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) {
+            db.getObjectStore(options.ot, "messages", "messages").getAll().onsuccess = function (event) {
                 resolve(event.target.result);
             };
         });

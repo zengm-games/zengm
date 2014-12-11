@@ -435,7 +435,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-preseason"];
         }
 
-        lock.unreadMessage(ot, function (unreadMessage) {
+        lock.unreadMessage(ot).then(function (unreadMessage) {
             if (unreadMessage) {
                 keys = ["play-menu-message"];
             }

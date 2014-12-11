@@ -511,44 +511,6 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         return tids;
     }
 
-    /**
-     * Save the schedule to the database, overwriting what's currently there.
-     * 
-     * @memberOf core.season
-     * @param {Array} tids A list of lists, each containing the team IDs of the home and
-            away teams, respectively, for every game in the season, respectively.
-     * @param {function()} cb Callback function run after the database operations finish.
-     */
-    function setSchedule(tids, cb) {
-        var i, row, schedule, scheduleStore, teams, tx;
-
-        teams = helpers.getTeams();
-
-        schedule = [];
-        for (i = 0; i < tids.length; i++) {
-            row = {homeTid: tids[i][0], awayTid: tids[i][1]};
-            schedule.push(row);
-        }
-
-        tx = g.dbl.transaction("schedule", "readwrite");
-        scheduleStore = tx.objectStore("schedule");
-        scheduleStore.getAll().onsuccess = function (event) {
-            var currentSchedule, i;
-
-            currentSchedule = event.target.result;
-            for (i = 0; i < currentSchedule.length; i++) {
-                scheduleStore.delete(currentSchedule[i].gid);
-            }
-
-            for (i = 0; i < schedule.length; i++) {
-                scheduleStore.add(schedule[i]);
-            }
-        };
-        tx.oncomplete = function () {
-            cb();
-        };
-    }
-
     phaseText = {
         "-1": " fantasy draft",
         "0": " preseason",
@@ -668,7 +630,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
     }
 
     function newPhaseRegularSeason(cb) {
-        setSchedule(newSchedule(), function () {
+        dao.schedule.set(newSchedule()).then(function () {
             var tx;
 
             if (g.showFirstOwnerMessage) {
@@ -1315,7 +1277,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 }
             }
             if (tids.length > 0) {
-                setSchedule(tids, function () { cb(); });
+                dao.schedule.set(tids).then(cb);
             } else {
                 // The previous round is over. Either make a new round or go to the next phase.
 
@@ -1487,7 +1449,6 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         newPhase: newPhase,
         newSchedule: newSchedule,
         newSchedulePlayoffsDay: newSchedulePlayoffsDay,
-        setSchedule: setSchedule,
         getSchedule: getSchedule,
         getDaysLeftSchedule: getDaysLeftSchedule,
         phaseText: phaseText

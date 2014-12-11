@@ -628,14 +628,10 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
             });
 
             for (i = 0; i < pidsAdd.length; i++) {
-                dao.players.getAll({
+                dao.players.get({
                     ot: tx,
                     key: pidsAdd[i]
-                }, function (players) {
-                    var p;
-
-                    p = players[0];
-
+                }).then(function (p) {
                     add.push({
                         value: p.valueWithContract,
                         skills: _.last(p.ratings).skills,
@@ -811,7 +807,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
             season: g.season,
             tid: tid,
             ot: tx
-        }, function (t) {
+        }).then(function (t) {
             strategy = t.strategy;
             pop = t.pop;
             if (pop > 20) {

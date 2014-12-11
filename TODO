@@ -80,6 +80,8 @@ grep -r Deferred js/views
 
 get rid of $ and _ where possible
 
+helper functions to DRY get and getAll in dao files
+
 unit tests
 
 unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-javascript-es6-promise-support-done-api https://code.google.com/p/v8/issues/detail?id=3093

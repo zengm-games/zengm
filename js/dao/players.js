@@ -119,7 +119,7 @@ if (cb !== undefined) {
     }
 
     function get(options) {
-
+        return getAll(options).get(0);
     }
 
     // This should ultimately delete stats before writing

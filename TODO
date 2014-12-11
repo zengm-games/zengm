@@ -23,7 +23,6 @@ switch dao.players.get to use promises
     js/core/season.js:            dao.players.getAll({
     js/core/season.js:                dao.players.getAll({
     js/core/trade.js:                dao.players.getAll({
-    js/views/powerRankings.js:                dao.players.getAll({
     js/views/player.js:            dao.players.getAll({
     js/views/playerRatings.js:            dao.players.getAll({
     js/views/playerShotLocations.js:            dao.players.getAll({
@@ -83,6 +82,8 @@ get rid of $ and _ where possible
 helper functions to DRY get and getAll in dao files
 
 unit tests
+
+what happens to an error in a function that returns a promise, but is outside of a promise? do i need to wrap everything in Promise.method?
 
 unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-javascript-es6-promise-support-done-api https://code.google.com/p/v8/issues/detail?id=3093
   can customize build to save space https://github.com/petkaantonov/bluebird#custom-builds
@@ -515,6 +516,7 @@ schedule page (and dashboard and maybe gamelog) should show opponent records
 LOW PRIORITY
 ------------
 
+team chemistry http://www.reddit.com/r/BasketballGM/comments/2oco2a/simple_suggestion_team_chemistry/cmrpap6?context=3
 use compound index on season + team for games obectStore in helpers.gameLogList, views.leagueDashboard, maybe elsewhere
 upcoming free agents page should show at least some information about signings (or non-signings) during re-sign phase
 tanking is too easy http://www.reddit.com/r/BasketballGM/comments/20038f/too_easy_to_tank/

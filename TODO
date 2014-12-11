@@ -6,8 +6,6 @@ THE FLATTENING
 
 use promises pervasively
 
-creating new league hangs
-
 util/account
 
 switch dao.players.get to use promises
@@ -93,6 +91,10 @@ put bugsnag back
 after fully abstracting IndexedDB, could i improve performance by running it locally in node and using a relational database?
   same with mobile on phonegap
   same with web - "turbo mode" where only one window (db connection) is allowed and caching is heavy
+
+benchmark
+  before/after
+  does switching from .all to .join matter?
 
 PERFORMANCE CRAP
 ----------------

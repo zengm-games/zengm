@@ -577,11 +577,11 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         updateEvents = updateEvents !== undefined ? updateEvents : [];
 
         // Set phase before updating play menu
-        db.setGameAttributes({phase: phase}, function () {
+        dao.gameAttributes.set({phase: phase}).then(function () {
             ui.updatePhase(g.season + phaseText[phase]);
             ui.updatePlayMenu(null).then(function () {
                 // Set lastDbChange last so there is no race condition
-                db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                dao.gameAttributes.set({lastDbChange: Date.now()}).then(function () {
                     if (cb !== undefined) {
                         cb();
                     }
@@ -669,10 +669,10 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
     function newPhaseRegularSeason(cb) {
         setSchedule(newSchedule(), function () {
-            var nagged, tx;
+            var tx;
 
             if (g.showFirstOwnerMessage) {
-                message.generate({wins: 0, playoffs: 0, money: 0}, function () {
+                message.generate({wins: 0, playoffs: 0, money: 0}).then(function () {
                     newPhaseCb(g.PHASE.REGULAR_SEASON, cb);
                 });
             } else {

@@ -34,7 +34,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/game", "core/seas
         } else if (amount === "untilPlayoffs") {
             if (g.phase < g.PHASE.PLAYOFFS) {
                 ui.updateStatus("Playing..."); // For quick UI updating, before game.play
-                season.getDaysLeftSchedule(function (numDays) {
+                season.getDaysLeftSchedule().then(function (numDays) {
                     game.play(numDays, true);
                 });
             }

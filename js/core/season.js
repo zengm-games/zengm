@@ -1380,13 +1380,12 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * Get the number of days left in the regular season schedule.
      * 
      * @memberOf core.season
-     * @param {function(Array)} cb Callback function that takes the number of games left in the schedule as its only argument.
+     * @return {Promise} The number of days left in the schedule.
      */
-    function getDaysLeftSchedule(cb) {
-        g.dbl.transaction("schedule").objectStore("schedule").getAll().onsuccess = function (event) {
-            var i, numDays, schedule, tids;
+    function getDaysLeftSchedule() {
+        return dao.schedule.get().then(function (schedule) {
+            var i, numDays, tids;
 
-            schedule = event.target.result;
             numDays = 0;
 
             while (schedule.length > 0) {
@@ -1404,8 +1403,8 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 schedule = schedule.slice(i);
             }
 
-            cb(numDays);
-        };
+            return numDays;
+        });
     }
 
     return {

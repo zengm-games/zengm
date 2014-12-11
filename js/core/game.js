@@ -58,7 +58,8 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
             afterDonePlayer();
         } else {
             key = [that.team[t].player[p].id, g.season, that.team[t].id];
-            tx.objectStore("playerStats").index("pid, season, tid").openCursor(key).onsuccess = function (event) {
+            // "prev" is in case there are multiple entries for the same player, like he was traded away and then brought back
+            tx.objectStore("playerStats").index("pid, season, tid").openCursor(key, "prev").onsuccess = function (event) {
                 var cursor, i, injuredThisGame, keys, playerStats;
 
                 cursor = event.target.result;

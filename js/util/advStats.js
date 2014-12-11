@@ -165,7 +165,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
                         (function (i) {
                             var key;
                             key = [players[i].pid, g.season, players[i].tid];
-                            tx.objectStore("playerStats").index("pid, season, tid").openCursor(key).onsuccess = function (event) {
+                            tx.objectStore("playerStats").index("pid, season, tid").openCursor(key, "prev").onsuccess = function (event) {
                                 var cursor, playerStats;
 
                                 cursor = event.target.result;

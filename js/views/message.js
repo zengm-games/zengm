@@ -2,7 +2,7 @@
  * @name views.message
  * @namespace View a single message.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView"], function (db, g, ui, $, ko, bbgmView) {
+define(["dao", "db", "globals", "ui", "lib/knockout", "util/bbgmView"], function (dao, db, g, ui, ko, bbgmView) {
     "use strict";
 
     function get(req) {
@@ -12,44 +12,43 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView"], f
     }
 
     function updateMessage(inputs, updateEvents, vm) {
-        var deferred, vars, tx;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.message.mid() !== inputs.mid) {
-            deferred = $.Deferred();
-            vars = {};
+            return new Promise(function (resolve, reject) {
+                var tx;
 
-            tx = g.dbl.transaction("messages", "readwrite");
+                tx = g.dbl.transaction("messages", "readwrite");
 
-            // If mid is null, this will open the message with the highest mid
-            tx.objectStore("messages").openCursor(inputs.mid, "prev").onsuccess = function (event) {
-                var cursor, message;
+                // If mid is null, this will open the message with the highest mid
+                tx.objectStore("messages").openCursor(inputs.mid, "prev").onsuccess = function (event) {
+                    var cursor, message;
 
-                cursor = event.target.result;
-                message = cursor.value;
+                    cursor = event.target.result;
+                    message = cursor.value;
 
-                if (!message.read) {
-                    message.read = true;
-                    cursor.update(message);
+                    if (!message.read) {
+                        message.read = true;
+                        cursor.update(message);
 
-                    tx.oncomplete = function () {
-                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        tx.oncomplete = function () {
+                            dao.gameAttributes.set({lastDbChange: Date.now()});
+
                             if (g.gameOver) {
                                 ui.updateStatus("You're fired!");
                             }
 
                             ui.updatePlayMenu(null).then(function () {
-                                vars.message = message;
-                                deferred.resolve(vars);
+                                resolve({
+                                    message: message
+                                });
                             });
+                        };
+                    } else {
+                        resolve({
+                            message: message
                         });
-                    };
-                } else {
-                    vars.message = message;
-                    deferred.resolve(vars);
-                }
-            };
-
-            return deferred.promise();
+                    }
+                };
+            });
         }
     }
 

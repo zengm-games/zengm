@@ -298,7 +298,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
         // If this is a request to start a new simulation... are we allowed to do
         // that? If so, set the lock and update the play menu
         if (start) {
-            lock.canStartGames(null, function (canStartGames) {
+            lock.canStartGames(null).then(function (canStartGames) {
                 if (canStartGames) {
                     db.setGameAttributes({gamesInProgress: true}, function () {
                         ui.updatePlayMenu(null, function () {

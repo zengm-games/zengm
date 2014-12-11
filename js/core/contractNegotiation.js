@@ -30,7 +30,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
 
         tx = db.getObjectStore(ot, ["gameAttributes", "messages", "negotiations", "players"], null, true);
 
-        lock.canStartNegotiation(tx, function (canStartNegotiation) {
+        lock.canStartNegotiation(tx).then(function (canStartNegotiation) {
             var playerStore;
 
             if (!canStartNegotiation) {
@@ -266,7 +266,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
         g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").delete(pid).onsuccess = function (event) {
             db.setGameAttributes({lastDbChange: Date.now()}, function () {
                 // If no negotiations are in progress, update status
-                lock.negotiationInProgress(null, function (negotiationInProgress) {
+                lock.negotiationInProgress(null).then(function (negotiationInProgress) {
                     if (!negotiationInProgress) {
                         if (g.phase === g.PHASE.FREE_AGENCY) {
                             ui.updateStatus(g.daysLeft + " days left");

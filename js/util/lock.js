@@ -12,11 +12,11 @@ define(["dao", "db", "globals"], function (dao, db, g) {
      * 
      * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
-     * @param {function(boolean)} cb Callback.
+     * @return {Promise.boolean}
      */
-    function gamesInProgress(ot, cb) {
-        db.loadGameAttribute(ot, "gamesInProgress").then(function () {
-            cb(g.gamesInProgress);
+    function gamesInProgress(ot) {
+        return db.loadGameAttribute(ot, "gamesInProgress").then(function () {
+            return g.gamesInProgress;
         });
     }
 
@@ -27,22 +27,15 @@ define(["dao", "db", "globals"], function (dao, db, g) {
      * 
      * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on negotiations; if null is passed, then a new transaction will be used.
-     * @param {function(boolean)} cb Callback.
+     * @return {Promise.boolean}
      */
-    function negotiationInProgress(ot, cb) {
-        var negotiationStore;
-
-        negotiationStore = db.getObjectStore(ot, "negotiations", "negotiations");
-        negotiationStore.getAll().onsuccess = function (event) {
-            var negotiations;
-
-            negotiations = event.target.result;
-
+    function negotiationInProgress(ot) {
+        return dao.negotiations.getAll({ot: ot}).then(function (negotiations) {
             if (negotiations.length > 0) {
-                return cb(true);
+                return true;
             }
-            return cb(false);
-        };
+            return false;
+        });
     }
 
     /**
@@ -52,20 +45,20 @@ define(["dao", "db", "globals"], function (dao, db, g) {
      *
      * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
-     * @param {function(boolean)} cb Callback.
+     * @return {Promise.boolean}
      */
-    function canStartGames(ot, cb) {
-        gamesInProgress(ot, function (gamesInProgressBool) {
+    function canStartGames(ot) {
+        return gamesInProgress(ot).then(function (gamesInProgressBool) {
             if (gamesInProgressBool) {
-                return cb(false);
+                return false;
             }
 
-            negotiationInProgress(ot, function (negotiationInProgressBool) {
+            return negotiationInProgress(ot).then(function (negotiationInProgressBool) {
                 if (negotiationInProgressBool) {
-                    return cb(false);
+                    return false;
                 }
 
-                return cb(true);
+                return true;
             });
         });
     }
@@ -77,28 +70,26 @@ define(["dao", "db", "globals"], function (dao, db, g) {
      * 
      * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
-     * @param {function(boolean)} cb Callback.
+     * @return {Promise.boolean}
      */
-    function canStartNegotiation(ot, cb) {
-        gamesInProgress(ot, function (gamesInProgressBool) {
+    function canStartNegotiation(ot) {
+        return gamesInProgress(ot).then(function (gamesInProgressBool) {
             if (gamesInProgressBool) {
-                return cb(false);
+                return false;
             }
 
             // Allow multiple parallel negotiations only for re-signing players
-            db.getObjectStore(ot, "negotiations", "negotiations").getAll().onsuccess = function (event) {
-                var i, negotiations;
-
-                negotiations = event.target.result;
+            dao.negotiations.getAll({ot: ot}).getAll().then(function (negotiations) {
+                var i;
 
                 for (i = 0; i < negotiations.length; i++) {
                     if (!negotiations[i].resigning) {
-                        return cb(false);
+                        return false;
                     }
                 }
 
-                return cb(true);
-            };
+                return true;
+            });
         });
     }
 
@@ -109,7 +100,7 @@ define(["dao", "db", "globals"], function (dao, db, g) {
      * 
      * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on messages; if null is passed, then a new transaction will be used.
-     * @return {Promise}
+     * @return {Promise.boolean}
      */
     function unreadMessage(ot) {
         return dao.messages.getAll({ot: ot}).then(function (messages) {

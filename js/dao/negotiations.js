@@ -6,7 +6,7 @@ define(["db", "lib/bluebird"], function (db, Promise) {
         options.ot = options.ot !== undefined ? options.ot : null;
 
         return new Promise(function (resolve, reject) {
-            db.getObjectStore(options.ot, "messages", "messages").getAll().onsuccess = function (event) {
+            db.getObjectStore(options.ot, "negotiations", "negotiations").getAll().onsuccess = function (event) {
                 resolve(event.target.result);
             };
         });

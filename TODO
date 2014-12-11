@@ -4,6 +4,8 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
+newSchedulePlayoffsDay
+
 use promises pervasively
 
 util/account

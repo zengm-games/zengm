@@ -1,4 +1,4 @@
-define(["globals", "lib/bluebird"], function (g, Promise) {
+define(["db", "globals", "lib/bluebird"], function (db, g, Promise) {
     "use strict";
 
     function getAll(options) {

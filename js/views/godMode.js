@@ -2,23 +2,17 @@
  * @name views.godMode
  * @namespace Enable or disable God Mode.
  */
-define(["db", "globals", "ui", "lib/jquery", "util/bbgmView", "util/helpers"], function (db, g, ui, $, bbgmView, helpers) {
+define(["db", "globals", "ui", "util/bbgmView", "util/helpers"], function (db, g, ui, bbgmView, helpers) {
     "use strict";
 
     function updateGodMode(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("toggleGodMode") >= 0) {
-            deferred = $.Deferred();
-
             // Make sure it's current
-            db.loadGameAttribute(null, "godMode", function () {
-                deferred.resolve({
+            return db.loadGameAttribute(null, "godMode").then(function () {
+                return {
                     godMode: g.godMode
-                });
+                };
             });
-
-            return deferred.promise();
         }
     }
 

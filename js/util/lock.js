@@ -15,7 +15,7 @@ define(["dao", "db", "globals"], function (dao, db, g) {
      * @param {function(boolean)} cb Callback.
      */
     function gamesInProgress(ot, cb) {
-        db.loadGameAttribute(ot, "gamesInProgress", function () {
+        db.loadGameAttribute(ot, "gamesInProgress").then(function () {
             cb(g.gamesInProgress);
         });
     }
@@ -112,7 +112,7 @@ define(["dao", "db", "globals"], function (dao, db, g) {
      * @return {Promise}
      */
     function unreadMessage(ot) {
-        return dao.messages.getAll({ot: ot}).getAll().then(function (messages) {
+        return dao.messages.getAll({ot: ot}).then(function (messages) {
             var i;
 
             for (i = 0; i < messages.length; i++) {

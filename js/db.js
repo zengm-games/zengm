@@ -858,15 +858,11 @@ console.log(event);
      *
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
      * @param {string} key Key in gameAttributes to load the value for.
-     * @param {function()=} cb Optional callback.
+     * @return {Promise}
      */
-    function loadGameAttribute(ot, key, cb) {
-        var gameAttributesStore;
-
-        gameAttributesStore = getObjectStore(ot, "gameAttributes", "gameAttributes");
-
-        gameAttributesStore.get(key).onsuccess = function (event) {
-            if (event.target.result === undefined) {
+    function loadGameAttribute(ot, key) {
+        return require("dao/gameAttributes").get({ot: ot, key: key}).then(function (gameAttribute) {
+            if (gameAttribute === undefined) {
                 // Default values for old leagues - see also loadGameAttributes
                 if (key === "numTeams") {
                     g.numTeams = 30;
@@ -878,18 +874,14 @@ console.log(event);
                     throw new Error("Unknown game attribute: " + key);
                 }
             } else {
-                g[key] = event.target.result.value;
+                g[key] = gameAttribute.value;
             }
 
             // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
             if (key === "godMode") {
                 g.vm.topMenu.godMode(g.godMode);
             }
-
-            if (cb !== undefined) {
-                cb();
-            }
-        };
+        });
     }
 
     /**

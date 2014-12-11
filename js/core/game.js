@@ -655,7 +655,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         cbNoGames = function () {
             ui.updateStatus("Idle");
             db.setGameAttributes({gamesInProgress: false}, function () {
-                ui.updatePlayMenu(null, function () {
+                ui.updatePlayMenu(null).then(function () {
                     // Check to see if the season is over
                     if (g.phase < g.PHASE.PLAYOFFS) {
                         season.getSchedule(null, 0, function (schedule) {
@@ -877,7 +877,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                     team.checkRosterSizes(function (userTeamSizeError) {
                         if (userTeamSizeError === null) {
                             db.setGameAttributes({gamesInProgress: true}, function () {
-                                ui.updatePlayMenu(null, function () {
+                                ui.updatePlayMenu(null).then(function () {
                                     cbRunDay();
                                 });
                             });

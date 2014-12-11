@@ -2,7 +2,7 @@
  * @name api
  * @namespace Functions called directly in response to user action (clicking a button, etc).
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/game", "core/season", "lib/jquery"], function (db, g, ui, freeAgents, game, season, $) {
+define(["dao", "db", "globals", "ui", "core/freeAgents", "core/game", "core/season", "lib/jquery"], function (dao, db, g, ui, freeAgents, game, season, $) {
     "use strict";
 
     function play(amount) {
@@ -44,7 +44,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/game", "core/season", "l
                     // This is needed because we can't be sure if core.game.play will be called again
                     ui.updateStatus("Idle");
                 }
-                db.setGameAttributes({gamesInProgress: false}, ui.updatePlayMenu);
+                dao.gameAttributes.set({gamesInProgress: false}).then(ui.updatePlayMenu);
             });
         } else if (amount === "untilDraft") {
             if (g.phase === g.PHASE.BEFORE_DRAFT) {

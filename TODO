@@ -6,8 +6,6 @@ THE FLATTENING
 
 use promises pervasively
 
-ui.updatePlayMenu
-
 util/account
 
 switch dao.players.get to use promises

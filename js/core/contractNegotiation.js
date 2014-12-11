@@ -80,7 +80,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                             // This function doesn't have its own transaction, so we need to call the callback now even though the update and add might not have been processed yet (this will keep the transaction alive).
                             if (cb !== undefined) {
                                 ui.updateStatus("Contract negotiation");
-                                ui.updatePlayMenu(tx, cb);
+                                ui.updatePlayMenu(tx).then(cb);
                             }
                         }
                     };
@@ -94,7 +94,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                 if (success) {
                     db.setGameAttributes({lastDbChange: Date.now()}, function () {
                         ui.updateStatus("Contract negotiation");
-                        ui.updatePlayMenu(null, cb);
+                        ui.updatePlayMenu(null).then(cb);
                     });
                 }
             };
@@ -296,7 +296,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
         g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").clear().onsuccess = function (event) {
             db.setGameAttributes({lastDbChange: Date.now()}, function () {
                 ui.updateStatus("Idle");
-                ui.updatePlayMenu(null, cb);
+                ui.updatePlayMenu(null).then(cb);
             });
         };
     }

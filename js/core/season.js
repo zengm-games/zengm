@@ -579,7 +579,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         // Set phase before updating play menu
         db.setGameAttributes({phase: phase}, function () {
             ui.updatePhase(g.season + phaseText[phase]);
-            ui.updatePlayMenu(null, function () {
+            ui.updatePlayMenu(null).then(function () {
                 // Set lastDbChange last so there is no race condition
                 db.setGameAttributes({lastDbChange: Date.now()}, function () {
                     if (cb !== undefined) {

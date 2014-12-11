@@ -9,7 +9,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
      * @memberOf dao.payrolls
      * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
-     * @param {Promise.<number, Array=>} cb Array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from dao.contracts.getAll.
+     * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from dao.contracts.getAll.
      */
     function get(options) {
         options = options !== undefined ? options : {};
@@ -36,7 +36,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
      * Get the total current payroll for every team team.
      * 
      * @memberOf dao.payrolls
-     * @param {Promise} cb Resolves to an array of payrolls, ordered by team id.
+     * @return {Promise} Resolves to an array of payrolls, ordered by team id.
      */
     function getAll() {
         var getPayroll, i, promises, tx;

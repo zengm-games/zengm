@@ -2,7 +2,7 @@
  * @name views.message
  * @namespace View a single message.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "util/viewHelpers"], function (db, g, ui, $, ko, bbgmView, viewHelpers) {
+define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView"], function (db, g, ui, $, ko, bbgmView) {
     "use strict";
 
     function get(req) {
@@ -37,7 +37,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "u
                                 ui.updateStatus("You're fired!");
                             }
 
-                            ui.updatePlayMenu(null, function () {
+                            ui.updatePlayMenu(null).then(function () {
                                 vars.message = message;
                                 deferred.resolve(vars);
                             });

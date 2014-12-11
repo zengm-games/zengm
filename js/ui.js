@@ -381,10 +381,14 @@ define(["db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery",
         }
     }
 
-    /*Get current options based on game state and push rendered play button
-    to client. ot is passed on to the lock functions.
-    */
-    function updatePlayMenu(ot, cb) {
+   /**
+     * Update play menu options based on game state.
+     * 
+     * @memberOf ui
+     * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, and negotiations; if null is passed, then a new transaction will be used.
+     * @return {Promise}
+     */
+    function updatePlayMenu(ot) {
         var allOptions, keys;
 
         allOptions = [{id: "play-menu-stop", url: "", label: "Stop"},
@@ -435,7 +439,7 @@ define(["db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery",
             keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-preseason"];
         }
 
-        Promise.all([
+        return Promise.all([
             lock.unreadMessage(ot),
             lock.gamesInProgress(ot),
             lock.negotiationInProgress(ot)
@@ -478,10 +482,6 @@ define(["db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery",
             }
 
             g.vm.topMenu.options(someOptions);
-
-            if (cb !== undefined) {
-                cb();
-            }
         });
     }
 

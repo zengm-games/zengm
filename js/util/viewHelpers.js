@@ -25,7 +25,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                     db.loadGameAttributes(null, function () {
                         //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
                         ui.realtimeUpdate(["dbChange"], undefined, function () {
-                            ui.updatePlayMenu(null, function () {
+                            ui.updatePlayMenu(null).then(function () {
                                 ui.updatePhase();
                                 ui.updateStatus();
                                 setTimeout(function () { checkDbChange(lid); }, 3000); // g.lid can't be passed as third argument when using Bugsnag
@@ -79,7 +79,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                             // Update play menu
                             ui.updateStatus();
                             ui.updatePhase();
-                            ui.updatePlayMenu(null, function () {
+                            ui.updatePlayMenu(null).then(function () {
                                 g.vm.topMenu.lid(g.lid);
                                 cb(updateEvents, reqCb);
                                 checkDbChange(g.lid);

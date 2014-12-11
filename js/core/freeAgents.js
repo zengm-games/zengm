@@ -246,7 +246,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
         // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
         cbNoDays = function () {
             db.setGameAttributes({gamesInProgress: false}, function () {
-                ui.updatePlayMenu(null, function () {
+                ui.updatePlayMenu(null).then(function () {
                     // Check to see if free agency is over
                     if (g.daysLeft === 0) {
                         season.newPhase(g.PHASE.PRESEASON, function () {
@@ -301,7 +301,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
             lock.canStartGames(null).then(function (canStartGames) {
                 if (canStartGames) {
                     db.setGameAttributes({gamesInProgress: true}, function () {
-                        ui.updatePlayMenu(null, function () {
+                        ui.updatePlayMenu(null).then(function () {
                             cbRunDay();
                         });
                     });

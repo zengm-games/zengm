@@ -448,7 +448,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                                                         nextPhase: null
                                                     }, function () {
                                                         ui.updatePhase(g.season + season.phaseText[g.phase]);
-                                                        ui.updatePlayMenu(null, function () {
+                                                        ui.updatePlayMenu(null).then(function () {
                                                             cb(pids);
                                                         });
                                                     });

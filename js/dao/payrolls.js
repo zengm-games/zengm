@@ -7,8 +7,8 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
      * This includes players who have been released but are still owed money from their old contracts.
      * 
      * @memberOf dao.payrolls
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
-     * @param {number} tid Team ID.
+     * @param {IDBTransaction|null} options.ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
+     * @param {number} options.tid Team ID.
      * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from dao.contracts.getAll.
      */
     function get(options) {

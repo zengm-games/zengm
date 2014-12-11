@@ -2,7 +2,7 @@
  * @name views.schedule
  * @namespace Show current schedule for user's team.
  */
-define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (db, g, ui, season, $, ko, bbgmView, helpers, viewHelpers, components) {
+define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "views/components"], function (dao, g, ui, $, ko, bbgmView, helpers, components) {
     "use strict";
 
     var mapping;
@@ -37,12 +37,8 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
     };
 
     function updateUpcoming(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
-            deferred = $.Deferred();
-
-            season.getSchedule(null, 0, function (schedule_) {
+            return dao.schedule.get().then(function (schedule_) {
                 var game, games, i, row, team0, team1;
 
                 games = [];
@@ -59,13 +55,12 @@ define(["db", "globals", "ui", "core/season", "lib/jquery", "lib/knockout", "uti
                         games.push(row);
                     }
                 }
-                deferred.resolve({
+
+                return {
                     abbrev: inputs.abbrev,
                     upcoming: games
-                });
+                };
             });
-
-            return deferred.promise();
         }
     }
 

@@ -178,13 +178,8 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
     }
 
     function updateSchedule(inputs, updateEvents, vm) {
-        var deferred, vars;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            deferred = $.Deferred();
-            vars = {};
-
-            season.getSchedule(null, 0, function (schedule_) {
+            return dao.schedule.get().then(function (schedule_) {
                 var game, games, i, numShowUpcoming, row, team0, team1;
 
                 games = [];
@@ -207,10 +202,7 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                     }
                 }
                 vm.upcoming(games);
-                deferred.resolve();
             });
-
-            return deferred.promise();
         }
     }
 

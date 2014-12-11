@@ -660,7 +660,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 ui.updatePlayMenu(null).then(function () {
                     // Check to see if the season is over
                     if (g.phase < g.PHASE.PLAYOFFS) {
-                        season.getSchedule(null, 0, function (schedule) {
+                        dao.schedule.get().then(function (schedule) {
                             if (schedule.length === 0) {
                                 season.newPhase(g.PHASE.PLAYOFFS);
                             }
@@ -812,7 +812,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
             tx = g.dbl.transaction(["players", "schedule", "teams"]);
 
             // Get the schedule for today
-            season.getSchedule(tx, 1, function (schedule) {
+            dao.schedule.get({ot: tx, oneDay: true}).then(function (schedule) {
                 if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
                     cbNoGames();
                 } else {
@@ -824,7 +824,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                             // Sometimes the playoff schedule isn't made the day before, so make it now
                             // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
                             season.newSchedulePlayoffsDay(function () {
-                                season.getSchedule(null, 1, function (schedule) {
+                                dao.schedule.get({oneDay: true}).then(function (schedule) {
                                     cbSimGames(schedule, teams);
                                 });
                             });

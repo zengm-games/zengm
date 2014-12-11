@@ -1377,43 +1377,6 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
     }
 
     /**
-     * Get an array of games from the schedule.
-     * 
-     * @memberOf core.season
-     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on schedule; if null is passed, then a new transaction will be used.
-     * @param {number} numDays Number of days of games requested. Currently, this will return all games if 0 is passed or one day of games if any number greater than 0 is passed.
-     * @param {function(Array)} cb Callback function that takes the requested schedule array as its only argument.
-     */
-    function getSchedule(ot, numDays, cb) {
-        var scheduleStore;
-
-        numDays = Math.floor(numDays);
-
-        scheduleStore = db.getObjectStore(ot, "schedule", "schedule");
-        scheduleStore.getAll().onsuccess = function (event) {
-            var i, schedule, tids;
-
-            schedule = event.target.result;
-            if (numDays > 0) {
-                schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
-
-                // Only take the games up until right before a team plays for the second time that day
-                tids = [];
-                for (i = 0; i < schedule.length; i++) {
-                    if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
-                        tids.push(schedule[i].homeTid);
-                        tids.push(schedule[i].awayTid);
-                    } else {
-                        break;
-                    }
-                }
-                schedule = schedule.slice(0, i);
-            }
-            cb(schedule);
-        };
-    }
-
-    /**
      * Get the number of days left in the regular season schedule.
      * 
      * @memberOf core.season
@@ -1449,7 +1412,6 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         newPhase: newPhase,
         newSchedule: newSchedule,
         newSchedulePlayoffsDay: newSchedulePlayoffsDay,
-        getSchedule: getSchedule,
         getDaysLeftSchedule: getDaysLeftSchedule,
         phaseText: phaseText
     };

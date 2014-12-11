@@ -7,7 +7,7 @@ define(["db", "lib/bluebird"], function (db, Promise) {
     // filter: Arbitrary JS function to run on output with array.filter
     // statsSeasons: if "all", return all (needed for career totals, listing all years stats, etc). if undefined/null, return none (same as empty array input). otherwise, it's an array of seasons to return (usually just one year, but can be two for oldStats)
     // statsPlayoffs: if undefined/null, default is false. if true, include both regular season and playffs, otherwise just regular season. This is because player.filter doesn't like being given only playoff stats, for some reason.
-    // statsTid: if undefined/null, return any. otherwise, filter
+    // statsTid: if undefined/null, return any team stats. otherwise, filter
     // 
     // Relevant SO links:
     // http://stackoverflow.com/questions/16501459/javascript-searching-indexeddb-using-multiple-indexes

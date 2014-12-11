@@ -934,7 +934,9 @@ console.log(event);
      */
     function setGameAttributes(gameAttributes, cb) {
         require("dao/gameAttributes").set(gameAttributes).then(function () {
-            cb();
+            if (cb !== undefined) {
+                cb();
+            }
         });
     }
 

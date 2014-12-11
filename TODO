@@ -6,6 +6,8 @@ THE FLATTENING
 
 use promises pervasively
 
+creating new league hangs
+
 util/account
 
 switch dao.players.get to use promises

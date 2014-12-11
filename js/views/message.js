@@ -2,7 +2,7 @@
  * @name views.message
  * @namespace View a single message.
  */
-define(["dao", "db", "globals", "ui", "lib/knockout", "util/bbgmView"], function (dao, db, g, ui, ko, bbgmView) {
+define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView"], function (dao, g, ui, Promise, ko, bbgmView) {
     "use strict";
 
     function get(req) {

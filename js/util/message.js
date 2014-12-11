@@ -2,7 +2,7 @@
  * @name util.message
  * @namespace Messages from the owner of the team to the GM.
  */
-define(["dao", "db", "globals", "util/helpers", "util/random"], function (dao, db, g, helpers, random) {
+define(["dao", "db", "globals", "lib/bluebird", "util/helpers", "util/random"], function (dao, db, g, Promise, helpers, random) {
     "use strict";
 
     var activities, playoffs, intro, first, money, ovr, wins;

@@ -773,7 +773,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                     ui.realtimeUpdate(["gameSim"], url, function () {
                         db.setGameAttributes({lastDbChange: Date.now()}, function () {
                             if (g.phase === g.PHASE.PLAYOFFS) {
-                                season.newSchedulePlayoffsDay(function () {
+                                season.newSchedulePlayoffsDay().then(function () {
                                     play(numDays - 1);
                                 });
                             } else {
@@ -823,7 +823,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
                             // Sometimes the playoff schedule isn't made the day before, so make it now
                             // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
-                            season.newSchedulePlayoffsDay(function () {
+                            season.newSchedulePlayoffsDay().then(function () {
                                 dao.schedule.get({oneDay: true}).then(function (schedule) {
                                     cbSimGames(schedule, teams);
                                 });

@@ -691,7 +691,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             seasonAttrs: ["winp"],
             season: g.season,
             sortBy: "winp"
-        }, function (teams) {
+        }).then(function (teams) {
             var cid, i, j, row, series, teamsConf, tidPlayoffs, tx;
 
             // Add entry for wins for each team; delete winp, which was only needed for sorting
@@ -789,17 +789,17 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             };
 
             tx.oncomplete = function () {
-                finances.assessPayrollMinLuxury().then(function () {
+                Promise.all([
+                    finances.assessPayrollMinLuxury(),
+                    newSchedulePlayoffsDay()
+                ]).then(function () {
                     var url;
 
                     // Don't redirect if we're viewing a live game now
                     if (location.pathname.indexOf("/live_game") === -1) {
                         url = helpers.leagueUrl(["playoffs"]);
                     }
-
-                    newSchedulePlayoffsDay(function () {
-                        newPhaseCb(g.PHASE.PLAYOFFS, cb, url, ["teamFinances"]);
-                    });
+                    newPhaseCb(g.PHASE.PLAYOFFS, cb, url, ["teamFinances"]);
                 });
             };
         });
@@ -1250,130 +1250,132 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
     }
 
     /*Creates a single day's schedule for an in-progress playoffs.*/
-    function newSchedulePlayoffsDay(cb) {
-        var tx;
+    function newSchedulePlayoffsDay() {
+        return new Promise(function (resolve, reject) {
+            var tx;
 
-        tx = g.dbl.transaction(["playoffSeries", "teams"], "readwrite");
+            tx = g.dbl.transaction(["playoffSeries", "teams"], "readwrite");
 
-        // Make today's playoff schedule
-        tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
-            var cursor, i, matchup, nextRound, numGames, playoffSeries, rnd, series, team1, team2, tids, tidsWon;
+            // Make today's playoff schedule
+            tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
+                var cursor, i, matchup, nextRound, numGames, playoffSeries, rnd, series, team1, team2, tids, tidsWon;
 
-            cursor = event.target.result;
-            playoffSeries = cursor.value;
-            series = playoffSeries.series;
-            rnd = playoffSeries.currentRound;
-            tids = [];
+                cursor = event.target.result;
+                playoffSeries = cursor.value;
+                series = playoffSeries.series;
+                rnd = playoffSeries.currentRound;
+                tids = [];
 
-            for (i = 0; i < series[rnd].length; i++) {
-                if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
-                    // Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
-                    numGames = series[rnd][i].home.won + series[rnd][i].away.won;
-                    if (numGames === 0 || numGames === 1 || numGames === 4 || numGames === 6) {
-                        tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
-                    } else {
-                        tids.push([series[rnd][i].away.tid, series[rnd][i].home.tid]);
+                for (i = 0; i < series[rnd].length; i++) {
+                    if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
+                        // Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
+                        numGames = series[rnd][i].home.won + series[rnd][i].away.won;
+                        if (numGames === 0 || numGames === 1 || numGames === 4 || numGames === 6) {
+                            tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
+                        } else {
+                            tids.push([series[rnd][i].away.tid, series[rnd][i].home.tid]);
+                        }
                     }
                 }
-            }
-            if (tids.length > 0) {
-                dao.schedule.set(tids).then(cb);
-            } else {
-                // The previous round is over. Either make a new round or go to the next phase.
-
-                // Record who won the league or conference championship
-                if (rnd === 3) {
-                    tx.objectStore("teams").openCursor(series[rnd][0].home.tid).onsuccess = function (event) {
-                        var cursor, t, teamSeason;
-
-                        cursor = event.target.result;
-                        t = cursor.value;
-                        teamSeason = _.last(t.seasons);
-                        if (series[rnd][0].home.won === 4) {
-                            teamSeason.playoffRoundsWon = 4;
-                            teamSeason.hype += 0.05;
-                            if (teamSeason.hype > 1) {
-                                teamSeason.hype = 1;
-                            }
-                        }
-                        cursor.update(t);
-                    };
-                    tx.objectStore("teams").openCursor(series[rnd][0].away.tid).onsuccess = function (event) {
-                        var cursor, t, teamSeason;
-
-                        cursor = event.target.result;
-                        t = cursor.value;
-                        teamSeason = _.last(t.seasons);
-                        if (series[rnd][0].away.won === 4) {
-                            teamSeason.playoffRoundsWon = 4;
-                            teamSeason.hype += 0.1;
-                            if (teamSeason.hype > 1) {
-                                teamSeason.hype = 1;
-                            }
-                        }
-                        cursor.update(t);
-                    };
-                    tx.oncomplete = function () {
-                        newPhase(g.PHASE.BEFORE_DRAFT, cb);
-                    };
+                if (tids.length > 0) {
+                    dao.schedule.set(tids).then(resolve);
                 } else {
-                    nextRound = [];
-                    tidsWon = [];
-                    for (i = 0; i < series[rnd].length; i += 2) {
-                        // Find the two winning teams
-                        if (series[rnd][i].home.won === 4) {
-                            team1 = helpers.deepCopy(series[rnd][i].home);
-                            tidsWon.push(series[rnd][i].home.tid);
-                        } else {
-                            team1 = helpers.deepCopy(series[rnd][i].away);
-                            tidsWon.push(series[rnd][i].away.tid);
-                        }
-                        if (series[rnd][i + 1].home.won === 4) {
-                            team2 = helpers.deepCopy(series[rnd][i + 1].home);
-                            tidsWon.push(series[rnd][i + 1].home.tid);
-                        } else {
-                            team2 = helpers.deepCopy(series[rnd][i + 1].away);
-                            tidsWon.push(series[rnd][i + 1].away.tid);
-                        }
+                    // The previous round is over. Either make a new round or go to the next phase.
 
-                        // Set home/away in the next round
-                        if (team1.winp > team2.winp) {
-                            matchup = {home: team1, away: team2};
-                        } else {
-                            matchup = {home: team2, away: team1};
-                        }
-
-                        matchup.home.won = 0;
-                        matchup.away.won = 0;
-                        series[rnd + 1][i / 2] = matchup;
-                    }
-                    playoffSeries.currentRound += 1;
-                    cursor.update(playoffSeries);
-
-                    // Update hype for winning a series
-                    for (i = 0; i < tidsWon.length; i++) {
-                        tx.objectStore("teams").openCursor(tidsWon[i]).onsuccess = function (event) {
+                    // Record who won the league or conference championship
+                    if (rnd === 3) {
+                        tx.objectStore("teams").openCursor(series[rnd][0].home.tid).onsuccess = function (event) {
                             var cursor, t, teamSeason;
 
                             cursor = event.target.result;
                             t = cursor.value;
                             teamSeason = _.last(t.seasons);
-                            teamSeason.playoffRoundsWon = playoffSeries.currentRound;
-                            teamSeason.hype += 0.05;
-                            if (teamSeason.hype > 1) {
-                                teamSeason.hype = 1;
+                            if (series[rnd][0].home.won === 4) {
+                                teamSeason.playoffRoundsWon = 4;
+                                teamSeason.hype += 0.05;
+                                if (teamSeason.hype > 1) {
+                                    teamSeason.hype = 1;
+                                }
                             }
                             cursor.update(t);
                         };
-                    }
+                        tx.objectStore("teams").openCursor(series[rnd][0].away.tid).onsuccess = function (event) {
+                            var cursor, t, teamSeason;
 
-                    tx.oncomplete = function () {
-                        // Next time, the schedule for the first day of the next round will be set
-                        newSchedulePlayoffsDay(cb);
-                    };
+                            cursor = event.target.result;
+                            t = cursor.value;
+                            teamSeason = _.last(t.seasons);
+                            if (series[rnd][0].away.won === 4) {
+                                teamSeason.playoffRoundsWon = 4;
+                                teamSeason.hype += 0.1;
+                                if (teamSeason.hype > 1) {
+                                    teamSeason.hype = 1;
+                                }
+                            }
+                            cursor.update(t);
+                        };
+                        tx.oncomplete = function () {
+                            newPhase(g.PHASE.BEFORE_DRAFT, resolve);
+                        };
+                    } else {
+                        nextRound = [];
+                        tidsWon = [];
+                        for (i = 0; i < series[rnd].length; i += 2) {
+                            // Find the two winning teams
+                            if (series[rnd][i].home.won === 4) {
+                                team1 = helpers.deepCopy(series[rnd][i].home);
+                                tidsWon.push(series[rnd][i].home.tid);
+                            } else {
+                                team1 = helpers.deepCopy(series[rnd][i].away);
+                                tidsWon.push(series[rnd][i].away.tid);
+                            }
+                            if (series[rnd][i + 1].home.won === 4) {
+                                team2 = helpers.deepCopy(series[rnd][i + 1].home);
+                                tidsWon.push(series[rnd][i + 1].home.tid);
+                            } else {
+                                team2 = helpers.deepCopy(series[rnd][i + 1].away);
+                                tidsWon.push(series[rnd][i + 1].away.tid);
+                            }
+
+                            // Set home/away in the next round
+                            if (team1.winp > team2.winp) {
+                                matchup = {home: team1, away: team2};
+                            } else {
+                                matchup = {home: team2, away: team1};
+                            }
+
+                            matchup.home.won = 0;
+                            matchup.away.won = 0;
+                            series[rnd + 1][i / 2] = matchup;
+                        }
+                        playoffSeries.currentRound += 1;
+                        cursor.update(playoffSeries);
+
+                        // Update hype for winning a series
+                        for (i = 0; i < tidsWon.length; i++) {
+                            tx.objectStore("teams").openCursor(tidsWon[i]).onsuccess = function (event) {
+                                var cursor, t, teamSeason;
+
+                                cursor = event.target.result;
+                                t = cursor.value;
+                                teamSeason = _.last(t.seasons);
+                                teamSeason.playoffRoundsWon = playoffSeries.currentRound;
+                                teamSeason.hype += 0.05;
+                                if (teamSeason.hype > 1) {
+                                    teamSeason.hype = 1;
+                                }
+                                cursor.update(t);
+                            };
+                        }
+
+                        tx.oncomplete = function () {
+                            // Next time, the schedule for the first day of the next round will be set
+                            resolve(newSchedulePlayoffsDay());
+                        };
+                    }
                 }
-            }
-        };
+            };
+        });
     }
 
     /**

@@ -303,7 +303,7 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
             seasonAttrs: ["won"],
             season: g.season,
             tid: g.userTid
-        }, function (t) {
+        }).then(function (t) {
             if (t.won >= 70) {
                 if (cb !== undefined) {
                     cb(true);
@@ -332,7 +332,7 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
                     seasonAttrs: ["won", "lost"],
                     season: g.season,
                     tid: g.userTid
-                }, function (t) {
+                }).then(function (t) {
                     if (t.won === 82 && t.lost === 0) {
                         if (cb !== undefined) {
                             cb(true);
@@ -418,7 +418,7 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
             seasonAttrs: ["expenses", "playoffRoundsWon"],
             season: g.season,
             tid: g.userTid
-        }, function (t) {
+        }).then(function (t) {
             if (t.playoffRoundsWon === 4 && t.expenses.salary.amount <= maxPayroll) {
                 if (cb !== undefined) {
                     cb(true);
@@ -494,7 +494,7 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
             seasonAttrs: ["playoffRoundsWon", "pop"],
             season: g.season,
             tid: g.userTid
-        }, function (t) {
+        }).then(function (t) {
             if (t.playoffRoundsWon === 4 && t.pop <= 2) {
                 if (cb !== undefined) {
                     cb(true);

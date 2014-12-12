@@ -656,18 +656,18 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
         cbNoGames = function () {
             ui.updateStatus("Idle");
-            db.setGameAttributes({gamesInProgress: false}, function () {
-                ui.updatePlayMenu(null).then(function () {
-                    // Check to see if the season is over
-                    if (g.phase < g.PHASE.PLAYOFFS) {
-                        dao.schedule.get().then(function (schedule) {
-                            if (schedule.length === 0) {
-                                season.newPhase(g.PHASE.PLAYOFFS);
-                            }
-                        });
-                    }
-                    ui.updateStatus("Idle");  // Just to be sure..
-                });
+            return dao.gameAttributes.set({gamesInProgress: false}).then(function () {
+                return ui.updatePlayMenu(null);
+            }).then(function () {
+                // Check to see if the season is over
+                if (g.phase < g.PHASE.PLAYOFFS) {
+                    return dao.schedule.get().then(function (schedule) {
+                        if (schedule.length === 0) {
+                            season.newPhase(g.PHASE.PLAYOFFS);
+                        }
+                    });
+                }
+                ui.updateStatus("Idle");  // Just to be sure..
             });
         };
 
@@ -795,12 +795,12 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid], doPlayByPlay);
                 results.push(gs.run());
             }
-            cbSaveResults(results);
+            return cbSaveResults(results);
         };
 
         // Simulates a day of games. If there are no games left, it calls cbNoGames.
-        // Callback is called after games are run
-        cbPlayGames = function (cb) {
+        // Promise is resolved after games are run
+        cbPlayGames = function () {
             var tx;
 
             if (numDays === 1) {
@@ -812,27 +812,28 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
             tx = g.dbl.transaction(["players", "schedule", "teams"]);
 
             // Get the schedule for today
-            dao.schedule.get({ot: tx, oneDay: true}).then(function (schedule) {
+            return dao.schedule.get({ot: tx, oneDay: true}).then(function (schedule) {
+                // Stop if no games
                 if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
-                    cbNoGames();
-                } else {
-                    // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
-                    loadTeams(tx).then(function (teams) {
-                        // Play games
-                        // Will loop through schedule and simulate all games
-                        if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
-                            // Sometimes the playoff schedule isn't made the day before, so make it now
-                            // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
-                            season.newSchedulePlayoffsDay().then(function () {
-                                dao.schedule.get({oneDay: true}).then(function (schedule) {
-                                    cbSimGames(schedule, teams);
-                                });
-                            });
-                        } else {
-                            cbSimGames(schedule, teams);
-                        }
-                    });
+                    return cbNoGames();
                 }
+
+                // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
+                return loadTeams(tx).then(function (teams) {
+                    // Play games
+                    // Will loop through schedule and simulate all games
+                    if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
+                        // Sometimes the playoff schedule isn't made the day before, so make it now
+                        // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
+                        return season.newSchedulePlayoffsDay().then(function () {
+                            return dao.schedule.get({oneDay: true}).then(function (schedule) {
+// Can't merge easily with next call because of schedule overwriting
+                                return cbSimGames(schedule, teams);
+                            });
+                        });
+                    }
+                    return cbSimGames(schedule, teams);
+                });
             });
         };
 
@@ -845,27 +846,27 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 // Check if it's the playoffs and do some special stuff if it is or isn't
                 if (g.phase !== g.PHASE.PLAYOFFS) {
                     // Decrease free agent demands and let AI teams sign them
-                    freeAgents.decreaseDemands()
+                    return freeAgents.decreaseDemands()
                         .then(freeAgents.autoSign)
                         .then(cbPlayGames);
-                } else {
-                    cbPlayGames();
                 }
+
+                return cbPlayGames();
             };
 
             if (numDays > 0) {
                 // If we didn't just stop games, let's play
                 // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
                 if (start || !g.stopGames) {
-                    if (g.stopGames) {
-                        db.setGameAttributes({stopGames: false}, cbYetAnother);
-                    } else {
-                        cbYetAnother();
-                    }
+                    return Promise.try(function () {
+                        if (g.stopGames) {
+                            return db.setGameAttributes({stopGames: false});
+                        }
+                    }).then(cbYetAnother);
                 }
             } else if (numDays === 0) {
                 // If this is the last day, update play menu
-                cbNoGames();
+                return cbNoGames();
             }
         };
 

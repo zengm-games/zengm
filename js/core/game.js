@@ -873,13 +873,12 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         // that? If so, set the lock and update the play menu
         if (start) {
             lock.canStartGames(null).then(function (canStartGames) {
+// How do I flatten conditional into promise chain?
                 if (canStartGames) {
-                    team.checkRosterSizes(function (userTeamSizeError) {
+                    team.checkRosterSizes().then(function (userTeamSizeError) {
                         if (userTeamSizeError === null) {
-                            db.setGameAttributes({gamesInProgress: true}, function () {
-                                ui.updatePlayMenu(null).then(function () {
-                                    cbRunDay();
-                                });
+                            dao.gameAttributes.set({gamesInProgress: true}).then(function () {
+                                ui.updatePlayMenu(null).then(cbRunDay);
                             });
                         } else {
                             ui.updateStatus("Idle");

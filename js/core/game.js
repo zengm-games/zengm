@@ -845,9 +845,9 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 // Check if it's the playoffs and do some special stuff if it is or isn't
                 if (g.phase !== g.PHASE.PLAYOFFS) {
                     // Decrease free agent demands and let AI teams sign them
-                    freeAgents.decreaseDemands(function () {
-                        freeAgents.autoSign().then(cbPlayGames);
-                    });
+                    freeAgents.decreaseDemands()
+                        .then(freeAgents.autoSign)
+                        .then(cbPlayGames);
                 } else {
                     cbPlayGames();
                 }

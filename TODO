@@ -6,7 +6,9 @@ THE FLATTENING
 
 use promises pervasively
 
-util/account
+team.checkRosterSizes
+
+core.game.play
 
 switch dao.players.get to use promises
   grep -R dao.players.get js

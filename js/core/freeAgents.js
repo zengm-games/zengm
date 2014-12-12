@@ -141,54 +141,58 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
      * This is called after each day in the regular season, as free agents become more willing to take smaller contracts.
      * 
      * @memberOf core.freeAgents
-     * @param {function()} cb Callback.
+     * @return {Promise}
      */
-    function decreaseDemands(cb) {
-        var tx;
+    function decreaseDemands() {
+        return new Promise(function (resolve, reject) {
+            var tx;
 
-        tx = g.dbl.transaction("players", "readwrite");
-        tx.objectStore("players").index("tid").openCursor(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-            var cursor, i, p;
+            tx = g.dbl.transaction("players", "readwrite");
+            tx.objectStore("players").index("tid").openCursor(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
+                var cursor, i, p;
 
-            cursor = event.target.result;
-            if (cursor) {
-                p = cursor.value;
+                cursor = event.target.result;
+                if (cursor) {
+                    p = cursor.value;
 
-                // Decrease free agent demands
-                p.contract.amount -= 50;
-                if (p.contract.amount < 500) {
-                    p.contract.amount = 500;
-                }
+                    // Decrease free agent demands
+                    p.contract.amount -= 50;
+                    if (p.contract.amount < 500) {
+                        p.contract.amount = 500;
+                    }
 
-                if (g.phase !== g.PHASE.FREE_AGENCY) {
-                    // Since this is after the season has already started, ask for a short contract
-                    if (p.contract.amount < 1000) {
-                        p.contract.exp = g.season;
+                    if (g.phase !== g.PHASE.FREE_AGENCY) {
+                        // Since this is after the season has already started, ask for a short contract
+                        if (p.contract.amount < 1000) {
+                            p.contract.exp = g.season;
+                        } else {
+                            p.contract.exp = g.season + 1;
+                        }
+                    }
+
+                    // Free agents' resistance to signing decays after every regular season game
+                    for (i = 0; i < p.freeAgentMood.length; i++) {
+                        p.freeAgentMood[i] -= 0.075;
+                        if (p.freeAgentMood[i] < 0) {
+                            p.freeAgentMood[i] = 0;
+                        }
+                    }
+
+                    // Also, heal.
+                    if (p.injury.gamesRemaining > 0) {
+                        p.injury.gamesRemaining -= 1;
                     } else {
-                        p.contract.exp = g.season + 1;
+                        p.injury = {type: "Healthy", gamesRemaining: 0};
                     }
-                }
 
-                // Free agents' resistance to signing decays after every regular season game
-                for (i = 0; i < p.freeAgentMood.length; i++) {
-                    p.freeAgentMood[i] -= 0.075;
-                    if (p.freeAgentMood[i] < 0) {
-                        p.freeAgentMood[i] = 0;
-                    }
+                    cursor.update(p);
+                    cursor.continue();
                 }
-
-                // Also, heal.
-                if (p.injury.gamesRemaining > 0) {
-                    p.injury.gamesRemaining -= 1;
-                } else {
-                    p.injury = {type: "Healthy", gamesRemaining: 0};
-                }
-
-                cursor.update(p);
-                cursor.continue();
-            }
-        };
-        tx.oncomplete = cb;
+            };
+            tx.oncomplete = function () {
+                resolve();
+            };
+        });
     }
 
     /**
@@ -263,7 +267,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
 
             // This is called if there are remaining days to simulate
             cbYetAnother = function () {
-                decreaseDemands(function () {
+                decreaseDemands().then(function () {
                     autoSign().then(function () {
                         db.setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}, function () {
                             if (g.daysLeft > 0 && numDays > 0) {

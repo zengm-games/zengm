@@ -9,7 +9,16 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
         });
     }
 
+    function add(league) {
+        return new Promise(function (resolve, reject) {
+            g.dbm.transaction("leagues", "readwrite").objectStore("leagues").add(league).onsuccess = function (event) {
+                resolve(event.target.result);
+            };
+        });
+    }
+
     return {
+        add: add,
         getAll: getAll
     };
 });

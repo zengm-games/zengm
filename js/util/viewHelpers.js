@@ -55,7 +55,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                     helpers.error('League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!', reqCb, true)
                 } else {
                     // Connect to league database
-                    db.connectLeague(g.lid, function () {
+                    db.connectLeague(g.lid).then(function () {
                         db.loadGameAttributes(null, function () {
                             var css;
 

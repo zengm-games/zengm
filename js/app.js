@@ -128,7 +128,7 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "ut
     // Any news?
     changes.check();
 
-    db.connectMeta(function () {
+    db.connectMeta().then(function () {
         var app = new Davis(function () {
             this.configure(function () {
                 this.generateRequestOnPageLoad = true;

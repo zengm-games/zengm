@@ -2,7 +2,7 @@
  * @name db
  * @namespace Creating, migrating, and connecting to databases; working with transactions.
  */
-define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (g, Davis, $, _, helpers) {
+define(["globals", "lib/bluebird", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (g, Promise, Davis, $, _, helpers) {
     "use strict";
 
     /**
@@ -122,40 +122,42 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
         //$("#content").before('<div class="alert alert-info alert-top"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
     }
 
-    function connectMeta(cb) {
-        var request;
+    function connectMeta() {
+        return new Promise(function (resolve, reject) {
+            var request;
 
 //        console.log('Connecting to database "meta"');
-        request = indexedDB.open("meta", 7);
-        request.onerror = function (event) {
-            if (event.target.webkitErrorMessage) {
-                throw new Error("Meta connection error: " + event.target.webkitErrorMessage);
-            } else {
-                throw new Error("Meta connection error: " + event.target.error.name + " - " + event.target.error.message);
-            }
-        };
-        request.onblocked = function () {
-            alert("Please close all other tabs with this site open!");
-        };
-        request.onupgradeneeded = function (event) {
-            if (event.oldVersion === 0) {
-                createMeta(event);
-            } else {
-                migrateMeta(event);
-            }
-        };
-        request.onsuccess = function (event) {
-            g.dbm = request.result;
-            g.dbm.onerror = function (event) {
-console.log(event);
+            request = indexedDB.open("meta", 7);
+            request.onerror = function (event) {
                 if (event.target.webkitErrorMessage) {
-                    throw new Error("Meta database error: " + event.target.webkitErrorMessage);
+                    throw new Error("Meta connection error: " + event.target.webkitErrorMessage);
                 } else {
-                    throw new Error("Meta database error: " + event.target.error.name + " - " + event.target.error.message);
+                    throw new Error("Meta connection error: " + event.target.error.name + " - " + event.target.error.message);
                 }
             };
-            cb();
-        };
+            request.onblocked = function () {
+                alert("Please close all other tabs with this site open!");
+            };
+            request.onupgradeneeded = function (event) {
+                if (event.oldVersion === 0) {
+                    createMeta(event);
+                } else {
+                    migrateMeta(event);
+                }
+            };
+            request.onsuccess = function (event) {
+                g.dbm = request.result;
+                g.dbm.onerror = function (event) {
+console.log(event);
+                    if (event.target.webkitErrorMessage) {
+                        throw new Error("Meta database error: " + event.target.webkitErrorMessage);
+                    } else {
+                        throw new Error("Meta database error: " + event.target.error.name + " - " + event.target.error.message);
+                    }
+                };
+                resolve();
+            };
+        });
     }
 
     /**
@@ -756,40 +758,42 @@ console.log(event);
         });
     }
 
-    function connectLeague(lid, cb) {
-        var request;
+    function connectLeague(lid) {
+        return new Promise(function (resolve, reject) {
+            var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 11);
-        request.onerror = function (event) {
-            if (event.target.webkitErrorMessage) {
-                throw new Error("League connection error: " + event.target.webkitErrorMessage);
-            } else {
-                throw new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message);
-            }
-        };
-        request.onblocked = function () {
-            alert("Please close all other tabs with this site open!");
-        };
-        request.onupgradeneeded = function (event) {
-            if (event.oldVersion === 0) {
-                createLeague(event, lid);
-            } else {
-                migrateLeague(event, lid);
-            }
-        };
-        request.onsuccess = function (event) {
-            g.dbl = request.result;
-            g.dbl.onerror = function (event) {
-console.log(event);
+            request = indexedDB.open("league" + lid, 11);
+            request.onerror = function (event) {
                 if (event.target.webkitErrorMessage) {
-                    throw new Error("League database error: " + event.target.webkitErrorMessage);
+                    throw new Error("League connection error: " + event.target.webkitErrorMessage);
                 } else {
-                    throw new Error("League database error: " + event.target.error.name + " - " + event.target.error.message);
+                    throw new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message);
                 }
             };
-            cb();
-        };
+            request.onblocked = function () {
+                alert("Please close all other tabs with this site open!");
+            };
+            request.onupgradeneeded = function (event) {
+                if (event.oldVersion === 0) {
+                    createLeague(event, lid);
+                } else {
+                    migrateLeague(event, lid);
+                }
+            };
+            request.onsuccess = function (event) {
+                g.dbl = request.result;
+                g.dbl.onerror = function (event) {
+console.log(event);
+                    if (event.target.webkitErrorMessage) {
+                        throw new Error("League database error: " + event.target.webkitErrorMessage);
+                    } else {
+                        throw new Error("League database error: " + event.target.error.name + " - " + event.target.error.message);
+                    }
+                };
+                resolve();
+            };
+        });
     }
 
     /**

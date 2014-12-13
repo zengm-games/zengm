@@ -2,7 +2,7 @@
  * @name core.contractNegotiation
  * @namespace All aspects of contract negotiation.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog", "util/helpers", "util/lock", "util/random"], function (db, g, ui, freeAgents, player, eventLog, helpers, lock, random) {
+define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/bluebird", "util/eventLog", "util/helpers", "util/lock", "util/random"], function (dao, db, g, ui, freeAgents, player, Promise, eventLog, helpers, lock, random) {
     "use strict";
 
     /**
@@ -311,79 +311,72 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
      * @param {function(string=)} cb Callback to be run only after the contract is successfully accepted. If an error occurs, pass a string error message.
      */
     function accept(pid, cb) {
-        g.dbl.transaction("negotiations").objectStore("negotiations").get(pid).onsuccess = function (event) {
-            var negotiation;
+        Promise.all([
+            dao.negotiations.get({key: pid}),
+            dao.payrolls.get({tid: g.userTid})
+        ]).spread(function (negotiation, payroll) {
+            var afterAddStatsRow, tx;
 
-            negotiation = event.target.result;
+            // If this contract brings team over the salary cap, it's not a minimum;
+            // contract, and it's not re-signing a current player, ERROR!
 
-            // If this contract brings team over the salary cap, it"s not a minimum;
-            // contract, and it's not re-signing a current player, ERROR!;
-            db.getPayroll(null, g.userTid, function (payroll) {
-                var afterAddStatsRow, tx;
+            if (!negotiation.resigning && (payroll + negotiation.player.amount > g.salaryCap && negotiation.player.amount !== g.minContract)) {
+                return cb("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");
+            }
 
-                if (!negotiation.resigning && (payroll + negotiation.player.amount > g.salaryCap && negotiation.player.amount !== g.minContract)) {
-                    return cb("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");
-                }
+            // Adjust to account for in-season signings;
+            if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
+                negotiation.player.years -= 1;
+            }
 
-                // Adjust to account for in-season signings;
-                if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
-                    negotiation.player.years -= 1;
-                }
+            afterAddStatsRow = function (p, cursor) {
+                p = player.setContract(p, {
+                    amount: negotiation.player.amount,
+                    exp: g.season + negotiation.player.years
+                }, true);
 
-/*                r = g.dbex("SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid", tid = g.userTid);
-                rosterOrder, = r.fetchone();*/
+                cursor.update(p);
 
-                afterAddStatsRow = function (p, cursor) {
-                    p = player.setContract(p, {
-                        amount: negotiation.player.amount,
-                        exp: g.season + negotiation.player.years
-                    }, true);
-
-                    cursor.update(p);
-
-                    if (negotiation.resigning) {
-                        eventLog.add(null, {
-                            type: "reSigned",
-                            text: 'You re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
-                            showNotification: false
-                        });
-                    } else {
-                        eventLog.add(null, {
-                            type: "freeAgent",
-                            text: 'You signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
-                            showNotification: false
-                        });
-                    }
-                }
-
-                tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
-                tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    p = cursor.value;
-
-                    p.tid = g.userTid;
-                    p.gamesUntilTradable = 15;
-
-                    // Handle stats if the season is in progress
-                    if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                        player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                            afterAddStatsRow(p, cursor);
-                        });
-                    } else {
-                        afterAddStatsRow(p, cursor);
-                    }
-                };
-                tx.oncomplete = function () {
-                    cancel(pid, function () {
-                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                            cb();
-                        });
+                if (negotiation.resigning) {
+                    eventLog.add(null, {
+                        type: "reSigned",
+                        text: 'You re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                        showNotification: false
                     });
-                };
-            });
-        };
+                } else {
+                    eventLog.add(null, {
+                        type: "freeAgent",
+                        text: 'You signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                        showNotification: false
+                    });
+                }
+            };
+
+            tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
+            tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
+                var cursor, p;
+
+                cursor = event.target.result;
+                p = cursor.value;
+
+                p.tid = g.userTid;
+                p.gamesUntilTradable = 15;
+
+                // Handle stats if the season is in progress
+                if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                    player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                        afterAddStatsRow(p, cursor);
+                    });
+                } else {
+                    afterAddStatsRow(p, cursor);
+                }
+            };
+            tx.oncomplete = function () {
+                cancel(pid, function () {
+                    dao.gameAttributes.set({lastDbChange: Date.now()}).then(cb);
+                });
+            };
+        });
     }
 
     return {

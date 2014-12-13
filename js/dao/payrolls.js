@@ -39,17 +39,13 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
      * @return {Promise} Resolves to an array of payrolls, ordered by team id.
      */
     function getAll() {
-        var getPayroll, i, promises, tx;
+        var i, promises, tx;
 
         tx = g.dbl.transaction(["players", "releasedPlayers"]);
 
-        getPayroll = function (tx, tid) {
-            return get({ot: tx, tid: tid});
-        };
-
         promises = [];
         for (i = 0; i < g.numTeams; i++) {
-            promises.push(getPayroll(tx, i));
+            promises.push(get({ot: tx, tid: i}));
         }
 
         return Promise.all(promises);

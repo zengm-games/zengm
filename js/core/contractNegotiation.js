@@ -244,7 +244,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
             };
         };
         tx.oncomplete = function () {
-            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+            dao.gameAttributes.set({lastDbChange: Date.now()}).then(function () {
                 if (cb !== undefined) {
                     cb();
                 }

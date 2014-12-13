@@ -2,7 +2,7 @@
  * @name views.newTeam
  * @namespace Pick a new team after being fired.
  */
-define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util/helpers"], function (db, g, ui, team, $, bbgmView, helpers) {
+define(["dao", "db", "globals", "ui", "core/team", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, team, bbgmView, helpers) {
     "use strict";
 
     function get(req) {
@@ -14,12 +14,12 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
     }
 
     function post(req) {
-        $("#new-team").attr("disabled", "disabled");
+        document.getElementById("new-team").disabled = true;
 
         ui.updateStatus("Idle");
         ui.updatePlayMenu();
 
-        db.setGameAttributes({
+        dao.gameAttributes.set({
             gameOver: false,
             userTid: Math.floor(req.params.tid),
             ownerMood: {
@@ -29,21 +29,18 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
             },
             gracePeriodEnd: g.season + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
             lastDbChange: Date.now()
-        }, function () {
+        }).then(function () {
             db.updateMetaNameRegion(g.lid, g.teamNamesCache[g.userTid], g.teamRegionsCache[g.userTid]);
             ui.realtimeUpdate([], helpers.leagueUrl([]));
         });
     }
 
     function updateTeamSelect() {
-        var deferred;
-        deferred = $.Deferred();
-
-        team.filter({
+        return team.filter({
             attrs: ["tid", "region", "name"],
             seasonAttrs: ["winp"],
             season: g.season
-        }, function (teams) {
+        }).then(function (teams) {
             // Remove user's team (no re-hiring immediately after firing)
             teams.splice(g.userTid, 1);
 
@@ -56,13 +53,11 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "util/bbgmView", "util
                 teams = teams.slice(0, 5);
             }
 
-            deferred.resolve({
+            return {
                 godMode: g.godMode,
                 teams: teams
-            });
+            };
         });
-
-        return deferred.promise();
     }
 
     function uiFirst() {

@@ -2,7 +2,7 @@
  * @name views.draftSummary
  * @namespace Draft summary.
  */
-define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, $, ko, _, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -19,7 +19,8 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
                 return {
                     redirectUrl: helpers.leagueUrl(["draft_scouting"])
                 };
-            } else if (season === g.season) {
+            }
+            if (season === g.season) {
                 // View last season by default
                 season = g.season - 1;
             }
@@ -30,6 +31,10 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
         };
     }
 
+    function InitViewModel() {
+        this.season = ko.observable();
+    }
+
     mapping = {
         players: {
             create: function (options) {
@@ -38,17 +43,13 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
         }
     };
 
-    function updateDraftSummary(inputs) {
-        var deferred, vars;
-
-        deferred = $.Deferred();
-        vars = {};
-
-        dao.players.getAll({
+    function updateDraftSummary(inputs, updateEvents, vm) {
+        // Update every time because anything could change this (unless all players from class are retired)
+        return dao.players.getAll({
             index: "draft.year",
             key: inputs.season,
             statsSeasons: "all"
-        }, function (playersAll) {
+        }).then(function (playersAll) {
             var currentPr, i, pa, p, players;
 
             playersAll = player.filter(playersAll, {
@@ -87,15 +88,11 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
                 }
             }
 
-            vars = {
+            return {
                 season: inputs.season,
                 players: players
             };
-
-            deferred.resolve(vars);
         });
-
-        return deferred.promise();
     }
 
     function uiFirst(vm) {
@@ -121,6 +118,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
     return bbgmView.init({
         id: "draftSummary",
         get: get,
+        InitViewModel: InitViewModel,
         mapping: mapping,
         runBefore: [updateDraftSummary],
         uiFirst: uiFirst,

@@ -263,7 +263,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
 
                     tx = g.dbl.transaction("awards", "readwrite");
-                    tx.objectStore("awards").add(awards);
+                    tx.objectStore("awards").put(awards);
                     tx.oncomplete = function () {
                         var tx;
 
@@ -765,7 +765,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
             row = {season: g.season, currentRound: 0, series: series};
             tx = g.dbl.transaction(["players", "playerStats", "playoffSeries", "teams"], "readwrite");
-            tx.objectStore("playoffSeries").add(row);
+            tx.objectStore("playoffSeries").put(row);
 
             if (tidPlayoffs.indexOf(g.userTid) >= 0) {
                 eventLog.add(null, {

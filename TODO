@@ -6,9 +6,8 @@ THE FLATTENING
 
 use promises pervasively
 
-season.awards
-
-core.game.play
+core.league
+core.season
 
 switch dao.players.get to use promises
   grep -R dao.players.get js

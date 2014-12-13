@@ -6,6 +6,8 @@ THE FLATTENING
 
 use promises pervasively
 
+season.awards
+
 core.game.play
 
 switch dao.players.get to use promises
@@ -81,8 +83,6 @@ get rid of $ and _ where possible
 helper functions to DRY get and getAll in dao files
 
 unit tests
-
-what happens to an error in a function that returns a promise, but is outside of a promise? do i need to wrap everything in Promise.method?
 
 unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-javascript-es6-promise-support-done-api https://code.google.com/p/v8/issues/detail?id=3093
   can customize build to save space https://github.com/petkaantonov/bluebird#custom-builds

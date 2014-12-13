@@ -839,21 +839,6 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
         // This simulates a day, including game simulation and any other bookkeeping that needs to be done
         cbRunDay = function () {
-            var cbYetAnother;
-
-            // This is called if there are remaining days to simulate
-            cbYetAnother = function () {
-                // Check if it's the playoffs and do some special stuff if it is or isn't
-                if (g.phase !== g.PHASE.PLAYOFFS) {
-                    // Decrease free agent demands and let AI teams sign them
-                    return freeAgents.decreaseDemands()
-                        .then(freeAgents.autoSign)
-                        .then(cbPlayGames);
-                }
-
-                return cbPlayGames();
-            };
-
             if (numDays > 0) {
                 // If we didn't just stop games, let's play
                 // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
@@ -862,7 +847,15 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         if (g.stopGames) {
                             return db.setGameAttributes({stopGames: false});
                         }
-                    }).then(cbYetAnother);
+                    }).then(function () {
+                        // Check if it's the playoffs and do some special stuff if it is or isn't
+                        return Promise.try(function () {
+                            if (g.phase !== g.PHASE.PLAYOFFS) {
+                                // Decrease free agent demands and let AI teams sign them
+                                return freeAgents.decreaseDemands().then(freeAgents.autoSign)
+                            }
+                        }).then(cbPlayGames);
+                    });
                 }
             } else if (numDays === 0) {
                 // If this is the last day, update play menu

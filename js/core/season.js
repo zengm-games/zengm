@@ -13,9 +13,9 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * This is based on three factors: regular season performance, playoff performance, and finances. Designed to be called after the playoffs end.
      * 
      * @memberOf core.season
-     * @param {function(Object)} cb Callback function whose argument is an object containing the changes in g.ownerMood this season.
+     * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
      */
-    function updateOwnerMood(cb) {
+    function updateOwnerMood() {
         return team.filter({
             seasonAttrs: ["won", "playoffRoundsWon", "profit"],
             season: g.season,
@@ -34,7 +34,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             }
             deltas.money = (t.profit - 15) / 100;
 
-            Promise.try(function () {
+            return Promise.try(function () {
                 // Only update owner mood if grace period is over
                 if (g.season >= g.gracePeriodEnd) {
                     ownerMood = {};
@@ -61,58 +61,60 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * The awards are saved to the "awards" object store.
      *
      * @memberOf core.season
-     * @param {function()} cb Callback function.
+     * @return {Promise}
      */
-    function awards(cb) {
-        var awardsByPlayer, cbAwardsByPlayer, tx;
+    function awards() {
+        var awards, awardsByPlayer, cbAwardsByPlayer, tx;
+
+        awards = {season: g.season};
 
         // [{pid, type}]
         awardsByPlayer = [];
 
-        cbAwardsByPlayer = function (awardsByPlayer, cb) {
-            var i, pids, tx;
+        cbAwardsByPlayer = function (awardsByPlayer) {
+            return new Promise(function (resolve, reject) {
+                var i, pids, tx;
 
-            pids = _.uniq(_.pluck(awardsByPlayer, "pid"));
+                pids = _.uniq(_.pluck(awardsByPlayer, "pid"));
 
-            tx = g.dbl.transaction("players", "readwrite");
-            for (i = 0; i < pids.length; i++) {
-                tx.objectStore("players").openCursor(pids[i]).onsuccess = function (event) {
-                    var cursor, i, p, updated;
+                tx = g.dbl.transaction("players", "readwrite");
+                for (i = 0; i < pids.length; i++) {
+                    tx.objectStore("players").openCursor(pids[i]).onsuccess = function (event) {
+                        var cursor, i, p, updated;
 
-                    cursor = event.target.result;
-                    p = cursor.value;
+                        cursor = event.target.result;
+                        p = cursor.value;
 
-                    updated = false;
-                    for (i = 0; i < awardsByPlayer.length; i++) {
-                        if (p.pid === awardsByPlayer[i].pid) {
-                            p.awards.push({season: g.season, type: awardsByPlayer[i].type});
-                            updated = true;
+                        updated = false;
+                        for (i = 0; i < awardsByPlayer.length; i++) {
+                            if (p.pid === awardsByPlayer[i].pid) {
+                                p.awards.push({season: g.season, type: awardsByPlayer[i].type});
+                                updated = true;
+                            }
                         }
-                    }
 
-                    if (updated) {
-                        cursor.update(p);
-                    }
+                        if (updated) {
+                            cursor.update(p);
+                        }
+                    };
+                }
+                tx.oncomplete = function () {
+                    resolve();
                 };
-            }
-            tx.oncomplete = function () {
-                cb();
-            };
+            });
         };
 
         tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "teams"]);
 
         // Get teams for won/loss record for awards, as well as finding the teams with the best records
-        team.filter({
+        return team.filter({
             attrs: ["tid", "abbrev", "region", "name", "cid"],
             seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
             season: g.season,
             sortBy: "winp",
             ot: tx
-        }, function (teams) {
-            var awards, i, foundEast, foundWest, t;
-
-            awards = {season: g.season};
+        }).then(function (teams) {
+            var i, foundEast, foundWest, t;
 
             for (i = 0; i < teams.length; i++) {
                 if (!foundEast && teams[i].cid === 0) {
@@ -133,166 +135,171 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             // Sort teams by tid so it can be easily used in awards formulas
             teams.sort(function (a, b) { return a.tid - b.tid; });
 
-            // Any non-retired player can win an award
-            dao.players.getAll({
+            return [teams, dao.players.getAll({
                 ot: tx,
                 index: "tid",
-                key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), // Any non-retired player can win an award
                 statsSeasons: [g.season]
-            }, function (players) {
-                var champTid, i, p, text, type;
+            })];
+        }).spread(function (teams, players) {
+            var champTid, i, p, type;
 
-                players = player.filter(players, {
-                    attrs: ["pid", "name", "tid", "abbrev", "draft"],
-                    stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
-                    season: g.season
+            players = player.filter(players, {
+                attrs: ["pid", "name", "tid", "abbrev", "draft"],
+                stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
+                season: g.season
+            });
+
+            // Add team games won to players
+            for (i = 0; i < players.length; i++) {
+                // Special handling for players who were cut mid-season
+                if (players[i].tid >= 0) {
+                    players[i].won = teams[players[i].tid].won;
+                } else {
+                    players[i].won = 20;
+                }
+            }
+
+            // Rookie of the Year
+            players.sort(function (a, b) {  return b.stats.ewa - a.stats.ewa; }); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
+            for (i = 0; i < players.length; i++) {
+                // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+                if (players[i].draft.year === g.season - 1) {
+                    break;
+                }
+            }
+            p = players[i];
+            if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
+                awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
+            }
+
+            // Most Valuable Player
+            players.sort(function (a, b) {  return (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won); });
+            p = players[0];
+            awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
+            // Notification unless it's the user's player, in which case it'll be shown below
+            if (p.tid !== g.userTid) {
+                eventLog.add(null, {
+                    type: "award",
+                    text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", p.abbrev]) + '">' + p.abbrev + '</a>) won the Most Valuable Player award.'
                 });
+            }
 
-                // Add team games won to players
-                for (i = 0; i < players.length; i++) {
-                    // Special handling for players who were cut mid-season
-                    if (players[i].tid >= 0) {
-                        players[i].won = teams[players[i].tid].won;
-                    } else {
-                        players[i].won = 20;
-                    }
+            // Sixth Man of the Year - same sort as MVP
+            for (i = 0; i < players.length; i++) {
+                // Must have come off the bench in most games
+                if (players[i].stats.gs === 0 || players[i].stats.gp / players[i].stats.gs > 2) {
+                    break;
                 }
+            }
+            p = players[i];
+            awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
 
-                // Rookie of the Year
-                players.sort(function (a, b) {  return b.stats.ewa - a.stats.ewa; }); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
-                for (i = 0; i < players.length; i++) {
-                    // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-                    if (players[i].draft.year === g.season - 1) {
-                        break;
-                    }
-                }
+            // All League Team - same sort as MVP
+            awards.allLeague = [{title: "First Team", players: []}];
+            type = "First Team All-League";
+            for (i = 0; i < 15; i++) {
                 p = players[i];
-                if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
-                    awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
+                if (i === 5) {
+                    awards.allLeague.push({title: "Second Team", players: []});
+                    type = "Second Team All-League";
+                } else if (i === 10) {
+                    awards.allLeague.push({title: "Third Team", players: []});
+                    type = "Third Team All-League";
                 }
+                _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
+                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
+            }
 
-                // Most Valuable Player
-                players.sort(function (a, b) {  return (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won); });
-                p = players[0];
-                awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
-                // Notification unless it's the user's player, in which case it'll be shown below
-                if (p.tid !== g.userTid) {
-                    eventLog.add(null, {
-                        type: "award",
-                        text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", p.abbrev]) + '">' + p.abbrev + '</a>) won the Most Valuable Player award.'
-                    });
-                }
+            // Defensive Player of the Year
+            players.sort(function (a, b) {  return b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl); });
+            p = players[0];
+            awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
 
-                // Sixth Man of the Year - same sort as MVP
-                for (i = 0; i < players.length; i++) {
-                    // Must have come off the bench in most games
-                    if (players[i].stats.gs === 0 || players[i].stats.gp / players[i].stats.gs > 2) {
-                        break;
-                    }
-                }
+            // All Defensive Team - same sort as DPOY
+            awards.allDefensive = [{title: "First Team", players: []}];
+            type = "First Team All-Defensive";
+            for (i = 0; i < 15; i++) {
                 p = players[i];
-                awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
-
-                // All League Team - same sort as MVP
-                awards.allLeague = [{title: "First Team", players: []}];
-                type = "First Team All-League";
-                for (i = 0; i < 15; i++) {
-                    p = players[i];
-                    if (i === 5) {
-                        awards.allLeague.push({title: "Second Team", players: []});
-                        type = "Second Team All-League";
-                    } else if (i === 10) {
-                        awards.allLeague.push({title: "Third Team", players: []});
-                        type = "Third Team All-League";
-                    }
-                    _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
-                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
+                if (i === 5) {
+                    awards.allDefensive.push({title: "Second Team", players: []});
+                    type = "Second Team All-Defensive";
+                } else if (i === 10) {
+                    awards.allDefensive.push({title: "Third Team", players: []});
+                    type = "Third Team All-Defensive";
                 }
+                _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
+                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
+            }
 
-                // Defensive Player of the Year
-                players.sort(function (a, b) {  return b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl); });
-                p = players[0];
-                awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
-                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
-
-                // All Defensive Team - same sort as DPOY
-                awards.allDefensive = [{title: "First Team", players: []}];
-                type = "First Team All-Defensive";
-                for (i = 0; i < 15; i++) {
-                    p = players[i];
-                    if (i === 5) {
-                        awards.allDefensive.push({title: "Second Team", players: []});
-                        type = "Second Team All-Defensive";
-                    } else if (i === 10) {
-                        awards.allDefensive.push({title: "Third Team", players: []});
-                        type = "Third Team All-Defensive";
-                    }
-                    _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
-                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
+            // Finals MVP - most WS in playoffs
+            for (i = 0; i < teams.length; i++) {
+                if (teams[i].playoffRoundsWon === 4) {
+                    champTid = teams[i].tid;
+                    break;
                 }
+            }
+            // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
+            return [champTid, dao.players.getAll({
+                ot: tx,
+                index: "tid",
+                key: champTid,
+                statsSeasons: [g.season],
+                statsTid: champTid,
+                statsPlayoffs: true
+            })];
+        }).spread(function (champTid, players) {
+            var p;
 
-                // Finals MVP - most WS in playoffs
-                for (i = 0; i < teams.length; i++) {
-                    if (teams[i].playoffRoundsWon === 4) {
-                        champTid = teams[i].tid;
-                        break;
-                    }
-                }
-                // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
-                dao.players.getAll({
-                    ot: tx,
-                    index: "tid",
-                    key: champTid,
-                    statsSeasons: [g.season],
-                    statsTid: champTid,
-                    statsPlayoffs: true
-                }, function (players) {
-                    players = player.filter(players, { // Only the champions, only playoff stats
-                        attrs: ["pid", "name", "tid", "abbrev"],
-                        stats: ["pts", "trb", "ast", "ewa"],
-                        season: g.season,
-                        playoffs: true,
-                        tid: champTid
-                    });
-                    players.sort(function (a, b) {  return b.statsPlayoffs.ewa - a.statsPlayoffs.ewa; });
-                    p = players[0];
-                    awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
-                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
+            players = player.filter(players, { // Only the champions, only playoff stats
+                attrs: ["pid", "name", "tid", "abbrev"],
+                stats: ["pts", "trb", "ast", "ewa"],
+                season: g.season,
+                playoffs: true,
+                tid: champTid
+            });
+            players.sort(function (a, b) {  return b.statsPlayoffs.ewa - a.statsPlayoffs.ewa; });
+            p = players[0];
+            awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
 
-                    tx = g.dbl.transaction("awards", "readwrite");
-                    tx.objectStore("awards").add(awards);
-                    tx.oncomplete = function () {
-                        var tx;
+            return new Promise(function (resolve, reject) {
+                var tx;
 
-                        // Notifications for awards for user's players
-                        tx = g.dbl.transaction("events", "readwrite");
-                        for (i = 0; i < awardsByPlayer.length; i++) {
-                            p = awardsByPlayer[i];
-                            if (p.tid === g.userTid) {
-                                text = 'Your player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ';
-                                if (p.type.indexOf("Team") >= 0) {
-                                    text += 'made the ' + p.type + '.';
-                                } else {
-                                    text += 'won the ' + p.type + ' award.';
-                                }
-                                eventLog.add(tx, {
-                                    type: "award",
-                                    text: text
-                                });
+                tx = g.dbl.transaction("awards", "readwrite");
+                tx.objectStore("awards").put(awards);
+                tx.oncomplete = function () {
+                    var i, p, text, tx;
+
+                    // Notifications for awards for user's players
+                    tx = g.dbl.transaction("events", "readwrite");
+                    for (i = 0; i < awardsByPlayer.length; i++) {
+                        p = awardsByPlayer[i];
+                        if (p.tid === g.userTid) {
+                            text = 'Your player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ';
+                            if (p.type.indexOf("Team") >= 0) {
+                                text += 'made the ' + p.type + '.';
+                            } else {
+                                text += 'won the ' + p.type + ' award.';
                             }
+                            eventLog.add(tx, {
+                                type: "award",
+                                text: text
+                            });
                         }
-                        tx.oncomplete = function () {
-                            // Achievements after awards
-                            account.checkAchievement.hardware_store();
-                            account.checkAchievement.sleeper_pick();
-                        };
-
-                        cbAwardsByPlayer(awardsByPlayer, cb);
+                    }
+                    tx.oncomplete = function () {
+                        // Achievements after awards
+                        account.checkAchievement.hardware_store();
+                        account.checkAchievement.sleeper_pick();
                     };
-                });
+
+                    resolve(cbAwardsByPlayer(awardsByPlayer));
+                };
             });
         });
     }
@@ -727,7 +734,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
             row = {season: g.season, currentRound: 0, series: series};
             tx = g.dbl.transaction(["players", "playerStats", "playoffSeries", "teams"], "readwrite");
-            tx.objectStore("playoffSeries").add(row);
+            tx.objectStore("playoffSeries").put(row);
 
             if (tidPlayoffs.indexOf(g.userTid) >= 0) {
                 eventLog.add(null, {
@@ -817,7 +824,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         account.checkAchievement.small_market();
 
         // Select winners of the season's awards
-        awards(function () {
+        awards().then(function () {
             var releasedPlayersStore, tx;
 
             tx = g.dbl.transaction(["events", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
@@ -828,7 +835,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 seasonAttrs: ["playoffRoundsWon"],
                 season: g.season,
                 ot: tx
-            }, function (teams) {
+            }).then(function (teams) {
                 var i, tid;
 
                 for (i = 0; i < teams.length; i++) {

@@ -77,72 +77,65 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "lib/
     }
 
     function updateNegotiation(inputs, updateEvents, vm) {
-        return new Promise(function (resolve, reject) {
-            g.dbl.transaction("negotiations").objectStore("negotiations").openCursor(inputs.pid).onsuccess = function (event) {
-                var negotiation;
+        return dao.negotiations.get({key: inputs.pid}).then(function (negotiation) {
+            if (!negotiation) {
+                return {
+                    errorMessage: "No negotiation with player " + inputs.pid + " in progress."
+                };
+            }
 
-                negotiation = event.target.result.value;
+            negotiation.player.expiration = negotiation.player.years + g.season;
+            // Adjust to account for in-season signings
+            if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
+                negotiation.player.expiration -= 1;
+            }
 
-                if (!negotiation) {
-                    return resolve({
-                        errorMessage: "No negotiation with player " + inputs.pid + " in progress."
-                    });
+            // Can't flatten more because of the return errorMessage above
+            return dao.players.get({
+                key: negotiation.pid
+            }).then(function (p) {
+                p = player.filter(p, {
+                    attrs: ["pid", "name", "freeAgentMood"],
+                    ratings: ["ovr", "pot"],
+                    season: g.season,
+                    showNoStats: true,
+                    showRookies: true,
+                    fuzz: true
+                });
+
+                // See views.freeAgents for moods as well
+                if (p.freeAgentMood[g.userTid] < 0.25) {
+                    p.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';
+                } else if (p.freeAgentMood[g.userTid] < 0.5) {
+                    p.mood = '<b>Willing to sign for the right price.</b>';
+                } else if (p.freeAgentMood[g.userTid] < 0.75) {
+                    p.mood = '<span class="text-warning"><b>Annoyed at you.</b></span>';
+                } else {
+                    p.mood = '<span class="text-danger"><b>Insulted by your presence.</b></span>';
                 }
+                delete p.freeAgentMood;
 
-                negotiation.player.expiration = negotiation.player.years + g.season;
-                // Adjust to account for in-season signings
-                if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
-                    negotiation.player.expiration -= 1;
-                }
-
-                resolve(dao.players.getAll({
-                    key: negotiation.pid
-                }).then(function (players) {
-                    var p;
-
-                    p = player.filter(players[0], {
-                        attrs: ["pid", "name", "freeAgentMood"],
-                        ratings: ["ovr", "pot"],
-                        season: g.season,
-                        showNoStats: true,
-                        showRookies: true,
-                        fuzz: true
-                    });
-
-                    // See views.freeAgents for moods as well
-                    if (p.freeAgentMood[g.userTid] < 0.25) {
-                        p.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';
-                    } else if (p.freeAgentMood[g.userTid] < 0.5) {
-                        p.mood = '<b>Willing to sign for the right price.</b>';
-                    } else if (p.freeAgentMood[g.userTid] < 0.75) {
-                        p.mood = '<span class="text-warning"><b>Annoyed at you.</b></span>';
-                    } else {
-                        p.mood = '<span class="text-danger"><b>Insulted by your presence.</b></span>';
-                    }
-                    delete p.freeAgentMood;
-
-                    return dao.payrolls.get({tid: g.userTid}).then(function (payroll) {
-                        return {
-                            salaryCap: g.salaryCap / 1000,
-                            payroll: payroll / 1000,
-                            team: {region: g.teamRegionsCache[g.userTid], name: g.teamNamesCache[g.userTid]},
-                            player: p,
-                            negotiation: {
-                                team: {
-                                    amount: negotiation.team.amount / 1000,
-                                    years: negotiation.team.years
-                                },
-                                player: {
-                                    amount: negotiation.player.amount / 1000,
-                                    expiration: negotiation.player.expiration,
-                                    years: negotiation.player.years
-                                },
-                                resigning: negotiation.resigning
-                            }
-                        };
-                    });
-                }));
-            };
+                return dao.payrolls.get({tid: g.userTid}).then(function (payroll) {
+                    return {
+                        salaryCap: g.salaryCap / 1000,
+                        payroll: payroll / 1000,
+                        team: {region: g.teamRegionsCache[g.userTid], name: g.teamNamesCache[g.userTid]},
+                        player: p,
+                        negotiation: {
+                            team: {
+                                amount: negotiation.team.amount / 1000,
+                                years: negotiation.team.years
+                            },
+                            player: {
+                                amount: negotiation.player.amount / 1000,
+                                expiration: negotiation.player.expiration,
+                                years: negotiation.player.years
+                            },
+                            resigning: negotiation.resigning
+                        }
+                    };
+                });
+            });
         });
     }
 

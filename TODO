@@ -60,6 +60,7 @@ core
 
 advStats - need ability to cancel promise chain and return early, but it's not an error that needs to be logged
   http://openmymind.net/Cancelling-Long-Promise-Chains/
+  also look at views with errorMessage
 
 fix as i go through
   db.getPayroll

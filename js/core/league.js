@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/player", "core/season", "core/team", "lib/underscore", "util/helpers", "util/random"], function (dao, db, g, ui, draft, finances, player, season, team, _, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/player", "core/season", "core/team", "lib/bluebird", "lib/underscore", "util/helpers", "util/random"], function (dao, db, g, ui, draft, finances, player, season, team, Promise, _, helpers, random) {
     "use strict";
 
     // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
@@ -450,27 +450,29 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
      * @param {number} lid League ID.
      * @param {function()=} cb Optional callback.
      */
-    function remove(lid, cb) {
-        var request;
+    function remove(lid) {
+        return new Promise(function (resolve, reject) {
+            var request;
 
-        if (g.dbl !== undefined) {
-            g.dbl.close();
-        }
+            if (g.dbl !== undefined) {
+                g.dbl.close();
+            }
 
-        g.dbm.transaction("leagues", "readwrite").objectStore("leagues").delete(lid);
-        request = indexedDB.deleteDatabase("league" + lid);
-        request.onsuccess = function (event) {
-            console.log("Database league" + lid + " successfully deleted");
-            cb();
-        };
-        request.onfailure = function (event) {
-            console.log("Error: ", event);
-            cb();
-        };
-        request.onblocked = function (event) {
-            console.log("Blocked: ", event);
-            cb();
-        };
+            g.dbm.transaction("leagues", "readwrite").objectStore("leagues").delete(lid);
+            request = indexedDB.deleteDatabase("league" + lid);
+            request.onsuccess = function (event) {
+                console.log("Database league" + lid + " successfully deleted");
+                resolve();
+            };
+            request.onfailure = function (event) {
+                console.log("Error: ", event);
+                resolve();
+            };
+            request.onblocked = function (event) {
+                console.log("Blocked: ", event);
+                resolve();
+            };
+        });
     }
 
 

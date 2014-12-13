@@ -12,7 +12,7 @@ define(["dao", "db", "globals", "ui", "core/league", "lib/bluebird", "util/bbgmV
     }
 
     function post(req) {
-        league.remove(parseInt(req.params.lid, 10), function () {
+        league.remove(parseInt(req.params.lid, 10)).then(function () {
             ui.realtimeUpdate([], "/");
         });
     }

@@ -3,6 +3,17 @@
 define(["db", "lib/bluebird"], function (db, Promise) {
     "use strict";
 
+    function count(options) {
+        options = options !== undefined ? options : {};
+        options.ot = options.ot !== undefined ? options.ot : null;
+
+        return new Promise(function (resolve, reject) {
+            db.getObjectStore(options.ot, "players", "players").count().onsuccess = function (event) {
+                resolve(event.target.result);
+            };
+        });
+    }
+
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
     // filter: Arbitrary JS function to run on output with array.filter
     // statsSeasons: if "all", return all (needed for career totals, listing all years stats, etc). if undefined/null, return none (same as empty array input). otherwise, it's an array of seasons to return (usually just one year, but can be two for oldStats)
@@ -151,6 +162,7 @@ if (cb !== undefined) {
     }
 
     return {
+        count: count,
         getAll: getAll,
         get: get,
         put: put

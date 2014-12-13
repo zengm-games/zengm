@@ -2,7 +2,7 @@
  * @name views.deleteLeague
  * @namespace Delete league form.
  */
-define(["db", "globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (db, g, ui, league, $, bbgmView, helpers, viewHelpers) {
+define(["dao", "db", "globals", "ui", "core/league", "lib/bluebird", "util/bbgmView", "util/viewHelpers"], function (dao, db, g, ui, league, Promise, bbgmView, viewHelpers) {
     "use strict";
 
     function get(req) {
@@ -18,47 +18,30 @@ define(["db", "globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "ut
     }
 
     function updateDeleteLeague(inputs, updateEvents) {
-        var deferred;
+        return db.connectLeague(inputs.lid).then(function () {
+            var tx;
 
-        deferred = $.Deferred();
-        db.connectLeague(inputs.lid, function () {
-            var transaction;
+            tx = g.dbl.transaction(["games", "players", "teams"]);
 
-            transaction = g.dbl.transaction(["games", "players", "teams"]);
-            transaction.objectStore("games").count().onsuccess = function (event) {
-                var numGames;
+            return Promise.all([
+                dao.games.count({ot: tx}),
+                dao.players.count({ot: tx}),
+                dao.teams.get({ot: tx, key: 0}),
+                dao.leagues.get({key: inputs.lid})
+            ]).spread(function (numGames, numPlayers, t, l) {
+                var numSeasons;
 
-                numGames = event.target.result;
+                numSeasons = t.seasons.length;
 
-                transaction.objectStore("teams").get(0).onsuccess = function (event) {
-                    var numSeasons;
-
-                    numSeasons = event.target.result.seasons.length;
-
-                    transaction.objectStore("players").count().onsuccess = function (event) {
-                        var numPlayers;
-
-                        numPlayers = event.target.result;
-
-                        g.dbm.transaction("leagues").objectStore("leagues").get(inputs.lid).onsuccess = function (event) {
-                            var l;
-
-                            l = event.target.result;
-
-                            deferred.resolve({
-                                lid: inputs.lid,
-                                name: l.name,
-                                numGames: numGames,
-                                numPlayers: numPlayers,
-                                numSeasons: numSeasons
-                            });
-                        };
-                    };
+                return {
+                    lid: inputs.lid,
+                    name: l.name,
+                    numGames: numGames,
+                    numPlayers: numPlayers,
+                    numSeasons: numSeasons
                 };
-            };
+            });
         });
-
-        return deferred.promise();
     }
 
     function uiFirst(vm) {

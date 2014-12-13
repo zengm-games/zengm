@@ -9,15 +9,10 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
      * Retrieve the current remaining draft order.
      *
      * @memberOf core.draft
-     * @param {function(Array.<Object>)} cb Callback function whose argument is an ordered array of pick objects.
+     * @return {Promise} Resolves to an ordered array of pick objects.
      */
-    function getOrder(cb) {
-        g.dbl.transaction("draftOrder").objectStore("draftOrder").get(0).onsuccess = function (event) {
-            var draftOrder;
-
-            draftOrder = event.target.result.draftOrder;
-            cb(draftOrder);
-        };
+    function getOrder() {
+        return dao.draftOrder.get();
     }
 
     /**
@@ -402,7 +397,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             playersAll = event.target.result;
             playersAll.sort(function (a, b) { return b.value - a.value; });
 
-            getOrder(function (draftOrder) {
+            getOrder().then(function (draftOrder) {
                 var autoSelectPlayer, cbAfterDoneAuto, pick, pid, selection;
 
                 // Called after either the draft is over or it's the user's pick

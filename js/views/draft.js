@@ -41,7 +41,7 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/jquery", "util
     function draftUser(pid, cb) {
         pid = parseInt(pid, 10);
 
-        draft.getOrder(function (draftOrder) {
+        draft.getOrder().then(function (draftOrder) {
             var pick;
 
             pick = draftOrder.shift();
@@ -60,7 +60,7 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/jquery", "util
     function draftUntilUserOrEnd() {
         ui.updateStatus("Draft in progress...");
         draft.untilUserOrEnd(function (pids) {
-            draft.getOrder(function (draftOrder) {
+            draft.getOrder().then(function (draftOrder) {
                 var done;
 
                 done = false;
@@ -126,7 +126,7 @@ console.log("FIXING");
                 index: "tid",
                 key: g.PLAYER.UNDRAFTED,
                 statsSeasons: [g.season]
-            }, function (undraftedAll) {
+            }).then(function (undraftedAll) {
                 var undrafted;
 
                 undraftedAll.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });
@@ -145,7 +145,7 @@ console.log("FIXING");
                     index: "draft.year",
                     key: g.season,
                     statsSeasons: [g.season]
-                }, function (players) {
+                }).then(function (players) {
                     var drafted, i, started;
 
                     players = player.filter(players, {
@@ -167,7 +167,7 @@ console.log("FIXING");
 
                     started = drafted.length > 0;
 
-                    draft.getOrder(function (draftOrder) {
+                    draft.getOrder().then(function (draftOrder) {
                         var i, slot;
 
                         for (i = 0; i < draftOrder.length; i++) {

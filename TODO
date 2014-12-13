@@ -6,8 +6,12 @@ THE FLATTENING
 
 use promises pervasively
 
+core.contractnegotiation
+  how to deal with error messages from function?
 core.league
 core.season
+
+make convenience function in dao.gameAttributes for lastDbChange updating to now
 
 switch dao.players.get to use promises
   grep -R dao.players.get js

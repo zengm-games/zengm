@@ -257,29 +257,25 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
      * 
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
-     * @param {function()} cb Callback.
+     * @return {Promise}
      */
-    function cancel(pid, cb) {
-        console.log("User canceled contract negotiations with " + pid);
-
+    function cancel(pid) {
         // Delete negotiation
-        g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").delete(pid).onsuccess = function (event) {
-            db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                // If no negotiations are in progress, update status
-                lock.negotiationInProgress(null).then(function (negotiationInProgress) {
-                    if (!negotiationInProgress) {
-                        if (g.phase === g.PHASE.FREE_AGENCY) {
-                            ui.updateStatus(g.daysLeft + " days left");
-                        } else {
-                            ui.updateStatus("Idle");
-                        }
-                        ui.updatePlayMenu();
-                    }
-
-                    cb();
-                });
-            });
-        };
+        return dao.negotiations.delete({key: pid}).then(function () {
+            return dao.gameAttributes.set({lastDbChange: Date.now()});
+        }).then(function () {
+            // If no negotiations are in progress, update status
+            return lock.negotiationInProgress(null);
+        }).then(function (negotiationInProgress) {
+            if (!negotiationInProgress) {
+                if (g.phase === g.PHASE.FREE_AGENCY) {
+                    ui.updateStatus(g.daysLeft + " days left");
+                } else {
+                    ui.updateStatus("Idle");
+                }
+                ui.updatePlayMenu();
+            }
+        });
     }
 
     /**
@@ -288,17 +284,15 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
      * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is re-signing players at the end of the season, although that should probably change eventually.
      * 
      * @memberOf core.contractNegotiation
-     * @param {function()=} cb Optional callback.
+     * @return {Promise}
      */
-    function cancelAll(cb) {
-        console.log("Canceling all ongoing contract negotiations...");
-
-        g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").clear().onsuccess = function (event) {
-            db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                ui.updateStatus("Idle");
-                ui.updatePlayMenu(null).then(cb);
-            });
-        };
+    function cancelAll() {
+        dao.negotiations.clear().then(function () {
+            return dao.gameAttributes.set({lastDbChange: Date.now()});
+        }).then(function () {
+            ui.updateStatus("Idle");
+            return ui.updatePlayMenu(null);
+        });
     }
 
     /**
@@ -372,9 +366,9 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
                 }
             };
             tx.oncomplete = function () {
-                cancel(pid, function () {
-                    dao.gameAttributes.set({lastDbChange: Date.now()}).then(cb);
-                });
+                cancel(pid).then(function () {
+                    return dao.gameAttributes.set({lastDbChange: Date.now()});
+                }).then(cb);
             };
         });
     }

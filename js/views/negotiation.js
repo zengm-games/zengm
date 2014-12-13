@@ -34,7 +34,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "lib/
         pid = parseInt(req.params.pid, 10);
 
         if (req.params.hasOwnProperty("cancel")) {
-            contractNegotiation.cancel(pid, function () {
+            contractNegotiation.cancel(pid).then(function () {
                 redirectNegotiationOrRoster(true);
             });
         } else if (req.params.hasOwnProperty("accept")) {

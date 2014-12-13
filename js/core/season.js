@@ -1060,13 +1060,13 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         team.filter({
             attrs: ["strategy"],
             season: g.season
-        }, function (teams) {
+        }).then(function (teams) {
             var strategies;
 
             strategies = _.pluck(teams, "strategy");
 
             // Delete all current negotiations to resign players
-            contractNegotiation.cancelAll(function () {
+            contractNegotiation.cancelAll().then(function () {
                 var playerStore, tx;
 
                 tx = g.dbl.transaction(["players", "teams"], "readwrite");
@@ -1159,9 +1159,9 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
     }
 
     function newPhaseFantasyDraft(cb, position) {
-        contractNegotiation.cancelAll(function () {
+        contractNegotiation.cancelAll().then(function () {
             draft.genOrderFantasy(position, function () {
-                db.setGameAttributes({nextPhase: g.phase}, function () {
+                dao.gameAttributes.set({nextPhase: g.phase}).then(function () {
                     var tx;
 
                     tx = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");

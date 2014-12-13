@@ -79,7 +79,7 @@ define(["dao", "db", "globals"], function (dao, db, g) {
             }
 
             // Allow multiple parallel negotiations only for re-signing players
-            dao.negotiations.getAll({ot: ot}).getAll().then(function (negotiations) {
+            return dao.negotiations.getAll({ot: ot}).then(function (negotiations) {
                 var i;
 
                 for (i = 0; i < negotiations.length; i++) {

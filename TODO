@@ -6,8 +6,6 @@ THE FLATTENING
 
 use promises pervasively
 
-fix contract negotiation
-
 core.game.play
 
 switch dao.players.get to use promises
@@ -38,7 +36,6 @@ switch dao.players.get to use promises
     js/views/tradingBlock.js:            dao.players.getAll({
     js/views/tradingBlock.js:                                dao.players.getAll({
     js/views/hallOfFame.js:            dao.players.getAll({
-    js/views/negotiation.js:            dao.players.getAll({
     js/views/leaders.js:                dao.players.getAll({
     js/views/roster.js:                        dao.players.getAll({
     js/views/roster.js:                    dao.players.getAll({

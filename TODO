@@ -16,7 +16,9 @@ dao refactor:
   remove players.getAll cb hack
   should more stuff be moved out of indexedDb.js? like schedule stuff?
 
-player.filter and team.filter should be renamed, otherwise it's confusing
+API design
+  player.filter and team.filter should be renamed, otherwise it's confusing
+  remove filter option from dao.players.getAll - also confusing, can just apply manually
 
 core.draft
 core.contractnegotiation
@@ -40,25 +42,14 @@ switch dao.players.get to use promises
     js/core/season.js:            dao.players.getAll({
     js/core/season.js:                dao.players.getAll({
     js/core/trade.js:                dao.players.getAll({
-    js/views/player.js:            dao.players.getAll({
     js/views/draft.js:            dao.players.getAll({
     js/views/draft.js:                dao.players.getAll({
-    js/views/freeAgents.js:            dao.players.getAll({
     js/views/tradingBlock.js:            dao.players.getAll({
     js/views/tradingBlock.js:                                dao.players.getAll({
-    js/views/hallOfFame.js:            dao.players.getAll({
-    js/views/leaders.js:                dao.players.getAll({
     js/views/roster.js:                        dao.players.getAll({
     js/views/roster.js:                    dao.players.getAll({
-    js/views/negotiationList.js:            dao.players.getAll({
-    js/views/teamHistory.js:                dao.players.getAll({
-    js/views/playerRatingDists.js:            dao.players.getAll({
-    js/views/draftSummary.js:        dao.players.getAll({
-    js/views/history.js:                dao.players.getAll({
-    js/views/upcomingFreeAgents.js:        dao.players.getAll({
     js/views/trade.js:            dao.players.getAll({
     js/views/trade.js:                dao.players.getAll({
-    js/util/advStats.js:            dao.players.getAll({
   then remove cb hack in dao.players.getAll
 
 views

@@ -26,27 +26,21 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
     };
 
     function updateLeagueFinances(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || inputs.season === g.season) {
-            deferred = $.Deferred();
-
-            team.filter({
+            return team.filter({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"],
                 season: inputs.season
-            }, function (teams) {
-                deferred.resolve({
+            }).then(function (teams) {
+                return {
                     season: inputs.season,
                     salaryCap: g.salaryCap / 1000,
                     minPayroll: g.minPayroll / 1000,
                     luxuryPayroll: g.luxuryPayroll / 1000,
                     luxuryTax: g.luxuryTax,
                     teams: teams
-                });
+                };
             });
-
-            return deferred.promise();
         }
     }
 

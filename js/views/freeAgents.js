@@ -44,10 +44,14 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/bluebird"
             dao.payrolls.get({key: g.userTid}).get(0),
             dao.players.getAll({
                 index: "tid",
+                key: g.userTid
+            }),
+            dao.players.getAll({
+                index: "tid",
                 key: g.PLAYER.FREE_AGENT,
                 statsSeasons: [g.season, g.season - 1]
             })
-        ]).spread(function (payroll, players) {
+        ]).spread(function (payroll, userPlayers, players) {
             var capSpace, i;
 
             capSpace = (g.salaryCap - payroll) / 1000;
@@ -73,6 +77,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/bluebird"
 
             return {
                 capSpace: capSpace,
+                numRosterSpots: 15 - userPlayers.length,
                 players: players
             };
         });

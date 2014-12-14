@@ -43,9 +43,7 @@ switch dao.players.get to use promises
     js/views/player.js:            dao.players.getAll({
     js/views/draft.js:            dao.players.getAll({
     js/views/draft.js:                dao.players.getAll({
-    js/views/draftScouting.js:        dao.players.getAll({
     js/views/freeAgents.js:            dao.players.getAll({
-    js/views/watchList.js:            dao.players.getAll({
     js/views/tradingBlock.js:            dao.players.getAll({
     js/views/tradingBlock.js:                                dao.players.getAll({
     js/views/hallOfFame.js:            dao.players.getAll({
@@ -87,6 +85,7 @@ db.getObjectStore - should never be used, equivalent function is in indexedDb ad
 
 big goals
   indexeddb only in dao
+    grep for transaction, objectStore, oncomplete, dbl, dbm, etc
   no "cb" anywhere
 
 grep -r Deferred js/views

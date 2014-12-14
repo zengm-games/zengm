@@ -2,16 +2,16 @@
  * @name views.draftScouting
  * @namespace Scouting prospects in future drafts.
  */
-define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, draft, finances, player, $, ko, _, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, draft, finances, player, Promise, $, ko, _, bbgmView, helpers) {
     "use strict";
 
     var mapping;
 
-    function addSeason(seasons, season, tid, cb) {
-        dao.players.getAll({
+    function addSeason(season, tid) {
+        return dao.players.getAll({
             index: "tid",
             key: tid
-        }, function (playersAll) {
+        }).then(function (playersAll) {
             var i, pa, p, players;
 
             playersAll = player.filter(playersAll, {
@@ -43,15 +43,13 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
             // Rank prospects
             players.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });
             for (i = 0; i < players.length; i++) {
-                players[i].rank = i + 1;players[i].rank = i + 1;
+                players[i].rank = i + 1;
             }
 
-            seasons.push({
+            return {
                 players: players,
                 season: season
-            });
-
-            cb();
+            };
         });
     }
 
@@ -64,13 +62,9 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
     };
 
     function updateDraftScouting(inputs, updateEvents) {
-        var deferred, firstUndraftedTid, seasonOffset, seasons;
+        var firstUndraftedTid, seasonOffset;
 
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0) {
-            deferred = $.Deferred();
-
-            seasons = [];
-
             // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
             if (g.phase < g.PHASE.FREE_AGENCY) {
                 seasonOffset = 0;
@@ -85,17 +79,15 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                 firstUndraftedTid = g.PLAYER.UNDRAFTED;
             }
 
-            addSeason(seasons, g.season + seasonOffset, firstUndraftedTid, function () {
-                addSeason(seasons, g.season + seasonOffset + 1, g.PLAYER.UNDRAFTED_2, function () {
-                    addSeason(seasons, g.season + seasonOffset + 2, g.PLAYER.UNDRAFTED_3, function () {
-                        deferred.resolve({
-                            seasons: seasons
-                        });
-                    });
-                });
+            return Promise.all([
+                addSeason(g.season + seasonOffset, firstUndraftedTid),
+                addSeason(g.season + seasonOffset + 1, g.PLAYER.UNDRAFTED_2),
+                addSeason(g.season + seasonOffset + 2, g.PLAYER.UNDRAFTED_3)
+            ]).then(function (seasons) {
+                return {
+                    seasons: seasons
+                };
             });
-
-            return deferred.promise();
         }
     }
 

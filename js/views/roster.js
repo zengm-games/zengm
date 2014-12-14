@@ -236,7 +236,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
 
             tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "schedule", "teams"]);
 
-            team.filter({
+            return team.filter({
                 season: inputs.season,
                 tid: inputs.tid,
                 attrs: ["tid", "region", "name", "strategy", "imgURL"],
@@ -253,11 +253,20 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
 
                 if (inputs.season === g.season) {
                     // Show players currently on the roster
-                    tx.objectStore("schedule").getAll().onsuccess = function (event) {
-                        var i, numGamesRemaining, schedule;
+                    return Promise.all([
+                        dao.schedule.get({ot: tx}),
+                        dao.players.getAll({
+                            ot: tx,
+                            index: "tid",
+                            key: inputs.tid,
+                            statsSeasons: [inputs.season],
+                            statsTid: inputs.tid
+                        }),
+                        dao.payrolls.get({ot: tx, key: inputs.tid}).get(0)
+                    ]).spread(function (schedule, players, payroll) {
+                        var i, numGamesRemaining;
 
                         // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
-                        schedule = event.target.result;
                         numGamesRemaining = 0;
                         for (i = 0; i < schedule.length; i++) {
                             if (inputs.tid === schedule[i].homeTid || inputs.tid === schedule[i].awayTid) {
@@ -265,59 +274,47 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                             }
                         }
 
-                        dao.players.getAll({
-                            ot: tx,
-                            index: "tid",
-                            key: inputs.tid,
-                            statsSeasons: [inputs.season],
-                            statsTid: inputs.tid
-                        }, function (players) {
-                            var i;
+                        players = player.filter(players, {
+                            attrs: attrs,
+                            ratings: ratings,
+                            stats: stats,
+                            season: inputs.season,
+                            tid: inputs.tid,
+                            showNoStats: true,
+                            showRookies: true,
+                            fuzz: true,
+                            numGamesRemaining: numGamesRemaining
+                        });
+                        players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
 
-                            players = player.filter(players, {
-                                attrs: attrs,
-                                ratings: ratings,
-                                stats: stats,
-                                season: inputs.season,
-                                tid: inputs.tid,
-                                showNoStats: true,
-                                showRookies: true,
-                                fuzz: true,
-                                numGamesRemaining: numGamesRemaining
-                            });
-                            players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
-
-                            for (i = 0; i < players.length; i++) {
-                                // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
-                                if (inputs.tid === g.userTid && (g.phase !== g.PHASE.PLAYOFFS || players.length > 15)) {
-                                    players[i].canRelease = true;
-                                } else {
-                                    players[i].canRelease = false;
-                                }
-
-                                // Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
-                                players[i].ptModifier = String(players[i].ptModifier);
+                        for (i = 0; i < players.length; i++) {
+                            // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
+                            if (inputs.tid === g.userTid && (g.phase !== g.PHASE.PLAYOFFS || players.length > 15)) {
+                                players[i].canRelease = true;
+                            } else {
+                                players[i].canRelease = false;
                             }
 
-                            vars.players = players;
+                            // Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
+                            players[i].ptModifier = String(players[i].ptModifier);
+                        }
 
-                            dao.payrolls.get({ot: tx, key: inputs.tid}).get(0).then(function (payroll) {
-                                vars.payroll = payroll / 1000;
+                        vars.players = players;
 
-                                deferred.resolve(vars);
-                            });
-                        });
-                    };
+                        vars.payroll = payroll / 1000;
+
+                        return vars
+                    });
                 } else {
                     // Show all players with stats for the given team and year
                     // Needs all seasons because of YWT!
-                    dao.players.getAll({
+                    return dao.players.getAll({
                         ot: tx,
                         index: "statsTids",
                         key: inputs.tid,
                         statsSeasons: "all",
                         statsTid: inputs.tid
-                    }, function (players) {
+                    }).then(function (players) {
                         var i;
 
                         players = player.filter(players, {
@@ -338,11 +335,10 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                         vars.players = players;
                         vars.payroll = null;
 
-                        deferred.resolve(vars);
+                        return vars;
                     });
                 }
             });
-            return deferred.promise();
         }
     }
 

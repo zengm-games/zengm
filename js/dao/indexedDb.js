@@ -58,10 +58,19 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
         methods.get = function (options) {
             options = options !== undefined ? options : {};
             options.ot = options.ot !== undefined ? options.ot : null;
+            options.index = options.index !== undefined ? options.index : null;
             options.key = options.key !== undefined ? options.key : null;
 
             return new Promise(function (resolve, reject) {
-                getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore).get(options.key).onsuccess = function (event) {
+                var objectStoreOrIndex;
+
+                objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
+
+                if (options.index !== null) {
+                    objectStoreOrIndex = objectStore.index(options.index);
+                }
+
+                objectStoreOrIndex.get(options.key).onsuccess = function (event) {
                     resolve(event.target.result);
                 };
             });
@@ -69,10 +78,19 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
         methods.getAll = function (options) {
             options = options !== undefined ? options : {};
+            options.index = options.index !== undefined ? options.index : null;
             options.ot = options.ot !== undefined ? options.ot : null;
 
             return new Promise(function (resolve, reject) {
-                getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore).getAll().onsuccess = function (event) {
+                var objectStoreOrIndex;
+
+                objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
+
+                if (options.index !== null) {
+                    objectStoreOrIndex = objectStore.index(options.index);
+                }
+
+                objectStoreOrIndex.getAll(options.key).onsuccess = function (event) {
                     resolve(event.target.result);
                 };
             });
@@ -464,7 +482,7 @@ if (cb !== undefined) {
     };
 
     players.get = function (options) {
-        return getAll(options).get(0);
+        return players.getAll(options).get(0);
     };
 
     // This should ultimately delete stats before writing

@@ -553,7 +553,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                 return returnOneTeam ? fts[0] : fts;
             } else {
                 savePayroll = function (i) {
-                    return dao.payrolls.get({ot: options.ot, tid: t[i].tid}).get(0).then(function (payroll) {
+                    return dao.payrolls.get({ot: options.ot, key: t[i].tid}).get(0).then(function (payroll) {
                         fts[i].payroll = payroll / 1000;
                         if (i === fts.length - 1) {
                             return returnOneTeam ? fts[0] : fts;
@@ -1261,7 +1261,7 @@ console.log(dv);*/
                                 player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
                                     p = player.setContract(p, p.contract, true);
                                     p.gamesUntilTradable = 15;
-                                    dao.players.put({ot: playerStore, p: p});
+                                    dao.players.put({ot: playerStore, value: p});
                                 });
 
                                 numPlayersOnRoster += 1;

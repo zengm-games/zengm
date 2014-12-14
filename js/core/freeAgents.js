@@ -89,7 +89,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                                 afterPickPlayer = function (p) {
                                     p = player.setContract(p, p.contract, true);
                                     p.gamesUntilTradable = 15;
-                                    dao.players.put({ot: tx, p: p});
+                                    dao.players.put({ot: tx, value: p});
                                     team.rosterAutoSort(tx, tid).then(function () {
                                         if (ti <= tids.length) {
                                             signTeam(ti + 1);

@@ -133,7 +133,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         that = this;
 
 //console.log('writeTeamStats');
-        dao.payrolls.get({ot: tx, tid: that.team[t1].id}).spread(function (payroll) {
+        dao.payrolls.get({ot: tx, key: that.team[t1].id}).get(0).then(function (payroll) {
             // Team stats
 //console.log('writeTeamStats 2');
             tx.objectStore("teams").openCursor(that.team[t1].id).onsuccess = function (event) {

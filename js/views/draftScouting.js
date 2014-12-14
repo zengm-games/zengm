@@ -185,7 +185,7 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                             delete p.stats;
 
                             player.updateValues(tx, p, [], function (p) {
-                                dao.players.put({ot: playerStore, p: p});
+                                dao.players.put({ot: playerStore, value: p});
                             });
                         });
 

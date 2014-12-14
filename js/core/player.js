@@ -521,11 +521,11 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
         p.ptModifier = 1; // Reset
 
         // The put doesn't always work in Chrome. No idea why.
-        dao.players.put({ot: ot, p: p});
-
-        if (cb !== undefined) {
-            cb();
-        }
+        dao.players.put({ot: ot, value: p}).then(function () {
+            if (cb !== undefined) {
+                cb();
+            }
+        });
     }
 
     /**

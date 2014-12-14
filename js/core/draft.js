@@ -91,7 +91,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
 
                 // Update player values after ratings changes
                 player.updateValues(ot, p, [], function (p) {
-                    dao.players.put({ot: tx, p: p});
+                    dao.players.put({ot: tx, value: p});
                 });
             }
 

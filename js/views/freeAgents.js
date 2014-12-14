@@ -41,7 +41,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/bluebird"
 
     function updateFreeAgents() {
         return Promise.all([
-            dao.payrolls.get({tid: g.userTid}).get(0),
+            dao.payrolls.get({key: g.userTid}).get(0),
             dao.players.getAll({
                 index: "tid",
                 key: g.PLAYER.FREE_AGENT,

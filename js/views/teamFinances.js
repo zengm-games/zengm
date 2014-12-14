@@ -120,7 +120,7 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
                 show: inputs.show
             };
 
-            return dao.payrolls.get({tid: inputs.tid}).spread(function (payroll, contracts) {
+            return dao.payrolls.get({key: inputs.tid}).spread(function (payroll, contracts) {
                 var contractTotals, i, j, season, showInt;
 
                 if (inputs.show === "all") {

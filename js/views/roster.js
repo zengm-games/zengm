@@ -301,7 +301,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
 
                             vars.players = players;
 
-                            dao.payrolls.get({ot: tx, tid: inputs.tid}).spread(function (payroll) {
+                            dao.payrolls.get({ot: tx, key: inputs.tid}).get(0).then(function (payroll) {
                                 vars.payroll = payroll / 1000;
 
                                 deferred.resolve(vars);

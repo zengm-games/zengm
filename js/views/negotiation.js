@@ -115,7 +115,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "lib/
                 }
                 delete p.freeAgentMood;
 
-                return dao.payrolls.get({tid: g.userTid}).then(function (payroll) {
+                return dao.payrolls.get({key: g.userTid}).get(0).then(function (payroll) {
                     return {
                         salaryCap: g.salaryCap / 1000,
                         payroll: payroll / 1000,

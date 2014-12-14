@@ -6,12 +6,27 @@ THE FLATTENING
 
 use promises pervasively
 
+dao refactor:
+  forceComplete in dao functions to put resolve in oncomplete, like draftOrder.put for core.draft.setOrder
+    this is an extra option to pass to put/add. need a place to put this, since previously was just passing a single object with the data to write. same with passing a transaction
+      option 1: options go to the object store name, like dao.draftOrder({ot: tx}).put(obj)
+      option 2: nest object in "value" property, like dao.draftOrder.put({ot: tx, value: obj})
+  make convenience function in dao.gameAttributes for lastDbChange updating to now
+    or do it automatically in adapter on DB update?
+  helper functions to DRY get and getAll in dao files
+    in dao/indexedDB.js, have all the adapters. most auto-generated from something like:
+      generateAdapater(dbm or dbl, objectStore, ["get", "getAll", etc]) and then allow you to overwrite as needed
+    allow overwrite
+      draftOrder.get
+      players.get*
+  remove players.getAll cb hack
+
+core.draft
 core.contractnegotiation
   how to deal with error messages from function?
 core.league
 core.season
-
-make convenience function in dao.gameAttributes for lastDbChange updating to now
+indexedDb.contracts.getAll
 
 switch dao.players.get to use promises
   grep -R dao.players.get js
@@ -76,6 +91,8 @@ fix as i go through
 util
   bbgmView
 
+db.getObjectStore - should never be used, equivalent function is in indexedDb adapter
+
 big goals
   indexeddb only in dao
   no "cb" anywhere
@@ -83,8 +100,6 @@ big goals
 grep -r Deferred js/views
 
 get rid of $ and _ where possible
-
-helper functions to DRY get and getAll in dao files
 
 unit tests
 
@@ -101,6 +116,8 @@ after fully abstracting IndexedDB, could i improve performance by running it loc
 benchmark
   before/after
   does switching from .all to .join matter?
+
+draftOrder should just be in globals, not a real table
 
 PERFORMANCE CRAP
 ----------------

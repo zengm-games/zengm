@@ -62,11 +62,13 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
         // Record in meta db
         return dao.leagues.add({
-            name: name,
-            tid: tid,
-            phaseText: phaseText,
-            teamName: teams[tid].name,
-            teamRegion: teams[tid].region
+            value: {
+                name: name,
+                tid: tid,
+                phaseText: phaseText,
+                teamName: teams[tid].name,
+                teamRegion: teams[tid].region
+            }
         }).then(function (lid) {
             g.lid = lid;
 
@@ -303,11 +305,11 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                             delete p.stats;
 
                             player.updateValues(tx, p, playerStats.reverse(), function (p) {
-                                dao.players.put({ot: tx, p: p, onsuccess: function (event) {
+                                dao.players.put({ot: tx, value: p}).then(function (pid) {
                                     var addStatsRows, i;
 
                                     // When adding a player, this is the only way to know the pid
-                                    p.pid = event.target.result;
+                                    p.pid = pid;
 
                                     // If no stats in League File, create blank stats rows for active players if necessary
                                     if (playerStats.length === 0) {
@@ -348,7 +350,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                         };
                                         addStatsRows();
                                     }
-                                }});
+                                });
                             });
                         }(p));
                     }
@@ -404,15 +406,15 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                 if (t2 === g.PLAYER.FREE_AGENT) {
                                     player.addToFreeAgents(tx, p, null, baseMoods, cbAfterEachPlayer);
                                 } else {
-                                    dao.players.put({ot: tx, p: p, onsuccess: function (event) {
+                                    dao.players.put({ot: tx, value: p}).then(function (pid) {
                                         // When adding a player, this is the only way to know the pid
-                                        p.pid = event.target.result;
+                                        p.pid = pid;
 
                                         // Needs pid, so must be called after put. It's okay, statsTid was already set above
                                         player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
                                             cbAfterEachPlayer();
                                         });
-                                    }});
+                                    });
                                 }
                             });
                         }

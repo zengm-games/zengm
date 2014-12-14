@@ -2,7 +2,7 @@
  * @name db
  * @namespace Creating, migrating, and connecting to databases; working with transactions.
  */
-define(["globals", "lib/bluebird", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (g, Promise, Davis, $, _, helpers) {
+define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (dao, g, Promise, Davis, $, _, helpers) {
     "use strict";
 
     /**
@@ -844,7 +844,7 @@ console.log(event);
 
 
     function getPayroll(ot, tid, cb) {
-        require("dao/payrolls").get({ot: ot, tid: tid}).then(cb);
+        dao.payrolls.get({ot: ot, key: tid}).then(cb);
     }
 
     /**
@@ -854,7 +854,7 @@ console.log(event);
      * @param {function(Array.<number>)} cb Callback whose first argument is an array of payrolls, ordered by team id.
      */
     function getPayrolls(cb) {
-        require("dao/payrolls").getAll().then(cb);
+        dao.payrolls.getAll().then(cb);
     }
 
     /**
@@ -865,7 +865,7 @@ console.log(event);
      * @return {Promise}
      */
     function loadGameAttribute(ot, key) {
-        return require("dao/gameAttributes").get({ot: ot, key: key}).then(function (gameAttribute) {
+        return dao.gameAttributes.get({ot: ot, key: key}).then(function (gameAttribute) {
             if (gameAttribute === undefined) {
                 // Default values for old leagues - see also loadGameAttributes
                 if (key === "numTeams") {
@@ -937,7 +937,7 @@ console.log(event);
      * @param {function()=} cb Optional callback.
      */
     function setGameAttributes(gameAttributes, cb) {
-        require("dao/gameAttributes").set(gameAttributes).then(function () {
+        dao.gameAttributes.set(gameAttributes).then(function () {
             if (cb !== undefined) {
                 cb();
             }

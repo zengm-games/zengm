@@ -2,18 +2,13 @@
  * @name views.inbox
  * @namespace Inbox.
  */
-define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], function (g, ui, $, bbgmView, viewHelpers) {
+define(["dao", "ui", "util/bbgmView"], function (dao, ui, bbgmView) {
     "use strict";
 
     function updateInbox() {
-        var deferred;
+        return dao.messages.getAll().then(function (messages) {
+            var anyUnread, i;
 
-        deferred = $.Deferred();
-
-        g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) {
-            var anyUnread, i, messages;
-
-            messages = event.target.result;
             messages.reverse();
 
             anyUnread = false;
@@ -24,13 +19,11 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], fun
                 }
             }
 
-            deferred.resolve({
+            return {
                 anyUnread: anyUnread,
                 messages: messages
-            });
-        };
-
-        return deferred.promise();
+            };
+        });
     }
 
     function uiFirst() {

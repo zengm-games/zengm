@@ -2,7 +2,7 @@
  * @name views.playerStats
  * @namespace Player stats table.
  */
-define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, player, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, $, ko, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -40,23 +40,19 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
     };
 
     function updatePlayers(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
-            deferred = $.Deferred();
-
-            dao.players.getAll({
+            return dao.players.getAll({
                 index: "tid",
                 key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
                 statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
                 statsPlayoffs: inputs.playoffs === "playoffs"
-            }, function (playersAll) {
-                var gp, i, min, players, tid;
+            }).then(function (players) {
+                var i, gp, tid;
 
                 tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
                 if (tid < 0) { tid = null; } // Show all teams
 
-                playersAll = player.filter(playersAll, {
+                players = player.filter(players, {
                     attrs: ["pid", "name", "pos", "age", "injury", "tid", "hof", "watch"],
                     ratings: ["skills"],
                     stats: ["abbrev", "tid", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
@@ -69,9 +65,9 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
 
                 // Find max gp to use for filtering
                 gp = 0;
-                for (i = 0; i < playersAll.length; i++) {
-                    if (playersAll[i].stats.gp > gp) {
-                        gp = playersAll[i].stats.gp;
+                for (i = 0; i < players.length; i++) {
+                    if (players[i].stats.gp > gp) {
+                        gp = players[i].stats.gp;
                     }
                 }
                 // Special case for career totals - use 82 games, unless this is the first season
@@ -82,37 +78,37 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
                 }
 
                 // Only keep players with more than 5 mpg
-                players = [];
-                for (i = 0; i < playersAll.length; i++) {
+                players = players.filter(function (p) {
+                    var min;
+
                     // Minutes played
                     if (inputs.statType === "totals") {
                         if (inputs.season) {
-                            min = playersAll[i].stats.min;
+                            min = p.stats.min;
                         } else {
-                            min = playersAll[i].careerStats.min;
+                            min = p.careerStats.min;
                         }
                     } else {
                         if (inputs.season) {
-                            min = playersAll[i].stats.gp * playersAll[i].stats.min;
+                            min = p.stats.gp * p.stats.min;
                         } else {
-                            min = playersAll[i].careerStats.gp * playersAll[i].careerStats.min;
+                            min = p.careerStats.gp * p.careerStats.min;
                         }
                     }
 
                     if (min > gp * 5) {
-                        players.push(playersAll[i]);
+                        return true;
                     }
-                }
+                });
 
-                deferred.resolve({
+                return {
                     players: players,
                     abbrev: inputs.abbrev,
                     season: inputs.season,
                     statType: inputs.statType,
                     playoffs: inputs.playoffs
-                });
+                };
             });
-            return deferred.promise();
         }
     }
 

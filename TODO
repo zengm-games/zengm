@@ -12,14 +12,11 @@ dao refactor:
       option 1: options go to the object store name, like dao.draftOrder({ot: tx}).put(obj)
       option 2: nest object in "value" property, like dao.draftOrder.put({ot: tx, value: obj})
   make convenience function in dao.gameAttributes for lastDbChange updating to now
-    or do it automatically in adapter on DB update?
-  helper functions to DRY get and getAll in dao files
-    in dao/indexedDB.js, have all the adapters. most auto-generated from something like:
-      generateAdapater(dbm or dbl, objectStore, ["get", "getAll", etc]) and then allow you to overwrite as needed
-    allow overwrite
-      draftOrder.get
-      players.get*
+    or do it automatically in adapter on DB update? only downside is that sometimes it's updated in one transaction with other gameAttributes changes
   remove players.getAll cb hack
+  should more stuff be moved out of indexedDb.js? like schedule stuff?
+
+player.filter and team.filter should be renamed, otherwise it's confusing
 
 core.draft
 core.contractnegotiation
@@ -44,14 +41,10 @@ switch dao.players.get to use promises
     js/core/season.js:                dao.players.getAll({
     js/core/trade.js:                dao.players.getAll({
     js/views/player.js:            dao.players.getAll({
-    js/views/playerRatings.js:            dao.players.getAll({
-    js/views/playerShotLocations.js:            dao.players.getAll({
     js/views/draft.js:            dao.players.getAll({
     js/views/draft.js:                dao.players.getAll({
     js/views/draftScouting.js:        dao.players.getAll({
-    js/views/playerStatDists.js:            dao.players.getAll({
     js/views/freeAgents.js:            dao.players.getAll({
-    js/views/playerStats.js:            dao.players.getAll({
     js/views/watchList.js:            dao.players.getAll({
     js/views/tradingBlock.js:            dao.players.getAll({
     js/views/tradingBlock.js:                                dao.players.getAll({
@@ -60,7 +53,6 @@ switch dao.players.get to use promises
     js/views/roster.js:                        dao.players.getAll({
     js/views/roster.js:                    dao.players.getAll({
     js/views/negotiationList.js:            dao.players.getAll({
-    js/views/leagueDashboard.js:            dao.players.getAll({
     js/views/teamHistory.js:                dao.players.getAll({
     js/views/playerRatingDists.js:            dao.players.getAll({
     js/views/draftSummary.js:        dao.players.getAll({
@@ -72,7 +64,7 @@ switch dao.players.get to use promises
   then remove cb hack in dao.players.getAll
 
 views
-  leagueDashboard
+  grep -r deferred js
 
 core
 

@@ -36,14 +36,10 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
     };
 
     function updatePlayers(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("playerMovement") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) || inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev()) {
-            deferred = $.Deferred();
-
-            dao.players.getAll({
+            return dao.players.getAll({
                 statsSeasons: [inputs.season]
-            }, function (players) {
+            }).then(function (players) {
                 var i, tid;
 
                 tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
@@ -76,14 +72,12 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
                     }
                 }
 
-                deferred.resolve({
+                return {
                     abbrev: inputs.abbrev,
                     season: inputs.season,
                     players: players
-                });
+                };
             });
-
-            return deferred.promise();
         }
     }
 

@@ -26,23 +26,18 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
     };
 
     function updateTeams(inputs, updateEvents, vm) {
-        var deferred, seasonAttributes;
-
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
-            deferred = $.Deferred();
-
-            team.filter({
+            return team.filter({
                 attrs: ["abbrev"],
                 seasonAttrs: ["won", "lost"],
                 stats: ["gp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"],
                 season: inputs.season
-            }, function (teams) {
-                deferred.resolve({
+            }).then(function (teams) {
+                return {
                     season: inputs.season,
                     teams: teams
-                });
+                };
             });
-            return deferred.promise();
         }
     }
 

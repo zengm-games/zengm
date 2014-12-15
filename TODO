@@ -13,8 +13,10 @@ dao refactor:
       option 2: nest object in "value" property, like dao.draftOrder.put({ot: tx, value: obj})
   make convenience function in dao.gameAttributes for lastDbChange updating to now
     or do it automatically in adapter on DB update? only downside is that sometimes it's updated in one transaction with other gameAttributes changes
-  remove players.getAll cb hack
   should more stuff be moved out of indexedDb.js? like schedule stuff?
+  need some way to handle writes
+  need some way to handle cursors
+    simple case: views/eventLog
 
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing

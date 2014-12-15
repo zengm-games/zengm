@@ -67,7 +67,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
                 objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
 
                 if (options.index !== null) {
-                    objectStoreOrIndex = objectStore.index(options.index);
+                    objectStoreOrIndex = objectStoreOrIndex.index(options.index);
                 }
 
                 objectStoreOrIndex.get(options.key).onsuccess = function (event) {
@@ -87,7 +87,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
                 objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
 
                 if (options.index !== null) {
-                    objectStoreOrIndex = objectStore.index(options.index);
+                    objectStoreOrIndex = objectStoreOrIndex.index(options.index);
                 }
 
                 objectStoreOrIndex.getAll(options.key).onsuccess = function (event) {
@@ -610,6 +610,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         awards: generateBasicDao("dbl", "awards", ["get"]),
         contracts: contracts,
         draftOrder: draftOrder,
+        events: generateBasicDao("dbl", "events", ["getAll"]),
         gameAttributes: gameAttributes,
         games: generateBasicDao("dbl", "games", ["count"]),
         messages: generateBasicDao("dbl", "messages", ["getAll"]),

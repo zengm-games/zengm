@@ -39,15 +39,11 @@ switch dao.players.get to use promises
     js/core/team.js:            dao.players.getAll({
     js/core/team.js:                dao.players.getAll({
     js/core/team.js:                dao.players.getAll({
-    js/core/season.js:            dao.players.getAll({
-    js/core/season.js:                dao.players.getAll({
     js/core/trade.js:                dao.players.getAll({
     js/views/draft.js:            dao.players.getAll({
     js/views/draft.js:                dao.players.getAll({
     js/views/tradingBlock.js:            dao.players.getAll({
     js/views/tradingBlock.js:                                dao.players.getAll({
-    js/views/roster.js:                        dao.players.getAll({
-    js/views/roster.js:                    dao.players.getAll({
     js/views/trade.js:            dao.players.getAll({
     js/views/trade.js:                dao.players.getAll({
   then remove cb hack in dao.players.getAll
@@ -57,9 +53,7 @@ views
 
 core
 
-advStats - need ability to cancel promise chain and return early, but it's not an error that needs to be logged
-  http://openmymind.net/Cancelling-Long-Promise-Chains/
-  also look at views with errorMessage
+look at views with errorMessage - is flow correct? problems with cancellation?
 
 fix as i go through
   db.getPayroll

@@ -356,7 +356,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
         promises = [];
         for (i = 0; i < g.numTeams; i++) {
-            promises.push(get({ot: tx, tid: i}));
+            promises.push(payrolls.get({ot: tx, key: i}));
         }
 
         return Promise.all(promises);
@@ -378,7 +378,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     // can say "fix the first N elements of the index and let the other values be anything" http://stackoverflow.com/questions/26203075/querying-an-indexeddb-compound-index-with-a-shorter-array
     // http://stackoverflow.com/a/23808891/786644
     // http://stackoverflow.com/questions/12084177/in-indexeddb-is-there-a-way-to-make-a-sorted-compound-query
-    players.getAll = function (options, cb) {
+    players.getAll = function (options) {
         options = options !== undefined ? options : {};
         options.ot = options.ot !== undefined ? options.ot : null;
         options.index = options.index !== undefined ? options.index : null;
@@ -387,6 +387,8 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
         options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
         options.filter = options.filter !== undefined ? options.filter : null;
 
+if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
+
         // By default, return no stats
         if (options.statsSeasons === undefined || options.statsSeasons === null) {
             options.statsSeasons = [];
@@ -394,11 +396,6 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
         return new Promise(function (resolve, reject) {
             var playerStore, tx;
-
-// HACK
-if (cb !== undefined) {
-    resolve = cb;
-}
 
             playerStore = getObjectStore(g.dbl, options.ot, ["players", "playerStats"], "players"); // Doesn't really need playerStats all the time
             tx = playerStore.transaction;
@@ -467,7 +464,7 @@ if (cb !== undefined) {
                                 done += 1;
 
                                 if (done === players.length) {
-    // do I need to sort?
+// do I need to sort?
                                     resolve(players);
                                 }
                             };
@@ -616,7 +613,7 @@ if (cb !== undefined) {
         gameAttributes: gameAttributes,
         games: generateBasicDao("dbl", "games", ["count"]),
         messages: generateBasicDao("dbl", "messages", ["getAll"]),
-        negotiations: generateBasicDao("dbl", "negotiations", ["get", "getAll", "delete", "clear"]),
+        negotiations: generateBasicDao("dbl", "negotiations", ["get", "getAll", "count", "delete", "clear"]),
         payrolls: payrolls,
         players: players,
         playoffSeries: generateBasicDao("dbl", "playoffSeries", ["get"]),

@@ -253,7 +253,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                 ui.updatePlayMenu(null).then(function () {
                     // Check to see if free agency is over
                     if (g.daysLeft === 0) {
-                        season.newPhase(g.PHASE.PRESEASON, function () {
+                        season.newPhase(g.PHASE.PRESEASON).then(function () {
                             ui.updateStatus("Idle");
                         });
                     }

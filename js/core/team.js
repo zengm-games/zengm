@@ -133,7 +133,16 @@ define(["dao", "db", "globals", "core/player", "lib/bluebird", "lib/underscore",
      * @return {Object} Updated team object.
      */
     function addStatsRow(t, playoffs) {
+        var i;
+
         playoffs = playoffs !== undefined ? playoffs : false;
+
+        // If there is already an entry for this season+playoffs, do nothing
+        for (i = 0; i < t.stats.length; i++) {
+            if (t.stats[i].season === g.season && t.stats[i].playoffs === playoffs) {
+                return t;
+            }
+        }
 
         t.stats.push({
             season: g.season,
@@ -1164,7 +1173,7 @@ console.log(dv);*/
                     key: t.tid,
                     statsSeasons: [g.season],
                     statsTid: t.tid
-                }, function (players) {
+                }).then(function (players) {
                     var age, denominator, i, numerator, score, updated, youngStar;
 
                     players = player.filter(players, {

@@ -245,7 +245,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                             cb(g.lid);
                         } else {
                             // Make schedule, start season
-                            season.newPhase(g.PHASE.REGULAR_SEASON, function () {
+                            season.newPhase(g.PHASE.REGULAR_SEASON).then(function () {
                                 var lid;
 
                                 ui.updateStatus("Idle");

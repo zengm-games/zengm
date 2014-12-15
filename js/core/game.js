@@ -663,11 +663,12 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 if (g.phase < g.PHASE.PLAYOFFS) {
                     return dao.schedule.get().then(function (schedule) {
                         if (schedule.length === 0) {
+                            // No return here, meaning no need to wait for season.newPhase to resolve - is that correct?
                             season.newPhase(g.PHASE.PLAYOFFS);
+                            ui.updateStatus("Idle");  // Just to be sure..
                         }
                     });
                 }
-                ui.updateStatus("Idle");  // Just to be sure..
             });
         };
 
@@ -814,6 +815,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
             // Get the schedule for today
             return dao.schedule.get({ot: tx, oneDay: true}).then(function (schedule) {
                 // Stop if no games
+                // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
                 if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
                     return cbNoGames();
                 }

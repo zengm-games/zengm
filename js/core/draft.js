@@ -136,7 +136,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             attrs: ["tid", "cid"],
             seasonAttrs: ["winp", "playoffRoundsWon"],
             season: g.season
-        }, function (teams) {
+        }).then(function (teams) {
             var chances, draw, firstThree, i, pick;
 
             // Sort teams by making playoffs (NOT playoff performance) and winp, for first round
@@ -454,12 +454,12 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                                 });
                             } else {
                                 // Normal
-                                season.newPhase(g.PHASE.AFTER_DRAFT, function () {
+                                season.newPhase(g.PHASE.AFTER_DRAFT).then(function () {
                                     cb(pids);
                                 });
                             }
                         } else {
-                            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                            dao.gameAttributes.set({lastDbChange: Date.now()}).then(function () {
                                 cb(pids);
                             });
                         }

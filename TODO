@@ -4,23 +4,28 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
+instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
+
 use promises pervasively
 
 dao.tx and tx.complete()
   implemented now in core.draft.setOrder
   test in other places
     grep -r --exclude-dir=test oncomplete js
+    can't fully promisify ones that include iterating over cursor yet! could partially do it (leave raw IDB code there but still use dao.tx for transaction) - but it'd be better to figure otu what to do with the cursors first
 
 dao refactor:
   make convenience function in dao.gameAttributes for lastDbChange updating to now
     or do it automatically in adapter on DB update? only downside is that sometimes it's updated in one transaction with other gameAttributes changes
   should more stuff be moved out of indexedDb.js? like schedule stuff?
   need some way to handle writes
-    if it's simple, create a custom function like dao.teams.updateStats
+    if it's simple, do a put after reading
+    maybe create a custom function like dao.teams.updateStats?
     but what if it's more complicated?
     or what about iterating over a cursor and updating each one?
-  need some way to handle cursors
-    simple case: views/eventLog
+  need some way to handle iterating over cursors
+    see: views/eventLog
+    maybe put a thin wrapper around it, similar to YDN
 
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing

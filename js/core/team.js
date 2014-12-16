@@ -1240,79 +1240,76 @@ console.log(dv);*/
      * @param {Promise.?string} cb Resolves to null if there is no error, or a string with the error message otherwise.
      */
     function checkRosterSizes() {
-        return new Promise(function (resolve, reject) {
-            var checkRosterSize, minFreeAgents, playerStore, tx, userTeamSizeError;
+        var checkRosterSize, minFreeAgents, tx, userTeamSizeError;
 
-            checkRosterSize = function (tid) {
-                dao.players.getAll({ot: tx, index: "tid", key: tid}).then(function (players) {
-                    var i, numPlayersOnRoster, p;
+        checkRosterSize = function (tid) {
+            dao.players.getAll({ot: tx, index: "tid", key: tid}).then(function (players) {
+                var i, numPlayersOnRoster, p;
 
-                    numPlayersOnRoster = players.length;
-                    if (numPlayersOnRoster > 15) {
-                        if (tid === g.userTid) {
-                            userTeamSizeError = 'Your team currently has more than the maximum number of players (15). You must remove players (by <a href="' + helpers.leagueUrl(["roster"]) + '">releasing them from your roster</a> or through <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
-                        } else {
-                            // Automatically drop lowest value players until we reach 15
-                            players.sort(function (a, b) { return a.value - b.value; }); // Lowest first
-                            for (i = 0; i < (numPlayersOnRoster - 15); i++) {
-                                player.release(tx, players[i], false);
-                            }
-                        }
-                    } else if (numPlayersOnRoster < g.minRosterSize) {
-                        if (tid === g.userTid) {
-                            userTeamSizeError = 'Your team currently has less than the minimum number of players (' + g.minRosterSize + '). You must add players (through <a href="' + helpers.leagueUrl(["free_agents"]) + '">free agency</a> or <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
-                        } else {
-                            // Auto-add players
-    //console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
-                            while (numPlayersOnRoster < g.minRosterSize) {
-                                p = minFreeAgents.shift();
-                                p.tid = tid;
-                                player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                                    p = player.setContract(p, p.contract, true);
-                                    p.gamesUntilTradable = 15;
-                                    dao.players.put({ot: playerStore, value: p});
-                                });
-
-                                numPlayersOnRoster += 1;
-                            }
-    //console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
+                numPlayersOnRoster = players.length;
+                if (numPlayersOnRoster > 15) {
+                    if (tid === g.userTid) {
+                        userTeamSizeError = 'Your team currently has more than the maximum number of players (15). You must remove players (by <a href="' + helpers.leagueUrl(["roster"]) + '">releasing them from your roster</a> or through <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
+                    } else {
+                        // Automatically drop lowest value players until we reach 15
+                        players.sort(function (a, b) { return a.value - b.value; }); // Lowest first
+                        for (i = 0; i < (numPlayersOnRoster - 15); i++) {
+                            player.release(tx, players[i], false);
                         }
                     }
+                } else if (numPlayersOnRoster < g.minRosterSize) {
+                    if (tid === g.userTid) {
+                        userTeamSizeError = 'Your team currently has less than the minimum number of players (' + g.minRosterSize + '). You must add players (through <a href="' + helpers.leagueUrl(["free_agents"]) + '">free agency</a> or <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
+                    } else {
+                        // Auto-add players
+//console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
+                        while (numPlayersOnRoster < g.minRosterSize) {
+                            p = minFreeAgents.shift();
+                            p.tid = tid;
+                            player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
+                                p = player.setContract(p, p.contract, true);
+                                p.gamesUntilTradable = 15;
+                                dao.players.put({ot: tx, value: p});
+                            });
 
-                    // Auto sort rosters (except player's team)
-                    // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
-                    if (tid !== g.userTid) {
-                        rosterAutoSort(playerStore, tid);
-                    }
-                });
-            };
-
-            tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "teams"], "readwrite");
-            playerStore = tx.objectStore("players");
-
-            userTeamSizeError = null;
-
-            dao.players.getAll({ot: tx, index: "tid", key: g.PLAYER.FREE_AGENT}).then(function (players) {
-                var i;
-
-                // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
-                minFreeAgents = [];
-                for (i = 0; i < players.length; i++) {
-                    if (players[i].contract.amount === 500) {
-                        minFreeAgents.push(players[i]);
+                            numPlayersOnRoster += 1;
+                        }
+//console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
                     }
                 }
-                minFreeAgents.sort(function (a, b) { return b.value - a.value; });
 
-                // Make sure teams are all within the roster limits
-                for (i = 0; i < g.numTeams; i++) {
-                    checkRosterSize(i);
+                // Auto sort rosters (except player's team)
+                // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
+                if (tid !== g.userTid) {
+                    rosterAutoSort(tx, tid);
                 }
             });
+        };
 
-            tx.oncomplete = function () {
-                resolve(userTeamSizeError);
-            };
+        tx = dao.tx(["players", "playerStats", "releasedPlayers", "teams"], "readwrite");
+
+        userTeamSizeError = null;
+
+        dao.players.getAll({ot: tx, index: "tid", key: g.PLAYER.FREE_AGENT}).then(function (players) {
+            var i;
+
+            // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
+            minFreeAgents = [];
+            for (i = 0; i < players.length; i++) {
+                if (players[i].contract.amount === 500) {
+                    minFreeAgents.push(players[i]);
+                }
+            }
+            minFreeAgents.sort(function (a, b) { return b.value - a.value; });
+
+            // Make sure teams are all within the roster limits
+            for (i = 0; i < g.numTeams; i++) {
+                checkRosterSize(i);
+            }
+        });
+
+        return tx.complete().then(function () {
+            return userTeamSizeError;
         });
     }
 

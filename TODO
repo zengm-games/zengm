@@ -226,6 +226,7 @@ separate active and retired players into separate object stores
 CURRENT
 -------
 
+a 0 day injury doesn't show up in box score, so it looks like player was just benched http://www.reddit.com/message/messages/2pfuyr
 career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/are_there_career_ending_injuries/
 if playoffSeries already exists, don't try to create again http://www.reddit.com/r/BasketballGM/comments/2on0ij/a_bug_will_not_advance_to_playoffs_errors_in_log/
   use put, not add

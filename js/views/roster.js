@@ -32,34 +32,32 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
         });
     }
 
-    function doReorder(sortedPids, cb) {
-        var tx;
+    function doReorder(sortedPids) {
+        var i, tx, updateRosterOrder;
 
-        tx = g.dbl.transaction("players", "readwrite");
+        tx = dao.tx("players", "readwrite");
 
-        // Update rosterOrder
-        tx.objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
-            var cursor, i, p;
-
-            cursor = event.target.result;
-            if (cursor) {
-                p = cursor.value;
-                for (i = 0; i < sortedPids.length; i++) {
-                    if (sortedPids[i] === p.pid) {
-                        p.rosterOrder = i;
-                        break;
-                    }
-                }
-                cursor.update(p);
-                cursor.continue();
-            }
-        };
-
-        tx.oncomplete = function () {
-            db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                cb();
+        updateRosterOrder = function (pid, rosterOrder) {
+            return dao.players.get({
+                ot: tx,
+                key: pid
+            }).then(function (p) {
+                p.rosterOrder = rosterOrder;
+                return dao.players.put({
+                    ot: tx,
+                    value: p
+                });
             });
         };
+
+        // Update rosterOrder
+        for (i = 0; i < sortedPids.length; i++) {
+            updateRosterOrder(sortedPids[i], i);
+        }
+
+        return tx.complete().then(function () {
+            return db.setGameAttributes({lastDbChange: Date.now()});
+        });
     }
 
     function doRelease(pid, justDrafted, cb) {
@@ -96,7 +94,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
         };
     }
 
-    function editableChanged(editable, vm) {
+    function editableChanged(editable) {
         var rosterTbody;
 
         rosterTbody = $("#roster tbody");
@@ -120,9 +118,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                         sortedPids[i] = parseInt(sortedPids[i], 10);
                     }
 
-                    doReorder(sortedPids, function () {
-                        highlightHandles();
-                    });
+                    doReorder(sortedPids).then(highlightHandles);
                 },
                 handle: ".roster-handle",
                 disabled: true
@@ -394,7 +390,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
             if (vm.editable()) {
                 highlightHandles();
             }
-            editableChanged(vm.editable(), vm);
+            editableChanged(vm.editable());
         }).extend({throttle: 1});
 
         ko.computed(function () {

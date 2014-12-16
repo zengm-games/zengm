@@ -388,7 +388,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
 
 
-    players = generateBasicDao("dbl", "players", ["count"]);
+    players = generateBasicDao("dbl", "players", ["count", "put"]);
 
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
     // filter: Arbitrary JS function to run on output with array.filter
@@ -506,42 +506,12 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         return players.getAll(options).get(0);
     };
 
-    // This should ultimately delete stats before writing
-    // options.onsuccess defines a callback function to be run on put.onsuccess. This does NOT mean the data is actually written to the database, just that it will be (no key errors or whatever). This should probably only be used to get the player ID from event.target.result when inserting/upserting a player.
+    players.putOriginal = players.put;
     players.put = function (options) {
         options = options !== undefined ? options : {};
-        options.ot = options.ot !== undefined ? options.ot : null;
-        if (options.value === undefined) { throw new Error("Must supply value property on input to \"add\" method."); }
         if (options.value.stats !== undefined) { throw new Error("stats property on player object"); }
 
-        return new Promise(function (resolve, reject) {
-            getObjectStore(g.dbl, options.ot, "players", "players", "readwrite").put(options.value).onsuccess = function (event) {
-                resolve(event.target.result);
-            };
-        });
-        /*var playerStore;
-
-        options = options !== undefined ? options : {};
-        options.ot = options.ot !== undefined ? options.ot : null;
-
-        if (!options.hasOwnProperty("p")) {
-            throw new Error("Must supply player object p");
-        }
-        if (options.p.hasOwnProperty("stats")) {
-            throw new Error("stats property on player object");
-        }
-
-        playerStore = db.getObjectStore(options.ot, "players", "players");
-
-        if (options.hasOwnProperty("onsuccess")) {
-            playerStore.put(options.p).onsuccess = options.onsuccess;
-        } else {
-            playerStore.put(options.p);
-        }
-
-        if (cb !== undefined) {
-            cb();
-        }*/
+        return players.putOriginal(options);
     };
 
 

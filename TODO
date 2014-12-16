@@ -6,10 +6,11 @@ THE FLATTENING
 
 use promises pervasively
 
+dao.tx and tx.complete()
+  implemented now in core.draft.setOrder
+  test in other places - anywhere you see g.dbl.transaction or oncomplete
+
 dao refactor:
-  forceComplete in dao functions to put resolve in oncomplete, like draftOrder.put for core.draft.setOrder
-    this is an extra option to pass to put/add. need a place to put this, since previously was just passing a single object with the data to write. same with passing a transaction
-    THIS IS A BAD IDEA! doesn't scale to putting multiple things in the same transaction. instead, just write a wrapper around IDB transactions. see core.draft.setOrder
   make convenience function in dao.gameAttributes for lastDbChange updating to now
     or do it automatically in adapter on DB update? only downside is that sometimes it's updated in one transaction with other gameAttributes changes
   should more stuff be moved out of indexedDb.js? like schedule stuff?

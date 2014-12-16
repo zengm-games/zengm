@@ -3,6 +3,11 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
     var contracts, gameAttributes, payrolls, players, schedule;
 
+    /**
+     * Create an IndexedDB transaction whose oncomplete event can be accessed as a promise.
+     * 
+     * This is the same as IDBRequest.transaction except the returned transaction has a "complete" property, which contains a function that returns a promise which resolves when the oncomplete event of the transaction fires.
+     */
     function tx(storeNames, mode) {
         var tx;
 
@@ -24,7 +29,6 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
      * 
      * This allows for the convenient use of transactions or object stores that have already been defined, which is often necessary.
      * 
-     * @memberOf db
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
      * @param {(string|Array.<string>)} transactionObjectStores The object stores to open a transaction with, if necessary.
      * @param {?string} objectStore The object store to return. If null, return a transaction.

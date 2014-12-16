@@ -346,7 +346,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
                 }
             };
 
-            tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
+            tx = dao.tx(["players", "playerStats"], "readwrite");
             tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
                 var cursor, p;
 
@@ -365,11 +365,11 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
                     afterAddStatsRow(p, cursor);
                 }
             };
-            tx.oncomplete = function () {
-                cancel(pid).then(function () {
-                    return dao.gameAttributes.set({lastDbChange: Date.now()});
-                }).then(cb);
-            };
+            return tx.complete().then(function () {
+                return cancel(pid);
+            }).then(function () {
+                return dao.gameAttributes.set({lastDbChange: Date.now()});
+            }).then(cb);
         });
     }
 

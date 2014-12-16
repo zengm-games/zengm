@@ -15,6 +15,9 @@ dao refactor:
     or do it automatically in adapter on DB update? only downside is that sometimes it's updated in one transaction with other gameAttributes changes
   should more stuff be moved out of indexedDb.js? like schedule stuff?
   need some way to handle writes
+    if it's simple, create a custom function like dao.teams.updateStats
+    but what if it's more complicated?
+    or what about iterating over a cursor and updating each one?
   need some way to handle cursors
     simple case: views/eventLog
 
@@ -86,6 +89,9 @@ unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-jav
   https://code.google.com/p/v8/issues/detail?id=3093
 
 put bugsnag back
+
+test
+  achievement retrieval from accoutn
 
 after fully abstracting IndexedDB, could i improve performance by running it locally in node and using a relational database?
   same with mobile on phonegap

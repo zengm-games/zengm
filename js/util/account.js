@@ -2,7 +2,7 @@
  * @name util.account
  * @namespace Functions for accessing account crap.
  */
-define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"], function (g, team, $, _, eventLog) {
+define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/underscore", "util/eventLog"], function (dao, g, team, Promise, $, _, eventLog) {
     "use strict";
 
     var allAchievements, checkAchievement;
@@ -115,13 +115,13 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
         });
     }
 
-    function getAchievements(cb) {
+    function getAchievements() {
         var achievements;
 
         achievements = allAchievements.slice();
 
-        g.dbm.transaction("achievements").objectStore("achievements").getAll().onsuccess = function (event) {
-            var achievementsLocal, i, j;
+        return dao.achievements.getAll().then(function (achievementsLocal) {
+            var i, j;
 
             // Initialize counts
             for (i = 0; i < achievements.length; i++) {
@@ -129,7 +129,6 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
             }
 
             // Handle any achivements stored in IndexedDB
-            achievementsLocal = event.target.result;
             for (j = 0; j < achievementsLocal.length; j++) {
                 for (i = 0; i < achievements.length; i++) {
                     if (achievements[i].slug === achievementsLocal[j].slug) {
@@ -139,28 +138,28 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
             }
 
             // Handle any achievements stored in the cloud
-            $.ajax({
+            return Promise.resolve($.ajax({
                 type: "GET",
                 url: "http://account.basketball-gm." + g.tld + "/get_achievements.php",
                 data: "sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {
                     withCredentials: true
-                },
-                success: function (achievementsRemote) {
-                    var i;
-
-                    for (i = 0; i < achievements.length; i++) {
-                        achievements[i].count += achievementsRemote[achievements[i].slug] !== undefined ? achievementsRemote[achievements[i].slug] : 0;
-                    }
-
-                    cb(achievements);
-                },
-                error: function () {
-                    cb(achievements);
                 }
+            })).then(function (achievementsRemote) {
+                var i;
+
+                // Merge local and remote achievements
+                for (i = 0; i < achievements.length; i++) {
+                    achievements[i].count += achievementsRemote[achievements[i].slug] !== undefined ? achievementsRemote[achievements[i].slug] : 0;
+                }
+
+                return achievements;
+            }).catch(function () {
+                // No remote connection, just return local achievements
+                return achievements;
             });
-        };
+        });
     }
 
     /**

@@ -22,24 +22,16 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
     }
 
     function updateAchievements(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("firstRun") >= 0) {
-            deferred = $.Deferred();
-
-            account.getAchievements(function (achievements) {
-                deferred.resolve({
+            return account.getAchievements().then(function (achievements) {
+                return {
                     achievements: achievements
-                });
+                };
             });
-
-            return deferred.promise();
         }
     }
 
     function uiFirst() {
-        var $login, $register;
-
         ui.title("Account");
 
         document.getElementById("logout").addEventListener("click", function (e) {

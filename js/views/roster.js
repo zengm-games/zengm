@@ -214,11 +214,9 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
     };
 
     function updateRoster(inputs, updateEvents, vm) {
-        var deferred, vars, tx;
+        var vars, tx;
 
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season()) {
-            deferred = $.Deferred();
-
             vars = {
                 abbrev: inputs.abbrev,
                 season: inputs.season,

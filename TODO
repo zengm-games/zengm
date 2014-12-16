@@ -9,8 +9,7 @@ use promises pervasively
 dao refactor:
   forceComplete in dao functions to put resolve in oncomplete, like draftOrder.put for core.draft.setOrder
     this is an extra option to pass to put/add. need a place to put this, since previously was just passing a single object with the data to write. same with passing a transaction
-      option 1: options go to the object store name, like dao.draftOrder({ot: tx}).put(obj)
-      option 2: nest object in "value" property, like dao.draftOrder.put({ot: tx, value: obj})
+    THIS IS A BAD IDEA! doesn't scale to putting multiple things in the same transaction. instead, just write a wrapper around IDB transactions
   make convenience function in dao.gameAttributes for lastDbChange updating to now
     or do it automatically in adapter on DB update? only downside is that sometimes it's updated in one transaction with other gameAttributes changes
   should more stuff be moved out of indexedDb.js? like schedule stuff?

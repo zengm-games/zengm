@@ -1,7 +1,7 @@
 define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     "use strict";
 
-    var contracts, draftOrder, gameAttributes, payrolls, players, schedule;
+    var contracts, gameAttributes, payrolls, players, schedule;
 
     /**
      * Get an object store or transaction based on input which may be the desired object store, a transaction to be used, or null.
@@ -51,7 +51,6 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
     function generateBasicDao(dbmOrDbl, objectStore, requestedMethods) {
         var filteredMethods, i, methods;
-
 
         methods = {};
 
@@ -103,6 +102,18 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
             return new Promise(function (resolve, reject) {
                 getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore, "readwrite").add(options.value).onsuccess = function (event) {
+                    resolve(event.target.result);
+                };
+            });
+        };
+
+        methods.put = function (options) {
+            options = options !== undefined ? options : {};
+            options.ot = options.ot !== undefined ? options.ot : null;
+            if (options.value === undefined) { throw new Error("Must supply value property on input to \"add\" method."); }
+
+            return new Promise(function (resolve, reject) {
+                getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore, "readwrite").put(options.value).onsuccess = function (event) {
                     resolve(event.target.result);
                 };
             });
@@ -241,13 +252,6 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
                 };
             };
         });
-    };
-
-
-
-    draftOrder = generateBasicDao("dbl", "draftOrder", ["getAll"]);
-    draftOrder.get = function () {
-        return draftOrder.getAll().get(0);
     };
 
 
@@ -610,7 +614,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         achievements: generateBasicDao("dbm", "achievements", ["getAll"]),
         awards: generateBasicDao("dbl", "awards", ["get"]),
         contracts: contracts,
-        draftOrder: draftOrder,
+        draftOrder: generateBasicDao("dbl", "draftOrder", ["get", "put"]),
         events: generateBasicDao("dbl", "events", ["getAll"]),
         gameAttributes: gameAttributes,
         games: generateBasicDao("dbl", "games", ["count"]),

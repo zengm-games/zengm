@@ -12,7 +12,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
      * @return {Promise} Resolves to an ordered array of pick objects.
      */
     function getOrder() {
-        return dao.draftOrder.get();
+        return dao.draftOrder.get({key: 0});
     }
 
     /**

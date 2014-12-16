@@ -3,6 +3,22 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
     var contracts, gameAttributes, payrolls, players, schedule;
 
+    function tx(storeNames, mode) {
+        var tx;
+
+        tx = g.dbl.transaction(storeNames, mode);
+
+        tx.complete = function () {
+            return new Promise(function (resolve, reject) {
+                tx.oncomplete = function () {
+                    resolve();
+                };
+            });
+        };
+
+        return tx;
+    }
+
     /**
      * Get an object store or transaction based on input which may be the desired object store, a transaction to be used, or null.
      * 
@@ -610,6 +626,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
 
     return {
+        tx: tx,
         leagues: generateBasicDao("dbm", "leagues", ["get", "getAll", "add"]),
         achievements: generateBasicDao("dbm", "achievements", ["getAll"]),
         awards: generateBasicDao("dbl", "awards", ["get"]),

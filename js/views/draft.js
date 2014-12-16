@@ -47,7 +47,7 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/jquery", "util
             pick = draftOrder.shift();
             if (pick.tid === g.userTid) {
                 draft.selectPlayer(pick, pid, function (pid) {
-                    draft.setOrder(draftOrder, function () {
+                    draft.setOrder(draftOrder).then(function () {
                         cb(pid);
                     });
                 });

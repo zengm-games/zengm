@@ -639,7 +639,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         events: generateBasicDao("dbl", "events", ["getAll"]),
         gameAttributes: gameAttributes,
         games: generateBasicDao("dbl", "games", ["count"]),
-        messages: generateBasicDao("dbl", "messages", ["getAll"]),
+        messages: generateBasicDao("dbl", "messages", ["getAll", "add"]),
         negotiations: generateBasicDao("dbl", "negotiations", ["get", "getAll", "count", "delete", "clear"]),
         payrolls: payrolls,
         players: players,

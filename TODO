@@ -8,7 +8,8 @@ use promises pervasively
 
 dao.tx and tx.complete()
   implemented now in core.draft.setOrder
-  test in other places - anywhere you see g.dbl.transaction or oncomplete
+  test in other places
+    grep -r --exclude-dir=test oncomplete js
 
 dao refactor:
   make convenience function in dao.gameAttributes for lastDbChange updating to now

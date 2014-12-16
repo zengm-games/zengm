@@ -143,7 +143,7 @@ define(["dao", "db", "globals", "lib/bluebird", "util/helpers", "util/random"], 
     ];
 
     function generate(deltas) {
-        var activity1, activity2, indMoney, indOverall, indPlayoffs, indOvr, indWins, m, ownerMoodSum;
+        var activity1, activity2, indMoney, indPlayoffs, indOvr, indWins, m, ownerMoodSum, tx;
 
         ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
 
@@ -230,30 +230,29 @@ define(["dao", "db", "globals", "lib/bluebird", "util/helpers", "util/random"], 
             }
         }
 
-        return new Promise(function (resolve, reject) {
-            var tx;
-
-            tx = g.dbl.transaction("messages", "readwrite");
-            tx.objectStore("messages").add({
+        tx = dao.tx("messages", "readwrite");
+        dao.messages.add({
+            ot: tx,
+            value: {
                 read: false,
                 from: "The Owner",
                 year: g.season,
                 text: m
+            }
+        });
+        return tx.complete().then(function () {
+            if (ownerMoodSum > -1) {
+                return;
+            }
+            if (g.season < g.gracePeriodEnd || g.godMode) {
+                // Can't get fired yet... or because of God Mode
+                return;
+            }
+            // Fired!
+            return dao.gameAttributes.set({
+                gameOver: true,
+                showFirstOwnerMessage: true
             });
-            tx.oncomplete = function () {
-                if (ownerMoodSum > -1) {
-                    resolve();
-                } else if (g.season < g.gracePeriodEnd || g.godMode) {
-                    // Can't get fired yet... or because of God Mode
-                    resolve();
-                } else {
-                    // Fired!
-                    dao.gameAttributes.set({
-                        gameOver: true,
-                        showFirstOwnerMessage: true
-                    }).then(resolve);
-                }
-            };
         });
     }
 

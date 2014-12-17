@@ -18,6 +18,11 @@ dao.store.iterate
   need a way to short circuit
   nesting?
   non-modifying?
+  should fully replace cursors!
+  DIFFICULT ONES:
+    needs to pass second parameter to openCursor
+      util/advStats.js
+      views/message.js
 
 dao refactor:
   make convenience function in dao.gameAttributes for lastDbChange updating to now

@@ -12,6 +12,13 @@ dao.tx and tx.complete()
     grep -r --exclude-dir=test oncomplete js
     can't fully promisify ones that include iterating over cursor yet! could partially do it (leave raw IDB code there but still use dao.tx for transaction) - but it'd be better to figure otu what to do with the cursors first
 
+dao.store.iterate
+  if "modify" is passed, apply function to each element in cursor
+    how to handle custom "get" functions like players.getAll?
+  need a way to short circuit
+  nesting?
+  non-modifying?
+
 dao refactor:
   make convenience function in dao.gameAttributes for lastDbChange updating to now
     or do it automatically in adapter on DB update? only downside is that sometimes it's updated in one transaction with other gameAttributes changes

@@ -97,8 +97,9 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
         methods.getAll = function (options) {
             options = options !== undefined ? options : {};
-            options.index = options.index !== undefined ? options.index : null;
             options.ot = options.ot !== undefined ? options.ot : null;
+            options.index = options.index !== undefined ? options.index : null;
+            options.key = options.key !== undefined ? options.key : null;
 
             return new Promise(function (resolve, reject) {
                 var objectStoreOrIndex;
@@ -170,6 +171,39 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
             return new Promise(function (resolve, reject) {
                 getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore, "readwrite").clear().onsuccess = function (event) {
                     resolve();
+                };
+            });
+        };
+
+        methods.iterate = function (options) {
+            options = options !== undefined ? options : {};
+            options.ot = options.ot !== undefined ? options.ot : null;
+            options.index = options.index !== undefined ? options.index : null;
+            options.key = options.key !== undefined ? options.key : null;
+            options.modify = options.modify !== undefined ? options.modify : null;
+
+            return new Promise(function (resolve, reject) {
+                var objectStoreOrIndex;
+
+                objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
+
+                if (options.index !== null) {
+                    objectStoreOrIndex = objectStoreOrIndex.index(options.index);
+                }
+
+                objectStoreOrIndex.openCursor(options.key).onsuccess = function (event) {
+                    var cursor;
+
+                    cursor = event.target.result;
+
+                    if (cursor) {
+                        if (options.modify !== null) {
+                            cursor.update(options.modify(cursor.value));
+                        }
+                        cursor.continue();
+                    } else {
+                        resolve();
+                    }
                 };
             });
         };
@@ -388,7 +422,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
 
 
-    players = generateBasicDao("dbl", "players", ["count", "put"]);
+    players = generateBasicDao("dbl", "players", ["count", "put", "iterate"]);
 
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
     // filter: Arbitrary JS function to run on output with array.filter

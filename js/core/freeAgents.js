@@ -144,55 +144,52 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
      * @return {Promise}
      */
     function decreaseDemands() {
-        return new Promise(function (resolve, reject) {
-            var tx;
+        var tx;
 
-            tx = g.dbl.transaction("players", "readwrite");
-            tx.objectStore("players").index("tid").openCursor(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                var cursor, i, p;
+        tx = dao.tx("players", "readwrite");
 
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
+        dao.players.iterate({
+            ot: tx,
+            index: "tid",
+            key: g.PLAYER.FREE_AGENT,
+            modify: function (p) {
+                var i;
 
-                    // Decrease free agent demands
-                    p.contract.amount -= 50;
-                    if (p.contract.amount < 500) {
-                        p.contract.amount = 500;
-                    }
-
-                    if (g.phase !== g.PHASE.FREE_AGENCY) {
-                        // Since this is after the season has already started, ask for a short contract
-                        if (p.contract.amount < 1000) {
-                            p.contract.exp = g.season;
-                        } else {
-                            p.contract.exp = g.season + 1;
-                        }
-                    }
-
-                    // Free agents' resistance to signing decays after every regular season game
-                    for (i = 0; i < p.freeAgentMood.length; i++) {
-                        p.freeAgentMood[i] -= 0.075;
-                        if (p.freeAgentMood[i] < 0) {
-                            p.freeAgentMood[i] = 0;
-                        }
-                    }
-
-                    // Also, heal.
-                    if (p.injury.gamesRemaining > 0) {
-                        p.injury.gamesRemaining -= 1;
-                    } else {
-                        p.injury = {type: "Healthy", gamesRemaining: 0};
-                    }
-
-                    cursor.update(p);
-                    cursor.continue();
+                // Decrease free agent demands
+                p.contract.amount -= 50;
+                if (p.contract.amount < 500) {
+                    p.contract.amount = 500;
                 }
-            };
-            tx.oncomplete = function () {
-                resolve();
-            };
+
+                if (g.phase !== g.PHASE.FREE_AGENCY) {
+                    // Since this is after the season has already started, ask for a short contract
+                    if (p.contract.amount < 1000) {
+                        p.contract.exp = g.season;
+                    } else {
+                        p.contract.exp = g.season + 1;
+                    }
+                }
+
+                // Free agents' resistance to signing decays after every regular season game
+                for (i = 0; i < p.freeAgentMood.length; i++) {
+                    p.freeAgentMood[i] -= 0.075;
+                    if (p.freeAgentMood[i] < 0) {
+                        p.freeAgentMood[i] = 0;
+                    }
+                }
+
+                // Also, heal.
+                if (p.injury.gamesRemaining > 0) {
+                    p.injury.gamesRemaining -= 1;
+                } else {
+                    p.injury = {type: "Healthy", gamesRemaining: 0};
+                }
+
+                return p;
+            }
         });
+
+        return tx.complete();
     }
 
     /**

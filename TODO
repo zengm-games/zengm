@@ -4,8 +4,6 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
-instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
-
 use promises pervasively
 
 dao.tx and tx.complete()
@@ -108,6 +106,9 @@ benchmark
   does switching from .all to .join matter?
 
 draftOrder should just be in globals, not a real table
+
+instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
+  see promises_super_tx branch
 
 PERFORMANCE CRAP
 ----------------

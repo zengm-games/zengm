@@ -976,46 +976,47 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 var tx;
 
                 // This is a hack to handle weird cases where players have draft.year set to the current season, which fucks up the draft UI
-                tx = g.dbl.transaction("players", "readwrite");
-                tx.objectStore("players").index("draft.year").openCursor(g.season).onsuccess = function (event) {
-                    var cursor = event.target.result;
-                    if (cursor) {
-                        var p = cursor.value;
+                tx = dao.tx("players", "readwrite");
+                dao.players.iterate({
+                    ot: tx,
+                    index: "draft.year",
+                    key: g.season,
+                    modify: function (p) {
                         if (p.tid >= 0) {
                             p.draft.year -= 1;
-                            cursor.update(p);
+                            return p;
                         }
-                        cursor.continue();
                     }
-                };
-                tx.oncomplete = function () {
-                    newPhaseFinalize(g.PHASE.DRAFT, helpers.leagueUrl(["draft"])).then(resolve);
-                };
+                });
+                tx.complete().then(function () {
+                    return newPhaseFinalize(g.PHASE.DRAFT, helpers.leagueUrl(["draft"]));
+                }).then(resolve);
             });
         });
     }
 
     function newPhaseAfterDraft() {
-        return new Promise(function (resolve, reject) {
-            var draftPickStore, round, t, tx;
+        var round, tid, tx;
 
-            // Add a new set of draft picks
-            tx = g.dbl.transaction("draftPicks", "readwrite");
-            draftPickStore = tx.objectStore("draftPicks");
-            for (t = 0; t < g.numTeams; t++) {
-                for (round = 1; round <= 2; round++) {
-                    draftPickStore.add({
-                        tid: t,
-                        originalTid: t,
+        tx = dao.tx("draftPicks", "readwrite");
+
+        // Add a new set of draft picks
+        for (tid = 0; tid < g.numTeams; tid++) {
+            for (round = 1; round <= 2; round++) {
+                dao.draftPicks.add({
+                    ot: tx,
+                    value: {
+                        tid: tid,
+                        originalTid: tid,
                         round: round,
                         season: g.season + 4
-                    });
-                }
+                    }
+                });
             }
+        }
 
-            tx.oncomplete = function () {
-                newPhaseFinalize(g.PHASE.AFTER_DRAFT, undefined, ["playerMovement"]).then(resolve);
-            };
+        return tx.complete().then(function () {
+            return newPhaseFinalize(g.PHASE.AFTER_DRAFT, undefined, ["playerMovement"]);
         });
     }
 

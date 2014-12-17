@@ -192,13 +192,17 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
                 }
 
                 objectStoreOrIndex.openCursor(options.key).onsuccess = function (event) {
-                    var cursor;
+                    var cursor, updated;
 
                     cursor = event.target.result;
 
                     if (cursor) {
                         if (options.modify !== null) {
-                            cursor.update(options.modify(cursor.value));
+                            updated = options.modify(cursor.value);
+                            // Only update if return value is not undefined
+                            if (updated !== undefined) {
+                                cursor.update(updated);
+                            }
                         }
                         cursor.continue();
                     } else {
@@ -640,6 +644,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         awards: generateBasicDao("dbl", "awards", ["get"]),
         contracts: contracts,
         draftOrder: generateBasicDao("dbl", "draftOrder", ["get", "put"]),
+        draftPicks: generateBasicDao("dbl", "draftPicks", ["add"]),
         events: generateBasicDao("dbl", "events", ["getAll"]),
         gameAttributes: gameAttributes,
         games: generateBasicDao("dbl", "games", ["count"]),

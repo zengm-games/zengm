@@ -16,8 +16,8 @@ dao.store.iterate
   if "modify" is passed, apply function to each element in cursor
     how to handle custom "get" functions like players.getAll?
     nesting?
-    async inside modify function
-  need a way to short circuit. return undefined?
+    async inside modify function - maybe accept a "done" function like unit tests
+  need a way to short circuit - maybe accept a "shortCircuit" functino that does that
   non-modifying?
   should fully replace cursors!
   DIFFICULT ONES:
@@ -94,8 +94,13 @@ big goals
   indexeddb only in dao
     grep for transaction, objectStore, oncomplete, dbl, dbm, etc
   no "cb" anywhere
+  no "openCursor" anywhere
+  no "transaction" anywhere
+  no "new Promise" anywhere
 
 grep -r Deferred js/views
+
+documentation!!!!! like nuances of iterate modify
 
 get rid of $ and _ where possible
 

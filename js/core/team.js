@@ -608,7 +608,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                 ot: tx,
                 index: "tid",
                 key: tid
-            }, function (players) {
+            }).then(function (players) {
                 var i, p;
 
                 for (i = 0; i < players.length; i++) {

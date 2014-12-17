@@ -15,8 +15,9 @@ dao.tx and tx.complete()
 dao.store.iterate
   if "modify" is passed, apply function to each element in cursor
     how to handle custom "get" functions like players.getAll?
+    nesting? see season.newPhasePlayoffs
+    async inside modify function?
   need a way to short circuit
-  nesting?
   non-modifying?
   should fully replace cursors!
   DIFFICULT ONES:

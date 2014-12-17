@@ -131,7 +131,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
         methods.put = function (options) {
             options = options !== undefined ? options : {};
             options.ot = options.ot !== undefined ? options.ot : null;
-            if (options.value === undefined) { throw new Error("Must supply value property on input to \"add\" method."); }
+            if (options.value === undefined) { throw new Error("Must supply value property on input to \"put\" method."); }
 
             return new Promise(function (resolve, reject) {
                 getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore, "readwrite").put(options.value).onsuccess = function (event) {
@@ -647,8 +647,8 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         negotiations: generateBasicDao("dbl", "negotiations", ["get", "getAll", "count", "delete", "clear"]),
         payrolls: payrolls,
         players: players,
-        playoffSeries: generateBasicDao("dbl", "playoffSeries", ["get"]),
+        playoffSeries: generateBasicDao("dbl", "playoffSeries", ["get", "put"]),
         schedule: schedule,
-        teams: generateBasicDao("dbl", "teams", ["get", "getAll"])
+        teams: generateBasicDao("dbl", "teams", ["get", "getAll", "iterate"])
     };
 });

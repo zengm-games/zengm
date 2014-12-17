@@ -708,117 +708,112 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             season: g.season,
             sortBy: "winp"
         }).then(function (teams) {
-            return new Promise(function (resolve, reject) {
-                var cid, i, j, row, series, teamsConf, tidPlayoffs, tx;
+            var cid, i, row, series, teamsConf, tidPlayoffs, tx;
 
-                // Add entry for wins for each team; delete winp, which was only needed for sorting
+            // Add entry for wins for each team; delete winp, which was only needed for sorting
+            for (i = 0; i < teams.length; i++) {
+                teams[i].won = 0;
+            }
+
+            tidPlayoffs = [];
+            series = [[], [], [], []];  // First round, second round, third round, fourth round
+            for (cid = 0; cid < 2; cid++) {
+                teamsConf = [];
                 for (i = 0; i < teams.length; i++) {
-                    teams[i].won = 0;
-                }
-
-                tidPlayoffs = [];
-                series = [[], [], [], []];  // First round, second round, third round, fourth round
-                for (cid = 0; cid < 2; cid++) {
-                    teamsConf = [];
-                    for (i = 0; i < teams.length; i++) {
-                        if (teams[i].cid === cid) {
-                            if (teamsConf.length < 8) {
-                                teamsConf.push(teams[i]);
-                                tidPlayoffs.push(teams[i].tid);
-                            }
+                    if (teams[i].cid === cid) {
+                        if (teamsConf.length < 8) {
+                            teamsConf.push(teams[i]);
+                            tidPlayoffs.push(teams[i].tid);
                         }
                     }
-                    series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
-                    series[0][cid * 4].home.seed = 1;
-                    series[0][cid * 4].away.seed = 8;
-                    series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
-                    series[0][1 + cid * 4].home.seed = 4;
-                    series[0][1 + cid * 4].away.seed = 5;
-                    series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
-                    series[0][2 + cid * 4].home.seed = 3;
-                    series[0][2 + cid * 4].away.seed = 6;
-                    series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
-                    series[0][3 + cid * 4].home.seed = 2;
-                    series[0][3 + cid * 4].away.seed = 7;
                 }
+                series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
+                series[0][cid * 4].home.seed = 1;
+                series[0][cid * 4].away.seed = 8;
+                series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
+                series[0][1 + cid * 4].home.seed = 4;
+                series[0][1 + cid * 4].away.seed = 5;
+                series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
+                series[0][2 + cid * 4].home.seed = 3;
+                series[0][2 + cid * 4].away.seed = 6;
+                series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
+                series[0][3 + cid * 4].home.seed = 2;
+                series[0][3 + cid * 4].away.seed = 7;
+            }
 
-                row = {season: g.season, currentRound: 0, series: series};
-                tx = g.dbl.transaction(["players", "playerStats", "playoffSeries", "teams"], "readwrite");
-                tx.objectStore("playoffSeries").put(row);
+            row = {season: g.season, currentRound: 0, series: series};
+            tx = dao.tx(["players", "playerStats", "playoffSeries", "teams"], "readwrite");
+            dao.playoffSeries.put({value: row});
 
-                if (tidPlayoffs.indexOf(g.userTid) >= 0) {
-                    eventLog.add(null, {
-                        type: "playoffs",
-                        text: 'Your team made <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
-                    });
-                } else {
-                    eventLog.add(null, {
-                        type: "playoffs",
-                        text: 'Your team didn\'t make <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
-                    });
-                }
+            if (tidPlayoffs.indexOf(g.userTid) >= 0) {
+                eventLog.add(null, {
+                    type: "playoffs",
+                    text: 'Your team made <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
+                });
+            } else {
+                eventLog.add(null, {
+                    type: "playoffs",
+                    text: 'Your team didn\'t make <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
+                });
+            }
 
-                // Add row to team stats and team season attributes
-                tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                    var cursor, i, t, teamSeason;
+            // Add row to team stats and team season attributes
+            dao.teams.iterate({
+                ot: tx,
+                modify: function (t) {
+                    var teamSeason;
 
-                    cursor = event.target.result;
-                    if (cursor) {
-                        t = cursor.value;
-                        teamSeason = _.last(t.seasons);
-                        if (tidPlayoffs.indexOf(t.tid) >= 0) {
-                            t = team.addStatsRow(t, true);
+                    teamSeason = t.seasons[t.seasons.length - 1];
 
-                            teamSeason.playoffRoundsWon = 0;
+                    if (tidPlayoffs.indexOf(t.tid) >= 0) {
+                        t = team.addStatsRow(t, true);
 
-                            // More hype for making the playoffs
-                            teamSeason.hype += 0.05;
-                            if (teamSeason.hype > 1) {
-                                teamSeason.hype = 1;
-                            }
+                        teamSeason.playoffRoundsWon = 0;
 
-                            cursor.update(t);
-
-                            // Add row to player stats
-                            tx.objectStore("players").index("tid").openCursor(t.tid).onsuccess = function (event) {
-                                var cursorP, p;
-
-                                cursorP = event.target.result;
-                                if (cursorP) {
-                                    p = cursorP.value;
-                                    player.addStatsRow(tx, p, true, function (p) {
-                                        cursorP.update(p);
-                                        cursorP.continue();
-                                    });
-                                }
-                            };
-                        } else {
-                            // Less hype for missing the playoffs
-                            teamSeason.hype -= 0.05;
-                            if (teamSeason.hype < 0) {
-                                teamSeason.hype = 0;
-                            }
-
-                            cursor.update(t);
+                        // More hype for making the playoffs
+                        teamSeason.hype += 0.05;
+                        if (teamSeason.hype > 1) {
+                            teamSeason.hype = 1;
                         }
-                        cursor.continue();
+
+                        // Add row to player stats
+                        tx.objectStore("players").index("tid").openCursor(t.tid).onsuccess = function (event) {
+                            var cursorP, p;
+
+                            cursorP = event.target.result;
+                            if (cursorP) {
+                                p = cursorP.value;
+                                player.addStatsRow(tx, p, true, function (p) {
+                                    cursorP.update(p);
+                                    cursorP.continue();
+                                });
+                            }
+                        };
+                    } else {
+                        // Less hype for missing the playoffs
+                        teamSeason.hype -= 0.05;
+                        if (teamSeason.hype < 0) {
+                            teamSeason.hype = 0;
+                        }
                     }
-                };
 
-                tx.oncomplete = function () {
-                    Promise.all([
-                        finances.assessPayrollMinLuxury(),
-                        newSchedulePlayoffsDay()
-                    ]).then(function () {
-                        var url;
+                    return t;
+                }
+            });
 
-                        // Don't redirect if we're viewing a live game now
-                        if (location.pathname.indexOf("/live_game") === -1) {
-                            url = helpers.leagueUrl(["playoffs"]);
-                        }
-                        newPhaseFinalize(g.PHASE.PLAYOFFS, url, ["teamFinances"]).then(resolve);
-                    });
-                };
+            return tx.complete().then(function () {
+                return Promise.all([
+                    finances.assessPayrollMinLuxury(),
+                    newSchedulePlayoffsDay()
+                ]);
+            }).then(function () {
+                var url;
+
+                // Don't redirect if we're viewing a live game now
+                if (location.pathname.indexOf("/live_game") === -1) {
+                    url = helpers.leagueUrl(["playoffs"]);
+                }
+                return newPhaseFinalize(g.PHASE.PLAYOFFS, url, ["teamFinances"]);
             });
         });
     }

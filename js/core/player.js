@@ -781,13 +781,13 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
      * 
      * A row contains stats for unique values of (pid, team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid and player ID in p.pid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
      *
-     * The callback function takes the player object with an updated statsTids as its argument. This is NOT written to the database within addStatsRow because it is often updated in several different ways before being written. Only the entry to playerStats is actually written to the databse by this function.
+     * The return value is the player object with an updated statsTids as its argument. This is NOT written to the database within addStatsRow because it is often updated in several different ways before being written. Only the entry to playerStats is actually written to the databse by this function (which happens asynchronously). You probably want to write the updated player object to the database soon after calling this, in the same transaction.
      *
      * @memberOf core.player
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on playerStats readwrite; if null is passed, then a new transaction will be used.
      * @param {Object} p Player object.
      * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
-     * @return {function(Object)} Callback function whose argument the updated player object.
+     * @return {Object} Updated player object.
      */
     function addStatsRow(ot, p, playoffs, cb) {
         var ps, statsRow, stopOnSeason, tx, withPs;
@@ -818,14 +818,12 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
             }
 
             tx.objectStore("playerStats").add(statsRow);
-            cb(p);
         };
 
         // Calculate yearsWithTeam
         // Iterate over player stats objects, most recent first
         ps = [];
         if (!playoffs) {
-
             // Because the "pid, season, tid" index does not order by psid, the first time we see a tid !== p.tid could
             // be the same season a player was traded to that team, and there still could be one more with tid ===
             // p.tid. So when we se tid !== p.tid, set stopOnSeason to the previous (next... I mean lower) season so we
@@ -864,6 +862,14 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
             };
         } else {
             withPs();
+        }
+
+        // Can return synchronously because 
+        if (cb === undefined) {
+            return p;
+        } else {
+console.log("player.addStatsRow doesn't need a callback anymore!")
+            cb(p);
         }
     }
 

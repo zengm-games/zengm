@@ -775,20 +775,6 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                         if (teamSeason.hype > 1) {
                             teamSeason.hype = 1;
                         }
-
-                        // Add row to player stats
-                        tx.objectStore("players").index("tid").openCursor(t.tid).onsuccess = function (event) {
-                            var cursorP, p;
-
-                            cursorP = event.target.result;
-                            if (cursorP) {
-                                p = cursorP.value;
-                                player.addStatsRow(tx, p, true, function (p) {
-                                    cursorP.update(p);
-                                    cursorP.continue();
-                                });
-                            }
-                        };
                     } else {
                         // Less hype for missing the playoffs
                         teamSeason.hype -= 0.05;
@@ -799,6 +785,18 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
                     return t;
                 }
+            });
+
+            // Add row to player stats
+            tidPlayoffs.forEach(function (tid) {
+                dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: tid,
+                    modify: function (p) {
+                        return player.addStatsRow(tx, p, true);
+                    }
+                });
             });
 
             return tx.complete().then(function () {

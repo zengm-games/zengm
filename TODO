@@ -6,7 +6,6 @@ THE FLATTENING
 
 use promises pervasively
 
-draft.genPlayers
 draft.genOrderFantasy
 
 dao.tx and tx.complete()

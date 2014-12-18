@@ -202,19 +202,23 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
                 }
 
                 objectStoreOrIndex.openCursor(options.key).onsuccess = function (event) {
-                    var cursor, updated;
+                    var cursor;
 
                     cursor = event.target.result;
 
                     if (cursor) {
                         if (options.modify !== null) {
-                            updated = options.modify(cursor.value);
-                            // Only update if return value is not undefined
-                            if (updated !== undefined) {
-                                cursor.update(updated);
-                            }
+                            // Return a promise: waits until resolved to continue
+                            // Return a value: immediately continue
+                            // Return or resolve to undefined: no update (otherwise update)
+                            Promise.resolve(options.modify(cursor.value)).then(function (updatedValue) {
+                                // Only update if return value is not undefined
+                                if (updatedValue !== undefined) {
+                                    cursor.update(updatedValue);
+                                }
+                                cursor.continue();
+                            });
                         }
-                        cursor.continue();
                     } else {
                         resolve();
                     }

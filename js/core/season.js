@@ -1076,17 +1076,17 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
             player.genBaseMoods(tx).then(function (baseMoods) {
                 // Reset contract demands of current free agents and undrafted players
-                dao.players.iterate({
+                return dao.players.iterate({
                     ot: tx,
                     index: "tid",
                     key: IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), // This only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
                     modify: function (p) {
-                        player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
+                        return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
                     }
                 }).then(function () {
                     // AI teams re-sign players or they become free agents
                     // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
-                    dao.players.iterate({
+                    return dao.players.iterate({
                         ot: tx,
                         index: "tid",
                         key: IDBKeyRange.lowerBound(0),
@@ -1109,33 +1109,33 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                                     return p; // Other endpoints include calls to addToFreeAgents, which handles updating the database
                                 }
 
-                                player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
+                                return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
                             }
                         }
                     });
                 });
-            });
-
-            // Bump up future draft classes (nested so tid updates don't cause race conditions)
-            dao.players.iterate({
-                ot: tx,
-                index: "tid",
-                key: g.PLAYER.UNDRAFTED_2,
-                modify: function (p) {
-                    p.tid = g.PLAYER.UNDRAFTED;
-                    p.ratings[0].fuzz /= 2;
-                    return p;
-                }
             }).then(function () {
+                // Bump up future draft classes (nested so tid updates don't cause race conditions)
                 dao.players.iterate({
                     ot: tx,
                     index: "tid",
-                    key: g.PLAYER.UNDRAFTED_3,
+                    key: g.PLAYER.UNDRAFTED_2,
                     modify: function (p) {
-                        p.tid = g.PLAYER.UNDRAFTED_2;
+                        p.tid = g.PLAYER.UNDRAFTED;
                         p.ratings[0].fuzz /= 2;
                         return p;
                     }
+                }).then(function () {
+                    dao.players.iterate({
+                        ot: tx,
+                        index: "tid",
+                        key: g.PLAYER.UNDRAFTED_3,
+                        modify: function (p) {
+                            p.tid = g.PLAYER.UNDRAFTED_2;
+                            p.ratings[0].fuzz /= 2;
+                            return p;
+                        }
+                    });
                 });
             });
 

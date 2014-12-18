@@ -7,6 +7,7 @@ THE FLATTENING
 use promises pervasively
 
 player.updateValues
+  views/customizePlayer
 
 dao.tx and tx.complete()
   implemented now in core.draft.setOrder

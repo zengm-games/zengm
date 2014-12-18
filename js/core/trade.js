@@ -396,12 +396,9 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
                                             //p.gamesUntilTradable = 15;
                                             p.ptModifier = 1; // Reset
                                             if (g.phase <= g.PHASE.PLAYOFFS) {
-                                                player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                                                    cursor.update(p);
-                                                });
-                                            } else {
-                                                cursor.update(p);
+                                                p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
                                             }
+                                            cursor.update(p);
                                         };
                                     }(l));
                                 }

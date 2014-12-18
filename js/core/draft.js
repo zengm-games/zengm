@@ -377,9 +377,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
 
             // Add stats row if necessary (fantasy draft in ongoing season)
             if (g.phase === g.PHASE.FANTASY_DRAFT && g.nextPhase <= g.PHASE.PLAYOFFS) {
-                player.addStatsRow(tx, p, g.nextPhase === g.PHASE.PLAYOFFS, function (p) {
-                    cursor.update(p);
-                });
+                p = player.addStatsRow(tx, p, g.nextPhase === g.PHASE.PLAYOFFS);
             }
 
             cursor.update(p);

@@ -95,7 +95,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                                             signTeam(ti + 1);
                                         }
                                     });
-    //console.log(p.tid + ' sign ' + p.name + ' - ' + numPlayersOnRoster);
+//console.log(p.tid + ' sign ' + p.name + ' - ' + numPlayersOnRoster);
                                 };
 
                                 if (numPlayersOnRoster < 15) {
@@ -105,12 +105,10 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                                             p = players[i];
                                             p.tid = tid;
                                             if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                                                player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                                                    afterPickPlayer(p);
-                                                });
-                                            } else {
-                                                afterPickPlayer(p);
+                                                p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
                                             }
+                                            afterPickPlayer(p);
+
                                             numPlayersOnRoster += 1;
                                             payroll += p.contract.amount;
                                             foundPlayer = true;

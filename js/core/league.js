@@ -315,12 +315,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                     if (playerStats.length === 0) {
                                         if (p.tid >= 0) {
                                             // Needs pid, so must be called after put. It's okay, statsTid was already set in player.augmentPartialPlayer
-                                            player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                                                cbAfterEachPlayer();
-                                            });
-                                        } else {
-                                            cbAfterEachPlayer();
+                                            p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
                                         }
+                                        cbAfterEachPlayer();
                                     } else {
                                         // If there are stats in the League File, add them to the database
                                         addStatsRows = function () {
@@ -411,9 +408,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                         p.pid = pid;
 
                                         // Needs pid, so must be called after put. It's okay, statsTid was already set above
-                                        player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                                            cbAfterEachPlayer();
-                                        });
+                                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                                        cbAfterEachPlayer();
                                     });
                                 }
                             });

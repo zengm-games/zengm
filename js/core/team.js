@@ -1258,11 +1258,10 @@ console.log(dv);*/
                         while (numPlayersOnRoster < g.minRosterSize) {
                             p = minFreeAgents.shift();
                             p.tid = tid;
-                            player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                                p = player.setContract(p, p.contract, true);
-                                p.gamesUntilTradable = 15;
-                                dao.players.put({ot: tx, value: p});
-                            });
+                            p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                            p = player.setContract(p, p.contract, true);
+                            p.gamesUntilTradable = 15;
+                            dao.players.put({ot: tx, value: p});
 
                             numPlayersOnRoster += 1;
                         }

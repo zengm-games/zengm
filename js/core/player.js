@@ -784,7 +784,7 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
      * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
      * @return {Object} Updated player object.
      */
-    function addStatsRow(ot, p, playoffs, cb) {
+    function addStatsRow(ot, p, playoffs) {
         var ps, statsRow, stopOnSeason, tx, withPs;
 
         tx = db.getObjectStore(ot, "playerStats", null, true);
@@ -859,13 +859,7 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
             withPs();
         }
 
-        // Can return synchronously because 
-        if (cb === undefined) {
-            return p;
-        } else {
-console.log("player.addStatsRow doesn't need a callback anymore!")
-            cb(p);
-        }
+        return p;
     }
 
     function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scoutingRank) {

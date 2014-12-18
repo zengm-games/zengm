@@ -309,7 +309,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
             dao.negotiations.get({key: pid}),
             dao.payrolls.get({key: g.userTid})
         ]).spread(function (negotiation, payroll) {
-            var afterAddStatsRow, tx;
+            var tx;
 
             // If this contract brings team over the salary cap, it's not a minimum;
             // contract, and it's not re-signing a current player, ERROR!
@@ -323,48 +323,42 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
                 negotiation.player.years -= 1;
             }
 
-            afterAddStatsRow = function (p, cursor) {
-                p = player.setContract(p, {
-                    amount: negotiation.player.amount,
-                    exp: g.season + negotiation.player.years
-                }, true);
-
-                cursor.update(p);
-
-                if (negotiation.resigning) {
-                    eventLog.add(null, {
-                        type: "reSigned",
-                        text: 'You re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
-                        showNotification: false
-                    });
-                } else {
-                    eventLog.add(null, {
-                        type: "freeAgent",
-                        text: 'You signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
-                        showNotification: false
-                    });
-                }
-            };
-
             tx = dao.tx(["players", "playerStats"], "readwrite");
-            tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
-                var cursor, p;
+            dao.players.iterate({
+                ot: tx,
+                key: pid,
+                modify: function (p) {
+                    p.tid = g.userTid;
+                    p.gamesUntilTradable = 15;
 
-                cursor = event.target.result;
-                p = cursor.value;
+                    // Handle stats if the season is in progress
+                    if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                    }
 
-                p.tid = g.userTid;
-                p.gamesUntilTradable = 15;
+                    p = player.setContract(p, {
+                        amount: negotiation.player.amount,
+                        exp: g.season + negotiation.player.years
+                    }, true);
 
-                // Handle stats if the season is in progress
-                if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                    player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                        afterAddStatsRow(p, cursor);
-                    });
-                } else {
-                    afterAddStatsRow(p, cursor);
+                    if (negotiation.resigning) {
+                        eventLog.add(null, {
+                            type: "reSigned",
+                            text: 'You re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                            showNotification: false
+                        });
+                    } else {
+                        eventLog.add(null, {
+                            type: "freeAgent",
+                            text: 'You signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                            showNotification: false
+                        });
+                    }
+
+                    return p;
                 }
-            };
+            });
+
             return tx.complete().then(function () {
                 return cancel(pid);
             }).then(function () {

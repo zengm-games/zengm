@@ -342,35 +342,27 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
 
             // Recalculate player values, since ratings may have changed
             player.updateValues(null, p, [], function (p) {
-                var putPlayer, tx;
+                var tx;
 
-                tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
-
-
-                // put will either add or update entry
-                putPlayer = function (p) {
-                    dao.players.put({ot: tx, p: p, onsuccess: function (event) {
-                        // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
-                        // When adding a player, this is the only way to know the pid
-                        pid = event.target.result;
-                    }});
-                };
+                tx = dao.tx(["players", "playerStats"], "readwrite");
 
                 // Add regular season or playoffs stat row, if necessary
                 if (p.tid >= 0 && p.tid !== vm.originalTid() && g.phase <= g.PHASE.PLAYOFFS) {
                     // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-                    player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                        putPlayer(p);
-                    });
-                } else {
-                    putPlayer(p);
+                    p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
                 }
 
-                tx.oncomplete = function () {
-                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                        ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
-                    });
-                };
+                dao.players.put({ot: tx, p: p}).then(function (pidLocal) {
+                    // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
+                    // When adding a player, this is the only way to know the pid
+                    pid = pidLocal;
+                });
+
+                tx.complete().then(function () {
+                    return dao.gameAttributes.set({lastDbChange: Date.now()});
+                }).then(function () {
+                    ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
+                });
             });
         });
     }

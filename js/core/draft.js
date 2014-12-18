@@ -136,10 +136,10 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
      * This is currently based on an NBA-like lottery, where the first 3 picks can be any of the non-playoff teams (with weighted probabilities).
      *
      * @memberOf core.draft
-     * @param {function()=} cb Optional callback function.
+     * @return {Promise}
      */
-    function genOrder(cb) {
-        team.filter({
+    function genOrder() {
+        return team.filter({
             attrs: ["tid", "cid"],
             seasonAttrs: ["winp", "playoffRoundsWon"],
             season: g.season
@@ -177,10 +177,12 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 }
             }
 
-            g.dbl.transaction("draftPicks").objectStore("draftPicks").index("season").getAll(g.season).onsuccess = function (event) {
-                var draftPickStore, draftPicks, draftOrder, draftPicksIndexed, i, tid;
+            return dao.draftPicks.getAll({
+                index: "season",
+                key: g.season
+            }).then(function (draftPicks) {
+                var draftPickStore, draftOrder, draftPicksIndexed, i, tid, tx;
 
-                draftPicks = event.target.result;
                 // Reorganize this to an array indexed on originalTid and round
                 draftPicksIndexed = [];
                 for (i = 0; i < draftPicks.length; i++) {
@@ -236,13 +238,18 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 }
 
                 // Delete from draftPicks object store so that they are completely untradeable
-                draftPickStore = g.dbl.transaction("draftPicks", "readwrite").objectStore("draftPicks");
+                tx = dao.tx("draftPicks", "readwrite");
                 for (i = 0; i < draftPicks.length; i++) {
-                    draftPickStore.delete(draftPicks[i].dpid);
+                    dao.draftPicks.delete({
+                        ot: tx,
+                        key: draftPicks[i].dpid
+                    });
                 }
 
-                setOrder(draftOrder).then(cb);
-            };
+                return tx.complete().then(function () {
+                    return setOrder(draftOrder);
+                });
+            });
         });
     }
 

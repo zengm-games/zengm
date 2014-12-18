@@ -971,27 +971,25 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
     }
 
     function newPhaseDraft() {
-        return new Promise(function (resolve, reject) {
-            draft.genOrder(function () {
-                var tx;
+        return draft.genOrder().then(function () {
+            var tx;
 
-                // This is a hack to handle weird cases where players have draft.year set to the current season, which fucks up the draft UI
-                tx = dao.tx("players", "readwrite");
-                dao.players.iterate({
-                    ot: tx,
-                    index: "draft.year",
-                    key: g.season,
-                    modify: function (p) {
-                        if (p.tid >= 0) {
-                            p.draft.year -= 1;
-                            return p;
-                        }
+            // This is a hack to handle weird cases where players have draft.year set to the current season, which fucks up the draft UI
+            tx = dao.tx("players", "readwrite");
+            dao.players.iterate({
+                ot: tx,
+                index: "draft.year",
+                key: g.season,
+                modify: function (p) {
+                    if (p.tid >= 0) {
+                        p.draft.year -= 1;
+                        return p;
                     }
-                });
-                tx.complete().then(function () {
-                    return newPhaseFinalize(g.PHASE.DRAFT, helpers.leagueUrl(["draft"]));
-                }).then(resolve);
+                }
             });
+            return tx.complete();
+        }).then(function () {
+            return newPhaseFinalize(g.PHASE.DRAFT, helpers.leagueUrl(["draft"]));
         });
     }
 

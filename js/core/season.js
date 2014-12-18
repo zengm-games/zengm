@@ -72,36 +72,29 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         awardsByPlayer = [];
 
         cbAwardsByPlayer = function (awardsByPlayer) {
-            return new Promise(function (resolve, reject) {
-                var i, pids, tx;
+            var i, pids, tx;
 
-                pids = _.uniq(_.pluck(awardsByPlayer, "pid"));
+            pids = _.uniq(_.pluck(awardsByPlayer, "pid"));
 
-                tx = g.dbl.transaction("players", "readwrite");
-                for (i = 0; i < pids.length; i++) {
-                    tx.objectStore("players").openCursor(pids[i]).onsuccess = function (event) {
-                        var cursor, i, p, updated;
+            tx = dao.tx("players", "readwrite");
+            for (i = 0; i < pids.length; i++) {
+                dao.players.iterate({
+                    ot: tx,
+                    key: pids[i],
+                    modify: function (p) {
+                        var i;
 
-                        cursor = event.target.result;
-                        p = cursor.value;
-
-                        updated = false;
                         for (i = 0; i < awardsByPlayer.length; i++) {
                             if (p.pid === awardsByPlayer[i].pid) {
                                 p.awards.push({season: g.season, type: awardsByPlayer[i].type});
-                                updated = true;
                             }
                         }
 
-                        if (updated) {
-                            cursor.update(p);
-                        }
-                    };
-                }
-                tx.oncomplete = function () {
-                    resolve();
-                };
-            });
+                        return p;
+                    }
+                });
+            }
+            return tx.complete();
         };
 
         tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "teams"]);
@@ -253,7 +246,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 statsPlayoffs: true
             })];
         }).spread(function (champTid, players) {
-            var p;
+            var p, tx;
 
             players = player.filter(players, { // Only the champions, only playoff stats
                 attrs: ["pid", "name", "tid", "abbrev"],
@@ -267,39 +260,37 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
             awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
 
-            return new Promise(function (resolve, reject) {
-                var tx;
+            tx = dao.tx("awards", "readwrite");
+            dao.awards.put({ot: tx, value: awards});
+            return tx.complete().then(function () {
+                return cbAwardsByPlayer(awardsByPlayer);
+            }).then(function () {
+                var i, p, text, tx;
 
-                tx = g.dbl.transaction("awards", "readwrite");
-                tx.objectStore("awards").put(awards);
-                tx.oncomplete = function () {
-                    var i, p, text, tx;
+                // None of this stuff needs to block, it's just notifications of crap
 
-                    // Notifications for awards for user's players
-                    tx = g.dbl.transaction("events", "readwrite");
-                    for (i = 0; i < awardsByPlayer.length; i++) {
-                        p = awardsByPlayer[i];
-                        if (p.tid === g.userTid) {
-                            text = 'Your player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ';
-                            if (p.type.indexOf("Team") >= 0) {
-                                text += 'made the ' + p.type + '.';
-                            } else {
-                                text += 'won the ' + p.type + ' award.';
-                            }
-                            eventLog.add(tx, {
-                                type: "award",
-                                text: text
-                            });
+                // Notifications for awards for user's players
+                tx = dao.tx("events", "readwrite");
+                for (i = 0; i < awardsByPlayer.length; i++) {
+                    p = awardsByPlayer[i];
+                    if (p.tid === g.userTid) {
+                        text = 'Your player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ';
+                        if (p.type.indexOf("Team") >= 0) {
+                            text += 'made the ' + p.type + '.';
+                        } else {
+                            text += 'won the ' + p.type + ' award.';
                         }
+                        eventLog.add(tx, {
+                            type: "award",
+                            text: text
+                        });
                     }
-                    tx.oncomplete = function () {
-                        // Achievements after awards
-                        account.checkAchievement.hardware_store();
-                        account.checkAchievement.sleeper_pick();
-                    };
-
-                    resolve(cbAwardsByPlayer(awardsByPlayer));
-                };
+                }
+                tx.complete().then(function () {
+                    // Achievements after awards
+                    account.checkAchievement.hardware_store();
+                    account.checkAchievement.sleeper_pick();
+                });
             });
         });
     }

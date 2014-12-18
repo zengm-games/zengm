@@ -24,6 +24,7 @@ dao.store.iterate
   need a way to short circuit - maybe accept a "shortCircuit" functino that does that
   non-modifying?
   should fully replace cursors!
+  is "iterate" a good name since it works equally well for opening a single cursor?
   DIFFICULT ONES:
     needs to pass second parameter to openCursor
       util/advStats.js

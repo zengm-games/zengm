@@ -287,7 +287,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
      * @return {Promise}
      */
     function cancelAll() {
-        dao.negotiations.clear().then(function () {
+        return dao.negotiations.clear().then(function () {
             return dao.gameAttributes.set({lastDbChange: Date.now()});
         }).then(function () {
             ui.updateStatus("Idle");

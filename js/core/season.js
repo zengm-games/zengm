@@ -1148,60 +1148,42 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
     function newPhaseFantasyDraft(position) {
         return contractNegotiation.cancelAll().then(function () {
-            return new Promise(function (resolve, reject) {
-                draft.genOrderFantasy(position, function () {
-                    dao.gameAttributes.set({nextPhase: g.phase}).then(function () {
-                        var tx;
+            return draft.genOrderFantasy(position);
+        }).then(function () {
+            return dao.gameAttributes.set({nextPhase: g.phase});
+        }).then(function () {
+            var tx;
 
-                        tx = g.dbl.transaction(["players", "releasedPlayers"], "readwrite");
+            tx = dao.tx(["players", "releasedPlayers"], "readwrite");
 
-                        // Protect draft prospects from being included in this
-                        tx.objectStore("players").index("tid").openCursor(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-                            var cursor, p;
-
-                            cursor = event.target.result;
-                            if (cursor) {
-                                p = cursor.value;
-
-                                p.tid = g.PLAYER.UNDRAFTED_FANTASY_TEMP;
-
-                                cursor.update(p);
-                                cursor.continue();
-                            } else {
-                                // Make all players draftable
-                                tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
-                                    var cursor, p;
-
-                                    cursor = event.target.result;
-                                    if (cursor) {
-                                        p = cursor.value;
-
-                                        p.tid = g.PLAYER.UNDRAFTED;
-
-                                        cursor.update(p);
-                                        cursor.continue();
-                                    } else {
-                                        // Delete all records of released players
-                                        tx.objectStore("releasedPlayers").openCursor().onsuccess = function (event) {
-                                            var cursor;
-
-                                            cursor = event.target.result;
-                                            if (cursor) {
-                                                cursor.delete();
-                                                cursor.continue();
-                                            }
-                                        };
-                                    }
-                                };
-                            }
-                        };
-
-                        tx.oncomplete = function () {
-                            newPhaseFinalize(g.PHASE.FANTASY_DRAFT, helpers.leagueUrl(["draft"]), ["playerMovement"]).then(resolve);
-                        };
-                    });
+            // Protect draft prospects from being included in this
+            dao.players.iterate({
+                ot: tx,
+                index: "tid",
+                key: g.PLAYER.UNDRAFTED,
+                modify: function (p) {
+                    p.tid = g.PLAYER.UNDRAFTED_FANTASY_TEMP;
+                    return p;
+                }
+            }).then(function () {
+                // Make all players draftable
+                dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                    modify: function (p) {
+                        p.tid = g.PLAYER.UNDRAFTED;
+                        return p;
+                    }
                 });
             });
+
+            // Delete all records of released players
+            dao.releasedPlayers.clear({ot: tx});
+
+            return tx.complete();
+        }).then(function () {
+            return newPhaseFinalize(g.PHASE.FANTASY_DRAFT, helpers.leagueUrl(["draft"]), ["playerMovement"]);
         });
     }
 

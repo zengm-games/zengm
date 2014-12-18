@@ -667,6 +667,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         payrolls: payrolls,
         players: players,
         playoffSeries: generateBasicDao("dbl", "playoffSeries", ["get", "put"]),
+        releasedPlayers: generateBasicDao("dbl", "releasedPlayers", ["clear"]),
         schedule: schedule,
         teams: generateBasicDao("dbl", "teams", ["get", "getAll", "iterate"])
     };

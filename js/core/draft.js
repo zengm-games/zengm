@@ -259,9 +259,9 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
      * Randomize team order and then snake for 12 rounds.
      *
      * @memberOf core.draft
-     * @param {function()=} cb Optional callback function.
+     * @return {Promise}
      */
-    function genOrderFantasy(position, cb) {
+    function genOrderFantasy(position) {
         var draftOrder, i, round, tids;
 
         // Randomly-ordered list of tids
@@ -293,7 +293,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             tids.reverse(); // Snake
         }
 
-        setOrder(draftOrder).then(cb);
+        return setOrder(draftOrder);
     }
 
     /**

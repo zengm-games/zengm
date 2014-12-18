@@ -6,7 +6,8 @@ THE FLATTENING
 
 use promises pervasively
 
-draft.genOrderFantasy
+fantasy draft
+  confirm draft prospects are protected
 
 dao.tx and tx.complete()
   implemented now in core.draft.setOrder

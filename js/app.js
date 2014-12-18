@@ -1,6 +1,7 @@
 // Make sure I never accidentally use native promises, because that could fuck with error handling
 var Promise = function () { throw new Error("USE BLUEBIRD!"); };
 Promise.all = function () { throw new Error("USE BLUEBIRD!"); };
+Promise.try = function () { throw new Error("USE BLUEBIRD!"); };
 
 requirejs.config({
     shim: {

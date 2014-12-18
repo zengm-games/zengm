@@ -1141,8 +1141,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
             return tx.complete().then(function () {
                 // Create new draft class for 3 years in the future
-// SHOULD RETURN PROMISE AND BLOCK
-                draft.genPlayers(null, g.PLAYER.UNDRAFTED_3, null, null, function () {});
+                return draft.genPlayers(null, g.PLAYER.UNDRAFTED_3);
             }).then(function () {
                 return newPhaseFinalize(g.PHASE.FREE_AGENCY, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
             });

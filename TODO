@@ -7,6 +7,7 @@ THE FLATTENING
 use promises pervasively
 
 draft.genPlayers
+draft.genOrderFantasy
 
 dao.tx and tx.complete()
   implemented now in core.draft.setOrder
@@ -51,6 +52,8 @@ core.contractnegotiation
 core.league
 core.season
 indexedDb.contracts.getAll
+
+rewrite old upgrading code?
 
 switch dao.players.get to use promises
   grep -R dao.players.get js

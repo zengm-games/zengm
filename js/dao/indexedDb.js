@@ -143,9 +143,19 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
         methods.count = function (options) {
             options = options !== undefined ? options : {};
             options.ot = options.ot !== undefined ? options.ot : null;
+            options.index = options.index !== undefined ? options.index : null;
+            options.key = options.key !== undefined ? options.key : null;
 
             return new Promise(function (resolve, reject) {
-                getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore).count().onsuccess = function (event) {
+                var objectStoreOrIndex;
+
+                objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
+
+                if (options.index !== null) {
+                    objectStoreOrIndex = objectStoreOrIndex.index(options.index);
+                }
+
+                objectStoreOrIndex.count(options.key).onsuccess = function (event) {
                     resolve(event.target.result);
                 };
             });

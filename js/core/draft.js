@@ -2,7 +2,7 @@
  * @name core.draft
  * @namespace The annual draft of new prospects.
  */
-define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team", "util/helpers", "util/random"], function (dao, db, g, ui, finances, player, team, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/bluebird", "util/helpers", "util/random"], function (dao, db, g, ui, finances, player, team, Promise, helpers, random) {
     "use strict";
 
     /**
@@ -48,23 +48,33 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
      * @memberOf core.draft
      * @param {IDBTransaction|null} ot An IndexedDB transaction on players (and teams if scoutingRank is not set), readwrite; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID number for the generated draft class. Should be g.PLAYER.UNDRAFTED, g.PLAYER.UNDRAFTED_2, or g.PLAYER.UNDRAFTED_3.
-     * @param {number?} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
-     * @param {number?} numPlayers The number of prospects to generate. Default value is 70.
-     * @param {function()} cb Callback function.
+     * @param {?number=} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
+     * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
+     * @return {Promise}
      */
-    function genPlayers(ot, tid, scoutingRank, numPlayers, cb) {
-        var withScoutingRank;
+    function genPlayers(ot, tid, scoutingRank, numPlayers) {
+        scoutingRank = scoutingRank !== undefined ? scoutingRank : null;
 
         if (numPlayers === null || numPlayers === undefined) {
             numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
         }
 
-        withScoutingRank = function (scoutingRank) {
-            var agingYears, baseAge, baseRating, draftYear, i, p, pot, profile, profiles, tx;
+        return Promise.try(function () {
+            // If scoutingRank is not supplied, have to hit the DB to get it
+            if (scoutingRank === null) {
+                return dao.teams.get({ot: ot, key: g.userTid}).then(function (t) {
+                    return finances.getRankLastThree(t, "expenses", "scouting");
+                });
+            }
 
-            tx = db.getObjectStore(ot, "players", null, true);
+            return scoutingRank;
+        }).then(function (scoutingRank) {
+            var agingYears, baseAge, baseRating, draftYear, i, p, pot, profile, profiles, promises;
 
             profiles = ["Point", "Wing", "Big", "Big", ""];
+
+            promises = [];
+
             for (i = 0; i < numPlayers; i++) {
                 baseRating = random.randInt(8, 31);
                 pot = Math.round(helpers.bound(random.realGauss(48, 17), baseRating, 90));
@@ -93,12 +103,18 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 p = player.develop(p, agingYears, true);
 
                 // Update player values after ratings changes
-                player.updateValues(ot, p, [], function (p) {
-                    dao.players.put({ot: tx, value: p});
-                });
+                promises.push(new Promise(function (resolve, reject) {
+                    player.updateValues(ot, p, [], function (p) {
+                        dao.players.put({ot: ot, value: p}).then(function () {
+                            resolve();
+                        });
+                    });
+                }));
             }
 
-            if (ot !== null) {
+            return Promise.all(promises);
+
+/*            if (ot !== null) {
                 // This function doesn't have its own transaction, so we need to call the callback now even though the update might not have been processed yet.
                 if (cb !== undefined) {
                     cb();
@@ -110,20 +126,8 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                         cb();
                     }
                 };
-            }
-        };
-
-        if (!scoutingRank) {
-            db.getObjectStore(ot, "teams", "teams").get(g.userTid).onsuccess = function (event) {
-                var t;
-
-                t = event.target.result;
-                scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
-                withScoutingRank(scoutingRank);
-            };
-        } else {
-            withScoutingRank(scoutingRank);
-        }
+            }*/
+        });
     }
 
     /**

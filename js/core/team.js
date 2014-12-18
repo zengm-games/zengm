@@ -577,7 +577,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
     }
 
     // estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).
-    function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesCached, cb) {
+    function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesCached) {
         var add, getPicks, getPlayers, gpAvg, payroll, pop, remove, roster, strategy, tx;
 
         // UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
@@ -591,7 +591,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         add = [];
         remove = [];
 
-        tx = g.dbl.transaction(["draftPicks", "players", "releasedPlayers", "teams"]);
+        tx = dao.tx(["draftPicks", "players", "releasedPlayers", "teams"]);
 
         // Get players
         getPlayers = function () {
@@ -604,6 +604,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                 fudgeFactor = 1;
             }
 
+            // Get roster and players to remove
             dao.players.getAll({
                 ot: tx,
                 index: "tid",
@@ -636,6 +637,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                 }
             });
 
+            // Get players to add
             for (i = 0; i < pidsAdd.length; i++) {
                 dao.players.get({
                     ot: tx,
@@ -657,10 +659,8 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
             // For each draft pick, estimate its value based on the recent performance of the team
             if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
                 // Estimate the order of the picks by team
-                tx.objectStore("teams").getAll().onsuccess = function (event) {
-                    var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, teams, trade, withEstValues, wps;
-
-                    teams = event.target.result;
+                dao.teams.getAll({ot: tx}).then(function (teams) {
+                    var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, trade, withEstValues, wps;
 
                     // This part needs to be run every time so that gpAvg is available
                     wps = []; // Contains estimated winning percentages for all teams by the end of the season
@@ -804,7 +804,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                             withEstValues();
                         });
                     }
-                };
+                });
             }
         };
 
@@ -832,7 +832,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
             payroll = payrollLocal;
         });
 
-        tx.oncomplete = function () {
+        return tx.complete().then(function () {
             var contractsFactor, base, doSkillBonuses, dv, needToDrop, rosterAndAdd, rosterAndRemove, salaryAddedThisSeason, salaryRemoved, skillsNeeded, sumContracts, sumValues;
 
             gpAvg = helpers.bound(gpAvg, 0, 82);
@@ -1061,77 +1061,19 @@ console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved)
                 }
             }
 
-            // Below is TOO SLOW and TOO CONFUSING. Above is less correct, but performs well.
-            /*// Teams should be less likely to trade in free agency, since they could alternatively just sign a free agent
-            if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {
-                // Short circuit if we're not adding any salary
-                if (salaryRemoved > 0) {
-                    return cb(dv);
-                }
-
-                tx = g.dbl.transaction(["players", "releasedPlayers"]);
-
-                // Is this team under the cap?
-                db.getPayroll(tx, tid, function (payroll) {
-                    if (payroll < g.salaryCap) {
-console.log(payroll);
-                        // Get the top free agent that fits under the cap
-                        tx.objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                            var i, players, topFreeAgent;
-
-                            // List of free agents, sorted by value
-                            players = event.target.result;
-                            players.sort(function (a, b) { return b.value - a.value; });
-
-                            for (i = 0; i < players.length; i++) {
-                                if (players[i].contract.amount + payroll <= g.salaryCap) {
-                                    topFreeAgent = players[i];
-                                    break;
-                                }
-                            }
-console.log(topFreeAgent);
-
-                            // Short circuit to prevent infinite callbacks
-                            if (pidsAdd[0] === topFreeAgent.pid && pidsAdd.length === 1 && pidsRemove.length === 0 && dpidsAdd.length === 0 && dpidsRemove.length === 0) {
-                                return cb(dv);
-                            }
-
-                            // Short circuit if the added salary doesn't impact this signing
-                            if (topFreeAgent.contract.amount + payroll - salaryRemoved * 1000 <= g.salaryCap) {
-console.log("Trade doesn't add so much as to prevent FA signing");
-                                return cb(dv);
-                            }
-
-                            valueChange(tid, [topFreeAgent.pid], [], [], [], function (dvFreeAgent) {
-console.log([dv, dvFreeAgent]);
-                                if (dvFreeAgent > dv) {
-console.log("Better options in free agency");
-                                } else {
-console.log("Worse options in free agency")
-                                }
-                            });
-                        };
-                    } else {
-                        cb(dv);
-                    }
-                });
-            } else {
-                cb(dv);
-            }*/
-
             // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
             // This is a fudge factor, since it's one-sided to punish the player
             if (add.length > remove.length) {
                 dv *= Math.pow(0.9, add.length - remove.length);
             }
 
-            cb(dv);
+            return dv;
 /*console.log('---');
 console.log([sumValues(add), sumContracts(add)]);
 console.log([sumValues(remove), sumContracts(remove)]);
 console.log(dv);*/
 
-        };
+        });
     }
 
     /**

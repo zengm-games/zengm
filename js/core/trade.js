@@ -84,7 +84,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
         tx = g.dbl.transaction(["draftPicks", "players"]);
 
         // This is just for debugging
-        team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null, function (dv) {
+        team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(function (dv) {
             console.log(dv);
         });
 
@@ -364,7 +364,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
 
                 outcome = "rejected"; // Default
 
-                team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null, function (dv) {
+                team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(function (dv) {
                     var draftPickStore, j, playerStore, tx;
 
                     tx = g.dbl.transaction(["draftPicks", "players", "playerStats"], "readwrite");
@@ -576,7 +576,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
                         }
                     }
                     (function (i) {
-                        team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached, function (dv) {
+                        team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached).then(function (dv) {
                             var asset, j;
 
                             assets[i].dv = dv;
@@ -620,7 +620,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
 
         // See if the AI team likes the current trade. If not, try adding something to it.
         testTrade = function () {
-            team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached, function (dv) {
+            team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
                 if (dv > 0 && initialSign === -1) {
                     cb(true, teams);
                 } else if ((added > 2 || (added > 0 && Math.random() > 0.5)) && initialSign === 1) {
@@ -635,7 +635,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
             });
         };
 
-        team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached, function (dv) {
+        team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
             if (dv > 0) {
                 // Try to make trade better for user's team
                 initialSign = 1;

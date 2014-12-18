@@ -2,7 +2,7 @@
  * @name core.player
  * @namespace Functions operating on player objects, parts of player objects, or arrays of player objects.
  */
-define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, db, g, finances, injuries, names, faces, _, eventLog, helpers, random) {
+define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", "lib/bluebird", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, db, g, finances, injuries, names, Promise, faces, _, eventLog, helpers, random) {
     "use strict";
 
     /**
@@ -1641,77 +1641,57 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
 
     // ps: player stats objects, regular season only, most recent first
     // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
-    function updateValues(ot, p, ps, cb) {
-        var getStats, playerStatsStore, season, withPs;
+    function updateValues(ot, p, ps) {
+        return Promise.try(function () {
+            var season;
 
-        // New player objects don't have pids or stats, so we don't need to hit the database
-        if (p.hasOwnProperty("pid")) {
-            playerStatsStore = db.getObjectStore(ot, "playerStats", "playerStats");
-        }
+            // Require up to the two most recent regular season stats entries, unless the current season has 2000+ minutes
+            if (ps.length === 0 || (ps.length === 1 && ps[0].min < 2000)) {
+                // Start search for past stats either at this season or at the most recent ps season
+                // This assumes ps[0].season is the most recent entry for this player!
+                if (ps.length === 0) {
+                    season = g.season;
+                } else {
+                    season = ps[0].season - 1;
+                }
 
-        withPs = function () {
+                // New player objects don't have pids let alone stats, so just skip
+                if (!p.hasOwnProperty("pid")) {
+                    return;
+                }
+
+                // Start at season and look backwards until we hit
+                // This will not work totally right if a player played for multiple teams in a season. It should be ordered by psid, instead it's ordered by tid because of the index used
+                return dao.playerStats.iterate({
+                    ot: ot,
+                    index: "pid, season, tid",
+                    key: IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]),
+                    direction: "prev",
+                    modify: function (psTemp, shortCircuit) {
+                        // Skip playoff stats
+                        if (psTemp.playoffs) {
+                            return;
+                        }
+
+                        // Store stats
+                        ps.push(psTemp);
+
+                        // Continue only if we need another row
+                        if (ps.length === 1 && ps[0].min < 2000) {
+                            shortCircuit();
+                        }
+                    }
+                });
+            }
+        }).then(function () {
             p.value = value(p, ps);
             p.valueNoPot = value(p, ps, {noPot: true});
             p.valueFuzz = value(p, ps, {fuzz: true});
             p.valueNoPotFuzz = value(p, ps, {noPot: true, fuzz: true});
             p.valueWithContract = value(p, ps, {withContract: true});
 
-            cb(p);
-        };
-
-        // Start at season and look backwards until we hit
-        // This will not work totally right if a player played for multiple teams in a season. It should be ordered by psid, instead it's ordered by tid because of the index used
-        getStats = function (season, cb) {
-            // New player objects don't have pids let alone stats, so just skip
-            if (!p.hasOwnProperty("pid")) {
-                return cb();
-            }
-
-            // Iterate over player stats objects, most recent first
-            playerStatsStore.index("pid, season, tid").openCursor(IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]), "prev").onsuccess = function (event) {
-                var cursor, psTemp;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    psTemp = cursor.value;
-
-                    // Skip playoff stats
-                    if (psTemp.playoffs) {
-                        return cursor.continue();
-                    }
-
-                    // Store stats
-                    ps.push(psTemp);
-
-                    // Continue only if we need another row
-                    if (ps.length === 1 && ps[0].min < 2000) {
-                        cursor.continue();
-                    } else {
-                        cb();
-                    }
-                } else {
-                    // We ran out of values, just do the best with what we have
-                    cb();
-                }
-            };
-        };
-
-        // Require up to the two most recent regular season stats entries, unless the current season has 2000+ minutes
-        if (ps.length === 0 || (ps.length === 1 && ps[0].min < 2000)) {
-            // Start search for past stats either at this season or at the most recent ps season
-            // This assumes ps[0].season is the most recent entry for this player!
-            if (ps.length === 0) {
-                season = g.season;
-            } else {
-                season = ps[0].season - 1;
-            }
-
-            getStats(season, function () {
-                withPs();
-            });
-        } else {
-            withPs();
-        }
+            return p;
+        });
     }
 
     /**

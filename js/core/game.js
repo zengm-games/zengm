@@ -106,7 +106,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
                         // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
                         if (g.phase !== g.PHASE.PLAYOFFS) {
-                            player.updateValues(tx, player_, [playerStats], function (player_) {
+                            player.updateValues(tx, player_, [playerStats]).then(function (player_) {
                                 cursor.update(player_);
                                 afterDonePlayer();
                             });

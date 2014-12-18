@@ -341,7 +341,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             }
 
             // Recalculate player values, since ratings may have changed
-            player.updateValues(null, p, [], function (p) {
+            player.updateValues(null, p, []).then(function (p) {
                 var tx;
 
                 tx = dao.tx(["players", "playerStats"], "readwrite");

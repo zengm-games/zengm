@@ -304,7 +304,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                             playerStats = p.stats;
                             delete p.stats;
 
-                            player.updateValues(tx, p, playerStats.reverse(), function (p) {
+                            player.updateValues(tx, p, playerStats.reverse()).then(function (p) {
                                 dao.players.put({ot: tx, value: p}).then(function (pid) {
                                     var addStatsRows, i;
 
@@ -390,7 +390,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                             }
 
                             // Update player values after ratings changes
-                            player.updateValues(tx, p, [], function (p) {
+                            player.updateValues(tx, p, []).then(function (p) {
                                 var randomizeExp;
 
                                 // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized

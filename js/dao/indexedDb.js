@@ -190,6 +190,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
             options.ot = options.ot !== undefined ? options.ot : null;
             options.index = options.index !== undefined ? options.index : null;
             options.key = options.key !== undefined ? options.key : null;
+            options.direction = options.direction !== undefined ? options.direction : "next";
             options.modify = options.modify !== undefined ? options.modify : null;
 
             return new Promise(function (resolve, reject) {
@@ -201,22 +202,34 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
                     objectStoreOrIndex = objectStoreOrIndex.index(options.index);
                 }
 
-                objectStoreOrIndex.openCursor(options.key).onsuccess = function (event) {
-                    var cursor;
+                objectStoreOrIndex.openCursor(options.key, options.direction).onsuccess = function (event) {
+                    var cursor, modifyResult, shortCircuit;
 
                     cursor = event.target.result;
 
                     if (cursor) {
                         if (options.modify !== null) {
+                            shortCircuit = false;
+
+                            modifyResult = options.modify(cursor.value, function () {
+                                shortCircuit = true;
+                            });
+
                             // Return a promise: waits until resolved to continue
                             // Return a value: immediately continue
                             // Return or resolve to undefined: no update (otherwise update)
-                            Promise.resolve(options.modify(cursor.value)).then(function (updatedValue) {
+                            Promise.resolve(modifyResult).then(function (updatedValue) {
                                 // Only update if return value is not undefined
                                 if (updatedValue !== undefined) {
                                     cursor.update(updatedValue);
                                 }
-                                cursor.continue();
+
+                                // Allow short circuiting
+                                if (shortCircuit) {
+                                    resolve();
+                                } else {
+                                    cursor.continue();
+                                }
                             });
                         }
                     } else {
@@ -666,7 +679,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         negotiations: generateBasicDao("dbl", "negotiations", ["get", "getAll", "count", "delete", "clear"]),
         payrolls: payrolls,
         players: players,
-        playerStats: generateBasicDao("dbl", "playerStats", ["getAll"]),
+        playerStats: generateBasicDao("dbl", "playerStats", ["getAll", "iterate"]),
         playoffSeries: generateBasicDao("dbl", "playoffSeries", ["get", "put", "iterate"]),
         releasedPlayers: generateBasicDao("dbl", "releasedPlayers", ["delete", "clear", "iterate"]),
         schedule: schedule,

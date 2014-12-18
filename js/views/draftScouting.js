@@ -176,7 +176,7 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                             // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
                             delete p.stats;
 
-                            player.updateValues(tx, p, [], function (p) {
+                            player.updateValues(tx, p, []).then(function (p) {
                                 dao.players.put({ot: playerStore, value: p});
                             });
                         });

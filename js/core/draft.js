@@ -103,12 +103,8 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 p = player.develop(p, agingYears, true);
 
                 // Update player values after ratings changes
-                promises.push(new Promise(function (resolve, reject) {
-                    player.updateValues(ot, p, [], function (p) {
-                        dao.players.put({ot: ot, value: p}).then(function () {
-                            resolve();
-                        });
-                    });
+                promises.push(player.updateValues(ot, p, []).then(function (p) {
+                    return dao.players.put({ot: ot, value: p});
                 }));
             }
 

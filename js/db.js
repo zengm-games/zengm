@@ -723,7 +723,7 @@ console.log(event);
                             afterStatsRows = function () {
                                 // Save player object without stats and with values
                                 delete p.stats;
-                                require("core/player").updateValues(tx, p, [], function (p) {
+                                require("core/player").updateValues(tx, p, []).then(function (p) {
                                     cursor.update(p);
 
                                     cursor.continue();

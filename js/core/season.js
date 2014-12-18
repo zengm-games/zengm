@@ -588,15 +588,13 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                         p = player.addRatingsRow(p, scoutingRank);
                         p = player.develop(p, 1, false, coachingRanks[p.tid]);
 
-                        return new Promise(function (resolve, reject) {
-                            // Update player values after ratings changes
-                            player.updateValues(tx, p, [], function (p) {
-                                // Add row to player stats if they are on a team
-                                if (p.tid >= 0) {
-                                    p = player.addStatsRow(tx, p, false);
-                                }
-                                resolve(p);
-                            });
+                        // Update player values after ratings changes
+                        return player.updateValues(tx, p, []).then(function (p) {
+                            // Add row to player stats if they are on a team
+                            if (p.tid >= 0) {
+                                p = player.addStatsRow(tx, p, false);
+                            }
+                            return p;
                         });
                     }
                 });

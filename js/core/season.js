@@ -553,74 +553,62 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         return freeAgents.autoSign().then(function () { // Important: do this before changing the season or contracts and stats are fucked up
             return dao.gameAttributes.set({season: g.season + 1});
         }).then(function () {
-            return new Promise(function (resolve, reject) {
-                var coachingRanks, scoutingRank, tx;
+            var coachingRanks, scoutingRank, tx;
 
-                coachingRanks = [];
+            coachingRanks = [];
 
-                tx = g.dbl.transaction(["players", "playerStats", "teams"], "readwrite");
+            tx = dao.tx(["players", "playerStats", "teams"], "readwrite");
 
-                // Add row to team stats and season attributes
-                tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                    var cursor, t;
+            // Add row to team stats and season attributes
+            dao.teams.iterate({
+                ot: tx,
+                modify: function (t) {
+                    // Save the coaching rank for later
+                    coachingRanks[t.tid] = _.last(t.seasons).expenses.coaching.rank;
 
-                    cursor = event.target.result;
-                    if (cursor) {
-                        t = cursor.value;
-
-                        // Save the coaching rank for later
-                        coachingRanks[t.tid] = _.last(t.seasons).expenses.coaching.rank;
-
-                        // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
-                        // This is done BEFORE a new season row is added.
-                        if (t.tid === g.userTid) {
-                            scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
-                        }
-
-                        t = team.addSeasonRow(t);
-                        t = team.addStatsRow(t);
-
-                        cursor.update(t);
-                        cursor.continue();
-                    } else {
-                        // Loop through all non-retired players
-                        tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
-                            var cursorP, p;
-
-                            cursorP = event.target.result;
-                            if (cursorP) {
-                                p = cursorP.value;
-
-                                // Update ratings
-                                p = player.addRatingsRow(p, scoutingRank);
-                                p = player.develop(p, 1, false, coachingRanks[p.tid]);
-
-                                // Update player values after ratings changes
-                                player.updateValues(tx, p, [], function (p) {
-                                    // Add row to player stats if they are on a team
-                                    if (p.tid >= 0) {
-                                        player.addStatsRow(tx, p, false, function (p) {
-                                            cursorP.update(p);
-                                            cursorP.continue();
-                                        });
-                                    } else {
-                                        cursorP.update(p);
-                                        cursorP.continue();
-                                    }
-                                });
-                            }
-                        };
+                    // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
+                    // This is done BEFORE a new season row is added.
+                    if (t.tid === g.userTid) {
+                        scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
                     }
-                };
 
-                tx.oncomplete = function () {
-                    // AI teams sign free agents
-                    newPhaseFinalize(g.PHASE.PRESEASON, undefined, ["playerMovement"]).then(resolve);
+                    t = team.addSeasonRow(t);
+                    t = team.addStatsRow(t);
 
-                    if (g.enableLogging && !window.inCordova) {
-                        ads.show();
+                    return t;
+                }
+            }).then(function () {
+                // Loop through all non-retired players
+                dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                    modify: function (p) {
+                        // Update ratings
+                        p = player.addRatingsRow(p, scoutingRank);
+                        p = player.develop(p, 1, false, coachingRanks[p.tid]);
+
+                        return new Promise(function (resolve, reject) {
+                            // Update player values after ratings changes
+                            player.updateValues(tx, p, [], function (p) {
+                                // Add row to player stats if they are on a team
+                                if (p.tid >= 0) {
+                                    p = player.addStatsRow(tx, p, false);
+                                }
+                                resolve(p);
+                            });
+                        });
                     }
-                };
+                });
+            });
+
+            return tx.complete().then(function () {
+                if (g.enableLogging && !window.inCordova) {
+                    ads.show();
+                }
+
+                // AI teams sign free agents
+                return newPhaseFinalize(g.PHASE.PRESEASON, undefined, ["playerMovement"]);
             });
         });
     }

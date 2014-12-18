@@ -6,8 +6,7 @@ THE FLATTENING
 
 use promises pervasively
 
-fantasy draft
-  confirm draft prospects are protected
+player.updateValues
 
 dao.tx and tx.complete()
   implemented now in core.draft.setOrder
@@ -122,6 +121,7 @@ put bugsnag back
 
 test
   achievement retrieval from accoutn
+  make sure ads show correctly
 
 after fully abstracting IndexedDB, could i improve performance by running it locally in node and using a relational database?
   same with mobile on phonegap

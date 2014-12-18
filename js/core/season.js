@@ -1021,48 +1021,40 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
     }
 
     function newPhaseResignPlayers() {
-        return new Promise(function (resolve, reject) {
-            var tx;
+        var tx;
 
-            tx = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
+        tx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
 
-            player.genBaseMoods(tx).then(function (baseMoods) {
-                var playerStore;
-
-                playerStore = tx.objectStore("players");
-
-                // Re-sign players on user's team, and some AI players
-                playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    if (cursor) {
-                        p = cursor.value;
-                        if (p.contract.exp <= g.season) {
-                            if (p.tid === g.userTid) {
-                                // Add to free agents first, to generate a contract demand
-                                player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, baseMoods, function () {
-                                    // Open negotiations with player
-                                    contractNegotiation.create(tx, p.pid, true, function (error) {
-                                        if (error !== undefined && error) {
-                                            eventLog.add(null, {
-                                                type: "refuseToSign",
-                                                text: error
-                                            });
-                                        }
+        player.genBaseMoods(tx).then(function (baseMoods) {
+            // Re-sign players on user's team, and some AI players
+            dao.players.iterate({
+                ot: tx,
+                index: "tid",
+                key: IDBKeyRange.lowerBound(0),
+                modify: function (p) {
+                    if (p.contract.exp <= g.season && p.tid === g.userTid) {
+                        // Add to free agents first, to generate a contract demand
+                        player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods, function () {
+                            // Open negotiations with player
+                            contractNegotiation.create(tx, p.pid, true, function (error) {
+                                if (error !== undefined && error) {
+                                    eventLog.add(null, {
+                                        type: "refuseToSign",
+                                        text: error
                                     });
-                                });
-                            }
-                        }
-                        cursor.continue();
-                    } else {
-                        // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
-                        dao.gameAttributes.set({daysLeft: 30}).then(function () {
-                            newPhaseFinalize(g.PHASE.RESIGN_PLAYERS, helpers.leagueUrl(["negotiation"]), ["playerMovement"]).then(resolve);
+                                }
+                            });
                         });
                     }
-                };
+                }
             });
+        });
+
+        return tx.complete().then(function () {
+            // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
+            return dao.gameAttributes.set({daysLeft: 30});
+        }).then(function () {
+            return newPhaseFinalize(g.PHASE.RESIGN_PLAYERS, helpers.leagueUrl(["negotiation"]), ["playerMovement"]);
         });
     }
 

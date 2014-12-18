@@ -17,6 +17,7 @@ dao.store.iterate
     how to handle custom "get" functions like players.getAll?
     nesting?
     async inside modify function - maybe accept a "done" function like unit tests
+    rename "modify" to something generic, because can do non-modify by just returning undefined
   need a way to short circuit - maybe accept a "shortCircuit" functino that does that
   non-modifying?
   should fully replace cursors!
@@ -125,8 +126,10 @@ benchmark
 
 draftOrder should just be in globals, not a real table
 
-instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
-  see promises_super_tx branch
+improve API
+  instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
+    see promises_super_tx branch
+    or could be dao.tx().then(function (tx) {}) and resolve that promise oncomplete? but how to pass value to then?
 
 PERFORMANCE CRAP
 ----------------

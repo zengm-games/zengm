@@ -1059,105 +1059,92 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
     }
 
     function newPhaseFreeAgency() {
+        var strategies;
+
         return team.filter({
             attrs: ["strategy"],
             season: g.season
         }).then(function (teams) {
-            return new Promise(function (resolve, reject) {
-                var strategies;
+            strategies = _.pluck(teams, "strategy");
 
-                strategies = _.pluck(teams, "strategy");
+            // Delete all current negotiations to resign players
+            return contractNegotiation.cancelAll();
+        }).then(function () {
+            var tx;
 
-                // Delete all current negotiations to resign players
-                contractNegotiation.cancelAll().then(function () {
-                    var playerStore, tx;
+            tx = dao.tx(["players", "teams"], "readwrite");
 
-                    tx = g.dbl.transaction(["players", "teams"], "readwrite");
-                    playerStore = tx.objectStore("players");
+            player.genBaseMoods(tx).then(function (baseMoods) {
+                // Reset contract demands of current free agents and undrafted players
+                dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), // This only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
+                    modify: function (p) {
+                        player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
+                    }
+                }).then(function () {
+                    // AI teams re-sign players or they become free agents
+                    // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
+                    dao.players.iterate({
+                        ot: tx,
+                        index: "tid",
+                        key: IDBKeyRange.lowerBound(0),
+                        modify: function (p) {
+                            var contract, factor;
 
-                    player.genBaseMoods(tx).then(function (baseMoods) {
-                        // AI teams re-sign players or they become free agents
-                        playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
-                            var contract, cursor, factor, p;
-
-                            cursor = event.target.result;
-                            if (cursor) {
-                                p = cursor.value;
-                                if (p.contract.exp <= g.season) {
-                                    if (p.tid !== g.userTid) {
-                                        // Automatically negotiate with teams
-                                        if (strategies[p.tid] === "rebuilding") {
-                                            factor = 0.4;
-                                        } else {
-                                            factor = 0;
-                                        }
-
-                                        if (Math.random() < p.value / 100 - factor) { // Should eventually be smarter than a coin flip
-                                            contract = player.genContract(p);
-                                            contract.exp += 1; // Otherwise contracts could expire this season
-                                            p = player.setContract(p, contract, true);
-                                            p.gamesUntilTradable = 15;
-                                            cursor.update(p); // Other endpoints include calls to addToFreeAgents, which handles updating the database
-                                        } else {
-                                            player.addToFreeAgents(playerStore, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
-                                        }
-                                    }
+                            if (p.contract.exp <= g.season && p.tid !== g.userTid) {
+                                // Automatically negotiate with teams
+                                if (strategies[p.tid] === "rebuilding") {
+                                    factor = 0.4;
+                                } else {
+                                    factor = 0;
                                 }
-                                cursor.continue();
+
+                                if (Math.random() < p.value / 100 - factor) { // Should eventually be smarter than a coin flip
+                                    contract = player.genContract(p);
+                                    contract.exp += 1; // Otherwise contracts could expire this season
+                                    p = player.setContract(p, contract, true);
+                                    p.gamesUntilTradable = 15;
+                                    return p; // Other endpoints include calls to addToFreeAgents, which handles updating the database
+                                }
+
+                                player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
                             }
-                        };
+                        }
                     });
-
-                    // Reset contract demands of current free agents and undrafted players
-                    player.genBaseMoods(tx).then(function (baseMoods) {
-                        // This IDBKeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
-                        playerStore.index("tid").openCursor(IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
-                            var cursor, p;
-
-                            cursor = event.target.result;
-                            if (cursor) {
-                                p = cursor.value;
-                                player.addToFreeAgents(playerStore, p, g.PHASE.FREE_AGENCY, baseMoods);
-        //                        cursor.update(p);
-                                cursor.continue();
-                            } else {
-                                // Bump up future draft classes (nested so tid updates don't cause race conditions)
-                                playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_2).onsuccess = function (event) {
-                                    var cursor, p;
-
-                                    cursor = event.target.result;
-                                    if (cursor) {
-                                        p = cursor.value;
-                                        p.tid = g.PLAYER.UNDRAFTED;
-                                        p.ratings[0].fuzz /= 2;
-                                        cursor.update(p);
-                                        cursor.continue();
-                                    } else {
-                                        playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_3).onsuccess = function (event) {
-                                            var cursor, p;
-
-                                            cursor = event.target.result;
-                                            if (cursor) {
-                                                p = cursor.value;
-                                                p.tid = g.PLAYER.UNDRAFTED_2;
-                                                p.ratings[0].fuzz /= 2;
-                                                cursor.update(p);
-                                                cursor.continue();
-                                            }
-                                        };
-                                    }
-                                };
-                            }
-                        };
-                    });
-
-                    tx.oncomplete = function () {
-                        // Create new draft class for 3 years in the future
-                        draft.genPlayers(null, g.PLAYER.UNDRAFTED_3, null, null, function () {
-                            newPhaseFinalize(g.PHASE.FREE_AGENCY, helpers.leagueUrl(["free_agents"]), ["playerMovement"]).then(resolve);
-                        });
-                    };
                 });
+            });
+
+            // Bump up future draft classes (nested so tid updates don't cause race conditions)
+            dao.players.iterate({
+                ot: tx,
+                index: "tid",
+                key: g.PLAYER.UNDRAFTED_2,
+                modify: function (p) {
+                    p.tid = g.PLAYER.UNDRAFTED;
+                    p.ratings[0].fuzz /= 2;
+                    return p;
+                }
+            }).then(function () {
+                dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: g.PLAYER.UNDRAFTED_3,
+                    modify: function (p) {
+                        p.tid = g.PLAYER.UNDRAFTED_2;
+                        p.ratings[0].fuzz /= 2;
+                        return p;
+                    }
+                });
+            });
+
+            return tx.complete().then(function () {
+                // Create new draft class for 3 years in the future
+// SHOULD RETURN PROMISE AND BLOCK
+                draft.genPlayers(null, g.PLAYER.UNDRAFTED_3, null, null, function () {});
+            }).then(function () {
+                return newPhaseFinalize(g.PHASE.FREE_AGENCY, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
             });
         });
     }

@@ -6,6 +6,8 @@ THE FLATTENING
 
 use promises pervasively
 
+draft.genPlayers
+
 dao.tx and tx.complete()
   implemented now in core.draft.setOrder
   test in other places
@@ -97,6 +99,7 @@ big goals
   no "cb" anywhere
   no "openCursor" anywhere
   no "transaction" anywhere
+  no "Store" anywhere
   no "new Promise" anywhere
 
 grep -r Deferred js/views

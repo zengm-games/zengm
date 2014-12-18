@@ -666,8 +666,9 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         negotiations: generateBasicDao("dbl", "negotiations", ["get", "getAll", "count", "delete", "clear"]),
         payrolls: payrolls,
         players: players,
+        playerStats: generateBasicDao("dbl", "playerStats", ["getAll"]),
         playoffSeries: generateBasicDao("dbl", "playoffSeries", ["get", "put", "iterate"]),
-        releasedPlayers: generateBasicDao("dbl", "releasedPlayers", ["clear"]),
+        releasedPlayers: generateBasicDao("dbl", "releasedPlayers", ["delete", "clear", "iterate"]),
         schedule: schedule,
         teams: generateBasicDao("dbl", "teams", ["get", "getAll", "put", "iterate"])
     };

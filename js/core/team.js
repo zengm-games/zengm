@@ -1140,25 +1140,23 @@ console.log(dv);*/
      * Basically.. switch to rebuilding if you're old and your success is fading, and switch to contending if you have a good amount of young talent on rookie deals and your success is growing.
      * 
      * @memberOf core.team
-     * @param {function ()} cb Callback.
+     * @return {Promise}
      */
-    function updateStrategies(cb) {
+    function updateStrategies() {
         var tx;
 
-        // For
-        tx = g.dbl.transaction(["players", "playerStats", "teams"], "readwrite");
-        tx.objectStore("teams").openCursor().onsuccess = function (event) {
-            var dWon, cursor, s, t, won;
-
-            cursor = event.target.result;
-            if (cursor) {
-                t = cursor.value;
+        tx = dao.tx(["players", "playerStats", "teams"], "readwrite");
+        dao.teams.iterate({
+            ot: tx,
+            modify: function (t) {
+                var dWon, s, won;
 
                 // Skip user's team
                 if (t.tid === g.userTid) {
-                    return cursor.continue();
+                    return;
                 }
 
+                // Change in wins
                 s = t.seasons.length - 1;
                 won = t.seasons[s].won;
                 if (s > 0) {
@@ -1167,7 +1165,8 @@ console.log(dv);*/
                     dWon = 0;
                 }
 
-                dao.players.getAll({
+                // Young stars
+                return dao.players.getAll({
                     ot: tx,
                     index: "tid",
                     key: t.tid,
@@ -1200,32 +1199,25 @@ console.log(dv);*/
                     // Average age, weighted by minutes played
                     age = numerator / denominator;
 
-//console.log([t.abbrev, 0.8 * dWon, (won - 41), 5 * (26 - age), youngStar * 20])
                     score = 0.8 * dWon + (won - 41) + 5 * (26 - age) + youngStar * 20;
 
                     updated = false;
                     if (score > 20 && t.strategy === "rebuilding") {
-//console.log(t.abbrev + " switch to contending")
                         t.strategy = "contending";
                         updated = true;
                     } else if (score < -20 && t.strategy === "contending") {
-//console.log(t.abbrev + " switch to rebuilding")
                         t.strategy = "rebuilding";
                         updated = true;
                     }
 
                     if (updated) {
-                        cursor.update(t);
+                        return t;
                     }
-
-                    cursor.continue();
                 });
             }
-        };
+        });
 
-        tx.oncomplete = function () {
-            cb();
-        };
+        return tx.complete();
     }
 
     /**

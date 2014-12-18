@@ -204,7 +204,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                 }
             }
 
-            player.genBaseMoods(tx, function (baseMoods) {
+            player.genBaseMoods(tx).then(function (baseMoods) {
                 var afterPlayerCreation, agingYears, baseRatings, cbAfterEachPlayer, contract, draftYear, goodNeutralBad, i, j, n, numLeft, p, players, pots, profile, profiles, randomizeExpiration, t, t2, playerTids;
 
                 afterPlayerCreation = function () {

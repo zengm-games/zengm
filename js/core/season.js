@@ -1026,7 +1026,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
             tx = g.dbl.transaction(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
 
-            player.genBaseMoods(tx, function (baseMoods) {
+            player.genBaseMoods(tx).then(function (baseMoods) {
                 var playerStore;
 
                 playerStore = tx.objectStore("players");
@@ -1083,7 +1083,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     tx = g.dbl.transaction(["players", "teams"], "readwrite");
                     playerStore = tx.objectStore("players");
 
-                    player.genBaseMoods(tx, function (baseMoods) {
+                    player.genBaseMoods(tx).then(function (baseMoods) {
                         // AI teams re-sign players or they become free agents
                         playerStore.index("tid").openCursor(IDBKeyRange.lowerBound(0)).onsuccess = function (event) {
                             var contract, cursor, factor, p;
@@ -1117,7 +1117,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     });
 
                     // Reset contract demands of current free agents and undrafted players
-                    player.genBaseMoods(tx, function (baseMoods) {
+                    player.genBaseMoods(tx).then(function (baseMoods) {
                         // This IDBKeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
                         playerStore.index("tid").openCursor(IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
                             var cursor, p;

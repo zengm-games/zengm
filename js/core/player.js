@@ -434,18 +434,13 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
      * This base mood is then modulated for an individual player in addToFreeAgents.
      * 
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on teams; if null is passed, then a new transaction will be used.
-     * @return {function(Array.<number>)} Callback function whose argument is an array of base moods, one for each team.
+     * @return {Promise} Array of base moods, one for each team.
      */
-    function genBaseMoods(ot, cb) {
-        var baseMoods, teamStore;
+    function genBaseMoods(ot) {
+        return dao.teams.getAll({ot: ot}).then(function (teams) {
+            var baseMoods, i, s;
 
-        baseMoods = [];
-
-        teamStore = db.getObjectStore(ot, "teams", "teams");
-        teamStore.getAll().onsuccess = function (event) {
-            var i, s, teams;
-
-            teams = event.target.result;
+            baseMoods = [];
 
             s = teams[0].seasons.length - 1;  // Most recent season index
 
@@ -472,8 +467,8 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
                 }
             }
 
-            cb(baseMoods);
-        };
+            return baseMoods;
+        });
     }
 
     /**
@@ -550,7 +545,7 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
             });
         }
 
-        genBaseMoods(tx, function (baseMoods) {
+        genBaseMoods(tx).then(function (baseMoods) {
             addToFreeAgents(tx, p, g.phase, baseMoods, cb);
         });
     }

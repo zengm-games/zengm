@@ -414,7 +414,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                             if (g.phase === g.PHASE.FANTASY_DRAFT) {
                                 // Undrafted players become free agents
                                 tx = g.dbl.transaction(["players", "teams"], "readwrite");
-                                player.genBaseMoods(tx, function (baseMoods) {
+                                player.genBaseMoods(tx).then(function (baseMoods) {
                                     var playerStore;
 
                                     playerStore = tx.objectStore("players");

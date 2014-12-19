@@ -77,14 +77,6 @@ core
 
 look at views with errorMessage - is flow correct? problems with cancellation?
 
-fix as i go through
-  db.getPayroll
-    db.getPayroll -> dao.payrolls.get({tid: TID})
-      grep -r getPayroll\( js
-    db.getPayrolls -> dao.payrolls.getAll()
-      grep -r getPayrolls\( js
-  team.filter
-
 util
   bbgmView
 

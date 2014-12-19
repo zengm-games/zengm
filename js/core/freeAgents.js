@@ -83,7 +83,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
 
                             numPlayersOnRoster = event.target.result;
 
-                            db.getPayroll(tx, tid, function (payroll) {
+                            dao.payrolls.get({ot: tx, key: tid}).then(function (payroll) {
                                 var afterPickPlayer, i, foundPlayer, p;
 
                                 afterPickPlayer = function (p) {

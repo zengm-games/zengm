@@ -827,7 +827,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
             getPicks();
         });
 
-        db.getPayroll(tx, tid, function (payrollLocal) {
+        dao.payrolls.get({ot: tx, key: tid}).then(function (payrollLocal) {
             payroll = payrollLocal;
         });
 

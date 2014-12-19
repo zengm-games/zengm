@@ -846,21 +846,6 @@ console.log(event);
         return g.dbl.transaction(transactionObjectStores).objectStore(objectStore);
     }
 
-
-    function getPayroll(ot, tid, cb) {
-        dao.payrolls.get({ot: ot, key: tid}).then(cb);
-    }
-
-    /**
-     * Get the total current payroll for every team team.
-     * 
-     * @memberOf db
-     * @param {function(Array.<number>)} cb Callback whose first argument is an array of payrolls, ordered by team id.
-     */
-    function getPayrolls(cb) {
-        dao.payrolls.getAll().then(cb);
-    }
-
     /**
      * Load a game attribute from the database and update the global variable g.
      *
@@ -1013,8 +998,6 @@ console.log(event);
         connectMeta: connectMeta,
         connectLeague: connectLeague,
         getObjectStore: getObjectStore,
-        getPayroll: getPayroll,
-        getPayrolls: getPayrolls,
         loadGameAttribute: loadGameAttribute,
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes,

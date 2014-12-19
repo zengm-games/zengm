@@ -38,26 +38,26 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/jquery", "util
         }
     }
 
-    function draftUser(pid, cb) {
-        draft.getOrder().then(function (draftOrder) {
+    function draftUser(pid) {
+        return draft.getOrder().then(function (draftOrder) {
             var pick;
 
             pick = draftOrder.shift();
             if (pick.tid === g.userTid) {
-                draft.selectPlayer(pick, pid).then(function () {
-                    draft.setOrder(draftOrder).then(function () {
-                        cb(pid);
+                return draft.selectPlayer(pick, pid).then(function () {
+                    return draft.setOrder(draftOrder).then(function () {
+                        return pid;
                     });
                 });
-            } else {
-                console.log("ERROR: User trying to draft out of turn.");
             }
+
+            console.log("ERROR: User trying to draft out of turn.");
         });
     }
 
     function draftUntilUserOrEnd() {
         ui.updateStatus("Draft in progress...");
-        draft.untilUserOrEnd(function (pids) {
+        draft.untilUserOrEnd().then(function (pids) {
             draft.getOrder().then(function (draftOrder) {
                 var done;
 
@@ -204,7 +204,7 @@ console.log("FIXING");
 
         $("#undrafted").on("click", "button", function (event) {
             $("#undrafted button").attr("disabled", "disabled");
-            draftUser(parseInt(this.getAttribute("data-player-id"), 10), function (pid) {
+            draftUser(parseInt(this.getAttribute("data-player-id"), 10)).then(function (pid) {
                 updateDraftTables([pid]);
                 draftUntilUserOrEnd();
             });

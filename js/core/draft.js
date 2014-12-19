@@ -2,7 +2,7 @@
  * @name core.draft
  * @namespace The annual draft of new prospects.
  */
-define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/bluebird", "util/helpers", "util/random"], function (dao, db, g, ui, finances, player, team, Promise, helpers, random) {
+define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "lib/bluebird", "util/helpers", "util/random"], function (dao, g, ui, finances, player, team, Promise, helpers, random) {
     "use strict";
 
     /**
@@ -107,20 +107,6 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             }
 
             return Promise.all(promises);
-
-/*            if (ot !== null) {
-                // This function doesn't have its own transaction, so we need to call the callback now even though the update might not have been processed yet.
-                if (cb !== undefined) {
-                    cb();
-                }
-            } else {
-                // This function has its own transaction, so wait until it finishes before calling the callback.
-                tx.oncomplete = function () {
-                    if (cb !== undefined) {
-                        cb();
-                    }
-                };
-            }*/
         });
     }
 
@@ -296,7 +282,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
      * By default there are 60 picks, but some are added/removed if there aren't 30 teams.
      *
      * @memberOf core.draft
-     * @param {Array.<number>} cb Array of salaries, in thousands of dollars/year.
+     * @return {Array.<number>} Array of salaries, in thousands of dollars/year.
      */
     function getRookieSalaries() {
         var rookieSalaries;
@@ -380,118 +366,114 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
      * This could be made faster by passing a transaction around, so all the writes for all the picks are done in one transaction. But when calling selectPlayer elsewhere (i.e. in testing or in response to the user's pick), it needs to be sure that the transaction is complete before continuing. So I would need to create a special case there to account for it. Given that this isn't really *that* slow now, that probably isn't worth the complexity. Although... team.rosterAutoSort does precisely this... so maybe it would be a good idea...
      *
      * @memberOf core.draft
-     * @param {function(Array.<Object>, Array.<number>)} cb Callback function. First argument is the list of draft picks (from getOrder). Second argument is a list of player IDs who were drafted during this function call, in order.
+     * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to array. First argument is the list of draft picks (from getOrder). Second argument is a list of player IDs who were drafted during this function call, in order.
      */
-    function untilUserOrEnd(cb) {
+    function untilUserOrEnd() {
         var pids;
 
         pids = [];
 
-        g.dbl.transaction("players").objectStore("players").index("tid").getAll(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-            var playersAll;
+        return Promise.all([
+            dao.players.getAll({
+                index: "tid",
+                key: g.PLAYER.UNDRAFTED
+            }),
+            getOrder()
+        ]).spread(function (playersAll, draftOrder) {
+            var afterDoneAuto, autoSelectPlayer, pick, pid, selection;
 
-            playersAll = event.target.result;
             playersAll.sort(function (a, b) { return b.value - a.value; });
 
-            getOrder().then(function (draftOrder) {
-                var autoSelectPlayer, cbAfterDoneAuto, pick, pid, selection;
+            // Called after either the draft is over or it's the user's pick
+            afterDoneAuto = function (draftOrder, pids) {
+                return setOrder(draftOrder).then(function () {
+                    var season, tx;
 
-                // Called after either the draft is over or it's the user's pick
-                cbAfterDoneAuto = function (draftOrder, pids) {
-                    setOrder(draftOrder).then(function () {
-                        var season, tx;
+                    // Is draft over?;
+                    if (draftOrder.length === 0) {
+                        season = require("core/season"); // Circular reference
 
-                        // Is draft over?;
-                        if (draftOrder.length === 0) {
-                            season = require("core/season"); // Circular reference
-                            if (g.phase === g.PHASE.FANTASY_DRAFT) {
-                                // Undrafted players become free agents
-                                tx = g.dbl.transaction(["players", "teams"], "readwrite");
-                                player.genBaseMoods(tx).then(function (baseMoods) {
-                                    var playerStore;
+                        // Fantasy draft special case!
+                        if (g.phase === g.PHASE.FANTASY_DRAFT) {
+                            tx = dao.tx(["players", "teams"], "readwrite");
 
-                                    playerStore = tx.objectStore("players");
-                                    playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-                                        var cursor, p;
-
-                                        cursor = event.target.result;
-                                        if (cursor) {
-                                            p = cursor.value;
-                                            player.addToFreeAgents(playerStore, p, g.PHASE.FREE_AGENCY, baseMoods);
-                                            cursor.continue();
-                                        } else {
-                                            // Swap back in normal draft class
-                                            playerStore.index("tid").openCursor(g.PLAYER.UNDRAFTED_FANTASY_TEMP).onsuccess = function (event) {
-                                                var cursor, p;
-
-                                                cursor = event.target.result;
-                                                if (cursor) {
-                                                    p = cursor.value;
-
-                                                    p.tid = g.PLAYER.UNDRAFTED;
-
-                                                    cursor.update(p);
-                                                    cursor.continue();
-                                                } else {
-                                                    db.setGameAttributes({
-                                                        lastDbChange: Date.now(),
-                                                        phase: g.nextPhase,
-                                                        nextPhase: null
-                                                    }, function () {
-                                                        ui.updatePhase(g.season + season.phaseText[g.phase]);
-                                                        ui.updatePlayMenu(null).then(function () {
-                                                            cb(pids);
-                                                        });
-                                                    });
-                                                }
-                                            };
-                                        }
-                                    };
+                            // Undrafted players become free agents
+                            return player.genBaseMoods(tx).then(function (baseMoods) {
+                                return dao.players.iterate({
+                                    ot: tx,
+                                    index: "tid",
+                                    key: g.PLAYER.UNDRAFTED,
+                                    modify: function (p) {
+                                        player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
+                                    }
                                 });
-                            } else {
-                                // Normal
-                                season.newPhase(g.PHASE.AFTER_DRAFT).then(function () {
-                                    cb(pids);
+                            }).then(function () {
+                                // Swap back in normal draft class
+                                return dao.players.iterate({
+                                    ot: tx,
+                                    index: "tid",
+                                    key: g.PLAYER.UNDRAFTED_FANTASY_TEMP,
+                                    modify: function (p) {
+                                        p.tid = g.PLAYER.UNDRAFTED;
+
+                                        return p;
+                                    }
                                 });
-                            }
-                        } else {
-                            dao.gameAttributes.set({lastDbChange: Date.now()}).then(function () {
-                                cb(pids);
+                            }).then(function () {
+                                return dao.gameAttributes.set({
+                                    lastDbChange: Date.now(),
+                                    phase: g.nextPhase,
+                                    nextPhase: null
+                                }).then(function () {
+                                    ui.updatePhase(g.season + season.phaseText[g.phase]);
+                                    return ui.updatePlayMenu(null).then(function () {
+                                        return pids;
+                                    });
+                                });
                             });
                         }
-                    });
-                };
 
-                // This will actually draft "untilUserOrEnd"
-                autoSelectPlayer = function () {
-                    if (draftOrder.length > 0) {
-                        pick = draftOrder.shift();
-
-                        // noAutoPick is for people who want to switch to each AI team and control
-                        // their selection, like someone manually running a multiplayer league.
-                        // Eventually this should have a better implementation.
-                        if (pick.tid === g.userTid || localStorage.noAutoPick) {
-                            draftOrder.unshift(pick);
-                            cbAfterDoneAuto(draftOrder, pids);
-                            return;
-                        }
-
-                        selection = Math.floor(Math.abs(random.gauss(0, 2)));  // 0=best prospect, 1=next best prospect, etc.
-                        pid = playersAll[selection].pid;
-                        selectPlayer(pick, pid).then(function () {
-                            pids.push(pid);
-                            playersAll.splice(selection, 1);  // Delete from the list of undrafted players
-
-                            autoSelectPlayer();
+                        // Non-fantasy draft
+                        return season.newPhase(g.PHASE.AFTER_DRAFT).then(function () {
+                            return pids;
                         });
-                    } else {
-                        cbAfterDoneAuto(draftOrder, pids);
                     }
-                };
 
-                autoSelectPlayer();
-            });
-        };
+                    // Draft is not over, so continue
+                    return dao.gameAttributes.set({lastDbChange: Date.now()}).then(function () {
+                        return pids;
+                    });
+                });
+            };
+
+            // This will actually draft "untilUserOrEnd"
+            autoSelectPlayer = function () {
+                if (draftOrder.length > 0) {
+                    pick = draftOrder.shift();
+
+                    // noAutoPick is for people who want to switch to each AI team and control
+                    // their selection, like someone manually running a multiplayer league.
+                    // Eventually this should have a better implementation.
+                    if (pick.tid === g.userTid || localStorage.noAutoPick) {
+                        draftOrder.unshift(pick);
+                        return afterDoneAuto(draftOrder, pids);
+                    }
+
+                    selection = Math.floor(Math.abs(random.gauss(0, 2)));  // 0=best prospect, 1=next best prospect, etc.
+                    pid = playersAll[selection].pid;
+                    return selectPlayer(pick, pid).then(function () {
+                        pids.push(pid);
+                        playersAll.splice(selection, 1);  // Delete from the list of undrafted players
+
+                        return autoSelectPlayer();
+                    });
+                }
+
+                return afterDoneAuto(draftOrder, pids);
+            };
+
+            return autoSelectPlayer();
+        });
     }
 
     return {

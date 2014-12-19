@@ -9,7 +9,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
 
     // This relies on vars being populated, so it can't be called in parallel with updateTrade
     function updateSummary(vars, cb) {
-        trade.getOtherTid(function (otherTid) {
+        trade.getOtherTid().then(function (otherTid) {
             var teams;
 
             teams = [
@@ -338,7 +338,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
             vm.summary.enablePropose(false); // Will be reenabled in updateSummary, if appropriate
             vm.message("");
 
-            trade.getOtherTid(function (otherTid) {
+            trade.getOtherTid().then(function (otherTid) {
                 var serialized, teams;
 
                 serialized = $("#rosters").serializeArray();

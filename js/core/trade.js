@@ -58,15 +58,12 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
      * Gets the team ID for the team that the user is trading with.
      * 
      * @memberOf core.trade
-     * @param {function(number)} cb Callback function. The argument is the other team's tid.
+     * @return {er} Resolves to the other team's team ID.
      */
-    function getOtherTid(cb) {
-        g.dbl.transaction("trade").objectStore("trade").get(0).onsuccess = function (event) {
-            var tr;
-
-            tr = event.target.result;
-            cb(tr.teams[1].tid);
-        };
+    function getOtherTid() {
+        return get().then(function (teams) {
+            return teams[1].tid;
+        });
     }
 
     /**

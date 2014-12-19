@@ -2,7 +2,7 @@
  * @name views.message
  * @namespace View a single message.
  */
-define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView"], function (dao, g, ui, Promise, ko, bbgmView) {
+define(["dao", "globals", "ui", "lib/knockout", "util/bbgmView"], function (dao, g, ui, ko, bbgmView) {
     "use strict";
 
     function get(req) {
@@ -12,41 +12,45 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView"]
     }
 
     function updateMessage(inputs, updateEvents, vm) {
+        var message, readThisPageview, tx;
+
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.message.mid() !== inputs.mid) {
-            return new Promise(function (resolve, reject) {
-                var tx;
+            tx = dao.tx("messages", "readwrite");
 
-                tx = g.dbl.transaction("messages", "readwrite");
+            readThisPageview = false;
 
-                // If mid is null, this will open the message with the highest mid
-                tx.objectStore("messages").openCursor(inputs.mid, "prev").onsuccess = function (event) {
-                    var cursor, message;
-
-                    cursor = event.target.result;
-                    message = cursor.value;
+            // If mid is null, this will open the *unread* message with the highest mid
+            dao.messages.iterate({
+                ot: tx,
+                key: inputs.mid,
+                direction: "prev",
+                modify: function (messageLocal, shortCircuit) {
+                    message = messageLocal;
 
                     if (!message.read) {
+                        shortCircuit(); // Keep looking until we find an unread one!
+
                         message.read = true;
-                        cursor.update(message);
+                        readThisPageview = true;
 
-                        tx.oncomplete = function () {
-                            dao.gameAttributes.set({lastDbChange: Date.now()});
-
-                            if (g.gameOver) {
-                                ui.updateStatus("You're fired!");
-                            }
-
-                            ui.updatePlayMenu(null).then(function () {
-                                resolve({
-                                    message: message
-                                });
-                            });
-                        };
-                    } else {
-                        resolve({
-                            message: message
-                        });
+                        return message;
                     }
+                }
+            });
+
+            return tx.complete().then(function () {
+                return dao.gameAttributes.set({lastDbChange: Date.now()});
+            }).then(function () {
+                if (readThisPageview) {
+                    if (g.gameOver) {
+                        ui.updateStatus("You're fired!");
+                    }
+
+                    return ui.updatePlayMenu(null);
+                }
+            }).then(function () {
+                return {
+                    message: message
                 };
             });
         }

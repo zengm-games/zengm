@@ -668,7 +668,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         tx: tx,
         leagues: generateBasicDao("dbm", "leagues", ["get", "getAll", "add", "iterate"]),
         achievements: generateBasicDao("dbm", "achievements", ["getAll"]),
-        awards: generateBasicDao("dbl", "awards", ["get", "put"]),
+        awards: generateBasicDao("dbl", "awards", ["get", "getAll", "put"]),
         contracts: contracts,
         draftOrder: generateBasicDao("dbl", "draftOrder", ["get", "put"]),
         draftPicks: generateBasicDao("dbl", "draftPicks", ["getAll", "add", "delete"]),

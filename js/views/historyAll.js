@@ -2,7 +2,7 @@
  * @name views.historyAll
  * @namespace Single table summary of all past seasons, leaguewide.
  */
-define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (g, ui, player, team, $, ko, bbgmView, helpers, viewHelpers, components) {
+define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers"], function (dao, g, ui, Promise, $, ko, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -16,17 +16,12 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
     };
 
     function updateHistory(inputs, updateEvents, vm) {
-        var deferred, tx;
-
         if (updateEvents.indexOf("firstRun") >= 0) {
-            deferred = $.Deferred();
-
-            tx = g.dbl.transaction(["awards", "teams"]);
-
-            tx.objectStore("awards").getAll().onsuccess = function (event) {
-                var awards, i, seasons;
-
-                awards = event.target.result;
+            return Promise.all([
+                dao.awards.getAll(),
+                dao.teams.getAll()
+            ]).spread(function (awards, teams) {
+                var championshipsByTid, i, seasons;
 
                 seasons = [];
                 for (i = 0; i < awards.length; i++) {
@@ -39,70 +34,61 @@ define(["globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout
                     };
                 }
 
-                tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                    var championshipsByTid, cursor, found, i, j, t;
+                teams.forEach(function (t) {
+                    var found, i, j;
 
-                    cursor = event.target.result;
-                    if (cursor) {
-                        t = cursor.value;
-
-                        // t.seasons has same season entries as the "seasons" array built from awards
-                        for (i = 0; i < seasons.length; i++) {
-                            // Find corresponding entries in seasons and t.seasons. Can't assume they are the same because they aren't if some data has been deleted (Improve Performance)
-                            found = false;
-                            for (j = 0; j < t.seasons.length; j++) {
-                                if (t.seasons[j].season === seasons[i].season) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (!found) {
-                                continue;
-                            }
-
-                            if (t.seasons[j].playoffRoundsWon === 4) {
-                                seasons[i].champ = {
-                                    tid: t.tid,
-                                    abbrev: t.abbrev,
-                                    region: t.region,
-                                    name: t.name,
-                                    won: t.seasons[j].won,
-                                    lost: t.seasons[j].lost
-                                };
-                            } else if (t.seasons[j].playoffRoundsWon === 3) {
-                                seasons[i].runnerUp = {
-                                    abbrev: t.abbrev,
-                                    region: t.region,
-                                    name: t.name,
-                                    won: t.seasons[j].won,
-                                    lost: t.seasons[j].lost
-                                };
+                    // t.seasons has same season entries as the "seasons" array built from awards
+                    for (i = 0; i < seasons.length; i++) {
+                        // Find corresponding entries in seasons and t.seasons. Can't assume they are the same because they aren't if some data has been deleted (Improve Performance)
+                        found = false;
+                        for (j = 0; j < t.seasons.length; j++) {
+                            if (t.seasons[j].season === seasons[i].season) {
+                                found = true;
+                                break;
                             }
                         }
-
-                        cursor.continue();
-                    } else {
-                        // Count up number of championships per team
-                        championshipsByTid = [];
-                        for (i = 0; i < g.numTeams; i++) {
-                            championshipsByTid.push(0);
-                        }
-                        for (i = 0; i < seasons.length; i++) {
-                            if (seasons[i].champ) {
-                                championshipsByTid[seasons[i].champ.tid] += 1;
-                                seasons[i].champ.count = championshipsByTid[seasons[i].champ.tid];
-                                delete seasons[i].champ.tid;
-                            }
+                        if (!found) {
+                            return;
                         }
 
-                        deferred.resolve({
-                            seasons: seasons
-                        });
+                        if (t.seasons[j].playoffRoundsWon === 4) {
+                            seasons[i].champ = {
+                                tid: t.tid,
+                                abbrev: t.abbrev,
+                                region: t.region,
+                                name: t.name,
+                                won: t.seasons[j].won,
+                                lost: t.seasons[j].lost
+                            };
+                        } else if (t.seasons[j].playoffRoundsWon === 3) {
+                            seasons[i].runnerUp = {
+                                abbrev: t.abbrev,
+                                region: t.region,
+                                name: t.name,
+                                won: t.seasons[j].won,
+                                lost: t.seasons[j].lost
+                            };
+                        }
                     }
-                };
-            };
+                });
 
-            return deferred.promise();
+                // Count up number of championships per team
+                championshipsByTid = [];
+                for (i = 0; i < g.numTeams; i++) {
+                    championshipsByTid.push(0);
+                }
+                for (i = 0; i < seasons.length; i++) {
+                    if (seasons[i].champ) {
+                        championshipsByTid[seasons[i].champ.tid] += 1;
+                        seasons[i].champ.count = championshipsByTid[seasons[i].champ.tid];
+                        delete seasons[i].champ.tid;
+                    }
+                }
+
+                return {
+                    seasons: seasons
+                };
+            });
         }
     }
 

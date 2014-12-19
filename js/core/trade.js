@@ -6,52 +6,55 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
     "use strict";
 
     /**
+     * Get the contents of the current trade from the database.
+     * 
+     * @memberOf core.trade
+     * @param {Promise.<Array.<Object>>} Resolves to an array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
+     */
+    function get() {
+        return dao.trade.get({key: 0}).then(function (tr) {
+            return tr.teams;
+        });
+    }
+
+    /**
      * Start a new trade with a team.
      * 
      * @memberOf core.trade
      * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs). If the other team's tid is null, it will automatically be determined from the pids.
-     * @param {function()} cb Callback function.
+     * @return {Promise}
      */
-    function create(teams, cb) {
-        g.dbl.transaction("trade").objectStore("trade").get(0).onsuccess = function (event) { // Same key always, as there is only one trade allowed at a time
-            var cbStartTrade, oldTr;
-
-            oldTr = event.target.result;
-
+    function create(teams) {
+        return get().then(function (oldTeams) {
             // If nothing is in this trade, it's just a team switch, so keep the old stuff from the user's team
             if (teams[0].pids.length === 0 && teams[1].pids.length === 0 && teams[0].dpids.length === 0 && teams[1].dpids.length === 0) {
-                teams[0].pids = oldTr.teams[0].pids;
-                teams[0].dpids = oldTr.teams[0].dpids;
+                teams[0].pids = oldTeams[0].pids;
+                teams[0].dpids = oldTeams[0].dpids;
             }
-
-            cbStartTrade = function () {
-                var tx;
-
-                tx = g.dbl.transaction("trade", "readwrite");
-                tx.objectStore("trade").put({
-                    rid: 0,
-                    teams: teams
-                });
-                tx.oncomplete = function () {
-                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                        cb();
-                    });
-                };
-            };
 
             // Make sure tid is set
-            if (teams[1].tid === undefined || teams[1].tid === null) {
-                g.dbl.transaction("players").objectStore("players").get(teams[1].pids[0]).onsuccess = function (event) {
-                    var p;
+            return Promise.try(function () {
+                if (teams[1].tid === undefined || teams[1].tid === null) {
+                    return dao.players.get({key: teams[1].pids[0]}).then(function (p) {
+                        teams[1].tid = p.tid;
+                    });
+                }
+            }).then(function () {
+                var tx;
 
-                    p = event.target.result;
-                    teams[1].tid = p.tid;
-                    cbStartTrade();
-                };
-            } else {
-                cbStartTrade();
-            }
-        };
+                tx = dao.tx("trade", "readwrite");
+                dao.trade.put({
+                    ot: tx,
+                    value: {
+                        rid: 0,
+                        teams: teams
+                    }
+                });
+                return tx.complete().then(function () {
+                    dao.gameAttributes.set({lastDbChange: Date.now()});
+                });
+            });
+        });
     }
 
     /**
@@ -163,18 +166,6 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                 };
             }(i));
         }
-    }
-
-    /**
-     * Get the contents of the current trade from the database.
-     * 
-     * @memberOf core.trade
-     * @param {Promise.<Array.<Object>>} Resolves to an array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
-     */
-    function get() {
-        return dao.trade.get({key: 0}).then(function (tr) {
-            return tr.teams;
-        });
     }
 
 
@@ -782,9 +773,9 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
     }
 
     return {
+        get: get,
         create: create,
         updatePlayers: updatePlayers,
-        get: get,
         getOtherTid: getOtherTid,
         summary: summary,
         clear: clear,

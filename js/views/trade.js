@@ -124,12 +124,12 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
         } else if (pid !== null) {
             // Start new trade for a single player
             teams[1].pids = [pid];
-            trade.create(teams, function () {
+            trade.create(teams).then(function () {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
             });
         } else if (newOtherTid !== null || userPids.length > 0 || otherPids.length > 0 || userDpids.length > 0 || otherDpids.length > 0) {
             // Start a new trade based on a list of pids and dpids, like from the trading block
-            trade.create(teams, function () {
+            trade.create(teams).then(function () {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
             });
         }

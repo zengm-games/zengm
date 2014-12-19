@@ -178,10 +178,10 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
      * 
      * @memberOf core.trade
      * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
-     * @param {function(Object)} cb Callback function. The argument is an object containing the trade summary.
+     * @return {Promise.Object} Resolves to an object contianing the trade summary.
      */
-    function summary(teams, cb) {
-        var i, done, dpids, pids, players, s, tids, transaction;
+    function summary(teams) {
+        var i, dpids, pids, players, promises, s, tids, tx;
 
         tids = [teams[0].tid, teams[1].tid];
         pids = [teams[0].pids, teams[1].pids];
@@ -192,99 +192,94 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
             s.teams.push({trade: [], total: 0, payrollAfterTrade: 0, name: ""});
         }
 
-        transaction = g.dbl.transaction(["draftPicks", "players", "releasedPlayers"]);
+        tx = dao.tx(["draftPicks", "players", "releasedPlayers"]);
 
         // Calculate properties of the trade
-        done = 0;
         players = [[], []];
-        for (i = 0; i < 2; i++) {
-            (function (i) {
-                dao.players.getAll({
-                    ot: transaction,
-                    index: "tid",
-                    key: tids[i]
-                }).then(function (playersTemp) {
-                    players[i] = player.filter(playersTemp, {
-                        attrs: ["pid", "name", "contract"],
-                        season: g.season,
-                        tid: tids[i],
-                        showRookies: true
-                    });
-                    s.teams[i].trade = _.filter(players[i], function (player) { return pids[i].indexOf(player.pid) >= 0; });
-                    s.teams[i].total = _.reduce(s.teams[i].trade, function (memo, player) { return memo + player.contract.amount; }, 0);
-
-                    transaction.objectStore("draftPicks").index("tid").getAll(tids[i]).onsuccess = function (event) {
-                        var j, k, overCap, picks, ratios;
-
-                        picks = event.target.result;
-                        s.teams[i].picks = [];
-                        for (j = 0; j < picks.length; j++) {
-                            if (dpids[i].indexOf(picks[j].dpid) >= 0) {
-                                s.teams[i].picks.push({desc: picks[j].season + " " + (picks[j].round === 1 ? "1st" : "2nd") + " round pick (" + g.teamAbbrevsCache[picks[j].originalTid] + ")"});
-                            }
-                        }
-
-                        done += 1;
-                        if (done === 2) {
-                            done = 0;
-
-                            // Test if any warnings need to be displayed
-                            overCap = [false, false];
-                            ratios = [0, 0];
-                            for (j = 0; j < 2; j++) {
-                                if (j === 0) {
-                                    k = 1;
-                                } else if (j === 1) {
-                                    k = 0;
-                                }
-
-                                s.teams[j].name = g.teamRegionsCache[tids[j]] + " " + g.teamNamesCache[tids[j]];
-
-                                if (s.teams[j].total > 0) {
-                                    ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
-                                } else if (s.teams[k].total > 0) {
-                                    ratios[j] = Infinity;
-                                } else {
-                                    ratios[j] = 100;
-                                }
-
-                                (function (j) {
-                                    dao.payrolls.get({ot: transaction, key: tids[j]}).spread(function (payroll) {
-                                        var k;
-
-                                        if (j === 0) {
-                                            k = 1;
-                                        } else if (j === 1) {
-                                            k = 0;
-                                        }
-
-                                        s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
-                                        if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
-                                            overCap[j] = true;
-                                        }
-
-                                        done += 1;
-                                        if (done === 2) {
-                                            if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
-                                                // Which team is at fault?;
-                                                if (ratios[0] > 125) {
-                                                    j = 0;
-                                                } else {
-                                                    j = 1;
-                                                }
-                                                s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
-                                            }
-
-                                            cb(s);
-                                        }
-                                    });
-                                }(j));
-                            }
-                        }
-                    };
+        promises = [];
+        [0, 1].forEach(function (i) {
+            promises.push(dao.players.getAll({
+                ot: tx,
+                index: "tid",
+                key: tids[i]
+            }).then(function (playersTemp) {
+                players[i] = player.filter(playersTemp, {
+                    attrs: ["pid", "name", "contract"],
+                    season: g.season,
+                    tid: tids[i],
+                    showRookies: true
                 });
-            }(i));
-        }
+                s.teams[i].trade = _.filter(players[i], function (player) { return pids[i].indexOf(player.pid) >= 0; });
+                s.teams[i].total = _.reduce(s.teams[i].trade, function (memo, player) { return memo + player.contract.amount; }, 0);
+            }));
+
+            promises.push(dao.draftPicks.getAll({
+                ot: tx,
+                index: "tid",
+                key: tids[i]
+            }).then(function (picks) {
+                var j;
+
+                s.teams[i].picks = [];
+                for (j = 0; j < picks.length; j++) {
+                    if (dpids[i].indexOf(picks[j].dpid) >= 0) {
+                        s.teams[i].picks.push({desc: picks[j].season + " " + (picks[j].round === 1 ? "1st" : "2nd") + " round pick (" + g.teamAbbrevsCache[picks[j].originalTid] + ")"});
+                    }
+                }
+            }));
+        });
+
+        return Promise.all(promises).then(function () {
+            var k, overCap, promises, ratios;
+
+            // Test if any warnings need to be displayed
+            overCap = [false, false];
+            ratios = [0, 0];
+            promises = [];
+            [0, 1].forEach(function (j) {
+                if (j === 0) {
+                    k = 1;
+                } else if (j === 1) {
+                    k = 0;
+                }
+
+                s.teams[j].name = g.teamRegionsCache[tids[j]] + " " + g.teamNamesCache[tids[j]];
+
+                if (s.teams[j].total > 0) {
+                    ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
+                } else if (s.teams[k].total > 0) {
+                    ratios[j] = Infinity;
+                } else {
+                    ratios[j] = 100;
+                }
+
+                promises.push(dao.payrolls.get({
+                    ot: tx,
+                    key: tids[j]
+                }).spread(function (payroll) {
+                    s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
+                    if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
+                        overCap[j] = true;
+                    }
+                }));
+            });
+
+            return Promise.all(promises).then(function () {
+                var j;
+
+                if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
+                    // Which team is at fault?;
+                    if (ratios[0] > 125) {
+                        j = 0;
+                    } else {
+                        j = 1;
+                    }
+                    s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
+                }
+
+                return s;
+            });
+        });
     }
 
 
@@ -340,7 +335,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
             // The summary will return a warning if (there is a problem. In that case,
             // that warning will already be pushed to the user so there is no need to
             // return a redundant message here.
-            summary(teams, function (s) {
+            summary(teams).then(function (s) {
                 var outcome;
 
                 if (s.warning && !forceTrade) {
@@ -643,13 +638,13 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
      * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
     function makeItWorkTrade(cb) {
-        getPickValues(g.dbl.transaction("players")).then(function (estValues) {
+        getPickValues().then(function (estValues) {
             get().then(function (teams0) {
                 makeItWork(teams0, false, estValues, function (found, teams) {
                     if (!found) {
                         cb(g.teamRegionsCache[teams0[1].tid] + ' GM: "I can\'t afford to give up so much."');
                     } else {
-                        summary(teams, function (s) {
+                        summary(teams).then(function (s) {
                             var tx;
 
                             // Store AI's proposed trade in database

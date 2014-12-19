@@ -56,7 +56,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
                             progressBar.style.width = Math.round(10 + 90 * done / numAfter) + "%";
 
                             if (found) {
-                                trade.summary(teams, function (summary) {
+                                trade.summary(teams).then(function (summary) {
                                     teams[1].warning = summary.warning;
                                     offers.push(teams[1]);
                                     afterOffers();

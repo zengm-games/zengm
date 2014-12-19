@@ -24,7 +24,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
                     dpids: vars.otherDpids
                 }
             ];
-            trade.summary(teams, function (summary) {
+            trade.summary(teams).then(function (summary) {
                 var i;
 
                 vars.summary = {

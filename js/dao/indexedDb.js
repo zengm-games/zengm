@@ -453,7 +453,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
 
 
-    players = generateBasicDao("dbl", "players", ["count", "put", "iterate"]);
+    players = generateBasicDao("dbl", "players", ["count", "put", "delete", "iterate"]);
 
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
     // filter: Arbitrary JS function to run on output with array.filter

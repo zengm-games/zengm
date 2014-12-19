@@ -2,7 +2,7 @@
  * @name core.trade
  * @namespace Trades between the user's team and other teams.
  */
-define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], function (dao, db, g, player, team, _) {
+define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib/underscore"], function (dao, db, g, player, team, Promise, _) {
     "use strict";
 
     /**
@@ -172,15 +172,12 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
      * Get the contents of the current trade from the database.
      * 
      * @memberOf core.trade
-     * @param {function(Array.<Object>)} cb Callback function. Argument is an array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
+     * @param {Promise.<Array.<Object>>} Resolves to an array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
      */
-    function get(cb) {
-        g.dbl.transaction("trade").objectStore("trade").get(0).onsuccess = function (event) {
-            var tr;
-
-            tr = event.target.result;
-            cb(tr.teams);
-        };
+    function get() {
+        return dao.trade.get({key: 0}).then(function (tr) {
+            return tr.teams;
+        });
     }
 
 
@@ -260,7 +257,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
                                 }
 
                                 (function (j) {
-                                    db.getPayroll(transaction, tids[j], function (payroll) {
+                                    dao.payrolls.get({ot: transaction, key: tids[j]}).spread(function (payroll) {
                                         var k;
 
                                         if (j === 0) {
@@ -344,7 +341,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
             return;
         }
 
-        get(function (teams) {
+        get().then(function (teams) {
             var dpids, pids, tids;
 
             tids = [teams[0].tid, teams[1].tid];
@@ -658,7 +655,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/underscore"], f
      */
     function makeItWorkTrade(cb) {
         getPickValues(g.dbl.transaction("players")).then(function (estValues) {
-            get(function (teams0) {
+            get().then(function (teams0) {
                 makeItWork(teams0, false, estValues, function (found, teams) {
                     if (!found) {
                         cb(g.teamRegionsCache[teams0[1].tid] + ' GM: "I can\'t afford to give up so much."');

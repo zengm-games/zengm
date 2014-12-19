@@ -683,6 +683,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         playoffSeries: generateBasicDao("dbl", "playoffSeries", ["get", "put", "iterate"]),
         releasedPlayers: generateBasicDao("dbl", "releasedPlayers", ["delete", "clear", "iterate"]),
         schedule: schedule,
-        teams: generateBasicDao("dbl", "teams", ["get", "getAll", "put", "iterate"])
+        teams: generateBasicDao("dbl", "teams", ["get", "getAll", "put", "iterate"]),
+        trade: generateBasicDao("dbl", "trade", ["get", "put"])
     };
 });

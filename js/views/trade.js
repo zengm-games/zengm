@@ -51,7 +51,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
 
     // Validate that the stored player IDs correspond with the active team ID
     function validateSavedPids(cb) {
-        trade.get(function (teams) {
+        trade.get().then(function (teams) {
             trade.updatePlayers(teams, function (teams) {
                 cb(teams);
             });

@@ -30,7 +30,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
         });
 
 
-        trade.getPickValues(g.dbl.transaction("players"), function (estValues) {
+        trade.getPickValues().then(function (estValues) {
             done = 0;
             for (i = 0; i < tids.length; i++) {
                 (function (tid) {

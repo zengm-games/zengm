@@ -660,7 +660,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
             if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
                 // Estimate the order of the picks by team
                 dao.teams.getAll({ot: tx}).then(function (teams) {
-                    var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, trade, withEstValues, wps;
+                    var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, withEstValues, wps;
 
                     // This part needs to be run every time so that gpAvg is available
                     wps = []; // Contains estimated winning percentages for all teams by the end of the season
@@ -798,8 +798,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                         estValues = estValuesCached;
                         withEstValues();
                     } else {
-                        trade = require("core/trade");
-                        trade.getPickValues(tx, function (newEstValues) {
+                        require("core/trade").getPickValues(tx).then(function (newEstValues) {
                             estValues = newEstValues;
                             withEstValues();
                         });

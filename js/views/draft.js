@@ -39,14 +39,12 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/jquery", "util
     }
 
     function draftUser(pid, cb) {
-        pid = parseInt(pid, 10);
-
         draft.getOrder().then(function (draftOrder) {
             var pick;
 
             pick = draftOrder.shift();
             if (pick.tid === g.userTid) {
-                draft.selectPlayer(pick, pid, function (pid) {
+                draft.selectPlayer(pick, pid).then(function () {
                     draft.setOrder(draftOrder).then(function () {
                         cb(pid);
                     });
@@ -206,7 +204,7 @@ console.log("FIXING");
 
         $("#undrafted").on("click", "button", function (event) {
             $("#undrafted button").attr("disabled", "disabled");
-            draftUser(this.getAttribute("data-player-id"), function (pid) {
+            draftUser(parseInt(this.getAttribute("data-player-id"), 10), function (pid) {
                 updateDraftTables([pid]);
                 draftUntilUserOrEnd();
             });

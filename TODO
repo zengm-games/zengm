@@ -107,6 +107,7 @@ grep -r Deferred js/views
 
 documentation!!!!! like nuances of iterate modify
   eventually factor out library and merge with https://github.com/aaronpowell/db.js/issues/95 maybe
+  throw error in inappropriate input param (like "pid")
 
 get rid of $ and _ where possible
 

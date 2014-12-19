@@ -2,7 +2,7 @@
  * @name views.newLeague
  * @namespace Create new league form.
  */
-define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, komapping, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, league, $, komapping, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     // Keep only relevant information, otherwise Knockout has to do extra work creating all kinds of observables
@@ -76,18 +76,22 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
         }
     }
 
-    function updateNewLeague(inputs, updateEvents) {
-        var deferred;
+    function updateNewLeague() {
+        var newLid;
 
-        deferred = $.Deferred();
+        newLid = null;
 
-        g.dbm.transaction("leagues").objectStore("leagues").openCursor(null, "prev").onsuccess = function (event) {
-            var cursor, newLid, teams;
+        // Find most recent league and add one to the LID
+        return dao.leagues.iterate({
+            direction: "prev",
+            modify: function (l, shortCircuit) {
+                newLid = l.lid + 1;
+                shortCircuit();
+            }
+        }).then(function () {
+            var teams;
 
-            cursor = event.target.result;
-            if (cursor) {
-                newLid = cursor.value.lid + 1;
-            } else {
+            if (newLid === null) {
                 newLid = 1;
             }
 
@@ -98,14 +102,12 @@ define(["globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "u
                 name: "Team"
             });
 
-            deferred.resolve({
+            return {
                 name: "League " + newLid,
                 teams: teams,
                 lastSelectedTid: parseInt(localStorage.lastSelectedTid, 10)
-            });
-        };
-
-        return deferred.promise();
+            };
+        });
     }
 
     function uiFirst(vm) {

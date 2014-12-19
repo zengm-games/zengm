@@ -13,39 +13,33 @@ define(["dao", "globals", "lib/bluebird", "lib/underscore"], function (dao, g, P
      */
     function assessPayrollMinLuxury() {
         return dao.payrolls.getAll().then(function (payrolls) {
-            return new Promise(function (resolve, reject) {
-                var tx;
+            var tx;
 
-                // Update teams object store
-                tx = g.dbl.transaction("teams", "readwrite");
-                tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                    var cursor, i, team;
+            // Update teams object store
+            tx = dao.tx("teams", "readwrite");
+            dao.teams.iterate({
+                ot: tx,
+                modify: function (t) {
+                    var s;
 
-                    cursor = event.target.result;
-                    if (cursor) {
-                        team = cursor.value;
-                        i = team.seasons.length - 1;  // Relevant row is the last one
+                    s = t.seasons.length - 1;  // Relevant row is the last one
 
-                        // Store payroll
-                        team.seasons[i].payrollEndOfSeason = payrolls[team.tid];
+                    // Store payroll
+                    t.seasons[s].payrollEndOfSeason = payrolls[t.tid];
 
-                        // Assess minimum payroll tax and luxury tax
-                        if (payrolls[team.tid] < g.minPayroll) {
-                            team.seasons[i].expenses.minTax.amount = g.minPayroll - payrolls[team.tid];
-                            team.seasons[i].cash -= team.seasons[i].expenses.minTax.amount;
-                        } else if (payrolls[team.tid] > g.luxuryPayroll) {
-                            team.seasons[i].expenses.luxuryTax.amount = g.luxuryTax * (payrolls[team.tid] - g.luxuryPayroll);
-                            team.seasons[i].cash -= team.seasons[i].expenses.luxuryTax.amount;
-                        }
-
-                        cursor.update(team);
-                        cursor.continue();
+                    // Assess minimum payroll tax and luxury tax
+                    if (payrolls[t.tid] < g.minPayroll) {
+                        t.seasons[s].expenses.minTax.amount = g.minPayroll - payrolls[t.tid];
+                        t.seasons[s].cash -= t.seasons[s].expenses.minTax.amount;
+                    } else if (payrolls[t.tid] > g.luxuryPayroll) {
+                        t.seasons[s].expenses.luxuryTax.amount = g.luxuryTax * (payrolls[t.tid] - g.luxuryPayroll);
+                        t.seasons[s].cash -= t.seasons[s].expenses.luxuryTax.amount;
                     }
-                };
-                tx.oncomplete = function () {
-                    resolve();
-                };
+
+                    return t;
+                }
             });
+            return tx.complete();
         });
     }
 

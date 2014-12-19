@@ -11,8 +11,8 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
      * @memberOf core.trade
      * @param {Promise.<Array.<Object>>} Resolves to an array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
      */
-    function get() {
-        return dao.trade.get({key: 0}).then(function (tr) {
+    function get(ot) {
+        return dao.trade.get({ot: ot, key: 0}).then(function (tr) {
             return tr.teams;
         });
     }
@@ -76,96 +76,100 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
      * 
      * @memberOf core.trade
      * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
-     * @param {function(Array.<Object>)} cb Callback function. Arguments are the same as the inputs, but with invalid entries removed.
+     * @return {Promise.<Array.<Object>>} Resolves to an array taht's the same as the input, but with invalid entries removed.
      */
-    function updatePlayers(teams, cb) {
-        var afterCheck, i, tx;
-
-        tx = g.dbl.transaction(["draftPicks", "players"]);
+    function updatePlayers(teams) {
+        var promises, tx;
 
         // This is just for debugging
         team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(function (dv) {
             console.log(dv);
         });
 
-        // This will get called after all the pids and dpids are checked to make sure they are accurate
-        afterCheck = _.after(teams.length * 2, function () {
+        tx = dao.tx(["draftPicks", "players"]);
+
+        // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
+        promises = [];
+        teams.forEach(function (t) {
+            // Check players
+            promises.push(dao.players.getAll({
+                ot: tx,
+                index: "tid",
+                key: t.tid
+            }).then(function (players) {
+                var j, pidsGood;
+
+                pidsGood = [];
+                for (j = 0; j < players.length; j++) {
+                    // Also, make sure player is not untradable
+                    if (t.pids.indexOf(players[j].pid) >= 0 && !isUntradable(players[j])) {
+                        pidsGood.push(players[j].pid);
+                    }
+                }
+                t.pids = pidsGood;
+            }));
+
+            // Check draft picks
+            promises.push(dao.draftPicks.getAll({
+                ot: tx,
+                index: "tid",
+                key: t.tid
+            }).then(function (dps) {
+                var dpidsGood, j;
+
+                dpidsGood = [];
+                for (j = 0; j < dps.length; j++) {
+                    if (t.dpids.indexOf(dps[j].dpid) >= 0) {
+                        dpidsGood.push(dps[j].dpid);
+                    }
+                }
+                t.dpids = dpidsGood;
+            }));
+        });
+
+        return Promise.resolve(promises).then(function () {
             var tx, updated;
 
             updated = false; // Has the trade actually changed?
 
-            tx = g.dbl.transaction("trade", "readwrite");
-            tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
-                var cursor, i, tr;
-
-                cursor = event.target.result;
-                tr = cursor.value;
+            tx = dao.tx("trade", "readwrite");
+            get(tx).then(function (oldTeams) {
+                var i;
 
                 for (i = 0; i < 2; i++) {
-                    if (teams[i].tid !== tr.teams[i].tid) {
+                    if (teams[i].tid !== oldTeams[i].tid) {
                         updated = true;
+                        break;
                     }
-                    if (teams[i].pids.toString() !== tr.teams[i].pids.toString()) {
+                    if (teams[i].pids.toString() !== oldTeams[i].pids.toString()) {
                         updated = true;
+                        break;
                     }
-                    if (teams[i].dpids.toString() !== tr.teams[i].dpids.toString()) {
+                    if (teams[i].dpids.toString() !== oldTeams[i].dpids.toString()) {
                         updated = true;
+                        break;
                     }
                 }
 
                 if (updated) {
-                    tr.teams = teams;
-                    cursor.update(tr);
-                }
-            };
-            tx.oncomplete = function () {
-                if (updated) {
-                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                        cb(teams);
+                    dao.trade.put({
+                        ot: tx,
+                        value: {
+                            rid: 0,
+                            teams: teams
+                        }
                     });
-                } else {
-                    cb(teams);
                 }
-            };
+            });
+
+            return tx.complete().then(function () {
+                if (updated) {
+                    return dao.gameAttributes.set({lastDbChange: Date.now()});
+                }
+            });
+        }).then(function () {
+            return teams;
         });
-
-        // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
-        for (i = 0; i < teams.length; i++) {
-            (function (i) {
-                // Check players
-                tx.objectStore("players").index("tid").getAll(teams[i].tid).onsuccess = function (event) {
-                    var j, pidsGood, players;
-
-                    pidsGood = [];
-                    players = event.target.result;
-                    for (j = 0; j < players.length; j++) {
-                        // Also, make sure player is not untradable
-                        if (teams[i].pids.indexOf(players[j].pid) >= 0 && !isUntradable(players[j])) {
-                            pidsGood.push(players[j].pid);
-                        }
-                    }
-                    teams[i].pids = pidsGood;
-
-                    afterCheck();
-                };
-
-                // Check draft picks
-                tx.objectStore("draftPicks").index("tid").getAll(teams[i].tid).onsuccess = function (event) {
-                    var dps, dpidsGood, j;
-
-                    dpidsGood = [];
-                    dps = event.target.result;
-                    for (j = 0; j < dps.length; j++) {
-                        if (teams[i].dpids.indexOf(dps[j].dpid) >= 0) {
-                            dpidsGood.push(dps[j].dpid);
-                        }
-                    }
-                    teams[i].dpids = dpidsGood;
-
-                    afterCheck();
-                };
-            }(i));
-        }
     }
 
 

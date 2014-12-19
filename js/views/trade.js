@@ -50,12 +50,8 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
     }
 
     // Validate that the stored player IDs correspond with the active team ID
-    function validateSavedPids(cb) {
-        trade.get().then(function (teams) {
-            trade.updatePlayers(teams, function (teams) {
-                cb(teams);
-            });
-        });
+    function validateSavedPids() {
+        return trade.get().then(trade.updatePlayers);
     }
 
     function get(req) {
@@ -176,7 +172,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
 
         deferred = $.Deferred();
 
-        validateSavedPids(function (teams) {
+        validateSavedPids().then(function (teams) {
             var tx;
 
             tx = g.dbl.transaction(["players", "playerStats"]);
@@ -356,7 +352,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
                     }
                 ];
 
-                trade.updatePlayers(teams, function (teams) {
+                trade.updatePlayers(teams).then(function (teams) {
                     var vars;
 
                     vars = {};

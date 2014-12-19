@@ -38,7 +38,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "lib/
                 redirectNegotiationOrRoster(true);
             });
         } else if (req.params.hasOwnProperty("accept")) {
-            contractNegotiation.accept(pid, function (error) {
+            contractNegotiation.accept(pid).then(function (error) {
                 if (error !== undefined && error) {
                     helpers.errorNotify(error);
                 }

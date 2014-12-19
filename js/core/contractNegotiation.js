@@ -267,10 +267,10 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
      * 
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
-     * @param {function(string=)} cb Callback to be run only after the contract is successfully accepted. If an error occurs, pass a string error message.
+     * @return {Promise.<string=>} If an error occurs, resolves to a string error message.
      */
-    function accept(pid, cb) {
-        Promise.all([
+    function accept(pid) {
+        return Promise.all([
             dao.negotiations.get({key: pid}),
             dao.payrolls.get({key: g.userTid})
         ]).spread(function (negotiation, payroll) {
@@ -280,7 +280,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
             // contract, and it's not re-signing a current player, ERROR!
 
             if (!negotiation.resigning && (payroll + negotiation.player.amount > g.salaryCap && negotiation.player.amount !== g.minContract)) {
-                return cb("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");
+                return "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.";
             }
 
             // Adjust to account for in-season signings;
@@ -328,7 +328,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
                 return cancel(pid);
             }).then(function () {
                 return dao.gameAttributes.set({lastDbChange: Date.now()});
-            }).then(cb);
+            });
         });
     }
 

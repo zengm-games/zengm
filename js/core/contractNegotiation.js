@@ -16,40 +16,31 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
      * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
      * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
-     * @param {function(string=)} cb Callback to be run only after a successful negotiation is started. If an error occurs, pass a string error message.
+     * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
      */
-    function create(ot, pid, resigning, cb) {
-        var success, tx;
-
-        console.log("Trying to start new contract negotiation with player " + pid);
-        success = false;
-
+    function create(ot, pid, resigning) {
         if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) && !resigning) {
-            return cb("You're not allowed to sign free agents now.");
+            return Promise.resolve("You're not allowed to sign free agents now.");
         }
 
-        tx = db.getObjectStore(ot, ["gameAttributes", "messages", "negotiations", "players"], null, true);
-
-        lock.canStartNegotiation(tx).then(function (canStartNegotiation) {
-            var playerStore;
-
+        // Can't flatten because of error callbacks
+        return lock.canStartNegotiation(ot).then(function (canStartNegotiation) {
             if (!canStartNegotiation) {
                 return cb("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
             }
 
-            playerStore = tx.objectStore("players");
-            playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-                var numPlayersOnRoster;
-
-                numPlayersOnRoster = event.target.result.length;
+            return dao.players.count({
+                ot: ot,
+                index: "tid",
+                key: g.userTid
+            }).then(function (numPlayersOnRoster) {
                 if (numPlayersOnRoster >= 15 && !resigning) {
                     return cb("Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.");
                 }
 
-                playerStore.get(pid).onsuccess = function (event) {
-                    var negotiation, p, playerAmount, playerYears;
+                return dao.players.get({ot: ot, key: pid}).then(function (p) {
+                    var negotiation, playerAmount, playerYears;
 
-                    p = event.target.result;
                     if (p.tid !== g.PLAYER.FREE_AGENT) {
                         return cb(p.name + " is not a free agent.");
                     }
@@ -74,31 +65,15 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
                         resigning: resigning
                     };
 
-                    tx.objectStore("negotiations").add(negotiation).onsuccess = function () {
-                        success = true;
-                        if (ot !== null) {
-                            // This function doesn't have its own transaction, so we need to call the callback now even though the update and add might not have been processed yet (this will keep the transaction alive).
-                            if (cb !== undefined) {
-                                ui.updateStatus("Contract negotiation");
-                                ui.updatePlayMenu(tx).then(cb);
-                            }
-                        }
-                    };
-                };
-            };
-        });
-
-        if (ot === null) {
-            // This function has its own transaction, so wait until it finishes before calling the callback.
-            tx.oncomplete = function () {
-                if (success) {
-                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                    return dao.negotiations.add({ot: ot, value: negotiation}).then(function () {
+                        return db.setGameAttributes({lastDbChange: Date.now()});
+                    }).then(function () {
                         ui.updateStatus("Contract negotiation");
-                        ui.updatePlayMenu(null).then(cb);
+                        return ui.updatePlayMenu(ot);
                     });
-                }
-            };
-        }
+                });
+            });
+        });
     }
 
     /**

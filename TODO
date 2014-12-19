@@ -45,8 +45,6 @@ API design
   remove filter option from dao.players.getAll - also confusing, can just apply manually
 
 core.draft
-core.contractnegotiation
-  how to deal with error messages from function?
 core.league
 core.season
 indexedDb.contracts.getAll

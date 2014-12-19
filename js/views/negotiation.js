@@ -48,7 +48,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "lib/
             // If there is no active negotiation with this pid, create it
             dao.negotiations.get({key: pid}).then(function (negotiation) {
                 if (!negotiation) {
-                    contractNegotiation.create(null, pid, false, function (error) {
+                    contractNegotiation.create(null, pid, false).then(function (error) {
                         if (error !== undefined && error) {
                             helpers.errorNotify(error);
                             ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
@@ -77,12 +77,15 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "lib/
     }
 
     function updateNegotiation(inputs, updateEvents, vm) {
-        return dao.negotiations.get({key: inputs.pid}).then(function (negotiation) {
-            if (!negotiation) {
+        // Call getAll so it works on null key
+        return dao.negotiations.getAll({key: inputs.pid}).then(function (negotiations) {
+            if (negotiations.length === 0) {
                 return {
                     errorMessage: "No negotiation with player " + inputs.pid + " in progress."
                 };
             }
+
+            var negotiation = negotiations[0];
 
             negotiation.player.expiration = negotiation.player.years + g.season;
             // Adjust to account for in-season signings

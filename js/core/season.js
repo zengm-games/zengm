@@ -1004,7 +1004,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                         // Add to free agents first, to generate a contract demand
                         player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods, function () {
                             // Open negotiations with player
-                            contractNegotiation.create(tx, p.pid, true, function (error) {
+                            contractNegotiation.create(tx, p.pid, true).then(function (error) {
                                 if (error !== undefined && error) {
                                     eventLog.add(null, {
                                         type: "refuseToSign",

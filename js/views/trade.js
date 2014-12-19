@@ -104,9 +104,9 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
             });
         } else if (req.params.propose !== undefined) {
             // Propose trade
-            trade.propose(function (accepted, message) {
+            trade.propose(req.params.hasOwnProperty("force-trade")).get(1).then(function (message) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
-            }, req.params.hasOwnProperty("force-trade"));
+            });
         } else if (req.params.ask !== undefined) {
             // What would make this deal work?
             askButtonEl = document.getElementById("ask-button");

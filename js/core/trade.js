@@ -314,18 +314,17 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
      * Before proposing the trade, the trade is validated to ensure that all player IDs match up with team IDs.
      * 
      * @memberOf core.trade
-     * @param {function(boolean, string)} cb Callback function. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
      * @param {boolean} forceTrade When true (like in God Mode), this trade is accepted regardless of the AI
+     * @return {Promise.<boolean, string>} Resolves to an array. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
      */
-    function propose(cb, forceTrade) {
+    function propose(forceTrade) {
         forceTrade = forceTrade !== undefined ? forceTrade : false;
 
         if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
-            cb(false, "Error! You're not allowed to make trades now.");
-            return;
+            return Promise.resove([false, "Error! You're not allowed to make trades now."]);
         }
 
-        get().then(function (teams) {
+        return get().then(function (teams) {
             var dpids, pids, tids;
 
             tids = [teams[0].tid, teams[1].tid];
@@ -335,84 +334,73 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
             // The summary will return a warning if (there is a problem. In that case,
             // that warning will already be pushed to the user so there is no need to
             // return a redundant message here.
-            summary(teams).then(function (s) {
+            return summary(teams).then(function (s) {
                 var outcome;
 
                 if (s.warning && !forceTrade) {
-                    cb(false, null);
-                    return;
+                    return [false, null];
                 }
 
                 outcome = "rejected"; // Default
 
-                team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(function (dv) {
-                    var draftPickStore, j, playerStore, tx;
+                return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(function (dv) {
+                    var tx;
 
-                    tx = g.dbl.transaction(["draftPicks", "players", "playerStats"], "readwrite");
-                    draftPickStore = tx.objectStore("draftPicks");
-                    playerStore = tx.objectStore("players");
+                    tx = dao.tx(["draftPicks", "players", "playerStats"], "readwrite");
 
                     if (dv > 0 || forceTrade) {
                         // Trade players
                         outcome = "accepted";
-                        for (j = 0; j < 2; j++) {
-                            (function (j) {
-                                var k, l;
+                        [0, 1].forEach(function (j) {
+                            var k;
 
-                                if (j === 0) {
-                                    k = 1;
-                                } else if (j === 1) {
-                                    k = 0;
-                                }
+                            if (j === 0) {
+                                k = 1;
+                            } else if (j === 1) {
+                                k = 0;
+                            }
 
-                                for (l = 0; l < pids[j].length; l++) {
-                                    (function (l) {
-                                        playerStore.openCursor(pids[j][l]).onsuccess = function (event) {
-                                            var cursor, p;
-
-                                            cursor = event.target.result;
-                                            p = cursor.value;
-                                            p.tid = tids[k];
-                                            // Don't make traded players untradable
-                                            //p.gamesUntilTradable = 15;
-                                            p.ptModifier = 1; // Reset
-                                            if (g.phase <= g.PHASE.PLAYOFFS) {
-                                                p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-                                            }
-                                            cursor.update(p);
-                                        };
-                                    }(l));
-                                }
-
-                                for (l = 0; l < dpids[j].length; l++) {
-                                    (function (l) {
-                                        draftPickStore.openCursor(dpids[j][l]).onsuccess = function (event) {
-                                            var cursor, dp;
-
-                                            cursor = event.target.result;
-                                            dp = cursor.value;
-                                            dp.tid = tids[k];
-                                            dp.abbrev = g.teamAbbrevsCache[tids[k]];
-                                            cursor.update(dp);
-                                        };
-                                    }(l));
-                                }
-                            }(j));
-                        }
-                    }
-
-                    tx.oncomplete = function () {
-                        if (outcome === "accepted") {
-                            // Auto-sort CPU team roster
-                            team.rosterAutoSort(null, tids[1]).then(function () {
-                                clear().then(function () { // This includes dbChange
-                                    cb(true, 'Trade accepted! "Nice doing business with you!"');
+                            pids[j].forEach(function (pid) {
+                                dao.players.get({
+                                    ot: tx,
+                                    key: pid
+                                }).then(function (p) {
+                                    p.tid = tids[k];
+                                    // Don't make traded players untradable
+                                    //p.gamesUntilTradable = 15;
+                                    p.ptModifier = 1; // Reset
+                                    if (g.phase <= g.PHASE.PLAYOFFS) {
+                                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                                    }
+                                    dao.players.put({ot: tx, value: p});
                                 });
                             });
-                        } else {
-                            cb(false, 'Trade rejected! "What, are you crazy?"');
+
+                            dpids[j].forEach(function (dpid) {
+                                dao.draftPicks.get({
+                                    ot: tx,
+                                    key: dpid
+                                }).then(function (dp) {
+                                    dp.tid = tids[k];
+                                    dp.abbrev = g.teamAbbrevsCache[tids[k]];
+                                    dao.draftPicks.put({ot: tx, value: dp});
+                                });
+                            });
+                        });
+                    }
+
+                    return tx.complete().then(function () {
+                        if (outcome === "accepted") {
+                            // Auto-sort CPU team roster
+                            return team.rosterAutoSort(null, tids[1]).then(function () {
+                                return clear(); // This includes dbChange
+                            }).then(function () {
+                                return [true, 'Trade accepted! "Nice doing business with you!"'];
+                            });
                         }
-                    };
+
+                        return [false, 'Trade rejected! "What, are you crazy?"'];
+                    });
                 });
             });
         });

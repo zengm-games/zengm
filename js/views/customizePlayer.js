@@ -2,7 +2,7 @@
  * @name views.customizePlayer
  * @namespace Create a new custom player or customize an existing one.
  */
-define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, finances, player, team, faces, $, ko, komapping, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "lib/faces", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/helpers"], function (dao, g, ui, finances, player, team, faces, ko, komapping, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -142,15 +142,11 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
     };
 
     function updateCustomizePlayer(inputs, updateEvents) {
-        var deferred;
-
         if (updateEvents.indexOf("firstRun") >= 0) {
-            deferred = $.Deferred();
-
-            team.filter({
+            return team.filter({
                 attrs: ["tid", "region", "name"],
                 season: g.season
-            }, function (teams) {
+            }).then(function (teams) {
                 var i, positions, seasonOffset, vars;
 
                 // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
@@ -200,10 +196,9 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
 
                 if (inputs.pid === null) {
                     // Generate new player as basis
-                    g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
-                        var p, scoutingRank, t;
+                    return dao.teams.get({key: g.userTid}).then(function (t) {
+                        var p, scoutingRank;
 
-                        t = event.target.result;
                         scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
 
                         p = player.generate(g.PLAYER.FREE_AGENT,
@@ -223,29 +218,25 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                         p.imgURL = "http://";
 
                         vars.p = p;
-                        deferred.resolve(vars);
-                    };
-                } else {
-                    g.dbl.transaction("players").objectStore("players").get(inputs.pid).onsuccess = function (event) {
-                        var p;
-
-                        p = event.target.result;
-
-                        if (p.imgURL.length > 0) {
-                            vars.appearanceOption = "Image URL";
-                        } else {
-                            vars.appearanceOption = "Cartoon Face";
-                            p.imgURL = "http://";
-                        }
-
-                        vars.originalTid = p.tid;
-                        vars.p = p;
-                        deferred.resolve(vars);
-                    };
+                        return vars;
+                    });
                 }
-            });
 
-            return deferred.promise();
+                // Load a player to edit
+                return dao.players.get({key: inputs.pid}).then(function (p) {
+                    if (p.imgURL.length > 0) {
+                        vars.appearanceOption = "Image URL";
+                    } else {
+                        vars.appearanceOption = "Cartoon Face";
+                        p.imgURL = "http://";
+                    }
+
+                    vars.originalTid = p.tid;
+                    vars.p = p;
+
+                    return vars;
+                });
+            });
         }
     }
 
@@ -346,16 +337,22 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
 
                 tx = dao.tx(["players", "playerStats"], "readwrite");
 
-                // Add regular season or playoffs stat row, if necessary
-                if (p.tid >= 0 && p.tid !== vm.originalTid() && g.phase <= g.PHASE.PLAYOFFS) {
-                    // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-                    p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-                }
 
-                dao.players.put({ot: tx, p: p}).then(function (pidLocal) {
+                dao.players.put({ot: tx, value: p}).then(function (pidLocal) {
                     // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
                     // When adding a player, this is the only way to know the pid
                     pid = pidLocal;
+
+                    // Add regular season or playoffs stat row, if necessary
+                    if (p.tid >= 0 && p.tid !== vm.originalTid() && g.phase <= g.PHASE.PLAYOFFS) {
+                        p.pid = pid;
+
+                        // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
+                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+
+                        // Add back to database
+                        dao.players.put({ot: tx, value: p});
+                    }
                 });
 
                 tx.complete().then(function () {

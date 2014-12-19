@@ -66,8 +66,6 @@ switch dao.players.get to use promises
     js/core/team.js:                dao.players.getAll({
     js/core/team.js:                dao.players.getAll({
     js/core/trade.js:                dao.players.getAll({
-    js/views/draft.js:            dao.players.getAll({
-    js/views/draft.js:                dao.players.getAll({
     js/views/tradingBlock.js:            dao.players.getAll({
     js/views/tradingBlock.js:                                dao.players.getAll({
     js/views/trade.js:            dao.players.getAll({

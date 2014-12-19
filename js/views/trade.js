@@ -103,7 +103,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
 
         if (req.params.clear !== undefined) {
             // Clear trade
-            trade.clear(function () {
+            trade.clear().then(function () {
                 ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
             });
         } else if (req.params.propose !== undefined) {

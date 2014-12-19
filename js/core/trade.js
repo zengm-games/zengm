@@ -300,28 +300,25 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
      * Remove all players currently added to the trade.
      * 
      * @memberOf core.trade
-     * @param {function()} cb Callback function.
+     * @return {Promise}
      */
-    function clear(cb) {
+    function clear() {
         var tx;
 
-        tx = g.dbl.transaction("trade", "readwrite");
-        tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
-            var cursor, i, tr;
+        tx = dao.tx("trade", "readwrite");
+        dao.trade.get({ot: tx, key: 0}).then(function (tr) {
+            var i;
 
-            cursor = event.target.result;
-            tr = cursor.value;
             for (i = 0; i < tr.teams.length; i++) {
                 tr.teams[i].pids = [];
                 tr.teams[i].dpids = [];
             }
-            cursor.update(tr);
-        };
-        tx.oncomplete = function () {
-            db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                cb();
-            });
-        };
+
+            dao.trade.put({ot: tx, value: tr});
+        });
+        return tx.complete().then(function () {
+            return db.setGameAttributes({lastDbChange: Date.now()});
+        });
     }
 
     /**
@@ -421,7 +418,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                         if (outcome === "accepted") {
                             // Auto-sort CPU team roster
                             team.rosterAutoSort(null, tids[1]).then(function () {
-                                clear(function () { // This includes dbChange
+                                clear().then(function () { // This includes dbChange
                                     cb(true, 'Trade accepted! "Nice doing business with you!"');
                                 });
                             });

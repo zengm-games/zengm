@@ -26,7 +26,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
         // Can't flatten because of error callbacks
         return lock.canStartNegotiation(ot).then(function (canStartNegotiation) {
             if (!canStartNegotiation) {
-                return cb("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
+                return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.";
             }
 
             return dao.players.count({
@@ -35,14 +35,14 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
                 key: g.userTid
             }).then(function (numPlayersOnRoster) {
                 if (numPlayersOnRoster >= 15 && !resigning) {
-                    return cb("Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.");
+                    return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
                 }
 
                 return dao.players.get({ot: ot, key: pid}).then(function (p) {
                     var negotiation, playerAmount, playerYears;
 
                     if (p.tid !== g.PLAYER.FREE_AGENT) {
-                        return cb(p.name + " is not a free agent.");
+                        return p.name + " is not a free agent.";
                     }
 
                     // Initial player proposal;
@@ -54,7 +54,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
                     }
 
                     if (freeAgents.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
-                        return cb('<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> refuses to sign with you, no matter what you offer.');
+                        return '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> refuses to sign with you, no matter what you offer.';
                     }
 
                     negotiation = {
@@ -115,22 +115,18 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
      * @param {number} teamAmount Teams's offer amount in thousands of dollars per year (between 500 and 20000).
      * @param {number} teamYears Team's offer length in years (between 1 and 5).
-     * @param {function()=} cb Optional callback.
+     * @return {Promise}
      */
-    function offer(pid, teamAmount, teamYears, cb) {
-        var i, negotiation, negotiations, tx;
-
-        console.log("User made contract offer for " + teamAmount + " over " + teamYears + " years to " + pid);
+    function offer(pid, teamAmount, teamYears) {
+        var tx;
 
         teamAmount = validAmount(teamAmount);
         teamYears = validYears(teamYears);
 
-        tx = g.dbl.transaction(["negotiations", "players"], "readwrite");
-        tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
-            var cursor, mood, p;
+        tx = dao.tx(["negotiations", "players"], "readwrite");
 
-            cursor = event.target.result;
-            p = cursor.value;
+        dao.players.get({ot: tx, key: pid}).then(function (p) {
+            var mood;
 
             mood = p.freeAgentMood[g.userTid];
             p.freeAgentMood[g.userTid] += random.uniform(0, 0.15);
@@ -138,13 +134,10 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
                 p.freeAgentMood[g.userTid] = 1;
             }
 
-            cursor.update(p);
+            dao.players.put({ot: tx, value: p});
 
-            tx.objectStore("negotiations").openCursor(pid).onsuccess = function (event) {
-                var cursor, diffPlayerOrig, diffTeamOrig, negotiation;
-
-                cursor = event.target.result;
-                negotiation = cursor.value;
+            dao.negotiations.get({ot: tx, key: pid}).then(function (negotiation) {
+                var diffPlayerOrig, diffTeamOrig;
 
                 // Player responds based on their mood
                 if (negotiation.orig.amount >= 18000) {
@@ -215,16 +208,13 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
                 negotiation.team.amount = teamAmount;
                 negotiation.team.years = teamYears;
 
-                cursor.update(negotiation);
-            };
-        };
-        tx.oncomplete = function () {
-            dao.gameAttributes.set({lastDbChange: Date.now()}).then(function () {
-                if (cb !== undefined) {
-                    cb();
-                }
+                dao.negotiations.put({ot: tx, value: negotiation});
             });
-        };
+        });
+
+        return tx.complete().then(function () {
+            return dao.gameAttributes.set({lastDbChange: Date.now()});
+        });
     }
 
     /**

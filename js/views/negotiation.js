@@ -69,7 +69,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "lib/
             if (teamAmountNew !== teamAmountNew || teamYearsNew !== teamYearsNew) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
             } else {
-                contractNegotiation.offer(pid, teamAmountNew, teamYearsNew, function () {
+                contractNegotiation.offer(pid, teamAmountNew, teamYearsNew).then(function () {
                     ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
                 });
             }

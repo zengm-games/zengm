@@ -6,6 +6,8 @@ THE FLATTENING
 
 use promises pervasively
 
+core.trade
+
 dao.tx and tx.complete()
   implemented now in core.draft.setOrder
   test in other places
@@ -18,7 +20,7 @@ dao.store.iterate
     nesting?
     async inside modify function - maybe accept a "done" function like unit tests
     rename "modify" to something generic, because can do non-modify by just returning undefined
-  need a way to short circuit - maybe accept a "shortCircuit" functino that does that
+    short circuit: shortCircuit function passed as second param
   non-modifying?
   should fully replace cursors!
   is "iterate" a good name since it works equally well for opening a single cursor?
@@ -44,9 +46,7 @@ API design
   player.filter and team.filter should be renamed, otherwise it's confusing
   remove filter option from dao.players.getAll - also confusing, can just apply manually
 
-core.draft
 core.league
-core.season
 indexedDb.contracts.getAll
 
 rewrite old upgrading code?

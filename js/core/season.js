@@ -64,14 +64,14 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * @return {Promise}
      */
     function awards() {
-        var awards, awardsByPlayer, cbAwardsByPlayer, tx;
+        var awards, awardsByPlayer, saveAwardsByPlayer, tx;
 
         awards = {season: g.season};
 
         // [{pid, type}]
         awardsByPlayer = [];
 
-        cbAwardsByPlayer = function (awardsByPlayer) {
+        saveAwardsByPlayer = function (awardsByPlayer) {
             var i, pids, tx;
 
             pids = _.uniq(_.pluck(awardsByPlayer, "pid"));
@@ -263,7 +263,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             tx = dao.tx("awards", "readwrite");
             dao.awards.put({ot: tx, value: awards});
             return tx.complete().then(function () {
-                return cbAwardsByPlayer(awardsByPlayer);
+                return saveAwardsByPlayer(awardsByPlayer);
             }).then(function () {
                 var i, p, text, tx;
 

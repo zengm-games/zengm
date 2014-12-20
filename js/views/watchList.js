@@ -28,7 +28,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
     };
 
     function updatePlayers(inputs, updateEvents, vm) {
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("clearWatchList") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
             return dao.players.getAll({
                 statsSeasons: [g.season, g.season - 1], // For oldStats
                 statsPlayoffs: inputs.playoffs === "playoffs",
@@ -70,6 +70,8 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
     }
 
     function uiFirst(vm) {
+        var clearWatchListEl;
+
         ui.title("Watch List");
 
         ko.computed(function () {
@@ -115,24 +117,23 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
 
         ui.tableClickableRows($("#watch-list"));
 
-        document.getElementById("clear-watch-list").addEventListener("click", function () {
-            g.dbl.transaction("players", "readwrite").objectStore("players").openCursor().onsuccess = function (event) {
-                var cursor, p;
+        clearWatchListEl = document.getElementById("clear-watch-list");
+        clearWatchListEl.addEventListener("click", function () {
+            clearWatchListEl.disabled = true;
 
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
+            dao.players.iterate({
+                modify: function (p) {
                     if (p.watch) {
                         p.watch = false;
-                        cursor.update(p);
+                        return p;
                     }
-                    cursor.continue();
-                } else {
-                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                        ui.realtimeUpdate(["watchList"]);
-                    });
                 }
-            };
+            }).then(function () {
+                return dao.gameAttributes.set({lastDbChange: Date.now()});
+            }).then(function () {
+                ui.realtimeUpdate(["clearWatchList"]);
+                clearWatchListEl.disabled = false;
+            });
         });
     }
 

@@ -186,18 +186,15 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
             // Update ptModifier in database
             pid = p.pid();
             ptModifier = parseFloat(p.ptModifier());
-            g.dbl.transaction("players", "readwrite").objectStore("players").openCursor(pid).onsuccess = function (event) {
-                var cursor, p;
-
-                cursor = event.target.result;
-                p = cursor.value;
+            dao.players.get({key: pid}).then(function (p) {
                 if (p.ptModifier !== ptModifier) {
                     p.ptModifier = ptModifier;
-                    cursor.update(p);
 
-                    db.setGameAttributes({lastDbChange: Date.now()});
+                    dao.players.put({value: p}).then(function () {
+                        dao.gameAttributes.set({lastDbChange: Date.now()});
+                    });
                 }
-            };
+            });
         }.bind(this);
     }
 

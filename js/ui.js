@@ -526,16 +526,10 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
             });
 
             // Update phase in meta database. No need to have this block updating the UI or anything.
-            g.dbm.transaction("leagues", "readwrite").objectStore("leagues").openCursor(g.lid).onsuccess = function (event) {
-                var cursor, l;
-
-                cursor = event.target.result;
-                l = cursor.value;
-
+            dao.leagues.get({key: g.lid}).then(function (l) {
                 l.phaseText = phaseText;
-
-                cursor.update(l);
-            };
+                dao.leagues.put({value: l});
+            });
         }
     }
 

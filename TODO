@@ -73,6 +73,7 @@ db.getObjectStore - should never be used, equivalent function is in indexedDb ad
 big goals
   indexeddb only in dao
     grep for transaction, objectStore, oncomplete, dbl, dbm, etc
+    grep -r --exclude-dir=test oncomplete js
   no "cb" anywhere
   no "openCursor" anywhere
   no "transaction" anywhere

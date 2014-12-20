@@ -50,7 +50,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
                     ];
 
                     if (tid !== g.userTid) {
-                        trade.makeItWork(teams, true, estValues, function (found, teams) {
+                        trade.makeItWork(teams, true, estValues).spread(function (found, teams) {
                             // Update progress bar
                             done += 1;
                             progressBar.style.width = Math.round(10 + 90 * done / numAfter) + "%";

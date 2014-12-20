@@ -415,9 +415,9 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
      * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
      * @param {boolean} holdUserConstant If true, then players/picks will only be added from the other team. This is useful for the trading block feature.
      * @param {?Object} estValuesCached Estimated draft pick values from trade.getPickValues, or null. Only pass if you're going to call this repeatedly, then it'll be faster if you cache the values up front.
-     * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
+     * @return {Promise.[boolean, Object]} Resolves to an array with one or two elements. First is a boolean indicating whether "make it work" was successful. If true, then the second argument is set to a teams object (similar to first input) with the "made it work" trade info.
      */
-    function makeItWork(teams, holdUserConstant, estValuesCached, cb) {
+    function makeItWork(teams, holdUserConstant, estValuesCached) {
         var added, initialSign, tryAddAsset, testTrade;
 
         added = 0;
@@ -428,7 +428,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
 
             assets = [];
 
-            tx = g.dbl.transaction(["draftPicks", "players"]);
+            tx = dao.tx(["draftPicks", "players"]);
 
             if (!holdUserConstant) {
                 // Get all players not in userPids
@@ -514,97 +514,97 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                 }
             };
 
-            tx.oncomplete = function () {
-                var done, i, otherDpids, otherPids, userPids, userDpids;
+            return tx.complete().then(function () {
+                var otherDpids, otherPids, promises, userPids, userDpids;
 
                 // If we've already added 5 assets or there are no more to try, stop
                 if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
-                    cb(false);
-                    return;
+                    return false;
                 }
 
                 // Calculate the value for each asset added to the trade, for use in forward selection
-                done = 0;
-                for (i = 0; i < assets.length; i++) {
+                promises = [];
+                assets.forEach(function (asset) {
                     userPids = teams[0].pids.slice();
                     otherPids = teams[1].pids.slice();
                     userDpids = teams[0].dpids.slice();
                     otherDpids = teams[1].dpids.slice();
 
-                    if (assets[i].type === "player") {
-                        if (assets[i].tid === g.userTid) {
-                            userPids.push(assets[i].pid);
+                    if (asset.type === "player") {
+                        if (asset.tid === g.userTid) {
+                            userPids.push(asset.pid);
                         } else {
-                            otherPids.push(assets[i].pid);
+                            otherPids.push(asset.pid);
                         }
                     } else {
-                        if (assets[i].tid === g.userTid) {
-                            userDpids.push(assets[i].dpid);
+                        if (asset.tid === g.userTid) {
+                            userDpids.push(asset.dpid);
                         } else {
-                            otherDpids.push(assets[i].dpid);
+                            otherDpids.push(asset.dpid);
                         }
                     }
-                    (function (i) {
-                        team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached).then(function (dv) {
-                            var asset, j;
+                    promises.push(team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached).then(function (dv) {
 
-                            assets[i].dv = dv;
-                            done += 1;
-                            if (done === assets.length) {
-                                assets.sort(function (a, b) { return b.dv - a.dv; });
+                        asset.dv = dv;
+                    }));
+                });
 
-                                // Find the asset that will push the trade value the smallest amount above 0
-                                for (j = 0; j < assets.length; j++) {
-                                    if (assets[j].dv < 0) {
-                                        break;
-                                    }
-                                }
-                                if (j > 0) {
-                                    j -= 1;
-                                }
-                                asset = assets[j];
-                                if (asset.type === "player") {
-                                    if (asset.tid === g.userTid) {
-                                        teams[0].pids.push(asset.pid);
-                                    } else {
-                                        teams[1].pids.push(asset.pid);
-                                    }
-                                } else {
-                                    if (asset.tid === g.userTid) {
-                                        teams[0].dpids.push(asset.dpid);
-                                    } else {
-                                        teams[1].dpids.push(asset.dpid);
-                                    }
-                                }
+                return Promise.all(promises);
+            }).then(function () {
+                var asset, j;
 
-                                added += 1;
+                assets.sort(function (a, b) { return b.dv - a.dv; });
 
-                                testTrade();
-                            }
-                        });
-                    }(i));
+                // Find the asset that will push the trade value the smallest amount above 0
+                for (j = 0; j < assets.length; j++) {
+                    if (assets[j].dv < 0) {
+                        break;
+                    }
                 }
-            };
+                if (j > 0) {
+                    j -= 1;
+                }
+                asset = assets[j];
+                if (asset.type === "player") {
+                    if (asset.tid === g.userTid) {
+                        teams[0].pids.push(asset.pid);
+                    } else {
+                        teams[1].pids.push(asset.pid);
+                    }
+                } else {
+                    if (asset.tid === g.userTid) {
+                        teams[0].dpids.push(asset.dpid);
+                    } else {
+                        teams[1].dpids.push(asset.dpid);
+                    }
+                }
+
+                added += 1;
+
+                return testTrade();
+            });
         };
 
         // See if the AI team likes the current trade. If not, try adding something to it.
         testTrade = function () {
-            team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
+            return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
                 if (dv > 0 && initialSign === -1) {
-                    cb(true, teams);
-                } else if ((added > 2 || (added > 0 && Math.random() > 0.5)) && initialSign === 1) {
-                    if (dv > 0) {
-                        cb(true, teams);
-                    } else {
-                        cb(false);
-                    }
-                } else {
-                    tryAddAsset();
+                    return [true, teams];
                 }
+
+                if ((added > 2 || (added > 0 && Math.random() > 0.5)) && initialSign === 1) {
+                    if (dv > 0) {
+                        return [true, teams];
+                    }
+
+                    return [false];
+                }
+
+                return tryAddAsset();
             });
         };
 
-        team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
+        return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
             if (dv > 0) {
                 // Try to make trade better for user's team
                 initialSign = 1;
@@ -613,7 +613,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                 initialSign = -1;
             }
 
-            testTrade();
+            return testTrade();
         });
     }
 
@@ -628,7 +628,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
     function makeItWorkTrade(cb) {
         getPickValues().then(function (estValues) {
             get().then(function (teams0) {
-                makeItWork(teams0, false, estValues, function (found, teams) {
+                makeItWork(teams0, false, estValues).spread(function (found, teams) {
                     if (!found) {
                         cb(g.teamRegionsCache[teams0[1].tid] + ' GM: "I can\'t afford to give up so much."');
                     } else {

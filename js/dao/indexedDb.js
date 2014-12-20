@@ -396,6 +396,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     };
 
 
+
     payrolls = {};
 
     /**
@@ -592,33 +593,26 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         options.ot = options.ot !== undefined ? options.ot : null;
         options.oneDay = options.oneDay !== undefined ? options.oneDay : false;
 
-        return new Promise(function (resolve, reject) {
-            var scheduleStore;
+        return schedule.getAll({ot: options.ot}).then(function (sched) {
+            var i, tids;
 
-            scheduleStore = getObjectStore(g.dbl, options.ot, "schedule", "schedule");
-            scheduleStore.getAll().onsuccess = function (event) {
-                var i, schedule, tids;
+            if (options.oneDay) {
+                sched = sched.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
 
-                schedule = event.target.result;
-
-                if (options.oneDay) {
-                    schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
-
-                    // Only take the games up until right before a team plays for the second time that day
-                    tids = [];
-                    for (i = 0; i < schedule.length; i++) {
-                        if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
-                            tids.push(schedule[i].homeTid);
-                            tids.push(schedule[i].awayTid);
-                        } else {
-                            break;
-                        }
+                // Only take the games up until right before a team plays for the second time that day
+                tids = [];
+                for (i = 0; i < sched.length; i++) {
+                    if (tids.indexOf(sched[i].homeTid) < 0 && tids.indexOf(sched[i].awayTid) < 0) {
+                        tids.push(sched[i].homeTid);
+                        tids.push(sched[i].awayTid);
+                    } else {
+                        break;
                     }
-                    schedule = schedule.slice(0, i);
                 }
+                sched = sched.slice(0, i);
+            }
 
-                resolve(schedule);
-            };
+            return sched;
         });
     };
 

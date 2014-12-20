@@ -2,7 +2,7 @@
  * @name views.deleteOldData
  * @namespace Delete old league data.
  */
-define(["db", "globals", "ui", "util/bbgmView"], function (db, g, ui, bbgmView) {
+define(["dao", "globals", "ui", "util/bbgmView"], function (dao, g, ui, bbgmView) {
     "use strict";
 
     function get(req) {
@@ -20,84 +20,58 @@ define(["db", "globals", "ui", "util/bbgmView"], function (db, g, ui, bbgmView) 
         deleteOldDataSuccessEl = document.getElementById("delete-old-data-success");
         deleteOldDataSuccessEl.style.visibility = "hidden";
 
-        tx = g.dbl.transaction(["games", "teams", "players", "playerStats"], "readwrite");
+        tx = dao.tx(["games", "teams", "players", "playerStats"], "readwrite");
 
         if (req.params.hasOwnProperty("boxScores")) {
-            tx.objectStore("games").openCursor().onsuccess = function (event) {
-                var cursor;
-
-                cursor = event.target.result;
-
-                if (cursor) {
-                    cursor.delete();
-                    cursor.continue();
-                }
-            };
+            dao.games.clear({ot: tx});
         }
 
         if (req.params.hasOwnProperty("teamStats")) {
-            tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                var cursor, t;
-
-                cursor = event.target.result;
-
-                if (cursor) {
-                    t = cursor.value;
+            dao.teams.iterate({
+                ot: tx,
+                modify: function (t) {
                     t.seasons = [t.seasons[t.seasons.length - 1]];
                     t.stats = [t.stats[t.stats.length - 1]];
-                    cursor.update(t);
-                    cursor.continue();
+                    return t;
                 }
-            };
+            });
         }
 
         if (req.params.hasOwnProperty("retiredPlayers")) {
-            tx.objectStore("players").index("tid").openCursor(g.PLAYER.RETIRED).onsuccess = function (event) {
-                var cursor;
-
-                cursor = event.target.result;
-
-                if (cursor) {
-                    cursor.delete();
-                    cursor.continue();
+            dao.players.iterate({
+                ot: tx,
+                index: "tid",
+                key: g.PLAYER.RETIRED,
+                modify: function (p) {
+                    return dao.players.delete({ot: tx, key: p.pid});
                 }
-            };
+            });
         }
 
         if (req.params.hasOwnProperty("playerStats")) {
-            tx.objectStore("players").openCursor().onsuccess = function (event) {
-                var cursor, p;
-
-                cursor = event.target.result;
-
-                if (cursor) {
-                    p = cursor.value;
+            dao.players.iterate({
+                ot: tx,
+                modify: function (p) {
                     p.ratings = [p.ratings[p.ratings.length - 1]];
-                    cursor.update(p);
-                    cursor.continue();
+                    return p;
                 }
-            };
-            tx.objectStore("playerStats").openCursor().onsuccess = function (event) {
-                var cursor, ps;
-
-                cursor = event.target.result;
-
-                if (cursor) {
-                    ps = cursor.value;
+            });
+            dao.playerStats.iterate({
+                ot: tx,
+                modify: function (ps) {
                     if (ps.season < g.season) {
-                        cursor.delete();
+                        return dao.playerStats.delete({ot: tx, key: ps.psid});
                     }
-                    cursor.continue();
                 }
-            };
+            });
         }
 
-        tx.oncomplete = function () {
-            db.setGameAttributes({lastDbChange: Date.now()}, function () {
+        tx.complete().then(function () {
+            dao.gameAttributes.set({lastDbChange: Date.now()}).then(function () {
                 deleteOldDataEl.disabled = false;
                 deleteOldDataSuccessEl.style.visibility = "visible";
             });
-        };
+        });
     }
 
     function uiFirst(vm) {

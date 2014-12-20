@@ -112,31 +112,21 @@ define(["dao", "globals", "lib/bluebird", "lib/underscore"], function (dao, g, P
                 revenuesByItem = getByItem(revenuesByTeam);
             }
 
-            return new Promise(function (resolve, reject) {
-                require("db").getObjectStore(ot, "teams", "teams", true).openCursor().onsuccess = function (event) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-
-                    if (cursor) {
-                        t = cursor.value;
-
-                        if (types.indexOf("budget") >= 0) {
-                            updateObj(t.budget, budgetsByItem);
-                        }
-                        if (types.indexOf("expenses") >= 0) {
-                            updateObj(t.seasons[s].expenses, expensesByItem);
-                        }
-                        if (types.indexOf("revenues") >= 0) {
-                            updateObj(t.seasons[s].revenues, revenuesByItem);
-                        }
-
-                        cursor.update(t);
-                        cursor.continue();
-                    } else {
-                        resolve();
+            return dao.teams.iterate({
+                ot: ot,
+                modify: function (t) {
+                    if (types.indexOf("budget") >= 0) {
+                        updateObj(t.budget, budgetsByItem);
                     }
-                };
+                    if (types.indexOf("expenses") >= 0) {
+                        updateObj(t.seasons[s].expenses, expensesByItem);
+                    }
+                    if (types.indexOf("revenues") >= 0) {
+                        updateObj(t.seasons[s].revenues, revenuesByItem);
+                    }
+
+                    return t;
+                }
             });
         });
     }

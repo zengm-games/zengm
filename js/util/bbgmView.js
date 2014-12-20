@@ -56,7 +56,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
             }
 
             // This will be called after every runBefore and runWhenever function is finished.
-            afterEverything = _.after(args.runWhenever.length + 1, function () {
+            afterEverything = _.after(args.runWhenever.length + args.runAfter.length + 1, function () {
                 if (containerEl.dataset.idLoading === containerEl.dataset.idLoaded) {
                     containerEl.dataset.idLoading = ""; // Done loading
                 }
@@ -90,14 +90,24 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
 
                     komapping.fromJS(vars, args.mapping, vm);
                 }
-//console.log(vars);
-//console.log(vm);
 
                 display(args, updateEvents);
 
                 afterEverything();
+            }).then(function () {
+                // Run promises in parallel, update when each one is ready
+                for (i = 0; i < args.runAfter.length; i++) {
+                    $.when(args.runAfter[i](inputs, updateEvents, vm)).done(function (vars) {
+                        if (vars !== undefined) {
+                            komapping.fromJS(vars, args.mapping, vm);
+                        }
+
+                        afterEverything();
+                    });
+                }
             });
 
+            // Run promises in parallel, update when each one is ready
             for (i = 0; i < args.runWhenever.length; i++) {
                 $.when(args.runWhenever[i](inputs, updateEvents, vm)).done(function (vars) {
                     if (vars !== undefined) {
@@ -173,6 +183,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
         args.beforeReq = args.beforeReq !== undefined ? args.beforeReq : viewHelpers.beforeLeague;
         args.get = args.get !== undefined ? args.get : function () { return {}; };
         args.runBefore = args.runBefore !== undefined ? args.runBefore : [];
+        args.runAfter = args.runAfter !== undefined ? args.runAfter : [];
         args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
         args.mapping = args.mapping !== undefined ? args.mapping : {};
 

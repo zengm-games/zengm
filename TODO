@@ -59,21 +59,14 @@ switch dao.players.get to use promises
     js/core/team.js:                dao.players.getAll({
     js/core/team.js:                dao.players.getAll({
     js/core/trade.js:                dao.players.getAll({
-    js/views/tradingBlock.js:            dao.players.getAll({
-    js/views/tradingBlock.js:                                dao.players.getAll({
-    js/views/trade.js:            dao.players.getAll({
-    js/views/trade.js:                dao.players.getAll({
   then remove cb hack in dao.players.getAll
-
-views
-  grep -r deferred js
 
 core
 
 look at views with errorMessage - is flow correct? problems with cancellation?
 
 util
-  bbgmView
+  bbgmView - get rid of $.when
 
 db.getObjectStore - should never be used, equivalent function is in indexedDb adapter
 
@@ -85,8 +78,6 @@ big goals
   no "transaction" anywhere
   no "Store" anywhere
   no "new Promise" anywhere
-
-grep -r Deferred js/views
 
 clean up
   documentation!!!!! like nuances of iterate modify

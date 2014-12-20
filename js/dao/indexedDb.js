@@ -200,7 +200,8 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
             return new Promise(function (resolve, reject) {
                 var objectStoreOrIndex;
 
-                objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore, "readwrite");
+                // Default to readonly transaction. If you want readwrite, manually pass a transaction.
+                objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
 
                 if (options.index !== null) {
                     objectStoreOrIndex = objectStoreOrIndex.index(options.index);

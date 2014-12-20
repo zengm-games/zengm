@@ -12,6 +12,7 @@ define(["dao", "db", "globals", "ui", "core/team", "lib/underscore", "util/bbgmV
         button.disabled = true;
 
         dao.teams.iterate({
+            ot: dao.tx("teams", "readwrite"),
             modify: function (t) {
                 t.abbrev = req.params.abbrev[t.tid];
                 t.region = req.params.region[t.tid];
@@ -121,6 +122,7 @@ define(["dao", "db", "globals", "ui", "core/team", "lib/underscore", "util/bbgmV
                 }
 
                 dao.teams.iterate({
+                    ot: dao.tx("teams", "readwrite"),
                     modify: function (t) {
                         t.cid = newTeams[t.tid].cid;
                         t.did = newTeams[t.tid].did;

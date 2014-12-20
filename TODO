@@ -6,10 +6,6 @@ THE FLATTENING
 
 use promises pervasively
 
-PROBLEM: iterate always opens a readwrite cursor. should have another function for non-updating
-  or default to non-updating and then there will be an error for any updating one that doesn't manually define a transaction
-  or add an option to iterate
-
 dao.tx and tx.complete()
   grep -r --exclude-dir=test oncomplete js
 

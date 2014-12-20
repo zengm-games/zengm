@@ -122,6 +122,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
             clearWatchListEl.disabled = true;
 
             dao.players.iterate({
+                ot: dao.tx("players", "readwrite"),
                 modify: function (p) {
                     if (p.watch) {
                         p.watch = false;

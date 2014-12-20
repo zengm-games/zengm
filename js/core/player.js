@@ -785,9 +785,8 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
      * @return {Object} Updated player object.
      */
     function addStatsRow(ot, p, playoffs) {
-        var ps, statsRow, stopOnSeason, tx, withPs;
+        var ps, statsRow, stopOnSeason;
 
-        tx = db.getObjectStore(ot, "playerStats", null, true);
         playoffs = playoffs !== undefined ? playoffs : false;
 
         statsRow = {pid: p.pid, season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0, yearsWithTeam: 1};
@@ -795,14 +794,51 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
         p.statsTids.push(p.tid);
         p.statsTids = _.uniq(p.statsTids);
 
-        // Run this after getting previous stats rows to calculate yearsWithTeam
-        withPs = function () {
+        // Calculate yearsWithTeam
+        // Iterate over player stats objects, most recent first
+        ps = [];
+        Promise.try(function () {
+            if (!playoffs) {
+                // Because the "pid, season, tid" index does not order by psid, the first time we see a tid !== p.tid could
+                // be the same season a player was traded to that team, and there still could be one more with tid ===
+                // p.tid. So when we se tid !== p.tid, set stopOnSeason to the previous (next... I mean lower) season so we
+                // can stop storing stats when it's totally safe.
+                stopOnSeason = 0;
+
+                return dao.playerStats.iterate({
+                    ot: ot,
+                    index: "pid, season, tid",
+                    key: IDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]),
+                    direction: "prev",
+                    modify: function (psTemp, shortCircuit) {
+                        // Skip playoff stats
+                        if (psTemp.playoffs) {
+                            return;
+                        }
+
+                        // Continue only if we haven't hit a season with another team yet
+                        if (psTemp.season === stopOnSeason) {
+                            shortCircuit();
+                        } else {
+                            if (psTemp.tid !== p.tid) {
+                                // Hit another team! Stop after this season is exhausted
+                                stopOnSeason = psTemp.season - 1;
+                            }
+
+                            // Store stats
+                            ps.push(psTemp);
+                        }
+                    }
+                });
+            }
+        }).then(function () {
             var i;
 
             ps = ps.sort(function (a, b) {
                 // Sort seasons in descending order. This is necessary because otherwise the index will cause ordering to be by tid within a season, which is probably not what is ever wanted.
                 return b.psid - a.psid;
             });
+
             // Count non-playoff seasons starting from the current one
             for (i = 0; i < ps.length; i++) {
                 if (ps[i].tid === p.tid) {
@@ -812,52 +848,8 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
                 }
             }
 
-            tx.objectStore("playerStats").add(statsRow);
-        };
-
-        // Calculate yearsWithTeam
-        // Iterate over player stats objects, most recent first
-        ps = [];
-        if (!playoffs) {
-            // Because the "pid, season, tid" index does not order by psid, the first time we see a tid !== p.tid could
-            // be the same season a player was traded to that team, and there still could be one more with tid ===
-            // p.tid. So when we se tid !== p.tid, set stopOnSeason to the previous (next... I mean lower) season so we
-            // can stop storing stats when it's totally safe.
-            stopOnSeason = 0;
-
-            tx.objectStore("playerStats").index("pid, season, tid").openCursor(IDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]), "prev").onsuccess = function (event) {
-                var cursor, psTemp;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    psTemp = cursor.value;
-
-                    // Skip playoff stats
-                    if (psTemp.playoffs) {
-                        return cursor.continue();
-                    }
-
-                    // Continue only if we haven't hit a season with another team yet
-                    if (psTemp.season === stopOnSeason) {
-                        withPs();
-                    } else {
-                        if (psTemp.tid !== p.tid) {
-                            // Hit another team! Stop after this season is exhausted
-                            stopOnSeason = psTemp.season - 1;
-                        }
-
-                        // Store stats
-                        ps.push(psTemp);
-
-                        cursor.continue();
-                    }
-                } else {
-                    withPs();
-                }
-            };
-        } else {
-            withPs();
-        }
+            dao.playerStats.add({ot: ot, value: statsRow});
+        });
 
         return p;
     }

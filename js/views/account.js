@@ -6,18 +6,12 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
     "use strict";
 
     function updateAccount(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("firstRun") >= 0) {
-            deferred = $.Deferred();
-
-            account.check(function () {
-                deferred.resolve({
+            return account.check().then(function () {
+                return {
                     username: g.vm.topMenu.username
-                });
+                };
             });
-
-            return deferred.promise();
         }
     }
 

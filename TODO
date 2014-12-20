@@ -109,7 +109,8 @@ unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-jav
 put bugsnag back
 
 test
-  achievement retrieval from accoutn
+  achievement retrieval from account
+  achievement syncing to account
   make sure ads show correctly
 
 after fully abstracting IndexedDB, could i improve performance by running it locally in node and using a relational database?

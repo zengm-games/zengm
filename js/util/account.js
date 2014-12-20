@@ -62,57 +62,36 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
         desc: 'Privately <a href="http://basketball-gm.com/contact/">report</a> a security issue in <a href="https://bitbucket.org/dumbmatter/bbgm-account">the account system</a> or some other part of the site.'
     }];
 
-    function check(cb) {
-        $.ajax({
+    function check() {
+        return Promise.resolve($.ajax({
             type: "GET",
             url: "http://account.basketball-gm." + g.tld + "/user_info.php",
             data: "sport=" + g.sport,
             dataType: "json",
             xhrFields: {
                 withCredentials: true
-            },
-            success: function (data) {
-                var achievementStore, tx;
-
-                // Save username for display
-                g.vm.topMenu.username(data.username);
-
-                // If user is logged in, upload any locally saved achievements
-                if (data.username !== "") {
-                    tx = g.dbm.transaction("achievements", "readwrite");
-                    achievementStore = tx.objectStore("achievements");
-                    achievementStore.getAll().onsuccess = function (event) {
-                        var achievements;
-
-                        achievements = _.pluck(event.target.result, "slug");
-
-                        // If any exist, delete and upload
-                        if (achievements.length > 0) {
-                            achievementStore.clear();
-                            // If this fails to save remotely, will be added to IDB again
-                            addAchievements(achievements, true, function () {
-                                if (cb !== undefined) {
-                                    cb();
-                                }
-                            });
-                        } else {
-                            if (cb !== undefined) {
-                                cb();
-                            }
-                        }
-                    };
-                } else {
-                    if (cb !== undefined) {
-                        cb();
-                    }
-                }
-            },
-            error: function () {
-                if (cb !== undefined) {
-                    cb();
-                }
             }
-        });
+        })).then(function (data) {
+            var tx;
+
+            // Save username for display
+            g.vm.topMenu.username(data.username);
+
+            // If user is logged in, upload any locally saved achievements
+            if (data.username !== "") {
+                tx = dao.tx("achievements", "readwrite");
+                return dao.achievements.getAll({ot: tx}).then(function (achievements) {
+                    achievements = _.pluck(achievements, "slug");
+
+                    // If any exist, delete and upload
+                    if (achievements.length > 0) {
+                        dao.achievements.clear({ot: tx});
+                        // If this fails to save remotely, will be added to IDB again
+                        return addAchievements(achievements, true);
+                    }
+                });
+            }
+        }).catch(function () {});
     }
 
     function getAchievements() {

@@ -2,7 +2,7 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers", "util/lock"], function (db, g, templates, Promise, Davis, $, ko, _, helpers, lock) {
+define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers", "util/lock"], function (dao, db, g, templates, Promise, Davis, $, ko, _, helpers, lock) {
     "use strict";
 
     // Things to do on initial page load
@@ -138,27 +138,23 @@ define(["db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery",
             watchEl = this;
             pid = parseInt(watchEl.dataset.pid, 10);
 
-            g.dbl.transaction("players", "readwrite").objectStore("players").openCursor(pid).onsuccess = function (event) {
-                var cursor, p;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-                    if (watchEl.classList.contains("watch-active")) {
-                        p.watch = false;
-                        watchEl.classList.remove("watch-active");
-                        watchEl.title = "Add to Watch List";
-                    } else {
-                        p.watch = true;
-                        watchEl.classList.add("watch-active");
-                        watchEl.title = "Remove from Watch List";
-                    }
-                    cursor.update(p);
-                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                        realtimeUpdate(["watchList"]);
-                    });
+            dao.players.get({key: pid}).then(function (p) {
+                if (watchEl.classList.contains("watch-active")) {
+                    p.watch = false;
+                    watchEl.classList.remove("watch-active");
+                    watchEl.title = "Add to Watch List";
+                } else {
+                    p.watch = true;
+                    watchEl.classList.add("watch-active");
+                    watchEl.title = "Remove from Watch List";
                 }
-            };
+
+                return dao.players.put({value: p});
+            }).then(function () {
+                return dao.gameAttributes.set({lastDbChange: Date.now()});
+            }).then(function () {
+                realtimeUpdate(["watchList"]);
+            });
         });
     }
 

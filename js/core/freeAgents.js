@@ -14,122 +14,105 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
      * @return {Promise}
      */
     function autoSign() {
-        return team.filter({
-            attrs: ["strategy"],
-            season: g.season
-        }).then(function (teams) {
-            return new Promise(function (resolve, reject) {
-                var strategies, tx;
+        return Promise.all([
+            team.filter({
+                attrs: ["strategy"],
+                season: g.season
+            }),
+            dao.players.getAll({
+                index: "tid",
+                key: g.PLAYER.FREE_AGENT
+            })
+        ]).spread(function (teams, players) {
+            var i, strategies, signTeam, tids, tx;
 
-                strategies = _.pluck(teams, "strategy");
+            strategies = _.pluck(teams, "strategy");
 
-                tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers"], "readwrite");
+            tx = dao.tx(["players", "playerStats", "releasedPlayers"], "readwrite");
 
-                tx.objectStore("players").index("tid").getAll(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                    var i, players, signTeam, tids;
+            // List of free agents, sorted by value
+            players.sort(function (a, b) { return b.value - a.value; });
 
-                    // List of free agents, sorted by value
-                    players = event.target.result;
-                    players.sort(function (a, b) { return b.value - a.value; });
+            if (players.length === 0) {
+                return;
+            }
 
-                    if (players.length === 0) {
-                        resolve();
-                        return;
+            // Randomly order teams
+            tids = [];
+            for (i = 0; i < g.numTeams; i++) {
+                tids.push(i);
+            }
+            random.shuffle(tids);
+
+            signTeam = function (ti) {
+                var tid;
+
+                tid = tids[ti];
+
+                // Run callback when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
+                if (ti >= tids.length) {
+                    return;
+                }
+
+                // Skip the user's team
+                if (tid === g.userTid) {
+                    return signTeam(ti + 1);
+                }
+
+                // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
+                if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
+                    return signTeam(ti + 1);
+                }
+
+                // Skip rebuilding teams sometimes
+                if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
+                    return signTeam(ti + 1);
+                }
+
+/*                    // Randomly don't try to sign some players this day
+                while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
+                    players.shift();
+                }*/
+
+                return Promise.all([
+                    dao.players.count({
+                        ot: tx,
+                        index: "tid",
+                        key: tid
+                    }),
+                    dao.payrolls.get({ot: tx, key: tid}).get(0)
+                ]).spread(function (numPlayersOnRoster, payroll) {
+                    var i, p;
+
+                    if (numPlayersOnRoster < 15) {
+                        for (i = 0; i < players.length; i++) {
+                            // Don't sign minimum contract players to fill out the roster
+                            if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
+                                p = players[i];
+                                p.tid = tid;
+                                if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                                    p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                                }
+                                p = player.setContract(p, p.contract, true);
+                                p.gamesUntilTradable = 15;
+
+                                // If we found one, stop looking for this team
+                                return dao.players.put({ot: tx, value: p}).then(function () {
+                                    return team.rosterAutoSort(tx, tid);
+                                }).then(function () {
+                                    players.splice(i, 1); // Remove from list of free agents
+                                    return signTeam(ti + 1);
+                                });
+                            }
+                        }
                     }
 
-                    // Randomly order teams
-                    tids = [];
-                    for (i = 0; i < g.numTeams; i++) {
-                        tids.push(i);
-                    }
-                    random.shuffle(tids);
+                    // If this is reached, no player was found
+                    return signTeam(ti + 1);
+                });
+            };
 
-                    signTeam = function (ti) {
-                        var tid;
-
-                        tid = tids[ti];
-
-                        // Run callback when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
-                        if (ti === tids.length) {
-                            resolve();
-                            return;
-                        }
-
-                        // Skip the user's team
-                        if (tid === g.userTid) {
-                            signTeam(ti + 1);
-                            return;
-                        }
-
-                        // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
-                        if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
-                            signTeam(ti + 1);
-                            return;
-                        }
-
-                        // Skip rebuilding teams sometimes
-                        if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
-                            signTeam(ti + 1);
-                            return;
-                        }
-
-    /*                    // Randomly don't try to sign some players this day
-                        while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
-                            players.shift();
-                        }*/
-
-                        tx.objectStore("players").index("tid").count(tid).onsuccess = function (event) {
-                            var numPlayersOnRoster;
-
-                            numPlayersOnRoster = event.target.result;
-
-                            dao.payrolls.get({ot: tx, key: tid}).then(function (payroll) {
-                                var afterPickPlayer, i, foundPlayer, p;
-
-                                afterPickPlayer = function (p) {
-                                    p = player.setContract(p, p.contract, true);
-                                    p.gamesUntilTradable = 15;
-                                    dao.players.put({ot: tx, value: p});
-                                    team.rosterAutoSort(tx, tid).then(function () {
-                                        if (ti <= tids.length) {
-                                            signTeam(ti + 1);
-                                        }
-                                    });
-//console.log(p.tid + ' sign ' + p.name + ' - ' + numPlayersOnRoster);
-                                };
-
-                                if (numPlayersOnRoster < 15) {
-                                    for (i = 0; i < players.length; i++) {
-                                        // Don't sign minimum contract players to fill out the roster
-                                        if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
-                                            p = players[i];
-                                            p.tid = tid;
-                                            if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                                                p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-                                            }
-                                            afterPickPlayer(p);
-
-                                            numPlayersOnRoster += 1;
-                                            payroll += p.contract.amount;
-                                            foundPlayer = true;
-                                            players.splice(i, 1); // Remove from list of free agents
-                                            break;  // Only add one free agent
-                                        }
-                                    }
-                                }
-
-                                if (!foundPlayer) {
-                                    if (ti <= tids.length) {
-                                        signTeam(ti + 1);
-                                    }
-                                }
-                            });
-                        };
-                    };
-
-                    signTeam(0);
-                };
-            });
+            return signTeam(0);
         });
     }
 

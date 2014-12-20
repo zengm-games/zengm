@@ -8,7 +8,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
      * 
      * This is the same as IDBRequest.transaction except the returned transaction has a "complete" property, which contains a function that returns a promise which resolves when the oncomplete event of the transaction fires.
      */
-    function tx(storeNames, mode) {
+    function tx_(storeNames, mode) {
         var tx;
 
         if (storeNames === "achievements") {
@@ -347,53 +347,51 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
      *
      * Items stored in gameAttributes are globally available through the global variable g. If a value is a constant across all leagues/games/whatever, it should just be set in globals.js instead.
      * 
-     * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
+     * @param {Object} newGameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
      * @returns {Promise} Promise for when it finishes.
      */
-    gameAttributes.set = function (gameAttributes) {
-        return new Promise(function (resolve, reject) {
-            var gameAttributesStore, i, key, toUpdate, tx;
+    gameAttributes.set = function (newGameAttributes) {
+        var key, toUpdate, tx;
 
-            toUpdate = [];
-            for (key in gameAttributes) {
-                if (gameAttributes.hasOwnProperty(key)) {
-                    if (g[key] !== gameAttributes[key]) {
-                        toUpdate.push(key);
-                    }
+        toUpdate = [];
+        for (key in newGameAttributes) {
+            if (newGameAttributes.hasOwnProperty(key)) {
+                if (g[key] !== newGameAttributes[key]) {
+                    toUpdate.push(key);
                 }
             }
+        }
 
-            tx = g.dbl.transaction("gameAttributes", "readwrite");
-            gameAttributesStore = tx.objectStore("gameAttributes");
+        tx = tx_("gameAttributes", "readwrite");
 
-            for (i = 0; i < toUpdate.length; i++) {
-                key = toUpdate[i];
-                (function (key) {
-                    gameAttributesStore.put({key: key, value: gameAttributes[key]}).onsuccess = function (event) {
-                        g[key] = gameAttributes[key];
-                    };
+        toUpdate.forEach(function (key) {
+            gameAttributes.put({
+                ot: tx,
+                value: {
+                    key: key,
+                    value: newGameAttributes[key]
+                }
+            }).then(function () {
+                g[key] = newGameAttributes[key];
+            });
 
-                    // Trigger a signal for the team finances view. This is stupid.
-                    if (key === "gamesInProgress") {
-                        if (gameAttributes[key]) {
-                            $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-                        } else {
-                            $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-                        }
-                    }
-                }(key));
-            }
-
-            tx.oncomplete = function () {
-                // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
-                if (gameAttributes.hasOwnProperty("gamesInProgress") && gameAttributes.gamesInProgress) {
+            // Trigger a signal for the team finances view. This is stupid.
+            if (key === "gamesInProgress") {
+                if (newGameAttributes[key]) {
                     $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-                } else if (gameAttributes.hasOwnProperty("gamesInProgress") && !gameAttributes.gamesInProgress) {
+                } else {
                     $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
                 }
+            }
+        });
 
-                resolve();
-            };
+        return tx.complete().then(function () {
+            // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
+            if (newGameAttributes.hasOwnProperty("gamesInProgress") && newGameAttributes.gamesInProgress) {
+                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
+            } else if (newGameAttributes.hasOwnProperty("gamesInProgress") && !newGameAttributes.gamesInProgress) {
+                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
+            }
         });
     };
 
@@ -662,7 +660,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
     };
 
     return {
-        tx: tx,
+        tx: tx_,
         leagues: generateBasicDao("dbm", "leagues"),
         achievements: generateBasicDao("dbm", "achievements"),
         awards: generateBasicDao("dbl", "awards"),

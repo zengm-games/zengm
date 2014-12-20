@@ -26,16 +26,8 @@ dao.store.iterate
 
 dao refactor:
   make convenience function in dao.gameAttributes for lastDbChange updating to now
-    or do it automatically in adapter on DB update? only downside is that sometimes it's updated in one transaction with other gameAttributes changes
-  should more stuff be moved out of indexedDb.js? like schedule stuff?
-  need some way to handle writes
-    if it's simple, do a put after reading
-    maybe create a custom function like dao.teams.updateStats?
-    but what if it's more complicated?
-    or what about iterating over a cursor and updating each one?
-  need some way to handle iterating over cursors
-    see: views/eventLog
-    maybe put a thin wrapper around it, similar to YDN
+    only downside is that sometimes it's updated in one transaction with other gameAttributes changes
+  move special cases out of dao - have it just be a thin IDB layer
 
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing

@@ -624,33 +624,30 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
      * @return {Promise}
      */
     schedule.set = function (tids) {
-        return new Promise(function (resolve, reject) {
-            var i, row, schedule, scheduleStore, tx;
+        var i, newSchedule, tx;
 
-            schedule = [];
-            for (i = 0; i < tids.length; i++) {
-                row = {homeTid: tids[i][0], awayTid: tids[i][1]};
-                schedule.push(row);
+        newSchedule = [];
+        for (i = 0; i < tids.length; i++) {
+            newSchedule.push({
+                homeTid: tids[i][0],
+                awayTid: tids[i][1]
+            });
+        }
+
+        tx = tx_("schedule", "readwrite");
+
+        schedule.clear({ot: tx}).then(function () {
+            var i;
+
+            for (i = 0; i < newSchedule.length; i++) {
+                schedule.add({
+                    ot: tx,
+                    value: newSchedule[i]
+                });
             }
-
-            tx = g.dbl.transaction("schedule", "readwrite");
-            scheduleStore = tx.objectStore("schedule");
-            scheduleStore.getAll().onsuccess = function (event) {
-                var currentSchedule, i;
-
-                currentSchedule = event.target.result;
-                for (i = 0; i < currentSchedule.length; i++) {
-                    scheduleStore.delete(currentSchedule[i].gid);
-                }
-
-                for (i = 0; i < schedule.length; i++) {
-                    scheduleStore.add(schedule[i]);
-                }
-            };
-            tx.oncomplete = function () {
-                resolve();
-            };
         });
+
+        return tx.complete().then();
     };
 
     return {

@@ -131,42 +131,42 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                     var i, overtime;
 
                     if (completed.length >= numShowCompleted) {
-                        shortCircuit();
+                        return shortCircuit();
+                    }
+
+                    if (game.overtimes === 1) {
+                        overtime = " (OT)";
+                    } else if (game.overtimes > 1) {
+                        overtime = " (" + game.overtimes + "OT)";
                     } else {
-                        if (game.overtimes === 1) {
-                            overtime = " (OT)";
-                        } else if (game.overtimes > 1) {
-                            overtime = " (" + game.overtimes + "OT)";
-                        } else {
-                            overtime = "";
+                        overtime = "";
+                    }
+
+                    // Check tid
+                    if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
+                        completed.push({
+                            gid: game.gid,
+                            overtime: overtime
+                        });
+
+                        i = completed.length - 1;
+                        if (game.teams[0].tid === g.userTid) {
+                            completed[i].home = true;
+                            completed[i].pts = game.teams[0].pts;
+                            completed[i].oppPts = game.teams[1].pts;
+                            completed[i].oppTid = game.teams[1].tid;
+                            completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
+                            completed[i].won = game.teams[0].pts > game.teams[1].pts;
+                        } else if (game.teams[1].tid === g.userTid) {
+                            completed[i].home = false;
+                            completed[i].pts = game.teams[1].pts;
+                            completed[i].oppPts = game.teams[0].pts;
+                            completed[i].oppTid = game.teams[0].tid;
+                            completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
+                            completed[i].won = game.teams[1].pts > game.teams[0].pts;
                         }
 
-                        // Check tid
-                        if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
-                            completed.push({
-                                gid: game.gid,
-                                overtime: overtime
-                            });
-
-                            i = completed.length - 1;
-                            if (game.teams[0].tid === g.userTid) {
-                                completed[i].home = true;
-                                completed[i].pts = game.teams[0].pts;
-                                completed[i].oppPts = game.teams[1].pts;
-                                completed[i].oppTid = game.teams[1].tid;
-                                completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
-                                completed[i].won = game.teams[0].pts > game.teams[1].pts;
-                            } else if (game.teams[1].tid === g.userTid) {
-                                completed[i].home = false;
-                                completed[i].pts = game.teams[1].pts;
-                                completed[i].oppPts = game.teams[0].pts;
-                                completed[i].oppTid = game.teams[0].tid;
-                                completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
-                                completed[i].won = game.teams[1].pts > game.teams[0].pts;
-                            }
-
-                            completed[i] = helpers.formatCompletedGame(completed[i]);
-                        }
+                        completed[i] = helpers.formatCompletedGame(completed[i]);
                     }
                 }
             }).then(function () {

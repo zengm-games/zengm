@@ -74,7 +74,7 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "
             // Load all games in list
             vm.completed.loading(true);
             vm.completed.games([]);
-            helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games(), function (games) {
+            helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games()).then(function (games) {
                 var i;
 
                 for (i = 0; i < games.length; i++) {
@@ -89,7 +89,7 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "
         }
         if (updateEvents.indexOf("gameSim") >= 0) {
             // Partial update of only new games
-            helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games(), function (games) {
+            helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games()).then(function (games) {
                 var i;
                 for (i = games.length - 1; i >= 0; i--) {
                     games[i] = helpers.formatCompletedGame(games[i]);

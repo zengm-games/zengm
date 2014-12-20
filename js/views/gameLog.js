@@ -201,7 +201,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
             // Load all games in list
             vm.gamesList.loading(true);
             vm.gamesList.games([]);
-            helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
+            helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games()).then(function (games) {
                 vm.gamesList.games(games);
                 vm.gamesList.abbrev(inputs.abbrev);
                 vm.gamesList.season(inputs.season);
@@ -225,7 +225,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         }
         if (updateEvents.indexOf("gameSim") >= 0 && inputs.season === g.season) {
             // Partial update of only new games
-            helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
+            helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games()).then(function (games) {
                 var i;
                 for (i = games.length - 1; i >= 0; i--) {
                     vm.gamesList.games.unshift(games[i]);

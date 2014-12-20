@@ -2,7 +2,7 @@
  * @name util.helpers
  * @namespace Various utility functions that don't have anywhere else to go.
  */
-define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, $, ko, eventLog) {
+define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko, eventLog) {
     "use strict";
 
     /**
@@ -15,7 +15,7 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * @return {Array} Array with two elements, the team ID and the validated abbreviation.
      */
     function validateAbbrev(abbrev) {
-        var abbrevs, tid;
+        var tid;
 
         tid = g.teamAbbrevsCache.indexOf(abbrev);
 
@@ -655,9 +655,9 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
      * @param {number} season Season for the list of games.
      * @param {number} gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
      * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
-     * @param {function(Array.<Object>)} cb Callback whose argument is a list of game objects.
+     * @return {Promise.<Array.<Object>>} Resolves to a list of game objects.
      */
-    function gameLogList(abbrev, season, gid, loadedGames, cb) {
+    function gameLogList(abbrev, season, gid, loadedGames) {
         var games, maxGid, out, tid;
 
         out = validateAbbrev(abbrev);
@@ -671,13 +671,18 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
         }
 
         games = [];
-        // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
-        g.dbl.transaction("games").objectStore("games").index("season").openCursor(season, "prev").onsuccess = function (event) {
-            var cursor, game, i, overtime;
 
-            cursor = event.target.result;
-            if (cursor && cursor.value.gid > maxGid) {
-                game = cursor.value;
+        // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
+        return dao.games.iterate({
+            index: "season",
+            key: season,
+            direction: "prev",
+            modify: function (game, shortCircuit) {
+                var i, overtime;
+
+                if (game.gid <= maxGid) {
+                    return shortCircuit();
+                }
 
                 if (game.overtimes === 1) {
                     overtime = " (OT)";
@@ -713,12 +718,10 @@ define(["globals", "lib/jquery", "lib/knockout", "util/eventLog"], function (g, 
                         games[i].won = game.teams[1].pts > game.teams[0].pts;
                     }
                 }
-
-                cursor.continue();
-            } else {
-                cb(games);
             }
-        };
+        }).then(function () {
+            return games;
+        });
     }
 
     function formatCompletedGame(game) {

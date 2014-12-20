@@ -46,29 +46,9 @@ indexedDb.contracts.getAll
 
 rewrite old upgrading code?
 
-switch dao.players.get to use promises
-  grep -R dao.players.get js
-  for retrieving one, implement dao.players.get on top of getAll
-  dao.players.getAll(tid).then(function (players) { return player.filter({}) }).then(function (players));
-  to fix
-    js/core/debug.js:        dao.players.getAll({statsSeasons: "all"}, function (players) {
-    js/core/debug.js:        dao.players.getAll({
-    js/core/debug.js:        dao.players.getAll({
-    js/core/team.js:        dao.players.getAll({
-    js/core/team.js:            dao.players.getAll({
-    js/core/team.js:                dao.players.getAll({
-    js/core/team.js:                dao.players.getAll({
-    js/core/trade.js:                dao.players.getAll({
-  then remove cb hack in dao.players.getAll
-
 core
 
 look at views with errorMessage - is flow correct? problems with cancellation?
-
-util
-  bbgmView - get rid of $.when
-
-db.getObjectStore - should never be used, equivalent function is in indexedDb adapter
 
 big goals
   indexeddb only in dao
@@ -79,6 +59,7 @@ big goals
   no "transaction" anywhere
   no "Store" anywhere
   no "new Promise" anywhere
+  no db.getObjectStore - equivalent function is in indexedDb adapter
 
 clean up
   documentation!!!!! like nuances of iterate modify
@@ -87,8 +68,6 @@ clean up
   shouldn't overwrite functions with getAll like in players - that should be another name
   all object stores get all methods
 
-get rid of $ and _ where possible
-
 unit tests
 
 unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-javascript-es6-promise-support-done-api https://code.google.com/p/v8/issues/detail?id=3093
@@ -96,6 +75,8 @@ unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-jav
   https://code.google.com/p/v8/issues/detail?id=3093
 
 put bugsnag back
+
+core.debug
 
 test
   achievement retrieval from account

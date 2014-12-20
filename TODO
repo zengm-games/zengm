@@ -7,10 +7,7 @@ THE FLATTENING
 use promises pervasively
 
 dao.tx and tx.complete()
-  implemented now in core.draft.setOrder
-  test in other places
-    grep -r --exclude-dir=test oncomplete js
-    can't fully promisify ones that include iterating over cursor yet! could partially do it (leave raw IDB code there but still use dao.tx for transaction) - but it'd be better to figure otu what to do with the cursors first
+  grep -r --exclude-dir=test oncomplete js
 
 dao.store.iterate
   if "modify" is passed, apply function to each element in cursor

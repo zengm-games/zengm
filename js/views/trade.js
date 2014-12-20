@@ -2,14 +2,14 @@
  * @name views.trade
  * @namespace Trade.
  */
-define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, trade, Davis, $, ko, komapping, _, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/player", "core/trade", "lib/bluebird", "lib/davis", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, trade, Promise, Davis, $, ko, komapping, _, bbgmView, helpers) {
     "use strict";
 
     var mapping;
 
     // This relies on vars being populated, so it can't be called in parallel with updateTrade
-    function updateSummary(vars, cb) {
-        trade.getOtherTid().then(function (otherTid) {
+    function updateSummary(vars) {
+        return trade.getOtherTid().then(function (otherTid) {
             var teams;
 
             teams = [
@@ -24,7 +24,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
                     dpids: vars.otherDpids
                 }
             ];
-            trade.summary(teams).then(function (summary) {
+            return trade.summary(teams).then(function (summary) {
                 var i;
 
                 vars.summary = {
@@ -44,7 +44,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
                     };
                 }
 
-                cb(vars);
+                return vars;
             });
         });
     }
@@ -168,141 +168,125 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
     };
 
     function updateTrade(inputs, updateEvents, vm) {
-        var deferred, vars;
+        var otherTid;
 
-        deferred = $.Deferred();
-
-        validateSavedPids().then(function (teams) {
-            var tx;
-
-            tx = g.dbl.transaction(["players", "playerStats"]);
-
+        return Promise.all([
+            validateSavedPids(),
             dao.players.getAll({
-                ot: tx,
                 index: "tid",
                 key: g.userTid,
                 statsSeasons: [g.season]
-            }).then(function (userRoster) {
-                var attrs, i, ratings, stats;
+            }),
+            dao.draftPicks.getAll({
+                index: "tid",
+                key: g.userTid
+            })
+        ]).spread(function (teams, userRoster, userPicks) {
+            var attrs, i, ratings, stats;
 
-                attrs = ["pid", "name", "pos", "age", "contract", "injury", "watch", "gamesUntilTradable"];
-                ratings = ["ovr", "pot", "skills"];
-                stats = ["min", "pts", "trb", "ast", "per"];
+            attrs = ["pid", "name", "pos", "age", "contract", "injury", "watch", "gamesUntilTradable"];
+            ratings = ["ovr", "pot", "skills"];
+            stats = ["min", "pts", "trb", "ast", "per"];
 
-                userRoster = player.filter(userRoster, {
+            userRoster = player.filter(userRoster, {
+                attrs: attrs,
+                ratings: ratings,
+                stats: stats,
+                season: g.season,
+                tid: g.userTid,
+                showNoStats: true,
+                showRookies: true,
+                fuzz: true
+            });
+            userRoster = trade.filterUntradable(userRoster);
+
+            for (i = 0; i < userRoster.length; i++) {
+                if (teams[0].pids.indexOf(userRoster[i].pid) >= 0) {
+                    userRoster[i].selected = true;
+                } else {
+                    userRoster[i].selected = false;
+                }
+            }
+
+            for (i = 0; i < userPicks.length; i++) {
+                userPicks[i].desc = helpers.pickDesc(userPicks[i]);
+            }
+
+            otherTid = teams[1].tid;
+
+            // Need to do this after knowing otherTid
+            return Promise.all([
+                dao.players.getAll({
+                    index: "tid",
+                    key: otherTid,
+                    statsSeasons: [g.season]
+                }),
+                dao.draftPicks.getAll({
+                    index: "tid",
+                    key: otherTid
+                }),
+                dao.teams.get({key: otherTid})
+            ]).spread(function (otherRoster, otherPicks, t) {
+                var i;
+
+                otherRoster = player.filter(otherRoster, {
                     attrs: attrs,
                     ratings: ratings,
                     stats: stats,
                     season: g.season,
-                    tid: g.userTid,
+                    tid: otherTid,
                     showNoStats: true,
                     showRookies: true,
                     fuzz: true
                 });
-                userRoster = trade.filterUntradable(userRoster);
+                otherRoster = trade.filterUntradable(otherRoster);
 
-                for (i = 0; i < userRoster.length; i++) {
-                    if (teams[0].pids.indexOf(userRoster[i].pid) >= 0) {
-                        userRoster[i].selected = true;
+                for (i = 0; i < otherRoster.length; i++) {
+                    if (teams[1].pids.indexOf(otherRoster[i].pid) >= 0) {
+                        otherRoster[i].selected = true;
                     } else {
-                        userRoster[i].selected = false;
+                        otherRoster[i].selected = false;
                     }
                 }
 
-                dao.players.getAll({
-                    ot: tx,
-                    index: "tid",
-                    key: teams[1].tid,
-                    statsSeasons: [g.season]
-                }).then(function (otherRoster) {
-                    var draftPickStore, i, showResigningMsg;
+                for (i = 0; i < otherPicks.length; i++) {
+                    otherPicks[i].desc = helpers.pickDesc(otherPicks[i]);
+                }
 
-                    otherRoster = player.filter(otherRoster, {
-                        attrs: attrs,
-                        ratings: ratings,
-                        stats: stats,
-                        season: g.season,
-                        tid: teams[1].tid,
-                        showNoStats: true,
-                        showRookies: true,
-                        fuzz: true
-                    });
-                    otherRoster = trade.filterUntradable(otherRoster);
-
-                    // If the season is over, can't trade players whose contracts are expired
-                    if (g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
-                        showResigningMsg = true;
-                    } else {
-                        showResigningMsg = false;
-                    }
-
-                    for (i = 0; i < otherRoster.length; i++) {
-                        if (teams[1].pids.indexOf(otherRoster[i].pid) >= 0) {
-                            otherRoster[i].selected = true;
-                        } else {
-                            otherRoster[i].selected = false;
-                        }
-                    }
-
-                    draftPickStore = g.dbl.transaction("draftPicks").objectStore("draftPicks");
-
-                    draftPickStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-                        var i, userPicks;
-
-                        userPicks = event.target.result;
-                        for (i = 0; i < userPicks.length; i++) {
-                            userPicks[i].desc = helpers.pickDesc(userPicks[i]);
-                        }
-
-                        draftPickStore.index("tid").getAll(teams[1].tid).onsuccess = function (event) {
-                            var i, otherPicks;
-
-                            otherPicks = event.target.result;
-                            for (i = 0; i < otherPicks.length; i++) {
-                                otherPicks[i].desc = helpers.pickDesc(otherPicks[i]);
-                            }
-
-                            g.dbl.transaction("teams").objectStore("teams").get(teams[1].tid).onsuccess = function (event) {
-                                var t;
-
-                                t = event.target.result;
-
-                                vars = {
-                                    salaryCap: g.salaryCap / 1000,
-                                    userDpids: teams[0].dpids,
-                                    userPicks: userPicks,
-                                    userPids: teams[0].pids,
-                                    userRoster: userRoster,
-                                    otherDpids: teams[1].dpids,
-                                    otherPicks: otherPicks,
-                                    otherPids: teams[1].pids,
-                                    otherRoster: otherRoster,
-                                    message: inputs.message,
-                                    strategy: t.strategy,
-                                    won: t.seasons[t.seasons.length - 1].won,
-                                    lost: t.seasons[t.seasons.length - 1].lost,
-                                    showResigningMsg: showResigningMsg,
-                                    godMode: g.godMode,
-                                    forceTrade: false
-                                };
-
-                                updateSummary(vars, function (vars) {
-                                    if (vm.teams.length === 0) {
-                                        vars.teams = helpers.getTeams(teams[1].tid);
-                                        vars.teams.splice(g.userTid, 1); // Can't trade with yourself
-                                        vars.userTeamName = g.teamRegionsCache[g.userTid] + " " + g.teamNamesCache[g.userTid];
-                                    }
-
-                                    deferred.resolve(vars);
-                                });
-                            };
-                        };
-                    };
-                });
+                return {
+                    salaryCap: g.salaryCap / 1000,
+                    userDpids: teams[0].dpids,
+                    userPicks: userPicks,
+                    userPids: teams[0].pids,
+                    userRoster: userRoster,
+                    otherDpids: teams[1].dpids,
+                    otherPicks: otherPicks,
+                    otherPids: teams[1].pids,
+                    otherRoster: otherRoster,
+                    message: inputs.message,
+                    strategy: t.strategy,
+                    won: t.seasons[t.seasons.length - 1].won,
+                    lost: t.seasons[t.seasons.length - 1].lost,
+                    godMode: g.godMode,
+                    forceTrade: false
+                };
             });
-        });
+        }).then(updateSummary).then(function (vars) {
+            if (vm.teams.length === 0) {
+                vars.teams = helpers.getTeams(otherTid);
+                vars.teams.splice(g.userTid, 1); // Can't trade with yourself
+                vars.userTeamName = g.teamRegionsCache[g.userTid] + " " + g.teamNamesCache[g.userTid];
+            }
 
-        return deferred.promise();
+            // If the season is over, can't trade players whose contracts are expired
+            if (g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
+                vars.showResigningMsg = true;
+            } else {
+                vars.showResigningMsg = false;
+            }
+
+            return vars;
+        });
     }
 
     function uiFirst(vm) {
@@ -328,9 +312,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
         rosterCheckboxesUser = $("#roster-user input");
         rosterCheckboxesOther = $("#roster-other input");
 
-        $("#rosters").on("click", "input", function (event) {
-            var serialized, teams;
-
+        $("#rosters").on("click", "input", function () {
             vm.summary.enablePropose(false); // Will be reenabled in updateSummary, if appropriate
             vm.message("");
 
@@ -361,7 +343,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/davis", "lib/j
                     vars.userDpids = teams[0].dpids;
                     vars.otherDpids = teams[1].dpids;
 
-                    updateSummary(vars, function (vars) {
+                    updateSummary(vars).then(function (vars) {
                         var found, i, j;
 
                         komapping.fromJS(vars, mapping, vm);

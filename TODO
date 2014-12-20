@@ -42,7 +42,7 @@ API design
   remove filter option from dao.players.getAll - also confusing, can just apply manually
 
 core.league
-indexedDb.contracts.getAll
+various functions in db
 
 rewrite old upgrading code?
 

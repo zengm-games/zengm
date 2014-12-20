@@ -5,6 +5,8 @@
 define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (dao, g, Promise, Davis, $, _, helpers) {
     "use strict";
 
+    var migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="http://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
+
     /**
      * Create new meta database with the latest structure.
      * 
@@ -27,31 +29,17 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/jquery", "lib/unders
      * @param {number} lid Integer league ID number.
      */
     function migrateMeta(event, lid) {
-        var dbm, migrateMessage, tx;
+        var dbm, tx;
+
+        document.getElementById("content").innerHTML = migrateMessage;
 
         console.log("Upgrading meta database from version " + event.oldVersion + " to version " + event.newVersion);
-
-        migrateMessage = '';
 
         dbm = event.target.result;
         tx = event.currentTarget.transaction;
 
         if (event.oldVersion <= 1) {
             dbm.deleteObjectStore("teams");
-
-            migrateMessage = '<p><strong>New in version 3.0.0-beta.2:</strong> injuries, more refined economic/financial simulations, improved contract negotiations, noise in displayed player ratings dependent on your scouting budget, and annual interactions with the owner of the team including the possibility of being fired for poor performance.</p>' + migrateMessage;
-        }
-
-        if (event.oldVersion <= 2) {
-            migrateMessage = '<p><strong>New in version 3.0.0-beta.3:</strong> draft lottery, improved trading AI, revamped team history pages, and control over playing time from the roster page.</p>' + migrateMessage;
-        }
-
-        if (event.oldVersion <= 3) {
-            migrateMessage = '<p><strong>New in version 3.0.0:</strong> export rosters for use in other leagues, import custom rosters, and view players selected to the Hall of Fame.</p>' + migrateMessage;
-        }
-
-        if (event.oldVersion <= 4) {
-            migrateMessage = '<p><strong>New in version 3.1.0:</strong> better AI from opposing managers and more trade functionality, including trading draft picks and asking for counter-proposals from the team you\'re trading with.</p>' + migrateMessage;
         }
 
         if (event.oldVersion <= 5) {
@@ -117,9 +105,6 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/jquery", "lib/unders
                 dbm.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
             }());
         }
-
-        // This is no longer being used for update messages! See util/changes.js
-        //$("#content").before('<div class="alert alert-info alert-top"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
     }
 
     function connectMeta() {
@@ -213,7 +198,7 @@ console.log(event);
     function migrateLeague(event, lid) {
         var dbl, teams, tx;
 
-        document.getElementById("content").innerHTML = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="http://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
+        document.getElementById("content").innerHTML = migrateMessage;
 
         console.log("Upgrading league" + lid + " database from version " + event.oldVersion + " to version " + event.newVersion);
 

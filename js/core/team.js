@@ -241,19 +241,15 @@ define(["dao", "db", "globals", "core/player", "lib/bluebird", "lib/underscore",
     /**
      * Sort a team's roster based on player ratings and stats.
      *
-     * If ot is null, then the callback will run only after the transaction finishes (i.e. only after the updated roster order is actually saved to the database). If ot is not null, then the callback might run earlier, so don't rely on the updated roster order actually being in the database yet.
-     *
-     * So, ot should NOT be null if you're sorting multiple roster as a component of some larger operation, but the results of the sorts don't actually matter. ot should be null if you need to ensure that the roster order is updated before you do something that will read the roster order (like updating the UI).
-     * 
      * @memberOf core.team
-     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
+     * @param {IDBTransaction|null} tx An IndexedDB transaction on players readwrite; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
      * @return {Promise}
      */
-    function rosterAutoSort(ot, tid) {
-        var tx;
-
-        tx = db.getObjectStore(ot, "players", null, true);
+    function rosterAutoSort(tx, tid) {
+        if (tx === null) {
+            tx = dao.tx("players", "readwrite");
+        }
 
         // Get roster and sort by value (no potential included)
         return dao.players.getAll({
@@ -280,25 +276,22 @@ define(["dao", "db", "globals", "core/player", "lib/bluebird", "lib/underscore",
             }
 
             // Update rosterOrder
-            return new Promise(function (resolve, reject) {
-                tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
-                    var cursor, i, p;
+            return dao.players.iterate({
+                ot: tx,
+                index: "tid",
+                key: tid,
+                modify: function (p) {
+                    var i;
 
-                    cursor = event.target.result;
-                    if (cursor) {
-                        p = cursor.value;
-                        for (i = 0; i < players.length; i++) {
-                            if (players[i].pid === p.pid) {
-                                p.rosterOrder = players[i].rosterOrder;
-                                break;
-                            }
+                    for (i = 0; i < players.length; i++) {
+                        if (players[i].pid === p.pid) {
+                            p.rosterOrder = players[i].rosterOrder;
+                            break;
                         }
-                        cursor.update(p);
-                        cursor.continue();
-                    } else {
-                        resolve();
                     }
-                };
+
+                    return p;
+                }
             });
         });
     }

@@ -369,9 +369,15 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
         });
 
         $("#roster-auto-sort").click(function () {
+            var tx;
+
             vm.players([]); // This is a hack to force a UI update because the jQuery UI sortable roster reordering does not update the view model, which can cause the view model to think the roster is sorted correctly when it really isn't. (Example: load the roster, auto sort, reload, drag reorder it, auto sort -> the auto sort doesn't update the UI.) Fixing this issue would fix flickering.
+
+            tx = dao.tx("players", "readwrite");
+            team.rosterAutoSort(tx, g.userTid);
+
             Promise.all([
-                team.rosterAutoSort(null, g.userTid),
+                tx.complete(), // Explicitly make sure writing is done for rosterAutoSort
                 dao.gameAttributes.set({lastDbChange: Date.now()})
             ]).then(function () {
                 ui.realtimeUpdate(["playerMovement"]);

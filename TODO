@@ -94,6 +94,8 @@ improve API
 PERFORMANCE CRAP
 ----------------
 
+IDEA: when writing injury info in game.writePlayerStats, use cached player object from when players are initially loaded
+
 license
   http://www.reddit.com/r/gamedev/comments/2ogq7b/very_niche_webbased_video_game_with_a_stable/cmnhpd8
   email draft

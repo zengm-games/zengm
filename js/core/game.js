@@ -23,15 +23,16 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
             this.sameDiv = true;
         }*/
 
-        return writeTeamStats(tx, results);/*.then(function () {
+        return writeTeamStats(tx, results).then(function (att) {
             return writePlayerStats(tx, results);
-        }).then(function () {
-            return writeGameStats(tx, results);
+        });/*.then(function () {
+            return writeGameStats(tx, results, att);
         });*/
     }
 
     function writeTeamStats(tx, results) {
-        return Promise.all([0, 1].map(function (t1) {
+console.log('writeTeamStats')
+        return Promise.reduce([0, 1], function (att, t1) {
             var t2;
 
             t2 = t1 === 1 ? 0 : 1;
@@ -40,7 +41,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 dao.payrolls.get({ot: tx, key: results.team[t1].id}).get(0),
                 dao.teams.get({ot: tx, key: results.team[t1].id})
             ]).spread(function (payroll, t) {
-                var att, coachingPaid, count, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
+                var coachingPaid, count, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
 
                 teamSeason = t.seasons[t.seasons.length - 1];
                 teamStats = t.stats[t.stats.length - 1];
@@ -52,9 +53,11 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 }
 
                 // Attendance - base calculation now, which is used for other revenue estimates
-                att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
-                if (g.phase === g.PHASE.PLAYOFFS) {
-                    att *= 1.5;  // Playoff bonus
+                if (t1 === 0) { // Base on home team
+                    att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
+                    if (g.phase === g.PHASE.PLAYOFFS) {
+                        att *= 1.5;  // Playoff bonus
+                    }
                 }
 
                 // Some things are only paid for regular season games.
@@ -90,15 +93,18 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 }
 
                 // Attendance - final estimate
-                att = random.gauss(att, 1000);
-                att *= 30 / t.budget.ticketPrice.amount;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
-                att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(t, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
-                if (att > 25000) {
-                    att = 25000;
-                } else if (att < 0) {
-                    att = 0;
+                if (t1 === 0) { // Base on home team
+                    att = random.gauss(att, 1000);
+                    att *= 30 / t.budget.ticketPrice.amount;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
+                    att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(t, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
+                    if (att > 25000) {
+                        att = 25000;
+                    } else if (att < 0) {
+                        att = 0;
+                    }
+                    att = Math.round(att);
                 }
-                att = Math.round(att);
+                // This doesn't really make sense
                 ticketRevenue = t.budget.ticketPrice.amount * att / 1000;  // [thousands of dollars]
 
                 // Hype - relative to the expectations of prior seasons
@@ -138,7 +144,10 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 revenue = merchRevenue + sponsorRevenue + nationalTvRevenue + localTvRevenue + ticketRevenue;
                 expenses = salaryPaid + scoutingPaid + coachingPaid + healthPaid + facilitiesPaid;
                 teamSeason.cash += revenue - expenses;
-                teamSeason.att += att;
+                if (t1 === 0) {
+                    // Only home team gets attendance...
+                    teamSeason.att += att;
+                }
                 teamSeason.gp += 1;
                 teamSeason.revenues.merch.amount += merchRevenue;
                 teamSeason.revenues.sponsor.amount += sponsorRevenue;
@@ -209,100 +218,84 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                     }
                 }
 
-                return dao.teams.put({ot: tx, value: t});
+                return dao.teams.put({ot: tx, value: t}).then(function () {
+                    return att;
+                });
             });
-        }));
-    };
+        }, 0);
+    }
 
     function writePlayerStats(tx, results) {
-        var afterDonePlayer, key, that;
-
-        that = this;
-
-        afterDonePlayer = function () {
-            if (p < that.team[t].player.length - 1) {
-                that.writePlayerStats(tx, t, p + 1, cb);
-            } else if (t === 0) {
-                that.writePlayerStats(tx, 1, 0, cb);
-            } else {
-                cb();
-            }
-        };
-
-//console.log('writePlayerStats');
-        // Only need to write stats if player got minutes
-        if (that.team[t].player[p].stat.min === 0) {
-            afterDonePlayer();
-        } else {
-            key = [that.team[t].player[p].id, g.season, that.team[t].id];
-            // "prev" is in case there are multiple entries for the same player, like he was traded away and then brought back
-            tx.objectStore("playerStats").index("pid, season, tid").openCursor(key, "prev").onsuccess = function (event) {
-                var cursor, i, injuredThisGame, keys, playerStats;
-
-                cursor = event.target.result;
-//console.log(cursor);
-                playerStats = cursor.value;
-
-                // Since index is not on playoffs, manually check
-                if (playerStats.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
-                    return cursor.continue();
+        return Promise.map(results.team, function (t) {
+            return Promise.map(t.player, function (p) {
+                // Only need to write stats if player got minutes
+                if (p.stat.min === 0) {
+                    return;
                 }
 
-                // Update stats
-                keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-                for (i = 0; i < keys.length; i++) {
-                    playerStats[keys[i]] += that.team[t].player[p].stat[keys[i]];
-                }
-                playerStats.gp += 1; // Already checked for non-zero minutes played above
-                playerStats.trb += that.team[t].player[p].stat.orb + that.team[t].player[p].stat.drb;
+                dao.playerStats.iterate({
+                    ot: tx,
+                    index: "pid, season, tid",
+                    key: [p.id, g.season, t.id],
+                    direction: "prev", // In case there are multiple entries for the same player, like he was traded away and then brought back
+                    modify: function (ps, shortCircuit) {
+                        var i, injuredThisGame, keys;
 
-                cursor.update(playerStats);
-
-                injuredThisGame = that.team[t].player[p].injured && that.team[t].player[p].injury.type === "Healthy";
-
-                // Only update player object (values and injuries) every 10 regular season games or on injury
-                if ((playerStats.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || (injuredThisGame)) {
-                    // This could be throttled to happen like every ~10 games or when there is an injury. Need to benchmark potential performance increase
-                    tx.objectStore("players").openCursor(that.team[t].player[p].id).onsuccess = function (event) {
-                        var cursor, player_;
-
-                        cursor = event.target.result;
-                        player_ = cursor.value;
-
-                        // Injury crap - assign injury type if player does not already have an injury in the database
-                        if (injuredThisGame) {
-                            player_.injury = player.injury(that.team[t].healthRank);
-                            that.team[t].player[p].injury = player_.injury; // So it gets written to box score
-                            if (that.team[t].id === g.userTid) {
-                                eventLog.add(tx, {
-                                    type: "injured",
-                                    text: '<a href="' + helpers.leagueUrl(["player", player_.pid]) + '">' + player_.name + '</a> was injured! (' + player_.injury.type + ', out for ' + player_.injury.gamesRemaining + ' games)'
-                                });
-                            }
+                        // Since index is not on playoffs, manually check
+                        if (ps.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
+                            return;
                         }
 
-                        // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
-                        if (g.phase !== g.PHASE.PLAYOFFS) {
-                            player.updateValues(tx, player_, [playerStats]).then(function (player_) {
-                                cursor.update(player_);
-                                afterDonePlayer();
+                        // Found it!
+                        shortCircuit();
+
+                        // Update stats
+                        keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+                        for (i = 0; i < keys.length; i++) {
+                            ps[keys[i]] += p.stat[keys[i]];
+                        }
+                        ps.gp += 1; // Already checked for non-zero minutes played above
+                        ps.trb += p.stat.orb + p.stat.drb;
+
+                        injuredThisGame = p.injured && p.injury.type === "Healthy";
+
+                        // Only update player object (values and injuries) every 10 regular season games or on injury
+                        if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
+                            dao.players.get({ot: tx, key: p.id}).then(function (p_) {
+                                // Injury crap - assign injury type if player does not already have an injury in the database
+                                if (injuredThisGame) {
+                                    p_.injury = player.injury(t.healthRank);
+                                    p.injury = p_.injury; // So it gets written to box score
+                                    if (t.id === g.userTid) {
+                                        eventLog.add(tx, {
+                                            type: "injured",
+                                            text: '<a href="' + helpers.leagueUrl(["player", p_.pid]) + '">' + p_.name + '</a> was injured! (' + p_.injury.type + ', out for ' + p_.injury.gamesRemaining + ' games)'
+                                        });
+                                    }
+                                }
+
+                                // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
+                                if (g.phase !== g.PHASE.PLAYOFFS) {
+                                    return player.updateValues(tx, p_, [ps]);
+                                }
+
+                                return p_;
+                            }).then(function (p_) {
+                                dao.players.put({ot: tx, value: p_});
                             });
-                        } else {
-                            cursor.update(player_);
-                            afterDonePlayer();
                         }
-                    };
-                } else {
-                    afterDonePlayer();
-                }
-            };
-        }
+
+                        return ps;
+                    }
+                });
+            });
+        });
     }
 
     function writeGameStats(tx, cb) {
         var gameStats, i, keys, p, t, text, that, tl, tw;
 
-        gameStats = {gid: this.id, att: this.att, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
+        gameStats = {gid: results.gid, att: this.att, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
         for (t = 0; t < 2; t++) {
             keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts', 'ptsQtrs'];
             for (i = 0; i < keys.length; i++) {
@@ -320,12 +313,6 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 gameStats.teams[t].players[p].pid = this.team[t].player[p].id;
                 gameStats.teams[t].players[p].skills = this.team[t].player[p].skills;
                 gameStats.teams[t].players[p].injury = this.team[t].player[p].injury;
-// Not needed any more? Real injureis saved?
-//                if (this.team[t].player[p].injured) {
-//                    gameStats.teams[t].players[p].injury = {type: "Injured", gamesRemaining: -1};
-//                } else {
-//                    gameStats.teams[t].players[p].injury = {type: "Healthy", gamesRemaining: 0};
-//                }
             }
         }
 

@@ -46,12 +46,9 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
 
         $("#finances-settings button").attr("disabled", "disabled").html("Saving...");
 
-        tx = g.dbl.transaction("teams", "readwrite");
-        tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
-            var budget, cursor, i, key, t;
-
-            cursor = event.target.result;
-            t = cursor.value;
+        tx = dao.tx("teams", "readwrite");
+        dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
+            var budget, key;
 
             budget = req.params.budget;
 
@@ -68,12 +65,12 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
                 }
             }
 
-            cursor.update(t);
-
-            finances.updateRanks(tx, ["budget"]).then(function () {
-                ui.realtimeUpdate(["teamFinances"]);
-            });
-        };
+            return dao.teams.put({ot: tx, value: t});
+        }).then(function () {
+            return finances.updateRanks(tx, ["budget"]);
+        }).then(function () {
+            ui.realtimeUpdate(["teamFinances"]);
+        });
     }
 
     function InitViewModel() {

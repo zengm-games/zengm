@@ -582,8 +582,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
         // UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
         if (dpidsRemove.length > 2) {
-            cb(-1);
-            return;
+            return -1;
         }
 
         // Get value and skills for each player on team or involved in the proposed transaction

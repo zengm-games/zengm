@@ -2,72 +2,67 @@
  * @name views.tradingBlock
  * @namespace Trading block.
  */
-define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/random"], function (dao, g, ui, player, team, trade, $, ko, _, bbgmView, helpers, random) {
+define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/random"], function (dao, g, ui, player, team, trade, Promise, $, ko, _, bbgmView, helpers, random) {
     "use strict";
 
     var mapping;
 
-    function getOffers(userPids, userDpids, cb) {
-        var afterOffers, done, i, numAfter, offers, progressBar, tids;
+    function getOffers(userPids, userDpids) {
+        var progressBar, tids;
 
         // Initialize progress bar
         progressBar = document.querySelector("#ask-progress .progress-bar");
         progressBar.style.width = "10%";
 
-        offers = [];
-
+        // Pick 10 random teams to try
         tids = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
         random.shuffle(tids);
         tids.splice(11, 19);
 
-        // Run callback after all teams have made an offer (ignoring the user's team)
-        numAfter = tids.length;
-        if (tids.indexOf(g.userTid) >= 0) {
-            numAfter -= 1;
-        }
-        afterOffers = _.after(numAfter, function () {
-            cb(offers);
-        });
+        return trade.getPickValues().then(function (estValues) {
+            var done, numTeams, promises;
 
-
-        trade.getPickValues().then(function (estValues) {
-            done = 0;
-            for (i = 0; i < tids.length; i++) {
-                (function (tid) {
-                    var teams;
-
-                    teams = [
-                        {
-                            tid: g.userTid,
-                            pids: userPids,
-                            dpids: userDpids
-                        },
-                        {
-                            tid: tid,
-                            pids: [],
-                            dpids: []
-                        }
-                    ];
-
-                    if (tid !== g.userTid) {
-                        trade.makeItWork(teams, true, estValues).spread(function (found, teams) {
-                            // Update progress bar
-                            done += 1;
-                            progressBar.style.width = Math.round(10 + 90 * done / numAfter) + "%";
-
-                            if (found) {
-                                trade.summary(teams).then(function (summary) {
-                                    teams[1].warning = summary.warning;
-                                    offers.push(teams[1]);
-                                    afterOffers();
-                                });
-                            } else {
-                                afterOffers();
-                            }
-                        });
-                    }
-                }(tids[i]));
+            // For width of progress bar
+            numTeams = tids.length;
+            if (tids.indexOf(g.userTid) >= 0) {
+                numTeams -= 1;
             }
+            done = 0;
+
+            promises = [];
+            tids.forEach(function (tid) {
+                var teams;
+
+                teams = [
+                    {
+                        tid: g.userTid,
+                        pids: userPids,
+                        dpids: userDpids
+                    },
+                    {
+                        tid: tid,
+                        pids: [],
+                        dpids: []
+                    }
+                ];
+
+                if (tid !== g.userTid) {
+                    promises.push(trade.makeItWork(teams, true, estValues).spread(function (found, teams) {
+                        // Update progress bar
+                        done += 1;
+                        progressBar.style.width = Math.round(10 + 90 * done / numTeams) + "%";
+
+                        if (found) {
+                            return trade.summary(teams).then(function (summary) {
+                                teams[1].warning = summary.warning;
+                                return teams[1];
+                            });
+                        }
+                    }));
+                }
+            });
+
+            return Promise.all(promises);
         });
     }
 
@@ -96,7 +91,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
         userPids = _.map(req.params.pids, function (x) { return parseInt(x, 10); });
         userDpids = _.map(req.params.dpids, function (x) { return parseInt(x, 10); });
 
-        getOffers(userPids, userDpids, function (offers) {
+        getOffers(userPids, userDpids).then(function (offers) {
             ui.realtimeUpdate(["tradingBlockAsk"], helpers.leagueUrl(["trading_block"]), function () {
                 buttonEl.style.display = "inline";
                 progressEl.style.display = "none";
@@ -132,17 +127,19 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
     };
 
     function updateUserRoster(inputs, updateEvents, vm) {
-        var deferred;
-
-        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
-            deferred = $.Deferred();
-
-            dao.players.getAll({
-                index: "tid",
-                key: g.userTid,
-                statsSeasons: [g.season],
-                statsTid: g.userTid
-            }, function (userRoster) {
+        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
+            return Promise.all([
+                dao.players.getAll({
+                    index: "tid",
+                    key: g.userTid,
+                    statsSeasons: [g.season],
+                    statsTid: g.userTid
+                }),
+                dao.draftPicks.getAll({
+                    index: "tid",
+                    key: g.userTid
+                })
+            ]).spread(function (userRoster, userPicks) {
                 var i;
 
                 userRoster = player.filter(userRoster, {
@@ -164,118 +161,111 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
                     }
                 }
 
-                g.dbl.transaction("draftPicks").objectStore("draftPicks").index("tid").getAll(g.userTid).onsuccess = function (event) {
-                    var i, userPicks;
+                for (i = 0; i < userPicks.length; i++) {
+                    userPicks[i].desc = helpers.pickDesc(userPicks[i]);
+                }
 
-                    userPicks = event.target.result;
-                    for (i = 0; i < userPicks.length; i++) {
-                        userPicks[i].desc = helpers.pickDesc(userPicks[i]);
-                    }
-
-                    deferred.resolve({
-                        userPids: inputs.userPids,
-                        userDpids: inputs.userDpids,
-                        userPicks: userPicks,
-                        userRoster: userRoster
-                    });
+                return {
+                    userPids: inputs.userPids,
+                    userDpids: inputs.userDpids,
+                    userPicks: userPicks,
+                    userRoster: userRoster
                 };
             });
-
-            return deferred.promise();
         }
     }
 
     function updateOffers(inputs, updateEvents, vm) {
-        var deferred, offers, tx;
+        var offers, tx;
 
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0) {
-            deferred = $.Deferred();
-
             offers = [];
 
             if (inputs.offers.length === 0) {
-                deferred.resolve({
+                return {
                     offers: offers
-                });
-            } else {
-                tx = g.dbl.transaction(["players", "playerStats", "draftPicks", "teams"]);
-
-                team.filter({
-                    attrs: ["abbrev", "region", "name", "strategy"],
-                    seasonAttrs: ["won", "lost"],
-                    season: g.season,
-                    ot: tx
-                }, function (teams) {
-                    var i;
-
-                    // Take the pids and dpids in each offer and get the info needed to display the offer
-                    for (i = 0; i < inputs.offers.length; i++) {
-                        (function (i) {
-                            var tid;
-
-                            tid = inputs.offers[i].tid;
-
-                            offers[i] = {
-                                tid: tid,
-                                abbrev: teams[tid].abbrev,
-                                region: teams[tid].region,
-                                name: teams[tid].name,
-                                strategy: teams[tid].strategy,
-                                won: teams[tid].won,
-                                lost: teams[tid].lost,
-                                pids: inputs.offers[i].pids,
-                                dpids: inputs.offers[i].dpids,
-                                warning: inputs.offers[i].warning
-                            };
-
-                            (function (i) {
-                                dao.players.getAll({
-                                    ot: tx,
-                                    index: "tid",
-                                    key: tid,
-                                    statsSeasons: [g.season],
-                                    statsTid: tid,
-                                    filter: function (p) {
-                                        return inputs.offers[i].pids.indexOf(p.pid) >= 0;
-                                    }
-                                }, function (players) {
-                                    offers[i].players = player.filter(players, {
-                                        attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch"],
-                                        ratings: ["ovr", "pot", "skills"],
-                                        stats: ["min", "pts", "trb", "ast", "per"],
-                                        season: g.season,
-                                        tid: tid,
-                                        showNoStats: true,
-                                        showRookies: true,
-                                        fuzz: true
-                                    });
-                                });
-                            }(i));
-
-                            tx.objectStore("draftPicks").index("tid").getAll(tid).onsuccess = function (event) {
-                                var j, picks;
-
-                                picks = _.filter(event.target.result, function (dp) { return inputs.offers[i].dpids.indexOf(dp.dpid) >= 0; });
-                                for (j = 0; j < picks.length; j++) {
-                                    picks[j].desc = helpers.pickDesc(picks[j]);
-                                }
-
-                                offers[i].picks = picks;
-                            };
-                        }(i));
-                    }
-                });
-
-                tx.oncomplete = function () {
-                    random.shuffle(offers);
-
-                    deferred.resolve({
-                        offers: offers
-                    });
                 };
             }
 
-            return deferred.promise();
+            tx = dao.tx(["players", "playerStats", "draftPicks", "teams"]);
+
+            return team.filter({
+                attrs: ["abbrev", "region", "name", "strategy"],
+                seasonAttrs: ["won", "lost"],
+                season: g.season,
+                ot: tx
+            }).then(function (teams) {
+                var i, promises;
+
+                promises = [];
+
+                // Take the pids and dpids in each offer and get the info needed to display the offer
+                for (i = 0; i < inputs.offers.length; i++) {
+                    (function (i) {
+                        var tid;
+
+                        tid = inputs.offers[i].tid;
+
+                        offers[i] = {
+                            tid: tid,
+                            abbrev: teams[tid].abbrev,
+                            region: teams[tid].region,
+                            name: teams[tid].name,
+                            strategy: teams[tid].strategy,
+                            won: teams[tid].won,
+                            lost: teams[tid].lost,
+                            pids: inputs.offers[i].pids,
+                            dpids: inputs.offers[i].dpids,
+                            warning: inputs.offers[i].warning
+                        };
+
+                        promises.push(dao.players.getAll({
+                            ot: tx,
+                            index: "tid",
+                            key: tid,
+                            statsSeasons: [g.season],
+                            statsTid: tid,
+                            filter: function (p) {
+                                return inputs.offers[i].pids.indexOf(p.pid) >= 0;
+                            }
+                        }).then(function (players) {
+                            offers[i].players = player.filter(players, {
+                                attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch"],
+                                ratings: ["ovr", "pot", "skills"],
+                                stats: ["min", "pts", "trb", "ast", "per"],
+                                season: g.season,
+                                tid: tid,
+                                showNoStats: true,
+                                showRookies: true,
+                                fuzz: true
+                            });
+                        }));
+
+                        promises.push(dao.draftPicks.getAll({
+                            ot: tx,
+                            index: "tid",
+                            key: tid
+                        }).then(function (picks) {
+                            var j;
+
+                            picks = picks.filter(function (dp) { return inputs.offers[i].dpids.indexOf(dp.dpid) >= 0; });
+                            for (j = 0; j < picks.length; j++) {
+                                picks[j].desc = helpers.pickDesc(picks[j]);
+                            }
+
+                            offers[i].picks = picks;
+                        }));
+                    }(i));
+                }
+
+                return Promise.all(promises);
+            }).then(function () {
+                random.shuffle(offers);
+
+                return {
+                    offers: offers
+                };
+            });
         }
     }
 
@@ -287,7 +277,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/j
         tradeable = function (roster) {
             var playersAndPicks;
 
-            playersAndPicks = _.map(roster, function (p) {
+            playersAndPicks = roster.map(function (p) {
                 var checkbox, disabled, selected;
 
                 if (p.selected) {

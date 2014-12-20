@@ -39,23 +39,26 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
                 // Update by adding any new events to the top of the list
                 maxEid = ko.unwrap(vm.events()[0].eid); // unwrap shouldn't be necessary
                 newEvents = [];
-                return new Promise(function (resolve, reject) {
-                    g.dbl.transaction("events").objectStore("events").index("season").openCursor(inputs.season, "prev").onsuccess = function (event) {
-                        var cursor, i;
+                return dao.events.iterate({
+                    index: "season",
+                    key: inputs.season,
+                    direction: "prev",
+                    modify: function (event, shortCircuit) {
+                        var i;
 
-                        cursor = event.target.result;
-                        if (cursor && cursor.value.eid > maxEid) {
-                            newEvents.push(cursor.value);
-                            cursor.continue();
+                        if (event.eid > maxEid) {
+                            newEvents.push(event);
                         } else {
+                            shortCircuit();
                             // Oldest first (cursor is in "prev" direction and we're adding to the front of vm.events)
                             for (i = newEvents.length - 1; i >= 0; i--) {
                                 vm.events.unshift(newEvents[i]);
                             }
-                            resolve({
-                                season: inputs.season
-                            });
                         }
+                    }
+                }).then(function () {
+                    return {
+                        season: inputs.season
                     };
                 });
             }

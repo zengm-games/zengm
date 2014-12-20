@@ -73,8 +73,8 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
         return db.transaction(transactionObjectStores).objectStore(objectStore);
     }
 
-    function generateBasicDao(dbmOrDbl, objectStore, requestedMethods) {
-        var filteredMethods, i, methods;
+    function generateBasicDao(dbmOrDbl, objectStore) {
+        var methods;
 
         methods = {};
 
@@ -243,13 +243,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
             });
         };
 
-        filteredMethods = {};
-
-        for (i = 0; i < requestedMethods.length; i++) {
-            filteredMethods[requestedMethods[i]] = methods[requestedMethods[i]];
-        }
-
-        return filteredMethods;
+        return methods;
     }
 
 
@@ -345,7 +339,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
 
 
-    gameAttributes = generateBasicDao("dbl", "gameAttributes", ["get"]);
+    gameAttributes = generateBasicDao("dbl", "gameAttributes");
 
     /**
      * Set values in the gameAttributes objectStore and update the global variable g.
@@ -457,7 +451,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
 
 
-    players = generateBasicDao("dbl", "players", ["count", "put", "delete", "iterate"]);
+    players = generateBasicDao("dbl", "players");
 
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
     // filter: Arbitrary JS function to run on output with array.filter
@@ -585,7 +579,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
 
 
-    schedule = {};
+    schedule = generateBasicDao("dbl", "schedule");
 
     /**
      * Get an array of games from the schedule.
@@ -668,24 +662,24 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
     return {
         tx: tx,
-        leagues: generateBasicDao("dbm", "leagues", ["get", "getAll", "add", "put", "iterate"]),
-        achievements: generateBasicDao("dbm", "achievements", ["add", "getAll", "clear"]),
-        awards: generateBasicDao("dbl", "awards", ["get", "getAll", "put"]),
+        leagues: generateBasicDao("dbm", "leagues"),
+        achievements: generateBasicDao("dbm", "achievements"),
+        awards: generateBasicDao("dbl", "awards"),
         contracts: contracts,
-        draftOrder: generateBasicDao("dbl", "draftOrder", ["get", "put"]),
-        draftPicks: generateBasicDao("dbl", "draftPicks", ["get", "getAll", "add", "put", "delete", "iterate"]),
-        events: generateBasicDao("dbl", "events", ["getAll"]),
+        draftOrder: generateBasicDao("dbl", "draftOrder"),
+        draftPicks: generateBasicDao("dbl", "draftPicks"),
+        events: generateBasicDao("dbl", "events"),
         gameAttributes: gameAttributes,
-        games: generateBasicDao("dbl", "games", ["get", "count", "clear", "iterate"]),
-        messages: generateBasicDao("dbl", "messages", ["getAll", "add", "iterate"]),
-        negotiations: generateBasicDao("dbl", "negotiations", ["get", "getAll", "count", "add", "put", "delete", "clear"]),
+        games: generateBasicDao("dbl", "games"),
+        messages: generateBasicDao("dbl", "messages"),
+        negotiations: generateBasicDao("dbl", "negotiations"),
         payrolls: payrolls,
         players: players,
-        playerStats: generateBasicDao("dbl", "playerStats", ["getAll", "delete", "iterate"]),
-        playoffSeries: generateBasicDao("dbl", "playoffSeries", ["get", "put", "iterate"]),
-        releasedPlayers: generateBasicDao("dbl", "releasedPlayers", ["delete", "clear", "iterate"]),
+        playerStats: generateBasicDao("dbl", "playerStats"),
+        playoffSeries: generateBasicDao("dbl", "playoffSeries"),
+        releasedPlayers: generateBasicDao("dbl", "releasedPlayers"),
         schedule: schedule,
-        teams: generateBasicDao("dbl", "teams", ["get", "getAll", "put", "iterate"]),
-        trade: generateBasicDao("dbl", "trade", ["get", "put"])
+        teams: generateBasicDao("dbl", "teams"),
+        trade: generateBasicDao("dbl", "trade")
     };
 });

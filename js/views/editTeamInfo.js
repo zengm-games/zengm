@@ -2,69 +2,61 @@
  * @name views.editTeamInfo
  * @namespace Edit Team Info.
  */
-define(["db", "globals", "ui", "core/team", "lib/jquery", "lib/underscore", "util/bbgmView", "util/helpers"], function (db, g, ui, team, $, _, bbgmView, helpers) {
+define(["dao", "db", "globals", "ui", "core/team", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, team, _, bbgmView, helpers) {
     "use strict";
 
     function post(req) {
-        var button;
+        var button, userName, userRegion;
 
         button = document.getElementById("edit-team-info");
         button.disabled = true;
 
-        g.dbl.transaction("teams", "readwrite").objectStore("teams").openCursor().onsuccess = function (event) {
-            var cursor, t;
-
-            cursor = event.target.result;
-            if (cursor) {
-                t = cursor.value;
+        dao.teams.iterate({
+            modify: function (t) {
                 t.abbrev = req.params.abbrev[t.tid];
                 t.region = req.params.region[t.tid];
                 t.name = req.params.name[t.tid];
                 t.seasons[t.seasons.length - 1].pop = parseFloat(req.params.pop[t.tid]);
-                cursor.update(t);
 
-                // Update meta cache of user's team
                 if (t.tid === g.userTid) {
-                    db.updateMetaNameRegion(g.lid, t.name, t.region);
+                    userName = t.name;
+                    userRegion = t.region;
                 }
 
-                cursor.continue();
-            } else {
-                // Updating cached values for team regions and team names for easy access.
-                db.setGameAttributes({
-                    lastDbChange: Date.now(),
-                    teamAbbrevsCache: req.params.abbrev,
-                    teamRegionsCache: req.params.region,
-                    teamNamesCache: req.params.name
-                }, function () {
-                    button.disabled = false;
-                    ui.realtimeUpdate([], helpers.leagueUrl(["edit_team_info"]));
-                });
+                return t;
             }
-        };
+        }).then(function () {
+            // Update meta cache of user's team
+            return db.updateMetaNameRegion(g.lid, userName, userRegion);
+        }).then(function () {
+            return dao.gameAttributes.set({
+                lastDbChange: Date.now(),
+                teamAbbrevsCache: req.params.abbrev,
+                teamRegionsCache: req.params.region,
+                teamNamesCache: req.params.name
+            });
+        }).then(function () {
+            button.disabled = false;
+            ui.realtimeUpdate([], helpers.leagueUrl(["edit_team_info"]));
+        });
     }
 
     function updateTeamInfo() {
-        var deferred;
-        deferred = $.Deferred();
-
-        team.filter({
+        return team.filter({
             attrs: ["tid", "abbrev", "region", "name"],
             seasonAttrs: ["pop"],
             season: g.season
-        }, function (teams) {
+        }).then(function (teams) {
             var i;
 
             for (i = 0; i < teams.length; i++) {
                 teams[i].pop = helpers.round(teams[i].pop, 6);
             }
 
-            deferred.resolve({
+            return {
                 teams: teams
-            });
+            };
         });
-
-        return deferred.promise();
     }
 
     function uiFirst(vm) {
@@ -81,7 +73,7 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "lib/underscore", "uti
             reader = new window.FileReader();
             reader.readAsText(file);
             reader.onload = function (event) {
-                var i, newTeams, rosters;
+                var i, newTeams, rosters, userName, userRegion;
 
                 rosters = JSON.parse(event.target.result);
                 newTeams = rosters.teams;
@@ -128,13 +120,8 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "lib/underscore", "uti
                     }
                 }
 
-                g.dbl.transaction("teams", "readwrite").objectStore("teams").openCursor().onsuccess = function (event) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    if (cursor) {
-                        t = cursor.value;
-
+                dao.teams.iterate({
+                    modify: function (t) {
                         t.cid = newTeams[t.tid].cid;
                         t.did = newTeams[t.tid].did;
                         t.region = newTeams[t.tid].region;
@@ -145,25 +132,26 @@ define(["db", "globals", "ui", "core/team", "lib/jquery", "lib/underscore", "uti
                             t.imgURL = newTeams[t.tid].imgURL;
                         }
 
-                        // Update meta cache of user's team
                         if (t.tid === g.userTid) {
-                            db.updateMetaNameRegion(g.lid, t.name, t.region);
+                            userName = t.name;
+                            userRegion = t.region;
                         }
 
-                        cursor.update(t);
-                        cursor.continue();
-                    } else {
-                        // Updating cached values for team regions and team names for easy access.
-                        db.setGameAttributes({
-                            lastDbChange: Date.now(),
-                            teamAbbrevsCache: _.pluck(newTeams, "abbrev"),
-                            teamRegionsCache: _.pluck(newTeams, "region"),
-                            teamNamesCache: _.pluck(newTeams, "name")
-                        }, function () {
-                            ui.realtimeUpdate(["dbChange"]);
-                        });
+                        return t;
                     }
-                };
+                }).then(function () {
+                    // Update meta cache of user's team
+                    return db.updateMetaNameRegion(g.lid, userName, userRegion);
+                }).then(function () {
+                    return dao.gameAttributes.set({
+                        lastDbChange: Date.now(),
+                        teamAbbrevsCache: _.pluck(newTeams, "abbrev"),
+                        teamRegionsCache: _.pluck(newTeams, "region"),
+                        teamNamesCache: _.pluck(newTeams, "name")
+                    });
+                }).then(function () {
+                    ui.realtimeUpdate(["dbChange"]);
+                });
             };
         });
     }

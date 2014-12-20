@@ -981,17 +981,11 @@ console.log(event);
     }
 
     function updateMetaNameRegion(lid, name, region) {
-        g.dbm.transaction("leagues", "readwrite").objectStore("leagues").openCursor(lid).onsuccess = function (event) {
-            var cursor, l;
-
-            cursor = event.target.result;
-            if (cursor) {
-                l = cursor.value;
-                l.teamName = name;
-                l.teamRegion = region;
-                cursor.update(l);
-            }
-        };
+        return dao.leagues.get({key: lid}).then(function (l) {
+            l.teamName = name;
+            l.teamRegion = region;
+            return dao.leagues.put({value: l});
+        });
     }
 
     return {

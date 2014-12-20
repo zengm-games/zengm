@@ -200,7 +200,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
             return new Promise(function (resolve, reject) {
                 var objectStoreOrIndex;
 
-                objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
+                objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore, "readwrite");
 
                 if (options.index !== null) {
                     objectStoreOrIndex = objectStoreOrIndex.index(options.index);
@@ -668,7 +668,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
     return {
         tx: tx,
-        leagues: generateBasicDao("dbm", "leagues", ["get", "getAll", "add", "iterate"]),
+        leagues: generateBasicDao("dbm", "leagues", ["get", "getAll", "add", "put", "iterate"]),
         achievements: generateBasicDao("dbm", "achievements", ["add", "getAll", "clear"]),
         awards: generateBasicDao("dbl", "awards", ["get", "getAll", "put"]),
         contracts: contracts,

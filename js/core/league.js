@@ -407,7 +407,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                 p = player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
 
                                 // Save to database
-                                if (t2 === g.PLAYER.FREE_AGENT) {
+                                if (p.tid === g.PLAYER.FREE_AGENT) {
                                     player.addToFreeAgents(tx, p, null, baseMoods, cbAfterEachPlayer);
                                 } else {
                                     dao.players.put({ot: tx, value: p}).then(function (pid) {

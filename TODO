@@ -4,8 +4,6 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
-stats row being added for FAs
-
 use promises pervasively
 
 dao.tx and tx.complete()

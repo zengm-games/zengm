@@ -2,7 +2,7 @@
  * @name views.schedule
  * @namespace Show current schedule for user's team.
  */
-define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "views/components"], function (dao, g, ui, $, ko, bbgmView, helpers, components) {
+define(["dao", "globals", "ui", "lib/knockout", "util/bbgmView", "util/helpers", "views/components"], function (dao, g, ui, ko, bbgmView, helpers, components) {
     "use strict";
 
     var mapping;
@@ -66,15 +66,11 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "
 
     // Based on views.gameLog.updateGamesList
     function updateCompleted(inputs, updateEvents, vm) {
-        var deferred;
-
-        deferred = $.Deferred();
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.abbrev !== vm.abbrev()) {
             // Load all games in list
             vm.completed.loading(true);
             vm.completed.games([]);
-            helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games()).then(function (games) {
+            return helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games()).then(function (games) {
                 var i;
 
                 for (i = 0; i < games.length; i++) {
@@ -83,21 +79,17 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "
 
                 vm.completed.games(games);
                 vm.completed.loading(false);
-                deferred.resolve();
             });
-            return deferred.promise();
         }
         if (updateEvents.indexOf("gameSim") >= 0) {
             // Partial update of only new games
-            helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games()).then(function (games) {
+            return helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games()).then(function (games) {
                 var i;
                 for (i = games.length - 1; i >= 0; i--) {
                     games[i] = helpers.formatCompletedGame(games[i]);
                     vm.completed.games.unshift(games[i]);
                 }
-                deferred.resolve();
             });
-            return deferred.promise();
         }
     }
 

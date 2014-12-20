@@ -97,7 +97,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             return tx.complete();
         };
 
-        tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "teams"]);
+        tx = dao.tx(["players", "playerStats", "releasedPlayers", "teams"]);
 
         // Get teams for won/loss record for awards, as well as finding the teams with the best records
         return team.filter({

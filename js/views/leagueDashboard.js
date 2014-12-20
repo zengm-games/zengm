@@ -116,64 +116,62 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
     }
 
     function updateGames(inputs, updateEvents, vm) {
-        var deferred, numShowCompleted, vars;
+        var completed, numShowCompleted;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            deferred = $.Deferred();
-            vars = {};
-
             numShowCompleted = 4;
-            vars.completed = [];
+            completed = [];
+
             // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
-            g.dbl.transaction("games").objectStore("games").index("season").openCursor(g.season, "prev").onsuccess = function (event) {
-                var cursor, game, i, overtime;
+            return dao.games.iterate({
+                index: "season",
+                key: g.season,
+                direction: "prev",
+                modify: function (game, shortCircuit) {
+                    var i, overtime;
 
-                cursor = event.target.result;
-                if (cursor && vars.completed.length < numShowCompleted) {
-                    game = cursor.value;
-
-                    if (game.overtimes === 1) {
-                        overtime = " (OT)";
-                    } else if (game.overtimes > 1) {
-                        overtime = " (" + game.overtimes + "OT)";
+                    if (completed.length >= numShowCompleted) {
+                        shortCircuit();
                     } else {
-                        overtime = "";
-                    }
-
-                    // Check tid
-                    if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
-                        vars.completed.push({
-                            gid: game.gid,
-                            overtime: overtime
-                        });
-
-                        i = vars.completed.length - 1;
-                        if (game.teams[0].tid === g.userTid) {
-                            vars.completed[i].home = true;
-                            vars.completed[i].pts = game.teams[0].pts;
-                            vars.completed[i].oppPts = game.teams[1].pts;
-                            vars.completed[i].oppTid = game.teams[1].tid;
-                            vars.completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
-                            vars.completed[i].won = game.teams[0].pts > game.teams[1].pts;
-                        } else if (game.teams[1].tid === g.userTid) {
-                            vars.completed[i].home = false;
-                            vars.completed[i].pts = game.teams[1].pts;
-                            vars.completed[i].oppPts = game.teams[0].pts;
-                            vars.completed[i].oppTid = game.teams[0].tid;
-                            vars.completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
-                            vars.completed[i].won = game.teams[1].pts > game.teams[0].pts;
+                        if (game.overtimes === 1) {
+                            overtime = " (OT)";
+                        } else if (game.overtimes > 1) {
+                            overtime = " (" + game.overtimes + "OT)";
+                        } else {
+                            overtime = "";
                         }
 
-                        vars.completed[i] = helpers.formatCompletedGame(vars.completed[i]);
-                    }
+                        // Check tid
+                        if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
+                            completed.push({
+                                gid: game.gid,
+                                overtime: overtime
+                            });
 
-                    cursor.continue();
-                } else {
-                    vm.completed(vars.completed);
-                    deferred.resolve();
+                            i = completed.length - 1;
+                            if (game.teams[0].tid === g.userTid) {
+                                completed[i].home = true;
+                                completed[i].pts = game.teams[0].pts;
+                                completed[i].oppPts = game.teams[1].pts;
+                                completed[i].oppTid = game.teams[1].tid;
+                                completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
+                                completed[i].won = game.teams[0].pts > game.teams[1].pts;
+                            } else if (game.teams[1].tid === g.userTid) {
+                                completed[i].home = false;
+                                completed[i].pts = game.teams[1].pts;
+                                completed[i].oppPts = game.teams[0].pts;
+                                completed[i].oppTid = game.teams[0].tid;
+                                completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
+                                completed[i].won = game.teams[1].pts > game.teams[0].pts;
+                            }
+
+                            completed[i] = helpers.formatCompletedGame(completed[i]);
+                        }
+                    }
                 }
-            };
-            return deferred.promise();
+            }).then(function () {
+                vm.completed(completed);
+            });
         }
     }
 

@@ -164,24 +164,21 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 for (i = 0; i < players.length; i++) {
                     if (players[i].active) {
                         (function (i) {
-                            var key;
-                            key = [players[i].pid, g.season, players[i].tid];
-                            tx.objectStore("playerStats").index("pid, season, tid").openCursor(key, "prev").onsuccess = function (event) {
-                                var cursor, playerStats;
-
-                                cursor = event.target.result;
-                                playerStats = cursor.value;
-
-                                // Since index is not on playoffs, manually check
-                                if (playerStats.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
-                                    return cursor.continue();
+                            dao.playerStats.iterate({
+                                ot: tx,
+                                index: "pid, season, tid",
+                                key: [players[i].pid, g.season, players[i].tid],
+                                direction: "prev",
+                                modify: function (ps, shortCircuit) {
+                                    // Since index is not on playoffs, manually check
+                                    if (ps.playoffs === (g.phase === g.PHASE.PLAYOFFS)) {
+                                        shortCircuit();
+                                        ps.per = PER[i];
+                                        ps.ewa = EWA[i];
+                                        return ps;
+                                    }
                                 }
-
-                                playerStats.per = PER[i];
-                                playerStats.ewa = EWA[i];
-
-                                cursor.update(playerStats);
-                            };
+                            });
                         }(i));
                     }
                 }

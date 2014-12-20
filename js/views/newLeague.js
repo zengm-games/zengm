@@ -57,19 +57,19 @@ define(["dao", "globals", "ui", "core/league", "lib/jquery", "lib/knockout.mappi
 
                     randomizeRosters = req.params.hasOwnProperty("randomize-rosters");
 
-                    league.create(req.params.name, tid, leagueFile, startingSeason, randomizeRosters, function (lid) {
+                    league.create(req.params.name, tid, leagueFile, startingSeason, randomizeRosters).then(function (lid) {
                         localStorage.lastSelectedTid = tid;
                         ui.realtimeUpdate([], "/l/" + lid, cb);
                     });
                 };
             } else {
-                league.create(req.params.name, tid, null, startingSeason, false, function (lid) {
+                league.create(req.params.name, tid, null, startingSeason, false).then(function (lid) {
                     localStorage.lastSelectedTid = tid;
                     ui.realtimeUpdate([], "/l/" + lid, cb);
                 });
             }
         } else {
-            league.create(req.params.name, tid, null, startingSeason, false, function (lid) {
+            league.create(req.params.name, tid, null, startingSeason, false).then(function (lid) {
                 localStorage.lastSelectedTid = tid;
                 ui.realtimeUpdate([], "/l/" + lid, cb);
             });

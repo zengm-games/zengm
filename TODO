@@ -34,6 +34,7 @@ API design
   remove filter option from dao.players.getAll - also confusing, can just apply manually
 
 core.league
+core.game - get rid of all internal functions! Promises are enough
 various functions in db
 
 rewrite old upgrading code?

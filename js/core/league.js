@@ -250,7 +250,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
                         player.updateValues(tx, p, playerStats.reverse()).then(function (p) {
                             dao.players.put({ot: tx, value: p}).then(function (pid) {
-                                var addStatsRows, i;
+                                var addStatsRows;
 
                                 // When adding a player, this is the only way to know the pid
                                 p.pid = pid;
@@ -279,12 +279,12 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                                         // Delete psid because it can cause problems due to interaction addStatsRow above
                                         delete ps.psid;
 
-                                        tx.objectStore("playerStats").add(ps).onsuccess = function () {
+                                        dao.playerStats.add({ot: tx, value: ps}).then(function () {
                                             // On to the next one
                                             if (playerStats.length > 0) {
                                                 addStatsRows();
                                             }
-                                        };
+                                        });
                                     };
                                     addStatsRows();
                                 }

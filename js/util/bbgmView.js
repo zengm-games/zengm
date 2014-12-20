@@ -31,7 +31,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
 
     function update(args) {
         return function (inputs, updateEvents, cb) {
-            var afterEverything, i, container, containerEl, promises;
+            var container, containerEl, promisesBefore;
 
             container = g.lid !== null ? "league_content" : "content";
             containerEl = document.getElementById(container);
@@ -55,22 +55,9 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
                 return;
             }
 
-            // This will be called after every runBefore and runWhenever function is finished.
-            afterEverything = _.after(args.runWhenever.length + args.runAfter.length + 1, function () {
-                if (containerEl.dataset.idLoading === containerEl.dataset.idLoaded) {
-                    containerEl.dataset.idLoading = ""; // Done loading
-                }
-
-                // Scroll to top
-                if (_.isEqual(updateEvents, ["firstRun"])) {
-                    window.scrollTo(window.pageXOffset, 0);
-                }
-
-                cb();
-            });
-
-            promises = args.runBefore.map(function (fn) { return fn(inputs, updateEvents, vm); });
-            Promise.all(promises).then(function (results) {
+            // Resolve all the promises before updating the UI to minimize flicker
+            promisesBefore = args.runBefore.map(function (fn) { return fn(inputs, updateEvents, vm); });
+            Promise.all(promisesBefore).then(function (results) {
                 var vars;
 
                 if (results.length > 1) {
@@ -92,31 +79,42 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
                 }
 
                 display(args, updateEvents);
-
-                afterEverything();
             }).then(function () {
+                var promisesAfter;
+
                 // Run promises in parallel, update when each one is ready
-                for (i = 0; i < args.runAfter.length; i++) {
-                    $.when(args.runAfter[i](inputs, updateEvents, vm)).done(function (vars) {
+                promisesAfter = args.runAfter.map(function (fn) {
+                    return Promise.resolve(fn(inputs, updateEvents, vm)).then(function (vars) {
                         if (vars !== undefined) {
                             komapping.fromJS(vars, args.mapping, vm);
                         }
-
-                        afterEverything();
                     });
-                }
-            });
-
-            // Run promises in parallel, update when each one is ready
-            for (i = 0; i < args.runWhenever.length; i++) {
-                $.when(args.runWhenever[i](inputs, updateEvents, vm)).done(function (vars) {
-                    if (vars !== undefined) {
-                        komapping.fromJS(vars, args.mapping, vm);
-                    }
-
-                    afterEverything();
                 });
-            }
+                return Promise.all(promisesAfter);
+            }).then(function () {
+                var promisesWhenever;
+
+                // Run promises in parallel, update when each one is ready
+                promisesWhenever = args.runWhenever.map(function (fn) {
+                    return Promise.resolve(fn(inputs, updateEvents, vm)).then(function (vars) {
+                        if (vars !== undefined) {
+                            komapping.fromJS(vars, args.mapping, vm);
+                        }
+                    });
+                });
+                return Promise.all(promisesWhenever);
+            }).then(function () {
+                if (containerEl.dataset.idLoading === containerEl.dataset.idLoaded) {
+                    containerEl.dataset.idLoading = ""; // Done loading
+                }
+
+                // Scroll to top
+                if (_.isEqual(updateEvents, ["firstRun"])) {
+                    window.scrollTo(window.pageXOffset, 0);
+                }
+
+                cb();
+            });
         };
     }
 

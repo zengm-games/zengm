@@ -83,7 +83,6 @@ define(["dao", "globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util
                     }
                 }
 
-console.log(boxScore);
                 return {
                     boxScore: boxScore
                 };

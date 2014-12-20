@@ -149,9 +149,9 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
      * @memberOf util.helpers
      * @param {Array.<string>} achievements Array of achievement IDs (see allAchievements above).
      * @param {boolean=} silent If true, don't show any notifications (like if achievements are only being moved from IDB to remote). Default false.
-     * @param {function()=} cb Optional callback.
+     * @return {Promise}
      */
-    function addAchievements(achievements, silent, cb) {
+    function addAchievements(achievements, silent) {
         var addToIndexedDB, notify;
 
         silent = silent !== undefined ? silent : false;
@@ -175,51 +175,43 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
             }
         };
 
-        addToIndexedDB = function (achievements, cb) {
-            var i, achievementStore, tx;
+        addToIndexedDB = function (achievements) {
+            var i, tx;
 
-            tx = g.dbm.transaction("achievements", "readwrite");
-            achievementStore = tx.objectStore("achievements");
+            tx = dao.tx("achievements", "readwrite");
             for (i = 0; i < achievements.length; i++) {
-                achievementStore.add({
-                    slug: achievements[i]
+                dao.achievements.add({
+                    ot: tx,
+                    value: {
+                        slug: achievements[i]
+                    }
                 });
                 notify(achievements[i]);
             }
 
-            tx.oncomplete = function () {
-                if (cb !== undefined) {
-                    cb();
-                }
-            };
+            return tx.complete();
         };
 
-        $.ajax({
+        return Promise.resolve($.ajax({
             type: "POST",
             url: "http://account.basketball-gm." + g.tld + "/add_achievements.php",
             data: {achievements: achievements, sport: g.sport},
             dataType: "json",
             xhrFields: {
                 withCredentials: true
-            },
-            success: function (data) {
-                var i;
-
-                if (data.success) {
-                    for (i = 0; i < achievements.length; i++) {
-                        notify(achievements[i]);
-                    }
-
-                    if (cb !== undefined) {
-                        cb();
-                    }
-                } else {
-                    addToIndexedDB(achievements, cb);
-                }
-            },
-            error: function () {
-                addToIndexedDB(achievements, cb);
             }
+        })).then(function (data) {
+            var i;
+
+            if (data.success) {
+                for (i = 0; i < achievements.length; i++) {
+                    notify(achievements[i]);
+                }
+            } else {
+                return addToIndexedDB(achievements);
+            }
+        }).catch(function () {
+            return addToIndexedDB(achievements);
         });
     }
 

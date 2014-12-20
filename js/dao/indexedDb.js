@@ -11,7 +11,11 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     function tx(storeNames, mode) {
         var tx;
 
-        tx = g.dbl.transaction(storeNames, mode);
+        if (storeNames === "achievements") {
+            tx = g.dbm.transaction(storeNames, mode);
+        } else {
+            tx = g.dbl.transaction(storeNames, mode);
+        }
 
         tx.complete = function () {
             return new Promise(function (resolve, reject) {
@@ -662,12 +666,10 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         });
     };
 
-
-
     return {
         tx: tx,
         leagues: generateBasicDao("dbm", "leagues", ["get", "getAll", "add", "iterate"]),
-        achievements: generateBasicDao("dbm", "achievements", ["getAll", "clear"]),
+        achievements: generateBasicDao("dbm", "achievements", ["add", "getAll", "clear"]),
         awards: generateBasicDao("dbl", "awards", ["get", "getAll", "put"]),
         contracts: contracts,
         draftOrder: generateBasicDao("dbl", "draftOrder", ["get", "put"]),

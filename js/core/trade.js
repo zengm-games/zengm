@@ -70,6 +70,49 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
     }
 
     /**
+     * Filter untradable players.
+     *
+     * If a player is not tradable, set untradable flag in the root of the object.
+     * 
+     * @memberOf core.trade
+     * @param {Array.<Object>} players Array of player objects or partial player objects
+     * @return {Array.<Object>} Processed input
+     */
+    function filterUntradable(players) {
+        var i;
+
+        for (i = 0; i < players.length; i++) {
+            if (players[i].contract.exp <= g.season && g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
+                // If the season is over, can't trade players whose contracts are expired
+                players[i].untradable = true;
+                players[i].untradableMsg = "Cannot trade expired contracts";
+            } else if (players[i].gamesUntilTradable > 0) {
+                // Can't trade players who recently were signed or traded
+                players[i].untradable = true;
+                players[i].untradableMsg = "Cannot trade recently-acquired player for " + players[i].gamesUntilTradable + " more games";
+            } else {
+                players[i].untradable = false;
+                players[i].untradableMsg = "";
+            }
+        }
+
+        return players;
+    }
+
+    /**
+     * Is a player untradable.
+     *
+     * Just calls filterUntradable and discards everything but the boolean.
+     * 
+     * @memberOf core.trade
+     * @param {<Object>} players Player object or partial player objects
+     * @return {boolean} Processed input
+     */
+    function isUntradable(player) {
+        return filterUntradable([player])[0].untradable;
+    }
+
+    /**
      * Validates that players are allowed to be traded and updates the database.
      * 
      * If any of the player IDs submitted do not correspond with the two teams that are trading, they will be ignored.
@@ -432,13 +475,11 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
 
             if (!holdUserConstant) {
                 // Get all players not in userPids
-                tx.objectStore("players").index("tid").openCursor(teams[0].tid).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    if (cursor) {
-                        p = cursor.value;
-
+                dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: teams[0].tid,
+                    modify: function (p) {
                         if (teams[0].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                             assets.push({
                                 type: "player",
@@ -446,20 +487,16 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                                 tid: teams[0].tid
                             });
                         }
-
-                        cursor.continue();
                     }
-                };
+                });
             }
 
             // Get all players not in otherPids
-            tx.objectStore("players").index("tid").openCursor(teams[1].tid).onsuccess = function (event) {
-                var cursor, p;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-
+            dao.players.iterate({
+                ot: tx,
+                index: "tid",
+                key: teams[1].tid,
+                modify: function (p) {
                     if (teams[1].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                         assets.push({
                             type: "player",
@@ -467,20 +504,16 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                             tid: teams[1].tid
                         });
                     }
-
-                    cursor.continue();
                 }
-            };
+            });
 
             if (!holdUserConstant) {
                 // Get all draft picks not in userDpids
-                tx.objectStore("draftPicks").index("tid").openCursor(teams[0].tid).onsuccess = function (event) {
-                    var cursor, dp;
-
-                    cursor = event.target.result;
-                    if (cursor) {
-                        dp = cursor.value;
-
+                dao.draftPicks.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: teams[0].tid,
+                    modify: function (dp) {
                         if (teams[0].dpids.indexOf(dp.dpid) < 0) {
                             assets.push({
                                 type: "draftPick",
@@ -488,20 +521,16 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                                 tid: teams[0].tid
                             });
                         }
-
-                        cursor.continue();
                     }
-                };
+                });
             }
 
             // Get all draft picks not in otherDpids
-            tx.objectStore("draftPicks").index("tid").openCursor(teams[1].tid).onsuccess = function (event) {
-                var cursor, dp;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    dp = cursor.value;
-
+            dao.draftPicks.iterate({
+                ot: tx,
+                index: "tid",
+                key: teams[1].tid,
+                modify: function (dp) {
                     if (teams[1].dpids.indexOf(dp.dpid) < 0) {
                         assets.push({
                             type: "draftPick",
@@ -509,10 +538,8 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                             tid: teams[1].tid
                         });
                     }
-
-                    cursor.continue();
                 }
-            };
+            });
 
             return tx.complete().then(function () {
                 var otherDpids, otherPids, promises, userPids, userDpids;
@@ -681,50 +708,6 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
             });
         });
     }
-
-    /**
-     * Filter untradable players.
-     *
-     * If a player is not tradable, set untradable flag in the root of the object.
-     * 
-     * @memberOf core.trade
-     * @param {Array.<Object>} players Array of player objects or partial player objects
-     * @return {Array.<Object>} Processed input
-     */
-    function filterUntradable(players) {
-        var i;
-
-        for (i = 0; i < players.length; i++) {
-            if (players[i].contract.exp <= g.season && g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
-                // If the season is over, can't trade players whose contracts are expired
-                players[i].untradable = true;
-                players[i].untradableMsg = "Cannot trade expired contracts";
-            } else if (players[i].gamesUntilTradable > 0) {
-                // Can't trade players who recently were signed or traded
-                players[i].untradable = true;
-                players[i].untradableMsg = "Cannot trade recently-acquired player for " + players[i].gamesUntilTradable + " more games";
-            } else {
-                players[i].untradable = false;
-                players[i].untradableMsg = "";
-            }
-        }
-
-        return players;
-    }
-
-    /**
-     * Is a player untradable.
-     *
-     * Just calls filterUntradable and discards everything but the boolean.
-     * 
-     * @memberOf core.trade
-     * @param {<Object>} players Player object or partial player objects
-     * @return {boolean} Processed input
-     */
-    function isUntradable(player) {
-        return filterUntradable([player])[0].untradable;
-    }
-
 
     /**
      * Estimate draft pick values, based on the generated draft prospects in the database.

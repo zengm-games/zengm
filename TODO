@@ -6,8 +6,6 @@ THE FLATTENING
 
 use promises pervasively
 
-core.trade
-
 dao.tx and tx.complete()
   implemented now in core.draft.setOrder
   test in other places

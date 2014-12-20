@@ -671,7 +671,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         awards: generateBasicDao("dbl", "awards", ["get", "getAll", "put"]),
         contracts: contracts,
         draftOrder: generateBasicDao("dbl", "draftOrder", ["get", "put"]),
-        draftPicks: generateBasicDao("dbl", "draftPicks", ["get", "getAll", "add", "put", "delete"]),
+        draftPicks: generateBasicDao("dbl", "draftPicks", ["get", "getAll", "add", "put", "delete", "iterate"]),
         events: generateBasicDao("dbl", "events", ["getAll"]),
         gameAttributes: gameAttributes,
         games: generateBasicDao("dbl", "games", ["count"]),

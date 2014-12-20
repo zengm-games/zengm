@@ -2,7 +2,7 @@
  * @name core.trade
  * @namespace Trades between the user's team and other teams.
  */
-define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib/underscore"], function (dao, db, g, player, team, Promise, _) {
+define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/helpers"], function (dao, db, g, player, team, Promise, _, helpers) {
     "use strict";
 
     /**
@@ -623,54 +623,60 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
      * This should be called for a trade negotiation, as it will update the trade objectStore.
      *
      * @memberOf core.trade
-     * @param {function(string)} cb Callback function. The argument is a string containing a message to be dispalyed to the user, as if it came from the AI GM.
+     * @return {Promise.string} Resolves to a string containing a message to be dispalyed to the user, as if it came from the AI GM.
      */
-    function makeItWorkTrade(cb) {
-        getPickValues().then(function (estValues) {
-            get().then(function (teams0) {
-                makeItWork(teams0, false, estValues).spread(function (found, teams) {
-                    if (!found) {
-                        cb(g.teamRegionsCache[teams0[1].tid] + ' GM: "I can\'t afford to give up so much."');
-                    } else {
-                        summary(teams).then(function (s) {
-                            var tx;
+    function makeItWorkTrade() {
+        return Promise.all([
+            getPickValues(),
+            get()
+        ]).spread(function (estValues, teams0) {
+            return makeItWork(helpers.deepCopy(teams0), false, estValues).spread(function (found, teams) {
+                if (!found) {
+                    return g.teamRegionsCache[teams[1].tid] + ' GM: "I can\'t afford to give up so much."';
+                }
 
-                            // Store AI's proposed trade in database
-                            tx = g.dbl.transaction("trade", "readwrite");
-                            tx.objectStore("trade").openCursor(0).onsuccess = function (event) {
-                                var cursor, i, updated, tr;
+                return summary(teams).then(function (s) {
+                    var i, updated;
 
-                                cursor = event.target.result;
-                                tr = cursor.value;
+                    // Store AI's proposed trade in database, if it's different
+                    updated = false;
 
-                                updated = false;
-
-                                for (i = 0; i < 2; i++) {
-                                    if (teams[i].tid !== tr.teams[i].tid) {
-                                        updated = true;
-                                    }
-                                    if (teams[i].pids.toString() !== tr.teams[i].pids.toString()) {
-                                        updated = true;
-                                    }
-                                    if (teams[i].dpids.toString() !== tr.teams[i].dpids.toString()) {
-                                        updated = true;
-                                    }
-                                }
-
-                                if (updated) {
-                                    tr.teams = teams;
-                                    cursor.update(tr);
-                                }
-                            };
-                            tx.oncomplete = function () {
-                                if (s.warning) {
-                                    cb(g.teamRegionsCache[teams[1].tid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."');
-                                } else {
-                                    cb(g.teamRegionsCache[teams[1].tid] + ' GM: "How does this sound?"');
-                                }
-                            };
-                        });
+                    for (i = 0; i < 2; i++) {
+                        if (teams[i].tid !== teams0[i].tid) {
+                            updated = true;
+                            break;
+                        }
+                        if (teams[i].pids.toString() !== teams0[i].pids.toString()) {
+                            updated = true;
+                            break;
+                        }
+                        if (teams[i].dpids.toString() !== teams0[i].dpids.toString()) {
+                            updated = true;
+                            break;
+                        }
                     }
+
+                    return Promise.try(function () {
+                        var tx;
+
+                        if (updated) {
+                            tx = dao.tx("trade", "readwrite");
+                            dao.trade.put({
+                                ot: tx,
+                                value: {
+                                    rid: 0,
+                                    teams: teams
+                                }
+                            });
+                            return tx.complete();
+                        }
+                    }).then(function () {
+                        if (s.warning) {
+                            return g.teamRegionsCache[teams[1].tid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."';
+                        }
+
+                        return g.teamRegionsCache[teams[1].tid] + ' GM: "How does this sound?"';
+                    });
                 });
             });
         });

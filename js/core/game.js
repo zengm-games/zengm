@@ -5,39 +5,216 @@
 define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "core/team", "lib/bluebird", "lib/underscore", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, db, g, ui, freeAgents, finances, gameSim, player, season, team, Promise, _, advStats, eventLog, lock, helpers, random) {
     "use strict";
 
-    function Game() {
-    }
-
-    Game.prototype.writeStats = function (tx, results, playoffs, cb) {
-        var that;
-
+    function writeStats(tx, results) {
         // Retrieve stats
-        this.team = results.team;
-        this.playoffs = playoffs;
-        this.id = results.gid;
-        this.overtimes = results.overtimes;
-        this.home = [true, false];
+//        this.team = results.team;
+//        this.playoffs = playoffs;
+//        this.id = results.gid;
+//        this.overtimes = results.overtimes;
+//        this.home = [true, false];
 
         // Are the teams in the same conference/division?
-        this.sameConf = false;
+/*        this.sameConf = false;
         this.sameDiv = false;
         if (this.team[0].cid === this.team[1].cid) {
             this.sameConf = true;
         }
         if (this.team[0].did === this.team[1].did) {
             this.sameDiv = true;
-        }
+        }*/
 
-        that = this;
+        return writeTeamStats(tx, results);/*.then(function () {
+            return writePlayerStats(tx, results);
+        }).then(function () {
+            return writeGameStats(tx, results);
+        });*/
+    }
 
-        this.writeTeamStats(tx, 0, function () {
-            that.writePlayerStats(tx, 0, 0, function () {
-                that.writeGameStats(tx, cb);
+    function writeTeamStats(tx, results) {
+        return Promise.all([0, 1].map(function (t1) {
+            var t2;
+
+            t2 = t1 === 1 ? 0 : 1;
+
+            return Promise.all([
+                dao.payrolls.get({ot: tx, key: results.team[t1].id}).get(0),
+                dao.teams.get({ot: tx, key: results.team[t1].id})
+            ]).spread(function (payroll, t) {
+                var att, coachingPaid, count, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
+
+                teamSeason = t.seasons[t.seasons.length - 1];
+                teamStats = t.stats[t.stats.length - 1];
+
+                if (results.team[t1].stat.pts > results.team[t2].stat.pts) {
+                    won = true;
+                } else {
+                    won = false;
+                }
+
+                // Attendance - base calculation now, which is used for other revenue estimates
+                att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
+                if (g.phase === g.PHASE.PLAYOFFS) {
+                    att *= 1.5;  // Playoff bonus
+                }
+
+                // Some things are only paid for regular season games.
+                salaryPaid = 0;
+                scoutingPaid = 0;
+                coachingPaid = 0;
+                healthPaid = 0;
+                facilitiesPaid = 0;
+                merchRevenue = 0;
+                sponsorRevenue = 0;
+                nationalTvRevenue = 0;
+                localTvRevenue = 0;
+                if (g.phase !== g.PHASE.PLAYOFFS) {
+                    // All in [thousands of dollars]
+                    salaryPaid = payroll / 82;
+                    scoutingPaid = t.budget.scouting.amount / 82;
+                    coachingPaid = t.budget.coaching.amount / 82;
+                    healthPaid = t.budget.health.amount / 82;
+                    facilitiesPaid = t.budget.facilities.amount / 82;
+                    merchRevenue = 3 * att / 1000;
+                    if (merchRevenue > 250) {
+                        merchRevenue = 250;
+                    }
+                    sponsorRevenue = 10 * att / 1000;
+                    if (sponsorRevenue > 600) {
+                        sponsorRevenue = 600;
+                    }
+                    nationalTvRevenue = 250;
+                    localTvRevenue = 10 * att / 1000;
+                    if (localTvRevenue > 1200) {
+                        localTvRevenue = 1200;
+                    }
+                }
+
+                // Attendance - final estimate
+                att = random.gauss(att, 1000);
+                att *= 30 / t.budget.ticketPrice.amount;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
+                att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(t, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
+                if (att > 25000) {
+                    att = 25000;
+                } else if (att < 0) {
+                    att = 0;
+                }
+                att = Math.round(att);
+                ticketRevenue = t.budget.ticketPrice.amount * att / 1000;  // [thousands of dollars]
+
+                // Hype - relative to the expectations of prior seasons
+                if (teamSeason.gp > 5 && g.phase !== g.PHASE.PLAYOFFS) {
+                    winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
+                    winpOld = 0;
+                    count = 0;
+                    for (i = t.seasons.length - 2; i >= 0; i--) { // Start at last season, go back
+                        winpOld += t.seasons[i].won / (t.seasons[i].won + t.seasons[i].lost);
+                        count++;
+                        if (count === 4) {
+                            break;  // Max 4 seasons
+                        }
+                    }
+                    if (count > 0) {
+                        winpOld /= count;
+                    } else {
+                        winpOld = 0.5;  // Default for new games
+                    }
+
+                    // It should never happen, but winp and winpOld sometimes turn up as NaN due to a duplicate season entry or the user skipping seasons
+                    if (winp !== winp) {
+                        winp = 0;
+                    }
+                    if (winpOld !== winpOld) {
+                        winpOld = 0;
+                    }
+
+                    teamSeason.hype = teamSeason.hype + 0.01 * (winp - 0.55) + 0.015 * (winp - winpOld);
+                    if (teamSeason.hype > 1) {
+                        teamSeason.hype = 1;
+                    } else if (teamSeason.hype < 0) {
+                        teamSeason.hype = 0;
+                    }
+                }
+
+                revenue = merchRevenue + sponsorRevenue + nationalTvRevenue + localTvRevenue + ticketRevenue;
+                expenses = salaryPaid + scoutingPaid + coachingPaid + healthPaid + facilitiesPaid;
+                teamSeason.cash += revenue - expenses;
+                teamSeason.att += att;
+                teamSeason.gp += 1;
+                teamSeason.revenues.merch.amount += merchRevenue;
+                teamSeason.revenues.sponsor.amount += sponsorRevenue;
+                teamSeason.revenues.nationalTv.amount += nationalTvRevenue;
+                teamSeason.revenues.localTv.amount += localTvRevenue;
+                teamSeason.revenues.ticket.amount += ticketRevenue;
+                teamSeason.expenses.salary.amount += salaryPaid;
+                teamSeason.expenses.scouting.amount += scoutingPaid;
+                teamSeason.expenses.coaching.amount += coachingPaid;
+                teamSeason.expenses.health.amount += healthPaid;
+                teamSeason.expenses.facilities.amount += facilitiesPaid;
+
+                keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+                for (i = 0; i < keys.length; i++) {
+                    teamStats[keys[i]] += results.team[t1].stat[keys[i]];
+                }
+                teamStats.gp += 1;
+                teamStats.trb += results.team[t1].stat.orb + results.team[t1].stat.drb;
+                teamStats.oppPts += results.team[t2].stat.pts;
+
+                if (teamSeason.lastTen.length === 10 && g.phase !== g.PHASE.PLAYOFFS) {
+                    teamSeason.lastTen.pop();
+                }
+
+                if (won && g.phase !== g.PHASE.PLAYOFFS) {
+                    teamSeason.won += 1;
+                    if (results.team[0].did === results.team[1].did) {
+                        teamSeason.wonDiv += 1;
+                    }
+                    if (results.team[0].cid === results.team[1].cid) {
+                        teamSeason.wonConf += 1;
+                    }
+
+                    if (t1 === 0) {
+                        teamSeason.wonHome += 1;
+                    } else {
+                        teamSeason.wonAway += 1;
+                    }
+
+                    teamSeason.lastTen.unshift(1);
+
+                    if (teamSeason.streak >= 0) {
+                        teamSeason.streak += 1;
+                    } else {
+                        teamSeason.streak = 1;
+                    }
+                } else if (g.phase !== g.PHASE.PLAYOFFS) {
+                    teamSeason.lost += 1;
+                    if (results.team[0].did === results.team[1].did) {
+                        teamSeason.lostDiv += 1;
+                    }
+                    if (results.team[0].cid === results.team[1].cid) {
+                        teamSeason.lostConf += 1;
+                    }
+
+                    if (t1 === 0) {
+                        teamSeason.lostHome += 1;
+                    } else {
+                        teamSeason.lostAway += 1;
+                    }
+
+                    teamSeason.lastTen.unshift(0);
+
+                    if (teamSeason.streak <= 0) {
+                        teamSeason.streak -= 1;
+                    } else {
+                        teamSeason.streak = -1;
+                    }
+                }
+
+                return dao.teams.put({ot: tx, value: t});
             });
-        });
+        }));
     };
 
-    Game.prototype.writePlayerStats = function (tx, t, p, cb) {
+    function writePlayerStats(tx, results) {
         var afterDonePlayer, key, that;
 
         that = this;
@@ -120,208 +297,9 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 }
             };
         }
-    };
+    }
 
-    Game.prototype.writeTeamStats = function (tx, t1, cb) {
-        var t2, that;
-
-        if (t1 === 0) {
-            t2 = 1;
-        } else {
-            t2 = 0;
-        }
-        that = this;
-
-//console.log('writeTeamStats');
-        dao.payrolls.get({ot: tx, key: that.team[t1].id}).get(0).then(function (payroll) {
-            // Team stats
-//console.log('writeTeamStats 2');
-            tx.objectStore("teams").openCursor(that.team[t1].id).onsuccess = function (event) {
-                var att, coachingPaid, count, cursor, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, t, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
-
-                cursor = event.target.result;
-                t = cursor.value;
-
-                teamSeason = _.last(t.seasons);
-                teamStats = _.last(t.stats);
-
-                if (that.team[t1].stat.pts > that.team[t2].stat.pts) {
-                    won = true;
-                } else {
-                    won = false;
-                }
-
-                // Attendance - base calculation now, which is used for other revenue estimates
-                att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
-                if (that.playoffs) {
-                    att *= 1.5;  // Playoff bonus
-                }
-
-                // Some things are only paid for regular season games.
-                salaryPaid = 0;
-                scoutingPaid = 0;
-                coachingPaid = 0;
-                healthPaid = 0;
-                facilitiesPaid = 0;
-                merchRevenue = 0;
-                sponsorRevenue = 0;
-                nationalTvRevenue = 0;
-                localTvRevenue = 0;
-                if (!that.playoffs) {
-                    // All in [thousands of dollars]
-                    salaryPaid = payroll / 82;
-                    scoutingPaid = t.budget.scouting.amount / 82;
-                    coachingPaid = t.budget.coaching.amount / 82;
-                    healthPaid = t.budget.health.amount / 82;
-                    facilitiesPaid = t.budget.facilities.amount / 82;
-                    merchRevenue = 3 * att / 1000;
-                    if (merchRevenue > 250) {
-                        merchRevenue = 250;
-                    }
-                    sponsorRevenue = 10 * att / 1000;
-                    if (sponsorRevenue > 600) {
-                        sponsorRevenue = 600;
-                    }
-                    nationalTvRevenue = 250;
-                    localTvRevenue = 10 * att / 1000;
-                    if (localTvRevenue > 1200) {
-                        localTvRevenue = 1200;
-                    }
-                }
-
-
-                // Attendance - final estimate
-                att = random.gauss(att, 1000);
-                att *= 30 / t.budget.ticketPrice.amount;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
-                att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(t, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
-                if (att > 25000) {
-                    att = 25000;
-                } else if (att < 0) {
-                    att = 0;
-                }
-                that.att = Math.round(att);
-                ticketRevenue = t.budget.ticketPrice.amount * att / 1000;  // [thousands of dollars]
-
-                // Hype - relative to the expectations of prior seasons
-                if (teamSeason.gp > 5 && !that.playoffs) {
-                    winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
-                    winpOld = 0;
-                    count = 0;
-                    for (i = t.seasons.length - 2; i >= 0; i--) { // Start at last season, go back
-                        winpOld += t.seasons[i].won / (t.seasons[i].won + t.seasons[i].lost);
-                        count++;
-                        if (count === 4) {
-                            break;  // Max 4 seasons
-                        }
-                    }
-                    if (count > 0) {
-                        winpOld /= count;
-                    } else {
-                        winpOld = 0.5;  // Default for new games
-                    }
-
-                    // It should never happen, but winp and winpOld sometimes turn up as NaN due to a duplicate season entry or the user skipping seasons
-                    if (winp !== winp) {
-                        winp = 0;
-                    }
-                    if (winpOld !== winpOld) {
-                        winpOld = 0;
-                    }
-
-                    teamSeason.hype = teamSeason.hype + 0.01 * (winp - 0.55) + 0.015 * (winp - winpOld);
-                    if (teamSeason.hype > 1) {
-                        teamSeason.hype = 1;
-                    } else if (teamSeason.hype < 0) {
-                        teamSeason.hype = 0;
-                    }
-                }
-
-                revenue = merchRevenue + sponsorRevenue + nationalTvRevenue + localTvRevenue + ticketRevenue;
-                expenses = salaryPaid + scoutingPaid + coachingPaid + healthPaid + facilitiesPaid;
-                teamSeason.cash += revenue - expenses;
-                teamSeason.att += that.att;
-                teamSeason.gp += 1;
-                teamSeason.revenues.merch.amount += merchRevenue;
-                teamSeason.revenues.sponsor.amount += sponsorRevenue;
-                teamSeason.revenues.nationalTv.amount += nationalTvRevenue;
-                teamSeason.revenues.localTv.amount += localTvRevenue;
-                teamSeason.revenues.ticket.amount += ticketRevenue;
-                teamSeason.expenses.salary.amount += salaryPaid;
-                teamSeason.expenses.scouting.amount += scoutingPaid;
-                teamSeason.expenses.coaching.amount += coachingPaid;
-                teamSeason.expenses.health.amount += healthPaid;
-                teamSeason.expenses.facilities.amount += facilitiesPaid;
-
-                keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-                for (i = 0; i < keys.length; i++) {
-                    teamStats[keys[i]] += that.team[t1].stat[keys[i]];
-                }
-                teamStats.gp += 1;
-                teamStats.trb += that.team[t1].stat.orb + that.team[t1].stat.drb;
-                teamStats.oppPts += that.team[t2].stat.pts;
-
-                if (teamSeason.lastTen.length === 10 && !that.playoffs) {
-                    teamSeason.lastTen.pop();
-                }
-
-                if (won && !that.playoffs) {
-                    teamSeason.won += 1;
-                    if (that.sameDiv) {
-                        teamSeason.wonDiv += 1;
-                    }
-                    if (that.sameConf) {
-                        teamSeason.wonConf += 1;
-                    }
-
-                    if (t1 === 0) {
-                        teamSeason.wonHome += 1;
-                    } else {
-                        teamSeason.wonAway += 1;
-                    }
-
-                    teamSeason.lastTen.unshift(1);
-
-                    if (teamSeason.streak >= 0) {
-                        teamSeason.streak += 1;
-                    } else {
-                        teamSeason.streak = 1;
-                    }
-                } else if (!that.playoffs) {
-                    teamSeason.lost += 1;
-                    if (that.sameDiv) {
-                        teamSeason.lostDiv += 1;
-                    }
-                    if (that.sameConf) {
-                        teamSeason.lostConf += 1;
-                    }
-
-                    if (t1 === 0) {
-                        teamSeason.lostHome += 1;
-                    } else {
-                        teamSeason.lostAway += 1;
-                    }
-
-                    teamSeason.lastTen.unshift(0);
-
-                    if (teamSeason.streak <= 0) {
-                        teamSeason.streak -= 1;
-                    } else {
-                        teamSeason.streak = -1;
-                    }
-                }
-
-                cursor.update(t);
-
-                if (t1 === 0) {
-                    that.writeTeamStats(tx, 1, cb);
-                } else {
-                    cb();
-                }
-            };
-        });
-    };
-
-    Game.prototype.writeGameStats = function (tx, cb) {
+    function writeGameStats(tx, cb) {
         var gameStats, i, keys, p, t, text, that, tl, tw;
 
         gameStats = {gid: this.id, att: this.att, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
@@ -469,7 +447,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         }
 
         cb();
-    };
+    }
 
     /**
      * Build a composite rating.
@@ -674,22 +652,22 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
         // Saves a vector of results objects for a day, as is output from cbSimGames
         cbSaveResults = function (results) {
-            var cbSaveResult, gidsFinished, gm, i, playByPlay, playoffs, tx;
+            var cbSaveResult, gidsFinished, tx;
 
             gidsFinished = [];
-            playoffs = g.phase === g.PHASE.PLAYOFFS;
 
             tx = g.dbl.transaction(["events", "games", "players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 //tx = g.dbl.transaction(["players", "schedule"], "readwrite");
 
             cbSaveResult = function (i) {
+                var promise;
+
 //console.log('cbSaveResult ' + i)
                 // Save the game ID so it can be deleted from the schedule below
                 gidsFinished.push(results[i].gid);
 
-                gm = new Game();
 //console.log(results[i]);
-                gm.writeStats(tx, results[i], playoffs, function () {
+                writeStats(tx, results[i]).then(function () {
                     var j, scheduleStore;
 
                     if (i > 0) {

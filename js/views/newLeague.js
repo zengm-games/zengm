@@ -2,7 +2,7 @@
  * @name views.newLeague
  * @namespace Create new league form.
  */
-define(["dao", "globals", "ui", "core/league", "lib/jquery", "lib/knockout.mapping", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, league, $, komapping, bbgmView, helpers, viewHelpers) {
+define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.mapping", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, ui, league, Promise, $, komapping, bbgmView, helpers, viewHelpers) {
     "use strict";
 
     // Keep only relevant information, otherwise Knockout has to do extra work creating all kinds of observables

@@ -705,10 +705,9 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                         var i;
 
                         for (i = 0; i < dpidsAdd.length; i++) {
-                            tx.objectStore("draftPicks").get(dpidsAdd[i]).onsuccess = function (event) {
-                                var dp, estPick, seasons, value;
+                            dao.draftPicks.get({ot: tx, key: dpidsAdd[i]}).then(function (dp) {
+                                var estPick, seasons, value;
 
-                                dp = event.target.result;
                                 estPick = estPicks[dp.originalTid];
 
                                 // For future draft picks, add some uncertainty
@@ -738,14 +737,13 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                                     age: 19,
                                     draftPick: true
                                 });
-                            };
+                            });
                         }
 
                         for (i = 0; i < dpidsRemove.length; i++) {
-                            tx.objectStore("draftPicks").get(dpidsRemove[i]).onsuccess = function (event) {
-                                var dp, estPick, fudgeFactor, seasons, value;
+                            dao.draftPicks.get({ot: tx, key: dpidsRemove[i]}).then(function (dp) {
+                                var estPick, fudgeFactor, seasons, value;
 
-                                dp = event.target.result;
                                 estPick = estPicks[dp.originalTid];
 
                                 // For future draft picks, add some uncertainty
@@ -782,7 +780,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                                     age: 19,
                                     draftPick: true
                                 });
-                            };
+                            });
                         }
                     };
 

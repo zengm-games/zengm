@@ -354,24 +354,11 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                         }
 
                         // Initialize rebuilding/contending, when possible
-                        if (t2 >= 0 && goodNeutralBad === 1) {
-                            tx.objectStore("teams").openCursor(t2).onsuccess = function (event) {
-                                var cursor, t;
-
-                                cursor = event.target.result;
-                                t = cursor.value;
-                                t.strategy = "contending";
-                                cursor.update(t);
-                            };
-                        } else if (t2 >= 0 && goodNeutralBad === -1) {
-                            tx.objectStore("teams").openCursor(t2).onsuccess = function (event) {
-                                var cursor, t;
-
-                                cursor = event.target.result;
-                                t = cursor.value;
-                                t.strategy = "rebuilding";
-                                cursor.update(t);
-                            };
+                        if (t2 >= 0) {
+                            dao.teams.get({ot: tx, key: t2}).then(function (t) {
+                                t.startegy = goodNeutralBad === 1 ? "contendeing" : "rebuilding";
+                                dao.teams.put({ot: tx, value: t});
+                            });
                         }
                     }
                 }

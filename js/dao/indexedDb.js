@@ -443,7 +443,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
         promises = [];
         for (i = 0; i < g.numTeams; i++) {
-            promises.push(payrolls.get({ot: tx, key: i}));
+            promises.push(payrolls.get({ot: tx, key: i}).get(0));
         }
 
         return Promise.all(promises);

@@ -56,7 +56,10 @@ define(["dao", "db", "globals", "core/draft", "core/league"], function (dao, db,
 
         describe("#genPlayers()", function () {
             it("should generate 70 players for the draft", function () {
-                return draft.genPlayers(null, g.PLAYER.UNDRAFTED, null, null, function () {
+                var tx;
+                tx = dao.tx(["players", "teams"], "readwrite");
+                draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, null);
+                return tx.complete().then(function () {
                     return dao.players.count({
                         index: "draft.year",
                         key: g.season

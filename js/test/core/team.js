@@ -242,25 +242,20 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team"], func
                     });
                 });
             });
-            /*it("should remove players to AI team over roster limit without returning error message FAILS SOMETIMES IN CHROME, I THINK IT'S A BUG IN CHROME", function () {
+            it("should remove players to AI team over roster limit without returning error message FAILS SOMETIMES IN CHROME, I THINK IT'S A BUG IN CHROME", function () {
                 return addTen(8).then(function () {
                     // Confirm roster size over limit
-                    g.dbl.transaction("players").objectStore("players").index("tid").count(8).onsuccess = function (event) {
-                        event.target.result.should.equal(24);
-
-                        // Confirm roster size pruned to limit
-                        return team.checkRosterSizes().then(function (userTeamSizeError) {
-                            should.equal(userTeamSizeError, null);
-                            // Without setTimeout, Chrome sometimes produces an error (16 instead of 15). I think it's a Chrome bug.
-                            setTimeout(function () {
-                                g.dbl.transaction("players").objectStore("players").index("tid").count(8).onsuccess = function (event) {
-                                    event.target.result.should.equal(15);
-                                };
-                            }, 1000);
-                        });
-                    };
+                    return dao.players.count({index: "tid", key: 8}).then(function (numPlayers) {
+                        numPlayers.should.equal(24);
+                    });
+                }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
+                    // Confirm no error message and roster size pruned to limit
+                    should.equal(userTeamSizeError, null);
+                    return dao.players.count({index: "tid", key: 8}).then(function (numPlayers) {
+                        numPlayers.should.equal(15);
+                    });
                 });
-            });*/
+            });
             it("should return error message when user team is under roster limit", function () {
                 return removeTen(g.userTid).then(function () {
                     // Confirm roster size under limit

@@ -170,7 +170,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
             }));
         });
 
-        return Promise.resolve(promises).then(function () {
+        return Promise.all(promises).then(function () {
             var tx, updated;
 
             updated = false; // Has the trade actually changed?

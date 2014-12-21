@@ -2,36 +2,10 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "core/team", "lib/bluebird", "lib/underscore", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, db, g, ui, freeAgents, finances, gameSim, player, season, team, Promise, _, advStats, eventLog, lock, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "core/team", "lib/bluebird", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, db, g, ui, freeAgents, finances, gameSim, player, season, team, Promise, advStats, eventLog, lock, helpers, random) {
     "use strict";
 
-    function writeStats(tx, results) {
-        // Retrieve stats
-//        this.team = results.team;
-//        this.playoffs = playoffs;
-//        this.id = results.gid;
-//        this.overtimes = results.overtimes;
-//        this.home = [true, false];
-
-        // Are the teams in the same conference/division?
-/*        this.sameConf = false;
-        this.sameDiv = false;
-        if (this.team[0].cid === this.team[1].cid) {
-            this.sameConf = true;
-        }
-        if (this.team[0].did === this.team[1].did) {
-            this.sameDiv = true;
-        }*/
-
-        return writeTeamStats(tx, results).then(function (att) {
-            return writePlayerStats(tx, results);
-        });/*.then(function () {
-            return writeGameStats(tx, results, att);
-        });*/
-    }
-
     function writeTeamStats(tx, results) {
-console.log('writeTeamStats')
         return Promise.reduce([0, 1], function (att, t1) {
             var t2;
 
@@ -292,33 +266,45 @@ console.log('writeTeamStats')
         });
     }
 
-    function writeGameStats(tx, cb) {
-        var gameStats, i, keys, p, t, text, that, tl, tw;
+    function writeGameStats(tx, results, att) {
+        var gameStats, i, keys, p, t, text, tl, tw;
 
-        gameStats = {gid: results.gid, att: this.att, season: g.season, playoffs: this.playoffs, overtimes: this.overtimes, won: {}, lost: {}, teams: [{tid: this.team[0].id, players: []}, {tid: this.team[1].id, players: []}]};
+        gameStats = {
+            gid: results.gid,
+            att: att,
+            season: g.season,
+            playoffs: g.phase === g.PHASE.PLAYOFFS,
+            overtimes: results.overtimes,
+            won: {},
+            lost: {},
+            teams: [
+                {tid: results.team[0].id, players: []},
+                {tid: results.team[1].id, players: []}
+            ]
+        };
+
         for (t = 0; t < 2; t++) {
             keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts', 'ptsQtrs'];
             for (i = 0; i < keys.length; i++) {
-                gameStats.teams[t][keys[i]] = this.team[t].stat[keys[i]];
+                gameStats.teams[t][keys[i]] = results.team[t].stat[keys[i]];
             }
-            gameStats.teams[t].trb = this.team[t].stat.orb + this.team[t].stat.drb;
+            gameStats.teams[t].trb = results.team[t].stat.orb + results.team[t].stat.drb;
 
             keys.unshift("gs"); // Also record starters, in addition to other stats
-            for (p = 0; p < this.team[t].player.length; p++) {
-                gameStats.teams[t].players[p] = {name: this.team[t].player[p].name, pos: this.team[t].player[p].pos};
+            for (p = 0; p < results.team[t].player.length; p++) {
+                gameStats.teams[t].players[p] = {name: results.team[t].player[p].name, pos: results.team[t].player[p].pos};
                 for (i = 0; i < keys.length; i++) {
-                    gameStats.teams[t].players[p][keys[i]] = this.team[t].player[p].stat[keys[i]];
+                    gameStats.teams[t].players[p][keys[i]] = results.team[t].player[p].stat[keys[i]];
                 }
-                gameStats.teams[t].players[p].trb = this.team[t].player[p].stat.orb + this.team[t].player[p].stat.drb;
-                gameStats.teams[t].players[p].pid = this.team[t].player[p].id;
-                gameStats.teams[t].players[p].skills = this.team[t].player[p].skills;
-                gameStats.teams[t].players[p].injury = this.team[t].player[p].injury;
+                gameStats.teams[t].players[p].trb = results.team[t].player[p].stat.orb + results.team[t].player[p].stat.drb;
+                gameStats.teams[t].players[p].pid = results.team[t].player[p].id;
+                gameStats.teams[t].players[p].skills = results.team[t].player[p].skills;
+                gameStats.teams[t].players[p].injury = results.team[t].player[p].injury;
             }
         }
 
-
         // Store some extra junk to make box scores easy
-        if (this.team[0].stat.pts > this.team[1].stat.pts) {
+        if (results.team[0].stat.pts > results.team[1].stat.pts) {
             tw = 0;
             tl = 1;
         } else {
@@ -326,40 +312,38 @@ console.log('writeTeamStats')
             tl = 0;
         }
 
-        gameStats.won.tid = this.team[tw].id;
-        gameStats.lost.tid = this.team[tl].id;
-        gameStats.won.pts = this.team[tw].stat.pts;
-        gameStats.lost.pts = this.team[tl].stat.pts;
-
-//console.log('writeGameStats');
-        tx.objectStore("games").add(gameStats);
+        gameStats.won.tid = results.team[tw].id;
+        gameStats.lost.tid = results.team[tl].id;
+        gameStats.won.pts = results.team[tw].stat.pts;
+        gameStats.lost.pts = results.team[tl].stat.pts;
 
         // Event log
-        if (this.team[0].id === g.userTid || this.team[1].id === g.userTid) {
-            if (this.team[tw].id === g.userTid) {
-                text = 'Your team defeated the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[this.team[tl].id], g.season]) + '">' + g.teamNamesCache[this.team[tl].id];
+        if (results.team[0].id === g.userTid || results.team[1].id === g.userTid) {
+            if (results.team[tw].id === g.userTid) {
+                text = 'Your team defeated the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tl].id], g.season]) + '">' + g.teamNamesCache[results.team[tl].id];
             } else {
-                text = 'Your team lost to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[this.team[tw].id], g.season]) + '">' + g.teamNamesCache[this.team[tw].id];
+                text = 'Your team lost to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tw].id], g.season]) + '">' + g.teamNamesCache[results.team[tw].id];
             }
-            text += '</a> <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, this.id]) + '">' + this.team[tw].stat.pts + "-" + this.team[tl].stat.pts + "</a>.";
+            text += '</a> <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid]) + '">' + results.team[tw].stat.pts + "-" + results.team[tl].stat.pts + "</a>.";
             eventLog.add(tx, {
-                type: this.team[tw].id === g.userTid ? "gameWon" : "gameLost",
+                type: results.team[tw].id === g.userTid ? "gameWon" : "gameLost",
                 text: text
             });
         }
 
-        // Record progress of playoff series, if appropriate
-        that = this;
-        if (this.playoffs) {
-            tx.objectStore("playoffSeries").openCursor(g.season).onsuccess = function (event) {
-                var cursor, currentRoundText, i, loserWon, otherTid, playoffRound, playoffSeries, series, won0;
+        return dao.games.add({ot: tx, value: gameStats}).then(function () {
+            // Record progress of playoff series, if appropriate
+            if (!gameStats.playoffs) {
+                return;
+            }
 
-                cursor = event.target.result;
-                playoffSeries = cursor.value;
+            return dao.playoffSeries.get({ot: tx, key: g.season}).then(function (playoffSeries) {
+                var currentRoundText, i, loserWon, otherTid, playoffRound, series, won0;
+
                 playoffRound = playoffSeries.series[playoffSeries.currentRound];
 
                 // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
-                if (that.team[0].stat.pts > that.team[1].stat.pts) {
+                if (results.team[0].stat.pts > results.team[1].stat.pts) {
                     won0 = true;
                 } else {
                     won0 = false;
@@ -368,14 +352,14 @@ console.log('writeTeamStats')
                 for (i = 0; i < playoffRound.length; i++) {
                     series = playoffRound[i];
 
-                    if (series.home.tid === that.team[0].id) {
+                    if (series.home.tid === results.team[0].id) {
                         if (won0) {
                             series.home.won += 1;
                         } else {
                             series.away.won += 1;
                         }
                         break;
-                    } else if (series.away.tid === that.team[0].id) {
+                    } else if (series.away.tid === results.team[0].id) {
                         if (won0) {
                             series.away.won += 1;
                         } else {
@@ -386,9 +370,9 @@ console.log('writeTeamStats')
                 }
 
                 // Check if the user's team won/lost a playoff series (before the finals)
-                if ((g.userTid === that.team[0].id || g.userTid === that.team[1].id) && playoffSeries.currentRound < 3) {
+                if ((g.userTid === results.team[0].id || g.userTid === results.team[1].id) && playoffSeries.currentRound < 3) {
                     if (series.away.won === 4 || series.home.won === 4) {
-                        otherTid = g.userTid === that.team[0].id ? that.team[1].id : that.team[0].id;
+                        otherTid = g.userTid === results.team[0].id ? results.team[1].id : results.team[0].id;
                         loserWon = series.away.won === 4 ? series.home.won : series.away.won;
                         if (playoffSeries.currentRound === 0) {
                             currentRoundText = "first round of the playoffs";
@@ -424,16 +408,14 @@ console.log('writeTeamStats')
                         otherTid = series.away.won === 4 ? series.away.tid : series.home.tid;
                         eventLog.add(tx, {
                             type: "playoffs",
-                            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[otherTid], g.season]) + '">' + g.teamRegionsCache[otherTid]+ ' ' + g.teamNamesCache[otherTid] + '</a> won the ' + g.season + ' league championship!'
+                            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[otherTid], g.season]) + '">' + g.teamRegionsCache[otherTid] + ' ' + g.teamNamesCache[otherTid] + '</a> won the ' + g.season + ' league championship!'
                         });
                     }
                 }
 
-                cursor.update(playoffSeries);
-            };
-        }
-
-        cb();
+                dao.playoffSeries.put({ot: tx, value: playoffSeries});
+            });
+        });
     }
 
     /**
@@ -647,14 +629,16 @@ console.log('writeTeamStats')
 //tx = g.dbl.transaction(["players", "schedule"], "readwrite");
 
             cbSaveResult = function (i) {
-                var promise;
-
 //console.log('cbSaveResult ' + i)
                 // Save the game ID so it can be deleted from the schedule below
                 gidsFinished.push(results[i].gid);
 
 //console.log(results[i]);
-                writeStats(tx, results[i]).then(function () {
+                writeTeamStats(tx, results[i]).then(function (att) {
+                    return writeGameStats(tx, results[i], att);
+                }).then(function () {
+                    return writePlayerStats(tx, results[i]);
+                }).then(function () {
                     var j, scheduleStore;
 
                     if (i > 0) {

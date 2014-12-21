@@ -756,7 +756,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 ui.updateStatus("Playing (" + numDays + " days left)");
             }
 
-            tx = g.dbl.transaction(["players", "schedule", "teams"]);
+            tx = dao.tx(["players", "schedule", "teams"]);
 
             // Get the schedule for today
             return dao.schedule.get({ot: tx, oneDay: true}).then(function (schedule) {

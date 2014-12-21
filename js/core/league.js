@@ -452,7 +452,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                 g.dbl.close();
             }
 
-            g.dbm.transaction("leagues", "readwrite").objectStore("leagues").delete(lid);
+            dao.leagues.delete({key: lid});
             request = indexedDB.deleteDatabase("league" + lid);
             request.onsuccess = function (event) {
                 console.log("Database league" + lid + " successfully deleted");
@@ -488,15 +488,15 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
         exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
 
         exportStore = function (i) {
-            g.dbl.transaction(stores[i]).objectStore(stores[i]).getAll().onsuccess = function (event) {
-                exportedLeague[stores[i]] = event.target.result;
+            dao[stores[i]].getAll().then(function (store) {
+                exportedLeague[stores[i]] = store;
 
                 if (i > 0) {
                     exportStore(i - 1);
                 } else {
                     movePlayerStats();
                 }
-            };
+            });
         };
 
         // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.

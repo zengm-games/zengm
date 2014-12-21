@@ -218,7 +218,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                 ]
             };
 
-            tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "schedule", "teams"]);
+            tx = dao.tx(["players", "playerStats", "releasedPlayers", "schedule", "teams"]);
 
             return team.filter({
                 season: inputs.season,
@@ -287,7 +287,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
 
                         vars.payroll = payroll / 1000;
 
-                        return vars
+                        return vars;
                     });
                 } else {
                     // Show all players with stats for the given team and year

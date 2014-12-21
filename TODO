@@ -8,6 +8,8 @@ TEST
 
 use promises pervasively
 
+league.export_
+
 dao.store.iterate
   if "modify" is passed, apply function to each element in cursor
     how to handle custom "get" functions like players.getAll?

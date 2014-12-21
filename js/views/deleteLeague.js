@@ -21,7 +21,7 @@ define(["dao", "db", "globals", "ui", "core/league", "lib/bluebird", "util/bbgmV
         return db.connectLeague(inputs.lid).then(function () {
             var tx;
 
-            tx = g.dbl.transaction(["games", "players", "teams"]);
+            tx = dao.tx(["games", "players", "teams"]);
 
             return Promise.all([
                 dao.games.count({ot: tx}),

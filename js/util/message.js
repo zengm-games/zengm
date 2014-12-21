@@ -136,7 +136,8 @@ define(["dao", "db", "globals", "lib/bluebird", "util/helpers", "util/random"], 
     ];
     ovr[1] = [
         "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships.",
-        "You know, general managers aren't hired to be mediocre. Do better next year."
+        "You know, general managers aren't hired to be mediocre. Do better next year.",
+        "I've been meaning to tell you about this great idea I had. What if we only play 4 guys on defense, so the other guy can just wait for an easy score at the other end? Pure genius, isn't it?"
     ];
     ovr[2] = [
         "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}."

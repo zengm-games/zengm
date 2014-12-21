@@ -18,10 +18,7 @@ dao.store.iterate
   non-modifying?
   should fully replace cursors!
   is "iterate" a good name since it works equally well for opening a single cursor?
-  DIFFICULT ONES:
-    needs to pass second parameter to openCursor
-      util/advStats.js
-      views/message.js
+    yes, because there is no need to use it for a single cursor, just do a get then a put
 
 dao refactor:
   make convenience function in dao.gameAttributes for lastDbChange updating to now

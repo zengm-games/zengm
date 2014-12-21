@@ -272,7 +272,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
     function accept(pid) {
         return Promise.all([
             dao.negotiations.get({key: pid}),
-            dao.payrolls.get({key: g.userTid})
+            dao.payrolls.get({key: g.userTid}).get(0)
         ]).spread(function (negotiation, payroll) {
             var tx;
 

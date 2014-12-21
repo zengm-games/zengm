@@ -2,7 +2,7 @@
  * @name test.core.contractNegotiation
  * @namespace Tests for core.contractNegotiation.
  */
-define(["dao", "db", "globals", "core/contractNegotiation", "core/league", "core/player"], function (dao, db, g, contractNegotiation, league, player) {
+define(["dao", "db", "globals", "core/contractNegotiation", "core/league"], function (dao, db, g, contractNegotiation, league) {
     "use strict";
 
     describe("core/contractNegotiation", function () {
@@ -153,50 +153,37 @@ define(["dao", "db", "globals", "core/contractNegotiation", "core/league", "core
             });
         });
         describe("#offer()", function () {
-/*            it("should never counter with an offer below what has already been proposed", function (done) {
+            it("should never counter with an offer below what has already been proposed", function () {
                 var tx;
 
                 tx = dao.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
-                return contractNegotiation.create(tx, 9, false);
+                contractNegotiation.create(tx, 9, false);
+                return tx.complete().then(function () {
+                    return dao.negotiations.get({key: 9}).then(function (negotiation) {
+                        var originalYears;
 
-                tx.complete().then(function () {
-                    g.dbl.tx("negotiations").objectStore("negotiations").get(9).onsuccess = function (event) {
-                        var negotiation, originalYears;
-
-                        negotiation = event.target.result;
                         originalYears = negotiation.player.years;
 
                         // offer a max contract for however many years the player wants
-                        contractNegotiation.offer(9, 20000, originalYears, function () {
-
-                            g.dbl.tx("negotiations").objectStore("negotiations").get(9).onsuccess = function (event) {
-                                var negotiation;
-
-                                negotiation = event.target.result;
-
+                        return contractNegotiation.offer(9, 20000, originalYears).then(function () {
+                            return dao.negotiations.get({key: 9}).then(function (negotiation) {
                                 // player should be happy to accept the $20,000,000 for the years they specified
                                 negotiation.player.amount.should.equal(20000);
                                 negotiation.player.years.should.equal(originalYears);
-
-                                // Try to skimp the player by offering slightly less
-                                contractNegotiation.offer(9, 19999, originalYears, function () {
-                                    g.dbl.tx("negotiations").objectStore("negotiations").get(9).onsuccess = function (event) {
-                                        var negotiation;
-
-                                        negotiation = event.target.result;
-
-                                        // Player should not fall for the bait and switch
-                                        negotiation.player.amount.should.equal(20000);
-                                        negotiation.player.years.should.equal(originalYears);
-
-                                        done();
-                                    };
+                            });
+                        }).then(function () {
+                            // Try to skimp the player by offering slightly less
+                            return contractNegotiation.offer(9, 19999, originalYears, function () {
+                                return dao.negotiations.get({key: 9}).then(function (negotiation) {
+                                    // Player should not fall for the bait and switch
+                                    negotiation.player.amount.should.equal(20000);
+                                    negotiation.player.years.should.equal(originalYears);
                                 });
-                            };
+                            });
                         });
-                    };
-                };
-            });*/
+                    });
+                });
+            });
         });
     });
 });

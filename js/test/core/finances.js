@@ -2,28 +2,24 @@
  * @name test.core.finances
  * @namespace Tests for core.finances.
  */
-define(["db", "globals", "core/league", "core/finances"], function (db, g, league, finances) {
+define(["dao", "db", "globals", "core/league", "core/finances"], function (dao, db, g, league, finances) {
     "use strict";
 
     describe("core/finances", function () {
-        before(function (done) {
-            db.connectMeta(function () {
-                league.create("Test", 0, undefined, 2013, false, function () {
-                    done();
-                });
+        before(function () {
+            return db.connectMeta().then(function () {
+                return league.create("Test", 0, undefined, 2013, false);
             });
         });
-        after(function (done) {
-            league.remove(g.lid, done);
+        after(function () {
+            return league.remove(g.lid);
         });
 
         describe("#assessPayrollMinLuxury()", function () {
-            it("should store payroll and appropriately assess luxury and minimum payroll taxes for each team", function (done) {
-                finances.assessPayrollMinLuxury(function () {
+            it("should store payroll and appropriately assess luxury and minimum payroll taxes for each team", function () {
+                return finances.assessPayrollMinLuxury(function () {
                     return dao.teams.getAll().then(function (teams) {
-                        var i, teams;
-
-                        teams = event.target.result;
+                        var i;
 
                         for (i = 0; i < g.numTeams; i++) {
                             teams[i].seasons[0].payrollEndOfSeason.should.be.above(0);
@@ -40,9 +36,7 @@ define(["db", "globals", "core/league", "core/finances"], function (db, g, leagu
                                 teams[i].seasons[0].expenses.minTax.amount.should.equal(0);
                             }
                         }
-
-                        done();
-                    };
+                    });
                 });
             });
         });

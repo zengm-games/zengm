@@ -63,8 +63,9 @@ clean up
 
 unit tests
   upgrade libs?
-  chai as promised?
+  chai as promised? probably not necessary
   get running from command line, maybe in karma?
+  performance compared to old version?
 
 unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-javascript-es6-promise-support-done-api https://code.google.com/p/v8/issues/detail?id=3093
   can customize build to save space https://github.com/petkaantonov/bluebird#custom-builds

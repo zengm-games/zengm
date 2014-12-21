@@ -60,38 +60,31 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
         });
     }
 
-    function doRelease(pid, justDrafted, cb) {
-        var playerStore, transaction;
+    function doRelease(pid, justDrafted) {
+        var tx;
 
-        transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
-        playerStore = transaction.objectStore("players");
+        tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite");
 
-        playerStore.index("tid").count(g.userTid).onsuccess = function (event) {
-            var numPlayersOnRoster;
-
-            numPlayersOnRoster = event.target.result;
-
+        return dao.players.count({
+            ot: tx,
+            index: "tid",
+            key: g.userTid
+        }).then(function (numPlayersOnRoster) {
             if (numPlayersOnRoster <= 5) {
-                return cb("You must keep at least 5 players on your roster.");
+                return "You must keep at least 5 players on your roster.";
             }
 
-            pid = parseInt(pid, 10);
-            playerStore.get(pid).onsuccess = function (event) {
-                var p;
-
-                p = event.target.result;
+            return dao.players.get({ot: tx, key: pid}).then(function (p) {
                 // Don't let the user update CPU-controlled rosters
                 if (p.tid === g.userTid) {
-                    player.release(transaction, p, justDrafted, function () {
-                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                            cb();
-                        });
+                    return player.release(tx, p, justDrafted).then(function () {
+                        return dao.gameAttributes.set({lastDbChange: Date.now()});
                     });
-                } else {
-                    return cb("You aren't allowed to do this.");
                 }
-            };
-        };
+
+                return "You aren't allowed to do this.";
+            });
+        });
     }
 
     function editableChanged(editable) {
@@ -357,7 +350,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                 }
                 if (window.confirm(releaseMessage)) {
                     tr = this.parentNode.parentNode;
-                    doRelease(pid, justDrafted, function (error) {
+                    doRelease(pid, justDrafted).then(function (error) {
                         if (error) {
                             alert("Error: " + error);
                         } else {

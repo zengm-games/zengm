@@ -4,10 +4,9 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
-use promises pervasively
+TEST
 
-dao.tx and tx.complete()
-  grep -r --exclude-dir=test oncomplete js
+use promises pervasively
 
 dao.store.iterate
   if "modify" is passed, apply function to each element in cursor
@@ -48,7 +47,6 @@ big goals
     grep for transaction, objectStore, oncomplete, dbl, dbm, etc
     grep -r --exclude-dir=test oncomplete js
   no "cb" anywhere
-  no "openCursor" anywhere
   no "transaction" anywhere
   no "Store" anywhere
   no "new Promise" anywhere

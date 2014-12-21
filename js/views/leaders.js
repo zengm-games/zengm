@@ -38,16 +38,12 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/knockout", "
     };
 
     function updateLeaders(inputs, updateEvents, vm) {
-        var tx;
-
         // Respond to watchList in case players are listed twice in different categories
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
-            tx = g.dbl.transaction(["players", "playerStats", "teams"]);
 
             return Promise.all([
-                dao.teams.getAll({ot: tx}),
+                dao.teams.getAll(),
                 dao.players.getAll({
-                    ot: tx,
                     statsSeasons: [inputs.season]
                 })
             ]).spread(function (teams, players) {

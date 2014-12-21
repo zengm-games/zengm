@@ -404,7 +404,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                                     index: "tid",
                                     key: g.PLAYER.UNDRAFTED,
                                     modify: function (p) {
-                                        player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
+                                        return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
                                     }
                                 });
                             }).then(function () {

@@ -16,21 +16,15 @@ define(["dao", "globals", "ui", "core/team", "lib/bluebird", "lib/jquery", "lib/
     };
 
     function updatePowerRankings(inputs, updateEvents, vm) {
-        var tx;
-
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
-            tx = g.dbl.transaction(["players", "teams"]);
-
             return Promise.all([
                 team.filter({
                     attrs: ["tid", "abbrev", "region", "name"],
                     seasonAttrs: ["won", "lost", "lastTen"],
                     stats: ["gp", "pts", "oppPts", "diff"],
-                    season: g.season,
-                    ot: tx
+                    season: g.season
                 }),
                 dao.players.getAll({
-                    ot: tx,
                     index: "tid",
                     key: IDBKeyRange.lowerBound(0)
                 })

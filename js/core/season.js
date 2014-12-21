@@ -1002,9 +1002,9 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 modify: function (p) {
                     if (p.contract.exp <= g.season && p.tid === g.userTid) {
                         // Add to free agents first, to generate a contract demand
-                        player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods, function () {
+                        return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods).then(function () {
                             // Open negotiations with player
-                            contractNegotiation.create(tx, p.pid, true).then(function (error) {
+                            return contractNegotiation.create(tx, p.pid, true).then(function (error) {
                                 if (error !== undefined && error) {
                                     eventLog.add(null, {
                                         type: "refuseToSign",

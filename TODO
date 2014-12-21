@@ -63,6 +63,7 @@ clean up
   what about creating, migrating, and deleting databases?
 
 unit tests
+  still some stuff commented out in js/test/app.js!
   upgrade libs?
   chai as promised? probably not necessary
   get running from command line, maybe in karma?

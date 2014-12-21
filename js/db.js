@@ -206,7 +206,7 @@ console.log(event);
         tx = event.currentTarget.transaction;
 
         // Make sure game attributes (i.e. g.startingSeason) are loaded first
-        loadGameAttributes(event.currentTarget.transaction, function () {
+        loadGameAttributes(tx).then(function () {
             if (event.oldVersion <= 1) {
                 teams = helpers.getTeamsDefault();
 
@@ -866,17 +866,11 @@ console.log(event);
      * Load game attributes from the database and update the global variable g.
      * 
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
-     * @param {function()=} cb Optional callback.
+     * @return {Promise}
      */
-    function loadGameAttributes(ot, cb) {
-        var gameAttributesStore;
-
-        gameAttributesStore = getObjectStore(ot, "gameAttributes", "gameAttributes");
-
-        gameAttributesStore.getAll().onsuccess = function (event) {
-            var i, gameAttributes;
-
-            gameAttributes = event.target.result;
+    function loadGameAttributes(ot) {
+        return dao.gameAttributes.getAll({ot: ot}).then(function (gameAttributes) {
+            var i;
 
             for (i = 0; i < gameAttributes.length; i++) {
                 g[gameAttributes[i].key] = gameAttributes[i].value;
@@ -895,11 +889,7 @@ console.log(event);
 
             // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
             g.vm.topMenu.godMode(g.godMode);
-
-            if (cb !== undefined) {
-                cb();
-            }
-        };
+        });
     }
 
     /**

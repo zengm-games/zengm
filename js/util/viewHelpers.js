@@ -2,7 +2,7 @@
  * @name util.viewHelpers
  * @namespace Helper functions called only by views.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers"], function (db, g, ui, $, ko, _, helpers) {
+define(["dao", "db", "globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function (dao, db, g, ui, $, ko, helpers) {
     "use strict";
 
     function beforeLeague(req, cb) {
@@ -20,9 +20,9 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
             }
 
             // db.loadGameAttribute cannot be used to check for a new lastDbChange because we need to have the old g.lastDbChange available right up to the last moment possible, for cases where db.loadGameAttribute might be blocked during a slow page refresh, as happens when viewing player rating and stat distributions. Otherwise, an extra refresh would occur with a stale lastDbChange.
-            g.dbl.transaction("gameAttributes").objectStore("gameAttributes").get("lastDbChange").onsuccess = function (event) {
-                if (g.lastDbChange !== event.target.result.value) {
-                    db.loadGameAttributes(null, function () {
+            dao.gameAttributes.get({key: "lastDbChange"}).then(function (lastDbChange) {
+                if (g.lastDbChange !== lastDbChange.value) {
+                    db.loadGameAttributes(null).then(function () {
                         //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
                         ui.realtimeUpdate(["dbChange"], undefined, function () {
                             ui.updatePlayMenu(null).then(function () {
@@ -35,7 +35,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                 } else {
                     setTimeout(function () { checkDbChange(lid); }, 3000); // g.lid can't be passed as third argument when using Bugsnag
                 }
-            };
+            });
         };
 
         // Make sure league exists
@@ -50,13 +50,13 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
             helpers.resetG();
 
             // Make sure this league exists before proceeding
-            g.dbm.transaction("leagues").objectStore("leagues").get(g.lid).onsuccess = function (event) {
-                if (event.target.result === undefined) {
+            dao.leagues.get({key: g.lid}).then(function (l) {
+                if (l === undefined) {
                     helpers.error('League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!', reqCb, true)
                 } else {
                     // Connect to league database
                     db.connectLeague(g.lid).then(function () {
-                        db.loadGameAttributes(null, function () {
+                        db.loadGameAttributes(null).then(function () {
                             var css;
 
                             ui.update({
@@ -87,7 +87,7 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "lib/underscore", "
                         });
                     });
                 }
-            }
+            });
         } else {
             cb(updateEvents, reqCb);
         }

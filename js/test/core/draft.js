@@ -51,16 +51,18 @@ define(["dao", "db", "globals", "core/draft", "core/league"], function (dao, db,
             });
         };
 
-        /*describe("#genPlayers()", function () {
-            it("should generate 70 players for the draft", function (done) {
-                draft.genPlayers(null, g.PLAYER.UNDRAFTED, null, null, function () {
-                    g.dbl.transaction("players").objectStore("players").index("draft.year").count(g.season).onsuccess = function (event) {
-                        event.target.result.should.equal(140); // 70 from original league, 70 from this
-                        done();
-                    };
+        describe("#genPlayers()", function () {
+            it("should generate 70 players for the draft", function () {
+                return draft.genPlayers(null, g.PLAYER.UNDRAFTED, null, null, function () {
+                    return dao.players.count({
+                        index: "draft.year",
+                        key: g.season
+                    }).then(function (numPlayers) {
+                        numPlayers.should.equal(140); // 70 from original league, 70 from this
+                    });
                 });
             });
-        });*/
+        });
 
         describe("#genOrder()", function () {
             it("should schedule 60 draft picks", function () {

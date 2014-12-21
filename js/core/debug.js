@@ -154,7 +154,7 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
             return x_t.mult(x).inverse().mult(x_t).mult(this);
         };
 
-        dao.players.getAll({statsSeasons: "all"}, function (players) {
+        dao.players.getAll({statsSeasons: "all"}).then(function (players) {
             var c, i, j, k, p, pers, ratings, ratingLabels, x, y;
 
             pers = [];
@@ -203,7 +203,7 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
         dao.players.getAll({
             index: "tid",
             key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
-        }, function (players) {
+        }).then(function (players) {
             var contract, i, p, total;
 
             total = 0;
@@ -223,7 +223,7 @@ define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data
         dao.players.getAll({
             index: "tid",
             key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
-        }, function (players) {
+        }).then(function (players) {
             var contract, i, output, p;
 
             output = "<pre>value,contract.amount\n";

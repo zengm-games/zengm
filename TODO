@@ -29,8 +29,6 @@ API design
   player.filter and team.filter should be renamed, otherwise it's confusing
   remove filter option from dao.players.getAll - also confusing, can just apply manually
 
-core.league
-core.game - get rid of all internal functions! Promises are enough
 various functions in db
 
 rewrite old upgrading code?
@@ -48,9 +46,6 @@ big goals
     grep -r --exclude-dir=test oncomplete js
   no "cb" anywhere
     util/bbgmView
-  no "Store" anywhere
-    core/league
-    core/team
   no "new Promise" anywhere
   no db.getObjectStore - equivalent function is in indexedDb adapter
 
@@ -74,8 +69,6 @@ unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-jav
   https://code.google.com/p/v8/issues/detail?id=3093
 
 put bugsnag back
-
-core.debug
 
 test
   achievement retrieval from account

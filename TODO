@@ -15,8 +15,6 @@ dao.store.iterate
     async inside modify function - maybe accept a "done" function like unit tests
     rename "modify" to something generic, because can do non-modify by just returning undefined
     short circuit: shortCircuit function passed as second param
-  non-modifying?
-  should fully replace cursors!
   is "iterate" a good name since it works equally well for opening a single cursor?
     yes, because there is no need to use it for a single cursor, just do a get then a put
 
@@ -33,11 +31,6 @@ various functions in db
 
 rewrite old upgrading code?
 
-util/account
-
-db.getObjectStore
-  other db functions
-
 look at views with errorMessage - is flow correct? problems with cancellation?
 
 big goals
@@ -45,8 +38,8 @@ big goals
     grep for transaction, objectStore, oncomplete, dbl, dbm, etc
     grep -r --exclude-dir=test oncomplete js
   no "cb" anywhere
-    util/bbgmView
-  no "new Promise" anywhere
+    util/bbgmView and util/helpers functions that talk to Davis - unavoidable unless i switch to a promise-based router library
+    util/account - think about it
   no db.getObjectStore - equivalent function is in indexedDb adapter
 
 clean up
@@ -58,11 +51,8 @@ clean up
   what about creating, migrating, and deleting databases?
 
 unit tests
-  upgrade libs?
-  chai as promised? probably not necessary
   get running from command line, maybe in karma?
   performance compared to old version?
-  firefox and chrome
 
 unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-javascript-es6-promise-support-done-api https://code.google.com/p/v8/issues/detail?id=3093
   can customize build to save space https://github.com/petkaantonov/bluebird#custom-builds

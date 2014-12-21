@@ -120,7 +120,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
 
     function get(fnBeforeReq, fnGet, fnUpdate) {
         return function (req) {
-            fnBeforeReq(req, function (updateEvents, cb) {
+            fnBeforeReq(req).spread(function (updateEvents, cb) {
                 var inputs;
 
                 inputs = fnGet(req);
@@ -143,7 +143,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
 
     function post(fnBeforeReq, fnPost) {
         return function (req) {
-            fnBeforeReq(req, function () {
+            fnBeforeReq(req).then(function () {
                 fnPost(req);
             });
         };

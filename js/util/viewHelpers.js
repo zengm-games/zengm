@@ -1,11 +1,11 @@
 /**
  * @name util.viewHelpers
- * @namespace Helper functions called only by views.
+ * @namespace Helper functions called only by views which pull important info (updateEvents and cb) from Davis request objects.
  */
-define(["dao", "db", "globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function (dao, db, g, ui, $, ko, helpers) {
+define(["dao", "db", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "util/helpers"], function (dao, db, g, ui, Promise, $, ko, helpers) {
     "use strict";
 
-    function beforeLeague(req, cb) {
+    function beforeLeague(req) {
         var reqCb, checkDbChange, popup, updateEvents;
 
         g.lid = parseInt(req.params.lid, 10);
@@ -50,13 +50,13 @@ define(["dao", "db", "globals", "ui", "lib/jquery", "lib/knockout", "util/helper
             helpers.resetG();
 
             // Make sure this league exists before proceeding
-            dao.leagues.get({key: g.lid}).then(function (l) {
+            return dao.leagues.get({key: g.lid}).then(function (l) {
                 if (l === undefined) {
-                    helpers.error('League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!', reqCb, true)
+                    helpers.error('League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!', reqCb, true);
                 } else {
                     // Connect to league database
-                    db.connectLeague(g.lid).then(function () {
-                        db.loadGameAttributes(null).then(function () {
+                    return db.connectLeague(g.lid).then(function () {
+                        return db.loadGameAttributes(null).then(function () {
                             var css;
 
                             ui.update({
@@ -79,31 +79,29 @@ define(["dao", "db", "globals", "ui", "lib/jquery", "lib/knockout", "util/helper
                             // Update play menu
                             ui.updateStatus();
                             ui.updatePhase();
-                            ui.updatePlayMenu(null).then(function () {
+                            return ui.updatePlayMenu(null).then(function () {
                                 g.vm.topMenu.lid(g.lid);
-                                cb(updateEvents, reqCb);
                                 checkDbChange(g.lid);
+                                return [updateEvents, reqCb];
                             });
                         });
                     });
                 }
             });
-        } else {
-            cb(updateEvents, reqCb);
         }
+
+        return Promise.resolve([updateEvents, reqCb]);
     }
 
-    function beforeNonLeague(req, cb) {
-        var playButtonElement, playPhaseElement, playStatusElement, reqCb, updateEvents;
+    function beforeNonLeague(req) {
+        var reqCb, updateEvents;
 
         g.lid = null;
         g.vm.topMenu.lid(undefined);
 
-        if (cb !== undefined) {
-            updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
-            reqCb = req.raw.cb !== undefined ? req.raw.cb : function () {};
-            cb(updateEvents, reqCb);
-        }
+        updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
+        reqCb = req.raw.cb !== undefined ? req.raw.cb : function () {};
+        return Promise.resolve([updateEvents, reqCb]);
     }
 
     return {

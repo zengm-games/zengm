@@ -59,7 +59,7 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
                     for (i = 0; i < 10; i++) {
                         addFakeGame(tx, i);
                     }
-                    tx.oncomplete = function () {
+                    tx.complete().then(function () {
                         done();
                     };
                 });
@@ -185,7 +185,7 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
                     for (i = 10; i < 20; i++) {
                         addFakeGame(tx, i);
                     }
-                    tx.oncomplete = function () {
+                    tx.complete().then(function () {
                             gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, ["gameSim"], function () {
                             document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
                             document.getElementById("box-score").innerHTML.should.equal("fuck");

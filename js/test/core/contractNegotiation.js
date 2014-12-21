@@ -130,44 +130,36 @@ define(["dao", "db", "globals", "core/contractNegotiation", "core/league", "core
         });
 
         describe("#accept()", function () {
-/*            it("should not allow signing non-minimum contracts that cause team to exceed the salary cap", function (done) {
-                var i, tx;
+            it("should not allow signing non-minimum contracts that cause team to exceed the salary cap", function () {
+                var tx;
 
                 tx = dao.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
-                return contractNegotiation.create(tx, 8, false).then(function (error) {
-                    var errorUndefined;
-
-                    errorUndefined = error === undefined;
-                    errorUndefined.should.equal(true);
+                contractNegotiation.create(tx, 8, false).then(function (error) {
+                    (typeof error).should.equal("undefined");
 
                     // Force a minimum contract
-                    tx.objectStore("negotiations").openCursor(8).onsuccess = function (event) {
-                        var cursor, negotiation;
-
-                        cursor = event.target.result;
-                        negotiation = cursor.value;
+                    dao.negotiations.get({ot: tx, key: 8}).then(function (negotiation) {
                         negotiation.player.amount = 60000;
-                        cursor.update(negotiation);
-                    };
+                        dao.negotiations.put({ot: tx, value: negotiation});
+                    });
                 });
 
-                tx.oncomplete = function () {
-                    contractNegotiation.accept(8).then(function (error) {
+                return tx.complete().then(function () {
+                    return contractNegotiation.accept(8).then(function (error) {
+                        (typeof error).should.equal("string");
                         error.should.equal("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");
-
-                        done();
                     });
-                };
+                });
             });
         });
         describe("#offer()", function () {
-            it("should never counter with an offer below what has already been proposed", function (done) {
+/*            it("should never counter with an offer below what has already been proposed", function (done) {
                 var tx;
 
                 tx = dao.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
                 return contractNegotiation.create(tx, 9, false);
 
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     g.dbl.tx("negotiations").objectStore("negotiations").get(9).onsuccess = function (event) {
                         var negotiation, originalYears;
 

@@ -26,7 +26,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                 tx = dao.tx("playoffSeries", "readwrite");
                 tx.objectStore("playoffSeries").put(ps);
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.fo_fo_fo(function (awarded) {
                         awarded.should.be.true;
                         done();
@@ -41,7 +41,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                 tx = dao.tx("playoffSeries", "readwrite");
                 tx.objectStore("playoffSeries").put(ps);
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.fo_fo_fo(function (awarded) {
                         awarded.should.be.false;
                         done();
@@ -56,7 +56,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                 tx = dao.tx("playoffSeries", "readwrite");
                 tx.objectStore("playoffSeries").put(ps);
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.fo_fo_fo(function (awarded) {
                         awarded.should.be.false;
                         done();
@@ -83,7 +83,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                         cursor.update(t);
                     };
-                    tx.oncomplete = function () {
+                    tx.complete().then(function () {
                         account.checkAchievement.septuawinarian(function (awarded) {
                             awarded.should.be.true;
                             done();
@@ -113,7 +113,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement["98_degrees"](function (awarded) {
                         awarded.should.be.true;
                         done();
@@ -135,7 +135,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement["98_degrees"](function (awarded) {
                         var tx;
 
@@ -154,7 +154,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                             cursor.update(t);
                         };
 
-                        tx.oncomplete = function () {
+                        tx.complete().then(function () {
                             account.checkAchievement["98_degrees"](function (awarded) {
                                 awarded.should.be.false;
                                 done();
@@ -182,7 +182,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement["98_degrees"](function (awarded) {
                         awarded.should.be.false;
                         done();
@@ -223,7 +223,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.dynasty(function (awarded) {
                         awarded.should.be.true;
 
@@ -248,7 +248,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                                     cursor.update(t);
                                 };
-                                tx.oncomplete = function () {
+                                tx.complete().then(function () {
                                     account.checkAchievement.dynasty(function (awarded) {
                                         awarded.should.be.true;
 
@@ -284,7 +284,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.dynasty(function (awarded) {
                         awarded.should.be.true;
 
@@ -318,7 +318,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.dynasty(function (awarded) {
                         awarded.should.be.true;
 
@@ -350,7 +350,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.dynasty(function (awarded) {
                         awarded.should.be.true;
 
@@ -385,7 +385,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.moneyball(function (awarded) {
                         awarded.should.be.true;
 
@@ -411,7 +411,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.moneyball(function (awarded) {
                         awarded.should.be.false;
 
@@ -438,7 +438,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.moneyball(function (awarded) {
                         awarded.should.be.true;
 
@@ -464,7 +464,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.moneyball(function (awarded) {
                         awarded.should.be.false;
 
@@ -487,7 +487,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                 tx = dao.tx("awards", "readwrite");
                 tx.objectStore("awards").put(awards);
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.hardware_store(function (awarded) {
                         awarded.should.be.true;
                         done();
@@ -502,7 +502,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                 tx = dao.tx("awards", "readwrite");
                 tx.objectStore("awards").put(awards);
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.hardware_store(function (awarded) {
                         awarded.should.be.false;
                         done();
@@ -517,7 +517,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                 tx = dao.tx("awards", "readwrite");
                 tx.objectStore("awards").put(awards);
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.hardware_store(function (awarded) {
                         awarded.should.be.false;
                         done();
@@ -542,7 +542,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.small_market(function (awarded) {
                         awarded.should.be.true;
                         done();
@@ -564,7 +564,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.small_market(function (awarded) {
                         awarded.should.be.false;
                         done();
@@ -586,7 +586,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(t);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.small_market(function (awarded) {
                         awarded.should.be.false;
                         done();
@@ -624,7 +624,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     tx.objectStore("awards").put(awards);
 
-                    tx.oncomplete = function () {
+                    tx.complete().then(function () {
                         account.checkAchievement.sleeper_pick(function (awarded) {
                             awarded.should.be.true;
                             done();
@@ -646,7 +646,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(p);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.sleeper_pick(function (awarded) {
                         awarded.should.be.false;
                         done();
@@ -668,7 +668,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(p);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.sleeper_pick(function (awarded) {
                         awarded.should.be.false;
                         done();
@@ -690,7 +690,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(p);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.sleeper_pick(function (awarded) {
                         awarded.should.be.false;
                         done();
@@ -712,7 +712,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     cursor.update(p);
                 };
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.sleeper_pick(function (awarded) {
                         awarded.should.be.false;
                         done();
@@ -739,7 +739,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                     cursor.update(p);
                 };
 
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     account.checkAchievement.sleeper_pick(function (awarded) {
                         awarded.should.be.false;
                         done();

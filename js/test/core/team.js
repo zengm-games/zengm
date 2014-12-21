@@ -225,7 +225,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
                     }
                 };
 
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     cb();
                 };
             }
@@ -248,7 +248,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
                     }
                 };
 
-                tx.oncomplete = function () {
+                tx.complete().then(function () {
                     cb();
                 };
             }

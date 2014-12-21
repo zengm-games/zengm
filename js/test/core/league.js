@@ -43,7 +43,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                 g.dbl.objectStoreNames.contains("trade").should.equal(true);
             });
             it("should initialize gameAttributes object store", function (done) {
-                g.dbl.transaction("gameAttributes").objectStore("gameAttributes").getAll().onsuccess = function (event) {
+                return dao.gameAttributes.getAll().then(function (gameAttributes) {
                     var count, gTest, key;
 
                     gTest = _.reduce(event.target.result, function (obj, row) { obj[row.key] = row.value; return obj; }, {});
@@ -74,7 +74,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                 };
             });
             it("should initialize draftOrder object store", function (done) {
-                g.dbl.transaction("draftOrder").objectStore("draftOrder").getAll().onsuccess = function (event) {
+                return dao.draftOrder.getAll().then(function (draftOrder) {
                     event.target.result.should.have.length(1);
                     event.target.result[0].rid.should.equal(1);
                     event.target.result[0].draftOrder.should.have.length(0);
@@ -82,7 +82,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                 };
             });
             it("should initialize teams object store", function (done) {
-                g.dbl.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
+                return dao.teams.getAll().then(function (teams) {
                     var cids, dids, i, teams;
 
                     teams = event.target.result;
@@ -108,7 +108,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                 };
             });
             it("should initialize trade object store", function (done) {
-                g.dbl.transaction("trade").objectStore("trade").getAll().onsuccess = function (event) {
+                return dao.trade.getAll().then(function (trade) {
                     event.target.result.should.have.length(1);
                     event.target.result[0].rid.should.equal(0);
                     event.target.result[0].teams.should.have.length(2);
@@ -116,7 +116,7 @@ define(["db", "globals", "core/league", "lib/underscore", "test/helpers"], funct
                 };
             });
             it("should initialize players object store", function (done) {
-                g.dbl.transaction("players").objectStore("players").getAll().onsuccess = function (event) {
+                return dao.players.getAll().then(function (players) {
                     event.target.result.should.have.length(33 * 14 + 70 * 3);
                     done();
                 };

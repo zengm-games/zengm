@@ -20,7 +20,7 @@ define(["db", "globals", "core/league", "core/finances"], function (db, g, leagu
         describe("#assessPayrollMinLuxury()", function () {
             it("should store payroll and appropriately assess luxury and minimum payroll taxes for each team", function (done) {
                 finances.assessPayrollMinLuxury(function () {
-                    g.dbl.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
+                    return dao.teams.getAll().then(function (teams) {
                         var i, teams;
 
                         teams = event.target.result;

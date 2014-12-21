@@ -158,7 +158,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
                 });
             });
             it("should use supplied IndexedDB transaction", function (done) {
-                var tx = g.dbl.transaction(["players", "releasedPlayers", "teams"]);
+                var tx = dao.tx(["players", "releasedPlayers", "teams"]);
                 team.filter({
                     attrs: ["tid", "abbrev"],
                     seasonAttrs: ["season", "won"],
@@ -209,7 +209,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
             function addTen(tid, cb) {
                 var i, tx;
 
-                tx = g.dbl.transaction("players", "readwrite");
+                tx = dao.tx("players", "readwrite");
                 i = 0;
 
                 tx.objectStore("players").index("tid").openCursor(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
@@ -233,7 +233,7 @@ define(["db", "globals", "core/league", "core/player", "core/team"], function (d
             function removeTen(tid, cb) {
                 var i, tx;
 
-                tx = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
+                tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite");
                 i = 0;
 
                 tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {

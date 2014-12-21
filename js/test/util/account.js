@@ -24,7 +24,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 // tid 7 wins 4-0 every series
                 ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":0,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":0,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
-                tx = g.dbl.transaction("playoffSeries", "readwrite");
+                tx = dao.tx("playoffSeries", "readwrite");
                 tx.objectStore("playoffSeries").put(ps);
                 tx.oncomplete = function () {
                     account.checkAchievement.fo_fo_fo(function (awarded) {
@@ -39,7 +39,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 // tid 7 loses a game!
                 ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":0,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":1,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
-                tx = g.dbl.transaction("playoffSeries", "readwrite");
+                tx = dao.tx("playoffSeries", "readwrite");
                 tx.objectStore("playoffSeries").put(ps);
                 tx.oncomplete = function () {
                     account.checkAchievement.fo_fo_fo(function (awarded) {
@@ -54,7 +54,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 // tid 7 is changed to 8
                 ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":8,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":0,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":8,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":1,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":8,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":8,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
-                tx = g.dbl.transaction("playoffSeries", "readwrite");
+                tx = dao.tx("playoffSeries", "readwrite");
                 tx.objectStore("playoffSeries").put(ps);
                 tx.oncomplete = function () {
                     account.checkAchievement.fo_fo_fo(function (awarded) {
@@ -72,7 +72,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     awarded.should.be.false;
 
-                    tx = g.dbl.transaction("teams", "readwrite");
+                    tx = dao.tx("teams", "readwrite");
                     tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                         var cursor, t;
 
@@ -100,7 +100,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 // tid 7 wins 4-0 every series
                 ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":0,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":0,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
-                tx = g.dbl.transaction(["playoffSeries", "teams"], "readwrite");
+                tx = dao.tx(["playoffSeries", "teams"], "readwrite");
                 tx.objectStore("playoffSeries").put(ps);
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
@@ -123,7 +123,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should not award achievement without 82-0 regular season", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
 
@@ -141,7 +141,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                         awarded.should.be.false;
 
-                        tx = g.dbl.transaction("teams", "readwrite");
+                        tx = dao.tx("teams", "readwrite");
                         tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                             var cursor, t;
 
@@ -169,7 +169,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 // tid 7 lost a game
                 ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":1,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":0,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
-                tx = g.dbl.transaction(["playoffSeries", "teams"], "readwrite");
+                tx = dao.tx(["playoffSeries", "teams"], "readwrite");
                 tx.objectStore("playoffSeries").put(ps);
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
@@ -211,7 +211,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 var tx;
 
                 // Add 6 to the existing season, making 7 seasons total
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, extraSeasons, t;
 
@@ -236,7 +236,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                                 awarded.should.be.false;
 
                                 // Add 1 to the existing 7 seasons, making 8 seasons total
-                                tx = g.dbl.transaction("teams", "readwrite");
+                                tx = dao.tx("teams", "readwrite");
                                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                                     var cursor, extraSeasons, t;
 
@@ -271,7 +271,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should award dynasty and dynasty_2 for 8 titles in 8 seasons, but not dynasty_3", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
 
@@ -304,7 +304,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 var tx;
 
                 // Add 5 to the existing season, making 13 seasons total
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, extraSeasons, t;
 
@@ -337,7 +337,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should award dynasty and dynasty_3 for 11 titles in 13 seasons, but not dynasty_2 if there are not 8 contiguous", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
 
@@ -372,7 +372,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should award moneyball and moneyball_2 for title with payroll <= $30M", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
 
@@ -400,7 +400,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should not award either if didn't win title", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
 
@@ -426,7 +426,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should award moneyball but not moneyball_2 for title with payroll > $30M and <= $40M", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
 
@@ -453,7 +453,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should not award either if payroll > $40M", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
 
@@ -485,7 +485,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 // tid 7 wins all awards
                 awards = {"season":2013,"roy":{"pid":501,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973},"mvp":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","pts":28.951219512195124,"trb":11.329268292682928,"ast":0.6585365853658537},"smoy":{"pid":505,"name":"Donald Gallager","tid":7,"abbrev":"MON","pts":22.195121951219512,"trb":7.878048780487805,"ast":0.7682926829268293},"dpoy":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","trb":11.329268292682928,"blk":3.2560975609756095,"stl":2.2804878048780486},"finalsMvp":{"pid":335,"name":"Erwin Ritchey","tid":7,"abbrev":"POR","pts":24.4,"trb":8.85,"ast":2.65}} ;
 
-                tx = g.dbl.transaction("awards", "readwrite");
+                tx = dao.tx("awards", "readwrite");
                 tx.objectStore("awards").put(awards);
                 tx.oncomplete = function () {
                     account.checkAchievement.hardware_store(function (awarded) {
@@ -500,7 +500,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 // tid 7 wins loses an award!
                 awards = {"season":2013,"roy":{"pid":501,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973},"mvp":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","pts":28.951219512195124,"trb":11.329268292682928,"ast":0.6585365853658537},"smoy":{"pid":505,"name":"Donald Gallager","tid":8,"abbrev":"MON","pts":22.195121951219512,"trb":7.878048780487805,"ast":0.7682926829268293},"dpoy":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","trb":11.329268292682928,"blk":3.2560975609756095,"stl":2.2804878048780486},"finalsMvp":{"pid":335,"name":"Erwin Ritchey","tid":7,"abbrev":"POR","pts":24.4,"trb":8.85,"ast":2.65}} ;
 
-                tx = g.dbl.transaction("awards", "readwrite");
+                tx = dao.tx("awards", "readwrite");
                 tx.objectStore("awards").put(awards);
                 tx.oncomplete = function () {
                     account.checkAchievement.hardware_store(function (awarded) {
@@ -515,7 +515,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                 // tid 7 is changed to 8
                 awards = {"season":2013,"roy":{"pid":501,"name":"Timothy Gonzalez","tid":8,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973},"mvp":{"pid":280,"name":"William Jarosz","tid":8,"abbrev":"PHI","pts":28.951219512195124,"trb":11.329268292682928,"ast":0.6585365853658537},"smoy":{"pid":505,"name":"Donald Gallager","tid":8,"abbrev":"MON","pts":22.195121951219512,"trb":7.878048780487805,"ast":0.7682926829268293},"dpoy":{"pid":280,"name":"William Jarosz","tid":8,"abbrev":"PHI","trb":11.329268292682928,"blk":3.2560975609756095,"stl":2.2804878048780486},"finalsMvp":{"pid":335,"name":"Erwin Ritchey","tid":8,"abbrev":"POR","pts":24.4,"trb":8.85,"ast":2.65}} ;
 
-                tx = g.dbl.transaction("awards", "readwrite");
+                tx = dao.tx("awards", "readwrite");
                 tx.objectStore("awards").put(awards);
                 tx.oncomplete = function () {
                     account.checkAchievement.hardware_store(function (awarded) {
@@ -530,7 +530,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should award achievement if user's team wins title in a small market", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
 
@@ -552,7 +552,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should not award achievement if user's team is not in a small market", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
 
@@ -574,7 +574,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should not award achievement if user's team does not win the title", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("teams", "readwrite");
+                tx = dao.tx("teams", "readwrite");
                 tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
                     var cursor, t;
 
@@ -602,7 +602,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
 
                     awarded.should.be.false;
 
-                    tx = g.dbl.transaction(["awards", "players"], "readwrite");
+                    tx = dao.tx(["awards", "players"], "readwrite");
 
                     tx.objectStore("players").openCursor(1).onsuccess = function (event) {
                         var cursor, p;
@@ -635,7 +635,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should not award achievement if not currently on user's team", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("players", "readwrite");
+                tx = dao.tx("players", "readwrite");
                 tx.objectStore("players").openCursor(1).onsuccess = function (event) {
                     var cursor, p;
 
@@ -656,7 +656,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should not award achievement if not drafted by user", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("players", "readwrite");
+                tx = dao.tx("players", "readwrite");
                 tx.objectStore("players").openCursor(1).onsuccess = function (event) {
                     var cursor, p;
 
@@ -678,7 +678,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should not award achievement if lottery pick", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("players", "readwrite");
+                tx = dao.tx("players", "readwrite");
                 tx.objectStore("players").openCursor(1).onsuccess = function (event) {
                     var cursor, p;
 
@@ -700,7 +700,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should not award achievement if old pick", function (done) {
                 var tx;
 
-                tx = g.dbl.transaction("players", "readwrite");
+                tx = dao.tx("players", "readwrite");
                 tx.objectStore("players").openCursor(1).onsuccess = function (event) {
                     var cursor, p;
 
@@ -722,7 +722,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
             it("should not award achievement not ROY", function (done) {
                 var awards, tx;
 
-                tx = g.dbl.transaction(["awards", "players"], "readwrite");
+                tx = dao.tx(["awards", "players"], "readwrite");
 
                 // Switch to pid 2
                 awards = {"season":2013,"roy":{"pid":2,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973}} ;

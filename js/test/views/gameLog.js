@@ -55,7 +55,7 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
                 league.create("Test", 0, undefined, 2013, false, function () {
                     var i, tx;
 
-                    tx = g.dbl.transaction("games", "readwrite");
+                    tx = dao.tx("games", "readwrite");
                     for (i = 0; i < 10; i++) {
                         addFakeGame(tx, i);
                     }
@@ -181,7 +181,7 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
                     child.parentNode.removeChild(child);
 
                     // Add fake games
-                    tx = g.dbl.transaction("games", "readwrite");
+                    tx = dao.tx("games", "readwrite");
                     for (i = 10; i < 20; i++) {
                         addFakeGame(tx, i);
                     }

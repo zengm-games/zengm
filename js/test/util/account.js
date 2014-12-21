@@ -2,19 +2,17 @@
  * @name test.util.account
  * @namespace Tests for util.account.
  */
-define(["db", "globals", "core/league", "util/account"], function (db, g, league, account) {
+define(["dao", "db", "globals", "core/league", "util/account"], function (dao, db, g, league, account) {
     "use strict";
 
     describe("util/account", function () {
-        before(function (done) {
-            db.connectMeta(function () {
-                league.create("Test", 7, undefined, 2013, false, function () {
-                    done();
-                });
+        before(function () {
+            return db.connectMeta().then(function () {
+                return league.create("Test", 7, undefined, 2013, false);
             });
         });
-        after(function (done) {
-            league.remove(g.lid, done);
+        after(function () {
+            return league.remove(g.lid);
         });
 
         describe("#checkAchievement.fo_fo_fo()", function () {
@@ -31,7 +29,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.true;
                         done();
                     });
-                };
+                });
             });
             it("should not award achievement for 16-? playoff record for user's team", function (done) {
                 var ps, tx;
@@ -46,7 +44,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
             it("should not award achievement for 16-0 playoff record for other team", function (done) {
                 var ps, tx;
@@ -61,7 +59,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
         });
 
@@ -88,7 +86,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                             awarded.should.be.true;
                             done();
                         });
-                    };
+                    });
                 });
             });
         });
@@ -118,7 +116,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.true;
                         done();
                     });
-                };
+                });
             });
             it("should not award achievement without 82-0 regular season", function (done) {
                 var tx;
@@ -159,9 +157,9 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                                 awarded.should.be.false;
                                 done();
                             });
-                        };
+                        });
                     });
-                };
+                });
             });
             it("should not be awarded without 16-0 playoffs", function (done) {
                 var ps, tx;
@@ -187,7 +185,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
         });
 
@@ -262,11 +260,11 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                                             });
                                         });
                                     });
-                                };
+                                });
                             });
                         });
                     });
-                };
+                });
             });
             it("should award dynasty and dynasty_2 for 8 titles in 8 seasons, but not dynasty_3", function (done) {
                 var tx;
@@ -298,7 +296,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                             });
                         });
                     });
-                };
+                });
             });
             it("should award dynasty, dynasty_2, and dynasty_3 for 11 titles in 13 seasons if there are 8 contiguous", function (done) {
                 var tx;
@@ -332,7 +330,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                             });
                         });
                     });
-                };
+                });
             });
             it("should award dynasty and dynasty_3 for 11 titles in 13 seasons, but not dynasty_2 if there are not 8 contiguous", function (done) {
                 var tx;
@@ -364,7 +362,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                             });
                         });
                     });
-                };
+                });
             });
         });
 
@@ -395,7 +393,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                             done();
                         });
                     });
-                };
+                });
             });
             it("should not award either if didn't win title", function (done) {
                 var tx;
@@ -421,7 +419,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                             done();
                         });
                     });
-                };
+                });
             });
             it("should award moneyball but not moneyball_2 for title with payroll > $30M and <= $40M", function (done) {
                 var tx;
@@ -448,7 +446,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                             done();
                         });
                     });
-                };
+                });
             });
             it("should not award either if payroll > $40M", function (done) {
                 var tx;
@@ -474,7 +472,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                             done();
                         });
                     });
-                };
+                });
             });
         });
 
@@ -492,7 +490,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.true;
                         done();
                     });
-                };
+                });
             });
             it("should not award achievement if user's team loses an award", function (done) {
                 var awards, tx;
@@ -507,7 +505,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
             it("should not award achievement if another team sweeps the awards", function (done) {
                 var awards, tx;
@@ -522,7 +520,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
         });
 
@@ -547,7 +545,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.true;
                         done();
                     });
-                };
+                });
             });
             it("should not award achievement if user's team is not in a small market", function (done) {
                 var tx;
@@ -569,7 +567,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
             it("should not award achievement if user's team does not win the title", function (done) {
                 var tx;
@@ -591,7 +589,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
         });
 
@@ -629,7 +627,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                             awarded.should.be.true;
                             done();
                         });
-                    };
+                    });
                 });
             });
             it("should not award achievement if not currently on user's team", function (done) {
@@ -651,7 +649,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
             it("should not award achievement if not drafted by user", function (done) {
                 var tx;
@@ -673,7 +671,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
             it("should not award achievement if lottery pick", function (done) {
                 var tx;
@@ -695,7 +693,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
             it("should not award achievement if old pick", function (done) {
                 var tx;
@@ -717,7 +715,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
             it("should not award achievement not ROY", function (done) {
                 var awards, tx;
@@ -744,7 +742,7 @@ define(["db", "globals", "core/league", "util/account"], function (db, g, league
                         awarded.should.be.false;
                         done();
                     });
-                };
+                });
             });
         });
     });

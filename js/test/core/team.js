@@ -170,7 +170,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team"], func
             });
         });
 
-/*        describe("#checkRosterSizes()", function () {
+        describe("#checkRosterSizes()", function () {
             before(function () {
                 return db.connectMeta().then(function () {
                     return league.create("Test", 0, undefined, 2013, false);
@@ -180,130 +180,121 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team"], func
                 return league.remove(g.lid);
             });
 
-            function addTen(tid, cb) {
+            function addTen(tid) {
                 var i, tx;
 
                 tx = dao.tx("players", "readwrite");
                 i = 0;
 
-                tx.objectStore("players").index("tid").openCursor(g.PLAYER.FREE_AGENT).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    p = cursor.value;
-                    p.tid = tid;
-                    cursor.update(p);
-                    i += 1;
-                    if (i < 10) {
-                        cursor.continue();
+                dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: g.PLAYER.FREE_AGENT,
+                    modify: function (p, shortCircuit) {
+                        if (i >= 10) {
+                            return shortCircuit();
+                        }
+                        i += 1;
+                        p.tid = tid;
+                        return p;
                     }
-                };
+                });
 
-                tx.complete().then(function () {
-                    cb();
-                };
+                return tx.complete();
             }
 
-            function removeTen(tid, cb) {
+            function removeTen(tid) {
                 var i, tx;
 
                 tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite");
                 i = 0;
 
-                tx.objectStore("players").index("tid").openCursor(tid).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    p = cursor.value;
-                    player.release(tx, p, false);
-                    i += 1;
-                    if (i < 10) {
-                        cursor.continue();
+                dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: tid,
+                    modify: function (p, shortCircuit) {
+                        if (i >= 10) {
+                            return shortCircuit();
+                        }
+                        i += 1;
+                        return player.release(tx, p, false);
                     }
-                };
+                });
 
-                tx.complete().then(function () {
-                    cb();
-                };
+                return tx.complete();
             }
 
-            it("should add players to AI team under roster limit without returning error message", function (done) {
-                removeTen(5, function () {
+            it("should add players to AI team under roster limit without returning error message", function () {
+                return removeTen(5).then(function () {
                     // Confirm roster size under limit
-                    g.dbl.transaction("players").objectStore("players").index("tid").count(5).onsuccess = function (event) {
-                        event.target.result.should.equal(4);
-
-                        // Confirm players added up to limit
-                        team.checkRosterSizes(function (userTeamSizeError) {
-                            should.equal(userTeamSizeError, null);
-                            g.dbl.transaction("players").objectStore("players").index("tid").count(5).onsuccess = function (event) {
-                                event.target.result.should.equal(g.minRosterSize);
-                                done();
-                            };
-                        });
-                    };
+                    return dao.players.count({index: "tid", key: 5}).then(function (numPlayers) {
+                        numPlayers.should.equal(4);
+                    });
+                }).then(function () {
+                    return team.checkRosterSizes().then(function (userTeamSizeError) {
+                        should.equal(userTeamSizeError, null);
+                    });
+                }).then(function () {
+                    // Confirm players added up to limit
+                    return dao.players.count({index: "tid", key: 5}).then(function (numPlayers) {
+                        numPlayers.should.equal(g.minRosterSize);
+                    });
                 });
             });
-            it("should remove players to AI team over roster limit without returning error message FAILS SOMETIMES IN CHROME, I THINK IT'S A BUG IN CHROME", function (done) {
-                addTen(8, function () {
+            /*it("should remove players to AI team over roster limit without returning error message FAILS SOMETIMES IN CHROME, I THINK IT'S A BUG IN CHROME", function () {
+                return addTen(8).then(function () {
                     // Confirm roster size over limit
                     g.dbl.transaction("players").objectStore("players").index("tid").count(8).onsuccess = function (event) {
                         event.target.result.should.equal(24);
 
                         // Confirm roster size pruned to limit
-                        team.checkRosterSizes(function (userTeamSizeError) {
+                        return team.checkRosterSizes().then(function (userTeamSizeError) {
                             should.equal(userTeamSizeError, null);
                             // Without setTimeout, Chrome sometimes produces an error (16 instead of 15). I think it's a Chrome bug.
                             setTimeout(function () {
                                 g.dbl.transaction("players").objectStore("players").index("tid").count(8).onsuccess = function (event) {
                                     event.target.result.should.equal(15);
-                                    done();
                                 };
                             }, 1000);
                         });
                     };
                 });
-            });
-            it("should return error message when user team is under roster limit", function (done) {
-                removeTen(g.userTid, function () {
-                    // Confirm roster size over limit
-                    g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
-                        event.target.result.should.equal(4);
-
-                        // Confirm roster size pruned to limit
-                        team.checkRosterSizes(function (userTeamSizeError) {
-                            userTeamSizeError.should.be.a("string");
-                            userTeamSizeError.should.contain("less");
-                            userTeamSizeError.should.contain("minimum");
-                            g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
-                                event.target.result.should.equal(4);
-                                done();
-                            };
-                        });
-                    };
-                });
-            });
-            it("should return error message when user team is over roster limit", function (done) {
-                addTen(g.userTid, function () {
-                    addTen(g.userTid, function () {
-                        // Confirm roster size over limit
-                        g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
-                            event.target.result.should.equal(24);
-
-                            // Confirm roster size pruned to limit
-                            team.checkRosterSizes(function (userTeamSizeError) {
-                                userTeamSizeError.should.be.a("string");
-                                userTeamSizeError.should.contain("more");
-                                userTeamSizeError.should.contain("maximum");
-                                g.dbl.transaction("players").objectStore("players").index("tid").count(g.userTid).onsuccess = function (event) {
-                                    event.target.result.should.equal(24);
-                                    done();
-                                };
-                            });
-                        };
+            });*/
+            it("should return error message when user team is under roster limit", function () {
+                return removeTen(g.userTid).then(function () {
+                    // Confirm roster size under limit
+                    return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
+                        numPlayers.should.equal(4);
+                    });
+                }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
+                    // Confirm roster size errora nd no auto-signing of players
+                    userTeamSizeError.should.be.a("string");
+                    userTeamSizeError.should.contain("less");
+                    userTeamSizeError.should.contain("minimum");
+                    return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
+                        numPlayers.should.equal(4);
                     });
                 });
             });
-        });*/
+            it("should return error message when user team is over roster limit", function () {
+                return addTen(g.userTid).then(function () {
+                    return addTen(g.userTid);
+                }).then(function () {
+                    // Confirm roster size over limit
+                    return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
+                        numPlayers.should.equal(24);
+                    });
+                }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
+                    // Confirm roster size error and no auto-release of players
+                    userTeamSizeError.should.be.a("string");
+                    userTeamSizeError.should.contain("more");
+                    userTeamSizeError.should.contain("maximum");
+                    return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
+                        numPlayers.should.equal(24);
+                    });
+                });
+            });
+        });
     });
 });

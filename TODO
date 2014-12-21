@@ -59,7 +59,7 @@ clean up
   eventually factor out library and merge with https://github.com/aaronpowell/db.js/issues/95 maybe
   throw error in inappropriate input param (like "pid")
   shouldn't overwrite functions with getAll like in players - that should be another name
-  all object stores get all methods
+  hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake
 
 unit tests
 

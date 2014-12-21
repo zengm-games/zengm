@@ -625,7 +625,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
             gidsFinished = [];
 
-            tx = g.dbl.transaction(["events", "games", "players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+            tx = dao.tx(["events", "games", "players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 //tx = g.dbl.transaction(["players", "schedule"], "readwrite");
 
             cbSaveResult = function (i) {
@@ -639,27 +639,26 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 }).then(function () {
                     return writePlayerStats(tx, results[i]);
                 }).then(function () {
-                    var j, scheduleStore;
+                    var j;
 
                     if (i > 0) {
                         cbSaveResult(i - 1);
                     } else {
                         // Delete finished games from schedule
-                        scheduleStore = tx.objectStore("schedule");
                         for (j = 0; j < gidsFinished.length; j++) {
-                            scheduleStore.delete(gidsFinished[j]);
+                            dao.schedule.delete({ot: tx, key: gidsFinished[j]});
                         }
 
                         // Update ranks
                         finances.updateRanks(tx, ["expenses", "revenues"]);
 
                         // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-                        tx.objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).onsuccess = function (event) {
-                            var changed, cursor, p;
-
-                            cursor = event.target.result;
-                            if (cursor) {
-                                p = cursor.value;
+                        dao.players.iterate({
+                            ot: tx,
+                            index: "tid",
+                            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                            modify: function (p) {
+                                var changed;
 
                                 changed = false;
                                 if (p.injury.gamesRemaining > 0) {
@@ -688,19 +687,17 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                                 }
 
                                 if (changed) {
-                                    cursor.update(p);
+                                    return p;
                                 }
-
-                                cursor.continue();
                             }
-                        };
+                        });
                     }
                 });
             };
 
             cbSaveResult(results.length - 1);
 
-            tx.oncomplete = function () {
+            tx.complete().then(function () {
                 var i, raw, url;
 
                 // If there was a play by play done for one of these games, get it
@@ -732,7 +729,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         });
                     }, raw);
                 });
-            };
+            });
         };
 
         // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults

@@ -626,7 +626,6 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
             gidsFinished = [];
 
             tx = dao.tx(["events", "games", "players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
-//tx = g.dbl.transaction(["players", "schedule"], "readwrite");
 
             cbSaveResult = function (i) {
 //console.log('cbSaveResult ' + i)

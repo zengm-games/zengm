@@ -20,7 +20,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
             return;
         }
 
-        league.export_(objectStores, function (data) {
+        league.export_(objectStores).then(function (data) {
             var a, blob, fileName, json, url;
 
             json = JSON.stringify(data, undefined, 2);

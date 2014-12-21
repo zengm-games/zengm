@@ -475,10 +475,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
      * 
      * @memberOf core.league
      * @param {string[]} stores Array of names of objectStores to include in export
-     * @param {function(Object)} cb Callback whose first argument contains all the exported league data.
+     * @return {Promise} Resolve to all the exported league data.
      */
-    function export_(stores, cb) {
-        var exportedLeague,  exportStore, movePlayerStats;
+    function export_(stores) {
+        var exportedLeague,  exportStore, i, promises;
 
         exportedLeague = {};
 
@@ -488,19 +488,18 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
         exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
 
         exportStore = function (i) {
-            dao[stores[i]].getAll().then(function (store) {
+            return dao[stores[i]].getAll().then(function (store) {
                 exportedLeague[stores[i]] = store;
-
-                if (i > 0) {
-                    exportStore(i - 1);
-                } else {
-                    movePlayerStats();
-                }
             });
         };
 
-        // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
-        movePlayerStats = function () {
+        promises = [];
+        for (i = 0; i < stores.length; i++) {
+            promises.push(exportStore(i));
+        }
+
+        return Promise.all(promises).then(function () {
+            // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
             var i, j, pid;
 
             if (stores.indexOf("playerStats") >= 0) {
@@ -522,12 +521,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                 }
 
                 delete exportedLeague.playerStats;
-
-                cb(exportedLeague);
-            } else {
-                cb(exportedLeague);
             }
-        }
+        }).then(function () {
+            return exportedLeague;
+        })
 
         // Iterate through all the stores
         exportStore(stores.length - 1, cb);

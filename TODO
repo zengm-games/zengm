@@ -8,8 +8,6 @@ TEST
 
 use promises pervasively
 
-league.export_
-
 dao.store.iterate
   if "modify" is passed, apply function to each element in cursor
     how to handle custom "get" functions like players.getAll?
@@ -37,7 +35,10 @@ various functions in db
 
 rewrite old upgrading code?
 
-core
+util/account
+
+db.getObjectStore
+  other db functions
 
 look at views with errorMessage - is flow correct? problems with cancellation?
 
@@ -46,8 +47,9 @@ big goals
     grep for transaction, objectStore, oncomplete, dbl, dbm, etc
     grep -r --exclude-dir=test oncomplete js
   no "cb" anywhere
-  no "transaction" anywhere
   no "Store" anywhere
+    core/league
+    core/team
   no "new Promise" anywhere
   no db.getObjectStore - equivalent function is in indexedDb adapter
 
@@ -57,6 +59,7 @@ clean up
   throw error in inappropriate input param (like "pid")
   shouldn't overwrite functions with getAll like in players - that should be another name
   hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake
+  what about creating, migrating, and deleting databases?
 
 unit tests
 

@@ -2,7 +2,7 @@
  * @name test.views.gameLog
  * @namespace Tests for views.gameLog.
  */
-define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function (db, g, league, $, gameLog) {
+define(["dao", "db", "globals", "core/league", "lib/jquery", "views/gameLog"], function (dao, db, g, league, $, gameLog) {
     "use strict";
 
     function confirmNotBuilt() {
@@ -46,29 +46,27 @@ define(["db", "globals", "core/league", "lib/jquery", "views/gameLog"], function
                 });
             }
         }
-        tx.objectStore("games").add(game);
+        dao.games.add({ot: tx, value: game});
     }
 
     describe("views/gameLog", function () {
-        before(function (done) {
-            db.connectMeta(function () {
-                league.create("Test", 0, undefined, 2013, false, function () {
-                    var i, tx;
-
-                    tx = dao.tx("games", "readwrite");
-                    for (i = 0; i < 10; i++) {
-                        addFakeGame(tx, i);
-                    }
-                    tx.complete().then(function () {
-                        done();
-                    };
-                });
-            });
+        before(function () {
             $("body").append('<div id="testsWrapper" style="visibility: hidden;"><div id="league_content"></div></div>');
+            return db.connectMeta().then(function () {
+                return league.create("Test", 0, undefined, 2013, false);
+            }).then(function () {
+                var i, tx;
+
+                tx = dao.tx("games", "readwrite");
+                for (i = 0; i < 10; i++) {
+                    addFakeGame(tx, i);
+                }
+                return tx.complete().then();
+            });
         });
-        after(function (done) {
-            league.remove(g.lid, done);
+        after(function () {
             $("#testsWrapper").remove();
+            return league.remove(g.lid);
         });
         afterEach(function () {
             document.getElementById("league_content").dataset.idLoaded = "";

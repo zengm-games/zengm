@@ -47,6 +47,7 @@ big goals
     grep for transaction, objectStore, oncomplete, dbl, dbm, etc
     grep -r --exclude-dir=test oncomplete js
   no "cb" anywhere
+    util/bbgmView
   no "Store" anywhere
     core/league
     core/team
@@ -66,6 +67,7 @@ unit tests
   chai as promised? probably not necessary
   get running from command line, maybe in karma?
   performance compared to old version?
+  firefox and chrome
 
 unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-javascript-es6-promise-support-done-api https://code.google.com/p/v8/issues/detail?id=3093
   can customize build to save space https://github.com/petkaantonov/bluebird#custom-builds
@@ -79,7 +81,6 @@ test
   achievement retrieval from account
   achievement syncing to account
   make sure ads show correctly
-  addTen and removeTen in core/team
 
 after fully abstracting IndexedDB, could i improve performance by running it locally in node and using a relational database?
   same with mobile on phonegap

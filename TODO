@@ -4,6 +4,8 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
+tools > reset db should persist debug mode
+
 TEST
 
 use promises pervasively

@@ -446,12 +446,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                 resolve();
             };
             request.onfailure = function (event) {
-                console.log("Error: ", event);
-                resolve();
+                reject(event);
             };
             request.onblocked = function (event) {
-                console.log("Blocked: ", event);
-                resolve();
+                reject(event);
             };
         });
     }

@@ -2,7 +2,7 @@
  * @name db
  * @namespace Creating, migrating, and connecting to databases; working with transactions.
  */
-define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (dao, g, Promise, Davis, $, _, helpers) {
+define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/helpers"], function (dao, g, Promise, Davis, _, helpers) {
     "use strict";
 
     var migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="http://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
@@ -26,9 +26,8 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/jquery", "lib/unders
      * Migrate meta database to the latest structure.
      * 
      * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
-     * @param {number} lid Integer league ID number.
      */
-    function migrateMeta(event, lid) {
+    function migrateMeta(event) {
         var dbm, tx;
 
         document.getElementById("content").innerHTML = migrateMessage;
@@ -909,19 +908,21 @@ console.log(event);
     }
 
     function reset() {
-        var key;
+        var debug, key;
 
         // localStorage, which is just use for table sorting currently
+        debug = localStorage.debug; // Save debug setting and restore later
         for (key in localStorage) {
             if (localStorage.hasOwnProperty(key)) {
                 localStorage.removeItem(key);
             }
         }
+        localStorage.debug = debug;
 
         // Delete any current league databases
         console.log("Deleting any current league databases...");
         g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
-            var data, done, i, league, leagues, request;
+            var i, league, leagues, promises;
 
             leagues = event.target.result;
 
@@ -932,26 +933,22 @@ console.log(event);
 
             league = require("core/league"); // Circular reference
 
-            done = 0;
+            promises = [];
             for (i = 0; i < leagues.length; i++) {
-                league.remove(leagues[i].lid, function () {
-                    done += 1;
-                    if (done === leagues.length) {
-                        // Delete any current meta database
-                        console.log("Deleting any current meta database...");
-                        g.dbm.close();
-                        request = indexedDB.deleteDatabase("meta");
-                        request.onsuccess = function (event) {
-                            // Create new meta database
-                            console.log("Creating new meta database...");
-                            connectMeta(function () {
-                                console.log("Done!");
-                                Davis.location.assign(new Davis.Request("/"));
-                            });
-                        };
-                    }
-                });
+                promises.push(league.remove(leagues[i].lid))
             }
+
+            Promise.all(promises).then(function () {
+                var request;
+
+                // Delete any current meta database
+                console.log("Deleting any current meta database...");
+                g.dbm.close();
+                request = indexedDB.deleteDatabase("meta");
+                request.onsuccess = function () {
+                    location.reload();
+                };
+            });
         };
     }
 

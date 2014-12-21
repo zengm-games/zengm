@@ -70,7 +70,7 @@ define(["dao", "db", "globals", "core/contractNegotiation", "core/league", "core
                     });
                 });
             });
-/*            it("should allow multiple concurrent negotiations if resigning is true", function (done) {
+            it("should allow multiple concurrent negotiations if resigning is true", function () {
                 var tx;
 
                 tx = dao.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
@@ -79,84 +79,58 @@ define(["dao", "db", "globals", "core/contractNegotiation", "core/league", "core
                     (typeof error).should.equal("undefined");
 
                     return dao.negotiations.getAll({ot: tx}).then(function (negotiations) {
-                        var negotiations;
-
-                        negotiations = event.target.result;
                         negotiations.length.should.equal(1);
                         negotiations[0].pid.should.equal(7);
-
-                        return contractNegotiation.create(tx, 8, true).then(function (error) {
-                            (typeof error).should.equal("undefined");
-
-                            return dao.negotiations.getAll({ot: tx}).then(function (negotiations) {
-                                var negotiations;
-
-                                negotiations = event.target.result;
-                                negotiations.length.should.equal(2);
-                                negotiations[0].pid.should.equal(7);
-                                negotiations[1].pid.should.equal(8);
-
-                                done();
-                            };
-                        });
-                    };
+                    });
+                }).then(function () {
+                    return contractNegotiation.create(tx, 8, true).then(function (error) {
+                        (typeof error).should.equal("undefined");
+                    });
+                }).then(function () {
+                    return dao.negotiations.getAll({ot: tx}).then(function (negotiations) {
+                        negotiations.length.should.equal(2);
+                        negotiations[0].pid.should.equal(7);
+                        negotiations[1].pid.should.equal(8);
+                    });
                 });
             });
             // The use of txs here might cause race conditions
-            it("should not allow a negotiation to start if there are already 15 players on the user's roster, unless resigning is true", function (done) {
+            it("should not allow a negotiation to start if there are already 15 players on the user's roster, unless resigning is true", function () {
                 var tx;
 
                 tx = dao.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
 
-                tx.objectStore("players").openCursor(7).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    p = cursor.value;
+                return dao.players.get({ot: tx, key: 7}).then(function (p) {
                     p.tid = g.userTid;
-
-                    cursor.update(p);
-
+                    return dao.players.put({ot: tx, value: p});
+                }).then(function () {
                     return contractNegotiation.create(tx, 8, false).then(function (error) {
                         error.should.equal("Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.");
-
-                        tx.objectStore("negotiations").getAll().onsuccess = function (event) {
-                            var negotiations;
-
-                            negotiations = event.target.result;
-                            negotiations.length.should.equal(0);
-
-                            return contractNegotiation.create(tx, 8, true).then(function (error) {
-                                (typeof error).should.equal("undefined");
-
-                                tx.objectStore("negotiations").getAll().onsuccess = function (event) {
-                                    var negotiations;
-
-                                    negotiations = event.target.result;
-                                    negotiations.length.should.equal(1);
-                                    negotiations[0].pid.should.equal(8);
-
-                                    tx.objectStore("players").openCursor(7).onsuccess = function (event) {
-                                        var cursor, p;
-
-                                        cursor = event.target.result;
-                                        p = cursor.value;
-                                        p.tid = g.PLAYER.FREE_AGENT;
-
-                                        cursor.update(p);
-
-                                        done();
-                                    };
-                                };
-                            });
-                        };
                     });
-                };
+                }).then(function () {
+                    return dao.negotiations.getAll({ot: tx}).then(function (negotiations) {
+                        negotiations.length.should.equal(0);
+                    });
+                }).then(function () {
+                    return contractNegotiation.create(tx, 8, true).then(function (error) {
+                        (typeof error).should.equal("undefined");
+                    });
+                }).then(function () {
+                    return dao.negotiations.getAll({ot: tx}).then(function (negotiations) {
+                        negotiations.length.should.equal(1);
+                        negotiations[0].pid.should.equal(8);
+                    });
+                }).then(function () {
+                    return dao.players.get({ot: tx, key: 7}).then(function (p) {
+                        p.tid = g.PLAYER.FREE_AGENT;
+                        return dao.players.put({ot: tx, value: p});
+                    });
+                });
             });
         });
 
         describe("#accept()", function () {
-            it("should not allow signing non-minimum contracts that cause team to exceed the salary cap", function (done) {
+/*            it("should not allow signing non-minimum contracts that cause team to exceed the salary cap", function (done) {
                 var i, tx;
 
                 tx = dao.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite");

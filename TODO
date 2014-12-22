@@ -4,8 +4,6 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
-tools > reset db should persist debug mode
-
 TEST
 
 use promises pervasively
@@ -24,6 +22,10 @@ dao refactor:
   make convenience function in dao.gameAttributes for lastDbChange updating to now
     only downside is that sometimes it's updated in one transaction with other gameAttributes changes
   move special cases out of dao - have it just be a thin IDB layer
+    name?
+      backboard
+      backcourt
+      baseline
 
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing
@@ -33,16 +35,13 @@ various functions in db
 
 rewrite old upgrading code?
 
-look at views with errorMessage - is flow correct? problems with cancellation?
-
 big goals
   indexeddb only in dao
-    grep for transaction, objectStore, oncomplete, dbl, dbm, etc
-    grep -r --exclude-dir=test oncomplete js
+    grep -r dbl js
+    grep -r dbm js
   no "cb" anywhere
     util/bbgmView and util/helpers functions that talk to Davis - unavoidable unless i switch to a promise-based router library
     util/account - think about it
-  no db.getObjectStore - equivalent function is in indexedDb adapter
 
 clean up
   documentation!!!!! like nuances of iterate modify
@@ -50,7 +49,8 @@ clean up
   throw error in inappropriate input param (like "pid")
   shouldn't overwrite functions with getAll like in players - that should be another name
   hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake
-  what about creating, migrating, and deleting databases?
+  what about creating, migrating, and deleting databases? and objectStoreNames?
+  don't use "ot" anywhere - it's all transactions so call it tx
 
 unit tests
   get running from command line, maybe in karma?

@@ -785,52 +785,6 @@ console.log(event);
     }
 
     /**
-     * Get an object store or transaction based on input which may be the desired object store, a transaction to be used, or null.
-     * 
-     * This allows for the convenient use of transactions or object stores that have already been defined, which is often necessary.
-     * 
-     * @memberOf db
-     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
-     * @param {(string|Array.<string>)} transactionObjectStores The object stores to open a transaction with, if necessary.
-     * @param {?string} objectStore The object store to return. If null, return a transaction.
-     * @param {boolean=} readwrite Should the transaction be readwrite or not? This only applies when a new transaction is created here (i.e. no transaction or objectStore is passed). Default false.
-     * @return {(IDBObjectStore|IDBTransaction)} The requested object store or transaction.
-     */
-    function getObjectStore(ot, transactionObjectStores, objectStore, readwrite) {
-        readwrite = readwrite !== undefined ? readwrite : false;
-
-        if (ot instanceof IDBTransaction) {
-            if (objectStore !== null) {
-                return ot.objectStore(objectStore);
-            }
-            return ot; // Return original transaction
-        }
-
-        // Return a transaction
-        if (objectStore === null) {
-            if (ot instanceof IDBObjectStore) {
-                return ot.transaction;
-            }
-
-            if (readwrite) {
-                return g.dbl.transaction(transactionObjectStores, "readwrite");
-            }
-            return g.dbl.transaction(transactionObjectStores);
-        }
-
-        // ot is an objectStore already, and an objectStore was requested (not a transation)
-        if (ot instanceof IDBObjectStore) {
-            return ot;
-        }
-
-
-        if (readwrite) {
-            return g.dbl.transaction(transactionObjectStores, "readwrite").objectStore(objectStore);
-        }
-        return g.dbl.transaction(transactionObjectStores).objectStore(objectStore);
-    }
-
-    /**
      * Load a game attribute from the database and update the global variable g.
      *
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
@@ -963,7 +917,6 @@ console.log(event);
     return {
         connectMeta: connectMeta,
         connectLeague: connectLeague,
-        getObjectStore: getObjectStore,
         loadGameAttribute: loadGameAttribute,
         loadGameAttributes: loadGameAttributes,
         setGameAttributes: setGameAttributes,

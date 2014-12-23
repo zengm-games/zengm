@@ -43,7 +43,7 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
                     index: "season",
                     key: inputs.season,
                     direction: "prev",
-                    modify: function (event, shortCircuit) {
+                    callback: function (event, shortCircuit) {
                         var i;
 
                         if (event.eid > maxEid) {

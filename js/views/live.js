@@ -2,7 +2,7 @@
  * @name views.live
  * @namespace Live play-by-play game simulation.
  */
-define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView"], function (dao, g, ui, $, ko, bbgmView) {
+define(["globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView"], function (g, ui, season, $, ko, bbgmView) {
     "use strict";
 
     function disableButtons() {
@@ -34,7 +34,7 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView"], 
 
     function updateGamesList(inputs, updateEvents, vm) {
         if (!vm.inProgress()) {
-            return dao.schedule.get({oneDay: true}).then(function (games) {
+            return season.getSchedule({oneDay: true}).then(function (games) {
                 var i;
 
                 for (i = 0; i < games.length; i++) {

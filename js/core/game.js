@@ -212,7 +212,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                     index: "pid, season, tid",
                     key: [p.id, g.season, t.id],
                     direction: "prev", // In case there are multiple entries for the same player, like he was traded away and then brought back
-                    modify: function (ps, shortCircuit) {
+                    callback: function (ps, shortCircuit) {
                         var i, injuredThisGame, keys;
 
                         // Since index is not on playoffs, manually check
@@ -608,7 +608,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
             }).then(function () {
                 // Check to see if the season is over
                 if (g.phase < g.PHASE.PLAYOFFS) {
-                    return dao.schedule.get().then(function (schedule) {
+                    return season.getSchedule().then(function (schedule) {
                         if (schedule.length === 0) {
                             // No return here, meaning no need to wait for season.newPhase to resolve - is that correct?
                             season.newPhase(g.PHASE.PLAYOFFS);
@@ -656,7 +656,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                             ot: tx,
                             index: "tid",
                             key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-                            modify: function (p) {
+                            callback: function (p) {
                                 var changed;
 
                                 changed = false;
@@ -758,7 +758,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
             tx = dao.tx(["players", "schedule", "teams"]);
 
             // Get the schedule for today
-            return dao.schedule.get({ot: tx, oneDay: true}).then(function (schedule) {
+            return season.getSchedule({ot: tx, oneDay: true}).then(function (schedule) {
                 // Stop if no games
                 // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
                 if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
@@ -773,7 +773,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         // Sometimes the playoff schedule isn't made the day before, so make it now
                         // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
                         return season.newSchedulePlayoffsDay().then(function () {
-                            return dao.schedule.get({oneDay: true}).then(function (schedule) {
+                            return season.getSchedule({oneDay: true}).then(function (schedule) {
 // Can't merge easily with next call because of schedule overwriting
                                 return cbSimGames(schedule, teams);
                             });

@@ -123,7 +123,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
 
             dao.players.iterate({
                 ot: dao.tx("players", "readwrite"),
-                modify: function (p) {
+                callback: function (p) {
                     if (p.watch) {
                         p.watch = false;
                         return p;

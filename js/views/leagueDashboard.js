@@ -2,7 +2,7 @@
  * @name views.leagueDashboard
  * @namespace League dashboard, displaying several bits of information about the league/team.
  */
-define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, season, team, $, ko, _, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, season, team, ko, _, bbgmView, helpers) {
     "use strict";
 
     function InitViewModel() {
@@ -127,7 +127,7 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                 index: "season",
                 key: g.season,
                 direction: "prev",
-                modify: function (game, shortCircuit) {
+                callback: function (game, shortCircuit) {
                     var i, overtime;
 
                     if (completed.length >= numShowCompleted) {
@@ -177,7 +177,7 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
 
     function updateSchedule(inputs, updateEvents, vm) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            return dao.schedule.get().then(function (schedule_) {
+            return season.getSchedule().then(function (schedule_) {
                 var game, games, i, numShowUpcoming, row, team0, team1;
 
                 games = [];

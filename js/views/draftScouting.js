@@ -135,7 +135,7 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                     ot: tx,
                     index: "tid",
                     key: IDBKeyRange.only(draftClassTid),
-                    modify: function (p) {
+                    callback: function (p) {
                         return dao.players.delete({ot: tx, key: p.pid});
                     }
                 }).then(function () {

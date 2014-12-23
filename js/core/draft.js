@@ -403,7 +403,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                                     ot: tx,
                                     index: "tid",
                                     key: g.PLAYER.UNDRAFTED,
-                                    modify: function (p) {
+                                    callback: function (p) {
                                         return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
                                     }
                                 });
@@ -413,7 +413,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                                     ot: tx,
                                     index: "tid",
                                     key: g.PLAYER.UNDRAFTED_FANTASY_TEMP,
-                                    modify: function (p) {
+                                    callback: function (p) {
                                         p.tid = g.PLAYER.UNDRAFTED;
 
                                         return p;

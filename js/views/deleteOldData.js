@@ -29,7 +29,7 @@ define(["dao", "globals", "ui", "util/bbgmView"], function (dao, g, ui, bbgmView
         if (req.params.hasOwnProperty("teamStats")) {
             dao.teams.iterate({
                 ot: tx,
-                modify: function (t) {
+                callback: function (t) {
                     t.seasons = [t.seasons[t.seasons.length - 1]];
                     t.stats = [t.stats[t.stats.length - 1]];
                     return t;
@@ -42,7 +42,7 @@ define(["dao", "globals", "ui", "util/bbgmView"], function (dao, g, ui, bbgmView
                 ot: tx,
                 index: "tid",
                 key: g.PLAYER.RETIRED,
-                modify: function (p) {
+                callback: function (p) {
                     return dao.players.delete({ot: tx, key: p.pid});
                 }
             });
@@ -51,14 +51,14 @@ define(["dao", "globals", "ui", "util/bbgmView"], function (dao, g, ui, bbgmView
         if (req.params.hasOwnProperty("playerStats")) {
             dao.players.iterate({
                 ot: tx,
-                modify: function (p) {
+                callback: function (p) {
                     p.ratings = [p.ratings[p.ratings.length - 1]];
                     return p;
                 }
             });
             dao.playerStats.iterate({
                 ot: tx,
-                modify: function (ps) {
+                callback: function (ps) {
                     if (ps.season < g.season) {
                         return dao.playerStats.delete({ot: tx, key: ps.psid});
                     }

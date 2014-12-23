@@ -190,7 +190,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team"], func
                     ot: tx,
                     index: "tid",
                     key: g.PLAYER.FREE_AGENT,
-                    modify: function (p, shortCircuit) {
+                    callback: function (p, shortCircuit) {
                         if (i >= 10) {
                             return shortCircuit();
                         }
@@ -213,7 +213,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team"], func
                     ot: tx,
                     index: "tid",
                     key: tid,
-                    modify: function (p, shortCircuit) {
+                    callback: function (p, shortCircuit) {
                         if (i >= 10) {
                             return shortCircuit();
                         }

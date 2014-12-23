@@ -81,7 +81,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 dao.players.iterate({
                     ot: tx,
                     key: pids[i],
-                    modify: function (p) {
+                    callback: function (p) {
                         var i;
 
                         for (i = 0; i < awardsByPlayer.length; i++) {
@@ -293,6 +293,76 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 });
             });
         });
+    }
+
+
+    /**
+     * Get an array of games from the schedule.
+     * 
+     * @param {(IDBObjectStore|IDBTransaction|null)} options.ot An IndexedDB object store or transaction on schedule; if null is passed, then a new transaction will be used.
+     * @param {boolean} options.oneDay Number of days of games requested. Default false.
+     * @return {Promise} Resolves to the requested schedule array.
+     */
+    function getSchedule(options) {
+        options = options !== undefined ? options : {};
+        options.ot = options.ot !== undefined ? options.ot : null;
+        options.oneDay = options.oneDay !== undefined ? options.oneDay : false;
+
+        return dao.schedule.getAll({ot: options.ot}).then(function (schedule) {
+            var i, tids;
+
+            if (options.oneDay) {
+                schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
+
+                // Only take the games up until right before a team plays for the second time that day
+                tids = [];
+                for (i = 0; i < schedule.length; i++) {
+                    if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
+                        tids.push(schedule[i].homeTid);
+                        tids.push(schedule[i].awayTid);
+                    } else {
+                        break;
+                    }
+                }
+                schedule = schedule.slice(0, i);
+            }
+
+            return schedule;
+        });
+    }
+
+    /**
+     * Save the schedule to the database, overwriting what's currently there.
+     * 
+     * @param {Array} tids A list of lists, each containing the team IDs of the home and
+            away teams, respectively, for every game in the season, respectively.
+     * @return {Promise}
+     */
+    function setSchedule(tids) {
+        var i, newSchedule, tx;
+
+        newSchedule = [];
+        for (i = 0; i < tids.length; i++) {
+            newSchedule.push({
+                homeTid: tids[i][0],
+                awayTid: tids[i][1]
+            });
+        }
+
+        tx = dao.tx("schedule", "readwrite");
+
+        dao.schedule.clear({ot: tx}).then(function () {
+            var i;
+
+            for (i = 0; i < newSchedule.length; i++) {
+                dao.schedule.add({
+                    ot: tx,
+                    value: newSchedule[i]
+                });
+            }
+        });
+
+        return tx.complete();
     }
 
     /**
@@ -562,7 +632,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             // Add row to team stats and season attributes
             dao.teams.iterate({
                 ot: tx,
-                modify: function (t) {
+                callback: function (t) {
                     // Save the coaching rank for later
                     coachingRanks[t.tid] = _.last(t.seasons).expenses.coaching.rank;
 
@@ -583,7 +653,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     ot: tx,
                     index: "tid",
                     key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-                    modify: function (p) {
+                    callback: function (p) {
                         // Update ratings
                         p = player.addRatingsRow(p, scoutingRank);
                         p = player.develop(p, 1, false, coachingRanks[p.tid]);
@@ -612,7 +682,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
     }
 
     function newPhaseRegularSeason() {
-        return dao.schedule.set(newSchedule()).then(function () {
+        return setSchedule(newSchedule()).then(function () {
             var tx;
 
             // First message from owner
@@ -737,7 +807,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
             // Add row to team stats and team season attributes
             dao.teams.iterate({
                 ot: tx,
-                modify: function (t) {
+                callback: function (t) {
                     var teamSeason;
 
                     teamSeason = t.seasons[t.seasons.length - 1];
@@ -770,7 +840,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     ot: tx,
                     index: "tid",
                     key: tid,
-                    modify: function (p) {
+                    callback: function (p) {
                         return player.addStatsRow(tx, p, true);
                     }
                 });
@@ -831,7 +901,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 ot: tx,
                 index: "tid",
                 key: tid,
-                modify: function (p) {
+                callback: function (p) {
                     p.awards.push({season: g.season, type: "Won Championship"});
                     return p;
                 }
@@ -847,7 +917,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 ot: tx,
                 index: "tid",
                 key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-                modify: function (p) {
+                callback: function (p) {
                     var update;
 
                     update = false;
@@ -914,7 +984,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 ot: tx,
                 index: "contract.exp",
                 key: IDBKeyRange.upperBound(g.season),
-                modify: function (rp) {
+                callback: function (rp) {
                     dao.releasedPlayers.delete({
                         ot: tx,
                         key: rp.rid
@@ -950,7 +1020,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 ot: tx,
                 index: "draft.year",
                 key: g.season,
-                modify: function (p) {
+                callback: function (p) {
                     if (p.tid >= 0) {
                         p.draft.year -= 1;
                         return p;
@@ -999,7 +1069,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 ot: tx,
                 index: "tid",
                 key: IDBKeyRange.lowerBound(0),
-                modify: function (p) {
+                callback: function (p) {
                     if (p.contract.exp <= g.season && p.tid === g.userTid) {
                         // Add to free agents first, to generate a contract demand
                         return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods).then(function () {
@@ -1048,7 +1118,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     ot: tx,
                     index: "tid",
                     key: IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), // This only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
-                    modify: function (p) {
+                    callback: function (p) {
                         return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
                     }
                 }).then(function () {
@@ -1058,7 +1128,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                         ot: tx,
                         index: "tid",
                         key: IDBKeyRange.lowerBound(0),
-                        modify: function (p) {
+                        callback: function (p) {
                             var contract, factor;
 
                             if (p.contract.exp <= g.season && p.tid !== g.userTid) {
@@ -1088,7 +1158,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     ot: tx,
                     index: "tid",
                     key: g.PLAYER.UNDRAFTED_2,
-                    modify: function (p) {
+                    callback: function (p) {
                         p.tid = g.PLAYER.UNDRAFTED;
                         p.ratings[0].fuzz /= 2;
                         return p;
@@ -1098,7 +1168,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                         ot: tx,
                         index: "tid",
                         key: g.PLAYER.UNDRAFTED_3,
-                        modify: function (p) {
+                        callback: function (p) {
                             p.tid = g.PLAYER.UNDRAFTED_2;
                             p.ratings[0].fuzz /= 2;
                             return p;
@@ -1131,7 +1201,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 ot: tx,
                 index: "tid",
                 key: g.PLAYER.UNDRAFTED,
-                modify: function (p) {
+                callback: function (p) {
                     p.tid = g.PLAYER.UNDRAFTED_FANTASY_TEMP;
                     return p;
                 }
@@ -1141,7 +1211,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     ot: tx,
                     index: "tid",
                     key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-                    modify: function (p) {
+                    callback: function (p) {
                         p.tid = g.PLAYER.UNDRAFTED;
                         return p;
                     }
@@ -1236,7 +1306,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
             // If series are still in progress, write games and short circuit
             if (tids.length > 0) {
-                return dao.schedule.set(tids);
+                return setSchedule(tids);
             }
 
             // If playoffs are over, update winner and go to next phase
@@ -1249,7 +1319,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                 dao.teams.iterate({
                     ot: tx,
                     key: key,
-                    modify: function (t) {
+                    callback: function (t) {
                         var s;
 
                         s = t.seasons.length - 1;
@@ -1335,7 +1405,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * @return {Promise} The number of days left in the schedule.
      */
     function getDaysLeftSchedule() {
-        return dao.schedule.get().then(function (schedule) {
+        return getSchedule().then(function (schedule) {
             var i, numDays, tids;
 
             numDays = 0;
@@ -1361,6 +1431,8 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
     return {
         newPhase: newPhase,
+        getSchedule: getSchedule,
+        setSchedule: setSchedule,
         newSchedule: newSchedule,
         newSchedulePlayoffsDay: newSchedulePlayoffsDay,
         getDaysLeftSchedule: getDaysLeftSchedule,

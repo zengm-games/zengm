@@ -292,7 +292,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
             dao.players.iterate({
                 ot: tx,
                 key: pid,
-                modify: function (p) {
+                callback: function (p) {
                     p.tid = g.userTid;
                     p.gamesUntilTradable = 15;
 

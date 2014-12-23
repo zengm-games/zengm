@@ -280,7 +280,7 @@ define(["dao", "db", "globals", "core/player", "lib/bluebird", "lib/underscore",
                 ot: tx,
                 index: "tid",
                 key: tid,
-                modify: function (p) {
+                callback: function (p) {
                     var i;
 
                     for (i = 0; i < players.length; i++) {
@@ -1079,7 +1079,7 @@ console.log(dv);*/
         tx = dao.tx(["players", "playerStats", "teams"], "readwrite");
         dao.teams.iterate({
             ot: tx,
-            modify: function (t) {
+            callback: function (t) {
                 var dWon, s, won;
 
                 // Skip user's team

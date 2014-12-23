@@ -2,7 +2,7 @@
  * @name views.roster
  * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
  */
-define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, player, team, Promise, ko, $, components, bbgmView, helpers) {
+define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team", "lib/bluebird", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, player, season, team, Promise, ko, $, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -238,7 +238,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                 if (inputs.season === g.season) {
                     // Show players currently on the roster
                     return Promise.all([
-                        dao.schedule.get({ot: tx}),
+                        season.getSchedule({ot: tx}),
                         dao.players.getAll({
                             ot: tx,
                             index: "tid",

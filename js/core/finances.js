@@ -19,7 +19,7 @@ define(["dao", "globals", "lib/bluebird", "lib/underscore"], function (dao, g, P
             tx = dao.tx("teams", "readwrite");
             dao.teams.iterate({
                 ot: tx,
-                modify: function (t) {
+                callback: function (t) {
                     var s;
 
                     s = t.seasons.length - 1;  // Relevant row is the last one
@@ -114,7 +114,7 @@ define(["dao", "globals", "lib/bluebird", "lib/underscore"], function (dao, g, P
 
             return dao.teams.iterate({
                 ot: ot,
-                modify: function (t) {
+                callback: function (t) {
                     if (types.indexOf("budget") >= 0) {
                         updateObj(t.budget, budgetsByItem);
                     }

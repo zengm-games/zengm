@@ -811,7 +811,7 @@ define(["dao", "db", "globals", "core/finances", "data/injuries", "data/names", 
                     index: "pid, season, tid",
                     key: IDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]),
                     direction: "prev",
-                    modify: function (psTemp, shortCircuit) {
+                    callback: function (psTemp, shortCircuit) {
                         // Skip playoff stats
                         if (psTemp.playoffs) {
                             return;
@@ -1660,7 +1660,7 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
                     index: "pid, season, tid",
                     key: IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]),
                     direction: "prev",
-                    modify: function (psTemp, shortCircuit) {
+                    callback: function (psTemp, shortCircuit) {
                         // Skip playoff stats
                         if (psTemp.playoffs) {
                             return;

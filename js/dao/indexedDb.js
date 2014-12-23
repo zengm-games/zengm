@@ -1,7 +1,7 @@
 define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     "use strict";
 
-    var contracts, gameAttributes, payrolls, players, schedule;
+    var contracts, gameAttributes, payrolls, players;
 
     /**
      * Create an IndexedDB transaction whose oncomplete event can be accessed as a promise.
@@ -195,7 +195,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
             options.index = options.index !== undefined ? options.index : null;
             options.key = options.key !== undefined ? options.key : null;
             options.direction = options.direction !== undefined ? options.direction : "next";
-            options.modify = options.modify !== undefined ? options.modify : null;
+            options.callback = options.callback !== undefined ? options.callback : null;
 
             return new Promise(function (resolve, reject) {
                 var objectStoreOrIndex;
@@ -208,22 +208,22 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
                 }
 
                 objectStoreOrIndex.openCursor(options.key, options.direction).onsuccess = function (event) {
-                    var cursor, modifyResult, shortCircuit;
+                    var cursor, callbackResult, shortCircuit;
 
                     cursor = event.target.result;
 
                     if (cursor) {
-                        if (options.modify !== null) {
+                        if (options.callback !== null) {
                             shortCircuit = false;
 
-                            modifyResult = options.modify(cursor.value, function () {
+                            callbackResult = options.callback(cursor.value, function () {
                                 shortCircuit = true;
                             });
 
                             // Return a promise: waits until resolved to continue
                             // Return a value: immediately continue
                             // Return or resolve to undefined: no update (otherwise update)
-                            Promise.resolve(modifyResult).then(function (updatedValue) {
+                            Promise.resolve(callbackResult).then(function (updatedValue) {
                                 // Only update if return value is not undefined
                                 if (updatedValue !== undefined) {
                                     cursor.update(updatedValue);
@@ -577,79 +577,6 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         return players.putOriginal(options);
     };
 
-
-
-    schedule = generateBasicDao("dbl", "schedule");
-
-    /**
-     * Get an array of games from the schedule.
-     * 
-     * @param {(IDBObjectStore|IDBTransaction|null)} options.ot An IndexedDB object store or transaction on schedule; if null is passed, then a new transaction will be used.
-     * @param {boolean} options.oneDay Number of days of games requested. Default false.
-     * @return {Promise} Resolves to the requested schedule array.
-     */
-    schedule.get = function (options) {
-        options = options !== undefined ? options : {};
-        options.ot = options.ot !== undefined ? options.ot : null;
-        options.oneDay = options.oneDay !== undefined ? options.oneDay : false;
-
-        return schedule.getAll({ot: options.ot}).then(function (sched) {
-            var i, tids;
-
-            if (options.oneDay) {
-                sched = sched.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
-
-                // Only take the games up until right before a team plays for the second time that day
-                tids = [];
-                for (i = 0; i < sched.length; i++) {
-                    if (tids.indexOf(sched[i].homeTid) < 0 && tids.indexOf(sched[i].awayTid) < 0) {
-                        tids.push(sched[i].homeTid);
-                        tids.push(sched[i].awayTid);
-                    } else {
-                        break;
-                    }
-                }
-                sched = sched.slice(0, i);
-            }
-
-            return sched;
-        });
-    };
-
-    /**
-     * Save the schedule to the database, overwriting what's currently there.
-     * 
-     * @param {Array} tids A list of lists, each containing the team IDs of the home and
-            away teams, respectively, for every game in the season, respectively.
-     * @return {Promise}
-     */
-    schedule.set = function (tids) {
-        var i, newSchedule, tx;
-
-        newSchedule = [];
-        for (i = 0; i < tids.length; i++) {
-            newSchedule.push({
-                homeTid: tids[i][0],
-                awayTid: tids[i][1]
-            });
-        }
-
-        tx = tx_("schedule", "readwrite");
-
-        schedule.clear({ot: tx}).then(function () {
-            var i;
-
-            for (i = 0; i < newSchedule.length; i++) {
-                schedule.add({
-                    ot: tx,
-                    value: newSchedule[i]
-                });
-            }
-        });
-
-        return tx.complete().then();
-    };
-
     return {
         tx: tx_,
         leagues: generateBasicDao("dbm", "leagues"),
@@ -668,7 +595,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         playerStats: generateBasicDao("dbl", "playerStats"),
         playoffSeries: generateBasicDao("dbl", "playoffSeries"),
         releasedPlayers: generateBasicDao("dbl", "releasedPlayers"),
-        schedule: schedule,
+        schedule: generateBasicDao("dbl", "schedule"),
         teams: generateBasicDao("dbl", "teams"),
         trade: generateBasicDao("dbl", "trade")
     };

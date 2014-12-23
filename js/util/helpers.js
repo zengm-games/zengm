@@ -677,7 +677,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
             index: "season",
             key: season,
             direction: "prev",
-            modify: function (game, shortCircuit) {
+            callback: function (game, shortCircuit) {
                 var i, overtime;
 
                 if (game.gid <= maxGid) {

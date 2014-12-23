@@ -169,7 +169,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                                 index: "pid, season, tid",
                                 key: [players[i].pid, g.season, players[i].tid],
                                 direction: "prev",
-                                modify: function (ps, shortCircuit) {
+                                callback: function (ps, shortCircuit) {
                                     // Since index is not on playoffs, manually check
                                     if (ps.playoffs === (g.phase === g.PHASE.PLAYOFFS)) {
                                         shortCircuit();

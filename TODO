@@ -9,27 +9,33 @@ TEST
 use promises pervasively
 
 dao.store.iterate
-  if "modify" is passed, apply function to each element in cursor
-    how to handle custom "get" functions like players.getAll?
-    nesting?
-    async inside modify function - maybe accept a "done" function like unit tests
-    rename "modify" to something generic, because can do non-modify by just returning undefined
+  if "callback" is passed, apply function to each element in cursor
+    to modify, return updated value
+    async inside modify function - return promise
+    can do non-modify by just returning undefined
     short circuit: shortCircuit function passed as second param
-  is "iterate" a good name since it works equally well for opening a single cursor?
-    yes, because there is no need to use it for a single cursor, just do a get then a put
 
 dao refactor:
   make convenience function in dao.gameAttributes for lastDbChange updating to now
     only downside is that sometimes it's updated in one transaction with other gameAttributes changes
   move special cases out of dao - have it just be a thin IDB layer
-    name?
-      backboard
-      backcourt
-      baseline
+    dao.payrolls.get -> team.getPayroll
+    dao.payrolls.getAll -> team.getPayrolls
+    dao.gameAttributes.set -> league.setGameAttribute
+    db.loadGameAttribute -> league.loadGameAttribute
+    db.loadGameAttributes -> league.loadGameAttributes
+    dao.contracts.getAll -> team.getContracts
+    dao.players.getAll -> player.getAllWithStats
+    IS THIS STUFF ACTUALLY A GOOD IDEA? I want a DAO, not an IDB wrapper. Goal is to allow different DB backends. Does this help or hurt that goal? Probably neutral at best, so maybe leave it alone for now.
+    ALSO - any function that uses getObjectStore will be problematic to move out
+      payrolls - not a problem, maybe make getAll require a transaction
+      contracts - not a problem, maybe make getAll require a transaction
+      could add another parameter to dao.tx that contains null/undefined or a transaction to base it on - GOOD IDEA
 
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing
   remove filter option from dao.players.getAll - also confusing, can just apply manually
+  return to g.dbl and g.dbm, not dao variable with merged league and meta
 
 various functions in db
 
@@ -51,6 +57,10 @@ clean up
   hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake
   what about creating, migrating, and deleting databases? and objectStoreNames?
   don't use "ot" anywhere - it's all transactions so call it tx
+  name?
+    backboard
+    backcourt
+    baseline!!!!!!!!!!!
 
 unit tests
   get running from command line, maybe in karma?
@@ -81,6 +91,13 @@ improve API
   instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
     see promises_super_tx branch
     or could be dao.tx().then(function (tx) {}) and resolve that promise oncomplete? but how to pass value to then?
+
+in-memory cache
+  when starting to play games (>1 day), "get" and "getAll" add object stores to cache (if they aren't already there) and "put" updates cached values and set marker saying they were updated
+  When games are over, write to database any cached values that were updated
+  what about other types of operations?
+    iterate: maybe cache query and check for duplicate query? not sure. this is tricky
+    others: maybe not needed for this application
 
 PERFORMANCE CRAP
 ----------------

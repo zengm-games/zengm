@@ -24,7 +24,7 @@ define(["dao", "globals", "ui", "lib/knockout", "util/bbgmView"], function (dao,
                 ot: tx,
                 key: inputs.mid,
                 direction: "prev",
-                modify: function (messageLocal, shortCircuit) {
+                callback: function (messageLocal, shortCircuit) {
                     message = messageLocal;
 
                     if (!message.read) {

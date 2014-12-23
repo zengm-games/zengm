@@ -2,7 +2,7 @@
  * @name views.schedule
  * @namespace Show current schedule for user's team.
  */
-define(["dao", "globals", "ui", "lib/knockout", "util/bbgmView", "util/helpers", "views/components"], function (dao, g, ui, ko, bbgmView, helpers, components) {
+define(["globals", "ui", "core/season", "lib/knockout", "util/bbgmView", "util/helpers", "views/components"], function (g, ui, season, ko, bbgmView, helpers, components) {
     "use strict";
 
     var mapping;
@@ -38,7 +38,7 @@ define(["dao", "globals", "ui", "lib/knockout", "util/bbgmView", "util/helpers",
 
     function updateUpcoming(inputs, updateEvents, vm) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
-            return dao.schedule.get().then(function (schedule_) {
+            return season.getSchedule().then(function (schedule_) {
                 var game, games, i, row, team0, team1;
 
                 games = [];

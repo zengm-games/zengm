@@ -133,7 +133,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
             ot: tx,
             index: "tid",
             key: g.PLAYER.FREE_AGENT,
-            modify: function (p) {
+            callback: function (p) {
                 var i;
 
                 // Decrease free agent demands

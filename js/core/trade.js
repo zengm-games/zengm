@@ -479,7 +479,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                     ot: tx,
                     index: "tid",
                     key: teams[0].tid,
-                    modify: function (p) {
+                    callback: function (p) {
                         if (teams[0].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                             assets.push({
                                 type: "player",
@@ -496,7 +496,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                 ot: tx,
                 index: "tid",
                 key: teams[1].tid,
-                modify: function (p) {
+                callback: function (p) {
                     if (teams[1].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                         assets.push({
                             type: "player",
@@ -513,7 +513,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                     ot: tx,
                     index: "tid",
                     key: teams[0].tid,
-                    modify: function (dp) {
+                    callback: function (dp) {
                         if (teams[0].dpids.indexOf(dp.dpid) < 0) {
                             assets.push({
                                 type: "draftPick",
@@ -530,7 +530,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                 ot: tx,
                 index: "tid",
                 key: teams[1].tid,
-                modify: function (dp) {
+                callback: function (dp) {
                     if (teams[1].dpids.indexOf(dp.dpid) < 0) {
                         assets.push({
                             type: "draftPick",

@@ -79,7 +79,7 @@ define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.
         // Find most recent league and add one to the LID
         return dao.leagues.iterate({
             direction: "prev",
-            modify: function (l, shortCircuit) {
+            callback: function (l, shortCircuit) {
                 newLid = l.lid + 1;
                 shortCircuit();
             }

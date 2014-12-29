@@ -1,7 +1,7 @@
 define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     "use strict";
 
-    var contracts, gameAttributes, players;
+    var gameAttributes, players;
 
     /**
      * Create an IndexedDB transaction whose oncomplete event can be accessed as a promise.
@@ -254,95 +254,6 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
 
 
-    contracts = {};
-
-    /**
-    * Gets all the contracts a team owes.
-    * 
-    * This includes contracts for players who have been released but are still owed money.
-    * 
-    * @memberOf db
-    * @param {IDBTransaction|null} options.ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
-    * @param {number} options.key Team ID.
-    * @returns {Promise.Array} Array of objects containing contract information.
-    */
-    contracts.getAll = function (options) {
-        options = options !== undefined ? options : {};
-        options.ot = options.ot !== undefined ? options.ot : null;
-        options.key = options.key !== undefined ? options.key : null;
-
-        return new Promise(function (resolve, reject) {
-            var contracts, tx;
-
-            tx = getObjectStore(g.dbl, options.ot, ["players", "releasedPlayers"], null);
-
-            // First, get players currently on the roster
-            tx.objectStore("players").index("tid").getAll(options.key).onsuccess = function (event) {
-                var i, players;
-
-                contracts = [];
-                players = event.target.result;
-                for (i = 0; i < players.length; i++) {
-                    contracts.push({
-                        pid: players[i].pid,
-                        name: players[i].name,
-                        skills: players[i].ratings[players[i].ratings.length - 1].skills,
-                        injury: players[i].injury,
-                        watch: players[i].watch !== undefined ? players[i].watch : false, // undefined check is for old leagues, can delete eventually
-                        amount: players[i].contract.amount,
-                        exp: players[i].contract.exp,
-                        released: false
-                    });
-                }
-
-                // Then, get any released players still owed money
-                tx.objectStore("releasedPlayers").index("tid").getAll(options.key).onsuccess = function (event) {
-                    var i, releasedPlayers;
-
-                    releasedPlayers = event.target.result;
-
-                    if (releasedPlayers.length === 0) {
-                        return resolve(contracts);
-                    }
-
-                    for (i = 0; i < releasedPlayers.length; i++) {
-                        (function (i) {
-                            tx.objectStore("players").get(releasedPlayers[i].pid).onsuccess = function (event) {
-                                var player;
-
-                                player = event.target.result;
-                                if (player !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
-                                    contracts.push({
-                                        pid: releasedPlayers[i].pid,
-                                        name: player.name,
-                                        skills: player.ratings[player.ratings.length - 1].skills,
-                                        injury: player.injury,
-                                        amount: releasedPlayers[i].contract.amount,
-                                        exp: releasedPlayers[i].contract.exp,
-                                        released: true
-                                    });
-                                } else {
-                                    contracts.push({
-                                        pid: releasedPlayers[i].pid,
-                                        name: "Deleted Player",
-                                        skills: [],
-                                        amount: releasedPlayers[i].contract.amount,
-                                        exp: releasedPlayers[i].contract.exp,
-                                        released: true
-                                    });
-                                }
-
-                                if (contracts.length === players.length + releasedPlayers.length) {
-                                    resolve(contracts);
-                                }
-                            };
-                        }(i));
-                    }
-                };
-            };
-        });
-    };
-
 
 
     gameAttributes = generateBasicDao("dbl", "gameAttributes");
@@ -533,7 +444,6 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         leagues: generateBasicDao("dbm", "leagues"),
         achievements: generateBasicDao("dbm", "achievements"),
         awards: generateBasicDao("dbl", "awards"),
-        contracts: contracts,
         draftOrder: generateBasicDao("dbl", "draftOrder"),
         draftPicks: generateBasicDao("dbl", "draftPicks"),
         events: generateBasicDao("dbl", "events"),

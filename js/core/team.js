@@ -1235,6 +1235,85 @@ console.log(dv);*/
         });
     }
 
+    /**
+    * Gets all the contracts a team owes.
+    * 
+    * This includes contracts for players who have been released but are still owed money.
+    * 
+    * @memberOf core.team
+    * @param {IDBTransaction|null} tx An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
+    * @param {number} tid Team ID.
+    * @returns {Promise.Array} Array of objects containing contract information.
+    */
+    function getContracts(tx, tid) {
+        var contracts;
+
+        tx = dao.tx(["players", "releasedPlayers"], "readonly", tx);
+
+        // First, get players currently on the roster
+        return dao.players.getAll({
+            ot: tx,
+            index: "tid",
+            key: tid
+        }).then(function (players) {
+            var i;
+
+            contracts = [];
+            for (i = 0; i < players.length; i++) {
+                contracts.push({
+                    pid: players[i].pid,
+                    name: players[i].name,
+                    skills: players[i].ratings[players[i].ratings.length - 1].skills,
+                    injury: players[i].injury,
+                    watch: players[i].watch !== undefined ? players[i].watch : false, // undefined check is for old leagues, can delete eventually
+                    amount: players[i].contract.amount,
+                    exp: players[i].contract.exp,
+                    released: false
+                });
+            }
+
+            // Then, get any released players still owed money
+            return dao.releasedPlayers.getAll({
+                ot: tx,
+                index: "tid",
+                key: tid
+            });
+        }).then(function (releasedPlayers) {
+            if (releasedPlayers.length === 0) {
+                return contracts;
+            }
+
+            return Promise.map(releasedPlayers, function (releasedPlayer) {
+                return dao.players.get({
+                    ot: tx,
+                    key: releasedPlayer.pid
+                }).then(function (p) {
+                    if (p !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
+                        contracts.push({
+                            pid: releasedPlayer.pid,
+                            name: p.name,
+                            skills: p.ratings[p.ratings.length - 1].skills,
+                            injury: p.injury,
+                            amount: releasedPlayer.contract.amount,
+                            exp: releasedPlayer.contract.exp,
+                            released: true
+                        });
+                    } else {
+                        contracts.push({
+                            pid: releasedPlayer.pid,
+                            name: "Deleted Player",
+                            skills: [],
+                            amount: releasedPlayer.contract.amount,
+                            exp: releasedPlayer.contract.exp,
+                            released: true
+                        });
+                    }
+                });
+            }).then(function () {
+                return contracts;
+            });
+        });
+    }
 
     /**
      * Get the total current payroll for a team.
@@ -1243,13 +1322,13 @@ console.log(dv);*/
      * 
      * @memberOf core.team
      * @param {IDBTransaction|null} tx An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
-     * @param {number} options.key Team ID.
+     * @param {number} tid Team ID.
      * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from dao.contracts.getAll.
      */
     function getPayroll(tx, tid) {
         tx = dao.tx(["players", "releasedPlayers"], "readonly", tx);
 
-        return dao.contracts.getAll({ot: tx, key: tid}).then(function (contracts) {
+        return getContracts(tx, tid).then(function (contracts) {
             var i, payroll;
 
             payroll = 0;
@@ -1259,7 +1338,7 @@ console.log(dv);*/
 
             return [payroll, contracts];
         });
-    };
+    }
 
     /**
      * Get the total current payroll for every team team.

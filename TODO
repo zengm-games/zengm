@@ -22,7 +22,6 @@ dao refactor:
     dao.gameAttributes.set -> league.setGameAttribute
     db.loadGameAttribute -> league.loadGameAttribute
     db.loadGameAttributes -> league.loadGameAttributes
-    dao.contracts.getAll -> team.getContracts
     dao.players.getAll -> player.getAllWithStats
     IS THIS STUFF ACTUALLY A GOOD IDEA? I want a DAO, not an IDB wrapper. Goal is to allow different DB backends. Does this help or hurt that goal? Probably neutral at best, so maybe leave it alone for now.
     ALSO - any function that uses getObjectStore will be problematic to move out
@@ -30,6 +29,8 @@ dao refactor:
       contracts - not a problem, maybe make getAll require a transaction
       could add another parameter to dao.tx that contains null/undefined or a transaction to base it on - GOOD IDEA
         replace getObjectStore with tx_
+
+"promises" arrays can often be replaced with Promise.map or Promise.reduce
 
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing

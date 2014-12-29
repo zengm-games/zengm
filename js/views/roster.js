@@ -246,7 +246,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
                             statsSeasons: [inputs.season],
                             statsTid: inputs.tid
                         }),
-                        dao.payrolls.get({ot: tx, key: inputs.tid}).get(0)
+                        team.getPayroll(tx, inputs.tid).get(0)
                     ]).spread(function (schedule, players, payroll) {
                         var i, numGamesRemaining;
 

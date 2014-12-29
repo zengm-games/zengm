@@ -2,7 +2,7 @@
  * @name views.freeAgents
  * @namespace List of free agents.
  */
-define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, freeAgents, player, Promise, $, ko, _, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, freeAgents, player, team, Promise, $, ko, _, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -41,7 +41,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/bluebird"
 
     function updateFreeAgents() {
         return Promise.all([
-            dao.payrolls.get({key: g.userTid}).get(0),
+            team.getPayroll(null, g.userTid).get(0),
             dao.players.getAll({
                 index: "tid",
                 key: g.userTid

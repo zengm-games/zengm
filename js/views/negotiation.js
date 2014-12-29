@@ -2,7 +2,7 @@
  * @name views.negotiation
  * @namespace Contract negotiation.
  */
-define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "lib/bluebird", "lib/knockout", "util/bbgmView", "util/helpers"], function (dao, g, ui, contractNegotiation, player, Promise, ko, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "core/team", "lib/knockout", "util/bbgmView", "util/helpers"], function (dao, g, ui, contractNegotiation, player, team, ko, bbgmView, helpers) {
     "use strict";
 
     // Show the negotiations list if there are more ongoing negotiations
@@ -118,7 +118,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "lib/
                 }
                 delete p.freeAgentMood;
 
-                return dao.payrolls.get({key: g.userTid}).get(0).then(function (payroll) {
+                return team.getPayroll(null, g.userTid).get(0).then(function (payroll) {
                     return {
                         salaryCap: g.salaryCap / 1000,
                         payroll: payroll / 1000,

@@ -1,15 +1,20 @@
 define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     "use strict";
 
-    var contracts, gameAttributes, payrolls, players;
+    var contracts, gameAttributes, players;
 
     /**
      * Create an IndexedDB transaction whose oncomplete event can be accessed as a promise.
      * 
      * This is the same as IDBRequest.transaction except the returned transaction has a "complete" property, which contains a function that returns a promise which resolves when the oncomplete event of the transaction fires.
      */
-    function tx_(storeNames, mode) {
+    function tx_(storeNames, mode, tx0) {
         var tx;
+
+        // If tx0 is something, short circuit
+        if (tx0 !== undefined && tx0 !== null) {
+            return tx0;
+        }
 
         if (storeNames === "achievements") {
             tx = g.dbm.transaction(storeNames, mode);
@@ -397,60 +402,6 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
 
 
 
-    payrolls = {};
-
-    /**
-     * Get the total current payroll for a team.
-     * 
-     * This includes players who have been released but are still owed money from their old contracts.
-     * 
-     * @memberOf dao.payrolls
-     * @param {IDBTransaction|null} options.ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
-     * @param {number} options.key Team ID.
-     * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from dao.contracts.getAll.
-     */
-    payrolls.get = function (options) {
-        options = options !== undefined ? options : {};
-        options.ot = options.ot !== undefined ? options.ot : null;
-        options.key = options.key !== undefined ? options.key : null;
-
-        return contracts.getAll({ot: options.ot, key: options.key}).then(function (contracts) {
-            var i, payroll;
-
-            payroll = 0;
-            for (i = 0; i < contracts.length; i++) {
-                payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
-            }
-
-            return [payroll, contracts];
-        });
-    };
-
-    /**
-     * Get the total current payroll for every team team.
-     * 
-     * @memberOf dao.payrolls
-     * @param {IDBTransaction|null} options.ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
-     * @return {Promise} Resolves to an array of payrolls, ordered by team id.
-     */
-    payrolls.getAll = function (options) {
-        var i, promises, tx;
-
-        options = options !== undefined ? options : {};
-        options.ot = options.ot !== undefined ? options.ot : null;
-
-        tx = getObjectStore(g.dbl, options.ot, ["players", "releasedPlayers"], null);
-
-        promises = [];
-        for (i = 0; i < g.numTeams; i++) {
-            promises.push(payrolls.get({ot: tx, key: i}).get(0));
-        }
-
-        return Promise.all(promises);
-    };
-
-
-
     players = generateBasicDao("dbl", "players");
 
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
@@ -590,7 +541,6 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         games: generateBasicDao("dbl", "games"),
         messages: generateBasicDao("dbl", "messages"),
         negotiations: generateBasicDao("dbl", "negotiations"),
-        payrolls: payrolls,
         players: players,
         playerStats: generateBasicDao("dbl", "playerStats"),
         playoffSeries: generateBasicDao("dbl", "playoffSeries"),

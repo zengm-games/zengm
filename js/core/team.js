@@ -2,7 +2,7 @@
  * @name core.team
  * @namespace Functions operating on team objects, parts of team objects, or arrays of team objects.
  */
-define(["dao", "db", "globals", "core/player", "lib/bluebird", "lib/underscore", "util/helpers", "util/random"], function (dao, db, g, player, Promise, _, helpers, random) {
+define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util/helpers", "util/random"], function (dao, g, player, Promise, _, helpers, random) {
     "use strict";
 
     /**
@@ -555,7 +555,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                 return returnOneTeam ? fts[0] : fts;
             } else {
                 savePayroll = function (i) {
-                    return dao.payrolls.get({ot: options.ot, key: t[i].tid}).get(0).then(function (payroll) {
+                    return getPayroll(options.ot, t[i].tid).get(0).then(function (payroll) {
                         fts[i].payroll = payroll / 1000;
                         if (i === fts.length - 1) {
                             return returnOneTeam ? fts[0] : fts;
@@ -817,7 +817,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
             getPicks();
         });
 
-        dao.payrolls.get({ot: tx, key: tid}).then(function (payrollLocal) {
+        getPayroll(tx, tid).then(function (payrollLocal) {
             payroll = payrollLocal;
         });
 
@@ -1235,6 +1235,52 @@ console.log(dv);*/
         });
     }
 
+
+    /**
+     * Get the total current payroll for a team.
+     * 
+     * This includes players who have been released but are still owed money from their old contracts.
+     * 
+     * @memberOf core.team
+     * @param {IDBTransaction|null} tx An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
+     * @param {number} options.key Team ID.
+     * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from dao.contracts.getAll.
+     */
+    function getPayroll(tx, tid) {
+        tx = dao.tx(["players", "releasedPlayers"], "readonly", tx);
+
+        return dao.contracts.getAll({ot: tx, key: tid}).then(function (contracts) {
+            var i, payroll;
+
+            payroll = 0;
+            for (i = 0; i < contracts.length; i++) {
+                payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
+            }
+
+            return [payroll, contracts];
+        });
+    };
+
+    /**
+     * Get the total current payroll for every team team.
+     * 
+     * @memberOf core.team
+     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
+     * @return {Promise} Resolves to an array of payrolls, ordered by team id.
+     */
+    function getPayrolls(tx) {
+        var i, promises;
+
+        tx = dao.tx(["players", "releasedPlayers"], "readonly", tx);
+
+        promises = [];
+        for (i = 0; i < g.numTeams; i++) {
+            promises.push(getPayroll({ot: tx, key: i}).get(0));
+        }
+
+        return Promise.all(promises);
+    }
+
     return {
         addSeasonRow: addSeasonRow,
         addStatsRow: addStatsRow,
@@ -1243,6 +1289,8 @@ console.log(dv);*/
         filter: filter,
         valueChange: valueChange,
         updateStrategies: updateStrategies,
-        checkRosterSizes: checkRosterSizes
+        checkRosterSizes: checkRosterSizes,
+        getPayroll: getPayroll,
+        getPayrolls: getPayrolls
     };
 });

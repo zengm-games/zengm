@@ -12,7 +12,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
             t2 = t1 === 1 ? 0 : 1;
 
             return Promise.all([
-                dao.payrolls.get({ot: tx, key: results.team[t1].id}).get(0),
+                team.getPayroll(tx, results.team[t1].id).get(0),
                 dao.teams.get({ot: tx, key: results.team[t1].id})
             ]).spread(function (payroll, t) {
                 var coachingPaid, count, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;

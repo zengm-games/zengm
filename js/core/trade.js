@@ -296,10 +296,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                     ratios[j] = 100;
                 }
 
-                promises.push(dao.payrolls.get({
-                    ot: tx,
-                    key: tids[j]
-                }).spread(function (payroll) {
+                promises.push(team.getPayroll(tx, tids[j]).get(0).then(function (payroll) {
                     s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
                     if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
                         overCap[j] = true;

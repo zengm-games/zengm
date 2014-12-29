@@ -2,7 +2,7 @@
  * @name core.contractNegotiation
  * @namespace All aspects of contract negotiation.
  */
-define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/bluebird", "util/eventLog", "util/helpers", "util/lock", "util/random"], function (dao, db, g, ui, freeAgents, player, Promise, eventLog, helpers, lock, random) {
+define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "core/team", "lib/bluebird", "util/eventLog", "util/helpers", "util/lock", "util/random"], function (dao, db, g, ui, freeAgents, player, team, Promise, eventLog, helpers, lock, random) {
     "use strict";
 
     /**
@@ -272,7 +272,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/blu
     function accept(pid) {
         return Promise.all([
             dao.negotiations.get({key: pid}),
-            dao.payrolls.get({key: g.userTid}).get(0)
+            team.getPayroll(null, g.userTid).get(0)
         ]).spread(function (negotiation, payroll) {
             var tx;
 

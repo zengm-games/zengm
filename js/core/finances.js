@@ -2,7 +2,7 @@
  * @name core.finances
  * @namespace Anything related to budget/finances.
  */
-define(["dao", "globals", "lib/bluebird", "lib/underscore"], function (dao, g, Promise, _) {
+define(["dao", "globals", "lib/underscore"], function (dao, g, _) {
     "use strict";
 
     /**
@@ -12,7 +12,7 @@ define(["dao", "globals", "lib/bluebird", "lib/underscore"], function (dao, g, P
      * @return {Promise}
      */
     function assessPayrollMinLuxury() {
-        return dao.payrolls.getAll().then(function (payrolls) {
+        return require("core/team").getPayrolls().then(function (payrolls) {
             var tx;
 
             // Update teams object store

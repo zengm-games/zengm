@@ -19,8 +19,6 @@ dao refactor:
   make convenience function in dao.gameAttributes for lastDbChange updating to now
     only downside is that sometimes it's updated in one transaction with other gameAttributes changes
   move special cases out of dao - have it just be a thin IDB layer
-    dao.payrolls.get -> team.getPayroll
-    dao.payrolls.getAll -> team.getPayrolls
     dao.gameAttributes.set -> league.setGameAttribute
     db.loadGameAttribute -> league.loadGameAttribute
     db.loadGameAttributes -> league.loadGameAttributes
@@ -31,6 +29,7 @@ dao refactor:
       payrolls - not a problem, maybe make getAll require a transaction
       contracts - not a problem, maybe make getAll require a transaction
       could add another parameter to dao.tx that contains null/undefined or a transaction to base it on - GOOD IDEA
+        replace getObjectStore with tx_
 
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing
@@ -101,6 +100,8 @@ in-memory cache
 
 PERFORMANCE CRAP
 ----------------
+
+YWT bug: http://www.reddit.com/r/BasketballGM/comments/2qerb2/bug_ywt_and_you/
 
 IDEA: when writing injury info in game.writePlayerStats, use cached player object from when players are initially loaded
 
@@ -223,6 +224,9 @@ separate active and retired players into separate object stores
 CURRENT
 -------
 
+career transactions page
+  multientry index in event log to pull every event involving a player
+great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_questions_and_feedback_feel_free_to_add/
 create a player during the playoffs and his stats row won't show up until the next season. basic problem seems to be that no playoff stats are returned if htere are no regular season stats
 a 0 day injury doesn't show up in box score, so it looks like player was just benched http://www.reddit.com/message/messages/2pfuyr
 career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/are_there_career_ending_injuries/
@@ -763,6 +767,7 @@ most improved player
 If you are simulating through the whole season and execute a trade while simulating, it will continue simulating even if you are over the roster limit. http://www.reddit.com/r/BasketballGM/comments/1xch01/trades_after_season/cfamo73
 players from different countries/nationalities
   how to pick names?
+  http://www.reddit.com/message/messages/2rdpk8
 IE10 support
   davisjs for knockoutjs links in IE10
     elem.host comes up blank in originChecks

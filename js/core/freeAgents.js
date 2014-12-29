@@ -80,7 +80,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                         index: "tid",
                         key: tid
                     }),
-                    dao.payrolls.get({ot: tx, key: tid}).get(0)
+                    team.getPayroll(tx, tid).get(0)
                 ]).spread(function (numPlayersOnRoster, payroll) {
                     var i, p;
 

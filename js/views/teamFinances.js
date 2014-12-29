@@ -2,7 +2,7 @@
  * @name views.teamFinances
  * @namespace Team finances.
  */
-define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, finances, team, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, finances, team, $, ko, _, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -117,7 +117,7 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
                 show: inputs.show
             };
 
-            return dao.payrolls.get({key: inputs.tid}).spread(function (payroll, contracts) {
+            return team.getPayroll(null, inputs.tid).get(1).then(function (contracts) {
                 var contractTotals, i, j, season, showInt;
 
                 if (inputs.show === "all") {

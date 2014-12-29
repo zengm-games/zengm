@@ -53,7 +53,7 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
 
     function updatePayroll(inputs, updateEvents) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
-            return dao.payrolls.get({key: g.userTid}).get(0).then(function (payroll) {
+            return team.getPayroll(null, g.userTid).get(0).then(function (payroll) {
                 return {
                     payroll: payroll / 1000 // [millions of dollars]
                 };

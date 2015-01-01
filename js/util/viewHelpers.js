@@ -46,7 +46,7 @@ define(["dao", "db", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockou
 
         // Make sure league template FOR THE CURRENT LEAGUE is showing
         if (g.vm.topMenu.lid() !== g.lid) {
-            // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
+            // Clear old game attributes from g, to make sure the new ones are saved to the db in league.setGameAttributes
             helpers.resetG();
 
             // Make sure this league exists before proceeding

@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/player", "core/season", "core/team", "lib/bluebird", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, db, g, ui, freeAgents, finances, gameSim, player, season, team, Promise, advStats, eventLog, lock, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/league", "core/player", "core/season", "core/team", "lib/bluebird", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, db, g, ui, freeAgents, finances, gameSim, league, player, season, team, Promise, advStats, eventLog, lock, helpers, random) {
     "use strict";
 
     function writeTeamStats(tx, results) {
@@ -603,7 +603,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
         cbNoGames = function () {
             ui.updateStatus("Idle");
-            return dao.gameAttributes.set({gamesInProgress: false}).then(function () {
+            return league.setGameAttributes({gamesInProgress: false}).then(function () {
                 return ui.updatePlayMenu(null);
             }).then(function () {
                 // Check to see if the season is over
@@ -717,7 +717,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 // Update all advanced stats every day
                 advStats.calculateAll().then(function () {
                     ui.realtimeUpdate(["gameSim"], url, function () {
-                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                        league.setGameAttributes({lastDbChange: Date.now()}).then(function () {
                             if (g.phase === g.PHASE.PLAYOFFS) {
                                 season.newSchedulePlayoffsDay().then(function () {
                                     play(numDays - 1);
@@ -792,7 +792,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 if (start || !g.stopGames) {
                     return Promise.try(function () {
                         if (g.stopGames) {
-                            return db.setGameAttributes({stopGames: false});
+                            return league.setGameAttributes({stopGames: false});
                         }
                     }).then(function () {
                         // Check if it's the playoffs and do some special stuff if it is or isn't
@@ -818,7 +818,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 if (canStartGames) {
                     team.checkRosterSizes().then(function (userTeamSizeError) {
                         if (userTeamSizeError === null) {
-                            dao.gameAttributes.set({gamesInProgress: true}).then(function () {
+                            league.setGameAttributes({gamesInProgress: true}).then(function () {
                                 ui.updatePlayMenu(null).then(cbRunDay);
                             });
                         } else {

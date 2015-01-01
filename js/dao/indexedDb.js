@@ -1,7 +1,7 @@
 define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     "use strict";
 
-    var gameAttributes, players;
+    var players;
 
     /**
      * Create an IndexedDB transaction whose oncomplete event can be accessed as a promise.
@@ -253,66 +253,6 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     }
 
 
-
-
-
-    gameAttributes = generateBasicDao("dbl", "gameAttributes");
-
-    /**
-     * Set values in the gameAttributes objectStore and update the global variable g.
-     *
-     * Items stored in gameAttributes are globally available through the global variable g. If a value is a constant across all leagues/games/whatever, it should just be set in globals.js instead.
-     * 
-     * @param {Object} newGameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
-     * @returns {Promise} Promise for when it finishes.
-     */
-    gameAttributes.set = function (newGameAttributes) {
-        var key, toUpdate, tx;
-
-        toUpdate = [];
-        for (key in newGameAttributes) {
-            if (newGameAttributes.hasOwnProperty(key)) {
-                if (g[key] !== newGameAttributes[key]) {
-                    toUpdate.push(key);
-                }
-            }
-        }
-
-        tx = tx_("gameAttributes", "readwrite");
-
-        toUpdate.forEach(function (key) {
-            gameAttributes.put({
-                ot: tx,
-                value: {
-                    key: key,
-                    value: newGameAttributes[key]
-                }
-            }).then(function () {
-                g[key] = newGameAttributes[key];
-            });
-
-            // Trigger a signal for the team finances view. This is stupid.
-            if (key === "gamesInProgress") {
-                if (newGameAttributes[key]) {
-                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-                } else {
-                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-                }
-            }
-        });
-
-        return tx.complete().then(function () {
-            // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
-            if (newGameAttributes.hasOwnProperty("gamesInProgress") && newGameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-            } else if (newGameAttributes.hasOwnProperty("gamesInProgress") && !newGameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-            }
-        });
-    };
-
-
-
     players = generateBasicDao("dbl", "players");
 
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
@@ -447,7 +387,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         draftOrder: generateBasicDao("dbl", "draftOrder"),
         draftPicks: generateBasicDao("dbl", "draftPicks"),
         events: generateBasicDao("dbl", "events"),
-        gameAttributes: gameAttributes,
+        gameAttributes: generateBasicDao("dbl", "gameAttributes"),
         games: generateBasicDao("dbl", "games"),
         messages: generateBasicDao("dbl", "messages"),
         negotiations: generateBasicDao("dbl", "negotiations"),

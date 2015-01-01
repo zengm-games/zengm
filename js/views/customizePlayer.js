@@ -2,7 +2,7 @@
  * @name views.customizePlayer
  * @namespace Create a new custom player or customize an existing one.
  */
-define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "lib/faces", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/helpers"], function (dao, g, ui, finances, player, team, faces, ko, komapping, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/finances", "core/league", "core/player", "core/team", "lib/faces", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/helpers"], function (dao, g, ui, finances, league, player, team, faces, ko, komapping, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -356,7 +356,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                 });
 
                 tx.complete().then(function () {
-                    return dao.gameAttributes.set({lastDbChange: Date.now()});
+                    return league.setGameAttributes({lastDbChange: Date.now()});
                 }).then(function () {
                     ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
                 });

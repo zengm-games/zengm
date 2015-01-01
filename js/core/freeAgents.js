@@ -2,7 +2,7 @@
  * @name core.freeAgents
  * @namespace Functions related to free agents that didn't make sense to put anywhere else.
  */
-define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/helpers", "util/lock", "util/random"], function (dao, db, g, ui, player, team, Promise, _, helpers, lock, random) {
+define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/helpers", "util/lock", "util/random"], function (dao, g, ui, player, team, Promise, _, helpers, lock, random) {
     "use strict";
 
     /**
@@ -227,7 +227,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
 
         // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
         cbNoDays = function () {
-            db.setGameAttributes({gamesInProgress: false}, function () {
+            require("core/league").setGameAttributes({gamesInProgress: false}).then(function () {
                 ui.updatePlayMenu(null).then(function () {
                     // Check to see if free agency is over
                     if (g.daysLeft === 0) {
@@ -247,7 +247,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
             cbYetAnother = function () {
                 decreaseDemands().then(function () {
                     autoSign().then(function () {
-                        db.setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}, function () {
+                        require("core/league").setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}).then(function () {
                             if (g.daysLeft > 0 && numDays > 0) {
                                 ui.realtimeUpdate(["playerMovement"], undefined, function () {
                                     ui.updateStatus(g.daysLeft + " days left");
@@ -266,7 +266,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
                 // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
                 if (start || !g.stopGames) {
                     if (g.stopGames) {
-                        db.setGameAttributes({stopGames: false}, cbYetAnother);
+                        require("core/league").setGameAttributes({stopGames: false}).then(cbYetAnother);
                     } else {
                         cbYetAnother();
                     }
@@ -282,7 +282,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/team", "lib/bluebird"
         if (start) {
             lock.canStartGames(null).then(function (canStartGames) {
                 if (canStartGames) {
-                    db.setGameAttributes({gamesInProgress: true}, function () {
+                    require("core/league").setGameAttributes({gamesInProgress: true}).then(function () {
                         ui.updatePlayMenu(null).then(function () {
                             cbRunDay();
                         });

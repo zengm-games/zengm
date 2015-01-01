@@ -2,7 +2,7 @@
  * @name views.roster
  * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
  */
-define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team", "lib/bluebird", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, player, season, team, Promise, ko, $, components, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "core/team", "lib/bluebird", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, league, player, season, team, Promise, ko, $, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -56,7 +56,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
         }
 
         return tx.complete().then(function () {
-            return db.setGameAttributes({lastDbChange: Date.now()});
+            return league.setGameAttributes({lastDbChange: Date.now()});
         });
     }
 
@@ -78,7 +78,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
                 // Don't let the user update CPU-controlled rosters
                 if (p.tid === g.userTid) {
                     return player.release(tx, p, justDrafted).then(function () {
-                        return dao.gameAttributes.set({lastDbChange: Date.now()});
+                        return league.setGameAttributes({lastDbChange: Date.now()});
                     });
                 }
 
@@ -184,7 +184,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
                     p.ptModifier = ptModifier;
 
                     dao.players.put({value: p}).then(function () {
-                        dao.gameAttributes.set({lastDbChange: Date.now()});
+                        league.setGameAttributes({lastDbChange: Date.now()});
                     });
                 }
             });
@@ -371,7 +371,7 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
 
             Promise.all([
                 tx.complete(), // Explicitly make sure writing is done for rosterAutoSort
-                dao.gameAttributes.set({lastDbChange: Date.now()})
+                league.setGameAttributes({lastDbChange: Date.now()})
             ]).then(function () {
                 ui.realtimeUpdate(["playerMovement"]);
             });

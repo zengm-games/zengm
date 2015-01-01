@@ -2,7 +2,7 @@
  * @name views.watchList
  * @namespace List of players to watch.
  */
-define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, freeAgents, player, $, ko, components, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/league", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, freeAgents, league, player, $, ko, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -130,7 +130,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
                     }
                 }
             }).then(function () {
-                return dao.gameAttributes.set({lastDbChange: Date.now()});
+                return league.setGameAttributes({lastDbChange: Date.now()});
             }).then(function () {
                 ui.realtimeUpdate(["clearWatchList"]);
                 clearWatchListEl.disabled = false;

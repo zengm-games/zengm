@@ -2,7 +2,7 @@
  * @name views.newTeam
  * @namespace Pick a new team after being fired.
  */
-define(["dao", "db", "globals", "ui", "core/team", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, team, bbgmView, helpers) {
+define(["db", "globals", "ui", "core/league", "core/team", "util/bbgmView", "util/helpers"], function (db, g, ui, league, team, bbgmView, helpers) {
     "use strict";
 
     function get(req) {
@@ -19,7 +19,7 @@ define(["dao", "db", "globals", "ui", "core/team", "util/bbgmView", "util/helper
         ui.updateStatus("Idle");
         ui.updatePlayMenu();
 
-        dao.gameAttributes.set({
+        league.setGameAttributes({
             gameOver: false,
             userTid: Math.floor(req.params.tid),
             ownerMood: {

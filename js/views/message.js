@@ -2,7 +2,7 @@
  * @name views.message
  * @namespace View a single message.
  */
-define(["dao", "globals", "ui", "lib/knockout", "util/bbgmView"], function (dao, g, ui, ko, bbgmView) {
+define(["dao", "globals", "ui", "core/league", "lib/knockout", "util/bbgmView"], function (dao, g, ui, league, ko, bbgmView) {
     "use strict";
 
     function get(req) {
@@ -39,7 +39,7 @@ define(["dao", "globals", "ui", "lib/knockout", "util/bbgmView"], function (dao,
             });
 
             return tx.complete().then(function () {
-                return dao.gameAttributes.set({lastDbChange: Date.now()});
+                return league.setGameAttributes({lastDbChange: Date.now()});
             }).then(function () {
                 if (readThisPageview) {
                     if (g.gameOver) {

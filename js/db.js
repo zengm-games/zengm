@@ -845,22 +845,6 @@ console.log(event);
         });
     }
 
-    /**
-     * Set values in the gameAttributes objectStore and update the global variable g.
-     *
-     * Items stored in gameAttributes are globally available through the global variable g. If a value is a constant across all leagues/games/whatever, it should just be set in globals.js instead.
-     * 
-     * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
-     * @param {function()=} cb Optional callback.
-     */
-    function setGameAttributes(gameAttributes, cb) {
-        dao.gameAttributes.set(gameAttributes).then(function () {
-            if (cb !== undefined) {
-                cb();
-            }
-        });
-    }
-
     function reset() {
         var debug, key;
 
@@ -919,7 +903,6 @@ console.log(event);
         connectLeague: connectLeague,
         loadGameAttribute: loadGameAttribute,
         loadGameAttributes: loadGameAttributes,
-        setGameAttributes: setGameAttributes,
         reset: reset,
         updateMetaNameRegion: updateMetaNameRegion
     };

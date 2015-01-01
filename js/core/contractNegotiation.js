@@ -2,7 +2,7 @@
  * @name core.contractNegotiation
  * @namespace All aspects of contract negotiation.
  */
-define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "core/team", "lib/bluebird", "util/eventLog", "util/helpers", "util/lock", "util/random"], function (dao, db, g, ui, freeAgents, player, team, Promise, eventLog, helpers, lock, random) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "lib/bluebird", "util/eventLog", "util/helpers", "util/lock", "util/random"], function (dao, g, ui, freeAgents, player, team, Promise, eventLog, helpers, lock, random) {
     "use strict";
 
     /**
@@ -66,7 +66,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "core/te
                     };
 
                     return dao.negotiations.add({ot: ot, value: negotiation}).then(function () {
-                        return db.setGameAttributes({lastDbChange: Date.now()});
+                        return require("core/league").setGameAttributes({lastDbChange: Date.now()});
                     }).then(function () {
                         ui.updateStatus("Contract negotiation");
                         return ui.updatePlayMenu(ot);
@@ -213,7 +213,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "core/te
         });
 
         return tx.complete().then(function () {
-            return dao.gameAttributes.set({lastDbChange: Date.now()});
+            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
         });
     }
 
@@ -227,7 +227,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "core/te
     function cancel(pid) {
         // Delete negotiation
         return dao.negotiations.delete({key: pid}).then(function () {
-            return dao.gameAttributes.set({lastDbChange: Date.now()});
+            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
         }).then(function () {
             // If no negotiations are in progress, update status
             return lock.negotiationInProgress(null);
@@ -253,7 +253,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "core/te
      */
     function cancelAll() {
         return dao.negotiations.clear().then(function () {
-            return dao.gameAttributes.set({lastDbChange: Date.now()});
+            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
         }).then(function () {
             ui.updateStatus("Idle");
             return ui.updatePlayMenu(null);
@@ -327,7 +327,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "core/te
             return tx.complete().then(function () {
                 return cancel(pid);
             }).then(function () {
-                return dao.gameAttributes.set({lastDbChange: Date.now()});
+                return require("core/league").setGameAttributes({lastDbChange: Date.now()});
             });
         });
     }

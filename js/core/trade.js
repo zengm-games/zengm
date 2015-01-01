@@ -2,7 +2,7 @@
  * @name core.trade
  * @namespace Trades between the user's team and other teams.
  */
-define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/helpers"], function (dao, db, g, player, team, Promise, _, helpers) {
+define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/helpers"], function (dao, db, g, league, player, team, Promise, _, helpers) {
     "use strict";
 
     /**
@@ -51,7 +51,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
                     }
                 });
                 return tx.complete().then(function () {
-                    dao.gameAttributes.set({lastDbChange: Date.now()});
+                    league.setGameAttributes({lastDbChange: Date.now()});
                 });
             });
         });
@@ -207,7 +207,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
 
             return tx.complete().then(function () {
                 if (updated) {
-                    return dao.gameAttributes.set({lastDbChange: Date.now()});
+                    return league.setGameAttributes({lastDbChange: Date.now()});
                 }
             });
         }).then(function () {
@@ -344,7 +344,7 @@ define(["dao", "db", "globals", "core/player", "core/team", "lib/bluebird", "lib
             dao.trade.put({ot: tx, value: tr});
         });
         return tx.complete().then(function () {
-            return db.setGameAttributes({lastDbChange: Date.now()});
+            return league.setGameAttributes({lastDbChange: Date.now()});
         });
     }
 

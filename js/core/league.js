@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/player", "core/season", "core/team", "lib/bluebird", "lib/underscore", "util/helpers", "util/random"], function (dao, db, g, ui, draft, finances, player, season, team, Promise, _, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/player", "core/season", "core/team", "lib/bluebird", "lib/jquery", "lib/underscore", "util/helpers", "util/random"], function (dao, db, g, ui, draft, finances, player, season, team, Promise, $, _, helpers, random) {
     "use strict";
 
     // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
@@ -118,10 +118,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                 }
             }
 
-            // Clear old game attributes from g, to make sure the new ones are saved to the db in db.setGameAttributes
+            // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
             helpers.resetG();
 
-            return dao.gameAttributes.set(gameAttributes);
+            return setGameAttributes(gameAttributes);
         }).then(function () {
             var i, j, t, round, scoutingRank, toMaybeAdd, tx;
 
@@ -509,15 +509,67 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
             }
         }).then(function () {
             return exportedLeague;
-        })
-
-        // Iterate through all the stores
-        exportStore(stores.length - 1, cb);
+        });
     }
+
+
+    /**
+     * Set values in the gameAttributes objectStore and update the global variable g.
+     *
+     * Items stored in gameAttributes are globally available through the global variable g. If a value is a constant across all leagues/games/whatever, it should just be set in globals.js instead.
+     * 
+     * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
+     * @returns {Promise} Promise for when it finishes.
+     */
+    function setGameAttributes(gameAttributes) {
+        var key, toUpdate, tx;
+
+        toUpdate = [];
+        for (key in gameAttributes) {
+            if (gameAttributes.hasOwnProperty(key)) {
+                if (g[key] !== gameAttributes[key]) {
+                    toUpdate.push(key);
+                }
+            }
+        }
+
+        tx = dao.tx("gameAttributes", "readwrite");
+
+        toUpdate.forEach(function (key) {
+            dao.gameAttributes.put({
+                ot: tx,
+                value: {
+                    key: key,
+                    value: gameAttributes[key]
+                }
+            }).then(function () {
+                g[key] = gameAttributes[key];
+            });
+
+            // Trigger a signal for the team finances view. This is stupid.
+            if (key === "gamesInProgress") {
+                if (gameAttributes[key]) {
+                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
+                } else {
+                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
+                }
+            }
+        });
+
+        return tx.complete().then(function () {
+            // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
+            if (gameAttributes.hasOwnProperty("gamesInProgress") && gameAttributes.gamesInProgress) {
+                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
+            } else if (gameAttributes.hasOwnProperty("gamesInProgress") && !gameAttributes.gamesInProgress) {
+                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
+            }
+        });
+    };
 
     return {
         create: create,
         export_: export_,
-        remove: remove
+        remove: remove,
+        setGameAttributes: setGameAttributes
     };
 });

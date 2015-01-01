@@ -2,7 +2,7 @@
  * @name views.deleteOldData
  * @namespace Delete old league data.
  */
-define(["dao", "globals", "ui", "util/bbgmView"], function (dao, g, ui, bbgmView) {
+define(["dao", "globals", "ui", "core/league", "util/bbgmView"], function (dao, g, ui, league, bbgmView) {
     "use strict";
 
     function get(req) {
@@ -67,7 +67,7 @@ define(["dao", "globals", "ui", "util/bbgmView"], function (dao, g, ui, bbgmView
         }
 
         tx.complete().then(function () {
-            dao.gameAttributes.set({lastDbChange: Date.now()}).then(function () {
+            league.setGameAttributes({lastDbChange: Date.now()}).then(function () {
                 deleteOldDataEl.disabled = false;
                 deleteOldDataSuccessEl.style.visibility = "visible";
             });

@@ -313,7 +313,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         ui = require("ui");
         viewHelpers = require("util/viewHelpers");
 
-        viewHelpers.beforeLeague(req, function () {
+        viewHelpers.beforeLeague(req).then(function () {
             var contentEl;
 
             ui.update({
@@ -374,7 +374,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
     /**
      * Delete all the things from the global variable g that are not stored in league databases.
      *
-     * This is used to clear out values from other leagues, to ensure that the appropriate values are updated in the database when calling db.setGameAttributes.
+     * This is used to clear out values from other leagues, to ensure that the appropriate values are updated in the database when calling league.setGameAttributes.
      * 
      * @memberOf util.helpers
      */

@@ -47,7 +47,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
                     if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
                     if (ownerMood.money > 1) { ownerMood.money = 1; }
 
-                    return dao.gameAttributes.set({ownerMood: ownerMood});
+                    return require("core/league").setGameAttributes({ownerMood: ownerMood});
                 }
             }).then(function () {
                 return deltas;
@@ -607,11 +607,11 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         updateEvents = updateEvents !== undefined ? updateEvents : [];
 
         // Set phase before updating play menu
-        return dao.gameAttributes.set({phase: phase}).then(function () {
+        return require("core/league").setGameAttributes({phase: phase}).then(function () {
             ui.updatePhase(g.season + phaseText[phase]);
             return ui.updatePlayMenu(null).then(function () {
                 // Set lastDbChange last so there is no race condition
-                return dao.gameAttributes.set({lastDbChange: Date.now()}).then(function () {
+                return require("core/league").setGameAttributes({lastDbChange: Date.now()}).then(function () {
                     updateEvents.push("newPhase");
                     ui.realtimeUpdate(updateEvents, url);
                 });
@@ -621,7 +621,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
     function newPhasePreseason() {
         return freeAgents.autoSign().then(function () { // Important: do this before changing the season or contracts and stats are fucked up
-            return dao.gameAttributes.set({season: g.season + 1});
+            return require("core/league").setGameAttributes({season: g.season + 1});
         }).then(function () {
             var coachingRanks, scoutingRank, tx;
 
@@ -1090,7 +1090,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
         return tx.complete().then(function () {
             // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
-            return dao.gameAttributes.set({daysLeft: 30});
+            return require("core/league").setGameAttributes({daysLeft: 30});
         }).then(function () {
             return newPhaseFinalize(g.PHASE.RESIGN_PLAYERS, helpers.leagueUrl(["negotiation"]), ["playerMovement"]);
         });
@@ -1190,7 +1190,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
         return contractNegotiation.cancelAll().then(function () {
             return draft.genOrderFantasy(position);
         }).then(function () {
-            return dao.gameAttributes.set({nextPhase: g.phase});
+            return require("core/league").setGameAttributes({nextPhase: g.phase});
         }).then(function () {
             var tx;
 

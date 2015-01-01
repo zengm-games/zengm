@@ -4,6 +4,8 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
+errorMessage short circuit in bbgmview - makes sense?
+
 TEST
 
 use promises pervasively
@@ -19,16 +21,11 @@ dao refactor:
   make convenience function in dao.gameAttributes for lastDbChange updating to now
     only downside is that sometimes it's updated in one transaction with other gameAttributes changes
   move special cases out of dao - have it just be a thin IDB layer
-    dao.gameAttributes.set -> league.setGameAttribute
     db.loadGameAttribute -> league.loadGameAttribute
     db.loadGameAttributes -> league.loadGameAttributes
     dao.players.getAll -> player.getAllWithStats
     IS THIS STUFF ACTUALLY A GOOD IDEA? I want a DAO, not an IDB wrapper. Goal is to allow different DB backends. Does this help or hurt that goal? Probably neutral at best, so maybe leave it alone for now.
-    ALSO - any function that uses getObjectStore will be problematic to move out
-      payrolls - not a problem, maybe make getAll require a transaction
-      contracts - not a problem, maybe make getAll require a transaction
-      could add another parameter to dao.tx that contains null/undefined or a transaction to base it on - GOOD IDEA
-        replace getObjectStore with tx_
+    ALSO - replace getObjectStore with tx_
 
 "promises" arrays can often be replaced with Promise.map or Promise.reduce
 
@@ -156,6 +153,10 @@ PHASE TWO/THREE: store non-retired players and playerStats in memory
 
 PLAYER DEVELOPMENT REVAMP
 -------------------------
+
+shouldn't have literally every aging player turn into a great shooter
+
+old players are currently undervalued
 
 player development revamp http://www.reddit.com/r/BasketballGM/comments/2cz7r6/player_development_code_has_kinda_ridiculous/
   something needs to be done. still too many 3 point shooting centers

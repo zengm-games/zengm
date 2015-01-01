@@ -2,7 +2,7 @@
  * @name util.message
  * @namespace Messages from the owner of the team to the GM.
  */
-define(["dao", "db", "globals", "lib/bluebird", "util/helpers", "util/random"], function (dao, db, g, Promise, helpers, random) {
+define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, helpers, random) {
     "use strict";
 
     var activities, playoffs, intro, first, money, ovr, wins;
@@ -150,7 +150,7 @@ define(["dao", "db", "globals", "lib/bluebird", "util/helpers", "util/random"], 
 
         if (g.showFirstOwnerMessage) {
             m = random.choice(first);
-            db.setGameAttributes({showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
+            require("core/league").setGameAttributes({showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
         } else {
             activity1 = random.choice(activities);
             activity2 = random.choice(activities);
@@ -250,7 +250,7 @@ define(["dao", "db", "globals", "lib/bluebird", "util/helpers", "util/random"], 
                 return;
             }
             // Fired!
-            return dao.gameAttributes.set({
+            return require("core/league").setGameAttributes({
                 gameOver: true,
                 showFirstOwnerMessage: true
             });

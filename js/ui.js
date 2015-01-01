@@ -151,7 +151,7 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
 
                 return dao.players.put({value: p});
             }).then(function () {
-                return dao.gameAttributes.set({lastDbChange: Date.now()});
+                return require("core/league").setGameAttributes({lastDbChange: Date.now()});
             }).then(function () {
                 realtimeUpdate(["watchList"]);
             });
@@ -497,7 +497,7 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
         if (statusText === undefined) {
             g.vm.topMenu.statusText(oldStatus);
         } else if (statusText !== oldStatus) {
-            db.setGameAttributes({statusText: statusText}, function () {
+            require("core/league").setGameAttributes({statusText: statusText}).then(function () {
                 g.vm.topMenu.statusText(statusText);
 //                console.log("Set status: " + statusText);
             });
@@ -520,7 +520,7 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
         if (phaseText === undefined) {
             g.vm.topMenu.phaseText(oldPhaseText);
         } else if (phaseText !== oldPhaseText) {
-            db.setGameAttributes({phaseText: phaseText}, function () {
+            require("core/league").setGameAttributes({phaseText: phaseText}).then(function () {
                 g.vm.topMenu.phaseText(phaseText);
 //                console.log("Set phase: " + phaseText);
             });

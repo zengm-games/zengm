@@ -2,7 +2,7 @@
  * @name views.editTeamInfo
  * @namespace Edit Team Info.
  */
-define(["dao", "db", "globals", "ui", "core/team", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, team, _, bbgmView, helpers) {
+define(["dao", "db", "globals", "ui", "core/league", "core/team", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, league, team, _, bbgmView, helpers) {
     "use strict";
 
     function post(req) {
@@ -30,7 +30,7 @@ define(["dao", "db", "globals", "ui", "core/team", "lib/underscore", "util/bbgmV
             // Update meta cache of user's team
             return db.updateMetaNameRegion(g.lid, userName, userRegion);
         }).then(function () {
-            return dao.gameAttributes.set({
+            return league.setGameAttributes({
                 lastDbChange: Date.now(),
                 teamAbbrevsCache: req.params.abbrev,
                 teamRegionsCache: req.params.region,
@@ -145,7 +145,7 @@ define(["dao", "db", "globals", "ui", "core/team", "lib/underscore", "util/bbgmV
                     // Update meta cache of user's team
                     return db.updateMetaNameRegion(g.lid, userName, userRegion);
                 }).then(function () {
-                    return dao.gameAttributes.set({
+                    return league.setGameAttributes({
                         lastDbChange: Date.now(),
                         teamAbbrevsCache: _.pluck(newTeams, "abbrev"),
                         teamRegionsCache: _.pluck(newTeams, "region"),

@@ -420,7 +420,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                                     }
                                 });
                             }).then(function () {
-                                return dao.gameAttributes.set({
+                                return require("core/league").setGameAttributes({
                                     lastDbChange: Date.now(),
                                     phase: g.nextPhase,
                                     nextPhase: null
@@ -440,7 +440,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                     }
 
                     // Draft is not over, so continue
-                    return dao.gameAttributes.set({lastDbChange: Date.now()}).then(function () {
+                    return require("core/league").setGameAttributes({lastDbChange: Date.now()}).then(function () {
                         return pids;
                     });
                 });

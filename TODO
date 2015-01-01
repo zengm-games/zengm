@@ -4,8 +4,6 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
-errorMessage short circuit in bbgmview - makes sense?
-
 TEST
 
 use promises pervasively

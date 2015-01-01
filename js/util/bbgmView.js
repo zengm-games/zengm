@@ -31,7 +31,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
 
     function update(args) {
         return function (inputs, updateEvents, cb) {
-            var container, containerEl, promisesBefore;
+            var container, containerEl, promisesBefore, promisesWhenever;
 
             container = g.lid !== null ? "league_content" : "content";
             containerEl = document.getElementById(container);
@@ -57,8 +57,19 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
 
             // Resolve all the promises before updating the UI to minimize flicker
             promisesBefore = args.runBefore.map(function (fn) { return fn(inputs, updateEvents, vm); });
+
+            // Run promises in parallel, update when each one is ready
+            // This runs no matter what
+            promisesWhenever = args.runWhenever.map(function (fn) {
+                return Promise.resolve(fn(inputs, updateEvents, vm)).then(function (vars) {
+                    if (vars !== undefined) {
+                        komapping.fromJS(vars, args.mapping, vm);
+                    }
+                });
+            });
+
             Promise.all(promisesBefore).then(function (results) {
-                var vars;
+                var promisesAfter, vars;
 
                 if (results.length > 1) {
                     vars = $.extend.apply(null, results);
@@ -79,10 +90,9 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
                 }
 
                 display(args, updateEvents);
-            }).then(function () {
-                var promisesAfter;
 
                 // Run promises in parallel, update when each one is ready
+                // This only runs if it hasn't been short-circuited yet
                 promisesAfter = args.runAfter.map(function (fn) {
                     return Promise.resolve(fn(inputs, updateEvents, vm)).then(function (vars) {
                         if (vars !== undefined) {
@@ -90,30 +100,22 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
                         }
                     });
                 });
-                return Promise.all(promisesAfter);
-            }).then(function () {
-                var promisesWhenever;
 
-                // Run promises in parallel, update when each one is ready
-                promisesWhenever = args.runWhenever.map(function (fn) {
-                    return Promise.resolve(fn(inputs, updateEvents, vm)).then(function (vars) {
-                        if (vars !== undefined) {
-                            komapping.fromJS(vars, args.mapping, vm);
-                        }
-                    });
+                return Promise.all([
+                    Promise.all(promisesAfter),
+                    Promise.all(promisesWhenever)
+                ]).then(function () {
+                    if (containerEl.dataset.idLoading === containerEl.dataset.idLoaded) {
+                        containerEl.dataset.idLoading = ""; // Done loading
+                    }
+
+                    // Scroll to top
+                    if (_.isEqual(updateEvents, ["firstRun"])) {
+                        window.scrollTo(window.pageXOffset, 0);
+                    }
+
+                    cb();
                 });
-                return Promise.all(promisesWhenever);
-            }).then(function () {
-                if (containerEl.dataset.idLoading === containerEl.dataset.idLoaded) {
-                    containerEl.dataset.idLoading = ""; // Done loading
-                }
-
-                // Scroll to top
-                if (_.isEqual(updateEvents, ["firstRun"])) {
-                    window.scrollTo(window.pageXOffset, 0);
-                }
-
-                cb();
             });
         };
     }

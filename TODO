@@ -25,8 +25,6 @@ dao refactor:
     IS THIS STUFF ACTUALLY A GOOD IDEA? I want a DAO, not an IDB wrapper. Goal is to allow different DB backends. Does this help or hurt that goal? Probably neutral at best, so maybe leave it alone for now.
     ALSO - replace getObjectStore with tx_
 
-"promises" arrays can often be replaced with Promise.map or Promise.reduce
-
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing
   remove filter option from dao.players.getAll - also confusing, can just apply manually

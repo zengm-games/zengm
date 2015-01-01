@@ -859,24 +859,15 @@ console.log(event);
 
         // Delete any current league databases
         console.log("Deleting any current league databases...");
-        g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
-            var i, league, leagues, promises;
-
-            leagues = event.target.result;
-
+        dao.leagues.getAll().then(function (leagues) {
             if (leagues.length === 0) {
                 console.log('No leagues found.');
                 Davis.location.assign(new Davis.Request("/"));
             }
 
-            league = require("core/league"); // Circular reference
-
-            promises = [];
-            for (i = 0; i < leagues.length; i++) {
-                promises.push(league.remove(leagues[i].lid))
-            }
-
-            Promise.all(promises).then(function () {
+            Promise.map(leagues, function (l) {
+                return require("core/league").remove(l.lid);
+            }).then(function () {
                 var request;
 
                 // Delete any current meta database
@@ -887,7 +878,7 @@ console.log(event);
                     location.reload();
                 };
             });
-        };
+        });
     }
 
     function updateMetaNameRegion(lid, name, region) {

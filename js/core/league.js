@@ -463,7 +463,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
      * @return {Promise} Resolve to all the exported league data.
      */
     function export_(stores) {
-        var exportedLeague,  exportStore, i, promises;
+        var exportedLeague;
 
         exportedLeague = {};
 
@@ -472,18 +472,11 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
         // name is only used for the file name of the exported roster file.
         exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
 
-        exportStore = function (i) {
-            return dao[stores[i]].getAll().then(function (store) {
-                exportedLeague[stores[i]] = store;
+        return Promise.map(stores, function (store) {
+            return dao[store].getAll().then(function (contents) {
+                exportedLeague[store] = contents;
             });
-        };
-
-        promises = [];
-        for (i = 0; i < stores.length; i++) {
-            promises.push(exportStore(i));
-        }
-
-        return Promise.all(promises).then(function () {
+        }).then(function () {
             // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
             var i, j, pid;
 

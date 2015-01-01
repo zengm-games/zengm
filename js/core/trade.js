@@ -539,7 +539,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
             });
 
             return tx.complete().then(function () {
-                var otherDpids, otherPids, promises, userPids, userDpids;
+                var otherDpids, otherPids, userPids, userDpids;
 
                 // If we've already added 5 assets or there are no more to try, stop
                 if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
@@ -547,8 +547,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
                 }
 
                 // Calculate the value for each asset added to the trade, for use in forward selection
-                promises = [];
-                assets.forEach(function (asset) {
+                return Promise.map(assets, function (asset) {
                     userPids = teams[0].pids.slice();
                     otherPids = teams[1].pids.slice();
                     userDpids = teams[0].dpids.slice();
@@ -567,13 +566,11 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
                             otherDpids.push(asset.dpid);
                         }
                     }
-                    promises.push(team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached).then(function (dv) {
+                    return team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached).then(function (dv) {
 
                         asset.dv = dv;
-                    }));
+                    });
                 });
-
-                return Promise.all(promises);
             }).then(function () {
                 var asset, j;
 

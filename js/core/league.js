@@ -557,12 +557,21 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                 $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
             }
         });
-    };
+    }
+
+    function updateMetaNameRegion(name, region) {
+        return dao.leagues.get({key: g.lid}).then(function (l) {
+            l.teamName = name;
+            l.teamRegion = region;
+            return dao.leagues.put({value: l});
+        });
+    }
 
     return {
         create: create,
         export_: export_,
         remove: remove,
-        setGameAttributes: setGameAttributes
+        setGameAttributes: setGameAttributes,
+        updateMetaNameRegion: updateMetaNameRegion
     };
 });

@@ -881,20 +881,11 @@ console.log(event);
         });
     }
 
-    function updateMetaNameRegion(lid, name, region) {
-        return dao.leagues.get({key: lid}).then(function (l) {
-            l.teamName = name;
-            l.teamRegion = region;
-            return dao.leagues.put({value: l});
-        });
-    }
-
     return {
         connectMeta: connectMeta,
         connectLeague: connectLeague,
         loadGameAttribute: loadGameAttribute,
         loadGameAttributes: loadGameAttributes,
-        reset: reset,
-        updateMetaNameRegion: updateMetaNameRegion
+        reset: reset
     };
 });

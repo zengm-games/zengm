@@ -28,7 +28,7 @@ define(["dao", "db", "globals", "ui", "core/league", "core/team", "lib/underscor
             }
         }).then(function () {
             // Update meta cache of user's team
-            return db.updateMetaNameRegion(g.lid, userName, userRegion);
+            return league.updateMetaNameRegion(userName, userRegion);
         }).then(function () {
             return league.setGameAttributes({
                 lastDbChange: Date.now(),
@@ -143,7 +143,7 @@ define(["dao", "db", "globals", "ui", "core/league", "core/team", "lib/underscor
                     }
                 }).then(function () {
                     // Update meta cache of user's team
-                    return db.updateMetaNameRegion(g.lid, userName, userRegion);
+                    return league.updateMetaNameRegion(userName, userRegion);
                 }).then(function () {
                     return league.setGameAttributes({
                         lastDbChange: Date.now(),

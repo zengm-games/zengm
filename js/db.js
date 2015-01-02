@@ -205,7 +205,7 @@ console.log(event);
         tx = event.currentTarget.transaction;
 
         // Make sure game attributes (i.e. g.startingSeason) are loaded first
-        loadGameAttributes(tx).then(function () {
+        require("core/league").loadGameAttributes(tx).then(function () {
             if (event.oldVersion <= 1) {
                 teams = helpers.getTeamsDefault();
 
@@ -784,67 +784,6 @@ console.log(event);
         });
     }
 
-    /**
-     * Load a game attribute from the database and update the global variable g.
-     *
-     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
-     * @param {string} key Key in gameAttributes to load the value for.
-     * @return {Promise}
-     */
-    function loadGameAttribute(ot, key) {
-        return dao.gameAttributes.get({ot: ot, key: key}).then(function (gameAttribute) {
-            if (gameAttribute === undefined) {
-                // Default values for old leagues - see also loadGameAttributes
-                if (key === "numTeams") {
-                    g.numTeams = 30;
-                } else if (key === "godMode") {
-                    g.godMode = false;
-                } else if (key === "godModeInPast") {
-                    g.godModeInPast = false;
-                } else {
-                    throw new Error("Unknown game attribute: " + key);
-                }
-            } else {
-                g[key] = gameAttribute.value;
-            }
-
-            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
-            if (key === "godMode") {
-                g.vm.topMenu.godMode(g.godMode);
-            }
-        });
-    }
-
-    /**
-     * Load game attributes from the database and update the global variable g.
-     * 
-     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
-     * @return {Promise}
-     */
-    function loadGameAttributes(ot) {
-        return dao.gameAttributes.getAll({ot: ot}).then(function (gameAttributes) {
-            var i;
-
-            for (i = 0; i < gameAttributes.length; i++) {
-                g[gameAttributes[i].key] = gameAttributes[i].value;
-            }
-
-            // Default values for old leagues - see also loadGameAttribute
-            if (g.numTeams === undefined) {
-                g.numTeams = 30;
-            }
-            if (g.godMode === undefined) {
-                g.godMode = false;
-            }
-            if (g.godModeInPast === undefined) {
-                g.godModeInPast = false;
-            }
-
-            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
-            g.vm.topMenu.godMode(g.godMode);
-        });
-    }
-
     function reset() {
         var debug, key;
 
@@ -884,8 +823,6 @@ console.log(event);
     return {
         connectMeta: connectMeta,
         connectLeague: connectLeague,
-        loadGameAttribute: loadGameAttribute,
-        loadGameAttributes: loadGameAttributes,
         reset: reset
     };
 });

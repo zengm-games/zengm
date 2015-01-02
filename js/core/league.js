@@ -567,11 +567,74 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
         });
     }
 
+    /**
+     * Load a game attribute from the database and update the global variable g.
+     *
+     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
+     * @param {string} key Key in gameAttributes to load the value for.
+     * @return {Promise}
+     */
+    function loadGameAttribute(ot, key) {
+        return dao.gameAttributes.get({ot: ot, key: key}).then(function (gameAttribute) {
+            if (gameAttribute === undefined) {
+                // Default values for old leagues - see also loadGameAttributes
+                if (key === "numTeams") {
+                    g.numTeams = 30;
+                } else if (key === "godMode") {
+                    g.godMode = false;
+                } else if (key === "godModeInPast") {
+                    g.godModeInPast = false;
+                } else {
+                    throw new Error("Unknown game attribute: " + key);
+                }
+            } else {
+                g[key] = gameAttribute.value;
+            }
+
+            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
+            if (key === "godMode") {
+                g.vm.topMenu.godMode(g.godMode);
+            }
+        });
+    }
+
+    /**
+     * Load game attributes from the database and update the global variable g.
+     * 
+     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
+     * @return {Promise}
+     */
+    function loadGameAttributes(ot) {
+        return dao.gameAttributes.getAll({ot: ot}).then(function (gameAttributes) {
+            var i;
+
+            for (i = 0; i < gameAttributes.length; i++) {
+                g[gameAttributes[i].key] = gameAttributes[i].value;
+            }
+
+            // Default values for old leagues - see also loadGameAttribute
+            if (g.numTeams === undefined) {
+                g.numTeams = 30;
+            }
+            if (g.godMode === undefined) {
+                g.godMode = false;
+            }
+            if (g.godModeInPast === undefined) {
+                g.godModeInPast = false;
+            }
+
+            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
+            g.vm.topMenu.godMode(g.godMode);
+        });
+    }
+
     return {
         create: create,
         export_: export_,
         remove: remove,
         setGameAttributes: setGameAttributes,
-        updateMetaNameRegion: updateMetaNameRegion
+        updateMetaNameRegion: updateMetaNameRegion,
+        loadGameAttribute: loadGameAttribute,
+        loadGameAttributes: loadGameAttributes
     };
 });

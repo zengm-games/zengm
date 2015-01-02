@@ -2,7 +2,7 @@
  * @name util.lock
  * @namespace These functions all deal with locking game state when there is some blocking action in progress. Like don't allow game simulations when a trade is being negotiated. For figuring out the current state, trust only the database.
  */
-define(["dao", "db", "globals"], function (dao, db, g) {
+define(["dao", "globals", "core/league"], function (dao, g, league) {
     "use strict";
 
     /**
@@ -15,7 +15,7 @@ define(["dao", "db", "globals"], function (dao, db, g) {
      * @return {Promise.boolean}
      */
     function gamesInProgress(ot) {
-        return db.loadGameAttribute(ot, "gamesInProgress").then(function () {
+        return league.loadGameAttribute(ot, "gamesInProgress").then(function () {
             return g.gamesInProgress;
         });
     }

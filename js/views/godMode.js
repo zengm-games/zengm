@@ -2,13 +2,13 @@
  * @name views.godMode
  * @namespace Enable or disable God Mode.
  */
-define(["dao", "db", "globals", "ui", "core/league", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, league, bbgmView, helpers) {
+define(["globals", "ui", "core/league", "util/bbgmView", "util/helpers"], function (g, ui, league, bbgmView, helpers) {
     "use strict";
 
     function updateGodMode(inputs, updateEvents, vm) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("toggleGodMode") >= 0) {
             // Make sure it's current
-            return db.loadGameAttribute(null, "godMode").then(function () {
+            return league.loadGameAttribute(null, "godMode").then(function () {
                 return {
                     godMode: g.godMode
                 };

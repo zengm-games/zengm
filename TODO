@@ -4,9 +4,7 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
-TEST
-
-use promises pervasively
+FIX UNIT TESTS
 
 dao.store.iterate
   if "callback" is passed, apply function to each element in cursor
@@ -19,8 +17,6 @@ dao refactor:
   make convenience function in dao.gameAttributes for lastDbChange updating to now
     only downside is that sometimes it's updated in one transaction with other gameAttributes changes
   move special cases out of dao - have it just be a thin IDB layer
-    db.loadGameAttribute -> league.loadGameAttribute
-    db.loadGameAttributes -> league.loadGameAttributes
     dao.players.getAll -> player.getAllWithStats
     IS THIS STUFF ACTUALLY A GOOD IDEA? I want a DAO, not an IDB wrapper. Goal is to allow different DB backends. Does this help or hurt that goal? Probably neutral at best, so maybe leave it alone for now.
     ALSO - replace getObjectStore with tx_

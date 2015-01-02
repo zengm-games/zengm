@@ -4,8 +4,6 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
-FIX UNIT TESTS
-
 dao.store.iterate
   if "callback" is passed, apply function to each element in cursor
     to modify, return updated value
@@ -14,8 +12,6 @@ dao.store.iterate
     short circuit: shortCircuit function passed as second param
 
 dao refactor:
-  make convenience function in dao.gameAttributes for lastDbChange updating to now
-    only downside is that sometimes it's updated in one transaction with other gameAttributes changes
   move special cases out of dao - have it just be a thin IDB layer
     dao.players.getAll -> player.getAllWithStats
     IS THIS STUFF ACTUALLY A GOOD IDEA? I want a DAO, not an IDB wrapper. Goal is to allow different DB backends. Does this help or hurt that goal? Probably neutral at best, so maybe leave it alone for now.
@@ -24,23 +20,18 @@ dao refactor:
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing
   remove filter option from dao.players.getAll - also confusing, can just apply manually
-  return to g.dbl and g.dbm, not dao variable with merged league and meta
-
-various functions in db
 
 rewrite old upgrading code?
 
 big goals
   indexeddb only in dao
     grep -r dbl js
-    grep -r dbm js
   no "cb" anywhere
     util/bbgmView and util/helpers functions that talk to Davis - unavoidable unless i switch to a promise-based router library
     util/account - think about it
 
 clean up
   documentation!!!!! like nuances of iterate modify
-  eventually factor out library and merge with https://github.com/aaronpowell/db.js/issues/95 maybe
   throw error in inappropriate input param (like "pid")
   shouldn't overwrite functions with getAll like in players - that should be another name
   hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake
@@ -50,10 +41,6 @@ clean up
     backboard
     backcourt
     baseline!!!!!!!!!!!
-
-unit tests
-  get running from command line, maybe in karma?
-  performance compared to old version?
 
 unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-javascript-es6-promise-support-done-api https://code.google.com/p/v8/issues/detail?id=3093
   can customize build to save space https://github.com/petkaantonov/bluebird#custom-builds
@@ -66,7 +53,7 @@ test
   achievement syncing to account
   make sure ads show correctly
 
-after fully abstracting IndexedDB, could i improve performance by running it locally in node and using a relational database?
+after fully abstracting IndexedDB, could i improve performance by running it locally in node and using another database?
   same with mobile on phonegap
   same with web - "turbo mode" where only one window (db connection) is allowed and caching is heavy
 
@@ -218,6 +205,10 @@ separate active and retired players into separate object stores
 CURRENT
 -------
 
+percentages for FG, FT, 3pt below box score like Yahoo
+game log for individual player
+  in each box score, include an array of players in the game. index on that.
+foreign player names
 career transactions page
   multientry index in event log to pull every event involving a player
 great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_questions_and_feedback_feel_free_to_add/

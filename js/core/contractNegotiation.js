@@ -66,8 +66,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
                     };
 
                     return dao.negotiations.add({ot: ot, value: negotiation}).then(function () {
-                        return require("core/league").setGameAttributes({lastDbChange: Date.now()});
-                    }).then(function () {
+                        require("core/league").setGameAttributes({lastDbChange: Date.now()});
                         ui.updateStatus("Contract negotiation");
                         return ui.updatePlayMenu(ot);
                     });

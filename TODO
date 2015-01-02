@@ -29,6 +29,8 @@ big goals
   no "cb" anywhere
     util/bbgmView and util/helpers functions that talk to Davis - unavoidable unless i switch to a promise-based router library
     util/account - think about it
+      could pass a "test" flag to toggle behavior, then promisify
+      see fo_fo_fo - still need to fix others and then fix actual usage and tests
 
 clean up
   documentation!!!!! like nuances of iterate modify
@@ -49,6 +51,7 @@ unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-jav
 put bugsnag back
 
 test
+  achievements work in game
   achievement retrieval from account
   achievement syncing to account
   make sure ads show correctly
@@ -209,6 +212,7 @@ percentages for FG, FT, 3pt below box score like Yahoo
 game log for individual player
   in each box score, include an array of players in the game. index on that.
 foreign player names
+  draftexpress? emailed them, if no reply, maybe scrape
 career transactions page
   multientry index in event log to pull every event involving a player
 great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_questions_and_feedback_feel_free_to_add/

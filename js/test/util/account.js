@@ -25,7 +25,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 tx = dao.tx("playoffSeries", "readwrite");
                 tx.objectStore("playoffSeries").put(ps);
                 tx.complete().then(function () {
-                    account.checkAchievement.fo_fo_fo(function (awarded) {
+                    account.checkAchievement.fo_fo_fo(false).then(function (awarded) {
                         awarded.should.be.true;
                         done();
                     });
@@ -40,7 +40,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 tx = dao.tx("playoffSeries", "readwrite");
                 tx.objectStore("playoffSeries").put(ps);
                 tx.complete().then(function () {
-                    account.checkAchievement.fo_fo_fo(function (awarded) {
+                    account.checkAchievement.fo_fo_fo(false).then(function (awarded) {
                         awarded.should.be.false;
                         done();
                     });
@@ -55,7 +55,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 tx = dao.tx("playoffSeries", "readwrite");
                 tx.objectStore("playoffSeries").put(ps);
                 tx.complete().then(function () {
-                    account.checkAchievement.fo_fo_fo(function (awarded) {
+                    account.checkAchievement.fo_fo_fo(false).then(function (awarded) {
                         awarded.should.be.false;
                         done();
                     });

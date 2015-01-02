@@ -219,18 +219,16 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
     // If cb is passed, it gets true/false depending on if achievement should be awarded, but nothing is actually recorded. If cb is not, the achievement is directly added if it's awarded.
     checkAchievement = {};
 
-    checkAchievement.fo_fo_fo = function (cb) {
+    checkAchievement.fo_fo_fo = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
-            var found, i, playoffSeries, round, series;
+        return dao.playoffSeries.get({key: g.season}).then(function (playoffSeries) {
+            var found, i, round, series;
 
-            playoffSeries = event.target.result;
             series = playoffSeries.series;
 
             for (round = 0; round < series.length; round++) {
@@ -246,19 +244,16 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
                     }
                 }
                 if (!found) {
-                    if (cb !== undefined) {
-                        cb(false);
-                    }
-                    return;
+                    return false;
                 }
             }
 
-            if (cb !== undefined) {
-                cb(true);
-            } else {
+            if (saveAchievement) {
                 addAchievements(["fo_fo_fo"]);
             }
-        };
+
+            return true;
+        });
     };
 
     checkAchievement.septuawinarian = function (cb) {

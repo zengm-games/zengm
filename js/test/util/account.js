@@ -156,17 +156,17 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
             });
         });
 
-/*        describe("#checkAchievement.dynasty*()", function () {
+        describe("#checkAchievement.dynasty*()", function () {
             it("should gracefully handle case where not enough seasons are present", function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
                     awarded.should.be.false;
 
                     return account.checkAchievement.dynasty_2(false).then(function (awarded) {
                         awarded.should.be.false;
-
-                        return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                            awarded.should.be.false;
-                        });
+                    });
+                }).then(function () {
+                    return account.checkAchievement.dynasty_3(false).then(function (awarded) {
+                        awarded.should.be.false;
                     });
                 });
             });
@@ -176,56 +176,50 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 // Add 6 to the existing season, making 7 seasons total
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                    var cursor, extraSeasons, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
+                    var extraSeasons;
 
                     extraSeasons = [{playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}];
                     t.seasons = t.seasons.concat(extraSeasons);
 
                     dao.teams.put({ot: tx, value: t});
-                };
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.dynasty(false).then(function (awarded) {
                         awarded.should.be.true;
+                    });
+                }).then(function () {
+                    return account.checkAchievement.dynasty_2(false).then(function (awarded) {
+                        awarded.should.be.false;
+                    });
+                }).then(function () {
+                    return account.checkAchievement.dynasty_3(false).then(function (awarded) {
+                        awarded.should.be.false;
+                    });
+                }).then(function () {
+                    var tx;
 
-                        return account.checkAchievement.dynasty_2(false).then(function (awarded) {
-                            awarded.should.be.false;
+                    // Add 1 to the existing 7 seasons, making 8 seasons total
+                    tx = dao.tx("teams", "readwrite");
+                    dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
+                        var extraSeasons;
 
-                            return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                                var tx;
+                        extraSeasons = [{playoffRoundsWon: 3}];
+                        t.seasons = t.seasons.concat(extraSeasons);
 
-                                awarded.should.be.false;
-
-                                // Add 1 to the existing 7 seasons, making 8 seasons total
-                                tx = dao.tx("teams", "readwrite");
-                                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                                    var cursor, extraSeasons, t;
-
-                                    cursor = event.target.result;
-                                    t = cursor.value;
-
-                                    extraSeasons = [{playoffRoundsWon: 3}];
-                                    t.seasons = t.seasons.concat(extraSeasons);
-
-                                    dao.teams.put({ot: tx, value: t});
-                                };
-                                return tx.complete().then(function () {
-                                    return account.checkAchievement.dynasty(false).then(function (awarded) {
-                                        awarded.should.be.true;
-
-                                        return account.checkAchievement.dynasty_2(false).then(function (awarded) {
-                                            awarded.should.be.false;
-
-                                            return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                                                awarded.should.be.false;
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                        });
+                        dao.teams.put({ot: tx, value: t});
+                    });
+                    return tx.complete();
+                }).then(function () {
+                    return account.checkAchievement.dynasty(false).then(function (awarded) {
+                        awarded.should.be.true;
+                    });
+                }).then(function () {
+                    return account.checkAchievement.dynasty_2(false).then(function (awarded) {
+                        awarded.should.be.false;
+                    });
+                }).then(function () {
+                    return account.checkAchievement.dynasty_3(false).then(function (awarded) {
+                        awarded.should.be.false;
                     });
                 });
             });
@@ -234,28 +228,23 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
                     // Update non-winning years from last test
                     t.seasons[0].playoffRoundsWon = 4;
                     t.seasons[7].playoffRoundsWon = 4;
 
                     dao.teams.put({ot: tx, value: t});
-                };
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.dynasty(false).then(function (awarded) {
                         awarded.should.be.true;
-
-                        return account.checkAchievement.dynasty_2(false).then(function (awarded) {
-                            awarded.should.be.true;
-
-                            return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                                awarded.should.be.false;
-                            });
-                        });
+                    });
+                }).then(function () {
+                    return account.checkAchievement.dynasty_2(false).then(function (awarded) {
+                        awarded.should.be.true;
+                    });
+                }).then(function () {
+                    return account.checkAchievement.dynasty_3(false).then(function (awarded) {
+                        awarded.should.be.false;
                     });
                 });
             });
@@ -265,10 +254,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 // Add 5 to the existing season, making 13 seasons total
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                    var cursor, extraSeasons, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
+                    var extraSeasons;
 
                     t.seasons[0].playoffRoundsWon = 0;
                     t.seasons[1].playoffRoundsWon = 0;
@@ -276,18 +262,18 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons = t.seasons.concat(extraSeasons);
 
                     dao.teams.put({ot: tx, value: t});
-                };
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.dynasty(false).then(function (awarded) {
                         awarded.should.be.true;
-
-                        return account.checkAchievement.dynasty_2(false).then(function (awarded) {
-                            //awarded.should.be.true;
-
-                            return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                                awarded.should.be.true;
-                            });
-                        });
+                    });
+                }).then(function () {
+                    return account.checkAchievement.dynasty_2(false).then(function (awarded) {
+                        awarded.should.be.true;
+                    });
+                }).then(function () {
+                    return account.checkAchievement.dynasty_3(false).then(function (awarded) {
+                        awarded.should.be.true;
                     });
                 });
             });
@@ -296,44 +282,34 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
                     // Swap a couple titles to make no 8 in a row
                     t.seasons[9].playoffRoundsWon = 0;
                     t.seasons[0].playoffRoundsWon = 4;
 
                     dao.teams.put({ot: tx, value: t});
-                };
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.dynasty(false).then(function (awarded) {
                         awarded.should.be.true;
-
-                        return account.checkAchievement.dynasty_2(false).then(function (awarded) {
-                            awarded.should.be.false;
-
-                            return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                                awarded.should.be.true;
-                            });
-                        });
+                    });
+                }).then(function () {
+                    return account.checkAchievement.dynasty_2(false).then(function (awarded) {
+                        awarded.should.be.false;
+                    });
+                }).then(function () {
+                    return account.checkAchievement.dynasty_3(false).then(function (awarded) {
+                        awarded.should.be.true;
                     });
                 });
             });
         });
 
-        describe("#checkAchievement.moneyball*()", function () {
+/*        describe("#checkAchievement.moneyball*()", function () {
             it("should award moneyball and moneyball_2 for title with payroll <= $30M", function () {
                 var tx;
 
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
                     t.seasons = [t.seasons[0]]; // Reset from dynasty*, only one season
                     t.seasons[0].playoffRoundsWon = 4;
                     t.seasons[0].expenses.salary.amount = 30000;
@@ -355,11 +331,6 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
                     t.seasons[0].playoffRoundsWon = 3;
 
                     dao.teams.put({ot: tx, value: t});
@@ -379,11 +350,6 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
                     t.seasons[0].playoffRoundsWon = 4;
                     t.seasons[0].expenses.salary.amount = 40000;
 
@@ -404,11 +370,6 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
                     t.seasons[0].expenses.salary.amount = 40001;
 
                     dao.teams.put({ot: tx, value: t});
@@ -476,11 +437,6 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
                     t.seasons[0].playoffRoundsWon = 4;
                     t.seasons[0].pop = 1.5;
 
@@ -497,11 +453,6 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
                     t.seasons[0].playoffRoundsWon = 4;
                     t.seasons[0].pop = 3;
 
@@ -518,11 +469,6 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
                     t.seasons[0].playoffRoundsWon = 3;
                     t.seasons[0].pop = 1.5;
 

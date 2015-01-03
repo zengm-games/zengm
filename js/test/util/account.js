@@ -23,7 +23,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":0,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":0,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
                 tx = dao.tx("playoffSeries", "readwrite");
-                tx.objectStore("playoffSeries").put(ps);
+                dao.playoffSeries.put({ot: tx, value: ps});
                 return tx.complete().then(function () {
                     return account.checkAchievement.fo_fo_fo(false).then(function (awarded) {
                         awarded.should.be.true;
@@ -37,7 +37,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":0,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":1,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
                 tx = dao.tx("playoffSeries", "readwrite");
-                tx.objectStore("playoffSeries").put(ps);
+                dao.playoffSeries.put({ot: tx, value: ps});
                 return tx.complete().then(function () {
                     return account.checkAchievement.fo_fo_fo(false).then(function (awarded) {
                         awarded.should.be.false;
@@ -51,7 +51,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":8,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":0,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":8,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":1,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":8,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":8,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
                 tx = dao.tx("playoffSeries", "readwrite");
-                tx.objectStore("playoffSeries").put(ps);
+                dao.playoffSeries.put({ot: tx, value: ps});
                 return tx.complete().then(function () {
                     return account.checkAchievement.fo_fo_fo(false).then(function (awarded) {
                         awarded.should.be.false;
@@ -82,126 +82,100 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
             });
         });
 
-/*        describe("#checkAchievement.98_degrees()", function () {
-            it("should award achievement for 82-0 regular season record and 16-0 playoff record for user's team", function (done) {
+        describe("#checkAchievement.98_degrees()", function () {
+            it("should award achievement for 82-0 regular season record and 16-0 playoff record for user's team", function () {
                 var ps, tx;
 
                 // tid 7 wins 4-0 every series
                 ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":0,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":0,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
                 tx = dao.tx(["playoffSeries", "teams"], "readwrite");
-                tx.objectStore("playoffSeries").put(ps);
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
+                dao.playoffSeries.put({ot: tx, value: ps});
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     t.seasons[0].won = 82;
                     t.seasons[0].lost = 0;
 
-                    cursor.update(t);
-                };
-                tx.complete().then(function () {
-                    account.checkAchievement["98_degrees"](function (awarded) {
+                    dao.teams.put({ot: tx, value: t});
+                });
+                return tx.complete().then(function () {
+                    return account.checkAchievement["98_degrees"](false).then(function (awarded) {
                         awarded.should.be.true;
-                        done();
                     });
                 });
             });
-            it("should not award achievement without 82-0 regular season", function (done) {
+            it("should not award achievement without 82-0 regular season", function () {
                 var tx;
 
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     t.seasons[0].won = 82;
                     t.seasons[0].lost = 1;
 
-                    cursor.update(t);
-                };
-                tx.complete().then(function () {
-                    account.checkAchievement["98_degrees"](function (awarded) {
+                    dao.teams.put({ot: tx, value: t});
+                });
+                return tx.complete().then(function () {
+                    return account.checkAchievement["98_degrees"](false).then(function (awarded) {
                         var tx;
 
                         awarded.should.be.false;
 
                         tx = dao.tx("teams", "readwrite");
-                        tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
-                            var cursor, t;
-
-                            cursor = event.target.result;
-                            t = cursor.value;
-
+                        dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                             t.seasons[0].won = 81;
                             t.seasons[0].lost = 0;
 
-                            cursor.update(t);
-                        };
-
-                        tx.complete().then(function () {
-                            account.checkAchievement["98_degrees"](function (awarded) {
-                                awarded.should.be.false;
-                                done();
-                            });
+                            dao.teams.put({ot: tx, value: t});
                         });
+                        return tx.complete();
+                    });
+                }).then(function () {
+                    return account.checkAchievement["98_degrees"](false).then(function (awarded) {
+                        awarded.should.be.false;
                     });
                 });
             });
-            it("should not be awarded without 16-0 playoffs", function (done) {
+            it("should not be awarded without 16-0 playoffs", function () {
                 var ps, tx;
 
                 // tid 7 lost a game
                 ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":1,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":0,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
                 tx = dao.tx(["playoffSeries", "teams"], "readwrite");
-                tx.objectStore("playoffSeries").put(ps);
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
-                    var cursor, t;
-
-                    cursor = event.target.result;
-                    t = cursor.value;
-
+                dao.playoffSeries.put({ot: tx, value: ps});
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     t.seasons[0].won = 82;
                     t.seasons[0].lost = 0;
 
-                    cursor.update(t);
-                };
-                tx.complete().then(function () {
-                    account.checkAchievement["98_degrees"](function (awarded) {
+                    dao.teams.put({ot: tx, value: t});
+                });
+                return tx.complete().then(function () {
+                    return account.checkAchievement["98_degrees"](false).then(function (awarded) {
                         awarded.should.be.false;
-                        done();
                     });
                 });
             });
         });
 
-        describe("#checkAchievement.dynasty*()", function () {
-            it("should gracefully handle case where not enough seasons are present", function (done) {
-                account.checkAchievement.dynasty(function (awarded) {
+/*        describe("#checkAchievement.dynasty*()", function () {
+            it("should gracefully handle case where not enough seasons are present", function () {
+                return account.checkAchievement.dynasty(false).then(function (awarded) {
                     awarded.should.be.false;
 
-                    account.checkAchievement.dynasty_2(function (awarded) {
+                    return account.checkAchievement.dynasty_2(false).then(function (awarded) {
                         awarded.should.be.false;
 
-                        account.checkAchievement.dynasty_3(function (awarded) {
+                        return account.checkAchievement.dynasty_3(false).then(function (awarded) {
                             awarded.should.be.false;
-
-                            done();
                         });
                     });
                 });
             });
-            it("should award dynasty for 6 titles in 8 seasons, but not dynasty_2 or dynasty_3", function (done) {
+            it("should award dynasty for 6 titles in 8 seasons, but not dynasty_2 or dynasty_3", function () {
                 var tx;
 
                 // Add 6 to the existing season, making 7 seasons total
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     var cursor, extraSeasons, t;
 
                     cursor = event.target.result;
@@ -210,23 +184,23 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     extraSeasons = [{playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}];
                     t.seasons = t.seasons.concat(extraSeasons);
 
-                    cursor.update(t);
+                    dao.teams.put({ot: tx, value: t});
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.dynasty(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.dynasty(false).then(function (awarded) {
                         awarded.should.be.true;
 
-                        account.checkAchievement.dynasty_2(function (awarded) {
+                        return account.checkAchievement.dynasty_2(false).then(function (awarded) {
                             awarded.should.be.false;
 
-                            account.checkAchievement.dynasty_3(function (awarded) {
+                            return account.checkAchievement.dynasty_3(false).then(function (awarded) {
                                 var tx;
 
                                 awarded.should.be.false;
 
                                 // Add 1 to the existing 7 seasons, making 8 seasons total
                                 tx = dao.tx("teams", "readwrite");
-                                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                                     var cursor, extraSeasons, t;
 
                                     cursor = event.target.result;
@@ -235,19 +209,17 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                                     extraSeasons = [{playoffRoundsWon: 3}];
                                     t.seasons = t.seasons.concat(extraSeasons);
 
-                                    cursor.update(t);
+                                    dao.teams.put({ot: tx, value: t});
                                 };
-                                tx.complete().then(function () {
-                                    account.checkAchievement.dynasty(function (awarded) {
+                                return tx.complete().then(function () {
+                                    return account.checkAchievement.dynasty(false).then(function (awarded) {
                                         awarded.should.be.true;
 
-                                        account.checkAchievement.dynasty_2(function (awarded) {
+                                        return account.checkAchievement.dynasty_2(false).then(function (awarded) {
                                             awarded.should.be.false;
 
-                                            account.checkAchievement.dynasty_3(function (awarded) {
+                                            return account.checkAchievement.dynasty_3(false).then(function (awarded) {
                                                 awarded.should.be.false;
-
-                                                done();
                                             });
                                         });
                                     });
@@ -257,11 +229,11 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     });
                 });
             });
-            it("should award dynasty and dynasty_2 for 8 titles in 8 seasons, but not dynasty_3", function (done) {
+            it("should award dynasty and dynasty_2 for 8 titles in 8 seasons, but not dynasty_3", function () {
                 var tx;
 
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     var cursor, t;
 
                     cursor = event.target.result;
@@ -271,30 +243,28 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].playoffRoundsWon = 4;
                     t.seasons[7].playoffRoundsWon = 4;
 
-                    cursor.update(t);
+                    dao.teams.put({ot: tx, value: t});
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.dynasty(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.dynasty(false).then(function (awarded) {
                         awarded.should.be.true;
 
-                        account.checkAchievement.dynasty_2(function (awarded) {
+                        return account.checkAchievement.dynasty_2(false).then(function (awarded) {
                             awarded.should.be.true;
 
-                            account.checkAchievement.dynasty_3(function (awarded) {
+                            return account.checkAchievement.dynasty_3(false).then(function (awarded) {
                                 awarded.should.be.false;
-
-                                done();
                             });
                         });
                     });
                 });
             });
-            it("should award dynasty, dynasty_2, and dynasty_3 for 11 titles in 13 seasons if there are 8 contiguous", function (done) {
+            it("should award dynasty, dynasty_2, and dynasty_3 for 11 titles in 13 seasons if there are 8 contiguous", function () {
                 var tx;
 
                 // Add 5 to the existing season, making 13 seasons total
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     var cursor, extraSeasons, t;
 
                     cursor = event.target.result;
@@ -305,29 +275,27 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     extraSeasons = [{playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}];
                     t.seasons = t.seasons.concat(extraSeasons);
 
-                    cursor.update(t);
+                    dao.teams.put({ot: tx, value: t});
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.dynasty(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.dynasty(false).then(function (awarded) {
                         awarded.should.be.true;
 
-                        account.checkAchievement.dynasty_2(function (awarded) {
+                        return account.checkAchievement.dynasty_2(false).then(function (awarded) {
                             //awarded.should.be.true;
 
-                            account.checkAchievement.dynasty_3(function (awarded) {
+                            return account.checkAchievement.dynasty_3(false).then(function (awarded) {
                                 awarded.should.be.true;
-
-                                done();
                             });
                         });
                     });
                 });
             });
-            it("should award dynasty and dynasty_3 for 11 titles in 13 seasons, but not dynasty_2 if there are not 8 contiguous", function (done) {
+            it("should award dynasty and dynasty_3 for 11 titles in 13 seasons, but not dynasty_2 if there are not 8 contiguous", function () {
                 var tx;
 
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     var cursor, t;
 
                     cursor = event.target.result;
@@ -337,19 +305,17 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[9].playoffRoundsWon = 0;
                     t.seasons[0].playoffRoundsWon = 4;
 
-                    cursor.update(t);
+                    dao.teams.put({ot: tx, value: t});
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.dynasty(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.dynasty(false).then(function (awarded) {
                         awarded.should.be.true;
 
-                        account.checkAchievement.dynasty_2(function (awarded) {
+                        return account.checkAchievement.dynasty_2(false).then(function (awarded) {
                             awarded.should.be.false;
 
-                            account.checkAchievement.dynasty_3(function (awarded) {
+                            return account.checkAchievement.dynasty_3(false).then(function (awarded) {
                                 awarded.should.be.true;
-
-                                done();
                             });
                         });
                     });
@@ -358,11 +324,11 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
         });
 
         describe("#checkAchievement.moneyball*()", function () {
-            it("should award moneyball and moneyball_2 for title with payroll <= $30M", function (done) {
+            it("should award moneyball and moneyball_2 for title with payroll <= $30M", function () {
                 var tx;
 
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     var cursor, t;
 
                     cursor = event.target.result;
@@ -372,25 +338,23 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].playoffRoundsWon = 4;
                     t.seasons[0].expenses.salary.amount = 30000;
 
-                    cursor.update(t);
+                    dao.teams.put({ot: tx, value: t});
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.moneyball(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.moneyball(false).then(function (awarded) {
                         awarded.should.be.true;
 
-                        account.checkAchievement.moneyball_2(function (awarded) {
+                        return account.checkAchievement.moneyball_2(false).then(function (awarded) {
                             awarded.should.be.true;
-
-                            done();
                         });
                     });
                 });
             });
-            it("should not award either if didn't win title", function (done) {
+            it("should not award either if didn't win title", function () {
                 var tx;
 
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     var cursor, t;
 
                     cursor = event.target.result;
@@ -398,25 +362,23 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                     t.seasons[0].playoffRoundsWon = 3;
 
-                    cursor.update(t);
+                    dao.teams.put({ot: tx, value: t});
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.moneyball(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.moneyball(false).then(function (awarded) {
                         awarded.should.be.false;
 
-                        account.checkAchievement.moneyball_2(function (awarded) {
+                        return account.checkAchievement.moneyball_2(false).then(function (awarded) {
                             awarded.should.be.false;
-
-                            done();
                         });
                     });
                 });
             });
-            it("should award moneyball but not moneyball_2 for title with payroll > $30M and <= $40M", function (done) {
+            it("should award moneyball but not moneyball_2 for title with payroll > $30M and <= $40M", function () {
                 var tx;
 
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     var cursor, t;
 
                     cursor = event.target.result;
@@ -425,25 +387,23 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].playoffRoundsWon = 4;
                     t.seasons[0].expenses.salary.amount = 40000;
 
-                    cursor.update(t);
+                    dao.teams.put({ot: tx, value: t});
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.moneyball(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.moneyball(false).then(function (awarded) {
                         awarded.should.be.true;
 
-                        account.checkAchievement.moneyball_2(function (awarded) {
+                        return account.checkAchievement.moneyball_2(false).then(function (awarded) {
                             awarded.should.be.false;
-
-                            done();
                         });
                     });
                 });
             });
-            it("should not award either if payroll > $40M", function (done) {
+            it("should not award either if payroll > $40M", function () {
                 var tx;
 
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     var cursor, t;
 
                     cursor = event.target.result;
@@ -451,16 +411,14 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                     t.seasons[0].expenses.salary.amount = 40001;
 
-                    cursor.update(t);
+                    dao.teams.put({ot: tx, value: t});
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.moneyball(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.moneyball(false).then(function (awarded) {
                         awarded.should.be.false;
 
-                        account.checkAchievement.moneyball_2(function (awarded) {
+                        return account.checkAchievement.moneyball_2(false).then(function (awarded) {
                             awarded.should.be.false;
-
-                            done();
                         });
                     });
                 });
@@ -468,7 +426,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
         });
 
         describe("#checkAchievement.hardware_store()", function () {
-            it("should award achievement if user's team sweeps awards", function (done) {
+            it("should award achievement if user's team sweeps awards", function () {
                 var awards, tx;
 
                 // tid 7 wins all awards
@@ -476,14 +434,13 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 tx = dao.tx("awards", "readwrite");
                 tx.objectStore("awards").put(awards);
-                tx.complete().then(function () {
-                    account.checkAchievement.hardware_store(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.hardware_store(false).then(function (awarded) {
                         awarded.should.be.true;
-                        done();
                     });
                 });
             });
-            it("should not award achievement if user's team loses an award", function (done) {
+            it("should not award achievement if user's team loses an award", function () {
                 var awards, tx;
 
                 // tid 7 wins loses an award!
@@ -491,14 +448,13 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 tx = dao.tx("awards", "readwrite");
                 tx.objectStore("awards").put(awards);
-                tx.complete().then(function () {
-                    account.checkAchievement.hardware_store(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.hardware_store(false).then(function (awarded) {
                         awarded.should.be.false;
-                        done();
                     });
                 });
             });
-            it("should not award achievement if another team sweeps the awards", function (done) {
+            it("should not award achievement if another team sweeps the awards", function () {
                 var awards, tx;
 
                 // tid 7 is changed to 8
@@ -506,21 +462,20 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 tx = dao.tx("awards", "readwrite");
                 tx.objectStore("awards").put(awards);
-                tx.complete().then(function () {
-                    account.checkAchievement.hardware_store(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.hardware_store(false).then(function (awarded) {
                         awarded.should.be.false;
-                        done();
                     });
                 });
             });
         });
 
         describe("#checkAchievement.small_market()", function () {
-            it("should award achievement if user's team wins title in a small market", function (done) {
+            it("should award achievement if user's team wins title in a small market", function () {
                 var tx;
 
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     var cursor, t;
 
                     cursor = event.target.result;
@@ -529,20 +484,19 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].playoffRoundsWon = 4;
                     t.seasons[0].pop = 1.5;
 
-                    cursor.update(t);
+                    dao.teams.put({ot: tx, value: t});
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.small_market(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.small_market(false).then(function (awarded) {
                         awarded.should.be.true;
-                        done();
                     });
                 });
             });
-            it("should not award achievement if user's team is not in a small market", function (done) {
+            it("should not award achievement if user's team is not in a small market", function () {
                 var tx;
 
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     var cursor, t;
 
                     cursor = event.target.result;
@@ -551,20 +505,19 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].playoffRoundsWon = 4;
                     t.seasons[0].pop = 3;
 
-                    cursor.update(t);
+                    dao.teams.put({ot: tx, value: t});
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.small_market(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.small_market(false).then(function (awarded) {
                         awarded.should.be.false;
-                        done();
                     });
                 });
             });
-            it("should not award achievement if user's team does not win the title", function (done) {
+            it("should not award achievement if user's team does not win the title", function () {
                 var tx;
 
                 tx = dao.tx("teams", "readwrite");
-                tx.objectStore("teams").openCursor(g.userTid).onsuccess = function (event) {
+                dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     var cursor, t;
 
                     cursor = event.target.result;
@@ -573,20 +526,19 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].playoffRoundsWon = 3;
                     t.seasons[0].pop = 1.5;
 
-                    cursor.update(t);
+                    dao.teams.put({ot: tx, value: t});
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.small_market(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.small_market(false).then(function (awarded) {
                         awarded.should.be.false;
-                        done();
                     });
                 });
             });
         });
 
         describe("#checkAchievement.sleeper_pick()", function () {
-            it("should award achievement if user's non-lottery pick wins ROY while on user's team", function (done) {
-                account.checkAchievement.sleeper_pick(function (awarded) {
+            it("should award achievement if user's non-lottery pick wins ROY while on user's team", function () {
+                return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                     var awards, tx;
 
                     awarded.should.be.false;
@@ -613,15 +565,14 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                     tx.objectStore("awards").put(awards);
 
-                    tx.complete().then(function () {
-                        account.checkAchievement.sleeper_pick(function (awarded) {
+                    return tx.complete().then(function () {
+                        return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                             awarded.should.be.true;
-                            done();
                         });
                     });
                 });
             });
-            it("should not award achievement if not currently on user's team", function (done) {
+            it("should not award achievement if not currently on user's team", function () {
                 var tx;
 
                 tx = dao.tx("players", "readwrite");
@@ -635,14 +586,13 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                     cursor.update(p);
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.sleeper_pick(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                         awarded.should.be.false;
-                        done();
                     });
                 });
             });
-            it("should not award achievement if not drafted by user", function (done) {
+            it("should not award achievement if not drafted by user", function () {
                 var tx;
 
                 tx = dao.tx("players", "readwrite");
@@ -657,14 +607,13 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                     cursor.update(p);
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.sleeper_pick(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                         awarded.should.be.false;
-                        done();
                     });
                 });
             });
-            it("should not award achievement if lottery pick", function (done) {
+            it("should not award achievement if lottery pick", function () {
                 var tx;
 
                 tx = dao.tx("players", "readwrite");
@@ -679,14 +628,13 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                     cursor.update(p);
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.sleeper_pick(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                         awarded.should.be.false;
-                        done();
                     });
                 });
             });
-            it("should not award achievement if old pick", function (done) {
+            it("should not award achievement if old pick", function () {
                 var tx;
 
                 tx = dao.tx("players", "readwrite");
@@ -701,14 +649,13 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                     cursor.update(p);
                 };
-                tx.complete().then(function () {
-                    account.checkAchievement.sleeper_pick(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                         awarded.should.be.false;
-                        done();
                     });
                 });
             });
-            it("should not award achievement not ROY", function (done) {
+            it("should not award achievement not ROY", function () {
                 var awards, tx;
 
                 tx = dao.tx(["awards", "players"], "readwrite");
@@ -728,10 +675,9 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     cursor.update(p);
                 };
 
-                tx.complete().then(function () {
-                    account.checkAchievement.sleeper_pick(function (awarded) {
+                return tx.complete().then(function () {
+                    return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                         awarded.should.be.false;
-                        done();
                     });
                 });
             });

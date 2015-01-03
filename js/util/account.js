@@ -287,7 +287,7 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
 
         return checkAchievement.fo_fo_fo(false).then(function (awarded) {
             if (awarded) {
-                team.filter({
+                return team.filter({
                     seasonAttrs: ["won", "lost"],
                     season: g.season,
                     tid: g.userTid

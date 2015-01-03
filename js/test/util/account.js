@@ -304,7 +304,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
             });
         });
 
-/*        describe("#checkAchievement.moneyball*()", function () {
+        describe("#checkAchievement.moneyball*()", function () {
             it("should award moneyball and moneyball_2 for title with payroll <= $30M", function () {
                 var tx;
 
@@ -315,14 +315,14 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].expenses.salary.amount = 30000;
 
                     dao.teams.put({ot: tx, value: t});
-                };
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.moneyball(false).then(function (awarded) {
                         awarded.should.be.true;
-
-                        return account.checkAchievement.moneyball_2(false).then(function (awarded) {
-                            awarded.should.be.true;
-                        });
+                    });
+                }).then(function () {
+                    return account.checkAchievement.moneyball_2(false).then(function (awarded) {
+                        awarded.should.be.true;
                     });
                 });
             });
@@ -334,14 +334,14 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].playoffRoundsWon = 3;
 
                     dao.teams.put({ot: tx, value: t});
-                };
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.moneyball(false).then(function (awarded) {
                         awarded.should.be.false;
-
-                        return account.checkAchievement.moneyball_2(false).then(function (awarded) {
-                            awarded.should.be.false;
-                        });
+                    });
+                }).then(function () {
+                    return account.checkAchievement.moneyball_2(false).then(function (awarded) {
+                        awarded.should.be.false;
                     });
                 });
             });
@@ -354,14 +354,14 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].expenses.salary.amount = 40000;
 
                     dao.teams.put({ot: tx, value: t});
-                };
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.moneyball(false).then(function (awarded) {
                         awarded.should.be.true;
-
-                        return account.checkAchievement.moneyball_2(false).then(function (awarded) {
-                            awarded.should.be.false;
-                        });
+                    });
+                }).then(function () {
+                    return account.checkAchievement.moneyball_2(false).then(function (awarded) {
+                        awarded.should.be.false;
                     });
                 });
             });
@@ -373,20 +373,20 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].expenses.salary.amount = 40001;
 
                     dao.teams.put({ot: tx, value: t});
-                };
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.moneyball(false).then(function (awarded) {
                         awarded.should.be.false;
-
-                        return account.checkAchievement.moneyball_2(false).then(function (awarded) {
-                            awarded.should.be.false;
-                        });
+                    });
+                }).then(function () {
+                    return account.checkAchievement.moneyball_2(false).then(function (awarded) {
+                        awarded.should.be.false;
                     });
                 });
             });
         });
 
-        describe("#checkAchievement.hardware_store()", function () {
+/*        describe("#checkAchievement.hardware_store()", function () {
             it("should award achievement if user's team sweeps awards", function () {
                 var awards, tx;
 

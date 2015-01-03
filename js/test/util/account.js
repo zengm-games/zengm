@@ -386,7 +386,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
             });
         });
 
-/*        describe("#checkAchievement.hardware_store()", function () {
+        describe("#checkAchievement.hardware_store()", function () {
             it("should award achievement if user's team sweeps awards", function () {
                 var awards, tx;
 
@@ -394,7 +394,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 awards = {"season":2013,"roy":{"pid":501,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973},"mvp":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","pts":28.951219512195124,"trb":11.329268292682928,"ast":0.6585365853658537},"smoy":{"pid":505,"name":"Donald Gallager","tid":7,"abbrev":"MON","pts":22.195121951219512,"trb":7.878048780487805,"ast":0.7682926829268293},"dpoy":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","trb":11.329268292682928,"blk":3.2560975609756095,"stl":2.2804878048780486},"finalsMvp":{"pid":335,"name":"Erwin Ritchey","tid":7,"abbrev":"POR","pts":24.4,"trb":8.85,"ast":2.65}} ;
 
                 tx = dao.tx("awards", "readwrite");
-                tx.objectStore("awards").put(awards);
+                dao.awards.put({ot: tx, value: awards});
                 return tx.complete().then(function () {
                     return account.checkAchievement.hardware_store(false).then(function (awarded) {
                         awarded.should.be.true;
@@ -408,7 +408,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 awards = {"season":2013,"roy":{"pid":501,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973},"mvp":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","pts":28.951219512195124,"trb":11.329268292682928,"ast":0.6585365853658537},"smoy":{"pid":505,"name":"Donald Gallager","tid":8,"abbrev":"MON","pts":22.195121951219512,"trb":7.878048780487805,"ast":0.7682926829268293},"dpoy":{"pid":280,"name":"William Jarosz","tid":7,"abbrev":"PHI","trb":11.329268292682928,"blk":3.2560975609756095,"stl":2.2804878048780486},"finalsMvp":{"pid":335,"name":"Erwin Ritchey","tid":7,"abbrev":"POR","pts":24.4,"trb":8.85,"ast":2.65}} ;
 
                 tx = dao.tx("awards", "readwrite");
-                tx.objectStore("awards").put(awards);
+                dao.awards.put({ot: tx, value: awards});
                 return tx.complete().then(function () {
                     return account.checkAchievement.hardware_store(false).then(function (awarded) {
                         awarded.should.be.false;
@@ -422,7 +422,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 awards = {"season":2013,"roy":{"pid":501,"name":"Timothy Gonzalez","tid":8,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973},"mvp":{"pid":280,"name":"William Jarosz","tid":8,"abbrev":"PHI","pts":28.951219512195124,"trb":11.329268292682928,"ast":0.6585365853658537},"smoy":{"pid":505,"name":"Donald Gallager","tid":8,"abbrev":"MON","pts":22.195121951219512,"trb":7.878048780487805,"ast":0.7682926829268293},"dpoy":{"pid":280,"name":"William Jarosz","tid":8,"abbrev":"PHI","trb":11.329268292682928,"blk":3.2560975609756095,"stl":2.2804878048780486},"finalsMvp":{"pid":335,"name":"Erwin Ritchey","tid":8,"abbrev":"POR","pts":24.4,"trb":8.85,"ast":2.65}} ;
 
                 tx = dao.tx("awards", "readwrite");
-                tx.objectStore("awards").put(awards);
+                dao.awards.put({ot: tx, value: awards});
                 return tx.complete().then(function () {
                     return account.checkAchievement.hardware_store(false).then(function (awarded) {
                         awarded.should.be.false;
@@ -431,7 +431,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
             });
         });
 
-        describe("#checkAchievement.small_market()", function () {
+/*        describe("#checkAchievement.small_market()", function () {
             it("should award achievement if user's team wins title in a small market", function () {
                 var tx;
 
@@ -509,7 +509,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     // ROY is pid 1 on tid 7
                     awards = {"season":2013,"roy":{"pid":1,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973}} ;
 
-                    tx.objectStore("awards").put(awards);
+                    dao.awards.put({ot: tx, value: awards});
 
                     return tx.complete().then(function () {
                         return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
@@ -608,7 +608,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                 // Switch to pid 2
                 awards = {"season":2013,"roy":{"pid":2,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973}} ;
-                tx.objectStore("awards").put(awards);
+                dao.awards.put({ot: tx, value: awards});
 
                 tx.objectStore("players").openCursor(1).onsuccess = function (event) {
                     var cursor, p;

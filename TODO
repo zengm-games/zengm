@@ -26,6 +26,7 @@ rewrite old upgrading code?
 big goals
   indexeddb only in dao
     grep -r dbl js
+    grep -r objectStore js
   no "cb" anywhere
     util/bbgmView and util/helpers functions that talk to Davis - unavoidable unless i switch to a promise-based router library
     util/account - think about it

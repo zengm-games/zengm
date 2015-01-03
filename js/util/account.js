@@ -251,47 +251,41 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
             if (saveAchievement) {
                 addAchievements(["fo_fo_fo"]);
             }
-
             return true;
         });
     };
 
-    checkAchievement.septuawinarian = function (cb) {
+    checkAchievement.septuawinarian = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        team.filter({
+        return team.filter({
             seasonAttrs: ["won"],
             season: g.season,
             tid: g.userTid
         }).then(function (t) {
             if (t.won >= 70) {
-                if (cb !== undefined) {
-                    cb(true);
-                } else {
+                if (saveAchievement) {
                     addAchievements(["septuawinarian"]);
                 }
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
+                return true;
             }
+
+            return false;
         });
     };
 
-    checkAchievement["98_degrees"] = function (cb) {
+    checkAchievement["98_degrees"] = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        checkAchievement.fo_fo_fo(function (awarded) {
+        return checkAchievement.fo_fo_fo(false).then(function (awarded) {
             if (awarded) {
                 team.filter({
                     seasonAttrs: ["won", "lost"],
@@ -299,37 +293,29 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
                     tid: g.userTid
                 }).then(function (t) {
                     if (t.won === 82 && t.lost === 0) {
-                        if (cb !== undefined) {
-                            cb(true);
-                        } else {
+                        if (saveAchievement) {
                             addAchievements(["98_degrees"]);
                         }
-                    } else {
-                        if (cb !== undefined) {
-                            cb(false);
-                        }
+                        return true;
                     }
+
+                    return false;
                 });
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
             }
+
+            return false;
         });
     };
 
-    function checkDynasty(titles, years, slug, cb) {
+    function checkDynasty(titles, years, slug, saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        g.dbl.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
-            var i, t, titlesFound;
-
-            t = event.target.result[g.userTid];
+        return dao.teams.get({key: g.userTid}).then(function (t) {
+            var i, titlesFound;
 
             titlesFound = 0;
             // Look over past years
@@ -346,171 +332,136 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
             }
 
             if (titlesFound >= titles) {
-                if (cb !== undefined) {
-                    cb(true);
-                } else {
+                if (saveAchievement) {
                     addAchievements([slug]);
                 }
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
+                return true;
             }
-        };
+
+            return false;
+        });
     }
 
-    checkAchievement.dynasty = function (cb) {
-        checkDynasty(6, 8, "dynasty", cb);
+    checkAchievement.dynasty = function (saveAchievement) {
+        return checkDynasty(6, 8, "dynasty", saveAchievement);
     };
 
-    checkAchievement.dynasty_2 = function (cb) {
-        checkDynasty(8, 8, "dynasty_2", cb);
+    checkAchievement.dynasty_2 = function (saveAchievement) {
+        return checkDynasty(8, 8, "dynasty_2", saveAchievement);
     };
 
-    checkAchievement.dynasty_3 = function (cb) {
-        checkDynasty(11, 13, "dynasty_3", cb);
+    checkAchievement.dynasty_3 = function (saveAchievement) {
+        return checkDynasty(11, 13, "dynasty_3", saveAchievement);
     };
 
-    function checkMoneyball(maxPayroll, slug, cb) {
+    function checkMoneyball(maxPayroll, slug, saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        team.filter({
+        return team.filter({
             seasonAttrs: ["expenses", "playoffRoundsWon"],
             season: g.season,
             tid: g.userTid
         }).then(function (t) {
             if (t.playoffRoundsWon === 4 && t.expenses.salary.amount <= maxPayroll) {
-                if (cb !== undefined) {
-                    cb(true);
-                } else {
+                if (saveAchievement) {
                     addAchievements([slug]);
                 }
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
+                return true;
             }
+
+            return false;
         });
     }
 
-    checkAchievement.moneyball = function (cb) {
+    checkAchievement.moneyball = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        checkMoneyball(40000, "moneyball", cb);
+        return checkMoneyball(40000, "moneyball", saveAchievement);
     };
 
-    checkAchievement.moneyball_2 = function (cb) {
+    checkAchievement.moneyball_2 = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        checkMoneyball(30000, "moneyball_2", cb);
+        return checkMoneyball(30000, "moneyball_2", saveAchievement);
     };
 
-    checkAchievement.hardware_store = function (cb) {
+    checkAchievement.hardware_store = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        g.dbl.transaction("awards").objectStore("awards").get(g.season).onsuccess = function (event) {
-            var awards;
-
-            awards = event.target.result;
-
+        return dao.awards.get({key: g.season}).then(function (awards) {
             if (awards.mvp.tid === g.userTid && awards.dpoy.tid === g.userTid && awards.smoy.tid === g.userTid && awards.roy.tid === g.userTid && awards.finalsMvp.tid === g.userTid) {
-                if (cb !== undefined) {
-                    cb(true);
-                } else {
+                if (saveAchievement) {
                     addAchievements(["hardware_store"]);
                 }
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
+                return true;
             }
-        };
+
+            return false;
+        });
     };
 
-    checkAchievement.small_market = function (cb) {
+    checkAchievement.small_market = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        team.filter({
+        return team.filter({
             seasonAttrs: ["playoffRoundsWon", "pop"],
             season: g.season,
             tid: g.userTid
         }).then(function (t) {
             if (t.playoffRoundsWon === 4 && t.pop <= 2) {
-                if (cb !== undefined) {
-                    cb(true);
-                } else {
+                if (saveAchievement) {
                     addAchievements(["small_market"]);
                 }
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
+                return true;
             }
+
+            return false;
         });
     };
 
-    checkAchievement.sleeper_pick = function (cb) {
+    checkAchievement.sleeper_pick = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        g.dbl.transaction("awards").objectStore("awards").get(g.season).onsuccess = function (event) {
-            var awards;
-
-            awards = event.target.result;
-
+        return dao.awards.get({key: g.season}).then(function (awards) {
             if (awards.roy.tid === g.userTid) {
-                g.dbl.transaction("players").objectStore("players").get(awards.roy.pid).onsuccess = function (event) {
-                    var p;
-
-                    p = event.target.result;
-
+                return dao.players.get({key: awards.roy.pid}).then(function (p) {
                     if (p.tid === g.userTid && p.draft.tid === g.userTid && p.draft.year === g.season - 1 && (p.draft.round > 1 || p.draft.pick >= 15)) {
-                        if (cb !== undefined) {
-                            cb(true);
-                        } else {
+                        if (saveAchievement) {
                             addAchievements(["sleeper_pick"]);
                         }
-                    } else {
-                        if (cb !== undefined) {
-                            cb(false);
-                        }
+                        return true;
                     }
-                };
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
+
+                    return false;
+                });
             }
-        };
+
+            return false;
+        });
     };
 
     return {

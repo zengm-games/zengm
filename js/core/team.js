@@ -314,7 +314,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
      * @param {boolean=} options.playoffs Boolean representing whether to return playoff stats or not; default is false. Unlike player.filter, team.filter returns either playoff stats or regular season stats, never both.
      * @param {string=} options.sortby Sorting method. "winp" sorts by descending winning percentage. If undefined, then teams are returned in order of their team IDs (which is alphabetical, currently).
      * @param {IDBTransaction|null=} options.ot An IndexedDB transaction on players, releasedPlayers, and teams; if null/undefined, then a new transaction will be used.
-     * @return  {Promise.(Object|Array.<Object>)} cb Filtered team object or array of filtered team objects, depending on the inputs.
+     * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
      */
     function filter(options) {
         var filterAttrs, filterSeasonAttrs, filterStats, filterStatsPartial;
@@ -1160,7 +1160,7 @@ console.log(dv);*/
      * these roster size limits, display a warning.
      * 
      * @memberOf core.team
-     * @param {Promise.?string} cb Resolves to null if there is no error, or a string with the error message otherwise.
+     * @return {Promise.?string} Resolves to null if there is no error, or a string with the error message otherwise.
      */
     function checkRosterSizes() {
         var checkRosterSize, minFreeAgents, tx, userTeamSizeError;

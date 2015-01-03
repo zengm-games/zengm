@@ -216,7 +216,8 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
     }
 
     // FOR EACH checkAchievement FUNCTION:
-    // If cb is passed, it gets true/false depending on if achievement should be awarded, but nothing is actually recorded. If cb is not, the achievement is directly added if it's awarded.
+    // Returns a promise that resolves to true or false depending on whether the achievement was awarded.
+    // HOWEVER, it's only saved to the database if saveAchievement is true (this is the default), but the saving happens asynchronously. It is theoretically possible that this could cause a notification to be displayed to the user about getting an achievement, but some error occurs when saving it.
     checkAchievement = {};
 
     checkAchievement.fo_fo_fo = function (saveAchievement) {

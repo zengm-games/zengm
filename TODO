@@ -4,13 +4,6 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
-dao.store.iterate
-  if "callback" is passed, apply function to each element in cursor
-    to modify, return updated value
-    async inside modify function - return promise
-    can do non-modify by just returning undefined
-    short circuit: shortCircuit function passed as second param
-
 dao refactor:
   move special cases out of dao - have it just be a thin IDB layer
     dao.players.getAll -> player.getAllWithStats
@@ -23,12 +16,7 @@ API design
 
 rewrite old upgrading code?
 
-big goals
-  no "cb" anywhere
-    util/bbgmView and util/helpers functions that talk to Davis - unavoidable unless i switch to a promise-based router library
-
 clean up
-  documentation!!!!! like nuances of iterate modify
   throw error in inappropriate input param (like "pid")
   shouldn't overwrite functions with getAll like in players - that should be another name
   hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake

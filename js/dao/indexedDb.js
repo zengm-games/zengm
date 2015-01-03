@@ -194,6 +194,17 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
             });
         };
 
+        /**
+         * Iterate over objects in an object store, optionally modifying them.
+         *
+         * This is a wrapper for openCursor. The "key" and "direction" parameters define how we're opening the cursor. Then, "callback" is a function that runs on each object retrieved.
+         * 
+         * The arguments passed to callback are the object itself and a function that will short circuit the iteration if called.
+         *
+         * If you return a promise within callback, the next iteration won't begin until the promise resolves.
+         *
+         * If you return (or resolve to) something besides undefined, that value will be used to overwrite the original value for the object.
+         */
         methods.iterate = function (options) {
             options = options !== undefined ? options : {};
             options.ot = options.ot !== undefined ? options.ot : null;

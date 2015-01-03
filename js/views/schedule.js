@@ -58,6 +58,7 @@ define(["globals", "ui", "core/season", "lib/knockout", "util/bbgmView", "util/h
 
                 return {
                     abbrev: inputs.abbrev,
+                    season: g.season,
                     upcoming: games
                 };
             });

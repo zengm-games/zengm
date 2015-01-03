@@ -431,7 +431,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
             });
         });
 
-/*        describe("#checkAchievement.small_market()", function () {
+        describe("#checkAchievement.small_market()", function () {
             it("should award achievement if user's team wins title in a small market", function () {
                 var tx;
 
@@ -441,7 +441,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].pop = 1.5;
 
                     dao.teams.put({ot: tx, value: t});
-                };
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.small_market(false).then(function (awarded) {
                         awarded.should.be.true;
@@ -457,7 +457,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].pop = 3;
 
                     dao.teams.put({ot: tx, value: t});
-                };
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.small_market(false).then(function (awarded) {
                         awarded.should.be.false;
@@ -473,7 +473,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     t.seasons[0].pop = 1.5;
 
                     dao.teams.put({ot: tx, value: t});
-                };
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.small_market(false).then(function (awarded) {
                         awarded.should.be.false;
@@ -482,7 +482,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
             });
         });
 
-        describe("#checkAchievement.sleeper_pick()", function () {
+/*        describe("#checkAchievement.sleeper_pick()", function () {
             it("should award achievement if user's non-lottery pick wins ROY while on user's team", function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                     var awards, tx;

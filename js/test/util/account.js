@@ -482,7 +482,7 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
             });
         });
 
-/*        describe("#checkAchievement.sleeper_pick()", function () {
+        describe("#checkAchievement.sleeper_pick()", function () {
             it("should award achievement if user's non-lottery pick wins ROY while on user's team", function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                     var awards, tx;
@@ -491,30 +491,25 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
 
                     tx = dao.tx(["awards", "players"], "readwrite");
 
-                    tx.objectStore("players").openCursor(1).onsuccess = function (event) {
-                        var cursor, p;
-
-                        cursor = event.target.result;
-                        p = cursor.value;
-
+                    dao.players.get({ot: tx, key: 1}).then(function (p) {
                         p.tid = g.userTid;
                         p.draft.tid = g.userTid;
                         p.draft.round = 1;
                         p.draft.pick = 20;
                         p.draft.year = g.season - 1;
 
-                        cursor.update(p);
-                    };
+                        dao.players.put({ot: tx, value: p});
+                    });
 
                     // ROY is pid 1 on tid 7
                     awards = {"season":2013,"roy":{"pid":1,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973}} ;
 
                     dao.awards.put({ot: tx, value: awards});
 
-                    return tx.complete().then(function () {
-                        return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
-                            awarded.should.be.true;
-                        });
+                    return tx.complete();
+                }).then(function () {
+                    return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
+                        awarded.should.be.true;
                     });
                 });
             });
@@ -522,16 +517,11 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 var tx;
 
                 tx = dao.tx("players", "readwrite");
-                tx.objectStore("players").openCursor(1).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    p = cursor.value;
-
+                dao.players.get({ot: tx, key: 1}).then(function (p) {
                     p.tid = 15;
 
-                    cursor.update(p);
-                };
+                    dao.players.put({ot: tx, value: p});
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                         awarded.should.be.false;
@@ -542,17 +532,12 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 var tx;
 
                 tx = dao.tx("players", "readwrite");
-                tx.objectStore("players").openCursor(1).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    p = cursor.value;
-
+                dao.players.get({ot: tx, key: 1}).then(function (p) {
                     p.tid = g.userTid;
                     p.draft.tid = 15;
 
-                    cursor.update(p);
-                };
+                    dao.players.put({ot: tx, value: p});
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                         awarded.should.be.false;
@@ -563,17 +548,12 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 var tx;
 
                 tx = dao.tx("players", "readwrite");
-                tx.objectStore("players").openCursor(1).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    p = cursor.value;
-
+                dao.players.get({ot: tx, key: 1}).then(function (p) {
                     p.draft.tid = g.userTid;
                     p.draft.pick = 7;
 
-                    cursor.update(p);
-                };
+                    dao.players.put({ot: tx, value: p});
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                         awarded.should.be.false;
@@ -584,17 +564,12 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 var tx;
 
                 tx = dao.tx("players", "readwrite");
-                tx.objectStore("players").openCursor(1).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    p = cursor.value;
-
+                dao.players.get({ot: tx, key: 1}).then(function (p) {
                     p.draft.pick = 15;
                     p.draft.year = g.season - 2;
 
-                    cursor.update(p);
-                };
+                    dao.players.put({ot: tx, value: p});
+                });
                 return tx.complete().then(function () {
                     return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                         awarded.should.be.false;
@@ -610,16 +585,11 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                 awards = {"season":2013,"roy":{"pid":2,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973}} ;
                 dao.awards.put({ot: tx, value: awards});
 
-                tx.objectStore("players").openCursor(1).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    p = cursor.value;
-
+                dao.players.get({ot: tx, key: 1}).then(function (p) {
                     p.draft.year = g.season - 1;
 
-                    cursor.update(p);
-                };
+                    dao.players.put({ot: tx, value: p});
+                });
 
                 return tx.complete().then(function () {
                     return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
@@ -627,6 +597,6 @@ define(["dao", "db", "globals", "core/league", "util/account"], function (dao, d
                     });
                 });
             });
-        });*/
+        });
     });
 });

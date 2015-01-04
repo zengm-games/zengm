@@ -10,8 +10,6 @@ test
   achievement syncing to account
   make sure ads show correctly
 
-put bugsnag back
-
 clean up
   replace getObjectStore with tx_
   throw error in inappropriate/unknown input param (like "pid")

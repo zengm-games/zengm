@@ -4,11 +4,7 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
-test
-  achievements work in game
-  achievement retrieval from account
-  achievement syncing to account
-  make sure ads show correctly
+make sure ads show correctly
 
 clean up
   replace getObjectStore with tx_

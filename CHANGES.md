@@ -2,6 +2,12 @@ Don't read much into the release dates. Changes are pushed live as often as
 possible, regardless of whether I make an official release with a new version
 number or not.
 
+# 3.5.0 (???)
+
+## Techincal details
+
+- Wrapped all IndexedDB calls in a Promises-based abstraction layer
+
 # 3.4.0 (2014-12-05)
 
 ## Gameplay and UI

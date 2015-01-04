@@ -11,7 +11,12 @@
   "bugs": {
     "url": "https://bitbucket.org/dumbmatter/basketball-gm/issues"
   },
+  "scripts": {
+    "lint": "node node_modules/eslint/bin/eslint.js js"
+  },
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "~0.11.0"
+  },
   "private": true
 }

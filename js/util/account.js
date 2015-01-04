@@ -62,6 +62,80 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
         desc: 'Privately <a href="http://basketball-gm.com/contact/">report</a> a security issue in <a href="https://bitbucket.org/dumbmatter/bbgm-account">the account system</a> or some other part of the site.'
     }];
 
+    /**
+     * Records one or more achievements.
+     *
+     * If logged in, try to record remotely and fall back to IndexedDB if necessary. If not logged in, just write to IndexedDB. Then, create a notification.
+     * 
+     * @memberOf util.helpers
+     * @param {Array.<string>} achievements Array of achievement IDs (see allAchievements above).
+     * @param {boolean=} silent If true, don't show any notifications (like if achievements are only being moved from IDB to remote). Default false.
+     * @return {Promise}
+     */
+    function addAchievements(achievements, silent) {
+        var addToIndexedDB, notify;
+
+        silent = silent !== undefined ? silent : false;
+
+        notify = function (slug) {
+            var i;
+
+            if (silent) {
+                return;
+            }
+
+            // Find name of achievement
+            for (i = 0; i < allAchievements.length; i++) {
+                if (allAchievements[i].slug === slug) {
+                    eventLog.add(null, {
+                        type: "achievement",
+                        text: '"' + allAchievements[i].name + '" achievement awarded! <a href="/account">View all achievements.</a>'
+                    });
+                    break;
+                }
+            }
+        };
+
+        addToIndexedDB = function (achievements) {
+            var i, tx;
+
+            tx = dao.tx("achievements", "readwrite");
+            for (i = 0; i < achievements.length; i++) {
+                dao.achievements.add({
+                    ot: tx,
+                    value: {
+                        slug: achievements[i]
+                    }
+                });
+                notify(achievements[i]);
+            }
+
+            return tx.complete();
+        };
+
+        return Promise.resolve($.ajax({
+            type: "POST",
+            url: "http://account.basketball-gm." + g.tld + "/add_achievements.php",
+            data: {achievements: achievements, sport: g.sport},
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true
+            }
+        })).then(function (data) {
+            var i;
+
+            if (data.success) {
+                for (i = 0; i < achievements.length; i++) {
+                    notify(achievements[i]);
+                }
+            } else {
+                return addToIndexedDB(achievements);
+            }
+        }).catch(function () {
+            return addToIndexedDB(achievements);
+        });
+    }
+
     function check() {
         return Promise.resolve($.ajax({
             type: "GET",
@@ -138,80 +212,6 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
                 // No remote connection, just return local achievements
                 return achievements;
             });
-        });
-    }
-
-    /**
-     * Records one or more achievements.
-     *
-     * If logged in, try to record remotely and fall back to IndexedDB if necessary. If not logged in, just write to IndexedDB. Then, create a notification.
-     * 
-     * @memberOf util.helpers
-     * @param {Array.<string>} achievements Array of achievement IDs (see allAchievements above).
-     * @param {boolean=} silent If true, don't show any notifications (like if achievements are only being moved from IDB to remote). Default false.
-     * @return {Promise}
-     */
-    function addAchievements(achievements, silent) {
-        var addToIndexedDB, notify;
-
-        silent = silent !== undefined ? silent : false;
-
-        notify = function (slug) {
-            var i;
-
-            if (silent) {
-                return;
-            }
-
-            // Find name of achievement
-            for (i = 0; i < allAchievements.length; i++) {
-                if (allAchievements[i].slug === slug) {
-                    eventLog.add(null, {
-                        type: "achievement",
-                        text: '"' + allAchievements[i].name + '" achievement awarded! <a href="/account">View all achievements.</a>'
-                    });
-                    break;
-                }
-            }
-        };
-
-        addToIndexedDB = function (achievements) {
-            var i, tx;
-
-            tx = dao.tx("achievements", "readwrite");
-            for (i = 0; i < achievements.length; i++) {
-                dao.achievements.add({
-                    ot: tx,
-                    value: {
-                        slug: achievements[i]
-                    }
-                });
-                notify(achievements[i]);
-            }
-
-            return tx.complete();
-        };
-
-        return Promise.resolve($.ajax({
-            type: "POST",
-            url: "http://account.basketball-gm." + g.tld + "/add_achievements.php",
-            data: {achievements: achievements, sport: g.sport},
-            dataType: "json",
-            xhrFields: {
-                withCredentials: true
-            }
-        })).then(function (data) {
-            var i;
-
-            if (data.success) {
-                for (i = 0; i < achievements.length; i++) {
-                    notify(achievements[i]);
-                }
-            } else {
-                return addToIndexedDB(achievements);
-            }
-        }).catch(function () {
-            return addToIndexedDB(achievements);
         });
     }
 

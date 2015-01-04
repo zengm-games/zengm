@@ -1,0 +1,16 @@
+{
+    "env": {
+        "browser": true,
+        "mocha": true,
+        "amd": true
+    },
+    "rules": {
+        "eol-last": 0,
+        "no-loop-func": 0,
+        "quotes": 0
+    },
+    "globals": {
+        "IDBKeyRange": true,
+        "should": true
+    }
+}

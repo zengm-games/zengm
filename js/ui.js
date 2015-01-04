@@ -95,10 +95,10 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
                 foundOpen = false;
                 lis = document.getElementById("nav-primary").children;
                 for (i = 0; i < lis.length; i++) {
-                    if (document.getElementById("nav-primary").children[i].classList.contains("open")) {
+                    if (lis[i].classList.contains("open")) {
                         foundOpen = true;
-                        liOpen = document.getElementById("nav-primary").children[i];
-                        if (liOpen == liHover) {
+                        liOpen = lis[i];
+                        if (liOpen === liHover) {
                             // The hovered menu is already open
                             return;
                         }
@@ -156,35 +156,6 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
                 realtimeUpdate(["watchList"]);
             });
         });
-    }
-
-    function parseLeagueUrl(url) {
-        var league_id, league_page, league_root_url, split_url;
-        // Returns a list containing the integer league ID (0 if none), the
-        // league root URL up to the league ID (empty string if none), and the
-        // league page (first URL folder after the ID) (empty string if none).
-
-        league_id = 0;
-        league_root_url = "";
-        league_page = "";
-
-        split_url = url.split("/", 6);
-
-        // If there's a URL that starts http://domain.com/l/<int:league_id>,
-        // split_url will have length 4 or 5, depending on if there is a page after
-        // the league ID.
-
-        if (split_url.length >= 5) {
-            league_id = parseInt(split_url[4], 10);
-            league_root_url = split_url.slice(0, 5).join("/");
-        }
-        if (split_url.length === 6) {
-            // Get rid of any trailing # or ?
-            league_page = split_url[5].split("#")[0];
-            league_page = split_url[5].split("?")[0];
-        }
-
-        return [league_id, league_root_url, league_page];
     }
 
     /**
@@ -265,19 +236,19 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
 
     // Data tables
     // fnStateSave and fnStateLoad are based on http://www.datatables.net/blog/localStorage_for_state_saving except the id of the table is used in the key. This means that whatever you do to a table (sorting, viewing page, etc) will apply to every identical table in other leagues.
-    function datatable(table, sort_col, data, extraOptions) {
+    function datatable(table, sortCol, data, extraOptions) {
         var options;
 
         options = $.extend({
             aaData: data,
-            aaSorting: [[sort_col, "desc"]],
+            aaSorting: [[sortCol, "desc"]],
             bDestroy: true,
             bDeferRender: true,
             bStateSave: true,
             fnStateSave: function (oSettings, oData) {
                 localStorage.setItem("DataTables_" + table[0].id, JSON.stringify(oData));
             },
-            fnStateLoad: function (oSettings) {
+            fnStateLoad: function () {
                 return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
             },
             sPaginationType: "bootstrap",
@@ -291,12 +262,12 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
 
         table.dataTable(options);
     }
-    function datatableSinglePage(table, sort_col, data, extraOptions) {
+    function datatableSinglePage(table, sortCol, data, extraOptions) {
         var options;
 
         options = $.extend({
             aaData: data,
-            aaSorting: [[sort_col, "desc"]],
+            aaSorting: [[sortCol, "desc"]],
             bDestroy: true,
             bFilter: false,
             bInfo: false,
@@ -305,7 +276,7 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
             fnStateSave: function (oSettings, oData) {
                 localStorage.setItem("DataTables_" + table[0].id, JSON.stringify(oData));
             },
-            fnStateLoad: function (oSettings) {
+            fnStateLoad: function () {
                 return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
             }
         }, extraOptions);
@@ -333,7 +304,7 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
         handleDropdown = function (select) {
             select.off("change");
             select.change(function (event) {
-                var args, extraParam, leaguePage, result, url, seasonsDropdown;
+                var args, extraParam, leaguePage, url, seasonsDropdown;
 
                 // UGLY HACK: Stop event handling if it looks like this is a season dropdown and a new season is starting. Otherwise you get double refreshes, often pointing to the previous year, since updating the season dropdown is interpreted as a "change"
                 seasonsDropdown = document.querySelector(".bbgm-dropdown .seasons");
@@ -342,8 +313,9 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
                 }
 
                 extraParam = select.parent()[0].dataset.extraParam;
-                result = parseLeagueUrl(document.URL);
-                leaguePage = result[2];
+
+                // Name of the page (like "standings"), with # and ? stuff removed
+                leaguePage = document.URL.split("/", 6)[5].split("#")[0].split("?")[0];
 
                 args = [leaguePage, select1.val()];
                 if (select2 !== undefined) {

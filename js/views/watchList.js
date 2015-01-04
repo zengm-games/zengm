@@ -75,7 +75,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/league", "core/player",
         ui.title("Watch List");
 
         ko.computed(function () {
-            var contract, d, i, p, players, rows, category, categories;
+            var contract, d, i, p, players, rows;
 
             // Number of decimals for many stats
             if (vm.statType() === "totals") {

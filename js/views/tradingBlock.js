@@ -126,7 +126,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/b
         }
     };
 
-    function updateUserRoster(inputs, updateEvents, vm) {
+    function updateUserRoster(inputs, updateEvents) {
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
             return Promise.all([
                 dao.players.getAll({
@@ -175,7 +175,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/b
         }
     }
 
-    function updateOffers(inputs, updateEvents, vm) {
+    function updateOffers(inputs, updateEvents) {
         var offers, tx;
 
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0) {

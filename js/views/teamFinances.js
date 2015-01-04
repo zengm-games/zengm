@@ -303,7 +303,7 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
                 undefined,
                 [
                     barSeasons,
-                    ["national TV revenue", "local TV revenue", "ticket revenue",  "corporate sponsorship revenue", "merchandising revenue"]
+                    ["national TV revenue", "local TV revenue", "ticket revenue", "corporate sponsorship revenue", "merchandising revenue"]
                 ],
                 function (val) {
                     return helpers.formatCurrency(val / 1000, "M", 1);

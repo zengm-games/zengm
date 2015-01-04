@@ -45,6 +45,9 @@ PERFORMANCE CRAP
 tooling
   flow
   eshint
+    don't ignore my stuff in lib! at a minimum: js/lib/IndexedDB-getAll-shim.js js/lib/boxPlot.js js/lib/jquery.barGraph.js js/lib/faces.js js/lib/jquery.dataTables.bbgmSorting.js js/lib/jquery.tabSlideOut.js
+  scry
+  jscs
 
 YWT bug: http://www.reddit.com/r/BasketballGM/comments/2qerb2/bug_ywt_and_you/
 

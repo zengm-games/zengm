@@ -4,30 +4,20 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
-dao.players.getAll -> player.getAllWithStats
-  the stats stuff can be put in some other function to be called after getAll
-    this would allos the elimination of the "filter" option, which now is applied between getAll and adding stats basically
-
-API design
-  player.filter and team.filter should be renamed, otherwise it's confusing
-    player.fitler -> player.process
-    team.filter -> team.getAndProcess
-
 test
   achievements work in game
   achievement retrieval from account
   achievement syncing to account
   make sure ads show correctly
-  benchmark
-    before/after
-    does switching from .all to .join matter?
 
 put bugsnag back
 
 clean up
   replace getObjectStore with tx_
   throw error in inappropriate/unknown input param (like "pid")
-  shouldn't overwrite functions with getAll like in players - that should be another name
+  dao.players.getAll -> player.getAllWithStats
+    the stats stuff could be put in some other function to be called after getAll
+      this would allow the elimination of the "filter" option, which now is applied between getAll and adding stats
   hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake
   what about creating, migrating, and deleting databases? and objectStoreNames?
   don't use "ot" anywhere - it's all transactions so call it tx
@@ -36,6 +26,11 @@ clean up
     instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
       see promises_super_tx branch
       or could be dao.tx().then(function (tx) {}) and resolve that promise oncomplete? but how to pass value to then?
+
+API design
+  player.filter and team.filter should be renamed, otherwise it's confusing
+    player.fitler -> player.process
+    team.filter -> team.getAndProcess
 
 rewrite old upgrading code? eventually, leave it there for now
 

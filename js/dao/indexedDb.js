@@ -1,4 +1,4 @@
-define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
+define(["globals", "lib/bluebird"], function (g, Promise) {
     "use strict";
 
     var dao;
@@ -336,7 +336,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
             }
 
             // Get stats
-            return Promise.reduce(players, function (i, p) {
+            return Promise.map(players, function (p) {
                 var key;
 
                 if (options.statsSeasons === "all") {
@@ -356,7 +356,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
                     key: key
                 }).then(function (playerStats) {
                     // Due to indexes not necessarily handling all cases, still need to filter
-                    players[i].stats = playerStats.filter(function (ps) {
+                    p.stats = playerStats.filter(function (ps) {
                         // statsSeasons is defined, but this season isn't in it
                         if (options.statsSeasons !== "all" && options.statsSeasons.indexOf(ps.season) < 0) {
                             return false;
@@ -377,10 +377,8 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
                         return a.psid - b.psid;
                     });
                 }).then(function () {
-                    return i + 1;
+                    return p;
                 });
-            }, 0).then(function () {
-                return players;
             });
         });
     };

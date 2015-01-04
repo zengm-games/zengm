@@ -2,7 +2,7 @@
  * @name views.playoffs
  * @namespace Show current or archived playoffs, or projected matchups for an in-progress season.
  */
-define(["dao", "globals", "ui", "core/draft", "core/player", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (dao, g, ui, draft, player, $, bbgmView, helpers, viewHelpers, components) {
+define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "lib/jquery", "util/bbgmView", "util/helpers"], function (dao, g, ui, draft, player, Promise, $, bbgmView, helpers) {
     "use strict";
 
     function updateDraftTables(pids) {
@@ -38,29 +38,27 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/jquery", "util
         }
     }
 
-    function draftUser(pid, cb) {
-        pid = parseInt(pid, 10);
-
-        draft.getOrder(function (draftOrder) {
+    function draftUser(pid) {
+        return draft.getOrder().then(function (draftOrder) {
             var pick;
 
             pick = draftOrder.shift();
             if (pick.tid === g.userTid) {
-                draft.selectPlayer(pick, pid, function (pid) {
-                    draft.setOrder(draftOrder, function () {
-                        cb(pid);
+                return draft.selectPlayer(pick, pid).then(function () {
+                    return draft.setOrder(draftOrder).then(function () {
+                        return pid;
                     });
                 });
-            } else {
-                console.log("ERROR: User trying to draft out of turn.");
             }
+
+            console.log("ERROR: User trying to draft out of turn.");
         });
     }
 
     function draftUntilUserOrEnd() {
         ui.updateStatus("Draft in progress...");
-        draft.untilUserOrEnd(function (pids) {
-            draft.getOrder(function (draftOrder) {
+        draft.untilUserOrEnd().then(function (pids) {
+            draft.getOrder().then(function (draftOrder) {
                 var done;
 
                 done = false;
@@ -88,109 +86,74 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/jquery", "util
     }
 
     function updateDraft(inputs, updateEvents, vm) {
-        var deferred, tx, vars;
-
-        deferred = $.Deferred();
-        vars = {};
-
-        // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
-        tx = g.dbl.transaction("players", "readwrite")
-        tx.objectStore("players").index("tid").get(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-            var season;
-
-            season = event.target.result.ratings[0].season;
-console.log(season);
-            if (season !== g.season && g.phase === g.PHASE.DRAFT) {
-console.log("FIXING");
-                tx.objectStore("players").index("tid").openCursor(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    if (cursor) {
-                        p = cursor.value;
-                        p.ratings[0].season = g.season;
-                        p.draft.year = g.season;
-                        cursor.update(p);
-                        cursor.continue();
-                    }
-                };
-            }
-        };
-
-        tx.oncomplete = function () {
-            var tx;
-
-            tx = g.dbl.transaction(["players", "playerStats"]);
+        return Promise.all([
             dao.players.getAll({
-                ot: tx,
                 index: "tid",
                 key: g.PLAYER.UNDRAFTED,
                 statsSeasons: [g.season]
-            }, function (undraftedAll) {
-                var undrafted;
+            }),
+            dao.players.getAll({
+                index: "draft.year",
+                key: g.season,
+                statsSeasons: [g.season]
+            })
+        ]).spread(function (undrafted, players) {
+            var drafted, i, started;
 
-                undraftedAll.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });
-                undrafted = player.filter(undraftedAll, {
-                    attrs: ["pid", "name", "pos", "age", "injury", "contract", "watch"],
-                    ratings: ["ovr", "pot", "skills"],
-                    stats: ["per", "ewa"],
-                    season: g.season,
-                    showNoStats: true,
-                    showRookies: true,
-                    fuzz: true
-                });
-
-                dao.players.getAll({
-                    ot: tx,
-                    index: "draft.year",
-                    key: g.season,
-                    statsSeasons: [g.season]
-                }, function (players) {
-                    var drafted, i, started;
-
-                    players = player.filter(players, {
-                        attrs: ["pid", "tid", "name", "pos", "age", "draft", "injury", "contract", "watch"],
-                        ratings: ["ovr", "pot", "skills"],
-                        stats: ["per", "ewa"],
-                        season: g.season,
-                        showRookies: true,
-                        fuzz: true
-                    });
-
-                    drafted = [];
-                    for (i = 0; i < players.length; i++) {
-                        if (players[i].tid >= 0) {
-                            drafted.push(players[i]);
-                        }
-                    }
-                    drafted.sort(function (a, b) { return (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick); });
-
-                    started = drafted.length > 0;
-
-                    draft.getOrder(function (draftOrder) {
-                        var i, slot;
-
-                        for (i = 0; i < draftOrder.length; i++) {
-                            slot = draftOrder[i];
-                            drafted.push({
-                                draft: {
-                                    tid: slot.tid,
-                                    originalTid: slot.originalTid,
-                                    round: slot.round,
-                                    pick: slot.pick
-                                },
-                                pid: -1
-                            });
-                        }
-
-                        vars = {undrafted: undrafted, drafted: drafted, started: started, fantasyDraft: g.phase === g.PHASE.FANTASY_DRAFT};
-                        deferred.resolve(vars);
-                    });
-                });
+            undrafted.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });
+            undrafted = player.filter(undrafted, {
+                attrs: ["pid", "name", "pos", "age", "injury", "contract", "watch"],
+                ratings: ["ovr", "pot", "skills"],
+                stats: ["per", "ewa"],
+                season: g.season,
+                showNoStats: true,
+                showRookies: true,
+                fuzz: true
             });
-        };
 
-        return deferred.promise();
+            players = player.filter(players, {
+                attrs: ["pid", "tid", "name", "pos", "age", "draft", "injury", "contract", "watch"],
+                ratings: ["ovr", "pot", "skills"],
+                stats: ["per", "ewa"],
+                season: g.season,
+                showRookies: true,
+                fuzz: true
+            });
+
+            drafted = [];
+            for (i = 0; i < players.length; i++) {
+                if (players[i].tid >= 0) {
+                    drafted.push(players[i]);
+                }
+            }
+            drafted.sort(function (a, b) { return (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick); });
+
+            started = drafted.length > 0;
+
+            return draft.getOrder().then(function (draftOrder) {
+                var i, slot;
+
+                for (i = 0; i < draftOrder.length; i++) {
+                    slot = draftOrder[i];
+                    drafted.push({
+                        draft: {
+                            tid: slot.tid,
+                            originalTid: slot.originalTid,
+                            round: slot.round,
+                            pick: slot.pick
+                        },
+                        pid: -1
+                    });
+                }
+
+                return {
+                    undrafted: undrafted,
+                    drafted: drafted,
+                    started: started,
+                    fantasyDraft: g.phase === g.PHASE.FANTASY_DRAFT
+                };
+            });
+        });
     }
 
     function uiFirst() {
@@ -206,7 +169,7 @@ console.log("FIXING");
 
         $("#undrafted").on("click", "button", function (event) {
             $("#undrafted button").attr("disabled", "disabled");
-            draftUser(this.getAttribute("data-player-id"), function (pid) {
+            draftUser(parseInt(this.getAttribute("data-player-id"), 10)).then(function (pid) {
                 updateDraftTables([pid]);
                 draftUntilUserOrEnd();
             });

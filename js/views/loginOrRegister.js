@@ -36,7 +36,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
                         // Check for participation achievement, if this is the first time logging in to this sport
                         account.getAchievements(function (achievements) {
                             if (achievements[0].count === 0) {
-                                account.addAchievements(["participation"], false, function () {
+                                account.addAchievements(["participation"]).then(function () {
                                     ui.realtimeUpdate([], "/account");
                                 });
                             } else {
@@ -83,7 +83,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
                     if (data.success) {
                         g.vm.topMenu.username(data.username);
 
-                        account.addAchievements(["participation"], false, function () {
+                        account.addAchievements(["participation"]).then(function () {
                             ui.realtimeUpdate([], "/account");
                         });
                     } else {

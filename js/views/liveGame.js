@@ -2,7 +2,7 @@
  * @name views.live
  * @namespace Live play-by-play game simulation.
  */
-define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers"], function (g, ui, game, $, ko, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers"], function (dao, g, ui, game, $, ko, bbgmView, helpers) {
     "use strict";
 
     function get(req) {
@@ -44,107 +44,13 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
     }
 
     function updatePlayByPlay(inputs, updateEvents, vm) {
-        var deferred, events, overtimes;
-
-        function processToNextPause() {
-            var e, i, ptsQtrs, stop, text;
-
-            stop = false;
-            while (!stop && events.length > 0) {
-                text = null;
-
-                e = events.shift();
-
-                if (e.type === "text") {
-                    if (e.t === 0 || e.t === 1) {
-                        text = e.time + " - " + vm.boxScore.teams()[e.t].abbrev() + " - " + e.text;
-                    } else {
-                        text = e.text;
-                    }
-
-                    // Show score after scoring plays
-                    if (text.indexOf("made") >= 0) {
-                        text += " (" + vm.boxScore.teams()[0].pts() + "-" + vm.boxScore.teams()[1].pts() + ")";
-                    }
-
-                    vm.boxScore.time(e.time);
-
-                    stop = true;
-                } else if (e.type === "sub") {
-                    for (i = 0; i < vm.boxScore.teams()[e.t].players().length; i++) {
-                        if (vm.boxScore.teams()[e.t].players()[i].pid() === e.on) {
-                            vm.boxScore.teams()[e.t].players()[i].inGame(true);
-                        } else if (vm.boxScore.teams()[e.t].players()[i].pid() === e.off) {
-                            vm.boxScore.teams()[e.t].players()[i].inGame(false);
-                        }
-                    }
-                } else if (e.type === "stat") {
-                    // Quarter-by-quarter score
-                    if (e.s === "pts") {
-                        // This is a hack because array elements are not made observable by default in the Knockout mapping plugin and I didn't want to write a really ugly mapping function.
-                        ptsQtrs = vm.boxScore.teams()[e.t].ptsQtrs();
-                        if (ptsQtrs.length <= e.qtr) {
-                            // Must be overtime! This updates ptsQtrs too.
-                            vm.boxScore.teams()[0].ptsQtrs.push(0);
-                            vm.boxScore.teams()[1].ptsQtrs.push(0);
-
-                            if (ptsQtrs.length > 4) {
-                                overtimes += 1;
-                                if (overtimes === 1) {
-                                    vm.boxScore.overtime(" (OT)");
-                                } else if (overtimes > 1) {
-                                    vm.boxScore.overtime(" (" + overtimes + "OT)");
-                                }
-                                vm.boxScore.quarter(helpers.ordinal(overtimes) + " overtime");
-                            } else {
-                                vm.boxScore.quarter(helpers.ordinal(ptsQtrs.length) + " quarter");
-                            }
-                        }
-                        ptsQtrs[e.qtr] += e.amt;
-                        vm.boxScore.teams()[e.t].ptsQtrs(ptsQtrs);
-                    }
-
-                    // Everything else
-                    if (e.s === "drb") {
-                        vm.boxScore.teams()[e.t].players()[e.p].trb(vm.boxScore.teams()[e.t].players()[e.p].trb() + e.amt);
-                        vm.boxScore.teams()[e.t].trb(vm.boxScore.teams()[e.t].trb() + e.amt);
-                    } else if (e.s === "orb") {
-                        vm.boxScore.teams()[e.t].players()[e.p].trb(vm.boxScore.teams()[e.t].players()[e.p].trb() + e.amt);
-                        vm.boxScore.teams()[e.t].trb(vm.boxScore.teams()[e.t].trb() + e.amt);
-                        vm.boxScore.teams()[e.t].players()[e.p][e.s](vm.boxScore.teams()[e.t].players()[e.p][e.s]() + e.amt);
-                        vm.boxScore.teams()[e.t][e.s](vm.boxScore.teams()[e.t][e.s]() + e.amt);
-                    } else if (e.s === "min" || e.s === "fg" || e.s === "fga" || e.s === "tp" || e.s === "tpa" || e.s === "ft" || e.s === "fta" || e.s === "ast" || e.s === "tov" || e.s === "stl" || e.s === "blk" || e.s === "pf" || e.s === "pts") {
-                        vm.boxScore.teams()[e.t].players()[e.p][e.s](vm.boxScore.teams()[e.t].players()[e.p][e.s]() + e.amt);
-                        vm.boxScore.teams()[e.t][e.s](vm.boxScore.teams()[e.t][e.s]() + e.amt);
-                    }
-                }
-            }
-
-            if (text !== null) {
-                vm.playByPlay.unshift(text);
-            }
-
-            if (events.length > 0) {
-                setTimeout(processToNextPause, 4000 / Math.pow(1.2, vm.speed()));
-            } else {
-                vm.boxScore.time("0:00");
-                vm.boxScore.gameOver(true);
-            }
-        }
-
         if (inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
-            deferred = $.Deferred();
-
-            events = inputs.playByPlay;
-            overtimes = 0;
-
-            g.dbl.transaction("games").objectStore("games").get(inputs.gidPlayByPlay).onsuccess = function (event) {
-                var boxScore, i, j, resetStats, s;
+            return dao.games.get({key: inputs.gidPlayByPlay}).then(function (boxScore) {
+                var i, j, resetStats, s;
 
                 // Stats to set to 0
                 resetStats = ["min", "fg", "fga", "tp", "tpa", "ft", "fta", "orb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
 
-                boxScore = event.target.result;
                 boxScore.overtime = "";
                 boxScore.quarter = "1st quarter";
                 boxScore.time = "12:00";
@@ -177,15 +83,10 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
                     }
                 }
 
-                deferred.resolve({
+                return {
                     boxScore: boxScore
-                });
-
-                // Start showing play-by-play
-                processToNextPause();
-            };
-
-            return deferred.promise();
+                };
+            });
         }
 
         // If no game is loaded by this point (either by this GET or a prior one), leave
@@ -216,12 +117,110 @@ define(["globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util/bbgmVi
         });
     }
 
+    function startLiveGame(inputs, updateEvents, vm) {
+        var events, overtimes, processToNextPause;
+
+        if (inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
+            events = inputs.playByPlay;
+            overtimes = 0;
+
+            processToNextPause = function () {
+                var e, i, ptsQtrs, stop, text;
+
+                stop = false;
+                while (!stop && events.length > 0) {
+                    text = null;
+
+                    e = events.shift();
+
+                    if (e.type === "text") {
+                        if (e.t === 0 || e.t === 1) {
+                            text = e.time + " - " + vm.boxScore.teams()[e.t].abbrev() + " - " + e.text;
+                        } else {
+                            text = e.text;
+                        }
+
+                        // Show score after scoring plays
+                        if (text.indexOf("made") >= 0) {
+                            text += " (" + vm.boxScore.teams()[0].pts() + "-" + vm.boxScore.teams()[1].pts() + ")";
+                        }
+
+                        vm.boxScore.time(e.time);
+
+                        stop = true;
+                    } else if (e.type === "sub") {
+                        for (i = 0; i < vm.boxScore.teams()[e.t].players().length; i++) {
+                            if (vm.boxScore.teams()[e.t].players()[i].pid() === e.on) {
+                                vm.boxScore.teams()[e.t].players()[i].inGame(true);
+                            } else if (vm.boxScore.teams()[e.t].players()[i].pid() === e.off) {
+                                vm.boxScore.teams()[e.t].players()[i].inGame(false);
+                            }
+                        }
+                    } else if (e.type === "stat") {
+                        // Quarter-by-quarter score
+                        if (e.s === "pts") {
+                            // This is a hack because array elements are not made observable by default in the Knockout mapping plugin and I didn't want to write a really ugly mapping function.
+                            ptsQtrs = vm.boxScore.teams()[e.t].ptsQtrs();
+                            if (ptsQtrs.length <= e.qtr) {
+                                // Must be overtime! This updates ptsQtrs too.
+                                vm.boxScore.teams()[0].ptsQtrs.push(0);
+                                vm.boxScore.teams()[1].ptsQtrs.push(0);
+
+                                if (ptsQtrs.length > 4) {
+                                    overtimes += 1;
+                                    if (overtimes === 1) {
+                                        vm.boxScore.overtime(" (OT)");
+                                    } else if (overtimes > 1) {
+                                        vm.boxScore.overtime(" (" + overtimes + "OT)");
+                                    }
+                                    vm.boxScore.quarter(helpers.ordinal(overtimes) + " overtime");
+                                } else {
+                                    vm.boxScore.quarter(helpers.ordinal(ptsQtrs.length) + " quarter");
+                                }
+                            }
+                            ptsQtrs[e.qtr] += e.amt;
+                            vm.boxScore.teams()[e.t].ptsQtrs(ptsQtrs);
+                        }
+
+                        // Everything else
+                        if (e.s === "drb") {
+                            vm.boxScore.teams()[e.t].players()[e.p].trb(vm.boxScore.teams()[e.t].players()[e.p].trb() + e.amt);
+                            vm.boxScore.teams()[e.t].trb(vm.boxScore.teams()[e.t].trb() + e.amt);
+                        } else if (e.s === "orb") {
+                            vm.boxScore.teams()[e.t].players()[e.p].trb(vm.boxScore.teams()[e.t].players()[e.p].trb() + e.amt);
+                            vm.boxScore.teams()[e.t].trb(vm.boxScore.teams()[e.t].trb() + e.amt);
+                            vm.boxScore.teams()[e.t].players()[e.p][e.s](vm.boxScore.teams()[e.t].players()[e.p][e.s]() + e.amt);
+                            vm.boxScore.teams()[e.t][e.s](vm.boxScore.teams()[e.t][e.s]() + e.amt);
+                        } else if (e.s === "min" || e.s === "fg" || e.s === "fga" || e.s === "tp" || e.s === "tpa" || e.s === "ft" || e.s === "fta" || e.s === "ast" || e.s === "tov" || e.s === "stl" || e.s === "blk" || e.s === "pf" || e.s === "pts") {
+                            vm.boxScore.teams()[e.t].players()[e.p][e.s](vm.boxScore.teams()[e.t].players()[e.p][e.s]() + e.amt);
+                            vm.boxScore.teams()[e.t][e.s](vm.boxScore.teams()[e.t][e.s]() + e.amt);
+                        }
+                    }
+                }
+
+                if (text !== null) {
+                    vm.playByPlay.unshift(text);
+                }
+
+                if (events.length > 0) {
+                    setTimeout(processToNextPause, 4000 / Math.pow(1.2, vm.speed()));
+                } else {
+                    vm.boxScore.time("0:00");
+                    vm.boxScore.gameOver(true);
+                }
+            };
+
+            processToNextPause();
+        }
+    }
+
     return bbgmView.init({
         id: "liveGame",
         get: get,
         post: post,
         InitViewModel: InitViewModel,
         runBefore: [updatePlayByPlay],
+        runAfter: [startLiveGame],
         uiFirst: uiFirst
     });
 });

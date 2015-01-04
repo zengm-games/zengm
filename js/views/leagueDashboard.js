@@ -2,7 +2,7 @@
  * @name views.leagueDashboard
  * @namespace League dashboard, displaying several bits of information about the league/team.
  */
-define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, db, g, ui, player, season, team, $, ko, mapping, _, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, season, team, ko, _, bbgmView, helpers) {
     "use strict";
 
     function InitViewModel() {
@@ -11,16 +11,10 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
     }
 
     function updateInbox(inputs, updateEvents) {
-        var deferred, vars;
-
-        deferred = $.Deferred();
-        vars = {};
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
-            g.dbl.transaction("messages").objectStore("messages").getAll().onsuccess = function (event) {
-                var i, messages;
+            return dao.messages.getAll().then(function (messages) {
+                var i;
 
-                messages = event.target.result;
                 messages.reverse();
 
                 for (i = 0; i < messages.length; i++) {
@@ -28,79 +22,61 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
                 }
                 messages = messages.slice(0, 2);
 
-                vars = {
+                return {
                     messages: messages
                 };
-
-                deferred.resolve(vars);
-            };
-
-            return deferred.promise();
+            });
         }
     }
 
     function updateTeam(inputs, updateEvents) {
-        var deferred, vars;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            deferred = $.Deferred();
-            vars = {};
+            return dao.teams.get({key: g.userTid}).then(function (t) {
+                var latestSeason;
 
-            g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
-                var i, userTeam, userTeamSeason;
+                latestSeason = t.seasons[t.seasons.length - 1];
 
-                userTeam = event.target.result;
-                userTeamSeason = _.last(userTeam.seasons);
-
-                vars.region = userTeam.region;
-                vars.name = userTeam.name;
-                vars.abbrev = userTeam.abbrev;
-                vars.won = userTeamSeason.won;
-                vars.lost = userTeamSeason.lost;
-                vars.cash = userTeamSeason.cash / 1000;  // [millions of dollars]
-                vars.salaryCap = g.salaryCap / 1000;  // [millions of dollars]
-                vars.season = g.season;
-                vars.playoffRoundsWon = userTeamSeason.playoffRoundsWon;
-
-                deferred.resolve(vars);
-            };
-            return deferred.promise();
+                return {
+                    region: t.region,
+                    name: t.name,
+                    abbrev: t.abbrev,
+                    won: latestSeason.won,
+                    lost: latestSeason.lost,
+                    cash: latestSeason.cash / 1000,  // [millions of dollars]
+                    salaryCap: g.salaryCap / 1000,  // [millions of dollars]
+                    season: g.season,
+                    playoffRoundsWon: latestSeason.playoffRoundsWon
+                };
+            });
         }
     }
 
     function updatePayroll(inputs, updateEvents) {
-        var deferred, vars;
-
-        deferred = $.Deferred();
-        vars = {};
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
-            db.getPayroll(null, g.userTid, function (payroll) {
-                vars.payroll = payroll / 1000;  // [millions of dollars]
-
-                deferred.resolve(vars);
+            return team.getPayroll(null, g.userTid).get(0).then(function (payroll) {
+                return {
+                    payroll: payroll / 1000 // [millions of dollars]
+                };
             });
-            return deferred.promise();
         }
     }
 
 
     function updateTeams(inputs, updateEvents) {
-        var deferred, stats, vars;
+        var stats, vars;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            deferred = $.Deferred();
             vars = {};
-
             stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
-            team.filter({
+
+            return team.filter({
                 attrs: ["tid", "cid"],
                 seasonAttrs: ["won", "lost", "winp", "att", "revenue", "profit"],
                 stats: stats,
                 season: g.season,
                 sortBy: ["winp", "-lost", "won"]
-            }, function (teams) {
-                var cid, i, j, ranks;
+            }).then(function (teams) {
+                var cid, i, j;
 
                 cid = _.find(teams, function (t) { return t.tid === g.userTid; }).cid;
 
@@ -134,28 +110,29 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
                 }
                 vars.oppPtsRank = 31 - vars.oppPtsRank;
 
-                deferred.resolve(vars);
+                return vars;
             });
-            return deferred.promise();
         }
     }
 
     function updateGames(inputs, updateEvents, vm) {
-        var deferred, numShowCompleted, vars;
+        var completed, numShowCompleted;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            deferred = $.Deferred();
-            vars = {};
-
             numShowCompleted = 4;
-            vars.completed = [];
-            // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
-            g.dbl.transaction("games").objectStore("games").index("season").openCursor(g.season, "prev").onsuccess = function (event) {
-                var cursor, game, i, overtime;
+            completed = [];
 
-                cursor = event.target.result;
-                if (cursor && vars.completed.length < numShowCompleted) {
-                    game = cursor.value;
+            // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
+            return dao.games.iterate({
+                index: "season",
+                key: g.season,
+                direction: "prev",
+                callback: function (game, shortCircuit) {
+                    var i, overtime;
+
+                    if (completed.length >= numShowCompleted) {
+                        return shortCircuit();
+                    }
 
                     if (game.overtimes === 1) {
                         overtime = " (OT)";
@@ -167,49 +144,40 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
 
                     // Check tid
                     if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
-                        vars.completed.push({
+                        completed.push({
                             gid: game.gid,
                             overtime: overtime
                         });
 
-                        i = vars.completed.length - 1;
+                        i = completed.length - 1;
                         if (game.teams[0].tid === g.userTid) {
-                            vars.completed[i].home = true;
-                            vars.completed[i].pts = game.teams[0].pts;
-                            vars.completed[i].oppPts = game.teams[1].pts;
-                            vars.completed[i].oppTid = game.teams[1].tid;
-                            vars.completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
-                            vars.completed[i].won = game.teams[0].pts > game.teams[1].pts;
+                            completed[i].home = true;
+                            completed[i].pts = game.teams[0].pts;
+                            completed[i].oppPts = game.teams[1].pts;
+                            completed[i].oppTid = game.teams[1].tid;
+                            completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
+                            completed[i].won = game.teams[0].pts > game.teams[1].pts;
                         } else if (game.teams[1].tid === g.userTid) {
-                            vars.completed[i].home = false;
-                            vars.completed[i].pts = game.teams[1].pts;
-                            vars.completed[i].oppPts = game.teams[0].pts;
-                            vars.completed[i].oppTid = game.teams[0].tid;
-                            vars.completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
-                            vars.completed[i].won = game.teams[1].pts > game.teams[0].pts;
+                            completed[i].home = false;
+                            completed[i].pts = game.teams[1].pts;
+                            completed[i].oppPts = game.teams[0].pts;
+                            completed[i].oppTid = game.teams[0].tid;
+                            completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
+                            completed[i].won = game.teams[1].pts > game.teams[0].pts;
                         }
 
-                        vars.completed[i] = helpers.formatCompletedGame(vars.completed[i]);
+                        completed[i] = helpers.formatCompletedGame(completed[i]);
                     }
-
-                    cursor.continue();
-                } else {
-                    vm.completed(vars.completed);
-                    deferred.resolve();
                 }
-            };
-            return deferred.promise();
+            }).then(function () {
+                vm.completed(completed);
+            });
         }
     }
 
     function updateSchedule(inputs, updateEvents, vm) {
-        var deferred, vars;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            deferred = $.Deferred();
-            vars = {};
-
-            season.getSchedule(null, 0, function (schedule_) {
+            return season.getSchedule().then(function (schedule_) {
                 var game, games, i, numShowUpcoming, row, team0, team1;
 
                 games = [];
@@ -232,25 +200,21 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
                     }
                 }
                 vm.upcoming(games);
-                deferred.resolve();
             });
-
-            return deferred.promise();
         }
     }
 
     function updatePlayers(inputs, updateEvents) {
-        var deferred, vars;
+        var vars;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-            deferred = $.Deferred();
             vars = {};
 
-            dao.players.getAll({
+            return dao.players.getAll({
                 index: "tid",
                 key: IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED),
                 statsSeasons: [g.season]
-            }, function (players) {
+            }).then(function (players) {
                 var i, stats, userPlayers;
 
                 players = player.filter(players, {
@@ -300,28 +264,25 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
                 // Find starting 5
                 vars.starters = userPlayers.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; }).slice(0, 5);
 
-                deferred.resolve(vars);
+                return vars;
             });
-            return deferred.promise();
         }
     }
 
     function updatePlayoffs(inputs, updateEvents) {
-        var deferred, vars;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
-            deferred = $.Deferred();
-            vars = {
-                showPlayoffSeries: false
-            };
 
-            g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
-                var found, i, playoffSeries, rnd, series;
+            return dao.playoffSeries.get({key: g.season}).then(function (playoffSeries) {
+                var found, i, rnd, series, vars;
 
-                playoffSeries = event.target.result;
+                vars = {
+                    showPlayoffSeries: false
+                };
+
                 if (playoffSeries !== undefined) {
                     series = playoffSeries.series;
                     found = false;
+
                     // Find the latest playoff series with the user's team in it
                     for (rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
                         for (i = 0; i < series[rnd].length; i++) {
@@ -347,24 +308,19 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
                     }
                 }
 
-                deferred.resolve(vars);
-            };
-            return deferred.promise();
+                return vars;
+            });
         }
     }
 
     function updateStandings(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
-            deferred = $.Deferred();
-
-            team.filter({
+            return team.filter({
                 attrs: ["tid", "cid", "abbrev", "region"],
                 seasonAttrs: ["won", "lost", "winp"],
                 season: g.season,
                 sortBy: ["winp", "-lost", "won"]
-            }, function (teams) {
+            }).then(function (teams) {
                 var cid, confTeams, i, k, l;
 
                 // Find user's conference
@@ -395,11 +351,10 @@ define(["dao", "db", "globals", "ui", "core/player", "core/season", "core/team",
                     }
                 }
 
-                deferred.resolve({
+                return {
                     confTeams: confTeams
-                });
+                };
             });
-            return deferred.promise();
         }
     }
 

@@ -2,16 +2,16 @@
  * @name views.draftScouting
  * @namespace Scouting prospects in future drafts.
  */
-define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, draft, finances, player, $, ko, _, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, draft, finances, player, Promise, $, ko, _, bbgmView, helpers) {
     "use strict";
 
     var mapping;
 
-    function addSeason(seasons, season, tid, cb) {
-        dao.players.getAll({
+    function addSeason(season, tid) {
+        return dao.players.getAll({
             index: "tid",
             key: tid
-        }, function (playersAll) {
+        }).then(function (playersAll) {
             var i, pa, p, players;
 
             playersAll = player.filter(playersAll, {
@@ -43,15 +43,13 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
             // Rank prospects
             players.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });
             for (i = 0; i < players.length; i++) {
-                players[i].rank = i + 1;players[i].rank = i + 1;
+                players[i].rank = i + 1;
             }
 
-            seasons.push({
+            return {
                 players: players,
                 season: season
-            });
-
-            cb();
+            };
         });
     }
 
@@ -64,13 +62,9 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
     };
 
     function updateDraftScouting(inputs, updateEvents) {
-        var deferred, firstUndraftedTid, seasonOffset, seasons;
+        var firstUndraftedTid, seasonOffset;
 
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0) {
-            deferred = $.Deferred();
-
-            seasons = [];
-
             // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
             if (g.phase < g.PHASE.FREE_AGENCY) {
                 seasonOffset = 0;
@@ -85,17 +79,15 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                 firstUndraftedTid = g.PLAYER.UNDRAFTED;
             }
 
-            addSeason(seasons, g.season + seasonOffset, firstUndraftedTid, function () {
-                addSeason(seasons, g.season + seasonOffset + 1, g.PLAYER.UNDRAFTED_2, function () {
-                    addSeason(seasons, g.season + seasonOffset + 2, g.PLAYER.UNDRAFTED_3, function () {
-                        deferred.resolve({
-                            seasons: seasons
-                        });
-                    });
-                });
+            return Promise.all([
+                addSeason(g.season + seasonOffset, firstUndraftedTid),
+                addSeason(g.season + seasonOffset + 1, g.PLAYER.UNDRAFTED_2),
+                addSeason(g.season + seasonOffset + 2, g.PLAYER.UNDRAFTED_3)
+            ]).then(function (seasons) {
+                return {
+                    seasons: seasons
+                };
             });
-
-            return deferred.promise();
         }
     }
 
@@ -132,74 +124,71 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
             });
 
             // Get scouting rank, which is used in a couple places below
-            g.dbl.transaction("teams").objectStore("teams").get(g.userTid).onsuccess = function (event) {
-                var playerStore, scoutingRank, t, tx;
+            dao.teams.get({key: g.userTid}).then(function (t) {
+                var scoutingRank, tx;
 
-                t = event.target.result;
                 scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
 
                 // Delete old players from draft class
-                tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
-                playerStore = tx.objectStore("players");
-                playerStore.index("tid").openCursor(IDBKeyRange.only(draftClassTid)).onsuccess = function (event) {
-                    var cursor, i, uploadedSeason;
-
-                    cursor = event.target.result;
-                    if (cursor) {
-                        playerStore.delete(cursor.primaryKey);
-                        cursor.continue();
-                    } else {
-                        // Everything else proceeds after deletes have finished
-
-                        // Find season from uploaded file, for age adjusting
-                        if (uploadedFile.hasOwnProperty("gameAttributes")) {
-                            for (i = 0; i < uploadedFile.gameAttributes.length; i++) {
-                                if (uploadedFile.gameAttributes[i].key === "season") {
-                                    uploadedSeason = uploadedFile.gameAttributes[i].value;
-                                    break;
-                                }
-                            }
-                        } else if (uploadedFile.hasOwnProperty("startingSeason")) {
-                            uploadedSeason = uploadedFile.startingSeason;
-                        }
-
-                        // Add new players to database
-                        players.forEach(function (p) {
-                            // Make sure player object is fully defined
-                            p = player.augmentPartialPlayer(p, scoutingRank);
-
-                            // Manually set TID, since at this point it is always g.PLAYER.UNDRAFTED
-                            p.tid = draftClassTid;
-
-                            // Manually remove PID, since all it can do is cause trouble
-                            if (p.hasOwnProperty("pid")) {
-                                delete p.pid;
-                            }
-
-                            // Adjust age
-                            if (uploadedSeason !== undefined) {
-                                p.born.year += g.season - uploadedSeason;
-                            }
-
-                            // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
-                            delete p.stats;
-
-                            player.updateValues(tx, p, [], function (p) {
-                                dao.players.put({ot: playerStore, p: p});
-                            });
-                        });
-
-                        // "Top off" the draft class if <70 players imported
-                        if (players.length < 70) {
-                            draft.genPlayers(tx, draftClassTid, scoutingRank, 70 - players.length);
-                        }
+                tx = dao.tx(["players", "playerStats"], "readwrite");
+                dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: IDBKeyRange.only(draftClassTid),
+                    callback: function (p) {
+                        return dao.players.delete({ot: tx, key: p.pid});
                     }
-                };
+                }).then(function () {
+                    var i, uploadedSeason;
 
-                tx.oncomplete = function () {
+                    // Find season from uploaded file, for age adjusting
+                    if (uploadedFile.hasOwnProperty("gameAttributes")) {
+                        for (i = 0; i < uploadedFile.gameAttributes.length; i++) {
+                            if (uploadedFile.gameAttributes[i].key === "season") {
+                                uploadedSeason = uploadedFile.gameAttributes[i].value;
+                                break;
+                            }
+                        }
+                    } else if (uploadedFile.hasOwnProperty("startingSeason")) {
+                        uploadedSeason = uploadedFile.startingSeason;
+                    }
+
+                    // Add new players to database
+                    players.forEach(function (p) {
+                        // Make sure player object is fully defined
+                        p = player.augmentPartialPlayer(p, scoutingRank);
+
+                        // Manually set TID, since at this point it is always g.PLAYER.UNDRAFTED
+                        p.tid = draftClassTid;
+
+                        // Manually remove PID, since all it can do is cause trouble
+                        if (p.hasOwnProperty("pid")) {
+                            delete p.pid;
+                        }
+
+                        // Adjust age
+                        if (uploadedSeason !== undefined) {
+                            p.born.year += g.season - uploadedSeason;
+                        }
+
+                        // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
+                        delete p.stats;
+
+                        player.updateValues(tx, p, []).then(function (p) {
+                            dao.players.put({ot: tx, value: p});
+                        });
+                    });
+
+                    // "Top off" the draft class if <70 players imported
+                    if (players.length < 70) {
+                        draft.genPlayers(tx, draftClassTid, scoutingRank, 70 - players.length);
+                    }
+                });
+
+                tx.complete().then(function () {
                     ui.realtimeUpdate(["dbChange"]);
-                };
-            };
+                });
+            });
         };
     }
 

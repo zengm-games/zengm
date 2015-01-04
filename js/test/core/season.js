@@ -2,7 +2,7 @@
  * @name test.core.season
  * @namespace Tests for core.season.
  */
-define(["db", "globals", "core/season", "util/helpers", "test/helpers"], function (db, g, season, helpers, testHelpers) {
+define(["globals", "core/season", "util/helpers", "test/helpers"], function (g, season, helpers, testHelpers) {
     "use strict";
 
     describe("core/season", function () {
@@ -31,7 +31,7 @@ define(["db", "globals", "core/season", "util/helpers", "test/helpers"], functio
                 }
             });
             it("should schedule each team one home game against every team in the other conference", function () {
-                var home, i, j, teams, tids;
+                var home, i, teams, tids;
 
                 tids = season.newSchedule();
 

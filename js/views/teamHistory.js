@@ -2,7 +2,7 @@
  * @name views.teamHistory
  * @namespace Team history.
  */
-define(["dao", "db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (dao, db, g, ui, player, $, ko, _, bbgmView, helpers, viewHelpers, components) {
+define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "views/components"], function (dao, g, ui, player, Promise, $, ko, _, bbgmView, helpers, components) {
     "use strict";
 
     var mapping;
@@ -34,15 +34,17 @@ define(["dao", "db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout
     };
 
     function updateTeamHistory(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
-            deferred = $.Deferred();
-
-            g.dbl.transaction("teams").objectStore("teams").get(inputs.tid).onsuccess = function (event) {
-                var abbrev, championships, history, i, playoffAppearances, totalWon, totalLost, userTeam, userTeamSeason;
-
-                userTeam = event.target.result;
+            return Promise.all([
+                dao.teams.get({key: inputs.tid}),
+                dao.players.getAll({
+                    index: "statsTids",
+                    key: inputs.tid,
+                    statsSeasons: "all",
+                    statsTid: inputs.tid
+                })
+            ]).spread(function (userTeam, players) {
+                var championships, history, i, playoffAppearances, totalWon, totalLost;
 
                 history = [];
                 totalWon = 0;
@@ -63,43 +65,32 @@ define(["dao", "db", "globals", "ui", "core/player", "lib/jquery", "lib/knockout
                 }
                 history.reverse(); // Show most recent season first
 
-                dao.players.getAll({
-                    index: "statsTids",
-                    key: inputs.tid,
-                    statsSeasons: "all",
-                    statsTid: inputs.tid
-                }, function (players) {
-                    var i;
-
-                    players = player.filter(players, {
-                        attrs: ["pid", "name", "pos", "injury", "tid", "hof", "watch"],
-                        stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
-                        tid: inputs.tid
-                    });
-
-                    for (i = 0; i < players.length; i++) {
-                        delete players[i].ratings;
-                        delete players[i].stats;
-                    }
-
-                    deferred.resolve({
-                        abbrev: inputs.abbrev,
-                        history: history,
-                        players: players,
-                        team: {
-                            name: userTeam.name,
-                            region: userTeam.region,
-                            tid: inputs.tid
-                        },
-                        totalWon: totalWon,
-                        totalLost: totalLost,
-                        playoffAppearances: playoffAppearances,
-                        championships: championships
-                    });
+                players = player.filter(players, {
+                    attrs: ["pid", "name", "pos", "injury", "tid", "hof", "watch"],
+                    stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
+                    tid: inputs.tid
                 });
-            };
 
-            return deferred.promise();
+                for (i = 0; i < players.length; i++) {
+                    delete players[i].ratings;
+                    delete players[i].stats;
+                }
+
+                return {
+                    abbrev: inputs.abbrev,
+                    history: history,
+                    players: players,
+                    team: {
+                        name: userTeam.name,
+                        region: userTeam.region,
+                        tid: inputs.tid
+                    },
+                    totalWon: totalWon,
+                    totalLost: totalLost,
+                    playoffAppearances: playoffAppearances,
+                    championships: championships
+                };
+            });
         }
     }
 

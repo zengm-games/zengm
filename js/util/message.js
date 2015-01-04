@@ -2,7 +2,7 @@
  * @name util.message
  * @namespace Messages from the owner of the team to the GM.
  */
-define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, ui, helpers, random) {
+define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, helpers, random) {
     "use strict";
 
     var activities, playoffs, intro, first, money, ovr, wins;
@@ -136,20 +136,21 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
     ];
     ovr[1] = [
         "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships.",
-        "You know, general managers aren't hired to be mediocre. Do better next year."
+        "You know, general managers aren't hired to be mediocre. Do better next year.",
+        "I've been meaning to tell you about this great idea I had. What if we only play 4 guys on defense, so the other guy can just wait for an easy score at the other end? Pure genius, isn't it?"
     ];
     ovr[2] = [
         "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}."
     ];
 
-    function generate(deltas, cb) {
-        var activity1, activity2, indMoney, indOverall, indPlayoffs, indOvr, indWins, m, ownerMoodSum, tx;
+    function generate(deltas) {
+        var activity1, activity2, indMoney, indPlayoffs, indOvr, indWins, m, ownerMoodSum, tx;
 
         ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
 
         if (g.showFirstOwnerMessage) {
             m = random.choice(first);
-            db.setGameAttributes({showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
+            require("core/league").setGameAttributes({showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
         } else {
             activity1 = random.choice(activities);
             activity2 = random.choice(activities);
@@ -230,27 +231,30 @@ define(["db", "globals", "ui", "util/helpers", "util/random"], function (db, g, 
             }
         }
 
-        tx = g.dbl.transaction("messages", "readwrite");
-        tx.objectStore("messages").add({
-            read: false,
-            from: "The Owner",
-            year: g.season,
-            text: m
-        });
-        tx.oncomplete = function () {
-            if (ownerMoodSum > -1) {
-                cb();
-            } else if (g.season < g.gracePeriodEnd || g.godMode) {
-                // Can't get fired yet... or because of God Mode
-                cb();
-            } else {
-                // Fired!
-                db.setGameAttributes({
-                    gameOver: true,
-                    showFirstOwnerMessage: true
-                }, cb);
+        tx = dao.tx("messages", "readwrite");
+        dao.messages.add({
+            ot: tx,
+            value: {
+                read: false,
+                from: "The Owner",
+                year: g.season,
+                text: m
             }
-        };
+        });
+        return tx.complete().then(function () {
+            if (ownerMoodSum > -1) {
+                return;
+            }
+            if (g.season < g.gracePeriodEnd || g.godMode) {
+                // Can't get fired yet... or because of God Mode
+                return;
+            }
+            // Fired!
+            return require("core/league").setGameAttributes({
+                gameOver: true,
+                showFirstOwnerMessage: true
+            });
+        });
     }
 
     return {

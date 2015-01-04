@@ -2,7 +2,7 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers", "util/lock"], function (db, g, templates, Davis, $, ko, _, helpers, lock) {
+define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers", "util/lock"], function (dao, db, g, templates, Promise, Davis, $, ko, _, helpers, lock) {
     "use strict";
 
     // Things to do on initial page load
@@ -123,7 +123,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             if (e.altKey && e.keyCode === 80) {
                 // ul -> first li -> a -> click
                 playMenuOptions.firstElementChild.firstElementChild.click();
-                
+
                 // If play menu is open, close it
                 if (playMenuOptions.parentElement.classList.contains("open")) {
                     $playMenuDropdown.dropdown("toggle");
@@ -138,27 +138,23 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             watchEl = this;
             pid = parseInt(watchEl.dataset.pid, 10);
 
-            g.dbl.transaction("players", "readwrite").objectStore("players").openCursor(pid).onsuccess = function (event) {
-                var cursor, p;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
-                    if (watchEl.classList.contains("watch-active")) {
-                        p.watch = false;
-                        watchEl.classList.remove("watch-active");
-                        watchEl.title = "Add to Watch List";
-                    } else {
-                        p.watch = true;
-                        watchEl.classList.add("watch-active");
-                        watchEl.title = "Remove from Watch List";
-                    }
-                    cursor.update(p);
-                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                        realtimeUpdate(["watchList"]);
-                    });
+            dao.players.get({key: pid}).then(function (p) {
+                if (watchEl.classList.contains("watch-active")) {
+                    p.watch = false;
+                    watchEl.classList.remove("watch-active");
+                    watchEl.title = "Add to Watch List";
+                } else {
+                    p.watch = true;
+                    watchEl.classList.add("watch-active");
+                    watchEl.title = "Remove from Watch List";
                 }
-            };
+
+                return dao.players.put({value: p});
+            }).then(function () {
+                return require("core/league").setGameAttributes({lastDbChange: Date.now()});
+            }).then(function () {
+                realtimeUpdate(["watchList"]);
+            });
         });
     }
 
@@ -381,10 +377,14 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         }
     }
 
-    /*Get current options based on game state and push rendered play button
-    to client. ot is passed on to the lock functions.
-    */
-    function updatePlayMenu(ot, cb) {
+   /**
+     * Update play menu options based on game state.
+     * 
+     * @memberOf ui
+     * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, and negotiations; if null is passed, then a new transaction will be used.
+     * @return {Promise}
+     */
+    function updatePlayMenu(ot) {
         var allOptions, keys;
 
         allOptions = [{id: "play-menu-stop", url: "", label: "Stop"},
@@ -435,55 +435,49 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
             keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-preseason"];
         }
 
-        lock.unreadMessage(ot, function (unreadMessage) {
+        return Promise.all([
+            lock.unreadMessage(ot),
+            lock.gamesInProgress(ot),
+            lock.negotiationInProgress(ot)
+        ]).spread(function (unreadMessage, gamesInProgress, negotiationInProgress) {
+            var i, ids, j, playButtonElement, someOptions;
+
             if (unreadMessage) {
                 keys = ["play-menu-message"];
             }
+            if (gamesInProgress) {
+                keys = ["play-menu-stop"];
+            }
+            if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
+                keys = ["play-menu-contract-negotiation"];
+            }
 
-            lock.gamesInProgress(ot, function (gamesInProgress) {
-                if (gamesInProgress) {
-                    keys = ["play-menu-stop"];
+            // If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.
+            if (g.gameOver && !unreadMessage) {
+                keys = ["play-menu-new-team", "play-menu-new-league"];
+            }
+
+            // This code is very ugly. Basically I just want to filter all_options into
+            // some_options based on if the ID matches one of the keys.
+            ids = [];
+            for (i = 0; i < allOptions.length; i++) {
+                ids.push(allOptions[i].id);
+            }
+            someOptions = [];
+            for (i = 0; i < keys.length; i++) {
+                for (j = 0; j < ids.length; j++) {
+                    if (ids[j] === keys[i]) {
+                        someOptions.push(allOptions[j]);
+                        break;
+                    }
                 }
+            }
 
-                lock.negotiationInProgress(ot, function (negotiationInProgress) {
-                    var i, ids, j, playButtonElement, someOptions;
+            if (someOptions.length > 0) {
+                someOptions[0].label += ' <span class="text-muted kbd">Alt+P</span>';
+            }
 
-                    if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
-                        keys = ["play-menu-contract-negotiation"];
-                    }
-
-                    // If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.
-                    if (g.gameOver && !unreadMessage) {
-                        keys = ["play-menu-new-team", "play-menu-new-league"];
-                    }
-
-                    // This code is very ugly. Basically I just want to filter all_options into
-                    // some_options based on if the ID matches one of the keys.
-                    ids = [];
-                    for (i = 0; i < allOptions.length; i++) {
-                        ids.push(allOptions[i].id);
-                    }
-                    someOptions = [];
-                    for (i = 0; i < keys.length; i++) {
-                        for (j = 0; j < ids.length; j++) {
-                            if (ids[j] === keys[i]) {
-                                someOptions.push(allOptions[j]);
-                                break;
-                            }
-                        }
-                    }
-
-                    if (someOptions.length > 0) {
-                        someOptions[0].label += ' <span class="text-muted kbd">Alt+P</span>';
-                    }
-
-                    g.vm.topMenu.options(someOptions);
-
-                    if (cb !== undefined) {
-                        cb();
-                    }
-                });
-            });
+            g.vm.topMenu.options(someOptions);
         });
     }
 
@@ -503,7 +497,7 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         if (statusText === undefined) {
             g.vm.topMenu.statusText(oldStatus);
         } else if (statusText !== oldStatus) {
-            db.setGameAttributes({statusText: statusText}, function () {
+            require("core/league").setGameAttributes({statusText: statusText}).then(function () {
                 g.vm.topMenu.statusText(statusText);
 //                console.log("Set status: " + statusText);
             });
@@ -526,22 +520,16 @@ define(["db", "globals", "templates", "lib/davis", "lib/jquery", "lib/knockout",
         if (phaseText === undefined) {
             g.vm.topMenu.phaseText(oldPhaseText);
         } else if (phaseText !== oldPhaseText) {
-            db.setGameAttributes({phaseText: phaseText}, function () {
+            require("core/league").setGameAttributes({phaseText: phaseText}).then(function () {
                 g.vm.topMenu.phaseText(phaseText);
 //                console.log("Set phase: " + phaseText);
             });
 
             // Update phase in meta database. No need to have this block updating the UI or anything.
-            g.dbm.transaction("leagues", "readwrite").objectStore("leagues").openCursor(g.lid).onsuccess = function (event) {
-                var cursor, l;
-
-                cursor = event.target.result;
-                l = cursor.value;
-
+            dao.leagues.get({key: g.lid}).then(function (l) {
                 l.phaseText = phaseText;
-
-                cursor.update(l);
-            };
+                dao.leagues.put({value: l});
+            });
         }
     }
 

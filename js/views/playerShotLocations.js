@@ -26,16 +26,12 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
     };
 
     function updatePlayers(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
-            deferred = $.Deferred();
-
-            dao.players.getAll({
+            return dao.players.getAll({
                 index: "tid",
                 key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
                 statsSeasons: [inputs.season]
-            }, function (players) {
+            }).then(function (players) {
                 players = player.filter(players, {
                     attrs: ["pid", "name", "pos", "age", "injury", "watch"],
                     ratings: ["skills"],
@@ -43,12 +39,11 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
                     season: inputs.season
                 });
 
-                deferred.resolve({
+                return {
                     season: inputs.season,
                     players: players
-                });
+                };
             });
-            return deferred.promise();
         }
     }
 

@@ -2,7 +2,7 @@
  * @name views.message
  * @namespace View a single message.
  */
-define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "util/viewHelpers"], function (db, g, ui, $, ko, bbgmView, viewHelpers) {
+define(["dao", "globals", "ui", "core/league", "lib/knockout", "util/bbgmView"], function (dao, g, ui, league, ko, bbgmView) {
     "use strict";
 
     function get(req) {
@@ -12,44 +12,47 @@ define(["db", "globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "u
     }
 
     function updateMessage(inputs, updateEvents, vm) {
-        var deferred, vars, tx;
+        var message, readThisPageview, tx;
 
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.message.mid() !== inputs.mid) {
-            deferred = $.Deferred();
-            vars = {};
+            tx = dao.tx("messages", "readwrite");
 
-            tx = g.dbl.transaction("messages", "readwrite");
+            readThisPageview = false;
 
-            // If mid is null, this will open the message with the highest mid
-            tx.objectStore("messages").openCursor(inputs.mid, "prev").onsuccess = function (event) {
-                var cursor, message;
+            // If mid is null, this will open the *unread* message with the highest mid
+            dao.messages.iterate({
+                ot: tx,
+                key: inputs.mid,
+                direction: "prev",
+                callback: function (messageLocal, shortCircuit) {
+                    message = messageLocal;
 
-                cursor = event.target.result;
-                message = cursor.value;
+                    if (!message.read) {
+                        shortCircuit(); // Keep looking until we find an unread one!
 
-                if (!message.read) {
-                    message.read = true;
-                    cursor.update(message);
+                        message.read = true;
+                        readThisPageview = true;
 
-                    tx.oncomplete = function () {
-                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                            if (g.gameOver) {
-                                ui.updateStatus("You're fired!");
-                            }
-
-                            ui.updatePlayMenu(null, function () {
-                                vars.message = message;
-                                deferred.resolve(vars);
-                            });
-                        });
-                    };
-                } else {
-                    vars.message = message;
-                    deferred.resolve(vars);
+                        return message;
+                    }
                 }
-            };
+            });
 
-            return deferred.promise();
+            return tx.complete().then(function () {
+                return league.setGameAttributes({lastDbChange: Date.now()});
+            }).then(function () {
+                if (readThisPageview) {
+                    if (g.gameOver) {
+                        ui.updateStatus("You're fired!");
+                    }
+
+                    return ui.updatePlayMenu(null);
+                }
+            }).then(function () {
+                return {
+                    message: message
+                };
+            });
         }
     }
 

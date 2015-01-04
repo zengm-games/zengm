@@ -1,3 +1,9 @@
+// Make sure I never accidentally use native promises, because that could fuck with error handling
+var Promise = function () { throw new Error("USE BLUEBIRD!"); };
+Promise.all = function () { throw new Error("USE BLUEBIRD!"); };
+Promise.map = function () { throw new Error("USE BLUEBIRD!"); };
+Promise.try = function () { throw new Error("USE BLUEBIRD!"); };
+
 requirejs.config({
     shim: {
         "lib/bootstrap-affix": {
@@ -66,7 +72,7 @@ requirejs.config({
     }
 });
 
-requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util/helpers", "lib/bootstrap-affix", "lib/bootstrap-alert", "lib/bootstrap-collapse", "lib/bootstrap-dropdown", "lib/bootstrap-modal", "lib/bootstrap-popover", "lib/davis.google_analytics", "lib/html5-dataset", "lib/IndexedDB-getAll-shim", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery-ui", "lib/jquery-ui.touch-punch", "util/templateHelpers", "api"], function (db, views, ui, changes, Davis, account, helpers) {
+requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util/helpers", "lib/bluebird", "lib/bootstrap-affix", "lib/bootstrap-alert", "lib/bootstrap-collapse", "lib/bootstrap-dropdown", "lib/bootstrap-modal", "lib/bootstrap-popover", "lib/davis.google_analytics", "lib/html5-dataset", "lib/IndexedDB-getAll-shim", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery-ui", "lib/jquery-ui.touch-punch", "util/templateHelpers", "api"], function (db, views, ui, changes, Davis, account, helpers) {
     "use strict";
 
     var errorMsg;
@@ -124,7 +130,7 @@ requirejs(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "ut
     // Any news?
     changes.check();
 
-    db.connectMeta(function () {
+    db.connectMeta().then(function () {
         var app = new Davis(function () {
             this.configure(function () {
                 this.generateRequestOnPageLoad = true;

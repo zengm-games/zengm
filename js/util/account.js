@@ -2,7 +2,7 @@
  * @name util.account
  * @namespace Functions for accessing account crap.
  */
-define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"], function (g, team, $, _, eventLog) {
+define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/underscore", "util/eventLog"], function (dao, g, team, Promise, $, _, eventLog) {
     "use strict";
 
     var allAchievements, checkAchievement;
@@ -62,66 +62,45 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
         desc: 'Privately <a href="http://basketball-gm.com/contact/">report</a> a security issue in <a href="https://bitbucket.org/dumbmatter/bbgm-account">the account system</a> or some other part of the site.'
     }];
 
-    function check(cb) {
-        $.ajax({
+    function check() {
+        return Promise.resolve($.ajax({
             type: "GET",
             url: "http://account.basketball-gm." + g.tld + "/user_info.php",
             data: "sport=" + g.sport,
             dataType: "json",
             xhrFields: {
                 withCredentials: true
-            },
-            success: function (data) {
-                var achievementStore, tx;
-
-                // Save username for display
-                g.vm.topMenu.username(data.username);
-
-                // If user is logged in, upload any locally saved achievements
-                if (data.username !== "") {
-                    tx = g.dbm.transaction("achievements", "readwrite");
-                    achievementStore = tx.objectStore("achievements");
-                    achievementStore.getAll().onsuccess = function (event) {
-                        var achievements;
-
-                        achievements = _.pluck(event.target.result, "slug");
-
-                        // If any exist, delete and upload
-                        if (achievements.length > 0) {
-                            achievementStore.clear();
-                            // If this fails to save remotely, will be added to IDB again
-                            addAchievements(achievements, true, function () {
-                                if (cb !== undefined) {
-                                    cb();
-                                }
-                            });
-                        } else {
-                            if (cb !== undefined) {
-                                cb();
-                            }
-                        }
-                    };
-                } else {
-                    if (cb !== undefined) {
-                        cb();
-                    }
-                }
-            },
-            error: function () {
-                if (cb !== undefined) {
-                    cb();
-                }
             }
-        });
+        })).then(function (data) {
+            var tx;
+
+            // Save username for display
+            g.vm.topMenu.username(data.username);
+
+            // If user is logged in, upload any locally saved achievements
+            if (data.username !== "") {
+                tx = dao.tx("achievements", "readwrite");
+                return dao.achievements.getAll({ot: tx}).then(function (achievements) {
+                    achievements = _.pluck(achievements, "slug");
+
+                    // If any exist, delete and upload
+                    if (achievements.length > 0) {
+                        dao.achievements.clear({ot: tx});
+                        // If this fails to save remotely, will be added to IDB again
+                        return addAchievements(achievements, true);
+                    }
+                });
+            }
+        }).catch(function () {});
     }
 
-    function getAchievements(cb) {
+    function getAchievements() {
         var achievements;
 
         achievements = allAchievements.slice();
 
-        g.dbm.transaction("achievements").objectStore("achievements").getAll().onsuccess = function (event) {
-            var achievementsLocal, i, j;
+        return dao.achievements.getAll().then(function (achievementsLocal) {
+            var i, j;
 
             // Initialize counts
             for (i = 0; i < achievements.length; i++) {
@@ -129,7 +108,6 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
             }
 
             // Handle any achivements stored in IndexedDB
-            achievementsLocal = event.target.result;
             for (j = 0; j < achievementsLocal.length; j++) {
                 for (i = 0; i < achievements.length; i++) {
                     if (achievements[i].slug === achievementsLocal[j].slug) {
@@ -139,28 +117,28 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
             }
 
             // Handle any achievements stored in the cloud
-            $.ajax({
+            return Promise.resolve($.ajax({
                 type: "GET",
                 url: "http://account.basketball-gm." + g.tld + "/get_achievements.php",
                 data: "sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {
                     withCredentials: true
-                },
-                success: function (achievementsRemote) {
-                    var i;
-
-                    for (i = 0; i < achievements.length; i++) {
-                        achievements[i].count += achievementsRemote[achievements[i].slug] !== undefined ? achievementsRemote[achievements[i].slug] : 0;
-                    }
-
-                    cb(achievements);
-                },
-                error: function () {
-                    cb(achievements);
                 }
+            })).then(function (achievementsRemote) {
+                var i;
+
+                // Merge local and remote achievements
+                for (i = 0; i < achievements.length; i++) {
+                    achievements[i].count += achievementsRemote[achievements[i].slug] !== undefined ? achievementsRemote[achievements[i].slug] : 0;
+                }
+
+                return achievements;
+            }).catch(function () {
+                // No remote connection, just return local achievements
+                return achievements;
             });
-        };
+        });
     }
 
     /**
@@ -171,9 +149,9 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
      * @memberOf util.helpers
      * @param {Array.<string>} achievements Array of achievement IDs (see allAchievements above).
      * @param {boolean=} silent If true, don't show any notifications (like if achievements are only being moved from IDB to remote). Default false.
-     * @param {function()=} cb Optional callback.
+     * @return {Promise}
      */
-    function addAchievements(achievements, silent, cb) {
+    function addAchievements(achievements, silent) {
         var addToIndexedDB, notify;
 
         silent = silent !== undefined ? silent : false;
@@ -197,70 +175,61 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
             }
         };
 
-        addToIndexedDB = function (achievements, cb) {
-            var i, achievementStore, tx;
+        addToIndexedDB = function (achievements) {
+            var i, tx;
 
-            tx = g.dbm.transaction("achievements", "readwrite");
-            achievementStore = tx.objectStore("achievements");
+            tx = dao.tx("achievements", "readwrite");
             for (i = 0; i < achievements.length; i++) {
-                achievementStore.add({
-                    slug: achievements[i]
+                dao.achievements.add({
+                    ot: tx,
+                    value: {
+                        slug: achievements[i]
+                    }
                 });
                 notify(achievements[i]);
             }
 
-            tx.oncomplete = function () {
-                if (cb !== undefined) {
-                    cb();
-                }
-            };
+            return tx.complete();
         };
 
-        $.ajax({
+        return Promise.resolve($.ajax({
             type: "POST",
             url: "http://account.basketball-gm." + g.tld + "/add_achievements.php",
             data: {achievements: achievements, sport: g.sport},
             dataType: "json",
             xhrFields: {
                 withCredentials: true
-            },
-            success: function (data) {
-                var i;
-
-                if (data.success) {
-                    for (i = 0; i < achievements.length; i++) {
-                        notify(achievements[i]);
-                    }
-
-                    if (cb !== undefined) {
-                        cb();
-                    }
-                } else {
-                    addToIndexedDB(achievements, cb);
-                }
-            },
-            error: function () {
-                addToIndexedDB(achievements, cb);
             }
+        })).then(function (data) {
+            var i;
+
+            if (data.success) {
+                for (i = 0; i < achievements.length; i++) {
+                    notify(achievements[i]);
+                }
+            } else {
+                return addToIndexedDB(achievements);
+            }
+        }).catch(function () {
+            return addToIndexedDB(achievements);
         });
     }
 
     // FOR EACH checkAchievement FUNCTION:
-    // If cb is passed, it gets true/false depending on if achievement should be awarded, but nothing is actually recorded. If cb is not, the achievement is directly added if it's awarded.
+    // Returns a promise that resolves to true or false depending on whether the achievement was awarded.
+    // HOWEVER, it's only saved to the database if saveAchievement is true (this is the default), but the saving happens asynchronously. It is theoretically possible that this could cause a notification to be displayed to the user about getting an achievement, but some error occurs when saving it.
     checkAchievement = {};
 
-    checkAchievement.fo_fo_fo = function (cb) {
+    checkAchievement.fo_fo_fo = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(g.season).onsuccess = function (event) {
-            var found, i, playoffSeries, round, series;
+        return dao.playoffSeries.get({key: g.season}).then(function (playoffSeries) {
+            var found, i, round, series;
 
-            playoffSeries = event.target.result;
             series = playoffSeries.series;
 
             for (round = 0; round < series.length; round++) {
@@ -276,95 +245,78 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
                     }
                 }
                 if (!found) {
-                    if (cb !== undefined) {
-                        cb(false);
-                    }
-                    return;
+                    return false;
                 }
             }
 
-            if (cb !== undefined) {
-                cb(true);
-            } else {
+            if (saveAchievement) {
                 addAchievements(["fo_fo_fo"]);
             }
-        };
+            return true;
+        });
     };
 
-    checkAchievement.septuawinarian = function (cb) {
+    checkAchievement.septuawinarian = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        team.filter({
+        return team.filter({
             seasonAttrs: ["won"],
             season: g.season,
             tid: g.userTid
-        }, function (t) {
+        }).then(function (t) {
             if (t.won >= 70) {
-                if (cb !== undefined) {
-                    cb(true);
-                } else {
+                if (saveAchievement) {
                     addAchievements(["septuawinarian"]);
                 }
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
+                return true;
             }
+
+            return false;
         });
     };
 
-    checkAchievement["98_degrees"] = function (cb) {
+    checkAchievement["98_degrees"] = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        checkAchievement.fo_fo_fo(function (awarded) {
+        return checkAchievement.fo_fo_fo(false).then(function (awarded) {
             if (awarded) {
-                team.filter({
+                return team.filter({
                     seasonAttrs: ["won", "lost"],
                     season: g.season,
                     tid: g.userTid
-                }, function (t) {
+                }).then(function (t) {
                     if (t.won === 82 && t.lost === 0) {
-                        if (cb !== undefined) {
-                            cb(true);
-                        } else {
+                        if (saveAchievement) {
                             addAchievements(["98_degrees"]);
                         }
-                    } else {
-                        if (cb !== undefined) {
-                            cb(false);
-                        }
+                        return true;
                     }
+
+                    return false;
                 });
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
             }
+
+            return false;
         });
     };
 
-    function checkDynasty(titles, years, slug, cb) {
+    function checkDynasty(titles, years, slug, saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        g.dbl.transaction("teams").objectStore("teams").getAll().onsuccess = function (event) {
-            var i, t, titlesFound;
-
-            t = event.target.result[g.userTid];
+        return dao.teams.get({key: g.userTid}).then(function (t) {
+            var i, titlesFound;
 
             titlesFound = 0;
             // Look over past years
@@ -381,171 +333,136 @@ define(["globals", "core/team", "lib/jquery", "lib/underscore", "util/eventLog"]
             }
 
             if (titlesFound >= titles) {
-                if (cb !== undefined) {
-                    cb(true);
-                } else {
+                if (saveAchievement) {
                     addAchievements([slug]);
                 }
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
+                return true;
             }
-        };
+
+            return false;
+        });
     }
 
-    checkAchievement.dynasty = function (cb) {
-        checkDynasty(6, 8, "dynasty", cb);
+    checkAchievement.dynasty = function (saveAchievement) {
+        return checkDynasty(6, 8, "dynasty", saveAchievement);
     };
 
-    checkAchievement.dynasty_2 = function (cb) {
-        checkDynasty(8, 8, "dynasty_2", cb);
+    checkAchievement.dynasty_2 = function (saveAchievement) {
+        return checkDynasty(8, 8, "dynasty_2", saveAchievement);
     };
 
-    checkAchievement.dynasty_3 = function (cb) {
-        checkDynasty(11, 13, "dynasty_3", cb);
+    checkAchievement.dynasty_3 = function (saveAchievement) {
+        return checkDynasty(11, 13, "dynasty_3", saveAchievement);
     };
 
-    function checkMoneyball(maxPayroll, slug, cb) {
+    function checkMoneyball(maxPayroll, slug, saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        team.filter({
+        return team.filter({
             seasonAttrs: ["expenses", "playoffRoundsWon"],
             season: g.season,
             tid: g.userTid
-        }, function (t) {
+        }).then(function (t) {
             if (t.playoffRoundsWon === 4 && t.expenses.salary.amount <= maxPayroll) {
-                if (cb !== undefined) {
-                    cb(true);
-                } else {
+                if (saveAchievement) {
                     addAchievements([slug]);
                 }
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
+                return true;
             }
+
+            return false;
         });
     }
 
-    checkAchievement.moneyball = function (cb) {
+    checkAchievement.moneyball = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        checkMoneyball(40000, "moneyball", cb);
+        return checkMoneyball(40000, "moneyball", saveAchievement);
     };
 
-    checkAchievement.moneyball_2 = function (cb) {
+    checkAchievement.moneyball_2 = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        checkMoneyball(30000, "moneyball_2", cb);
+        return checkMoneyball(30000, "moneyball_2", saveAchievement);
     };
 
-    checkAchievement.hardware_store = function (cb) {
+    checkAchievement.hardware_store = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        g.dbl.transaction("awards").objectStore("awards").get(g.season).onsuccess = function (event) {
-            var awards;
-
-            awards = event.target.result;
-
+        return dao.awards.get({key: g.season}).then(function (awards) {
             if (awards.mvp.tid === g.userTid && awards.dpoy.tid === g.userTid && awards.smoy.tid === g.userTid && awards.roy.tid === g.userTid && awards.finalsMvp.tid === g.userTid) {
-                if (cb !== undefined) {
-                    cb(true);
-                } else {
+                if (saveAchievement) {
                     addAchievements(["hardware_store"]);
                 }
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
+                return true;
             }
-        };
-    };
 
-    checkAchievement.small_market = function (cb) {
-        if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
-        }
-
-        team.filter({
-            seasonAttrs: ["playoffRoundsWon", "pop"],
-            season: g.season,
-            tid: g.userTid
-        }, function (t) {
-            if (t.playoffRoundsWon === 4 && t.pop <= 2) {
-                if (cb !== undefined) {
-                    cb(true);
-                } else {
-                    addAchievements(["small_market"]);
-                }
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
-            }
+            return false;
         });
     };
 
-    checkAchievement.sleeper_pick = function (cb) {
+    checkAchievement.small_market = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
         if (g.godModeInPast) {
-            if (cb !== undefined) {
-                cb(false);
-            }
-            return;
+            return Promise.resolve(false);
         }
 
-        g.dbl.transaction("awards").objectStore("awards").get(g.season).onsuccess = function (event) {
-            var awards;
+        return team.filter({
+            seasonAttrs: ["playoffRoundsWon", "pop"],
+            season: g.season,
+            tid: g.userTid
+        }).then(function (t) {
+            if (t.playoffRoundsWon === 4 && t.pop <= 2) {
+                if (saveAchievement) {
+                    addAchievements(["small_market"]);
+                }
+                return true;
+            }
 
-            awards = event.target.result;
+            return false;
+        });
+    };
 
+    checkAchievement.sleeper_pick = function (saveAchievement) {
+        saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+
+        if (g.godModeInPast) {
+            return Promise.resolve(false);
+        }
+
+        return dao.awards.get({key: g.season}).then(function (awards) {
             if (awards.roy.tid === g.userTid) {
-                g.dbl.transaction("players").objectStore("players").get(awards.roy.pid).onsuccess = function (event) {
-                    var p;
-
-                    p = event.target.result;
-
+                return dao.players.get({key: awards.roy.pid}).then(function (p) {
                     if (p.tid === g.userTid && p.draft.tid === g.userTid && p.draft.year === g.season - 1 && (p.draft.round > 1 || p.draft.pick >= 15)) {
-                        if (cb !== undefined) {
-                            cb(true);
-                        } else {
+                        if (saveAchievement) {
                             addAchievements(["sleeper_pick"]);
                         }
-                    } else {
-                        if (cb !== undefined) {
-                            cb(false);
-                        }
+                        return true;
                     }
-                };
-            } else {
-                if (cb !== undefined) {
-                    cb(false);
-                }
+
+                    return false;
+                });
             }
-        };
+
+            return false;
+        });
     };
 
     return {

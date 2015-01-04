@@ -1,11 +1,64 @@
 DB CHANGES SINCE 3.4.0
 ----------------------
 
+THE FLATTENING
+--------------
+
+test
+  achievements work in game
+  achievement retrieval from account
+  achievement syncing to account
+  make sure ads show correctly
+
+put bugsnag back
+
+clean up
+  replace getObjectStore with tx_
+  throw error in inappropriate/unknown input param (like "pid")
+  dao.players.getAll -> player.getAllWithStats
+    the stats stuff could be put in some other function to be called after getAll
+      this would allow the elimination of the "filter" option, which now is applied between getAll and adding stats
+  hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake
+  what about creating, migrating, and deleting databases? and objectStoreNames?
+  don't use "ot" anywhere - it's all transactions so call it tx
+  extract it as a library named "baseline"
+  improve API
+    instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
+      see promises_super_tx branch
+      or could be dao.tx().then(function (tx) {}) and resolve that promise oncomplete? but how to pass value to then?
+
+API design
+  player.filter and team.filter should be renamed, otherwise it's confusing
+    player.fitler -> player.process
+    team.filter -> team.getAndProcess
+
+rewrite old upgrading code? eventually, leave it there for now
+
+after fully abstracting IndexedDB, could i improve performance by running it locally in node and using another database?
+  same with mobile on phonegap
+  same with web - "turbo mode" where only one window (db connection) is allowed and caching is heavy
+
+in-memory cache
+  when starting to play games (>1 day), "get" and "getAll" add object stores to cache (if they aren't already there) and "put" updates cached values and set marker saying they were updated
+  When games are over, write to database any cached values that were updated
+  what about other types of operations?
+    iterate: maybe cache query and check for duplicate query? not sure. this is tricky
+    others: maybe not needed for this application
+
 PERFORMANCE CRAP
 ----------------
 
+tooling
+  flow
+  eshint
+
+YWT bug: http://www.reddit.com/r/BasketballGM/comments/2qerb2/bug_ywt_and_you/
+
+IDEA: when writing injury info in game.writePlayerStats, use cached player object from when players are initially loaded
+
 license
   http://www.reddit.com/r/gamedev/comments/2ogq7b/very_niche_webbased_video_game_with_a_stable/cmnhpd8
+  email draft
 
 nan checker: check every object before it is written to db (add, put, cursor.update)
   contract can be set to NaN
@@ -53,6 +106,10 @@ PHASE TWO/THREE: store non-retired players and playerStats in memory
 
 PLAYER DEVELOPMENT REVAMP
 -------------------------
+
+shouldn't have literally every aging player turn into a great shooter
+
+old players are currently undervalued
 
 player development revamp http://www.reddit.com/r/BasketballGM/comments/2cz7r6/player_development_code_has_kinda_ridiculous/
   something needs to be done. still too many 3 point shooting centers
@@ -122,6 +179,19 @@ separate active and retired players into separate object stores
 CURRENT
 -------
 
+percentages for FG, FT, 3pt below box score like Yahoo
+game log for individual player
+  in each box score, include an array of players in the game. index on that.
+foreign player names
+  draftexpress? emailed them, if no reply, maybe scrape
+career transactions page
+  multientry index in event log to pull every event involving a player
+great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_questions_and_feedback_feel_free_to_add/
+create a player during the playoffs and his stats row won't show up until the next season. basic problem seems to be that no playoff stats are returned if htere are no regular season stats
+a 0 day injury doesn't show up in box score, so it looks like player was just benched http://www.reddit.com/message/messages/2pfuyr
+career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/are_there_career_ending_injuries/
+if playoffSeries already exists, don't try to create again http://www.reddit.com/r/BasketballGM/comments/2on0ij/a_bug_will_not_advance_to_playoffs_errors_in_log/
+  use put, not add
 when uploading league file, no need to read whole thing in just to show teams menu. only need to read up to teams. but how?
 simulate in multiple tabs -> NaN
 should be impossible to have a player average 0 assists in big minutes
@@ -414,7 +484,11 @@ schedule page (and dashboard and maybe gamelog) should show opponent records
 LOW PRIORITY
 ------------
 
-use compound index on season + team for games obectStore in helpers.gameLogList
+simple advanced stats
+  TS%, etc
+  pace-weighted stats
+team chemistry http://www.reddit.com/r/BasketballGM/comments/2oco2a/simple_suggestion_team_chemistry/cmrpap6?context=3
+use compound index on season + team for games obectStore in helpers.gameLogList, views.leagueDashboard, maybe elsewhere
 upcoming free agents page should show at least some information about signings (or non-signings) during re-sign phase
 tanking is too easy http://www.reddit.com/r/BasketballGM/comments/20038f/too_easy_to_tank/
 contractNegotiation
@@ -648,11 +722,13 @@ update formulas
 FUTURE
 ------
 
+draftOrder should just be in globals, not a real table
 shot charts showing hot spots (red/yellow/green) based on shot location data
 most improved player
 If you are simulating through the whole season and execute a trade while simulating, it will continue simulating even if you are over the roster limit. http://www.reddit.com/r/BasketballGM/comments/1xch01/trades_after_season/cfamo73
 players from different countries/nationalities
   how to pick names?
+  http://www.reddit.com/message/messages/2rdpk8
 IE10 support
   davisjs for knockoutjs links in IE10
     elem.host comes up blank in originChecks

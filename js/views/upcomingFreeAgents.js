@@ -36,18 +36,14 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
     };
 
     function updateUpcomingFreeAgents(inputs) {
-        var deferred;
-
-        deferred = $.Deferred();
-
-        dao.players.getAll({
+        return dao.players.getAll({
             index: "tid",
             key: IDBKeyRange.lowerBound(0),
             statsSeasons: [g.season],
             filter: function (p) {
                 return p.contract.exp === inputs.season;
             }
-        }, function (players) {
+        }).then(function (players) {
             var i;
 
             // Done before filter so full player object can be passed to player.genContract.
@@ -67,13 +63,11 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
                 fuzz: true
             });
 
-            deferred.resolve({
+            return {
                 players: players,
                 season: inputs.season
-            });
+            };
         });
-
-        return deferred.promise();
     }
 
     function uiFirst(vm) {

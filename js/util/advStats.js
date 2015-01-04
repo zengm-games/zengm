@@ -2,7 +2,7 @@
  * @name util.advStats
  * @namespace Advanced stats (PER, WS, etc) that require some nontrivial calculations and thus are calculated and cached once each day.
  */
-define(["dao", "globals", "core/player", "core/team", "lib/underscore"], function (dao, g, player, team, _) {
+define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/underscore"], function (dao, g, player, team, Promise, _) {
     "use strict";
 
     /**
@@ -13,22 +13,22 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
      * In the playoffs, only playoff stats are used.
      *
      * @memberOf util.advStats
-     * @param {function()} cb Callback function.
+     * @return {Promise}
      */
-    function calculatePER(cb) {
+    function calculatePER() {
         // Total team stats (not per game averages) - gp, pts, ast, fg, plus all the others needed for league totals
-        team.filter({
+        return team.filter({
             attrs: ["tid"],
             stats: ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb", "oppPts"],
             season: g.season,
             totals: true,
             playoffs: g.PHASE.PLAYOFFS === g.phase
-        }, function (teams) {
+        }).then(function (teams) {
             var i, league, leagueStats;
 
             // Total league stats (not per game averages) - gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
             leagueStats = ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb"];
-            league = _.reduce(teams, function (memo, team) {
+            league = teams.reduce(function (memo, team) {
                 var i;
                 for (i = 0; i < leagueStats.length; i++) {
                     if (memo.hasOwnProperty(leagueStats[i])) {
@@ -40,9 +40,9 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
                 return memo;
             }, {});
 
-            // If no games have been played, somehow, don't continue. But why would no games be played?
+            // If no games have been played, somehow, don't continue. But why would no games be played? I don't know, but it happens some times.
             if (league.gp === 0) {
-                return cb();
+                return;
             }
 
             // Calculate pace for each team, using the "estimated pace adjustment" formula rather than the "pace adjustment" formula because it's simpler and ends up at nearly the same result. To do this the real way, I'd probably have to store the number of possessions from core.gameSim.
@@ -58,12 +58,13 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
 
             // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
             // Active players have tid >= 0
-            dao.players.getAll({
+            return dao.players.getAll({
                 index: "tid",
                 key: IDBKeyRange.lowerBound(0),
                 statsSeasons: [g.season],
                 statsPlayoffs: g.PHASE.PLAYOFFS === g.phase
-            }, function (players) {
+            // Can't drop this then to another level because of the short circuit return above
+            }).then(function (players) {
                 var aPER, drbp, EWA, factor, i, mins, PER, tid, uPER, vop, tx;
 
                 players = player.filter(players, {
@@ -159,37 +160,29 @@ define(["dao", "globals", "core/player", "core/team", "lib/underscore"], functio
                 }());
 
                 // Save to database
-                tx = g.dbl.transaction("playerStats", "readwrite");
+                tx = dao.tx("playerStats", "readwrite");
                 for (i = 0; i < players.length; i++) {
                     if (players[i].active) {
                         (function (i) {
-                            var key;
-                            key = [players[i].pid, g.season, players[i].tid];
-                            tx.objectStore("playerStats").index("pid, season, tid").openCursor(key, "prev").onsuccess = function (event) {
-                                var cursor, playerStats;
-
-                                cursor = event.target.result;
-                                playerStats = cursor.value;
-
-                                // Since index is not on playoffs, manually check
-                                if (playerStats.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
-                                    return cursor.continue();
+                            dao.playerStats.iterate({
+                                ot: tx,
+                                index: "pid, season, tid",
+                                key: [players[i].pid, g.season, players[i].tid],
+                                direction: "prev",
+                                callback: function (ps, shortCircuit) {
+                                    // Since index is not on playoffs, manually check
+                                    if (ps.playoffs === (g.phase === g.PHASE.PLAYOFFS)) {
+                                        shortCircuit();
+                                        ps.per = PER[i];
+                                        ps.ewa = EWA[i];
+                                        return ps;
+                                    }
                                 }
-
-                                playerStats.per = PER[i];
-                                playerStats.ewa = EWA[i];
-
-if (EWA[i] != EWA[i]) { debugger; }
-                                cursor.update(playerStats);
-                            };
+                            });
                         }(i));
                     }
                 }
-                tx.oncomplete = function () {
-                    if (cb !== undefined) {
-                        cb();
-                    }
-                };
+                return tx.complete();
             });
         });
     }
@@ -201,10 +194,10 @@ if (EWA[i] != EWA[i]) { debugger; }
      * Currently this is just PER.
      *
      * @memberOf util.advStats
-     * @param {function()} cb Callback function.
+     * @return {Promise}
      */
-    function calculateAll(cb) {
-        calculatePER(cb);
+    function calculateAll() {
+        return calculatePER();
     }
 
     return {

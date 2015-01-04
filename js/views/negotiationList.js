@@ -2,7 +2,7 @@
  * @name views.negotiationList
  * @namespace List of re-signing negotiations in progress.
  */
-define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, freeAgents, player, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, freeAgents, player, Promise, $, ko, _, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -24,58 +24,51 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", 
     };
 
     function updateNegotiationList() {
-        var deferred;
-
-        deferred = $.Deferred();
-
-        g.dbl.transaction("negotiations").objectStore("negotiations").getAll().onsuccess = function (event) {
-            var negotiations, negotiationPids;
-
-            negotiations = event.target.result;
-            negotiationPids = _.pluck(negotiations, "pid");
-
-            // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
+        // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
+        return Promise.all([
+            dao.negotiations.getAll(),
             dao.players.getAll({
                 index: "tid",
                 key: g.PLAYER.FREE_AGENT,
                 statsSeasons: [g.season],
-                statsTid: g.userTid,
-                filter: function (p) {
-                    return negotiationPids.indexOf(p.pid) >= 0;
-                }
-            }, function (players) {
-                var i, j;
+                statsTid: g.userTid
+            })
+        ]).spread(function (negotiations, players) {
+            var i, j, negotiationPids;
 
-                players = player.filter(players, {
-                    attrs: ["pid", "name", "pos", "age", "freeAgentMood", "injury", "watch"],
-                    ratings: ["ovr", "pot", "skills"],
-                    stats: ["min", "pts", "trb", "ast", "per"],
-                    season: g.season,
-                    tid: g.userTid,
-                    showNoStats: true,
-                    fuzz: true
-                });
+            negotiationPids = _.pluck(negotiations, "pid");
 
-                for (i = 0; i < players.length; i++) {
-                    for (j = 0; j < negotiations.length; j++) {
-                        if (players[i].pid === negotiations[j].pid) {
-                            players[i].contract = {};
-                            players[i].contract.amount = negotiations[j].player.amount / 1000;
-                            players[i].contract.exp = g.season + negotiations[j].player.years;
-                            break;
-                        }
-                    }
-
-                    players[i].mood = player.moodColorText(players[i]);
-                }
-
-                deferred.resolve({
-                    players: players
-                });
+            players = players.filter(function (p) {
+                return negotiationPids.indexOf(p.pid) >= 0;
             });
-        };
 
-        return deferred.promise();
+            players = player.filter(players, {
+                attrs: ["pid", "name", "pos", "age", "freeAgentMood", "injury", "watch"],
+                ratings: ["ovr", "pot", "skills"],
+                stats: ["min", "pts", "trb", "ast", "per"],
+                season: g.season,
+                tid: g.userTid,
+                showNoStats: true,
+                fuzz: true
+            });
+
+            for (i = 0; i < players.length; i++) {
+                for (j = 0; j < negotiations.length; j++) {
+                    if (players[i].pid === negotiations[j].pid) {
+                        players[i].contract = {};
+                        players[i].contract.amount = negotiations[j].player.amount / 1000;
+                        players[i].contract.exp = g.season + negotiations[j].player.years;
+                        break;
+                    }
+                }
+
+                players[i].mood = player.moodColorText(players[i]);
+            }
+
+            return {
+                players: players
+            };
+        });
     }
 
     function uiFirst(vm) {

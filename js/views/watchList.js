@@ -2,7 +2,7 @@
  * @name views.watchList
  * @namespace List of players to watch.
  */
-define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (dao, db, g, ui, freeAgents, player, $, ko, components, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/league", "core/player", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, freeAgents, league, player, $, ko, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -28,18 +28,14 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
     };
 
     function updatePlayers(inputs, updateEvents, vm) {
-        var deferred;
-
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
-            deferred = $.Deferred();
-
-            dao.players.getAll({
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("clearWatchList") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
+            return dao.players.getAll({
                 statsSeasons: [g.season, g.season - 1], // For oldStats
                 statsPlayoffs: inputs.playoffs === "playoffs",
                 filter: function (p) {
                     return p.watch && typeof p.watch !== "function"; // In Firefox, objects have a "watch" function
                 }
-            }, function (players) {
+            }).then(function (players) {
                 var i;
 
                 players = player.filter(players, {
@@ -64,17 +60,18 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
                     }
                 }
 
-                deferred.resolve({
+                return {
                     players: players,
                     statType: inputs.statType,
                     playoffs: inputs.playoffs
-                });
+                };
             });
-            return deferred.promise();
         }
     }
 
     function uiFirst(vm) {
+        var clearWatchListEl;
+
         ui.title("Watch List");
 
         ko.computed(function () {
@@ -109,7 +106,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
                 } else if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3) {
                     contract = p.draft.year + " Draft Prospect";
                 } else {
-                    contract = helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp
+                    contract = helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp;
                 }
 
                 rows.push([helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), '<a href="' + helpers.leagueUrl(["roster", p.abbrev]) + '">' + p.abbrev + '</a>', String(p.ratings.ovr), String(p.ratings.pot), contract, String(p.stats.gp), helpers.round(p.stats.min, d), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.trb, d), helpers.round(p.stats.ast, d), helpers.round(p.stats.tov, d), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, d), helpers.round(p.stats.pts, d), helpers.round(p.stats.per, 1), helpers.round(p.stats.ewa, 1)]);
@@ -120,24 +117,24 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/player", "lib/jqu
 
         ui.tableClickableRows($("#watch-list"));
 
-        document.getElementById("clear-watch-list").addEventListener("click", function () {
-            g.dbl.transaction("players", "readwrite").objectStore("players").openCursor().onsuccess = function (event) {
-                var cursor, p;
+        clearWatchListEl = document.getElementById("clear-watch-list");
+        clearWatchListEl.addEventListener("click", function () {
+            clearWatchListEl.disabled = true;
 
-                cursor = event.target.result;
-                if (cursor) {
-                    p = cursor.value;
+            dao.players.iterate({
+                ot: dao.tx("players", "readwrite"),
+                callback: function (p) {
                     if (p.watch) {
                         p.watch = false;
-                        cursor.update(p);
+                        return p;
                     }
-                    cursor.continue();
-                } else {
-                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                        ui.realtimeUpdate(["watchList"]);
-                    });
                 }
-            };
+            }).then(function () {
+                return league.setGameAttributes({lastDbChange: Date.now()});
+            }).then(function () {
+                ui.realtimeUpdate(["clearWatchList"]);
+                clearWatchListEl.disabled = false;
+            });
         });
     }
 

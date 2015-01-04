@@ -2,30 +2,25 @@
  * @name views.gameLog
  * @namespace Game log and box score viewing for all seasons and teams.
  */
-define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, $, ko, komapping, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, Promise, $, ko, components, bbgmView, helpers) {
     "use strict";
-
-    var mapping;
 
     /**
      * Generate a box score.
      *
      * @memberOf views.gameLog
      * @param {number} gid Integer game ID for the box score (a negative number means no box score).
-     * @param {function(Object)} cb Callback whose argument is an object containing the box score data (or a blank object).
+     * @return {Promise.Object} Resolves to an object containing the box score data (or a blank object).
      */
-    function boxScore(gid, cb) {
+    function boxScore(gid) {
         if (gid >= 0) {
-            g.dbl.transaction("games").objectStore("games").get(gid).onsuccess = function (event) {
-                var i, game;
-
-                game = event.target.result;
+            return dao.games.get({key: gid}).then(function (game) {
+                var i;
 
                 // If game doesn't exist (bad gid or deleted box scores), show nothing
                 if (!game) {
-                    return cb({});
+                    return {};
                 }
-
 
                 for (i = 0; i < game.teams.length; i++) {
                     // Team metadata
@@ -59,11 +54,11 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                     game.overtime = "";
                 }
 
-                cb(game);
-            };
-        } else {
-            cb({});
+                return game;
+            });
         }
+
+        return Promise.resolve({});
     }
 
     function get(req) {
@@ -137,15 +132,11 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
     }
 
     function updateTeamSeason(inputs, updateEvents, vm) {
-        var deferred;
-
-        deferred = $.Deferred();
-        deferred.resolve({
+        return {
             // Needed for dropdown
             abbrev: inputs.abbrev,
             season: inputs.season
-        });
-        return deferred.promise();
+        };
     }
 
     /**
@@ -157,14 +148,13 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
      * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
      */
     function updateBoxScore(inputs, updateEvents, vm) {
-        var deferred, vars;
-
-        deferred = $.Deferred();
-        vars = {};
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.gid !== vm.boxScore.gid()) {
-            boxScore(inputs.gid, function (game) {
-                vars.boxScore = game;
+            return boxScore(inputs.gid).then(function (game) {
+                var vars;
+
+                vars = {
+                    boxScore: game
+                };
 
                 // Either update the box score if we found one, or show placeholder
                 if (!game.hasOwnProperty("teams")) {
@@ -176,9 +166,8 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                     window.scrollTo(window.pageXOffset, 0);
                 }
 
-                deferred.resolve(vars);
+                return vars;
             });
-            return deferred.promise();
         }
     }
 
@@ -193,15 +182,11 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
      * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
      */
     function updateGamesList(inputs, updateEvents, vm) {
-        var deferred;
-
-        deferred = $.Deferred();
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.abbrev !== vm.gamesList.abbrev() || inputs.season !== vm.gamesList.season()) {
             // Load all games in list
             vm.gamesList.loading(true);
             vm.gamesList.games([]);
-            helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
+            return helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games()).then(function (games) {
                 vm.gamesList.games(games);
                 vm.gamesList.abbrev(inputs.abbrev);
                 vm.gamesList.season(inputs.season);
@@ -210,22 +195,20 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                 // Update prev/next links, in case box score loaded before games list
                 updatePrevNextLinks(vm);
 
-                deferred.resolve();
 /* This doesn't work for some reason.
-                deferred.resolve({
+                return {
                     gamesList: {
                         games: games,
                         abbrev: inputs.abbrev,
                         season: inputs.season,
                         loading: false
                     }
-                });*/
+                };*/
             });
-            return deferred.promise();
         }
         if (updateEvents.indexOf("gameSim") >= 0 && inputs.season === g.season) {
             // Partial update of only new games
-            helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games(), function (games) {
+            return helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games()).then(function (games) {
                 var i;
                 for (i = games.length - 1; i >= 0; i--) {
                     vm.gamesList.games.unshift(games[i]);
@@ -233,10 +216,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
                 // Update prev/next links, in case box score loaded before games list
                 updatePrevNextLinks(vm);
-
-                deferred.resolve();
             });
-            return deferred.promise();
         }
     }
 

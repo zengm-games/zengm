@@ -2,7 +2,7 @@
  * @name views.hallOfFame
  * @namespace Hall of fame table.
  */
-define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, player, $, ko, _, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, $, ko, _, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -26,21 +26,15 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
     };
 
     function updatePlayers(inputs, updateEvents, vm) {
-        var deferred, playersAll;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.BEFORE_DRAFT)) {
-            deferred = $.Deferred();
-
-            playersAll = [];
-
-            dao.players.getAll({
+            return dao.players.getAll({
                 index: "tid",
                 key: g.PLAYER.RETIRED,
                 statsSeasons: "all",
                 filter: function (p) {
                     return p.hof;
                 }
-            }, function (players) {
+            }).then(function (players) {
                 var i, j;
 
                 players = player.filter(players, {
@@ -70,11 +64,10 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
                     }
                 }
 
-                deferred.resolve({
+                return {
                     players: players
-                });
+                };
             });
-            return deferred.promise();
         }
     }
 

@@ -32,19 +32,15 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
     };
 
     function updatePlayer(inputs, updateEvents, vm) {
-        var deferred;
-
-        deferred = $.Deferred();
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
-            dao.players.getAll({
+            return dao.players.get({
                 key: inputs.pid,
                 statsSeasons: "all",
                 statsPlayoffs: true
-            }, function (players) {
-                var currentRatings, p;
+            }).then(function (p) {
+                var currentRatings;
 
-                p = player.filter(players[0], {
+                p = player.filter(p, {
                     attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch"],
                     ratings: ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],
                     stats: ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
@@ -61,7 +57,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
 
                 currentRatings = p.ratings[p.ratings.length - 1];
 
-                deferred.resolve({
+                return {
                     player: p,
                     currentRatings: currentRatings,
                     showTradeFor: p.tid !== g.userTid && p.tid >= 0,
@@ -70,10 +66,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
                     showContract: p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && p.tid !== g.PLAYER.UNDRAFTED_FANTASY_TEMP && p.tid !== g.PLAYER.RETIRED,
                     injured: p.injury.type !== "Healthy",
                     godMode: g.godMode
-                });
+                };
             });
-
-            return deferred.promise();
         }
     }
 

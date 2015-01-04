@@ -2,7 +2,7 @@
  * @name api
  * @namespace Functions called directly in response to user action (clicking a button, etc).
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/game", "core/season", "lib/jquery"], function (db, g, ui, freeAgents, game, season, $) {
+define(["dao", "db", "globals", "ui", "core/freeAgents", "core/game", "core/league", "core/season", "lib/jquery"], function (dao, db, g, ui, freeAgents, game, league, season, $) {
     "use strict";
 
     function play(amount) {
@@ -34,17 +34,17 @@ define(["db", "globals", "ui", "core/freeAgents", "core/game", "core/season", "l
         } else if (amount === "untilPlayoffs") {
             if (g.phase < g.PHASE.PLAYOFFS) {
                 ui.updateStatus("Playing..."); // For quick UI updating, before game.play
-                season.getDaysLeftSchedule(function (numDays) {
+                season.getDaysLeftSchedule().then(function (numDays) {
                     game.play(numDays, true);
                 });
             }
         } else if (amount === "stop") {
-            db.setGameAttributes({stopGames: true}, function () {
+            league.setGameAttributes({stopGames: true}).then(function () {
                 if (g.phase !== g.PHASE.FREE_AGENCY) {
                     // This is needed because we can't be sure if core.game.play will be called again
                     ui.updateStatus("Idle");
                 }
-                db.setGameAttributes({gamesInProgress: false}, ui.updatePlayMenu);
+                league.setGameAttributes({gamesInProgress: false}).then(ui.updatePlayMenu);
             });
         } else if (amount === "untilDraft") {
             if (g.phase === g.PHASE.BEFORE_DRAFT) {
@@ -56,18 +56,14 @@ define(["db", "globals", "ui", "core/freeAgents", "core/game", "core/season", "l
             }
         } else if (amount === "untilFreeAgency") {
             if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-                g.dbl.transaction("negotiations").objectStore("negotiations").count().onsuccess = function (event) {
-                    var numRemaining;
-
-                    numRemaining = event.target.result;
-
+                dao.negotiations.count().then(function (numRemaining) {
                     // Show warning dialog only if there are players remaining un-re-signed
                     if (numRemaining === 0 || window.confirm("Are you sure you want to proceed to free agency while " + numRemaining + " of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.")) {
-                        season.newPhase(g.PHASE.FREE_AGENCY, function () {
+                        season.newPhase(g.PHASE.FREE_AGENCY).then(function () {
                             ui.updateStatus(g.daysLeft + " days left");
                         });
                     }
-                };
+                });
             }
         } else if (amount === "untilRegularSeason") {
             if (g.phase === g.PHASE.PRESEASON) {

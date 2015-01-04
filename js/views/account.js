@@ -6,40 +6,26 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
     "use strict";
 
     function updateAccount(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("firstRun") >= 0) {
-            deferred = $.Deferred();
-
-            account.check(function () {
-                deferred.resolve({
+            return account.check().then(function () {
+                return {
                     username: g.vm.topMenu.username
-                });
+                };
             });
-
-            return deferred.promise();
         }
     }
 
     function updateAchievements(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("firstRun") >= 0) {
-            deferred = $.Deferred();
-
-            account.getAchievements(function (achievements) {
-                deferred.resolve({
+            return account.getAchievements().then(function (achievements) {
+                return {
                     achievements: achievements
-                });
+                };
             });
-
-            return deferred.promise();
         }
     }
 
     function uiFirst() {
-        var $login, $register;
-
         ui.title("Account");
 
         document.getElementById("logout").addEventListener("click", function (e) {

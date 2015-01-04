@@ -2,7 +2,7 @@
  * @name util.bbgmView
  * @namespace Framework for loading, displaying, and updating content. bbgmView is designed so that it is easy to write UIs that are granular in both reading from the database and updating the DOM, to minimize useless updates to previously cached or displayed values. See the documentation for util.bbgmView.init for more detail on use.
  */
-define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/helpers", "util/viewHelpers"], function (g, ui, $, ko, komapping, _, helpers, viewHelpers) {
+define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/helpers", "util/viewHelpers"], function (g, ui, Promise, $, ko, komapping, _, helpers, viewHelpers) {
     "use strict";
 
     var vm;
@@ -31,7 +31,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
     function update(args) {
         return function (inputs, updateEvents, cb) {
-            var afterEverything, i, container, containerEl;
+            var container, containerEl, promisesBefore, promisesWhenever;
 
             container = g.lid !== null ? "league_content" : "content";
             containerEl = document.getElementById(container);
@@ -55,27 +55,26 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
                 return;
             }
 
-            // This will be called after every runBefore and runWhenever function is finished.
-            afterEverything = _.after(args.runWhenever.length + 1, function () {
-                if (containerEl.dataset.idLoading === containerEl.dataset.idLoaded) {
-                    containerEl.dataset.idLoading = ""; // Done loading
-                }
+            // Resolve all the promises before updating the UI to minimize flicker
+            promisesBefore = args.runBefore.map(function (fn) { return fn(inputs, updateEvents, vm); });
 
-                // Scroll to top
-                if (_.isEqual(updateEvents, ["firstRun"])) {
-                    window.scrollTo(window.pageXOffset, 0);
-                }
-
-                cb();
+            // Run promises in parallel, update when each one is ready
+            // This runs no matter what
+            promisesWhenever = args.runWhenever.map(function (fn) {
+                return Promise.resolve(fn(inputs, updateEvents, vm)).then(function (vars) {
+                    if (vars !== undefined) {
+                        komapping.fromJS(vars, args.mapping, vm);
+                    }
+                });
             });
 
-            $.when.apply(null, _.map(args.runBefore, function (fn) { return fn(inputs, updateEvents, vm); })).done(function () {
-                var vars;
+            Promise.all(promisesBefore).then(function (results) {
+                var promisesAfter, vars;
 
-                if (arguments.length > 1) {
-                    vars = $.extend.apply(null, arguments);
+                if (results.length > 1) {
+                    vars = $.extend.apply(null, results);
                 } else {
-                    vars = arguments[0];
+                    vars = results[0];
                 }
 
                 if (vars !== undefined) {
@@ -89,29 +88,41 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
                     komapping.fromJS(vars, args.mapping, vm);
                 }
-//console.log(vars);
-//console.log(vm);
 
                 display(args, updateEvents);
 
-                afterEverything();
-            });
+                // Run promises in parallel, update when each one is ready
+                // This only runs if it hasn't been short-circuited yet
+                promisesAfter = args.runAfter.map(function (fn) {
+                    return Promise.resolve(fn(inputs, updateEvents, vm)).then(function (vars) {
+                        if (vars !== undefined) {
+                            komapping.fromJS(vars, args.mapping, vm);
+                        }
+                    });
+                });
 
-            for (i = 0; i < args.runWhenever.length; i++) {
-                $.when(args.runWhenever[i](inputs, updateEvents, vm)).done(function (vars) {
-                    if (vars !== undefined) {
-                        komapping.fromJS(vars, args.mapping, vm);
+                return Promise.all([
+                    Promise.all(promisesAfter),
+                    Promise.all(promisesWhenever)
+                ]).then(function () {
+                    if (containerEl.dataset.idLoading === containerEl.dataset.idLoaded) {
+                        containerEl.dataset.idLoading = ""; // Done loading
                     }
 
-                    afterEverything();
+                    // Scroll to top
+                    if (_.isEqual(updateEvents, ["firstRun"])) {
+                        window.scrollTo(window.pageXOffset, 0);
+                    }
+
+                    cb();
                 });
-            }
+            });
         };
     }
 
     function get(fnBeforeReq, fnGet, fnUpdate) {
         return function (req) {
-            fnBeforeReq(req, function (updateEvents, cb) {
+            fnBeforeReq(req).spread(function (updateEvents, cb) {
                 var inputs;
 
                 inputs = fnGet(req);
@@ -134,7 +145,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
 
     function post(fnBeforeReq, fnPost) {
         return function (req) {
-            fnBeforeReq(req, function () {
+            fnBeforeReq(req).then(function () {
                 fnPost(req);
             });
         };
@@ -172,6 +183,7 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "
         args.beforeReq = args.beforeReq !== undefined ? args.beforeReq : viewHelpers.beforeLeague;
         args.get = args.get !== undefined ? args.get : function () { return {}; };
         args.runBefore = args.runBefore !== undefined ? args.runBefore : [];
+        args.runAfter = args.runAfter !== undefined ? args.runAfter : [];
         args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
         args.mapping = args.mapping !== undefined ? args.mapping : {};
 

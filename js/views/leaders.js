@@ -2,7 +2,7 @@
  * @name views.leaders
  * @namespace League stat leaders.
  */
-define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (dao, g, ui, player, $, ko, komapping, _, bbgmView, helpers, viewHelpers, components) {
+define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/helpers", "views/components"], function (dao, g, ui, player, Promise, ko, komapping, bbgmView, helpers, components) {
     "use strict";
 
     var mapping;
@@ -38,19 +38,16 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
     };
 
     function updateLeaders(inputs, updateEvents, vm) {
-        var deferred, tx, vars;
-
         // Respond to watchList in case players are listed twice in different categories
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
-            deferred = $.Deferred();
-            vars = {};
 
-            tx = g.dbl.transaction(["players", "playerStats", "teams"]);
-
-            tx.objectStore("teams").getAll().onsuccess = function (event) {
-                var gps, i, j, teams;
-
-                teams = event.target.result;
+            return Promise.all([
+                dao.teams.getAll(),
+                dao.players.getAll({
+                    statsSeasons: [inputs.season]
+                })
+            ]).spread(function (teams, players) {
+                var categories, gps, i, j, k, leader, pass, userAbbrev, playerValue, stats;
 
                 // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
                 gps = [];
@@ -69,91 +66,79 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
                     }
                 }
 
+                players = player.filter(players, {
+                    attrs: ["pid", "name", "injury", "watch"],
+                    ratings: ["skills"],
+                    stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev", "tid"],
+                    season: inputs.season
+                });
 
-                dao.players.getAll({
-                    ot: tx,
-                    statsSeasons: [inputs.season]
-                }, function (players) {
-                    var categories, i, j, k, leader, pass, userAbbrev, playerValue, stats;
+                userAbbrev = helpers.getAbbrev(g.userTid);
 
-                    players = player.filter(players, {
-                        attrs: ["pid", "name", "injury", "watch"],
-                        ratings: ["skills"],
-                        stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev", "tid"],
-                        season: inputs.season
-                    });
+                // minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
+                categories = [];
+                categories.push({name: "Points", stat: "Pts", title: "Points Per Game", data: [], minStats: ["gp", "pts"], minValue: [70, 1400]});
+                categories.push({name: "Rebounds", stat: "Reb", title: "Rebounds Per Game", data: [], minStats: ["gp", "trb"], minValue: [70, 800]});
+                categories.push({name: "Assists", stat: "Ast", title: "Assists Per Game", data: [], minStats: ["gp", "ast"], minValue: [70, 400]});
+                categories.push({name: "Field Goal Percentage", stat: "FG%", title: "Field Goal Percentage", data: [], minStats: ["fg"], minValue: [300]});
+                categories.push({name: "Three-Pointer Percentage", stat: "3PT%", title: "Three-Pointer Percentage", data: [], minStats: ["tp"], minValue: [55]});
+                categories.push({name: "Free Throw Percentage", stat: "FT%", title: "Free Throw Percentage", data: [], minStats: ["ft"], minValue: [125]});
+                categories.push({name: "Blocks", stat: "Blk", title: "Blocks Per Game", data: [], minStats: ["gp", "blk"], minValue: [70, 100]});
+                categories.push({name: "Steals", stat: "Stl", title: "Steals Per Game", data: [], minStats: ["gp", "stl"], minValue: [70, 125]});
+                categories.push({name: "Minutes", stat: "Min", title: "Minutes Per Game", data: [], minStats: ["gp", "min"], minValue: [70, 2000]});
+                categories.push({name: "Player Efficiency Rating", stat: "PER", title: "Player Efficiency Rating", data: [], minStats: ["min"], minValue: [2000]});
+                categories.push({name: "Estimated Wins Added", stat: "EWA", title: "Estimated Wins Added", data: [], minStats: ["min"], minValue: [2000]});
+                stats = ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa"];
 
-                    userAbbrev = helpers.getAbbrev(g.userTid);
-
-                    // minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
-                    categories = [];
-                    categories.push({name: "Points", stat: "Pts", title: "Points Per Game", data: [], minStats: ["gp", "pts"], minValue: [70, 1400]});
-                    categories.push({name: "Rebounds", stat: "Reb", title: "Rebounds Per Game", data: [], minStats: ["gp", "trb"], minValue: [70, 800]});
-                    categories.push({name: "Assists", stat: "Ast", title: "Assists Per Game", data: [], minStats: ["gp", "ast"], minValue: [70, 400]});
-                    categories.push({name: "Field Goal Percentage", stat: "FG%", title: "Field Goal Percentage", data: [], minStats: ["fg"], minValue: [300]});
-                    categories.push({name: "Three-Pointer Percentage", stat: "3PT%", title: "Three-Pointer Percentage", data: [], minStats: ["tp"], minValue: [55]});
-                    categories.push({name: "Free Throw Percentage", stat: "FT%", title: "Free Throw Percentage", data: [], minStats: ["ft"], minValue: [125]});
-                    categories.push({name: "Blocks", stat: "Blk", title: "Blocks Per Game", data: [], minStats: ["gp", "blk"], minValue: [70, 100]});
-                    categories.push({name: "Steals", stat: "Stl", title: "Steals Per Game", data: [], minStats: ["gp", "stl"], minValue: [70, 125]});
-                    categories.push({name: "Minutes", stat: "Min", title: "Minutes Per Game", data: [], minStats: ["gp", "min"], minValue: [70, 2000]});
-                    categories.push({name: "Player Efficiency Rating", stat: "PER", title: "Player Efficiency Rating", data: [], minStats: ["min"], minValue: [2000]});
-                    categories.push({name: "Estimated Wins Added", stat: "EWA", title: "Estimated Wins Added", data: [], minStats: ["min"], minValue: [2000]});
-                    stats = ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa"];
-
-                    for (i = 0; i < categories.length; i++) {
-                        players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
-                        for (j = 0; j < players.length; j++) {
-                            // Test if the player meets the minimum statistical requirements for this category
-                            pass = false;
-                            for (k = 0; k < categories[i].minStats.length; k++) {
-                                // Everything except gp is a per-game average, so we need to scale them by games played
-                                if (categories[i].minStats[k] === "gp") {
-                                    playerValue = players[j].stats[categories[i].minStats[k]];
-                                } else {
-                                    playerValue = players[j].stats[categories[i].minStats[k]] * players[j].stats.gp;
-                                }
-
-                                // Compare against value normalized for team games played
-                                if (playerValue >= Math.ceil(categories[i].minValue[k] * gps[players[j].stats.tid] / 82)) {
-                                    pass = true;
-                                    break;  // If one is true, don't need to check the others
-                                }
+                for (i = 0; i < categories.length; i++) {
+                    players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
+                    for (j = 0; j < players.length; j++) {
+                        // Test if the player meets the minimum statistical requirements for this category
+                        pass = false;
+                        for (k = 0; k < categories[i].minStats.length; k++) {
+                            // Everything except gp is a per-game average, so we need to scale them by games played
+                            if (categories[i].minStats[k] === "gp") {
+                                playerValue = players[j].stats[categories[i].minStats[k]];
+                            } else {
+                                playerValue = players[j].stats[categories[i].minStats[k]] * players[j].stats.gp;
                             }
 
-                            if (pass) {
-                                leader = helpers.deepCopy(players[j]);
-                                leader.i = categories[i].data.length + 1;
-                                leader.stat = leader.stats[stats[i]];
-                                leader.abbrev = leader.stats.abbrev;
-                                delete leader.stats;
-                                if (userAbbrev === leader.abbrev) {
-                                    leader.userTeam = true;
-                                } else {
-                                    leader.userTeam = false;
-                                }
-                                categories[i].data.push(leader);
-                            }
-
-                            // Stop when we found 10
-                            if (categories[i].data.length === 10) {
-                                break;
+                            // Compare against value normalized for team games played
+                            if (playerValue >= Math.ceil(categories[i].minValue[k] * gps[players[j].stats.tid] / 82)) {
+                                pass = true;
+                                break;  // If one is true, don't need to check the others
                             }
                         }
 
-                        delete categories[i].minStats;
-                        delete categories[i].minValue;
+                        if (pass) {
+                            leader = helpers.deepCopy(players[j]);
+                            leader.i = categories[i].data.length + 1;
+                            leader.stat = leader.stats[stats[i]];
+                            leader.abbrev = leader.stats.abbrev;
+                            delete leader.stats;
+                            if (userAbbrev === leader.abbrev) {
+                                leader.userTeam = true;
+                            } else {
+                                leader.userTeam = false;
+                            }
+                            categories[i].data.push(leader);
+                        }
+
+                        // Stop when we found 10
+                        if (categories[i].data.length === 10) {
+                            break;
+                        }
                     }
 
-                    vars = {
-                        season: inputs.season,
-                        categories: categories
-                    };
+                    delete categories[i].minStats;
+                    delete categories[i].minValue;
+                }
 
-                    deferred.resolve(vars);
-                });
-            };
-
-            return deferred.promise();
+                return {
+                    season: inputs.season,
+                    categories: categories
+                };
+            });
         }
     }
 

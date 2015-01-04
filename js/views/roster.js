@@ -2,7 +2,7 @@
  * @name views.roster
  * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
  */
-define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, db, g, ui, finances, player, team, ko, $, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "core/team", "lib/bluebird", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, league, player, season, team, Promise, ko, $, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -32,71 +32,62 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
         });
     }
 
-    function doReorder(sortedPids, cb) {
-        var tx;
+    function doReorder(sortedPids) {
+        var i, tx, updateRosterOrder;
 
-        tx = g.dbl.transaction("players", "readwrite");
+        tx = dao.tx("players", "readwrite");
 
-        // Update rosterOrder
-        tx.objectStore("players").index("tid").openCursor(g.userTid).onsuccess = function (event) {
-            var cursor, i, p;
-
-            cursor = event.target.result;
-            if (cursor) {
-                p = cursor.value;
-                for (i = 0; i < sortedPids.length; i++) {
-                    if (sortedPids[i] === p.pid) {
-                        p.rosterOrder = i;
-                        break;
-                    }
-                }
-                cursor.update(p);
-                cursor.continue();
-            }
-        };
-
-        tx.oncomplete = function () {
-            db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                cb();
+        updateRosterOrder = function (pid, rosterOrder) {
+            return dao.players.get({
+                ot: tx,
+                key: pid
+            }).then(function (p) {
+                p.rosterOrder = rosterOrder;
+                return dao.players.put({
+                    ot: tx,
+                    value: p
+                });
             });
         };
+
+        // Update rosterOrder
+        for (i = 0; i < sortedPids.length; i++) {
+            updateRosterOrder(sortedPids[i], i);
+        }
+
+        return tx.complete().then(function () {
+            return league.setGameAttributes({lastDbChange: Date.now()});
+        });
     }
 
-    function doRelease(pid, justDrafted, cb) {
-        var playerStore, transaction;
+    function doRelease(pid, justDrafted) {
+        var tx;
 
-        transaction = g.dbl.transaction(["players", "releasedPlayers", "teams"], "readwrite");
-        playerStore = transaction.objectStore("players");
+        tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite");
 
-        playerStore.index("tid").count(g.userTid).onsuccess = function (event) {
-            var numPlayersOnRoster;
-
-            numPlayersOnRoster = event.target.result;
-
+        return dao.players.count({
+            ot: tx,
+            index: "tid",
+            key: g.userTid
+        }).then(function (numPlayersOnRoster) {
             if (numPlayersOnRoster <= 5) {
-                return cb("You must keep at least 5 players on your roster.");
+                return "You must keep at least 5 players on your roster.";
             }
 
-            pid = parseInt(pid, 10);
-            playerStore.get(pid).onsuccess = function (event) {
-                var p;
-
-                p = event.target.result;
+            return dao.players.get({ot: tx, key: pid}).then(function (p) {
                 // Don't let the user update CPU-controlled rosters
                 if (p.tid === g.userTid) {
-                    player.release(transaction, p, justDrafted, function () {
-                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                            cb();
-                        });
+                    return player.release(tx, p, justDrafted).then(function () {
+                        return league.setGameAttributes({lastDbChange: Date.now()});
                     });
-                } else {
-                    return cb("You aren't allowed to do this.");
                 }
-            };
-        };
+
+                return "You aren't allowed to do this.";
+            });
+        });
     }
 
-    function editableChanged(editable, vm) {
+    function editableChanged(editable) {
         var rosterTbody;
 
         rosterTbody = $("#roster tbody");
@@ -120,9 +111,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                         sortedPids[i] = parseInt(sortedPids[i], 10);
                     }
 
-                    doReorder(sortedPids, function () {
-                        highlightHandles();
-                    });
+                    doReorder(sortedPids).then(highlightHandles);
                 },
                 handle: ".roster-handle",
                 disabled: true
@@ -190,18 +179,15 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             // Update ptModifier in database
             pid = p.pid();
             ptModifier = parseFloat(p.ptModifier());
-            g.dbl.transaction("players", "readwrite").objectStore("players").openCursor(pid).onsuccess = function (event) {
-                var cursor, p;
-
-                cursor = event.target.result;
-                p = cursor.value;
+            dao.players.get({key: pid}).then(function (p) {
                 if (p.ptModifier !== ptModifier) {
                     p.ptModifier = ptModifier;
-                    cursor.update(p);
 
-                    db.setGameAttributes({lastDbChange: Date.now()});
+                    dao.players.put({value: p}).then(function () {
+                        league.setGameAttributes({lastDbChange: Date.now()});
+                    });
                 }
-            };
+            });
         }.bind(this);
     }
 
@@ -214,11 +200,9 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
     };
 
     function updateRoster(inputs, updateEvents, vm) {
-        var deferred, vars, tx;
+        var vars, tx;
 
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season()) {
-            deferred = $.Deferred();
-
             vars = {
                 abbrev: inputs.abbrev,
                 season: inputs.season,
@@ -234,15 +218,15 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 ]
             };
 
-            tx = g.dbl.transaction(["players", "playerStats", "releasedPlayers", "schedule", "teams"]);
+            tx = dao.tx(["players", "playerStats", "releasedPlayers", "schedule", "teams"]);
 
-            team.filter({
+            return team.filter({
                 season: inputs.season,
                 tid: inputs.tid,
                 attrs: ["tid", "region", "name", "strategy", "imgURL"],
                 seasonAttrs: ["profit", "won", "lost", "playoffRoundsWon"],
                 ot: tx
-            }, function (t) {
+            }).then(function (t) {
                 var attrs, ratings, stats;
 
                 vars.team = t;
@@ -253,11 +237,20 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
 
                 if (inputs.season === g.season) {
                     // Show players currently on the roster
-                    tx.objectStore("schedule").getAll().onsuccess = function (event) {
-                        var i, numGamesRemaining, schedule;
+                    return Promise.all([
+                        season.getSchedule({ot: tx}),
+                        dao.players.getAll({
+                            ot: tx,
+                            index: "tid",
+                            key: inputs.tid,
+                            statsSeasons: [inputs.season],
+                            statsTid: inputs.tid
+                        }),
+                        team.getPayroll(tx, inputs.tid).get(0)
+                    ]).spread(function (schedule, players, payroll) {
+                        var i, numGamesRemaining;
 
                         // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
-                        schedule = event.target.result;
                         numGamesRemaining = 0;
                         for (i = 0; i < schedule.length; i++) {
                             if (inputs.tid === schedule[i].homeTid || inputs.tid === schedule[i].awayTid) {
@@ -265,59 +258,47 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                             }
                         }
 
-                        dao.players.getAll({
-                            ot: tx,
-                            index: "tid",
-                            key: inputs.tid,
-                            statsSeasons: [inputs.season],
-                            statsTid: inputs.tid
-                        }, function (players) {
-                            var i;
+                        players = player.filter(players, {
+                            attrs: attrs,
+                            ratings: ratings,
+                            stats: stats,
+                            season: inputs.season,
+                            tid: inputs.tid,
+                            showNoStats: true,
+                            showRookies: true,
+                            fuzz: true,
+                            numGamesRemaining: numGamesRemaining
+                        });
+                        players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
 
-                            players = player.filter(players, {
-                                attrs: attrs,
-                                ratings: ratings,
-                                stats: stats,
-                                season: inputs.season,
-                                tid: inputs.tid,
-                                showNoStats: true,
-                                showRookies: true,
-                                fuzz: true,
-                                numGamesRemaining: numGamesRemaining
-                            });
-                            players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
-
-                            for (i = 0; i < players.length; i++) {
-                                // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
-                                if (inputs.tid === g.userTid && (g.phase !== g.PHASE.PLAYOFFS || players.length > 15)) {
-                                    players[i].canRelease = true;
-                                } else {
-                                    players[i].canRelease = false;
-                                }
-
-                                // Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
-                                players[i].ptModifier = String(players[i].ptModifier);
+                        for (i = 0; i < players.length; i++) {
+                            // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
+                            if (inputs.tid === g.userTid && (g.phase !== g.PHASE.PLAYOFFS || players.length > 15)) {
+                                players[i].canRelease = true;
+                            } else {
+                                players[i].canRelease = false;
                             }
 
-                            vars.players = players;
+                            // Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
+                            players[i].ptModifier = String(players[i].ptModifier);
+                        }
 
-                            db.getPayroll(tx, inputs.tid, function (payroll) {
-                                vars.payroll = payroll / 1000;
+                        vars.players = players;
 
-                                deferred.resolve(vars);
-                            });
-                        });
-                    };
+                        vars.payroll = payroll / 1000;
+
+                        return vars;
+                    });
                 } else {
                     // Show all players with stats for the given team and year
                     // Needs all seasons because of YWT!
-                    dao.players.getAll({
+                    return dao.players.getAll({
                         ot: tx,
                         index: "statsTids",
                         key: inputs.tid,
                         statsSeasons: "all",
                         statsTid: inputs.tid
-                    }, function (players) {
+                    }).then(function (players) {
                         var i;
 
                         players = player.filter(players, {
@@ -338,11 +319,10 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                         vars.players = players;
                         vars.payroll = null;
 
-                        deferred.resolve(vars);
+                        return vars;
                     });
                 }
             });
-            return deferred.promise();
         }
     }
 
@@ -370,7 +350,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
                 }
                 if (window.confirm(releaseMessage)) {
                     tr = this.parentNode.parentNode;
-                    doRelease(pid, justDrafted, function (error) {
+                    doRelease(pid, justDrafted).then(function (error) {
                         if (error) {
                             alert("Error: " + error);
                         } else {
@@ -381,12 +361,19 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             }
         });
 
-        $("#roster-auto-sort").click(function (event) {
+        $("#roster-auto-sort").click(function () {
+            var tx;
+
             vm.players([]); // This is a hack to force a UI update because the jQuery UI sortable roster reordering does not update the view model, which can cause the view model to think the roster is sorted correctly when it really isn't. (Example: load the roster, auto sort, reload, drag reorder it, auto sort -> the auto sort doesn't update the UI.) Fixing this issue would fix flickering.
-            team.rosterAutoSort(null, g.userTid, function () {
-                db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                    ui.realtimeUpdate(["playerMovement"]);
-                });
+
+            tx = dao.tx("players", "readwrite");
+            team.rosterAutoSort(tx, g.userTid);
+
+            Promise.all([
+                tx.complete(), // Explicitly make sure writing is done for rosterAutoSort
+                league.setGameAttributes({lastDbChange: Date.now()})
+            ]).then(function () {
+                ui.realtimeUpdate(["playerMovement"]);
             });
         });
 
@@ -399,7 +386,7 @@ define(["dao", "db", "globals", "ui", "core/finances", "core/player", "core/team
             if (vm.editable()) {
                 highlightHandles();
             }
-            editableChanged(vm.editable(), vm);
+            editableChanged(vm.editable());
         }).extend({throttle: 1});
 
         ko.computed(function () {

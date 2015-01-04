@@ -54,7 +54,7 @@ define(["globals", "core/player", "lib/underscore", "util/helpers"], function (g
                 }, {
                     min: 77 * 19.3,
                     per: 13,
-                    ewa: 1.1 
+                    ewa: 1.1
                 }, {
                     min: 82 * 26,
                     per: 18.9,

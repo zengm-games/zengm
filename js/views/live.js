@@ -2,7 +2,7 @@
  * @name views.live
  * @namespace Live play-by-play game simulation.
  */
-define(["globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers"], function (g, ui, season, $, ko, bbgmView, helpers) {
+define(["globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgmView"], function (g, ui, season, $, ko, bbgmView) {
     "use strict";
 
     function disableButtons() {
@@ -33,12 +33,8 @@ define(["globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgm
     }
 
     function updateGamesList(inputs, updateEvents, vm) {
-        var deferred;
-
         if (!vm.inProgress()) {
-            deferred = $.Deferred();
-
-            season.getSchedule(null, 1, function (games) {
+            return season.getSchedule({oneDay: true}).then(function (games) {
                 var i;
 
                 for (i = 0; i < games.length; i++) {
@@ -53,13 +49,11 @@ define(["globals", "ui", "core/season", "lib/jquery", "lib/knockout", "util/bbgm
                     games[i].homeName = g.teamNamesCache[games[i].homeTid];
                 }
 
-                deferred.resolve({
+                return {
                     games: games,
                     boxScore: {gid: -1}
-                });
+                };
             });
-
-            return deferred.promise();
         }
     }
 

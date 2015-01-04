@@ -2,50 +2,44 @@
  * @name core.finances
  * @namespace Anything related to budget/finances.
  */
-define(["globals", "lib/underscore"], function (g, _) {
+define(["dao", "globals", "lib/underscore"], function (dao, g, _) {
     "use strict";
 
     /**
      * Assess the payroll and apply minimum and luxury taxes.
      *
      * @memberOf core.finances
-     * @param {function()} cb Callback function.
+     * @return {Promise}
      */
-    function assesPayrollMinLuxury(cb) {
-        var i, getPayroll, payrolls, tx;
-
-        require("db").getPayrolls(function (payrolls) {
+    function assessPayrollMinLuxury() {
+        return require("core/team").getPayrolls().then(function (payrolls) {
             var tx;
 
             // Update teams object store
-            tx = g.dbl.transaction("teams", "readwrite");
-            tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                var cursor, i, team;
+            tx = dao.tx("teams", "readwrite");
+            dao.teams.iterate({
+                ot: tx,
+                callback: function (t) {
+                    var s;
 
-                cursor = event.target.result;
-                if (cursor) {
-                    team = cursor.value;
-                    i = team.seasons.length - 1;  // Relevant row is the last one
+                    s = t.seasons.length - 1;  // Relevant row is the last one
 
                     // Store payroll
-                    team.seasons[i].payrollEndOfSeason = payrolls[team.tid];
+                    t.seasons[s].payrollEndOfSeason = payrolls[t.tid];
 
                     // Assess minimum payroll tax and luxury tax
-                    if (payrolls[team.tid] < g.minPayroll) {
-                        team.seasons[i].expenses.minTax.amount = g.minPayroll - payrolls[team.tid];
-                        team.seasons[i].cash -= team.seasons[i].expenses.minTax.amount;
-                    } else if (payrolls[team.tid] > g.luxuryPayroll) {
-                        team.seasons[i].expenses.luxuryTax.amount = g.luxuryTax * (payrolls[team.tid] - g.luxuryPayroll);
-                        team.seasons[i].cash -= team.seasons[i].expenses.luxuryTax.amount;
+                    if (payrolls[t.tid] < g.minPayroll) {
+                        t.seasons[s].expenses.minTax.amount = g.minPayroll - payrolls[t.tid];
+                        t.seasons[s].cash -= t.seasons[s].expenses.minTax.amount;
+                    } else if (payrolls[t.tid] > g.luxuryPayroll) {
+                        t.seasons[s].expenses.luxuryTax.amount = g.luxuryTax * (payrolls[t.tid] - g.luxuryPayroll);
+                        t.seasons[s].cash -= t.seasons[s].expenses.luxuryTax.amount;
                     }
 
-                    cursor.update(team);
-                    cursor.continue();
+                    return t;
                 }
-            };
-            tx.oncomplete = function () {
-                cb();
-            };
+            });
+            return tx.complete();
         });
     }
 
@@ -59,10 +53,10 @@ define(["globals", "lib/underscore"], function (g, _) {
      * @memberOf core.finances
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on teams, readwrite; if null is passed, then a new transaction will be used.
      * @param {Array.<string>} type The types of ranks to update - some combination of "budget", "expenses", and "revenues"
-     * @param {function()=} cb Optional callback function.
+     * @param {Promise}
      */
-    function updateRanks(ot, types, cb) {
-        var getByItem, sortFn, teamStore, updateObj;
+    function updateRanks(ot, types) {
+        var getByItem, sortFn, updateObj;
 
         sortFn = function (a, b) {
             return b.amount - a.amount;
@@ -94,12 +88,8 @@ define(["globals", "lib/underscore"], function (g, _) {
             }
         };
 
-        teamStore = require("db").getObjectStore(ot, "teams", "teams", true);
-
-        teamStore.getAll().onsuccess = function (event) {
-            var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam, s, teams;
-
-            teams = event.target.result;
+        return dao.teams.getAll({ot: ot}).then(function (teams) {
+            var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam, s;
 
             if (types.indexOf("budget") >= 0) {
                 budgetsByTeam = _.pluck(teams, "budget");
@@ -122,14 +112,9 @@ define(["globals", "lib/underscore"], function (g, _) {
                 revenuesByItem = getByItem(revenuesByTeam);
             }
 
-            teamStore.openCursor().onsuccess = function (event) {
-                var cursor, i, item, t;
-
-                cursor = event.target.result;
-
-                if (cursor) {
-                    t = cursor.value;
-
+            return dao.teams.iterate({
+                ot: ot,
+                callback: function (t) {
                     if (types.indexOf("budget") >= 0) {
                         updateObj(t.budget, budgetsByItem);
                     }
@@ -140,13 +125,10 @@ define(["globals", "lib/underscore"], function (g, _) {
                         updateObj(t.seasons[s].revenues, revenuesByItem);
                     }
 
-                    cursor.update(t);
-                    cursor.continue();
-                } else if (cb !== undefined) {
-                    cb();
+                    return t;
                 }
-            };
-        };
+            });
+        });
     }
 
     /**
@@ -176,7 +158,7 @@ define(["globals", "lib/underscore"], function (g, _) {
     }
 
     return {
-        assesPayrollMinLuxury: assesPayrollMinLuxury,
+        assessPayrollMinLuxury: assessPayrollMinLuxury,
         updateRanks: updateRanks,
         getRankLastThree: getRankLastThree
     };

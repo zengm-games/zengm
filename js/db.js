@@ -2,8 +2,10 @@
  * @name db
  * @namespace Creating, migrating, and connecting to databases; working with transactions.
  */
-define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"], function (g, Davis, $, _, helpers) {
+define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/helpers"], function (dao, g, Promise, Davis, _, helpers) {
     "use strict";
+
+    var migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="http://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
 
     /**
      * Create new meta database with the latest structure.
@@ -24,34 +26,19 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
      * Migrate meta database to the latest structure.
      * 
      * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
-     * @param {number} lid Integer league ID number.
      */
-    function migrateMeta(event, lid) {
-        var dbm, migrateMessage, tx;
+    function migrateMeta(event) {
+        var dbm, tx;
+
+        document.getElementById("content").innerHTML = migrateMessage;
 
         console.log("Upgrading meta database from version " + event.oldVersion + " to version " + event.newVersion);
-
-        migrateMessage = '';
 
         dbm = event.target.result;
         tx = event.currentTarget.transaction;
 
         if (event.oldVersion <= 1) {
             dbm.deleteObjectStore("teams");
-
-            migrateMessage = '<p><strong>New in version 3.0.0-beta.2:</strong> injuries, more refined economic/financial simulations, improved contract negotiations, noise in displayed player ratings dependent on your scouting budget, and annual interactions with the owner of the team including the possibility of being fired for poor performance.</p>' + migrateMessage;
-        }
-
-        if (event.oldVersion <= 2) {
-            migrateMessage = '<p><strong>New in version 3.0.0-beta.3:</strong> draft lottery, improved trading AI, revamped team history pages, and control over playing time from the roster page.</p>' + migrateMessage;
-        }
-
-        if (event.oldVersion <= 3) {
-            migrateMessage = '<p><strong>New in version 3.0.0:</strong> export rosters for use in other leagues, import custom rosters, and view players selected to the Hall of Fame.</p>' + migrateMessage;
-        }
-
-        if (event.oldVersion <= 4) {
-            migrateMessage = '<p><strong>New in version 3.1.0:</strong> better AI from opposing managers and more trade functionality, including trading draft picks and asking for counter-proposals from the team you\'re trading with.</p>' + migrateMessage;
         }
 
         if (event.oldVersion <= 5) {
@@ -117,45 +104,44 @@ define(["globals", "lib/davis", "lib/jquery", "lib/underscore", "util/helpers"],
                 dbm.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
             }());
         }
-
-        // This is no longer being used for update messages! See util/changes.js
-        //$("#content").before('<div class="alert alert-info alert-top"><button type="button" class="close" data-dismiss="alert">&times;</button>' + migrateMessage + '</div>');
     }
 
-    function connectMeta(cb) {
-        var request;
+    function connectMeta() {
+        return new Promise(function (resolve, reject) {
+            var request;
 
 //        console.log('Connecting to database "meta"');
-        request = indexedDB.open("meta", 7);
-        request.onerror = function (event) {
-            if (event.target.webkitErrorMessage) {
-                throw new Error("Meta connection error: " + event.target.webkitErrorMessage);
-            } else {
-                throw new Error("Meta connection error: " + event.target.error.name + " - " + event.target.error.message);
-            }
-        };
-        request.onblocked = function () {
-            alert("Please close all other tabs with this site open!");
-        };
-        request.onupgradeneeded = function (event) {
-            if (event.oldVersion === 0) {
-                createMeta(event);
-            } else {
-                migrateMeta(event);
-            }
-        };
-        request.onsuccess = function (event) {
-            g.dbm = request.result;
-            g.dbm.onerror = function (event) {
-console.log(event);
+            request = indexedDB.open("meta", 7);
+            request.onerror = function (event) {
                 if (event.target.webkitErrorMessage) {
-                    throw new Error("Meta database error: " + event.target.webkitErrorMessage);
+                    throw new Error("Meta connection error: " + event.target.webkitErrorMessage);
                 } else {
-                    throw new Error("Meta database error: " + event.target.error.name + " - " + event.target.error.message);
+                    throw new Error("Meta connection error: " + event.target.error.name + " - " + event.target.error.message);
                 }
             };
-            cb();
-        };
+            request.onblocked = function () {
+                alert("Please close all other tabs with this site open!");
+            };
+            request.onupgradeneeded = function (event) {
+                if (event.oldVersion === 0) {
+                    createMeta(event);
+                } else {
+                    migrateMeta(event);
+                }
+            };
+            request.onsuccess = function (event) {
+                g.dbm = request.result;
+                g.dbm.onerror = function (event) {
+console.log(event);
+                    if (event.target.webkitErrorMessage) {
+                        throw new Error("Meta database error: " + event.target.webkitErrorMessage);
+                    } else {
+                        throw new Error("Meta database error: " + event.target.error.name + " - " + event.target.error.message);
+                    }
+                };
+                resolve();
+            };
+        });
     }
 
     /**
@@ -211,7 +197,7 @@ console.log(event);
     function migrateLeague(event, lid) {
         var dbl, teams, tx;
 
-        document.getElementById("content").innerHTML = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="http://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
+        document.getElementById("content").innerHTML = migrateMessage;
 
         console.log("Upgrading league" + lid + " database from version " + event.oldVersion + " to version " + event.newVersion);
 
@@ -219,7 +205,7 @@ console.log(event);
         tx = event.currentTarget.transaction;
 
         // Make sure game attributes (i.e. g.startingSeason) are loaded first
-        loadGameAttributes(event.currentTarget.transaction, function () {
+        require("core/league").loadGameAttributes(tx).then(function () {
             if (event.oldVersion <= 1) {
                 teams = helpers.getTeamsDefault();
 
@@ -682,14 +668,18 @@ console.log(event);
                     var draft;
 
                     draft = require("core/draft");
-                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, null, null, function () {
-                        draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, null, null, function () {
-                            tx.objectStore("players").index("tid").count(g.PLAYER.UNDRAFTED).onsuccess = function (event) {
-                                if (event.target.result === 0) {
-                                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, null, function () {});
-                                }
-                            };
+                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3).then(function () {
+                        return draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2);
+                    }).then(function () {
+                        return dao.players.count({
+                            ot: tx,
+                            index: "tid",
+                            key: g.PLAYER.UNDRAFTED
                         });
+                    }).then(function (numPlayersUndrafted) {
+                        if (numPlayersUndrafted === 0) {
+                            return draft.genPlayers(tx, g.PLAYER.UNDRAFTED);
+                        }
                     });
                 }());
             }
@@ -717,7 +707,7 @@ console.log(event);
                             afterStatsRows = function () {
                                 // Save player object without stats and with values
                                 delete p.stats;
-                                require("core/player").updateValues(tx, p, [], function (p) {
+                                require("core/player").updateValues(tx, p, []).then(function (p) {
                                     cursor.update(p);
 
                                     cursor.continue();
@@ -756,429 +746,83 @@ console.log(event);
         });
     }
 
-    function connectLeague(lid, cb) {
-        var request;
+    function connectLeague(lid) {
+        return new Promise(function (resolve, reject) {
+            var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-        request = indexedDB.open("league" + lid, 11);
-        request.onerror = function (event) {
-            if (event.target.webkitErrorMessage) {
-                throw new Error("League connection error: " + event.target.webkitErrorMessage);
-            } else {
-                throw new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message);
-            }
-        };
-        request.onblocked = function () {
-            alert("Please close all other tabs with this site open!");
-        };
-        request.onupgradeneeded = function (event) {
-            if (event.oldVersion === 0) {
-                createLeague(event, lid);
-            } else {
-                migrateLeague(event, lid);
-            }
-        };
-        request.onsuccess = function (event) {
-            g.dbl = request.result;
-            g.dbl.onerror = function (event) {
-console.log(event);
+            request = indexedDB.open("league" + lid, 11);
+            request.onerror = function (event) {
                 if (event.target.webkitErrorMessage) {
-                    throw new Error("League database error: " + event.target.webkitErrorMessage);
+                    throw new Error("League connection error: " + event.target.webkitErrorMessage);
                 } else {
-                    throw new Error("League database error: " + event.target.error.name + " - " + event.target.error.message);
+                    throw new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message);
                 }
             };
-            cb();
-        };
-    }
-
-    /**
-     * Get an object store or transaction based on input which may be the desired object store, a transaction to be used, or null.
-     * 
-     * This allows for the convenient use of transactions or object stores that have already been defined, which is often necessary.
-     * 
-     * @memberOf db
-     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
-     * @param {(string|Array.<string>)} transactionObjectStores The object stores to open a transaction with, if necessary.
-     * @param {?string} objectStore The object store to return. If null, return a transaction.
-     * @param {boolean=} readwrite Should the transaction be readwrite or not? This only applies when a new transaction is created here (i.e. no transaction or objectStore is passed). Default false.
-     * @return {(IDBObjectStore|IDBTransaction)} The requested object store or transaction.
-     */
-    function getObjectStore(ot, transactionObjectStores, objectStore, readwrite) {
-        readwrite = readwrite !== undefined ? readwrite : false;
-
-        if (ot instanceof IDBTransaction) {
-            if (objectStore !== null) {
-                return ot.objectStore(objectStore);
-            }
-            return ot; // Return original transaction
-        }
-
-        // Return a transaction
-        if (objectStore === null) {
-            if (ot instanceof IDBObjectStore) {
-                return ot.transaction;
-            }
-
-            if (readwrite) {
-                return g.dbl.transaction(transactionObjectStores, "readwrite");
-            }
-            return g.dbl.transaction(transactionObjectStores);
-        }
-
-        // ot is an objectStore already, and an objectStore was requested (not a transation)
-        if (ot instanceof IDBObjectStore) {
-            return ot;
-        }
-
-
-        if (readwrite) {
-            return g.dbl.transaction(transactionObjectStores, "readwrite").objectStore(objectStore);
-        }
-        return g.dbl.transaction(transactionObjectStores).objectStore(objectStore);
-    }
-
-    /**
-     * Gets all the contracts a team owes.
-     * 
-     * This includes contracts for players who have been released but are still owed money.
-     * 
-     * @memberOf db
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
-     * @param {number} tid Team ID.
-     * @param {function(Array)} cb Callback whose first argument is an array of objects containing contract information.
-     */
-    function getContracts(ot, tid, cb) {
-        var contracts, transaction;
-
-        transaction = getObjectStore(ot, ["players", "releasedPlayers"], null);
-
-        // First, get players currently on the roster
-        transaction.objectStore("players").index("tid").getAll(tid).onsuccess = function (event) {
-            var i, players;
-
-            contracts = [];
-            players = event.target.result;
-            for (i = 0; i < players.length; i++) {
-                contracts.push({
-                    pid: players[i].pid,
-                    name: players[i].name,
-                    skills: _.last(players[i].ratings).skills,
-                    injury: players[i].injury,
-                    watch: players[i].watch !== undefined ? players[i].watch : false, // undefined check is for old leagues, can delete eventually
-                    amount: players[i].contract.amount,
-                    exp: players[i].contract.exp,
-                    released: false
-                });
-            }
-
-            // Then, get any released players still owed money
-            transaction.objectStore("releasedPlayers").index("tid").getAll(tid).onsuccess = function (event) {
-                var i, releasedPlayers;
-
-                releasedPlayers = event.target.result;
-
-                if (releasedPlayers.length === 0) {
-                    return cb(contracts);
-                }
-
-                for (i = 0; i < releasedPlayers.length; i++) {
-                    (function (i) {
-                        transaction.objectStore("players").get(releasedPlayers[i].pid).onsuccess = function (event) {
-                            var player;
-
-
-
-                            player = event.target.result;
-                            if (player !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
-                                contracts.push({
-                                    pid: releasedPlayers[i].pid,
-                                    name: player.name,
-                                    skills: _.last(player.ratings).skills,
-                                    injury: player.injury,
-                                    amount: releasedPlayers[i].contract.amount,
-                                    exp: releasedPlayers[i].contract.exp,
-                                    released: true
-                                });
-                            } else {
-                                contracts.push({
-                                    pid: releasedPlayers[i].pid,
-                                    name: "Deleted Player",
-                                    skills: [],
-                                    amount: releasedPlayers[i].contract.amount,
-                                    exp: releasedPlayers[i].contract.exp,
-                                    released: true
-                                });
-                            }
-
-                            if (contracts.length === players.length + releasedPlayers.length) {
-                                cb(contracts);
-                            }
-                        };
-                    }(i));
+            request.onblocked = function () {
+                alert("Please close all other tabs with this site open!");
+            };
+            request.onupgradeneeded = function (event) {
+                if (event.oldVersion === 0) {
+                    createLeague(event, lid);
+                } else {
+                    migrateLeague(event, lid);
                 }
             };
-        };
-    }
-
-    /**
-     * Get the total current payroll for a team.
-     * 
-     * This includes players who have been released but are still owed money from their old contracts.
-     * 
-     * @memberOf db
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
-     * @param {number} tid Team ID.
-     * @param {function(number, Array=)} cb Callback; first argument is the payroll in thousands of dollars, second argument is the list of contract objects from getContracts.
-     */
-    function getPayroll(ot, tid, cb) {
-        if (tid === undefined) {
-            cb(0, []);
-            return console.log('ERROR: db.getPayroll needs a TID!');
-        }
-        getContracts(ot, tid, function (contracts) {
-            var i, payroll;
-
-            payroll = 0;
-            for (i = 0; i < contracts.length; i++) {
-                payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
-            }
-
-            cb(payroll, contracts);
+            request.onsuccess = function (event) {
+                g.dbl = request.result;
+                g.dbl.onerror = function (event) {
+console.log(event);
+                    if (event.target.webkitErrorMessage) {
+                        throw new Error("League database error: " + event.target.webkitErrorMessage);
+                    } else {
+                        throw new Error("League database error: " + event.target.error.name + " - " + event.target.error.message);
+                    }
+                };
+                resolve();
+            };
         });
     }
 
-    /**
-     * Get the total current payroll for every team team.
-     * 
-     * @memberOf db
-     * @param {function(Array.<number>)} cb Callback whose first argument is an array of payrolls, ordered by team id.
-     */
-    function getPayrolls(cb) {
-        var i, localGetPayroll, payrolls, tx;
-
-        payrolls = [];
-        localGetPayroll = function (tx, tid) {
-            getPayroll(tx, tid, function (payroll) {
-                payrolls[tid] = payroll;
-            });
-        };
-
-        // First, get all the current payrolls
-        tx = g.dbl.transaction(["players", "releasedPlayers"]);
-        for (i = 0; i < g.numTeams; i++) {
-            localGetPayroll(tx, i);
-        }
-        tx.oncomplete = function () {
-            cb(payrolls);
-        };
-    }
-
-    /**
-     * Load a game attribute from the database and update the global variable g.
-     *
-     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
-     * @param {string} key Key in gameAttributes to load the value for.
-     * @param {function()=} cb Optional callback.
-     */
-    function loadGameAttribute(ot, key, cb) {
-        var gameAttributesStore;
-
-        gameAttributesStore = getObjectStore(ot, "gameAttributes", "gameAttributes");
-
-        gameAttributesStore.get(key).onsuccess = function (event) {
-            if (event.target.result === undefined) {
-                // Default values for old leagues - see also loadGameAttributes
-                if (key === "numTeams") {
-                    g.numTeams = 30;
-                } else if (key === "godMode") {
-                    g.godMode = false;
-                } else if (key === "godModeInPast") {
-                    g.godModeInPast = false;
-                } else {
-                    throw new Error("Unknown game attribute: " + key);
-                }
-            } else {
-                g[key] = event.target.result.value;
-            }
-
-            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
-            if (key === "godMode") {
-                g.vm.topMenu.godMode(g.godMode);
-            }
-
-            if (cb !== undefined) {
-                cb();
-            }
-        };
-    }
-
-    /**
-     * Load game attributes from the database and update the global variable g.
-     * 
-     * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
-     * @param {function()=} cb Optional callback.
-     */
-    function loadGameAttributes(ot, cb) {
-        var gameAttributesStore;
-
-        gameAttributesStore = getObjectStore(ot, "gameAttributes", "gameAttributes");
-
-        gameAttributesStore.getAll().onsuccess = function (event) {
-            var i, gameAttributes;
-
-            gameAttributes = event.target.result;
-
-            for (i = 0; i < gameAttributes.length; i++) {
-                g[gameAttributes[i].key] = gameAttributes[i].value;
-            }
-
-            // Default values for old leagues - see also loadGameAttribute
-            if (g.numTeams === undefined) {
-                g.numTeams = 30;
-            }
-            if (g.godMode === undefined) {
-                g.godMode = false;
-            }
-            if (g.godModeInPast === undefined) {
-                g.godModeInPast = false;
-            }
-
-            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
-            g.vm.topMenu.godMode(g.godMode);
-
-            if (cb !== undefined) {
-                cb();
-            }
-        };
-    }
-
-    /**
-     * Set values in the gameAttributes objectStore and update the global variable g.
-     *
-     * Items stored in gameAttributes are globally available through the global variable g. If a value is a constant across all leagues/games/whatever, it should just be set in globals.js instead.
-     * 
-     * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
-     * @param {function()=} cb Optional callback.
-     */
-    function setGameAttributes(gameAttributes, cb) {
-        var gameAttributesStore, i, key, toUpdate, tx;
-
-        toUpdate = [];
-        for (key in gameAttributes) {
-            if (gameAttributes.hasOwnProperty(key)) {
-                if (g[key] !== gameAttributes[key]) {
-                    toUpdate.push(key);
-                }
-            }
-        }
-
-        tx = g.dbl.transaction("gameAttributes", "readwrite");
-        gameAttributesStore = tx.objectStore("gameAttributes");
-
-        for (i = 0; i < toUpdate.length; i++) {
-            key = toUpdate[i];
-            (function (key) {
-                gameAttributesStore.put({key: key, value: gameAttributes[key]}).onsuccess = function (event) {
-                    g[key] = gameAttributes[key];
-                };
-
-                // Trigger a signal for the team finances view. This is stupid.
-                if (key === "gamesInProgress") {
-                    if (gameAttributes[key]) {
-                        $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-                    } else {
-                        $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-                    }
-                }
-            }(key));
-        }
-
-        tx.oncomplete = function () {
-            // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
-            if (gameAttributes.hasOwnProperty("gamesInProgress") && gameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-            } else if (gameAttributes.hasOwnProperty("gamesInProgress") && !gameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-            }
-
-            if (cb !== undefined) {
-                cb();
-            }
-        };
-    }
-
     function reset() {
-        var key;
+        var debug, key;
 
         // localStorage, which is just use for table sorting currently
+        debug = localStorage.debug; // Save debug setting and restore later
         for (key in localStorage) {
             if (localStorage.hasOwnProperty(key)) {
                 localStorage.removeItem(key);
             }
         }
+        localStorage.debug = debug;
 
         // Delete any current league databases
         console.log("Deleting any current league databases...");
-        g.dbm.transaction("leagues").objectStore("leagues").getAll().onsuccess = function (event) {
-            var data, done, i, league, leagues, request;
-
-            leagues = event.target.result;
-
+        dao.leagues.getAll().then(function (leagues) {
             if (leagues.length === 0) {
                 console.log('No leagues found.');
                 Davis.location.assign(new Davis.Request("/"));
             }
 
-            league = require("core/league"); // Circular reference
+            Promise.map(leagues, function (l) {
+                return require("core/league").remove(l.lid);
+            }).then(function () {
+                var request;
 
-            done = 0;
-            for (i = 0; i < leagues.length; i++) {
-                league.remove(leagues[i].lid, function () {
-                    done += 1;
-                    if (done === leagues.length) {
-                        // Delete any current meta database
-                        console.log("Deleting any current meta database...");
-                        g.dbm.close();
-                        request = indexedDB.deleteDatabase("meta");
-                        request.onsuccess = function (event) {
-                            // Create new meta database
-                            console.log("Creating new meta database...");
-                            connectMeta(function () {
-                                console.log("Done!");
-                                Davis.location.assign(new Davis.Request("/"));
-                            });
-                        };
-                    }
-                });
-            }
-        };
-    }
-
-    function updateMetaNameRegion(lid, name, region) {
-        g.dbm.transaction("leagues", "readwrite").objectStore("leagues").openCursor(lid).onsuccess = function (event) {
-            var cursor, l;
-
-            cursor = event.target.result;
-            if (cursor) {
-                l = cursor.value;
-                l.teamName = name;
-                l.teamRegion = region;
-                cursor.update(l);
-            }
-        };
+                // Delete any current meta database
+                console.log("Deleting any current meta database...");
+                g.dbm.close();
+                request = indexedDB.deleteDatabase("meta");
+                request.onsuccess = function () {
+                    location.reload();
+                };
+            });
+        });
     }
 
     return {
         connectMeta: connectMeta,
         connectLeague: connectLeague,
-        getObjectStore: getObjectStore,
-        getPayroll: getPayroll,
-        getPayrolls: getPayrolls,
-        loadGameAttribute: loadGameAttribute,
-        loadGameAttributes: loadGameAttributes,
-        setGameAttributes: setGameAttributes,
-        reset: reset,
-        updateMetaNameRegion: updateMetaNameRegion
+        reset: reset
     };
 });

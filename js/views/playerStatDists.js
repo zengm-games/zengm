@@ -41,16 +41,12 @@ define(["dao", "globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib
     }
 
     function updatePlayers(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
-            deferred = $.Deferred();
-
-            dao.players.getAll({
+            return dao.players.getAll({
                 index: "tid",
                 key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
                 statsSeasons: [inputs.season]
-            }, function (players) {
+            }).then(function (players) {
                 var statsAll;
 
                 players = player.filter(players, {
@@ -74,12 +70,11 @@ define(["dao", "globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib
                     return memo;
                 }, {});
 
-                deferred.resolve({
+                return {
                     season: inputs.season,
                     statsAll: statsAll
-                });
+                };
             });
-            return deferred.promise();
         }
     }
 

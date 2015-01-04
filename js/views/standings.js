@@ -2,7 +2,7 @@
  * @name views.standings
  * @namespace Standings.
  */
-define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, team, $, ko, komapping, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "views/components", "util/bbgmView", "util/helpers"], function (g, ui, team, $, ko, komapping, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -43,17 +43,13 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
     };
 
     function updateStandings(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
-            deferred = $.Deferred();
-
-            team.filter({
+            return team.filter({
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
                 seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
                 season: inputs.season,
                 sortBy: ["winp", "-lost", "won"]
-            }, function (teams) {
+            }).then(function (teams) {
                 var confs, confRanks, confTeams, divTeams, i, j, k, l;
 
                 confs = [];
@@ -109,12 +105,11 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
                     }
                 }
 
-                deferred.resolve({
+                return {
                     season: inputs.season,
                     confs: confs
-                });
+                };
             });
-            return deferred.promise();
         }
     }
 

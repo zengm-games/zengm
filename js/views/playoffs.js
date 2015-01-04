@@ -2,7 +2,7 @@
  * @name views.playoffs
  * @namespace Show current or archived playoffs, or projected matchups for an in-progress season.
  */
-define(["globals", "ui", "core/season", "core/team", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (g, ui, season, team, $, ko, bbgmView, helpers, viewHelpers, components) {
+define(["dao", "globals", "ui", "core/team", "lib/knockout", "util/bbgmView", "util/helpers", "views/components"], function (dao, g, ui, team, ko, bbgmView, helpers, components) {
     "use strict";
 
     function get(req) {
@@ -12,20 +12,16 @@ define(["globals", "ui", "core/season", "core/team", "lib/jquery", "lib/knockout
     }
 
     function updatePlayoffs(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0)) {
-            deferred = $.Deferred();
-
+            // If in the current season and before playoffs started, display projected matchups
             if (inputs.season === g.season && g.phase < g.PHASE.PLAYOFFS) {
-                // In the current season, before playoffs start, display projected matchups
-                team.filter({
+                return team.filter({
                     attrs: ["tid", "cid", "abbrev", "name"],
                     seasonAttrs: ["winp"],
                     season: inputs.season,
                     sortBy: ["winp", "-lost", "won"]
-                }, function (teams) {
-                    var cid, i, j, keys, series, teamsConf;
+                }).then(function (teams) {
+                    var cid, i, series, teamsConf;
 
                     series = [[], [], [], []];  // First round, second round, third round, fourth round
                     for (cid = 0; cid < 2; cid++) {
@@ -49,29 +45,26 @@ define(["globals", "ui", "core/season", "core/team", "lib/jquery", "lib/knockout
                         series[0][3 + cid * 4].away.seed = 5;
                     }
 
-                    deferred.resolve({
+                    return {
                         finalMatchups: false,
                         series: series,
                         season: inputs.season
-                    });
+                    };
                 });
-            } else {
-                // Display the current or archived playoffs
-                g.dbl.transaction("playoffSeries").objectStore("playoffSeries").get(inputs.season).onsuccess = function (event) {
-                    var i, j, playoffSeries, series;
-
-                    playoffSeries = event.target.result;
-                    series = playoffSeries.series;
-
-                    deferred.resolve({
-                        finalMatchups: true,
-                        series: series,
-                        season: inputs.season
-                    });
-                };
             }
 
-            return deferred.promise();
+            // Display the current or archived playoffs
+            return dao.playoffSeries.get({key: inputs.season}).then(function (playoffSeries) {
+                var series;
+
+                series = playoffSeries.series;
+
+                return {
+                    finalMatchups: true,
+                    series: series,
+                    season: inputs.season
+                };
+            });
         }
     }
 

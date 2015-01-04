@@ -2,6 +2,5 @@
 *.pyc
 *.sublime-project
 *.sublime-workspace
+node_modules
 test_case.html
-data/nba*
-player.filter.txt

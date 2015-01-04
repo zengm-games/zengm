@@ -2,7 +2,7 @@
  * @name views.eventLog
  * @namespace Event log.
  */
-define(["globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (g, ui, $, ko, bbgmView, helpers, viewHelpers, components) {
+define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView", "util/helpers", "views/components"], function (dao, g, ui, Promise, ko, bbgmView, helpers, components) {
     "use strict";
 
     function get(req) {
@@ -17,53 +17,51 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/bbgmView", "util/he
     }
 
     function updateEventLog(inputs, updateEvents, vm) {
-        var deferred, maxEid, newEvents;
+        var maxEid, newEvents;
 
         if (updateEvents.length >= 0 || inputs.season !== vm.season()) {
-            deferred = $.Deferred();
-
             if (inputs.season !== vm.season()) {
                 vm.events([]);
             }
 
             if (vm.events().length === 0) {
                 // Show all events, newest at top
-                g.dbl.transaction("events").objectStore("events").index("season").getAll(inputs.season).onsuccess = function (event) {
-                    var events;
-
-                    events = event.target.result;
+                return dao.events.getAll({index: "season", key: inputs.season}).then(function (events) {
                     events.reverse(); // Newest first
-                    deferred.resolve({
+                    return {
                         events: events,
                         season: inputs.season
-                    });
-                };
-            } else if (inputs.season === g.season) { // Can't update old seasons!
+                    };
+                });
+            }
+
+            if (inputs.season === g.season) { // Can't update old seasons!
                 // Update by adding any new events to the top of the list
                 maxEid = ko.unwrap(vm.events()[0].eid); // unwrap shouldn't be necessary
                 newEvents = [];
-                g.dbl.transaction("events").objectStore("events").index("season").openCursor(inputs.season, "prev").onsuccess = function (event) {
-                    var cursor, i;
+                return dao.events.iterate({
+                    index: "season",
+                    key: inputs.season,
+                    direction: "prev",
+                    callback: function (event, shortCircuit) {
+                        var i;
 
-                    cursor = event.target.result;
-                    if (cursor && cursor.value.eid > maxEid) {
-                        newEvents.push(cursor.value);
-                        cursor.continue();
-                    } else {
-                        // Oldest first (cursor is in "prev" direction and we're adding to the front of vm.events)
-                        for (i = newEvents.length - 1; i >= 0; i--) {
-                            vm.events.unshift(newEvents[i]);
+                        if (event.eid > maxEid) {
+                            newEvents.push(event);
+                        } else {
+                            shortCircuit();
+                            // Oldest first (cursor is in "prev" direction and we're adding to the front of vm.events)
+                            for (i = newEvents.length - 1; i >= 0; i--) {
+                                vm.events.unshift(newEvents[i]);
+                            }
                         }
-                        deferred.resolve({
-                            season: inputs.season
-                        });
                     }
-                };
-            } else {
-                deferred.resolve();
+                }).then(function () {
+                    return {
+                        season: inputs.season
+                    };
+                });
             }
-
-            return deferred.promise();
         }
     }
 

@@ -2,7 +2,7 @@
  * @name core.contractNegotiation
  * @namespace All aspects of contract negotiation.
  */
-define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog", "util/helpers", "util/lock", "util/random"], function (db, g, ui, freeAgents, player, eventLog, helpers, lock, random) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "lib/bluebird", "util/eventLog", "util/helpers", "util/lock", "util/random"], function (dao, g, ui, freeAgents, player, team, Promise, eventLog, helpers, lock, random) {
     "use strict";
 
     /**
@@ -16,42 +16,33 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
      * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
      * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
-     * @param {function(string=)} cb Callback to be run only after a successful negotiation is started. If an error occurs, pass a string error message.
+     * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
      */
-    function create(ot, pid, resigning, cb) {
-        var success, tx;
-
-        console.log("Trying to start new contract negotiation with player " + pid);
-        success = false;
-
+    function create(ot, pid, resigning) {
         if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) && !resigning) {
-            return cb("You're not allowed to sign free agents now.");
+            return Promise.resolve("You're not allowed to sign free agents now.");
         }
 
-        tx = db.getObjectStore(ot, ["gameAttributes", "messages", "negotiations", "players"], null, true);
-
-        lock.canStartNegotiation(tx, function (canStartNegotiation) {
-            var playerStore;
-
+        // Can't flatten because of error callbacks
+        return lock.canStartNegotiation(ot).then(function (canStartNegotiation) {
             if (!canStartNegotiation) {
-                return cb("You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
+                return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.";
             }
 
-            playerStore = tx.objectStore("players");
-            playerStore.index("tid").getAll(g.userTid).onsuccess = function (event) {
-                var numPlayersOnRoster;
-
-                numPlayersOnRoster = event.target.result.length;
+            return dao.players.count({
+                ot: ot,
+                index: "tid",
+                key: g.userTid
+            }).then(function (numPlayersOnRoster) {
                 if (numPlayersOnRoster >= 15 && !resigning) {
-                    return cb("Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.");
+                    return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
                 }
 
-                playerStore.get(pid).onsuccess = function (event) {
-                    var negotiation, p, playerAmount, playerYears;
+                return dao.players.get({ot: ot, key: pid}).then(function (p) {
+                    var negotiation, playerAmount, playerYears;
 
-                    p = event.target.result;
                     if (p.tid !== g.PLAYER.FREE_AGENT) {
-                        return cb(p.name + " is not a free agent.");
+                        return p.name + " is not a free agent.";
                     }
 
                     // Initial player proposal;
@@ -63,7 +54,7 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                     }
 
                     if (freeAgents.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
-                        return cb('<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> refuses to sign with you, no matter what you offer.');
+                        return '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> refuses to sign with you, no matter what you offer.';
                     }
 
                     negotiation = {
@@ -74,31 +65,14 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                         resigning: resigning
                     };
 
-                    tx.objectStore("negotiations").add(negotiation).onsuccess = function () {
-                        success = true;
-                        if (ot !== null) {
-                            // This function doesn't have its own transaction, so we need to call the callback now even though the update and add might not have been processed yet (this will keep the transaction alive).
-                            if (cb !== undefined) {
-                                ui.updateStatus("Contract negotiation");
-                                ui.updatePlayMenu(tx, cb);
-                            }
-                        }
-                    };
-                };
-            };
-        });
-
-        if (ot === null) {
-            // This function has its own transaction, so wait until it finishes before calling the callback.
-            tx.oncomplete = function () {
-                if (success) {
-                    db.setGameAttributes({lastDbChange: Date.now()}, function () {
+                    return dao.negotiations.add({ot: ot, value: negotiation}).then(function () {
+                        require("core/league").setGameAttributes({lastDbChange: Date.now()});
                         ui.updateStatus("Contract negotiation");
-                        ui.updatePlayMenu(null, cb);
+                        return ui.updatePlayMenu(ot);
                     });
-                }
-            };
-        }
+                });
+            });
+        });
     }
 
     /**
@@ -140,22 +114,18 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
      * @param {number} teamAmount Teams's offer amount in thousands of dollars per year (between 500 and 20000).
      * @param {number} teamYears Team's offer length in years (between 1 and 5).
-     * @param {function()=} cb Optional callback.
+     * @return {Promise}
      */
-    function offer(pid, teamAmount, teamYears, cb) {
-        var i, negotiation, negotiations, tx;
-
-        console.log("User made contract offer for " + teamAmount + " over " + teamYears + " years to " + pid);
+    function offer(pid, teamAmount, teamYears) {
+        var tx;
 
         teamAmount = validAmount(teamAmount);
         teamYears = validYears(teamYears);
 
-        tx = g.dbl.transaction(["negotiations", "players"], "readwrite");
-        tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
-            var cursor, mood, p;
+        tx = dao.tx(["negotiations", "players"], "readwrite");
 
-            cursor = event.target.result;
-            p = cursor.value;
+        dao.players.get({ot: tx, key: pid}).then(function (p) {
+            var mood;
 
             mood = p.freeAgentMood[g.userTid];
             p.freeAgentMood[g.userTid] += random.uniform(0, 0.15);
@@ -163,13 +133,10 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                 p.freeAgentMood[g.userTid] = 1;
             }
 
-            cursor.update(p);
+            dao.players.put({ot: tx, value: p});
 
-            tx.objectStore("negotiations").openCursor(pid).onsuccess = function (event) {
-                var cursor, diffPlayerOrig, diffTeamOrig, negotiation;
-
-                cursor = event.target.result;
-                negotiation = cursor.value;
+            dao.negotiations.get({ot: tx, key: pid}).then(function (negotiation) {
+                var diffPlayerOrig, diffTeamOrig;
 
                 // Player responds based on their mood
                 if (negotiation.orig.amount >= 18000) {
@@ -240,16 +207,13 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                 negotiation.team.amount = teamAmount;
                 negotiation.team.years = teamYears;
 
-                cursor.update(negotiation);
-            };
-        };
-        tx.oncomplete = function () {
-            db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                if (cb !== undefined) {
-                    cb();
-                }
+                dao.negotiations.put({ot: tx, value: negotiation});
             });
-        };
+        });
+
+        return tx.complete().then(function () {
+            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
+        });
     }
 
     /**
@@ -257,29 +221,25 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
      * 
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
-     * @param {function()} cb Callback.
+     * @return {Promise}
      */
-    function cancel(pid, cb) {
-        console.log("User canceled contract negotiations with " + pid);
-
+    function cancel(pid) {
         // Delete negotiation
-        g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").delete(pid).onsuccess = function (event) {
-            db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                // If no negotiations are in progress, update status
-                lock.negotiationInProgress(null, function (negotiationInProgress) {
-                    if (!negotiationInProgress) {
-                        if (g.phase === g.PHASE.FREE_AGENCY) {
-                            ui.updateStatus(g.daysLeft + " days left");
-                        } else {
-                            ui.updateStatus("Idle");
-                        }
-                        ui.updatePlayMenu();
-                    }
-
-                    cb();
-                });
-            });
-        };
+        return dao.negotiations.delete({key: pid}).then(function () {
+            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
+        }).then(function () {
+            // If no negotiations are in progress, update status
+            return lock.negotiationInProgress(null);
+        }).then(function (negotiationInProgress) {
+            if (!negotiationInProgress) {
+                if (g.phase === g.PHASE.FREE_AGENCY) {
+                    ui.updateStatus(g.daysLeft + " days left");
+                } else {
+                    ui.updateStatus("Idle");
+                }
+                ui.updatePlayMenu();
+            }
+        });
     }
 
     /**
@@ -288,17 +248,15 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
      * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is re-signing players at the end of the season, although that should probably change eventually.
      * 
      * @memberOf core.contractNegotiation
-     * @param {function()=} cb Optional callback.
+     * @return {Promise}
      */
-    function cancelAll(cb) {
-        console.log("Canceling all ongoing contract negotiations...");
-
-        g.dbl.transaction("negotiations", "readwrite").objectStore("negotiations").clear().onsuccess = function (event) {
-            db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                ui.updateStatus("Idle");
-                ui.updatePlayMenu(null, cb);
-            });
-        };
+    function cancelAll() {
+        return dao.negotiations.clear().then(function () {
+            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
+        }).then(function () {
+            ui.updateStatus("Idle");
+            return ui.updatePlayMenu(null);
+        });
     }
 
     /**
@@ -308,38 +266,44 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
      * 
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
-     * @param {function(string=)} cb Callback to be run only after the contract is successfully accepted. If an error occurs, pass a string error message.
+     * @return {Promise.<string=>} If an error occurs, resolves to a string error message.
      */
-    function accept(pid, cb) {
-        g.dbl.transaction("negotiations").objectStore("negotiations").get(pid).onsuccess = function (event) {
-            var negotiation;
+    function accept(pid) {
+        return Promise.all([
+            dao.negotiations.get({key: pid}),
+            team.getPayroll(null, g.userTid).get(0)
+        ]).spread(function (negotiation, payroll) {
+            var tx;
 
-            negotiation = event.target.result;
+            // If this contract brings team over the salary cap, it's not a minimum;
+            // contract, and it's not re-signing a current player, ERROR!
 
-            // If this contract brings team over the salary cap, it"s not a minimum;
-            // contract, and it's not re-signing a current player, ERROR!;
-            db.getPayroll(null, g.userTid, function (payroll) {
-                var afterAddStatsRow, tx;
+            if (!negotiation.resigning && (payroll + negotiation.player.amount > g.salaryCap && negotiation.player.amount !== g.minContract)) {
+                return "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.";
+            }
 
-                if (!negotiation.resigning && (payroll + negotiation.player.amount > g.salaryCap && negotiation.player.amount !== g.minContract)) {
-                    return cb("This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");
-                }
+            // Adjust to account for in-season signings;
+            if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
+                negotiation.player.years -= 1;
+            }
 
-                // Adjust to account for in-season signings;
-                if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
-                    negotiation.player.years -= 1;
-                }
+            tx = dao.tx(["players", "playerStats"], "readwrite");
+            dao.players.iterate({
+                ot: tx,
+                key: pid,
+                callback: function (p) {
+                    p.tid = g.userTid;
+                    p.gamesUntilTradable = 15;
 
-/*                r = g.dbex("SELECT MAX(rosterOrder) + 1 FROM playerAttributes WHERE tid = :tid", tid = g.userTid);
-                rosterOrder, = r.fetchone();*/
+                    // Handle stats if the season is in progress
+                    if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                    }
 
-                afterAddStatsRow = function (p, cursor) {
                     p = player.setContract(p, {
                         amount: negotiation.player.amount,
                         exp: g.season + negotiation.player.years
                     }, true);
-
-                    cursor.update(p);
 
                     if (negotiation.resigning) {
                         eventLog.add(null, {
@@ -354,36 +318,17 @@ define(["db", "globals", "ui", "core/freeAgents", "core/player", "util/eventLog"
                             showNotification: false
                         });
                     }
+
+                    return p;
                 }
-
-                tx = g.dbl.transaction(["players", "playerStats"], "readwrite");
-                tx.objectStore("players").openCursor(pid).onsuccess = function (event) {
-                    var cursor, p;
-
-                    cursor = event.target.result;
-                    p = cursor.value;
-
-                    p.tid = g.userTid;
-                    p.gamesUntilTradable = 15;
-
-                    // Handle stats if the season is in progress
-                    if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                        player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS, function (p) {
-                            afterAddStatsRow(p, cursor);
-                        });
-                    } else {
-                        afterAddStatsRow(p, cursor);
-                    }
-                };
-                tx.oncomplete = function () {
-                    cancel(pid, function () {
-                        db.setGameAttributes({lastDbChange: Date.now()}, function () {
-                            cb();
-                        });
-                    });
-                };
             });
-        };
+
+            return tx.complete().then(function () {
+                return cancel(pid);
+            }).then(function () {
+                return require("core/league").setGameAttributes({lastDbChange: Date.now()});
+            });
+        });
     }
 
     return {

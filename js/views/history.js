@@ -2,7 +2,7 @@
  * @name views.history
  * @namespace Summaries of past seasons, leaguewide.
  */
-define(["dao", "globals", "ui", "core/player", "core/team", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components"], function (dao, g, ui, player, team, $, ko, bbgmView, helpers, viewHelpers, components) {
+define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib/knockout", "util/bbgmView", "util/helpers", "views/components"], function (dao, g, ui, player, team, Promise, ko, bbgmView, helpers, components) {
     "use strict";
 
     function get(req) {
@@ -30,15 +30,20 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/jquery", "lib/k
     }
 
     function updateHistory(inputs, updateEvents, vm) {
-        var deferred;
-
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.season() !== inputs.season) {
-            deferred = $.Deferred();
-
-            g.dbl.transaction("awards").objectStore("awards").get(inputs.season).onsuccess = function (event) {
-                var awards;
-
-                awards = event.target.result;
+            return Promise.all([
+                dao.awards.get({key: inputs.season}),
+                dao.players.getAll({
+                    index: "retiredYear",
+                    key: inputs.season
+                }),
+                team.filter({
+                    attrs: ["tid", "abbrev", "region", "name"],
+                    seasonAttrs: ["playoffRoundsWon"],
+                    season: inputs.season
+                })
+            ]).spread(function (awards, retiredPlayers, teams) {
+                var champ, i;
 
                 // Hack placeholder for old seasons before Finals MVP existed
                 if (!awards.hasOwnProperty("finalsMvp")) {
@@ -51,49 +56,33 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/jquery", "lib/k
                     };
                 }
 
-                dao.players.getAll({
-                    index: "retiredYear",
-                    key: inputs.season
-                }, function (retiredPlayers) {
-                    var i;
-
-                    retiredPlayers = player.filter(retiredPlayers, {
-                        attrs: ["pid", "name", "age", "hof"],
-                        season: inputs.season
-                    });
-                    for (i = 0; i < retiredPlayers.length; i++) {
-                        // Show age at retirement, not current age
-                        retiredPlayers[i].age -= g.season - inputs.season;
-                    }
-                    retiredPlayers.sort(function (a, b) { return b.age - a.age; });
-
-                    team.filter({
-                        attrs: ["abbrev", "region", "name"],
-                        seasonAttrs: ["playoffRoundsWon"],
-                        season: inputs.season
-                    }, function (teams) {
-                        var champ, i;
-
-                        for (i = 0; i < teams.length; i++) {
-                            if (teams[i].playoffRoundsWon === 4) {
-                                champ = teams[i];
-                                break;
-                            }
-                        }
-                        champ.tid = g.teamAbbrevsCache.indexOf(champ.abbrev);
-
-                        deferred.resolve({
-                            awards: awards,
-                            champ: champ,
-                            retiredPlayers: retiredPlayers,
-                            season: inputs.season,
-                            userTid: g.userTid
-                        });
-                    });
+                // Get list of retired players
+                retiredPlayers = player.filter(retiredPlayers, {
+                    attrs: ["pid", "name", "age", "hof"],
+                    season: inputs.season
                 });
-            };
+                for (i = 0; i < retiredPlayers.length; i++) {
+                    // Show age at retirement, not current age
+                    retiredPlayers[i].age -= g.season - inputs.season;
+                }
+                retiredPlayers.sort(function (a, b) { return b.age - a.age; });
 
-            return deferred.promise();
+                // Get champs
+                for (i = 0; i < teams.length; i++) {
+                    if (teams[i].playoffRoundsWon === 4) {
+                        champ = teams[i];
+                        break;
+                    }
+                }
+
+                return {
+                    awards: awards,
+                    champ: champ,
+                    retiredPlayers: retiredPlayers,
+                    season: inputs.season,
+                    userTid: g.userTid
+                };
+            });
         }
     }
 

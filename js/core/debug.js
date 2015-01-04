@@ -2,8 +2,6 @@
  * @name core.debug
  * @namespace Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
  */
-/*global console*/
-/*eslint no-console: 0*/
 define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, player, _) {
     "use strict";
 

@@ -639,6 +639,45 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
     }
 
     /**
+     * Estimate draft pick values, based on the generated draft prospects in the database.
+     *
+     * This was made for team.valueChange, so it could be called once and the results cached.
+     *
+     * @memberOf core.trade
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players; if null is passed, then a new transaction will be used.
+     * @return {Promise.Object} Resolves to estimated draft pick values.
+     */
+    function getPickValues(ot) {
+        var estValues, i, promises;
+
+        estValues = {
+            default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37] // This is basically arbitrary
+        };
+
+        // Look up to 4 season in the future, but depending on whether this is before or after the draft, the first or last will be empty/incomplete
+        promises = [];
+        for (i = g.season; i < g.season + 4; i++) {
+            promises.push(dao.players.getAll({
+                ot: ot,
+                index: "draft.year",
+                key: i
+            }).then(function (players) {
+                if (players.length > 0) {
+                    for (i = 0; i < players.length; i++) {
+                        players[i].value += 4; // +4 is to generally make picks more valued
+                    }
+                    players.sort(function (a, b) { return b.value - a.value; });
+                    estValues[players[0].draft.year] = _.pluck(players, "value");
+                }
+            }));
+        }
+
+        return Promise.all(promises).then(function () {
+            return estValues;
+        });
+    }
+
+    /**
      * Make a trade work
      *
      * This should be called for a trade negotiation, as it will update the trade objectStore.
@@ -700,45 +739,6 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
                     });
                 });
             });
-        });
-    }
-
-    /**
-     * Estimate draft pick values, based on the generated draft prospects in the database.
-     *
-     * This was made for team.valueChange, so it could be called once and the results cached.
-     *
-     * @memberOf core.trade
-     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players; if null is passed, then a new transaction will be used.
-     * @return {Promise.Object} Resolves to estimated draft pick values.
-     */
-    function getPickValues(ot) {
-        var estValues, i, promises;
-
-        estValues = {
-            default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37] // This is basically arbitrary
-        };
-
-        // Look up to 4 season in the future, but depending on whether this is before or after the draft, the first or last will be empty/incomplete
-        promises = [];
-        for (i = g.season; i < g.season + 4; i++) {
-            promises.push(dao.players.getAll({
-                ot: ot,
-                index: "draft.year",
-                key: i
-            }).then(function (players) {
-                if (players.length > 0) {
-                    for (i = 0; i < players.length; i++) {
-                        players[i].value += 4; // +4 is to generally make picks more valued
-                    }
-                    players.sort(function (a, b) { return b.value - a.value; });
-                    estValues[players[0].draft.year] = _.pluck(players, "value");
-                }
-            }));
-        }
-
-        return Promise.all(promises).then(function () {
-            return estValues;
         });
     }
 

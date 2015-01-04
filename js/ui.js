@@ -303,7 +303,7 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
 
         handleDropdown = function (select) {
             select.off("change");
-            select.change(function (event) {
+            select.change(function () {
                 var args, extraParam, leaguePage, url, seasonsDropdown;
 
                 // UGLY HACK: Stop event handling if it looks like this is a season dropdown and a new season is starting. Otherwise you get double refreshes, often pointing to the previous year, since updating the season dropdown is interpreted as a "change"

@@ -15,7 +15,7 @@ define(["dao", "globals", "ui", "core/team", "lib/bluebird", "lib/jquery", "lib/
         }
     };
 
-    function updatePowerRankings(inputs, updateEvents, vm) {
+    function updatePowerRankings(inputs, updateEvents) {
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
             return Promise.all([
                 team.filter({

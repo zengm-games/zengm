@@ -20,7 +20,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
             return;
         }
 
-        league.export_(objectStores).then(function (data) {
+        league.exportLeague(objectStores).then(function (data) {
             var a, blob, fileName, json, url;
 
             json = JSON.stringify(data, undefined, 2);
@@ -47,7 +47,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/hel
         });
     }
 
-    function updateExportLeague(inputs, updateEvents, vm) {
+    function updateExportLeague(inputs, updateEvents) {
         var categories;
 
         if (updateEvents.indexOf("firstRun") >= 0) {

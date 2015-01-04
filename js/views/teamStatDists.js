@@ -2,7 +2,7 @@
  * @name views.teamStatDists
  * @namespace Team stat distributions.
  */
-define(["globals", "ui", "core/team", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, team, boxPlot, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/team", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers"], function (g, ui, team, boxPlot, $, ko, _, components, bbgmView, helpers) {
     "use strict";
 
     var nbaStatsAll;

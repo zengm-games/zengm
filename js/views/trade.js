@@ -295,7 +295,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/bluebird", "li
         ui.title("Trade");
 
         // Don't use the dropdown function because this needs to be a POST
-        $("#trade-select-team").change(function (event) {
+        $("#trade-select-team").change(function () {
             // ui.realtimeUpdate currently can't handle a POST request
             Davis.location.replace(new Davis.Request({
                 abbrev: $("#trade-select-team").val(),

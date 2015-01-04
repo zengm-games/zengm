@@ -2,7 +2,7 @@
  * @name views.teamShotLocations
  * @namespace Team shot locations table.
  */
-define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, team, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers"], function (g, ui, team, $, ko, _, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;

@@ -9,6 +9,7 @@ make sure ads show correctly
 clean up
   replace getObjectStore with tx_
   throw error in inappropriate/unknown input param (like "pid")
+  throw error if tx passed to dao.tx is something besides transaction/null/undefined
   dao.players.getAll -> player.getAllWithStats
     the stats stuff could be put in some other function to be called after getAll
       this would allow the elimination of the "filter" option, which now is applied between getAll and adding stats
@@ -49,6 +50,8 @@ tooling
     go through http://eslint.org/docs/rules/ and see if anything needs to be enabled
   scry
   jscs
+
+is iOS detector working? getting weird errors in logs
 
 YWT bug: http://www.reddit.com/r/BasketballGM/comments/2qerb2/bug_ywt_and_you/
 

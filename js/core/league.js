@@ -269,7 +269,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
             }
 
             return player.genBaseMoods(tx).then(function (baseMoods) {
-                var agingYears, baseRatings, draftYear, goodNeutralBad, i, j, n, p, players, pots, profile, profiles, t, t2, playerTids;
+                var agingYears, baseRatings, draftYear, goodNeutralBad, i, n, p, players, pots, profile, profiles, t, t2, playerTids;
 
                 // Either add players from league file or generate them
 
@@ -494,7 +494,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
             dao.leagues.delete({key: lid});
             request = indexedDB.deleteDatabase("league" + lid);
-            request.onsuccess = function (event) {
+            request.onsuccess = function () {
                 console.log("Database league" + lid + " successfully deleted");
                 resolve();
             };
@@ -515,7 +515,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
      * @param {string[]} stores Array of names of objectStores to include in export
      * @return {Promise} Resolve to all the exported league data.
      */
-    function export_(stores) {
+    function exportLeague(stores) {
         var exportedLeague;
 
         exportedLeague = {};
@@ -629,7 +629,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
     return {
         create: create,
-        export_: export_,
+        exportLeague: exportLeague,
         remove: remove,
         setGameAttributes: setGameAttributes,
         updateMetaNameRegion: updateMetaNameRegion,

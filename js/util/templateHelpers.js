@@ -72,7 +72,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
 
     ko.bindingHandlers.newWindow = {
         update: function (element, valueAccessor) {
-            var args, i, url;
+            var args, url;
 
             args = valueAccessor();
 
@@ -142,7 +142,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
 
     ko.bindingHandlers.attrLeagueUrl = {
         update: function (element, valueAccessor, allBindingsAccessor, viewModel) {
-            var args, attr, i, options, toAttr, url;
+            var args, attr, options, toAttr;
 
             args = valueAccessor();
             toAttr = {};

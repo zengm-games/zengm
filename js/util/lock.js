@@ -9,7 +9,7 @@ define(["dao", "globals"], function (dao, g) {
      * Is game simulation in progress?
      *
      * Calls the callback function with either true or false depending on whether there is a game simulation currently in progress.
-     * 
+     *
      * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
      * @return {Promise.boolean}
@@ -24,7 +24,7 @@ define(["dao", "globals"], function (dao, g) {
      * Is a negotiation in progress?
      *
      * Calls the callback function with either true or false depending on whether there is an ongoing negoation.
-     * 
+     *
      * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on negotiations; if null is passed, then a new transaction will be used.
      * @return {Promise.boolean}
@@ -67,7 +67,7 @@ define(["dao", "globals"], function (dao, g) {
      * Can a new contract negotiation be started?
      *
      * Calls the callback function with either true or false. If games are in progress or a free agent (not re-signing!) is being negotiated with, false.
-     * 
+     *
      * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
      * @return {Promise.boolean}
@@ -97,7 +97,7 @@ define(["dao", "globals"], function (dao, g) {
      * Is there an undread message from the owner?
      *
      * Calls the callback function with either true or false.
-     * 
+     *
      * @memberOf util.lock
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on messages; if null is passed, then a new transaction will be used.
      * @return {Promise.boolean}

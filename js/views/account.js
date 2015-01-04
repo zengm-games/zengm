@@ -5,7 +5,7 @@
 define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgmView", "util/helpers", "util/random", "util/viewHelpers"], function (g, ui, league, $, account, bbgmView, helpers, random, viewHelpers) {
     "use strict";
 
-    function updateAccount(inputs, updateEvents, vm) {
+    function updateAccount(inputs, updateEvents) {
         if (updateEvents.indexOf("firstRun") >= 0) {
             return account.check().then(function () {
                 return {
@@ -15,7 +15,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
         }
     }
 
-    function updateAchievements(inputs, updateEvents, vm) {
+    function updateAchievements(inputs, updateEvents) {
         if (updateEvents.indexOf("firstRun") >= 0) {
             return account.getAchievements().then(function (achievements) {
                 return {

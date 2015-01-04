@@ -232,7 +232,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @return {Object} Updated player object.
      */
     function develop(p, years, generate, coachingRank) {
-        var age, baseChange, baseChangeLocal, calcBaseChange, i, j, ratingKeys, r, sigma, sign;
+        var age, baseChange, baseChangeLocal, calcBaseChange, i, j, ratingKeys, r, sign;
 
         years = years !== undefined ? years : 1;
         generate = generate !== undefined ? generate : false;
@@ -346,27 +346,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                 }
                 p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChangeLocal * random.uniform(0.5, 1.5));
             }
-
-            /*ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
-            for (j = 0; j < ratingKeys.length; j++) {
-                //increase = plusMinus
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + random.realGauss(1, 2) * baseChange);
-            }*/
-            /*// Easy to improve
-            ratingKeys = ['stre', 'endu', 'ins', 'ft', 'fg', 'tp', 'blk', 'stl'];
-            for (j = 0; j < ratingKeys.length; j++) {
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + random.realGauss(2, 2) * baseChange);
-            }
-            // In between
-            ratingKeys = ['spd', 'jmp', 'dnk'];
-            for (j = 0; j < ratingKeys.length; j++) {
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.realGauss(1, 2) * baseChange, -100, 35));
-            }
-            // Hard to improve
-            ratingKeys = ['drb', 'pss', 'reb'];
-            for (j = 0; j < ratingKeys.length; j++) {
-                p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(random.realGauss(1, 2) * baseChange, -10, 20));
-            }*/
 
 //console.log([age, p.ratings[r].pot - p.ratings[r].ovr, ovr(p.ratings[r]) - p.ratings[r].ovr])
             // Update overall and potential
@@ -598,10 +577,10 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         }
 
         // Each row should sum to ~150
-        profiles = [[10,  10,  10,  10,  10,  10,  10,  10,  10,  25,  10,  10,  10,  10,  10],  // Base 
-                    [-30, -10, 40,  20,  15,   0,   0,   10,  15,  25,   0,   30,  20,  20,  0],   // Point Guard
-                    [10,  10,  15,  15,  0,   0,   25,  15,  15,  20,   0,   10,  15,  0,   15],  // Wing
-                    [45,  30,  -15, -15, -5,  30,  30,  -5,   -15, -25, 30,  -5,   -20, -20, 30]];  // Big
+        profiles = [[10, 10, 10, 10, 10, 10, 10, 10, 10, 25, 10, 10, 10, 10, 10], // Base
+                    [-30, -10, 40, 20, 15, 0, 0, 10, 15, 25, 0, 30, 20, 20, 0], // Point Guard
+                    [10, 10, 15, 15, 0, 0, 25, 15, 15, 20, 0, 10, 15, 0, 15], // Wing
+                    [45, 30, -15, -15, -5, 30, 30, -5, -15, -25, 30, -5, -20, -20, 30]]; // Big
         sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
         baseRating = random.gauss(baseRating, 5);
 
@@ -647,7 +626,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         return ratings;
     }
 
-    function name(nationality) {
+    function name() {
         var fn, fnRand, i, ln, lnRand;
 
         // First name
@@ -884,7 +863,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         p.hgt = Math.round(random.randInt(-2, 2) + p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt);  // Height in inches (from minHgt to maxHgt)
         p.weight = Math.round(random.randInt(-20, 20) + (p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight);  // Weight in pounds (from minWeight to maxWeight)
 
-        // Randomly choose nationality  
+        // Randomly choose nationality
         nationality = 'USA';
         p.born = {
             year: g.season - age,
@@ -946,7 +925,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @return {Object} Injury object (type and gamesRemaining)
      */
     function injury(healthRank) {
-        var i, rand, type;
+        var i, rand;
 
         rand = random.uniform(0, 10882);
         for (i = 0; i < injuries.cumSum.length; i++) {
@@ -956,8 +935,19 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         }
         return {
             type: injuries.types[i],
-            gamesRemaining: Math.round((0.7 * (healthRank - 1) / (g.numTeams - 1) + 0.65)  * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])
+            gamesRemaining: Math.round((0.7 * (healthRank - 1) / (g.numTeams - 1) + 0.65) * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])
         };
+    }
+
+    /**
+     * How many seasons are left on this contract? The answer can be a fraction if the season is partially over
+     *
+     * @memberOf core.player
+     * @param {Object} exp Contract expiration year.
+     * @return {number} numGamesRemaining Number of games remaining in the current season (0 to 82).
+     */
+    function contractSeasonsRemaining(exp, numGamesRemaining) {
+        return (exp - g.season) + numGamesRemaining / 82;
     }
 
     /**
@@ -1021,7 +1011,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
         // Copys/filters the attributes listed in options.attrs from p to fp.
         filterAttrs = function (fp, p, options) {
-            var award, awardsGroupedTemp, i, j;
+            var award, awardsGroupedTemp, i;
 
             for (i = 0; i < options.attrs.length; i++) {
                 if (options.attrs[i] === "age") {
@@ -1030,8 +1020,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                     fp.draft = p.draft;
                     fp.draft.age = p.draft.year - p.born.year;
                     if (options.fuzz) {
-                        fp.draft.ovr =  Math.round(helpers.bound(fp.draft.ovr + p.ratings[0].fuzz, 0, 100));
-                        fp.draft.pot =  Math.round(helpers.bound(fp.draft.pot + p.ratings[0].fuzz, 0, 100));
+                        fp.draft.ovr = Math.round(helpers.bound(fp.draft.ovr + p.ratings[0].fuzz, 0, 100));
+                        fp.draft.pot = Math.round(helpers.bound(fp.draft.pot + p.ratings[0].fuzz, 0, 100));
                     }
                     // Inject abbrevs
                     fp.draft.abbrev = g.teamAbbrevsCache[fp.draft.tid];
@@ -1521,14 +1511,12 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      *     ratings.
      */
     function value(p, ps, options) {
-        var age, current, i, potential, pr, ps, ps1, ps2, s, worth, worthFactor;
+        var age, current, potential, pr, ps1, ps2, s;
 
         options = options !== undefined ? options : {};
         options.noPot = options.noPot !== undefined ? options.noPot : false;
         options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
         options.withContract = options.withContract !== undefined ? options.withContract : false;
-
-if (ps === undefined) { console.log("NO STATS"); ps = []; }
 
         // Current ratings
         pr = {}; // Start blank, add what we need (efficiency, wow!)
@@ -1719,18 +1707,6 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
         }
 
         return p;
-    }
-
-
-    /**
-     * How many seasons are left on this contract? The answer can be a fraction if the season is partially over
-     *
-     * @memberOf core.player
-     * @param {Object} exp Contract expiration year.
-     * @return {number} numGamesRemaining Number of games remaining in the current season (0 to 82).
-     */
-    function contractSeasonsRemaining(exp, numGamesRemaining) {
-        return (exp - g.season) + numGamesRemaining / 82;
     }
 
     // See views.negotiation for moods as well

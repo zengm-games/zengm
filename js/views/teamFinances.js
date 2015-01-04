@@ -166,7 +166,7 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
                             // Handle an object in the database
                             barData[keys[i]] = {};
                             tempData = _.pluck(t.seasons, keys[i]);
-                            _.each(tempData[0], function (value, key, obj) {
+                            _.each(tempData[0], function (value, key) {
                                 barData[keys[i]][key] = helpers.nullPad(_.pluck(_.pluck(tempData, key), "amount"), showInt);
                             });
                         }
@@ -265,7 +265,7 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
                 return output;
             }), {
                 // This is needed to update the totals at the bottom. Knockout can't do it directly because (apparently) DataTables handles the whole table, even the tfoot.
-                fnFooterCallback: function (nFoot, aData, iStart, iEnd, aiDisplay) {
+                fnFooterCallback: function (nFoot) {
                     var cells, contractTotals, i;
 
                     cells = nFoot.getElementsByTagName('th');

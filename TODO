@@ -44,8 +44,9 @@ PERFORMANCE CRAP
 
 tooling
   flow
-  eshint
+  eslint
     don't ignore my stuff in lib! at a minimum: js/lib/IndexedDB-getAll-shim.js js/lib/boxPlot.js js/lib/jquery.barGraph.js js/lib/faces.js js/lib/jquery.dataTables.bbgmSorting.js js/lib/jquery.tabSlideOut.js
+    go through http://eslint.org/docs/rules/ and see if anything needs to be enabled
   scry
   jscs
 

@@ -47,7 +47,7 @@ define(["dao", "globals", "lib/underscore"], function (dao, g, _) {
      * Update the rankings of team budgets, expenses, and revenue sources.
      *
      * Budget ranks should be updated after *any* team updates *any* budget item.
-     * 
+     *
      * Revenue and expenses ranks should be updated any time any revenue or expense occurs - so basically, after every game.
      *
      * @memberOf core.finances

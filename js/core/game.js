@@ -590,13 +590,13 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
      * 
      * @memberOf core.game
      * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all games will be simulated up until either the end of the regular season or the end of the playoffs, whichever happens first.
-     * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed.
+     * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
      * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the ui.realtimeUpdate raw call.
      */
     function play(numDays, start, gidPlayByPlay) {
         var cbNoGames, cbPlayGames, cbSaveResults, cbSimGames, cbRunDay;
 
-        start = start !== undefined ? start : false;
+        start = start !== undefined ? start : true;
 
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
         cbNoGames = function () {
@@ -718,10 +718,10 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         league.setGameAttributes({lastDbChange: Date.now()}).then(function () {
                             if (g.phase === g.PHASE.PLAYOFFS) {
                                 season.newSchedulePlayoffsDay().then(function () {
-                                    play(numDays - 1);
+                                    play(numDays - 1, false);
                                 });
                             } else {
-                                play(numDays - 1);
+                                play(numDays - 1, false);
                             }
                         });
                     }, raw);

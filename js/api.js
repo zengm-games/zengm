@@ -24,19 +24,17 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/game", "core/leag
             if (g.phase <= g.PHASE.PLAYOFFS) {
                 ui.updateStatus("Playing..."); // For quick UI updating, before game.play
                 // Start playing games
-                game.play(numDays, true);
+                game.play(numDays);
             } else if (g.phase === g.PHASE.FREE_AGENCY) {
                 if (numDays > g.daysLeft) {
                     numDays = g.daysLeft;
                 }
-                freeAgents.play(numDays, true);
+                freeAgents.play(numDays);
             }
         } else if (amount === "untilPlayoffs") {
             if (g.phase < g.PHASE.PLAYOFFS) {
                 ui.updateStatus("Playing..."); // For quick UI updating, before game.play
-                season.getDaysLeftSchedule().then(function (numDays) {
-                    game.play(numDays, true);
-                });
+                season.getDaysLeftSchedule().then(game.play);
             }
         } else if (amount === "stop") {
             league.setGameAttributes({stopGames: true}).then(function () {

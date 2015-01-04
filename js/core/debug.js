@@ -2,7 +2,7 @@
  * @name core.debug
  * @namespace Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
  */
-define(["dao", "globals", "core/finances", "core/player", "data/injuries", "data/names", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, g, finances, player, injuries, names, faces, _, eventLog, helpers, random) {
+define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, player, _) {
     "use strict";
 
     function regressRatingsPer() {

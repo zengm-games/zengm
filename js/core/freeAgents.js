@@ -7,7 +7,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
 
     /**
      * AI teams sign free agents.
-     * 
+     *
      * Each team (in random order) will sign free agents up to their salary cap or roster size limit. This should eventually be made smarter
      *
      * @memberOf core.freeAgents
@@ -217,12 +217,12 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
      * 
      * @memberOf core.freeAgents
      * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all of free agency will be simulated up until the preseason starts.
-     * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed.
+     * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
      */
     function play(numDays, start) {
         var cbNoDays, cbRunDay, season;
 
-        start = start !== undefined ? start : false;
+        start = start !== undefined ? start : true;
         season = require("core/season");
 
         // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
@@ -251,7 +251,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                             if (g.daysLeft > 0 && numDays > 0) {
                                 ui.realtimeUpdate(["playerMovement"], undefined, function () {
                                     ui.updateStatus(g.daysLeft + " days left");
-                                    play(numDays - 1);
+                                    play(numDays - 1, false);
                                 });
                             } else if (g.daysLeft === 0) {
                                 cbNoDays();

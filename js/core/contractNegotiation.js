@@ -77,7 +77,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
 
     /**
      * Restrict the input to between g.minContract and g.maxContract, the valid amount of annual thousands of dollars for a contract.
-     * 
+     *
      * @memberOf core.contractNegotiation
      * @param {number} years Annual salary, in thousands of dollars, to be validated.
      * @return {number} An integer between g.minContract and g.maxContract, rounded to the nearest $10k.
@@ -93,7 +93,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
 
     /**
      * Restrict the input to between 1 and 5, the valid number of years for a contract.
-     * 
+     *
      * @memberOf core.contractNegotiation
      * @param {number} years Number of years, to be validated.
      * @return {number} An integer between 1 and 5.
@@ -109,7 +109,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
 
     /**
      * Make an offer to a player.
-     * 
+     *
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
      * @param {number} teamAmount Teams's offer amount in thousands of dollars per year (between 500 and 20000).
@@ -218,7 +218,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
 
     /**
      * Cancel contract negotiations with a player.
-     * 
+     *
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
      * @return {Promise}
@@ -244,9 +244,9 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
 
     /**
      * Cancel all ongoing contract negotiations.
-     * 
+     *
      * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is re-signing players at the end of the season, although that should probably change eventually.
-     * 
+     *
      * @memberOf core.contractNegotiation
      * @return {Promise}
      */
@@ -261,9 +261,9 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
 
     /**
      * Accept the player's offer.
-     * 
+     *
      * If successful, then the team's current roster will be displayed.
-     * 
+     *
      * @memberOf core.contractNegotiation
      * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
      * @return {Promise.<string=>} If an error occurs, resolves to a string error message.

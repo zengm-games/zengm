@@ -7,9 +7,9 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Initialize the two teams that are playing this game.
-     * 
+     *
      * When an instance of this class is created, information about the two teams is passed to GameSim. Then GameSim.run will actually simulate a game and return the results (i.e. stats) of the simulation. Also see core.game where the inputs to this function are generated.
-     * 
+     *
      * @memberOf core.gameSim
      * @param {number} gid Integer game ID, which must be unique as it will serve as the primary key in the database when the game is saved.
      * @param {Object} team1 Information about the home team. Top-level properties are: id (team ID number), defense (a number representing the overall team defensive rating), pace (the mean number of possessions the team likes to have in a game), stat (an for storing team stats), and player (a list of objects, one for each player on the team, ordered by rosterOrder). Each player's object contains: id (player's unique ID number), valueNoPot (current player value, from core.player.value), stat (an object for storing player stats, similar to the one for team stats), and compositeRatings (an object containing various ratings used in the game simulation), and skills (a list of discrete skills a player has, as defined in core.player.skills, which influence game simulation). In other words...
@@ -168,7 +168,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * Simulate this.numPossessions possessions.
      *
      * To simulate regulation or overtime, just set this.numPossessions to the appropriate value and call this function.
-     * 
+     *
      * @memberOf core.gameSim
      */
     GameSim.prototype.simPossessions = function () {
@@ -228,7 +228,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * Perform appropriate substitutions.
      *
      * Can this be sped up?
-     * 
+     *
      * @memberOf core.gameSim
      * @return {boolean} true if a substitution occurred, false otherwise.
      */
@@ -312,7 +312,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * Update synergy.
      *
      * This should be called after this.updatePlayersOnCourt as it only produces different output when the players on the court change.
-     * 
+     *
      * @memberOf core.gameSim
      */
     GameSim.prototype.updateSynergy = function () {
@@ -376,7 +376,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * Update team composite ratings.
      *
      * This should be called once every possession, after this.updatePlayersOnCourt and this.updateSynergy as they influence output, to update the team composite ratings based on the players currently on the court.
-     * 
+     *
      * @memberOf core.gameSim
      */
     GameSim.prototype.updateTeamCompositeRatings = function () {
@@ -411,7 +411,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * Update playing time stats.
      *
      * This should be called once every possession, at the end, to record playing time and bench time for players.
-     * 
+     *
      * @memberOf core.gameSim
      */
     GameSim.prototype.updatePlayingTime = function () {
@@ -443,7 +443,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * See if any injuries occurred this possession, and handle the consequences.
      *
      * This doesn't actually compute the type of injury, it just determines if a player is injured bad enough to miss the rest of the game.
-     * 
+     *
      * @memberOf core.gameSim
      */
     GameSim.prototype.injuries = function () {
@@ -473,7 +473,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Simulate a single possession.
-     * 
+     *
      * @memberOf core.gameSim
      * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
      */
@@ -494,7 +494,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Probability of the current possession ending in a turnover.
-     * 
+     *
      * @memberOf core.gameSim
      * @return {number} Probability from 0 to 1.
      */
@@ -504,7 +504,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Turnover.
-     * 
+     *
      * @memberOf core.gameSim
      * @return {string} Either "tov" or "stl" depending on whether the turnover was caused by a steal or not.
      */
@@ -525,7 +525,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Probability that a turnover occurring in this possession is a steal.
-     * 
+     *
      * @memberOf core.gameSim
      * @return {number} Probability from 0 to 1.
      */
@@ -535,7 +535,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Steal.
-     * 
+     *
      * @memberOf core.gameSim
      * @return {string} Currently always returns "stl".
      */
@@ -552,7 +552,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Shot.
-     * 
+     *
      * @memberOf core.gameSim
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
      * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
@@ -652,7 +652,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Probability that a shot taken this possession is blocked.
-     * 
+     *
      * @memberOf core.gameSim
      * @return {number} Probability from 0 to 1.
      */
@@ -662,7 +662,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Blocked shot.
-     * 
+     *
      * @memberOf core.gameSim
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
      * @return {string} Output of this.doReb.
@@ -704,7 +704,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * Field goal.
      *
      * Simulate a successful made field goal.
-     * 
+     *
      * @memberOf core.gameSim
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the passing player, who will get an assist. -1 if no assist.
@@ -751,7 +751,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Probability that a shot taken this possession is assisted.
-     * 
+     *
      * @memberOf core.gameSim
      * @return {number} Probability from 0 to 1.
      */
@@ -761,7 +761,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Free throw.
-     * 
+     *
      * @memberOf core.gameSim
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
      * @param {number} amount Integer representing the number of free throws to shoot
@@ -818,7 +818,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * Rebound.
      *
      * Simulates a rebound opportunity (e.g. after a missed shot).
-     * 
+     *
      * @memberOf core.gameSim
      * @return {string} "drb" for a defensive rebound, "orb" for an offensive rebound, null for no rebound (like if the ball goes out of bounds).
      */
@@ -848,7 +848,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Generate an array of composite ratings.
-     * 
+     *
      * @memberOf core.gameSim
      * @param {string} rating Key of this.team[t].player[p].compositeRating to use.
      * @param {number} t Team (0 or 1, this.or or this.d).
@@ -871,7 +871,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     /**
      * Pick a player to do something.
-     * 
+     *
      * @memberOf core.gameSim
      * @param {Array.<number>} ratios output of this.ratingArray.
      * @param {number} exempt An integer representing a player that can't be picked (i.e. you can't assist your own shot, which is the only current use of exempt). The value of exempt ranges from 0 to 4, corresponding to the index of the player in this.playersOnCourt. This is *NOT* the same value as the player ID *or* the index of the this.team[t].player list. Yes, that's confusing.
@@ -931,7 +931,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
     };
 
     GameSim.prototype.recordPlay = function (type, t, names) {
-        var i, qtr, sec, text, texts;
+        var i, sec, text, texts;
 
         if (this.playByPlay !== undefined) {
             if (type === "injury") {
@@ -1024,14 +1024,14 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                     });
                 }
             } else {
-                console.log("No text for " + type);
+                throw new Error("No text for " + type);
             }
         }
     };
 
     /**
      * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
-     * 
+     *
      * @memberOf core.gameSim
      * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
      * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).

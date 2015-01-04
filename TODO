@@ -4,55 +4,44 @@ DB CHANGES SINCE 3.4.0
 THE FLATTENING
 --------------
 
-dao refactor:
-  move special cases out of dao - have it just be a thin IDB layer
-    dao.players.getAll -> player.getAllWithStats
-    IS THIS STUFF ACTUALLY A GOOD IDEA? I want a DAO, not an IDB wrapper. Goal is to allow different DB backends. Does this help or hurt that goal? Probably neutral at best, so maybe leave it alone for now.
-    ALSO - replace getObjectStore with tx_
+dao.players.getAll -> player.getAllWithStats
+  the stats stuff can be put in some other function to be called after getAll
+    this would allos the elimination of the "filter" option, which now is applied between getAll and adding stats basically
 
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing
-  remove filter option from dao.players.getAll - also confusing, can just apply manually
-
-rewrite old upgrading code?
-
-clean up
-  throw error in inappropriate input param (like "pid")
-  shouldn't overwrite functions with getAll like in players - that should be another name
-  hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake
-  what about creating, migrating, and deleting databases? and objectStoreNames?
-  don't use "ot" anywhere - it's all transactions so call it tx
-  name?
-    backboard
-    backcourt
-    baseline!!!!!!!!!!!
-
-unhandled rejects in chrome http://stackoverflow.com/questions/26667598/will-javascript-es6-promise-support-done-api https://code.google.com/p/v8/issues/detail?id=3093
-  can customize build to save space https://github.com/petkaantonov/bluebird#custom-builds
-  https://code.google.com/p/v8/issues/detail?id=3093
-
-put bugsnag back
+    player.fitler -> player.process
+    team.filter -> team.getAndProcess
 
 test
   achievements work in game
   achievement retrieval from account
   achievement syncing to account
   make sure ads show correctly
+  benchmark
+    before/after
+    does switching from .all to .join matter?
+
+put bugsnag back
+
+clean up
+  replace getObjectStore with tx_
+  throw error in inappropriate/unknown input param (like "pid")
+  shouldn't overwrite functions with getAll like in players - that should be another name
+  hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake
+  what about creating, migrating, and deleting databases? and objectStoreNames?
+  don't use "ot" anywhere - it's all transactions so call it tx
+  extract it as a library named "baseline"
+  improve API
+    instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
+      see promises_super_tx branch
+      or could be dao.tx().then(function (tx) {}) and resolve that promise oncomplete? but how to pass value to then?
+
+rewrite old upgrading code? eventually, leave it there for now
 
 after fully abstracting IndexedDB, could i improve performance by running it locally in node and using another database?
   same with mobile on phonegap
   same with web - "turbo mode" where only one window (db connection) is allowed and caching is heavy
-
-benchmark
-  before/after
-  does switching from .all to .join matter?
-
-draftOrder should just be in globals, not a real table
-
-improve API
-  instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
-    see promises_super_tx branch
-    or could be dao.tx().then(function (tx) {}) and resolve that promise oncomplete? but how to pass value to then?
 
 in-memory cache
   when starting to play games (>1 day), "get" and "getAll" add object stores to cache (if they aren't already there) and "put" updates cached values and set marker saying they were updated
@@ -63,6 +52,10 @@ in-memory cache
 
 PERFORMANCE CRAP
 ----------------
+
+tooling
+  flow
+  eshint
 
 YWT bug: http://www.reddit.com/r/BasketballGM/comments/2qerb2/bug_ywt_and_you/
 
@@ -734,6 +727,7 @@ update formulas
 FUTURE
 ------
 
+draftOrder should just be in globals, not a real table
 shot charts showing hot spots (red/yellow/green) based on shot location data
 most improved player
 If you are simulating through the whole season and execute a trade while simulating, it will continue simulating even if you are over the roster limit. http://www.reddit.com/r/BasketballGM/comments/1xch01/trades_after_season/cfamo73

@@ -16,7 +16,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
             return tx0;
         }
 
-        if (storeNames === "achievements") {
+        if (storeNames === "achievements" || storeNames === "leagues") {
             tx = g.dbm.transaction(storeNames, mode);
         } else {
             tx = g.dbl.transaction(storeNames, mode);
@@ -37,6 +37,8 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
      * Get an object store or transaction based on input which may be the desired object store, a transaction to be used, or null.
      * 
      * This allows for the convenient use of transactions or object stores that have already been defined, which is often necessary.
+     *
+     * This could eventually be replaced by tx_ above.
      * 
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
      * @param {(string|Array.<string>)} transactionObjectStores The object stores to open a transaction with, if necessary.
@@ -267,7 +269,7 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     players = generateBasicDao("dbl", "players");
 
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
-    // filter: Arbitrary JS function to run on output with array.filter
+    // filter: Arbitrary JS function to run on players with array.filter. This is run before stats are retrieved, so it can improve performance in some cases.
     // statsSeasons: if "all", return all (needed for career totals, listing all years stats, etc). if undefined/null, return none (same as empty array input). otherwise, it's an array of seasons to return (usually just one year, but can be two for oldStats)
     // statsPlayoffs: if undefined/null, default is false. if true, include both regular season and playffs, otherwise just regular season. This is because player.filter doesn't like being given only playoff stats, for some reason.
     // statsTid: if undefined/null, return any team stats. otherwise, filter
@@ -392,8 +394,8 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
     return {
         tx: tx_,
-        leagues: generateBasicDao("dbm", "leagues"),
         achievements: generateBasicDao("dbm", "achievements"),
+        leagues: generateBasicDao("dbm", "leagues"),
         awards: generateBasicDao("dbl", "awards"),
         draftOrder: generateBasicDao("dbl", "draftOrder"),
         draftPicks: generateBasicDao("dbl", "draftPicks"),

@@ -27,3 +27,7 @@ make it work in IE10. Also, lines 267-270 are similarly added for IE10:
       }
 
 jquery.tabSlideOut.js is currently not used.
+
+bluebird.js is mostly needed because I'm not comfortable with Chrome's native
+promise support, e.g. https://code.google.com/p/v8/issues/detail?id=3093 and
+http://stackoverflow.com/q/26667598/786644

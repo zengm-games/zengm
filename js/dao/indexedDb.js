@@ -1,7 +1,7 @@
 define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     "use strict";
 
-    var players;
+    var dao;
 
     /**
      * Create an IndexedDB transaction whose oncomplete event can be accessed as a promise.
@@ -266,7 +266,30 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     }
 
 
-    players = generateBasicDao("dbl", "players");
+    dao = {
+        tx: tx_,
+        achievements: generateBasicDao("dbm", "achievements"),
+        leagues: generateBasicDao("dbm", "leagues"),
+        awards: generateBasicDao("dbl", "awards"),
+        draftOrder: generateBasicDao("dbl", "draftOrder"),
+        draftPicks: generateBasicDao("dbl", "draftPicks"),
+        events: generateBasicDao("dbl", "events"),
+        gameAttributes: generateBasicDao("dbl", "gameAttributes"),
+        games: generateBasicDao("dbl", "games"),
+        messages: generateBasicDao("dbl", "messages"),
+        negotiations: generateBasicDao("dbl", "negotiations"),
+        playerStats: generateBasicDao("dbl", "playerStats"),
+        playoffSeries: generateBasicDao("dbl", "playoffSeries"),
+        releasedPlayers: generateBasicDao("dbl", "releasedPlayers"),
+        schedule: generateBasicDao("dbl", "schedule"),
+        teams: generateBasicDao("dbl", "teams"),
+        trade: generateBasicDao("dbl", "trade")
+    };
+
+
+    dao.players = generateBasicDao("dbl", "players");
+
+    dao.players.getAllOriginal = dao.players.getAll;
 
     // This is intended just for getting the data from the database. Anything more sophisticated is in core.player.filter
     // filter: Arbitrary JS function to run on players with array.filter. This is run before stats are retrieved, so it can improve performance in some cases.
@@ -280,7 +303,9 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
     // can say "fix the first N elements of the index and let the other values be anything" http://stackoverflow.com/questions/26203075/querying-an-indexeddb-compound-index-with-a-shorter-array
     // http://stackoverflow.com/a/23808891/786644
     // http://stackoverflow.com/questions/12084177/in-indexeddb-is-there-a-way-to-make-a-sorted-compound-query
-    players.getAll = function (options) {
+    dao.players.getAll = function (options) {
+        var tx;
+
         options = options !== undefined ? options : {};
         options.ot = options.ot !== undefined ? options.ot : null;
         options.index = options.index !== undefined ? options.index : null;
@@ -289,127 +314,88 @@ define(["globals", "lib/bluebird", "lib/jquery"], function (g, Promise, $) {
         options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
         options.filter = options.filter !== undefined ? options.filter : null;
 
-if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
-
         // By default, return no stats
         if (options.statsSeasons === undefined || options.statsSeasons === null) {
             options.statsSeasons = [];
         }
 
-        return new Promise(function (resolve, reject) {
-            var playerStore, tx;
+        tx = dao.tx(["players", "playerStats"], "readonly", options.ot);
 
-            playerStore = getObjectStore(g.dbl, options.ot, ["players", "playerStats"], "players"); // Doesn't really need playerStats all the time
-            tx = playerStore.transaction;
-
-            if (options.index !== null) {
-                playerStore = playerStore.index(options.index);
+        return dao.players.getAllOriginal({
+            ot: tx,
+            index: options.index,
+            key: options.key
+        }).then(function (players) {
+            if (options.filter !== null) {
+                players = players.filter(options.filter);
             }
 
-            playerStore.getAll(options.key).onsuccess = function (event) {
-                var done, i, pid, players;
+            if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
+                // No stats needed! Yay!
+                return players;
+            }
 
-                players = event.target.result;
+            // Get stats
+            return Promise.reduce(players, function (i, p) {
+                var key;
 
-                if (options.filter !== null) {
-                    players = players.filter(options.filter);
+                if (options.statsSeasons === "all") {
+                    // All seasons
+                    key = IDBKeyRange.bound([p.pid], [p.pid, '']);
+                } else if (options.statsSeasons.length === 1) {
+                    // Restrict to one season
+                    key = IDBKeyRange.bound([p.pid, options.statsSeasons[0]], [p.pid, options.statsSeasons[0], '']);
+                } else if (options.statsSeasons.length > 1) {
+                    // Restrict to range between seasons
+                    key = IDBKeyRange.bound([p.pid, Math.min.apply(null, options.statsSeasons)], [p.pid, Math.max.apply(null, options.statsSeasons), '']);
                 }
 
-                done = 0;
+                return dao.playerStats.getAll({
+                    ot: tx,
+                    index: "pid, season, tid",
+                    key: key
+                }).then(function (playerStats) {
+                    // Due to indexes not necessarily handling all cases, still need to filter
+                    players[i].stats = playerStats.filter(function (ps) {
+                        // statsSeasons is defined, but this season isn't in it
+                        if (options.statsSeasons !== "all" && options.statsSeasons.indexOf(ps.season) < 0) {
+                            return false;
+                        }
 
-                // Hacky way: always get all seasons for pid, then filter in JS
-                if ((options.statsSeasons === "all" || options.statsSeasons.length > 0) && players.length > 0) {
-                    for (i = 0; i < players.length; i++) {
-                        pid = players[i].pid;
+                        // If options.statsPlayoffs is false, don't include playoffs. Otherwise, include both
+                        if (!options.statsPlayoffs && options.statsPlayoffs !== ps.playoffs) {
+                            return false;
+                        }
 
-                        (function (i) {
-                            var key;
+                        if (options.statsTid !== null && options.statsTid !== ps.tid) {
+                            return false;
+                        }
 
-                            if (options.statsSeasons === "all") {
-                                // All seasons
-                                key = IDBKeyRange.bound([pid], [pid, '']);
-                            } else if (options.statsSeasons.length === 1) {
-                                // Restrict to one season
-                                key = IDBKeyRange.bound([pid, options.statsSeasons[0]], [pid, options.statsSeasons[0], '']);
-                            } else if (options.statsSeasons.length > 1) {
-                                // Restrict to range between seasons
-                                key = IDBKeyRange.bound([pid, Math.min.apply(null, options.statsSeasons)], [pid, Math.max.apply(null, options.statsSeasons), '']);
-                            }
-
-                            tx.objectStore("playerStats").index("pid, season, tid").getAll(key).onsuccess = function (event) {
-                                var playerStats;
-
-                                playerStats = event.target.result;
-
-                                // Due to indexes not necessarily handling all cases, still need to filter
-                                players[i].stats = playerStats.filter(function (ps) {
-                                    // statsSeasons is defined, but this season isn't in it
-                                    if (options.statsSeasons !== "all" && options.statsSeasons.indexOf(ps.season) < 0) {
-                                        return false;
-                                    }
-
-                                    // If options.statsPlayoffs is false, don't include playoffs. Otherwise, include both
-                                    if (!options.statsPlayoffs && options.statsPlayoffs !== ps.playoffs) {
-                                        return false;
-                                    }
-
-                                    if (options.statsTid !== null && options.statsTid !== ps.tid) {
-                                        return false;
-                                    }
-
-                                    return true;
-                                }).sort(function (a, b) {
-                                    // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
-                                    return a.psid - b.psid;
-                                });
-
-                                done += 1;
-
-                                if (done === players.length) {
-// do I need to sort?
-                                    resolve(players);
-                                }
-                            };
-                        }(i));
-                    }
-                } else {
-                    // No stats needed! Yay!
-                    resolve(players);
-                }
-            };
+                        return true;
+                    }).sort(function (a, b) {
+                        // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
+                        return a.psid - b.psid;
+                    });
+                }).then(function () {
+                    return i + 1;
+                });
+            }, 0).then(function () {
+                return players;
+            });
         });
     };
 
-    players.get = function (options) {
-        return players.getAll(options).get(0);
+    dao.players.get = function (options) {
+        return dao.players.getAll(options).get(0);
     };
 
-    players.putOriginal = players.put;
-    players.put = function (options) {
+    dao.players.putOriginal = dao.players.put;
+    dao.players.put = function (options) {
         options = options !== undefined ? options : {};
         if (options.value.stats !== undefined) { throw new Error("stats property on player object"); }
 
-        return players.putOriginal(options);
+        return dao.players.putOriginal(options);
     };
 
-    return {
-        tx: tx_,
-        achievements: generateBasicDao("dbm", "achievements"),
-        leagues: generateBasicDao("dbm", "leagues"),
-        awards: generateBasicDao("dbl", "awards"),
-        draftOrder: generateBasicDao("dbl", "draftOrder"),
-        draftPicks: generateBasicDao("dbl", "draftPicks"),
-        events: generateBasicDao("dbl", "events"),
-        gameAttributes: generateBasicDao("dbl", "gameAttributes"),
-        games: generateBasicDao("dbl", "games"),
-        messages: generateBasicDao("dbl", "messages"),
-        negotiations: generateBasicDao("dbl", "negotiations"),
-        players: players,
-        playerStats: generateBasicDao("dbl", "playerStats"),
-        playoffSeries: generateBasicDao("dbl", "playoffSeries"),
-        releasedPlayers: generateBasicDao("dbl", "releasedPlayers"),
-        schedule: generateBasicDao("dbl", "schedule"),
-        teams: generateBasicDao("dbl", "teams"),
-        trade: generateBasicDao("dbl", "trade")
-    };
+    return dao;
 });

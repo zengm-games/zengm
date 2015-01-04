@@ -11,7 +11,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * Update g.ownerMood based on performance this season.
      *
      * This is based on three factors: regular season performance, playoff performance, and finances. Designed to be called after the playoffs end.
-     * 
+     *
      * @memberOf core.season
      * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
      */
@@ -298,7 +298,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
     /**
      * Get an array of games from the schedule.
-     * 
+     *
      * @param {(IDBObjectStore|IDBTransaction|null)} options.ot An IndexedDB object store or transaction on schedule; if null is passed, then a new transaction will be used.
      * @param {boolean} options.oneDay Number of days of games requested. Default false.
      * @return {Promise} Resolves to the requested schedule array.
@@ -333,7 +333,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
     /**
      * Save the schedule to the database, overwriting what's currently there.
-     * 
+     *
      * @param {Array} tids A list of lists, each containing the team IDs of the home and
             away teams, respectively, for every game in the season, respectively.
      * @return {Promise}
@@ -369,7 +369,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * Creates a new regular season schedule for 30 teams.
      *
      * This makes an NBA-like schedule in terms of conference matchups, division matchups, and home/away games.
-     * 
+     *
      * @memberOf core.season
      * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
      */
@@ -488,7 +488,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * Creates a new regular season schedule for an arbitrary number of teams.
      *
      * newScheduleDefault is much nicer and more balanced, but only works for 30 teams.
-     * 
+     *
      * @memberOf core.season
      * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
      */
@@ -538,7 +538,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * Wrapper function to generate a new schedule with the appropriate algorithm based on the number of teams in the league.
      *
      * For 30 teams, use newScheduleDefault (NBA-like).
-     * 
+     *
      * @memberOf core.season
      * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
      */
@@ -596,7 +596,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * Common tasks run after a new phrase is set.
      *
      * This updates the phase, executes a callback, and (if necessary) updates the UI. It should only be called from one of the NewPhase* functions defined below.
-     * 
+     *
      * @memberOf core.season
      * @param {number} phase Integer representing the new phase of the game (see other functions in this module).
      * @param {string=} url Optional URL to pass to ui.realtimeUpdate for redirecting on new phase. If undefined, then the current page will just be refreshed.
@@ -1231,7 +1231,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
      * Set a new phase of the game.
      *
      * This function is called to do all the crap that must be done during transitions between phases of the game, such as moving from the regular season to the playoffs. Phases are defined in the g.PHASE.* global variables. The phase update may happen asynchronously if the database must be accessed, so do not rely on g.phase being updated immediately after this function is called. Instead, pass a callback.
-     * 
+     *
      * @memberOf core.season
      * @param {number} phase Numeric phase ID. This should always be one of the g.PHASE.* variables defined in globals.js.
      * @param {} extra Parameter containing extra info to be passed to phase changing function. Currently only used for newPhaseFantasyDraft.
@@ -1400,7 +1400,7 @@ define(["dao", "db", "globals", "ui", "core/contractNegotiation", "core/draft", 
 
     /**
      * Get the number of days left in the regular season schedule.
-     * 
+     *
      * @memberOf core.season
      * @return {Promise} The number of days left in the schedule.
      */

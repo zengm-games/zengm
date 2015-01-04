@@ -5,7 +5,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
 
     /**
      * Create an IndexedDB transaction whose oncomplete event can be accessed as a promise.
-     * 
+     *
      * This is the same as IDBRequest.transaction except the returned transaction has a "complete" property, which contains a function that returns a promise which resolves when the oncomplete event of the transaction fires.
      */
     function tx_(storeNames, mode, tx0) {
@@ -35,11 +35,11 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
 
     /**
      * Get an object store or transaction based on input which may be the desired object store, a transaction to be used, or null.
-     * 
+     *
      * This allows for the convenient use of transactions or object stores that have already been defined, which is often necessary.
      *
      * This could eventually be replaced by tx_ above.
-     * 
+     *
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction to be used; if null is passed, then a new transaction will be used.
      * @param {(string|Array.<string>)} transactionObjectStores The object stores to open a transaction with, if necessary.
      * @param {?string} objectStore The object store to return. If null, return a transaction.
@@ -200,7 +200,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
          * Iterate over objects in an object store, optionally modifying them.
          *
          * This is a wrapper for openCursor. The "key" and "direction" parameters define how we're opening the cursor. Then, "callback" is a function that runs on each object retrieved.
-         * 
+         *
          * The arguments passed to callback are the object itself and a function that will short circuit the iteration if called.
          *
          * If you return a promise within callback, the next iteration won't begin until the promise resolves.

@@ -22,8 +22,61 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
     }
 
     /**
+     * Set values in the gameAttributes objectStore and update the global variable g.
+     *
+     * Items stored in gameAttributes are globally available through the global variable g. If a value is a constant across all leagues/games/whatever, it should just be set in globals.js instead.
+     *
+     * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
+     * @returns {Promise} Promise for when it finishes.
+     */
+    function setGameAttributes(gameAttributes) {
+        var key, toUpdate, tx;
+
+        toUpdate = [];
+        for (key in gameAttributes) {
+            if (gameAttributes.hasOwnProperty(key)) {
+                if (g[key] !== gameAttributes[key]) {
+                    toUpdate.push(key);
+                }
+            }
+        }
+
+        tx = dao.tx("gameAttributes", "readwrite");
+
+        toUpdate.forEach(function (key) {
+            dao.gameAttributes.put({
+                ot: tx,
+                value: {
+                    key: key,
+                    value: gameAttributes[key]
+                }
+            }).then(function () {
+                g[key] = gameAttributes[key];
+            });
+
+            // Trigger a signal for the team finances view. This is stupid.
+            if (key === "gamesInProgress") {
+                if (gameAttributes[key]) {
+                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
+                } else {
+                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
+                }
+            }
+        });
+
+        return tx.complete().then(function () {
+            // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
+            if (gameAttributes.hasOwnProperty("gamesInProgress") && gameAttributes.gamesInProgress) {
+                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
+            } else if (gameAttributes.hasOwnProperty("gamesInProgress") && !gameAttributes.gamesInProgress) {
+                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
+            }
+        });
+    }
+
+    /**
      * Create a new league.
-     * 
+     *
      * @memberOf core.league
      * @param {string} name The name of the league.
      * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
@@ -57,7 +110,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
         if (leagueFile.hasOwnProperty("meta") && leagueFile.meta.hasOwnProperty("phaseText")) {
             phaseText = leagueFile.meta.phaseText;
         } else {
-            phaseText =  "";
+            phaseText = "";
         }
 
         // Record in meta db
@@ -426,7 +479,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
     /**
      * Delete an existing league.
-     * 
+     *
      * @memberOf core.league
      * @param {number} lid League ID.
      * @param {function()=} cb Optional callback.
@@ -457,7 +510,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
     /**
      * Export existing active league.
-     * 
+     *
      * @memberOf core.league
      * @param {string[]} stores Array of names of objectStores to include in export
      * @return {Promise} Resolve to all the exported league data.
@@ -505,60 +558,6 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
         });
     }
 
-
-    /**
-     * Set values in the gameAttributes objectStore and update the global variable g.
-     *
-     * Items stored in gameAttributes are globally available through the global variable g. If a value is a constant across all leagues/games/whatever, it should just be set in globals.js instead.
-     * 
-     * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
-     * @returns {Promise} Promise for when it finishes.
-     */
-    function setGameAttributes(gameAttributes) {
-        var key, toUpdate, tx;
-
-        toUpdate = [];
-        for (key in gameAttributes) {
-            if (gameAttributes.hasOwnProperty(key)) {
-                if (g[key] !== gameAttributes[key]) {
-                    toUpdate.push(key);
-                }
-            }
-        }
-
-        tx = dao.tx("gameAttributes", "readwrite");
-
-        toUpdate.forEach(function (key) {
-            dao.gameAttributes.put({
-                ot: tx,
-                value: {
-                    key: key,
-                    value: gameAttributes[key]
-                }
-            }).then(function () {
-                g[key] = gameAttributes[key];
-            });
-
-            // Trigger a signal for the team finances view. This is stupid.
-            if (key === "gamesInProgress") {
-                if (gameAttributes[key]) {
-                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-                } else {
-                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-                }
-            }
-        });
-
-        return tx.complete().then(function () {
-            // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
-            if (gameAttributes.hasOwnProperty("gamesInProgress") && gameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-            } else if (gameAttributes.hasOwnProperty("gamesInProgress") && !gameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-            }
-        });
-    }
-
     function updateMetaNameRegion(name, region) {
         return dao.leagues.get({key: g.lid}).then(function (l) {
             l.teamName = name;
@@ -600,7 +599,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
     /**
      * Load game attributes from the database and update the global variable g.
-     * 
+     *
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
      * @return {Promise}
      */

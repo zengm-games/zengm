@@ -92,7 +92,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * Simulates the game and returns the results.
      *
      * Also see core.game where the outputs of this function are used.
-     *  
+     *
      * @memberOf core.gameSim
      * @return {Array.<Object>} Game result object, an array of two objects similar to the inputs to GameSim, but with both the team and player "stat" objects filled in and the extraneous data (pace, valueNoPot, compositeRating) removed. In other words...
      *     {
@@ -305,7 +305,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
     // x is value, a controls sharpness, b controls center
     GameSim.prototype.sigmoid = function (x, a, b) {
-        return 1 / (1 + Math.exp(-(a * (x - b)))); 
+        return 1 / (1 + Math.exp(-(a * (x - b))));
     };
 
     /**

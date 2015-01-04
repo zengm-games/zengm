@@ -78,7 +78,7 @@
         "no-script-url": 2,
         "no-self-compare": 0,
         "no-sequences": 2,
-        "no-shadow": 2,
+        "no-shadow": 0,
         "no-shadow-restricted-names": 2,
         "no-space-before-semi": 2,
         "no-spaced-func": 2,
@@ -105,7 +105,7 @@
         "comma-spacing": 2,
         "comma-style": 0,
         "complexity": [0, 11],
-        "consistent-return": 2,
+        "consistent-return": 0,
         "consistent-this": [0, "that"],
         "curly": [2, "all"],
         "default-case": 0,
@@ -154,6 +154,7 @@
 
     "globals": {
         "IDBKeyRange": true,
+        "mocha": true,
         "should": true
     }
 }

@@ -7,7 +7,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
 
     /**
      * Add a new row of season attributes to a team object.
-     * 
+     *
      * There should be one season attributes row for each year, and a new row should be added for each team at the start of a season.
      *
      * @memberOf core.team
@@ -124,7 +124,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
 
     /**
      * Add a new row of stats to a team object.
-     * 
+     *
      * A row contains stats for unique values of (season, playoffs). So new rows need to be added when a new season starts or when a team makes the playoffs.
      *
      * @memberOf core.team
@@ -178,7 +178,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
 
     /**
      * Create a new team object.
-     * 
+     *
      * @memberOf core.team
      * @param {Object} tm Team metadata object, likely from core.league.create.
      * @return {Object} Team object to insert in the database.
@@ -302,7 +302,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
      * This can be used to retrieve information about a certain season, compute average statistics from the raw data, etc.
      *
      * This is similar to player.filter, but has some differences. If only one season is requested, the attrs, seasonAttrs, and stats properties will all be merged on the root filtered team object for each team. "stats" is broken out into its own property only when multiple seasons are requested (options.season is undefined). "seasonAttrs" should behave similarly, but it currently doesn't because it just hasn't been used that way anywhere yet.
-     * 
+     *
      * @memberOf core.team
      * @param {Object} options Options, as described below.
      * @param {number=} options.season Season to retrieve stats/ratings for. If undefined, return stats for all seasons in a list called "stats".
@@ -1069,7 +1069,7 @@ console.log(dv);*/
      * Update team strategies (contending or rebuilding) for every team in the league.
      *
      * Basically.. switch to rebuilding if you're old and your success is fading, and switch to contending if you have a good amount of young talent on rookie deals and your success is growing.
-     * 
+     *
      * @memberOf core.team
      * @return {Promise}
      */
@@ -1158,7 +1158,7 @@ console.log(dv);*/
      * If any AI team is under the minimum roster size, sign minimum contract
      * players until the limit is reached. If the user's team is breaking one of
      * these roster size limits, display a warning.
-     * 
+     *
      * @memberOf core.team
      * @return {Promise.?string} Resolves to null if there is no error, or a string with the error message otherwise.
      */
@@ -1237,9 +1237,9 @@ console.log(dv);*/
 
     /**
     * Gets all the contracts a team owes.
-    * 
+    *
     * This includes contracts for players who have been released but are still owed money.
-    * 
+    *
     * @memberOf core.team
     * @param {IDBTransaction|null} tx An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
     * @param {number} tid Team ID.
@@ -1317,9 +1317,9 @@ console.log(dv);*/
 
     /**
      * Get the total current payroll for a team.
-     * 
+     *
      * This includes players who have been released but are still owed money from their old contracts.
-     * 
+     *
      * @memberOf core.team
      * @param {IDBTransaction|null} tx An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
      * @param {number} tid Team ID.
@@ -1342,7 +1342,7 @@ console.log(dv);*/
 
     /**
      * Get the total current payroll for every team team.
-     * 
+     *
      * @memberOf core.team
      * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
      * @return {Promise} Resolves to an array of payrolls, ordered by team id.

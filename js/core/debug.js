@@ -2,6 +2,8 @@
  * @name core.debug
  * @namespace Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
  */
+/*global console*/
+/*eslint no-console: 0*/
 define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, player, _) {
     "use strict";
 
@@ -99,7 +101,6 @@ define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, pl
                 }
                 lead++;
             }
-            return this;
         };
 
         function IdentityMatrix(n) {
@@ -146,12 +147,12 @@ define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, pl
         }
         ColumnVector.prototype = Matrix.prototype;
 
-        Matrix.prototype.regression_coefficients = function (x) {
-            var x_t;
+        Matrix.prototype.regressionCoefficients = function (x) {
+            var xT;
 
-            x_t = x.transpose();
+            xT = x.transpose();
 
-            return x_t.mult(x).inverse().mult(x_t).mult(this);
+            return xT.mult(x).inverse().mult(xT).mult(this);
         };
 
         dao.players.getAll({statsSeasons: "all"}).then(function (players) {
@@ -187,7 +188,7 @@ define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, pl
             x = new Matrix(ratings);
             y = new ColumnVector(pers);
 
-            c = y.regression_coefficients(x);
+            c = y.regressionCoefficients(x);
 
             ratingLabels = ["hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
             for (i = 0; i < ratingLabels.length; i++) {

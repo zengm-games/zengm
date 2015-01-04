@@ -420,15 +420,15 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
      * Build a composite rating.
      *
      * Composite ratings are combinations of player ratings meant to represent one facet of the game, like the ability to make a jump shot. All composite ratings are scaled from 0 to 1.
-     * 
+     *
      * @memberOf core.game
      * @param {Object.<string, number>} ratings Player's ratings object.
      * @param {Array.<string>} components List of player ratings to include in the composite ratings. In addition to the normal ones, "constant" is a constant value of 50 for every player, which can be used to add a baseline value for a stat.
      * @param {Array.<number>=} weights Optional array of weights used in the linear combination of components. If undefined, then all weights are assumed to be 1. If defined, this must be the same size as components.
      * @return {number} Composite rating, a number between 0 and 1.
      */
-    function _composite(rating, components, weights) {
-        var add, component, divideBy, i, r, rcomp, rmax, sign, y;
+    function makeComposite(rating, components, weights) {
+        var component, divideBy, i, r, rcomp;
 
         if (weights === undefined) {
             // Default: array of ones with same size as components
@@ -441,7 +441,6 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         rating.constant = 50;
 
         r = 0;
-        rmax = 0;
         divideBy = 0;
         for (i = 0; i < components.length; i++) {
             component = components[i];
@@ -468,9 +467,9 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
     /**
      * Load all teams into an array of team objects.
-     * 
+     *
      * The team objects contain all the information needed to simulate games. It would be more efficient if it only loaded team data for teams that are actually playing, particularly in the playoffs.
-     * 
+     *
      * @memberOf core.game
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players and teams; if null is passed, then a new transaction will be used.
      * @param {Promise} Resolves to an array of team objects, ordered by tid.
@@ -521,25 +520,25 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                     p.ovr = rating.ovr;
 
                     // These use the same formulas as the skill definitions in player.skills!
-                    p.compositeRating.pace = _composite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
-                    p.compositeRating.usage = Math.pow(_composite(rating, ['ins', 'dnk', 'fg', 'tp', 'spd', 'drb'], [1.5, 1, 1, 1, 0.15, 0.15]), 1.9);
-                    p.compositeRating.dribbling = _composite(rating, ['drb', 'spd']);
-                    p.compositeRating.passing = _composite(rating, ['drb', 'pss'], [0.4, 1]);
-                    p.compositeRating.turnovers = _composite(rating, ['drb', 'pss', 'spd', 'hgt', 'ins'], [1, 1, -1, 1, 1]);  // This should not influence whether a turnover occurs, it should just be used to assign players
-                    p.compositeRating.shootingAtRim = _composite(rating, ['hgt', 'spd', 'jmp', 'dnk'], [1, 0.2, 0.6, 0.4]);  // Dunk or layup, fast break or half court
-                    p.compositeRating.shootingLowPost = _composite(rating, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1]);  // Post scoring
-                    p.compositeRating.shootingMidRange = _composite(rating, ['hgt', 'fg'], [0.2, 1]);  // Two point jump shot
-                    p.compositeRating.shootingThreePointer = _composite(rating, ['hgt', 'tp'], [0.2, 1]);  // Three point jump shot
-                    p.compositeRating.shootingFT = _composite(rating, ['ft']);  // Free throw
-                    p.compositeRating.rebounding = _composite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1.5, 0.1, 0.1, 0.7]);
-                    p.compositeRating.stealing = _composite(rating, ['constant', 'spd', 'stl'], [1, 1, 1]);
-                    p.compositeRating.blocking = _composite(rating, ['hgt', 'jmp', 'blk'], [1.5, 0.5, 0.5]);
-                    p.compositeRating.fouling = _composite(rating, ['constant', 'hgt', 'blk', 'spd'], [1.5, 1, 1, -1]);
-                    p.compositeRating.defense = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);
-                    p.compositeRating.defenseInterior = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1]);
-                    p.compositeRating.defensePerimeter = _composite(rating, ['hgt', 'stre', 'spd', 'jmp', 'stl'], [1, 1, 2, 0.5, 1]);
-                    p.compositeRating.endurance = _composite(rating, ['constant', 'endu', 'hgt'], [1, 1, -0.1]);
-                    p.compositeRating.athleticism = _composite(rating, ['stre', 'spd', 'jmp', 'hgt'], [1, 1, 1, 0.5]); // Currently only used for synergy calculation
+                    p.compositeRating.pace = makeComposite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
+                    p.compositeRating.usage = Math.pow(makeComposite(rating, ['ins', 'dnk', 'fg', 'tp', 'spd', 'drb'], [1.5, 1, 1, 1, 0.15, 0.15]), 1.9);
+                    p.compositeRating.dribbling = makeComposite(rating, ['drb', 'spd']);
+                    p.compositeRating.passing = makeComposite(rating, ['drb', 'pss'], [0.4, 1]);
+                    p.compositeRating.turnovers = makeComposite(rating, ['drb', 'pss', 'spd', 'hgt', 'ins'], [1, 1, -1, 1, 1]);  // This should not influence whether a turnover occurs, it should just be used to assign players
+                    p.compositeRating.shootingAtRim = makeComposite(rating, ['hgt', 'spd', 'jmp', 'dnk'], [1, 0.2, 0.6, 0.4]);  // Dunk or layup, fast break or half court
+                    p.compositeRating.shootingLowPost = makeComposite(rating, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1]);  // Post scoring
+                    p.compositeRating.shootingMidRange = makeComposite(rating, ['hgt', 'fg'], [0.2, 1]);  // Two point jump shot
+                    p.compositeRating.shootingThreePointer = makeComposite(rating, ['hgt', 'tp'], [0.2, 1]);  // Three point jump shot
+                    p.compositeRating.shootingFT = makeComposite(rating, ['ft']);  // Free throw
+                    p.compositeRating.rebounding = makeComposite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1.5, 0.1, 0.1, 0.7]);
+                    p.compositeRating.stealing = makeComposite(rating, ['constant', 'spd', 'stl'], [1, 1, 1]);
+                    p.compositeRating.blocking = makeComposite(rating, ['hgt', 'jmp', 'blk'], [1.5, 0.5, 0.5]);
+                    p.compositeRating.fouling = makeComposite(rating, ['constant', 'hgt', 'blk', 'spd'], [1.5, 1, 1, -1]);
+                    p.compositeRating.defense = makeComposite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);
+                    p.compositeRating.defenseInterior = makeComposite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1]);
+                    p.compositeRating.defensePerimeter = makeComposite(rating, ['hgt', 'stre', 'spd', 'jmp', 'stl'], [1, 1, 2, 0.5, 1]);
+                    p.compositeRating.endurance = makeComposite(rating, ['constant', 'endu', 'hgt'], [1, 1, -0.1]);
+                    p.compositeRating.athleticism = makeComposite(rating, ['stre', 'spd', 'jmp', 'hgt'], [1, 1, 1, 0.5]); // Currently only used for synergy calculation
 
                     p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
 
@@ -585,9 +584,9 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
     /**
      * Play one or more days of games.
-     * 
+     *
      * This also handles the case where there are no more games to be played by switching the phase to either the playoffs or before the draft, as appropriate.
-     * 
+     *
      * @memberOf core.game
      * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all games will be simulated up until either the end of the regular season or the end of the playoffs, whichever happens first.
      * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
@@ -797,7 +796,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         return Promise.try(function () {
                             if (g.phase !== g.PHASE.PLAYOFFS) {
                                 // Decrease free agent demands and let AI teams sign them
-                                return freeAgents.decreaseDemands().then(freeAgents.autoSign)
+                                return freeAgents.decreaseDemands().then(freeAgents.autoSign);
                             }
                         }).then(cbPlayGames);
                     });

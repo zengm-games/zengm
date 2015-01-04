@@ -120,7 +120,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
      * Decrease contract demands for all free agents.
      *
      * This is called after each day in the regular season, as free agents become more willing to take smaller contracts.
-     * 
+     *
      * @memberOf core.freeAgents
      * @return {Promise}
      */
@@ -199,7 +199,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
 
     /**
      * Will a player negotiate with a team, or not?
-     * 
+     *
      * @param {number} amount Player's desired contract amount, already adjusted for mood as in amountWithMood, in thousands of dollars
      * @param {number} mood Player's mood towards the team in question.
      * @return {boolean} Answer to the question.
@@ -214,7 +214,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
 
     /**
      * Simulates one or more days of free agency.
-     * 
+     *
      * @memberOf core.freeAgents
      * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all of free agency will be simulated up until the preseason starts.
      * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.

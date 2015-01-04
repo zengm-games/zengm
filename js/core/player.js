@@ -25,7 +25,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
     /**
      * Calculates the overall rating by averaging together all the other ratings.
-     * 
+     *
      * @memberOf core.player
      * @param {Object.<string, number>} ratings Player's ratings object.
      * @return {number} Overall rating.
@@ -42,7 +42,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * Assign "skills" based on ratings.
      *
      * "Skills" are discrete categories, like someone is a 3 point shooter or they aren't. These are displayed next to the player's name generally, and are also used in game simulation. The possible skills are:
-     * 
+     *
      * * Three Point Shooter (3)
      * * Athlete (A)
      * * Ball Handler (B)
@@ -51,7 +51,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * * Post Scorer (Po)
      * * Passer (Ps)
      * * Rebounder (R)
-     * 
+     *
      * @memberOf core.player
      * @param {Object.<string, number>} ratings Ratings object.
      * @return {Array.<string>} Array of skill IDs.
@@ -116,7 +116,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
     /**
      * Generate a contract for a player.
-     * 
+     *
      * @memberOf core.player
      * @param {Object} ratings Player object. At a minimum, this must have one entry in the ratings array.
      * @param {boolean} randomizeExp If true, then it is assumed that some random amount of years has elapsed since the contract was signed, thus decreasing the expiration date. This is used when generating players in a new league.
@@ -191,7 +191,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
     /**
      * Store a contract in a player object.
-     * 
+     *
      * @memberOf core.player
      * @param {Object} p Player object.
      * @param {Object} contract Contract object with two properties, exp (year) and amount (thousands of dollars).
@@ -223,7 +223,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
      *
      * Make sure to call player.updateValues after this! Otherwise, player values will be out of sync.
-     * 
+     *
      * @memberOf core.player
      * @param {Object} p Player object.
      * @param {number=} years Number of years to develop (default 1).
@@ -347,8 +347,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                 p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChangeLocal * random.uniform(0.5, 1.5));
             }
 
-            // 
-
             /*ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'];
             for (j = 0; j < ratingKeys.length; j++) {
                 //increase = plusMinus
@@ -397,9 +395,9 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
     /**
      * Add or subtract amount from all current ratings and update the player's contract appropriately.
-     * 
+     *
      * This should only be called when generating players for a new league. Otherwise, develop should be used. Also, make sure you call player.updateValues and player.setContract after this, because ratings are changed!
-     * 
+     *
      * @memberOf core.player
      * @param {Object} p Player object.
      * @param {number} amount Number to be added to each rating (can be negative).
@@ -432,7 +430,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * Calculates the base "mood" factor for any free agent towards a team.
      *
      * This base mood is then modulated for an individual player in addToFreeAgents.
-     * 
+     *
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on teams; if null is passed, then a new transaction will be used.
      * @return {Promise} Array of base moods, one for each team.
      */
@@ -473,10 +471,10 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
     /**
      * Adds player to the free agents list.
-     * 
+     *
      * This should be THE ONLY way that players are added to the free agents
      * list, because this will also calculate their demanded contract and mood.
-     * 
+     *
      * @memberOf core.player
      * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on players readwrite; if null is passed, then a new transaction will be used.
      * @param {Object} p Player object.
@@ -523,9 +521,9 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
     /**
      * Release player.
-     * 
+     *
      * This keeps track of what the player's current team owes him, and then calls player.addToFreeAgents.
-     * 
+     *
      * @memberOf core.player
      * @param {IDBTransaction} tx An IndexedDB transaction on players, releasedPlayers, and teams, readwrite.
      * @param {Object} p Player object.
@@ -676,7 +674,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
     /**
      * Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings.
-     * 
+     *
      * @memberOf core.player
      * @param {Object.<string, number>} ratings Ratings object.
      * @return {string} Position.
@@ -747,7 +745,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
     /**
      * Add a new row of ratings to a player object.
-     * 
+     *
      * There should be one ratings row for each year a player is not retired, and a new row should be added for each non-retired player at the start of a season.
      *
      * @memberOf core.player
@@ -774,7 +772,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
     /**
      * Add a new row of stats to the playerStats database.
-     * 
+     *
      * A row contains stats for unique values of (pid, team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid and player ID in p.pid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
      *
      * The return value is the player object with an updated statsTids as its argument. This is NOT written to the database within addStatsRow because it is often updated in several different ways before being written. Only the entry to playerStats is actually written to the databse by this function (which happens asynchronously). You probably want to write the updated player object to the database soon after calling this, in the same transaction.
@@ -968,11 +966,11 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * This can be used to retrieve information about a certain season, compute average statistics from the raw data, etc.
      *
      * For a player object (p), create an object suitible for output based on the appropriate options, most notably a options.season and options.tid to find rows in of stats and ratings, and options.attributes, options.stats, and options.ratings to extract teh desired information. In the output, the attributes keys will be in the root of the object. There will also be stats and ratings properties containing filtered stats and ratings objects.
-     * 
+     *
      * If options.season is undefined, then the stats and ratings objects will contain lists of objects for each season and options.tid is ignored. Then, there will also be a careerStats property in the output object containing an object with career averages.
      *
      * There are several more options (all described below) which can make things pretty complicated, but most of the time, they are not needed.
-     * 
+     *
      * @memberOf core.player
      * @param {Object|Array.<Object>} p Player object or array of player objects to be filtered.
      * @param {Object} options Options, as described below.
@@ -1691,7 +1689,7 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
      * Have a player retire, including all event and HOF bookkeeping.
      *
      * This just updates a player object. You need to write it to the database after.
-     * 
+     *
      * @memberOf core.player
      * @param {IDBTransaction} ot An IndexedDB transaction on events.
      * @param {Object} p Player object.
@@ -1726,7 +1724,7 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
 
     /**
      * How many seasons are left on this contract? The answer can be a fraction if the season is partially over
-     * 
+     *
      * @memberOf core.player
      * @param {Object} exp Contract expiration year.
      * @return {number} numGamesRemaining Number of games remaining in the current season (0 to 82).
@@ -1768,7 +1766,7 @@ if (ps === undefined) { console.log("NO STATS"); ps = []; }
      * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
      *
      * This doesn't add the things from player.updateValues!
-     * 
+     *
      * @memberOf core.player
      * @param {Object} p Partial player object.
      * @return {Object} p Full player object.

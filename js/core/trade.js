@@ -7,7 +7,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
 
     /**
      * Get the contents of the current trade from the database.
-     * 
+     *
      * @memberOf core.trade
      * @param {Promise.<Array.<Object>>} Resolves to an array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
      */
@@ -19,7 +19,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
 
     /**
      * Start a new trade with a team.
-     * 
+     *
      * @memberOf core.trade
      * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs). If the other team's tid is null, it will automatically be determined from the pids.
      * @return {Promise}
@@ -59,7 +59,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
 
     /**
      * Gets the team ID for the team that the user is trading with.
-     * 
+     *
      * @memberOf core.trade
      * @return {er} Resolves to the other team's team ID.
      */
@@ -73,7 +73,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
      * Filter untradable players.
      *
      * If a player is not tradable, set untradable flag in the root of the object.
-     * 
+     *
      * @memberOf core.trade
      * @param {Array.<Object>} players Array of player objects or partial player objects
      * @return {Array.<Object>} Processed input
@@ -103,7 +103,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
      * Is a player untradable.
      *
      * Just calls filterUntradable and discards everything but the boolean.
-     * 
+     *
      * @memberOf core.trade
      * @param {<Object>} players Player object or partial player objects
      * @return {boolean} Processed input
@@ -114,9 +114,9 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
 
     /**
      * Validates that players are allowed to be traded and updates the database.
-     * 
+     *
      * If any of the player IDs submitted do not correspond with the two teams that are trading, they will be ignored.
-     * 
+     *
      * @memberOf core.trade
      * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
      * @return {Promise.<Array.<Object>>} Resolves to an array taht's the same as the input, but with invalid entries removed.
@@ -218,7 +218,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
 
     /**
      * Create a summary of the trade, for eventual display to the user.
-     * 
+     *
      * @memberOf core.trade
      * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
      * @return {Promise.Object} Resolves to an object contianing the trade summary.
@@ -325,7 +325,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
 
     /**
      * Remove all players currently added to the trade.
-     * 
+     *
      * @memberOf core.trade
      * @return {Promise}
      */
@@ -350,9 +350,9 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
 
     /**
      * Proposes the current trade in the database.
-     * 
+     *
      * Before proposing the trade, the trade is validated to ensure that all player IDs match up with team IDs.
-     * 
+     *
      * @memberOf core.trade
      * @param {boolean} forceTrade When true (like in God Mode), this trade is accepted regardless of the AI
      * @return {Promise.<boolean, string>} Resolves to an array. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
@@ -707,7 +707,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
      * Estimate draft pick values, based on the generated draft prospects in the database.
      *
      * This was made for team.valueChange, so it could be called once and the results cached.
-     * 
+     *
      * @memberOf core.trade
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players; if null is passed, then a new transaction will be used.
      * @return {Promise.Object} Resolves to estimated draft pick values.

@@ -161,7 +161,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                 index: "season",
                 key: g.season
             }).then(function (draftPicks) {
-                var draftPickStore, draftOrder, draftPicksIndexed, i, tid, tx;
+                var draftOrder, draftPicksIndexed, i, tid, tx;
 
                 // Reorganize this to an array indexed on originalTid and round
                 draftPicksIndexed = [];

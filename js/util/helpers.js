@@ -130,7 +130,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
      *     name: String team name.
      *     abbrev: String 3-letter team abbreviation.
      *     selected: If selectedTid is defined, this is a boolean representing whether this team is "selected" or not (see below).
-     * 
+     *
      * @memberOf util.helpers
      * @param {number|string} selectedTid A team ID or abbrev for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.
      * @return {Array.Object} All teams.
@@ -169,7 +169,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
 
     /**
      * Take a list of teams (similar to the output of getTeamsDefault) and add popRank properties, where 1 is the largest population and teams.length is the smallest.
-     * 
+     *
      * @param {Array.<Object>} teams Teams without popRank properties.
      * @return {Array.<Object>} Teams with added popRank properties.
      */
@@ -206,7 +206,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
      *     selected: If selectedTid is defined, this is a boolean representing whether this team is "selected" or not (see below).
      *
      * This should only be used to initialize things, since many of these values can change from their defaults.
-     * 
+     *
      * @memberOf util.helpers
      * @param {number|string} selectedTid A team ID or abbrev for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.
      * @return {Array.<Object>} All teams.
@@ -254,7 +254,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
 
     /**
      * Clones an object.
-     * 
+     *
      * Taken from http://stackoverflow.com/a/3284324/786644
      *
      * @memberOf util.helpers
@@ -277,7 +277,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
 
     /**
      * Display a whole-page error message to the user.
-     * 
+     *
      * @memberOf util.helpers
      * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error".
      */
@@ -303,7 +303,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
 
     /**
      * Display a whole-page error message to the user, while retaining the league menu.
-     * 
+     *
      * @memberOf util.helpers
      * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
      */
@@ -333,7 +333,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
      * Display a whole-page error message to the user by calling either leagueError or globalError as appropriate.
      *
      * Use errorNotify for minor errors.
-     * 
+     *
      * @memberOf util.helpers
      * @param {string} error Text of the error message to be displayed.
      * @param {function()} cb Optional callback function.
@@ -359,7 +359,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
      * Display a transient error message as a notification popup.
      *
      * Use error if you need to block the whole page.
-     * 
+     *
      * @memberOf util.helpers
      * @param {string} error Text of the error message to be displayed.
      */
@@ -375,7 +375,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
      * Delete all the things from the global variable g that are not stored in league databases.
      *
      * This is used to clear out values from other leagues, to ensure that the appropriate values are updated in the database when calling league.setGameAttributes.
-     * 
+     *
      * @memberOf util.helpers
      */
     function resetG() {
@@ -441,7 +441,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
      * Create a URL for a page within a league.
      *
      * This will also maintain any query string on the end of the URL, for instance for popup windows, unless options.noQueryString is set. Ignoring the query string can be important for forms in Davis.js until this is fixed: https://github.com/olivernn/davis.js/issues/75
-     * 
+     *
      * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
      * @param {object|number?} lid League ID number, either a number or a knockout observable. If not passed, then g.lid is used. This is needed to make some observables (navbar) depend on the lid.
      * @return {string} URL
@@ -511,7 +511,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
 
     /**
      * Round a number to a certain number of decimal places.
-     * 
+     *
      * @memberOf util.helpers
      * @param {number|string} value Number to round.
      * @param {number=} precision Number of decimal places. Default is 0 (round to integer).
@@ -525,7 +525,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
 
     /**
      * Pad an array with nulls or truncate it so that it has a fixed length.
-     * 
+     *
      * @memberOf util.helpers
      * @param {Array} array Input array.
      * @param {number} length Desired length.
@@ -566,7 +566,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
      * Format a number with commas in the thousands places.
      *
      * Also, rounds the number first.
-     * 
+     *
      * @memberOf util.helpers
      * @param {number|string} x Input number.
      * @return {string} Formatted number.

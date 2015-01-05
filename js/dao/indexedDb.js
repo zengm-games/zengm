@@ -18,6 +18,9 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
             return tx0;
         }
 
+        // Default value, because some people reported errors when this was undefined
+        mode = mode !== undefined ? mode : "readonly";
+
         if (storeNames === "achievements" || storeNames === "leagues") {
             tx = g.dbm.transaction(storeNames, mode);
         } else {

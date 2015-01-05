@@ -252,8 +252,8 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
                     tid: tids[i],
                     showRookies: true
                 });
-                s.teams[i].trade = _.filter(players[i], function (player) { return pids[i].indexOf(player.pid) >= 0; });
-                s.teams[i].total = _.reduce(s.teams[i].trade, function (memo, player) { return memo + player.contract.amount; }, 0);
+                s.teams[i].trade = players[i].filter(function (player) { return pids[i].indexOf(player.pid) >= 0; });
+                s.teams[i].total = s.teams[i].trade.reduce(function (memo, player) { return memo + player.contract.amount; }, 0);
             }));
 
             promises.push(dao.draftPicks.getAll({
@@ -273,13 +273,13 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
         });
 
         return Promise.all(promises).then(function () {
-            var k, overCap, promises, ratios;
+            var overCap, ratios;
 
             // Test if any warnings need to be displayed
             overCap = [false, false];
             ratios = [0, 0];
-            promises = [];
-            [0, 1].forEach(function (j) {
+            return Promise.map([0, 1], function (j) {
+                var k;
                 if (j === 0) {
                     k = 1;
                 } else if (j === 1) {
@@ -296,15 +296,13 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
                     ratios[j] = 100;
                 }
 
-                promises.push(team.getPayroll(tx, tids[j]).get(0).then(function (payroll) {
+                return team.getPayroll(tx, tids[j]).get(0).then(function (payroll) {
                     s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
                     if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
                         overCap[j] = true;
                     }
-                }));
-            });
-
-            return Promise.all(promises).then(function () {
+                });
+            }).then(function () {
                 var j;
 
                 if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {

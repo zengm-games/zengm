@@ -66,7 +66,7 @@ generate documentation and stick it in the docs folder.
 
 # JavaScript coding style
 
-Run ESLint with `npm run lint`
+Run ESLint with `make lint`
 
 Documentation of functions is based on
 https://developers.google.com/closure/compiler/docs/js-for-compiler

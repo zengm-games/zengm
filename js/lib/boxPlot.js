@@ -7,7 +7,7 @@
  * mostly JSLint compliant, much simpler (no outlier detection, ...), and now
  * makes horizontal rather than vertical box plots.
  */
-var boxPlot = (function () {
+window.boxPlot = (function () {
     "use strict";
 
     function quartile(data, quart) {
@@ -66,7 +66,7 @@ var boxPlot = (function () {
      *     labels: boolean for whether to show numeric labels (default true)
      */
     function create(plot) {
-        var containerDiv, lowerBoxDiv, lowerLabel, lowerWhiskerDiv, i, medianLabel, midLineDiv, maxScaleDiv, maxScaleLabel, minScaleDiv, minScaleLabel, q1Label, q3Label, upperBoxDiv, upperLabel, upperWhiskerDiv, val, x;
+        var containerDiv, lowerBoxDiv, lowerLabel, lowerWhiskerDiv, medianLabel, midLineDiv, maxScaleDiv, maxScaleLabel, minScaleDiv, minScaleLabel, q1Label, q3Label, upperBoxDiv, upperLabel, upperWhiskerDiv, val, x;
 
         if (!plot.hasOwnProperty("color")) {
             plot.color = "#000000";

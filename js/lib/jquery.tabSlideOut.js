@@ -20,10 +20,10 @@
         tabHeight = parseInt(settings.tabHandle.outerHeight(), 10) + 'px';
 
         // Set calculated css
-        obj.css({'right' : settings.rightPos});
-        settings.tabHandle.css({'right' : 0});
-        obj.css({'bottom' : '-' + containerHeight, 'position' : 'fixed'});
-        settings.tabHandle.css({'top' : '-' + tabHeight});
+        obj.css({right: settings.rightPos});
+        settings.tabHandle.css({right: 0});
+        obj.css({bottom: '-' + containerHeight, position: 'fixed'});
+        settings.tabHandle.css({top: '-' + tabHeight});
 
         // Functions for animation events
         settings.tabHandle.click(function (event) {
@@ -38,7 +38,7 @@
             obj.animate({bottom: '-3px'}, 300).addClass('open');
         };
 
-        settings.tabHandle.click(function (event) {
+        settings.tabHandle.click(function () {
             if (obj.hasClass('open')) {
                 slideIn();
             } else {

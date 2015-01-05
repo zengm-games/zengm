@@ -13,47 +13,45 @@
      *     2-2
      *     ...
      */
-    $.fn.dataTableExt.aTypes.unshift(
-        function (sData) {
-            var bDash, bDigitAfterDash, bDigitBeforeDash, Char, i, sValidChars;
+    $.fn.dataTableExt.aTypes.unshift(function (sData) {
+        var bDash, bDigitAfterDash, bDigitBeforeDash, Char, i, sValidChars;
 
-            bDash = false;
-            bDigitBeforeDash = false;
-            bDigitAfterDash = false;
-            sValidChars = "0123456789-";
+        bDash = false;
+        bDigitBeforeDash = false;
+        bDigitAfterDash = false;
+        sValidChars = "0123456789-";
 
-            for (i = 0; i < sData.length; i++) {
-                Char = sData.charAt(i);
-                if (sValidChars.indexOf(Char) === -1) {
+        for (i = 0; i < sData.length; i++) {
+            Char = sData.charAt(i);
+            if (sValidChars.indexOf(Char) === -1) {
+                return null;
+            }
+
+            // Need a digit after dash
+            if (Char !== "-" && !bDash) {
+                bDigitBeforeDash = true;
+            }
+
+            /* Only allowed one dash place... */
+            if (Char === "-") {
+                if (bDash) {
                     return null;
                 }
-
-                // Need a digit after dash
-                if (Char !== "-" && !bDash) {
-                    bDigitBeforeDash = true;
-                }
-
-                /* Only allowed one dash place... */
-                if (Char === "-") {
-                    if (bDash) {
-                        return null;
-                    }
-                    bDash = true;
-                }
-
-                // Need a digit after dash
-                if (Char !== "-" && bDash) {
-                    bDigitAfterDash = true;
-                }
+                bDash = true;
             }
 
-            if (bDash) {
-                return "numeric-dash";
+            // Need a digit after dash
+            if (Char !== "-" && bDash) {
+                bDigitAfterDash = true;
             }
-
-            return null;
         }
-    );
+
+        if (bDash && bDigitBeforeDash && bDigitAfterDash) {
+            return "numeric-dash";
+        }
+
+        return null;
+    });
     $.fn.dataTableExt.oSort["numeric-dash-asc"] = function (a, b) {
         var x, y;
 
@@ -204,20 +202,16 @@
      *     ...
      * Other content (like "skills" span) is allowed to appear after the name
      */
-    $.fn.dataTableExt.aTypes.unshift(
-        function (sData) {
-            var bM, bSomething, Char, i, iDollarSign, sValidChars;
-
-            // This is kind of messy... the first condition is to match anything that looks like a name. The second is to catch a series of Three Capitalized Words that occur inside an HTML tag, as in a list of team names ("New York Knights").
-            if (sData.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/) && !sData.match(/>[A-Z][a-z]+ [A-Z][A-Z|a-z]+ [A-Z][a-z]+/)) {
-                return "name";
-            }
-
-            return null;
+    $.fn.dataTableExt.aTypes.unshift(function (sData) {
+        // This is kind of messy... the first condition is to match anything that looks like a name. The second is to catch a series of Three Capitalized Words that occur inside an HTML tag, as in a list of team names ("New York Knights").
+        if (sData.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/) && !sData.match(/>[A-Z][a-z]+ [A-Z][A-Z|a-z]+ [A-Z][a-z]+/)) {
+            return "name";
         }
-    );
+
+        return null;
+    });
     $.fn.dataTableExt.oSort["name-asc"] = function (a, b) {
-        var x, xName, y, yName;
+        var x, y;
 
         x = a.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
         y = b.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
@@ -237,7 +231,7 @@
         return 0;
     };
     $.fn.dataTableExt.oSort["name-desc"] = function (a, b) {
-        var x, xName, y, yName;
+        var x, y;
 
         x = a.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
         y = b.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');

@@ -45,7 +45,7 @@
 
         // this is either an IDBObjectStore or an IDBIndex, depending on the context.
         this.openCursor(key).onsuccess = function (event) {
-            var cursor, e, target;
+            var cursor, e;
 
             cursor = event.target.result;
             if (cursor) {

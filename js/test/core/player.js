@@ -2,6 +2,7 @@
  * @name test.core.player
  * @namespace Tests for core.player.
  */
+/*eslint no-unused-expressions: 0*/
 define(["globals", "core/player", "lib/underscore", "util/helpers"], function (g, player, _, helpers) {
     "use strict";
 

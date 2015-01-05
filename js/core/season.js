@@ -2,6 +2,7 @@
  * @name core.season
  * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Currently, this includes things that happen when moving between phases of the season (i.e. regular season to playoffs) and scheduling. As I write this, I realize that it might make more sense to break up those two classes of functions into two separate modules, but oh well.
  */
+/*eslint no-use-before-define: 0*/
 define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/account", "util/ads", "util/eventLog", "util/helpers", "util/message", "util/random"], function (dao, g, ui, contractNegotiation, draft, finances, freeAgents, player, team, Promise, _, account, ads, eventLog, helpers, message, random) {
     "use strict";
 
@@ -744,135 +745,6 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         return newPhaseFinalize(g.PHASE.AFTER_TRADE_DEADLINE);
     }
 
-    /*Creates a single day's schedule for an in-progress playoffs.*/
-    function newSchedulePlayoffsDay() {
-        var playoffSeries, rnd, series, tids, tx;
-
-        tx = dao.tx(["playoffSeries", "teams"], "readwrite");
-
-        // This is a little tricky. We're returning this promise, but within the "then"s we're returning tx.complete() for the same transaction. Probably should be refactored.
-        return dao.playoffSeries.get({
-            ot: tx,
-            key: g.season
-        }).then(function (playoffSeriesLocal) {
-            var i, numGames;
-
-            playoffSeries = playoffSeriesLocal;
-            series = playoffSeries.series;
-            rnd = playoffSeries.currentRound;
-            tids = [];
-
-            // Try to schedule games if there are active series
-            for (i = 0; i < series[rnd].length; i++) {
-                if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
-                    // Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
-                    numGames = series[rnd][i].home.won + series[rnd][i].away.won;
-                    if (numGames === 0 || numGames === 1 || numGames === 4 || numGames === 6) {
-                        tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
-                    } else {
-                        tids.push([series[rnd][i].away.tid, series[rnd][i].home.tid]);
-                    }
-                }
-            }
-        }).then(function () {
-            var i, key, matchup, team1, team2, tidsWon;
-
-            // Now playoffSeries, rnd, series, and tids are set
-
-            // If series are still in progress, write games and short circuit
-            if (tids.length > 0) {
-                return setSchedule(tids);
-            }
-
-            // If playoffs are over, update winner and go to next phase
-            if (rnd === 3) {
-                if (series[rnd][0].home.won === 4) {
-                    key = series[rnd][0].home.tid;
-                } else if (series[rnd][0].away.won === 4) {
-                    key = series[rnd][0].away.tid;
-                }
-                dao.teams.iterate({
-                    ot: tx,
-                    key: key,
-                    callback: function (t) {
-                        var s;
-
-                        s = t.seasons.length - 1;
-
-                        t.seasons[s].playoffRoundsWon = 4;
-                        t.seasons[s].hype += 0.05;
-                        if (t.seasons[s].hype > 1) {
-                            t.seasons[s].hype = 1;
-                        }
-
-                        return t;
-                    }
-                });
-                return tx.complete().then(function () {
-                    return newPhase(g.PHASE.BEFORE_DRAFT);
-                });
-            }
-
-            // Playoffs are not over! Make another round
-
-            // Set matchups for next round
-            tidsWon = [];
-            for (i = 0; i < series[rnd].length; i += 2) {
-                // Find the two winning teams
-                if (series[rnd][i].home.won === 4) {
-                    team1 = helpers.deepCopy(series[rnd][i].home);
-                    tidsWon.push(series[rnd][i].home.tid);
-                } else {
-                    team1 = helpers.deepCopy(series[rnd][i].away);
-                    tidsWon.push(series[rnd][i].away.tid);
-                }
-                if (series[rnd][i + 1].home.won === 4) {
-                    team2 = helpers.deepCopy(series[rnd][i + 1].home);
-                    tidsWon.push(series[rnd][i + 1].home.tid);
-                } else {
-                    team2 = helpers.deepCopy(series[rnd][i + 1].away);
-                    tidsWon.push(series[rnd][i + 1].away.tid);
-                }
-
-                // Set home/away in the next round
-                if (team1.winp > team2.winp) {
-                    matchup = {home: team1, away: team2};
-                } else {
-                    matchup = {home: team2, away: team1};
-                }
-
-                matchup.home.won = 0;
-                matchup.away.won = 0;
-                series[rnd + 1][i / 2] = matchup;
-            }
-
-            playoffSeries.currentRound += 1;
-            dao.playoffSeries.put({ot: tx, value: playoffSeries});
-
-            // Update hype for winning a series
-            for (i = 0; i < tidsWon.length; i++) {
-                dao.teams.get({
-                    ot: tx,
-                    key: tidsWon[i]
-                }).then(function (t) {
-                    var s;
-
-                    s = t.seasons.length - 1;
-                    t.seasons[s].playoffRoundsWon = playoffSeries.currentRound;
-                    t.seasons[s].hype += 0.05;
-                    if (t.seasons[s].hype > 1) {
-                        t.seasons[s].hype = 1;
-                    }
-
-                    dao.teams.put({ot: tx, value: t});
-                });
-            }
-
-            // Next time, the schedule for the first day of the next round will be set
-            return tx.complete().then(newSchedulePlayoffsDay);
-        });
-    }
-
     function newPhasePlayoffs() {
         // Achievements after regular season
         account.checkAchievement.septuawinarian();
@@ -1377,25 +1249,163 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
 
         if (phase === g.PHASE.PRESEASON) {
             return newPhasePreseason();
-        } else if (phase === g.PHASE.REGULAR_SEASON) {
+        }
+        if (phase === g.PHASE.REGULAR_SEASON) {
             return newPhaseRegularSeason();
-        } else if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
+        }
+        if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
             return newPhaseAfterTradeDeadline();
-        } else if (phase === g.PHASE.PLAYOFFS) {
+        }
+        if (phase === g.PHASE.PLAYOFFS) {
             return newPhasePlayoffs();
-        } else if (phase === g.PHASE.BEFORE_DRAFT) {
+        }
+        if (phase === g.PHASE.BEFORE_DRAFT) {
             return newPhaseBeforeDraft();
-        } else if (phase === g.PHASE.DRAFT) {
+        }
+        if (phase === g.PHASE.DRAFT) {
             return newPhaseDraft();
-        } else if (phase === g.PHASE.AFTER_DRAFT) {
+        }
+        if (phase === g.PHASE.AFTER_DRAFT) {
             return newPhaseAfterDraft();
-        } else if (phase === g.PHASE.RESIGN_PLAYERS) {
+        }
+        if (phase === g.PHASE.RESIGN_PLAYERS) {
             return newPhaseResignPlayers();
-        } else if (phase === g.PHASE.FREE_AGENCY) {
+        }
+        if (phase === g.PHASE.FREE_AGENCY) {
             return newPhaseFreeAgency();
-        } else if (phase === g.PHASE.FANTASY_DRAFT) {
+        }
+        if (phase === g.PHASE.FANTASY_DRAFT) {
             return newPhaseFantasyDraft(extra);
         }
+    }
+
+    /*Creates a single day's schedule for an in-progress playoffs.*/
+    function newSchedulePlayoffsDay() {
+        var playoffSeries, rnd, series, tids, tx;
+
+        tx = dao.tx(["playoffSeries", "teams"], "readwrite");
+
+        // This is a little tricky. We're returning this promise, but within the "then"s we're returning tx.complete() for the same transaction. Probably should be refactored.
+        return dao.playoffSeries.get({
+            ot: tx,
+            key: g.season
+        }).then(function (playoffSeriesLocal) {
+            var i, numGames;
+
+            playoffSeries = playoffSeriesLocal;
+            series = playoffSeries.series;
+            rnd = playoffSeries.currentRound;
+            tids = [];
+
+            // Try to schedule games if there are active series
+            for (i = 0; i < series[rnd].length; i++) {
+                if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
+                    // Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
+                    numGames = series[rnd][i].home.won + series[rnd][i].away.won;
+                    if (numGames === 0 || numGames === 1 || numGames === 4 || numGames === 6) {
+                        tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
+                    } else {
+                        tids.push([series[rnd][i].away.tid, series[rnd][i].home.tid]);
+                    }
+                }
+            }
+        }).then(function () {
+            var i, key, matchup, team1, team2, tidsWon;
+
+            // Now playoffSeries, rnd, series, and tids are set
+
+            // If series are still in progress, write games and short circuit
+            if (tids.length > 0) {
+                return setSchedule(tids);
+            }
+
+            // If playoffs are over, update winner and go to next phase
+            if (rnd === 3) {
+                if (series[rnd][0].home.won === 4) {
+                    key = series[rnd][0].home.tid;
+                } else if (series[rnd][0].away.won === 4) {
+                    key = series[rnd][0].away.tid;
+                }
+                dao.teams.iterate({
+                    ot: tx,
+                    key: key,
+                    callback: function (t) {
+                        var s;
+
+                        s = t.seasons.length - 1;
+
+                        t.seasons[s].playoffRoundsWon = 4;
+                        t.seasons[s].hype += 0.05;
+                        if (t.seasons[s].hype > 1) {
+                            t.seasons[s].hype = 1;
+                        }
+
+                        return t;
+                    }
+                });
+                return tx.complete().then(function () {
+                    return newPhase(g.PHASE.BEFORE_DRAFT);
+                });
+            }
+
+            // Playoffs are not over! Make another round
+
+            // Set matchups for next round
+            tidsWon = [];
+            for (i = 0; i < series[rnd].length; i += 2) {
+                // Find the two winning teams
+                if (series[rnd][i].home.won === 4) {
+                    team1 = helpers.deepCopy(series[rnd][i].home);
+                    tidsWon.push(series[rnd][i].home.tid);
+                } else {
+                    team1 = helpers.deepCopy(series[rnd][i].away);
+                    tidsWon.push(series[rnd][i].away.tid);
+                }
+                if (series[rnd][i + 1].home.won === 4) {
+                    team2 = helpers.deepCopy(series[rnd][i + 1].home);
+                    tidsWon.push(series[rnd][i + 1].home.tid);
+                } else {
+                    team2 = helpers.deepCopy(series[rnd][i + 1].away);
+                    tidsWon.push(series[rnd][i + 1].away.tid);
+                }
+
+                // Set home/away in the next round
+                if (team1.winp > team2.winp) {
+                    matchup = {home: team1, away: team2};
+                } else {
+                    matchup = {home: team2, away: team1};
+                }
+
+                matchup.home.won = 0;
+                matchup.away.won = 0;
+                series[rnd + 1][i / 2] = matchup;
+            }
+
+            playoffSeries.currentRound += 1;
+            dao.playoffSeries.put({ot: tx, value: playoffSeries});
+
+            // Update hype for winning a series
+            for (i = 0; i < tidsWon.length; i++) {
+                dao.teams.get({
+                    ot: tx,
+                    key: tidsWon[i]
+                }).then(function (t) {
+                    var s;
+
+                    s = t.seasons.length - 1;
+                    t.seasons[s].playoffRoundsWon = playoffSeries.currentRound;
+                    t.seasons[s].hype += 0.05;
+                    if (t.seasons[s].hype > 1) {
+                        t.seasons[s].hype = 1;
+                    }
+
+                    dao.teams.put({ot: tx, value: t});
+                });
+            }
+
+            // Next time, the schedule for the first day of the next round will be set
+            return tx.complete().then(newSchedulePlayoffsDay);
+        });
     }
 
     /**

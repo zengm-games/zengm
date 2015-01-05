@@ -1,2 +1,9 @@
-js/lib/*
 js/export_3.3.js
+js/lib/*
+!js/lib/IndexedDB-getAll-shim.js
+!js/lib/bbgm-notifications.js
+!js/lib/boxPlot.js
+!js/lib/jquery.barGraph.js
+!js/lib/faces.js
+!js/lib/jquery.dataTables.bbgmSorting.js
+!js/lib/jquery.tabSlideOut.js

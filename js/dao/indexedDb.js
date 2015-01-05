@@ -228,7 +228,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
                 }
 
                 objectStoreOrIndex.openCursor(options.key, options.direction).onsuccess = function (event) {
-                    var cursor, callbackResult, shortCircuit;
+                    var callbackResult, cursor, shortCircuit;
 
                     cursor = event.target.result;
 

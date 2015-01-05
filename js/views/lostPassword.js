@@ -2,11 +2,11 @@
  * @name views.lostPassword
  * @namespace Lost password handling.
  */
-define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, account, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], function (g, ui, $, bbgmView, viewHelpers) {
     "use strict";
 
     function uiFirst() {
-        var ajaxErrorMsg, $lostpw;
+        var $lostpw, ajaxErrorMsg;
 
         ui.title("Lost Password");
 

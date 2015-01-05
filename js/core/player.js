@@ -232,7 +232,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @return {Object} Updated player object.
      */
     function develop(p, years, generate, coachingRank) {
-        var age, baseChange, baseChangeLocal, calcBaseChange, i, j, ratingKeys, r, sign;
+        var age, baseChange, baseChangeLocal, calcBaseChange, i, j, r, ratingKeys, sign;
 
         years = years !== undefined ? years : 1;
         generate = generate !== undefined ? generate : false;
@@ -833,7 +833,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
     }
 
     function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scoutingRank) {
-        var maxHgt, minHgt, maxWeight, minWeight, nationality, p;
+        var maxHgt, maxWeight, minHgt, minWeight, nationality, p;
 
         p = {}; // Will be saved to database
         p.tid = tid;

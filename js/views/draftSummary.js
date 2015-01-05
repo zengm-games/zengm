@@ -50,7 +50,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
             key: inputs.season,
             statsSeasons: "all"
         }).then(function (playersAll) {
-            var currentPr, i, pa, p, players;
+            var currentPr, i, p, pa, players;
 
             playersAll = player.filter(playersAll, {
                 attrs: ["tid", "abbrev", "draft", "pid", "name", "pos", "age"],

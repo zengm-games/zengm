@@ -53,7 +53,7 @@
 
     // Default scale for bar chart. This finds the max and min values in the data, adds 10% in each direction so you don't end up with tiny slivers, and then expands the upper/lower lims to 0 if 0 wasn't already in the range.
     function defaultYlim(data, stacked) {
-        var i, j, min, max, x;
+        var i, j, max, min, x;
 
         min = Infinity;
         max = -Infinity;
@@ -133,7 +133,7 @@
     }
 
     $.barGraph = function (container, data, ylim, labels, dataTooltipFn) {
-        var bottom, cssClass, height, i, j, gap, offsets, scaled, stacked, titleStart;
+        var bottom, cssClass, gap, height, i, j, offsets, scaled, stacked, titleStart;
 
         dataTooltipFn = dataTooltipFn !== undefined ? dataTooltipFn : function (val) { return val; };
 

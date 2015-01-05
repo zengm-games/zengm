@@ -3,7 +3,7 @@
 define(function () {
     "use strict";
 
-    var container, Notifier;
+    var Notifier, container;
 
     container = document.createElement("div");
     container.classList.add("notification-container");

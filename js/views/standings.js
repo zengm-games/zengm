@@ -50,7 +50,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
                 season: inputs.season,
                 sortBy: ["winp", "-lost", "won"]
             }).then(function (teams) {
-                var confs, confRanks, confTeams, divTeams, i, j, k, l;
+                var confRanks, confTeams, confs, divTeams, i, j, k, l;
 
                 confs = [];
                 for (i = 0; i < g.confs.length; i++) {

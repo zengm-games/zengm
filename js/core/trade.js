@@ -224,7 +224,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
      * @return {Promise.Object} Resolves to an object contianing the trade summary.
      */
     function summary(teams) {
-        var i, dpids, pids, players, promises, s, tids, tx;
+        var dpids, i, pids, players, promises, s, tids, tx;
 
         tids = [teams[0].tid, teams[1].tid];
         pids = [teams[0].pids, teams[1].pids];
@@ -458,7 +458,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
      * @return {Promise.[boolean, Object]} Resolves to an array with one or two elements. First is a boolean indicating whether "make it work" was successful. If true, then the second argument is set to a teams object (similar to first input) with the "made it work" trade info.
      */
     function makeItWork(teams, holdUserConstant, estValuesCached) {
-        var added, initialSign, tryAddAsset, testTrade;
+        var added, initialSign, testTrade, tryAddAsset;
 
         added = 0;
 
@@ -539,7 +539,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
             });
 
             return tx.complete().then(function () {
-                var otherDpids, otherPids, userPids, userDpids;
+                var otherDpids, otherPids, userDpids, userPids;
 
                 // If we've already added 5 assets or there are no more to try, stop
                 if (initialSign === -1 && (assets.length === 0 || added >= 5)) {

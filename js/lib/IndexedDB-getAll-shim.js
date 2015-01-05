@@ -3,7 +3,7 @@
 (function () {
     "use strict";
 
-    var Event, getAll, IDBIndex, IDBObjectStore, IDBRequest;
+    var Event, IDBIndex, IDBObjectStore, IDBRequest, getAll;
 
     IDBObjectStore = window.IDBObjectStore || window.webkitIDBObjectStore || window.mozIDBObjectStore || window.msIDBObjectStore;
     IDBIndex = window.IDBIndex || window.webkitIDBIndex || window.mozIDBIndex || window.msIDBIndex;

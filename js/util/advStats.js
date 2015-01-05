@@ -65,7 +65,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 statsPlayoffs: g.PHASE.PLAYOFFS === g.phase
             // Can't drop this then to another level because of the short circuit return above
             }).then(function (players) {
-                var aPER, drbp, EWA, factor, i, mins, PER, tid, uPER, vop, tx;
+                var EWA, PER, aPER, drbp, factor, i, mins, tid, tx, uPER, vop;
 
                 players = player.filter(players, {
                     attrs: ["pid", "tid", "pos"],

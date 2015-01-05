@@ -118,7 +118,7 @@ define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, pl
 
         // modifies the matrix "in place"
         Matrix.prototype.inverse = function () {
-            var i, I;
+            var I, i;
 
             if (this.height !== this.width) {
                 throw "can't invert a non-square matrix";
@@ -154,7 +154,7 @@ define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, pl
         };
 
         dao.players.getAll({statsSeasons: "all"}).then(function (players) {
-            var c, i, j, k, p, pers, ratings, ratingLabels, x, y;
+            var c, i, j, k, p, pers, ratingLabels, ratings, x, y;
 
             pers = [];
             ratings = [];

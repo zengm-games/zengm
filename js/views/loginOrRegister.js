@@ -2,11 +2,11 @@
  * @name views.loginOrRegister
  * @namespace Login and register forms.
  */
-define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, account, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/viewHelpers"], function (g, ui, $, account, bbgmView, viewHelpers) {
     "use strict";
 
     function uiFirst() {
-        var ajaxErrorMsg, $login, $register;
+        var $login, $register, ajaxErrorMsg;
 
         ui.title("Login or Register");
 

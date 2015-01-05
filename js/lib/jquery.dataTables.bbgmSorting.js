@@ -14,7 +14,7 @@
      *     ...
      */
     $.fn.dataTableExt.aTypes.unshift(function (sData) {
-        var bDash, bDigitAfterDash, bDigitBeforeDash, Char, i, sValidChars;
+        var Char, bDash, bDigitAfterDash, bDigitBeforeDash, i, sValidChars;
 
         bDash = false;
         bDigitBeforeDash = false;
@@ -125,7 +125,7 @@
      */
     $.fn.dataTableExt.aTypes.unshift(
         function (sData) {
-            var bM, bSomething, Char, i, iDollarSign, sValidChars;
+            var Char, bM, bSomething, i, iDollarSign, sValidChars;
 
             iDollarSign = sData.indexOf("$");
             if (iDollarSign < 0) {

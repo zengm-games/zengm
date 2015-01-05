@@ -108,7 +108,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             sortBy: "winp",
             ot: tx
         }).then(function (teams) {
-            var i, foundEast, foundWest, t;
+            var foundEast, foundWest, i, t;
 
             for (i = 0; i < teams.length; i++) {
                 if (!foundEast && teams[i].cid === 0) {

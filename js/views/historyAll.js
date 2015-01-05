@@ -108,10 +108,10 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "u
         teamName = function (t, season) {
             if (t) {
                 return '<a href="' + helpers.leagueUrl(["roster", t.abbrev, season]) + '">' + t.region + '</a> (' + t.won + '-' + t.lost + ')';
-            } else {
-                // This happens if there is missing data, such as from Improve Performance
-                return 'N/A';
             }
+
+            // This happens if there is missing data, such as from Improve Performance
+            return 'N/A';
         };
 
         ko.computed(function () {

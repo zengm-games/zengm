@@ -12,7 +12,7 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
             index: "tid",
             key: tid
         }).then(function (playersAll) {
-            var i, pa, p, players;
+            var i, p, pa, players;
 
             playersAll = player.filter(playersAll, {
                 attrs: ["pid", "name", "pos", "age", "watch", "valueFuzz"],

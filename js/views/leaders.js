@@ -47,7 +47,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/knockout", "
                     statsSeasons: [inputs.season]
                 })
             ]).spread(function (teams, players) {
-                var categories, gps, i, j, k, leader, pass, userAbbrev, playerValue, stats;
+                var categories, gps, i, j, k, leader, pass, playerValue, stats, userAbbrev;
 
                 // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
                 gps = [];

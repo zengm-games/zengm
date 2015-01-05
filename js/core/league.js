@@ -176,7 +176,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
             return setGameAttributes(gameAttributes);
         }).then(function () {
-            var i, j, t, round, scoutingRank, toMaybeAdd, tx;
+            var i, j, round, scoutingRank, t, toMaybeAdd, tx;
 
             // Probably is fastest to use this transaction for everything done to create a new league
             tx = dao.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games"], "readwrite");
@@ -269,7 +269,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
             }
 
             return player.genBaseMoods(tx).then(function (baseMoods) {
-                var agingYears, baseRatings, draftYear, goodNeutralBad, i, n, p, players, pots, profile, profiles, t, t2, playerTids;
+                var agingYears, baseRatings, draftYear, goodNeutralBad, i, n, p, playerTids, players, pots, profile, profiles, t, t2;
 
                 // Either add players from league file or generate them
 

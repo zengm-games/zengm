@@ -67,7 +67,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/bluebird", "li
     }
 
     function post(req) {
-        var askButtonEl, newOtherTid, otherDpids, otherPids, out, pid, userDpids, userPids, teams;
+        var askButtonEl, newOtherTid, otherDpids, otherPids, out, pid, teams, userDpids, userPids;
 
         pid = req.params.pid !== undefined ? parseInt(req.params.pid, 10) : null;
         if (req.raw.abbrev !== undefined) {

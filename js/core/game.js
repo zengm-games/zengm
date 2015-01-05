@@ -593,7 +593,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
      * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the ui.realtimeUpdate raw call.
      */
     function play(numDays, start, gidPlayByPlay) {
-        var cbNoGames, cbPlayGames, cbSaveResults, cbSimGames, cbRunDay;
+        var cbNoGames, cbPlayGames, cbRunDay, cbSaveResults, cbSimGames;
 
         start = start !== undefined ? start : true;
 

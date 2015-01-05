@@ -468,9 +468,9 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
     function watchBlock(pid, watch) {
         if (watch) {
             return '<span class="glyphicon glyphicon-flag watch watch-active" title="Remove from Watch List" data-pid="' + pid + '"></span>';
-        } else {
-            return '<span class="glyphicon glyphicon-flag watch" title="Add to Watch List" data-pid="' + pid + '"></span>';
         }
+
+        return '<span class="glyphicon glyphicon-flag watch" title="Add to Watch List" data-pid="' + pid + '"></span>';
     }
 
     /**
@@ -852,9 +852,9 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
                     // Try to recover gracefully
                     checkObject(obj, false, true); // This will update obj
                     return _super.call(this, obj);
-                } else {
-                    return _super.apply(this, arguments);
                 }
+
+                return _super.apply(this, arguments);
             };
         };
 

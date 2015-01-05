@@ -316,7 +316,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @memberOf core.gameSim
      */
     GameSim.prototype.updateSynergy = function () {
-        var i, p, perimFactor, t, skillsCount;
+        var i, p, perimFactor, skillsCount, t;
 
         for (t = 0; t < 2; t++) {
             // Count all the *fractional* skills of the active players on a team (including duplicates)
@@ -516,9 +516,9 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.recordStat(this.o, p, "tov");
         if (this.probStl() > Math.random()) {
             return this.doStl(p);  // "stl"
-        } else {
-            this.recordPlay("tov", this.o, [this.team[this.o].player[p].name]);
         }
+
+        this.recordPlay("tov", this.o, [this.team[this.o].player[p].name]);
 
         return "tov";
     };
@@ -558,7 +558,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
      */
     GameSim.prototype.doShot = function (shooter) {
-        var fatigue, p, passer, probMake, probAndOne, probMissAndFoul, r1, r2, r3, ratios, type;
+        var fatigue, p, passer, probAndOne, probMake, probMissAndFoul, r1, r2, r3, ratios, type;
 
         p = this.playersOnCourt[this.o][shooter];
 

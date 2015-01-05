@@ -604,7 +604,7 @@ console.log(event);
                 };
 
                 tx.objectStore("games").openCursor().onsuccess = function (event) {
-                    var cursor, i, j, game, update;
+                    var cursor, game, i, j, update;
 
                     cursor = event.target.result;
                     if (cursor) {

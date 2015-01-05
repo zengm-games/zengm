@@ -38,7 +38,7 @@ define(["dao", "globals", "ui", "core/finances", "core/league", "core/player", "
     }
 
     function InitViewModel() {
-        var i, ratingKeys;
+        var ratingKeys;
 
         this.p = {
             face: ko.observable(),
@@ -59,27 +59,25 @@ define(["dao", "globals", "ui", "core/finances", "core/league", "core/player", "
         // Easy access to ratings array, since it could have any number of entries and we only want the last one
         this.ratings = {};
         ratingKeys = ["pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
-        for (i = 0; i < ratingKeys.length; i++) {
-            (function (i) {
-                this.ratings[ratingKeys[i]] = ko.computed({
-                    read: function () {
-                        // Critical: this will always call p.ratings() so it knows to update after player is loaded
-                        if (this.p.ratings().length > 0) {
-                            return this.p.ratings()[this.p.ratings().length - 1][ratingKeys[i]]();
-                        } else {
-                            return 0;
-                        }
-                    },
-                    write: function (value) {
-                        var rating;
-                        rating = helpers.bound(parseInt(value, 10), 0, 100);
-                        if (isNaN(rating)) { rating = 0; }
-                        this.p.ratings()[this.p.ratings().length - 1][ratingKeys[i]](rating);
-                    },
-                    owner: this
-                });
-            }.bind(this))(i);
-        }
+        ratingKeys.forEach(function (ratingKey) {
+            this.ratings[ratingKey] = ko.computed({
+                read: function () {
+                    // Critical: this will always call p.ratings() so it knows to update after player is loaded
+                    if (this.p.ratings().length > 0) {
+                        return this.p.ratings()[this.p.ratings().length - 1][ratingKey]();
+                    }
+
+                    return 0;
+                },
+                write: function (value) {
+                    var rating;
+                    rating = helpers.bound(parseInt(value, 10), 0, 100);
+                    if (isNaN(rating)) { rating = 0; }
+                    this.p.ratings()[this.p.ratings().length - 1][ratingKey](rating);
+                },
+                owner: this
+            });
+        }, this);
 
         // Set born.year based on age input
         this.age = ko.computed({

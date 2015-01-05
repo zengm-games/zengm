@@ -5,7 +5,7 @@
 define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, helpers, random) {
     "use strict";
 
-    var activities, playoffs, intro, first, money, ovr, wins;
+    var activities, first, intro, money, ovr, playoffs, wins;
 
     // First message after new game
     first = [
@@ -144,7 +144,7 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
     ];
 
     function generate(deltas) {
-        var activity1, activity2, indMoney, indPlayoffs, indOvr, indWins, m, ownerMoodSum, tx;
+        var activity1, activity2, indMoney, indOvr, indPlayoffs, indWins, m, ownerMoodSum, tx;
 
         ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
 

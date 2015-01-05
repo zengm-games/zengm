@@ -679,19 +679,19 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
             // If payroll for the current season was requested, find the current payroll for each team. Otherwise, don't.
             if (options.seasonAttrs.indexOf("payroll") < 0 || options.season !== g.season) {
                 return returnOneTeam ? fts[0] : fts;
-            } else {
-                savePayroll = function (i) {
-                    return getPayroll(options.ot, t[i].tid).get(0).then(function (payroll) {
-                        fts[i].payroll = payroll / 1000;
-                        if (i === fts.length - 1) {
-                            return returnOneTeam ? fts[0] : fts;
-                        }
-
-                        return savePayroll(i + 1);
-                    });
-                };
-                return savePayroll(0);
             }
+
+            savePayroll = function (i) {
+                return getPayroll(options.ot, t[i].tid).get(0).then(function (payroll) {
+                    fts[i].payroll = payroll / 1000;
+                    if (i === fts.length - 1) {
+                        return returnOneTeam ? fts[0] : fts;
+                    }
+
+                    return savePayroll(i + 1);
+                });
+            };
+            return savePayroll(0);
         });
     }
 
@@ -948,7 +948,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
         });
 
         return tx.complete().then(function () {
-            var contractsFactor, base, doSkillBonuses, dv, rosterAndAdd, rosterAndRemove, salaryAddedThisSeason, salaryRemoved, skillsNeeded, sumContracts, sumValues;
+            var base, contractsFactor, doSkillBonuses, dv, rosterAndAdd, rosterAndRemove, salaryAddedThisSeason, salaryRemoved, skillsNeeded, sumContracts, sumValues;
 
             gpAvg = helpers.bound(gpAvg, 0, 82);
 

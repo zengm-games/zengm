@@ -66,7 +66,7 @@ window.boxPlot = (function () {
      *     labels: boolean for whether to show numeric labels (default true)
      */
     function create(plot) {
-        var containerDiv, lowerBoxDiv, lowerLabel, lowerWhiskerDiv, medianLabel, midLineDiv, maxScaleDiv, maxScaleLabel, minScaleDiv, minScaleLabel, q1Label, q3Label, upperBoxDiv, upperLabel, upperWhiskerDiv, val, x;
+        var containerDiv, lowerBoxDiv, lowerLabel, lowerWhiskerDiv, maxScaleDiv, maxScaleLabel, medianLabel, midLineDiv, minScaleDiv, minScaleLabel, q1Label, q3Label, upperBoxDiv, upperLabel, upperWhiskerDiv, val, x;
 
         if (!plot.hasOwnProperty("color")) {
             plot.color = "#000000";

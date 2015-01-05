@@ -47,7 +47,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "vi
                 statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
                 statsPlayoffs: inputs.playoffs === "playoffs"
             }).then(function (players) {
-                var i, gp, tid;
+                var gp, i, tid;
 
                 tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
                 if (tid < 0) { tid = null; } // Show all teams

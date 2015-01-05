@@ -47,7 +47,7 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
 
     // Things to do on initial page load
     function init() {
-        var api, playMenu, $playMenuDropdown, playMenuOptions, topMenuCollapse;
+        var $playMenuDropdown, api, playMenu, playMenuOptions, topMenuCollapse;
 
         ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
 
@@ -126,7 +126,7 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
         // When a dropdown at the top is open, use hover to move between items,
         // like in a normal menubar.
         $("#nav-primary .dropdown-toggle").on("mouseenter", function () {
-            var i, lis, liHover, liOpen, foundOpen;
+            var foundOpen, i, liHover, liOpen, lis;
 
             if (!topMenuCollapse.hasClass("in")) {
                 liHover = this.parentNode;
@@ -304,7 +304,7 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
         handleDropdown = function (select) {
             select.off("change");
             select.change(function () {
-                var args, extraParam, leaguePage, url, seasonsDropdown;
+                var args, extraParam, leaguePage, seasonsDropdown, url;
 
                 // UGLY HACK: Stop event handling if it looks like this is a season dropdown and a new season is starting. Otherwise you get double refreshes, often pointing to the previous year, since updating the season dropdown is interpreted as a "change"
                 seasonsDropdown = document.querySelector(".bbgm-dropdown .seasons");

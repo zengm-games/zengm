@@ -194,7 +194,7 @@ define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.
                 reader = new window.FileReader();
                 reader.readAsText(file);
                 reader.onload = function (event) {
-                    var newTeams, leagueFile;
+                    var leagueFile, newTeams;
 
                     leagueFile = JSON.parse(event.target.result);
                     newTeams = leagueFile.teams;

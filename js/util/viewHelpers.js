@@ -6,7 +6,7 @@ define(["dao", "db", "globals", "ui", "core/league", "lib/bluebird", "lib/jquery
     "use strict";
 
     function beforeLeague(req) {
-        var reqCb, checkDbChange, popup, updateEvents;
+        var checkDbChange, popup, reqCb, updateEvents;
 
         g.lid = parseInt(req.params.lid, 10);
 

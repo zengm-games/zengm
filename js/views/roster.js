@@ -200,7 +200,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
     };
 
     function updateRoster(inputs, updateEvents, vm) {
-        var vars, tx;
+        var tx, vars;
 
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season()) {
             vars = {
@@ -289,39 +289,39 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
 
                         return vars;
                     });
-                } else {
-                    // Show all players with stats for the given team and year
-                    // Needs all seasons because of YWT!
-                    return dao.players.getAll({
-                        ot: tx,
-                        index: "statsTids",
-                        key: inputs.tid,
-                        statsSeasons: "all",
-                        statsTid: inputs.tid
-                    }).then(function (players) {
-                        var i;
-
-                        players = player.filter(players, {
-                            attrs: attrs,
-                            ratings: ratings,
-                            stats: stats,
-                            season: inputs.season,
-                            tid: inputs.tid,
-                            fuzz: true
-                        });
-                        players.sort(function (a, b) {  return b.stats.gp * b.stats.min - a.stats.gp * a.stats.min; });
-
-                        for (i = 0; i < players.length; i++) {
-                            players[i].age = players[i].age - (g.season - inputs.season);
-                            players[i].canRelease = false;
-                        }
-
-                        vars.players = players;
-                        vars.payroll = null;
-
-                        return vars;
-                    });
                 }
+
+                // Show all players with stats for the given team and year
+                // Needs all seasons because of YWT!
+                return dao.players.getAll({
+                    ot: tx,
+                    index: "statsTids",
+                    key: inputs.tid,
+                    statsSeasons: "all",
+                    statsTid: inputs.tid
+                }).then(function (players) {
+                    var i;
+
+                    players = player.filter(players, {
+                        attrs: attrs,
+                        ratings: ratings,
+                        stats: stats,
+                        season: inputs.season,
+                        tid: inputs.tid,
+                        fuzz: true
+                    });
+                    players.sort(function (a, b) {  return b.stats.gp * b.stats.min - a.stats.gp * a.stats.min; });
+
+                    for (i = 0; i < players.length; i++) {
+                        players[i].age = players[i].age - (g.season - inputs.season);
+                        players[i].canRelease = false;
+                    }
+
+                    vars.players = players;
+                    vars.payroll = null;
+
+                    return vars;
+                });
             });
         }
     }
@@ -330,7 +330,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
         // Release and Buy Out buttons, which will only appear if the roster is editable
         // Trade For button is handled by POST
         $("#roster").on("click", "button", function () {
-            var justDrafted, i, pid, players, releaseMessage;
+            var i, justDrafted, pid, players, releaseMessage;
 
             pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
             players = vm.players();

@@ -38,7 +38,7 @@ define([], function () {
     }*/
 
     function show() {
-        var now, adTimer;
+        var adTimer, now;
 
         if (Math.random() < 0.75) {
             showGCS();

@@ -45,7 +45,7 @@ define(["db", "globals", "core/league", "core/trade"], function (db, g, league, 
         describe("#updatePlayers()", function () {
             it("should allow players from both teams to be set", function () {
                 return trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: 3, pids: [], dpids: []}]).then(function () {
-                    var userPidsTest, otherPidsTest;
+                    var otherPidsTest, userPidsTest;
 
                     userPidsTest = [48, 50];
                     otherPidsTest = [87, 97];
@@ -65,7 +65,7 @@ define(["db", "globals", "core/league", "core/trade"], function (db, g, league, 
             });
             it("should delete the other team's players, but not the user's players, from the trade when a new team is selected", function () {
                 return trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: 3, pids: [], dpids: []}]).then(function () {
-                    var userPidsTest, otherPidsTest;
+                    var otherPidsTest, userPidsTest;
 
                     userPidsTest = [48, 50];
                     otherPidsTest = [87, 97];

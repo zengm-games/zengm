@@ -44,7 +44,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "li
                     statsTid: inputs.tid
                 })
             ]).spread(function (userTeam, players) {
-                var championships, history, i, playoffAppearances, totalWon, totalLost;
+                var championships, history, i, playoffAppearances, totalLost, totalWon;
 
                 history = [];
                 totalWon = 0;

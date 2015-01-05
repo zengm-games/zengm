@@ -176,7 +176,7 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
                     barData.att = _.map(barData.att, function (num, i) {
                         if (t.seasons[i] !== undefined) {
                             if (t.seasons[i].gp > 0) {
-                                return num / t.seasons[i].gp; // per game
+                                return num / (t.seasons[i].wonHome + t.seasons[i].lostHome); // per game
                             }
                             return 0;
                         }

@@ -253,6 +253,8 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                                     return player.updateValues(tx, p_, [ps]);
                                 }
 
+                                return p_;
+                            }).then(function (p_) {
                                 dao.players.put({ot: tx, value: p_});
                             });
                         }

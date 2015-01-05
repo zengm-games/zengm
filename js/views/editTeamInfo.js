@@ -60,7 +60,7 @@ define(["dao", "db", "globals", "ui", "core/league", "core/team", "lib/underscor
         });
     }
 
-    function uiFirst(vm) {
+    function uiFirst() {
         var fileEl;
 
         ui.title("Edit Team Names");

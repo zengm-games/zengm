@@ -155,7 +155,10 @@
     "globals": {
         "_gaq": true,
         "console": true,
+        "IDBCursor": true,
         "IDBKeyRange": true,
+        "IDBObjectStore": true,
+        "IDBTransaction": true,
         "mocha": true,
         "should": true
     }

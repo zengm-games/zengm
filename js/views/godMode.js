@@ -5,7 +5,7 @@
 define(["globals", "ui", "core/league", "util/bbgmView", "util/helpers"], function (g, ui, league, bbgmView, helpers) {
     "use strict";
 
-    function updateGodMode(inputs, updateEvents, vm) {
+    function updateGodMode(inputs, updateEvents) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("toggleGodMode") >= 0) {
             // Make sure it's current
             return league.loadGameAttribute(null, "godMode").then(function () {

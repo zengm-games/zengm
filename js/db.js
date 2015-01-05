@@ -9,7 +9,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
 
     /**
      * Create new meta database with the latest structure.
-     * 
+     *
      * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
      */
     function createMeta(event) {
@@ -24,7 +24,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
 
     /**
      * Migrate meta database to the latest structure.
-     * 
+     *
      * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
      */
     function migrateMeta(event) {
@@ -107,7 +107,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
     }
 
     function connectMeta() {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             var request;
 
 //        console.log('Connecting to database "meta"');
@@ -120,7 +120,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
                 }
             };
             request.onblocked = function () {
-                alert("Please close all other tabs with this site open!");
+                window.alert("Please close all other tabs with this site open!");
             };
             request.onupgradeneeded = function (event) {
                 if (event.oldVersion === 0) {
@@ -129,7 +129,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
                     migrateMeta(event);
                 }
             };
-            request.onsuccess = function (event) {
+            request.onsuccess = function () {
                 g.dbm = request.result;
                 g.dbm.onerror = function (event) {
 console.log(event);
@@ -146,7 +146,7 @@ console.log(event);
 
     /**
      * Create a new league database with the latest structure.
-     * 
+     *
      * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
      * @param {number} lid Integer league ID number for new league.
      */
@@ -190,7 +190,7 @@ console.log(event);
 
     /**
      * Migrate a league database to the latest structure.
-     * 
+     *
      * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
      * @param {number} lid Integer league ID number.
      */
@@ -740,14 +740,14 @@ console.log(event);
                                 afterStatsRows();
                             }
                         }
-                    }
+                    };
                 }());
             }
         });
     }
 
     function connectLeague(lid) {
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
             var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
@@ -760,7 +760,7 @@ console.log(event);
                 }
             };
             request.onblocked = function () {
-                alert("Please close all other tabs with this site open!");
+                window.alert("Please close all other tabs with this site open!");
             };
             request.onupgradeneeded = function (event) {
                 if (event.oldVersion === 0) {
@@ -769,7 +769,7 @@ console.log(event);
                     migrateLeague(event, lid);
                 }
             };
-            request.onsuccess = function (event) {
+            request.onsuccess = function () {
                 g.dbl = request.result;
                 g.dbl.onerror = function (event) {
 console.log(event);

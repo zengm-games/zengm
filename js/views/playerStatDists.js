@@ -2,7 +2,7 @@
  * @name views.playerStatDists
  * @namespace Player stat distributions.
  */
-define(["dao", "globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, g, ui, player, boxPlot, $, ko, _, components, bbgmView, helpers, viewHelpers) {
+define(["dao", "globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib/knockout", "lib/underscore", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, boxPlot, $, ko, _, components, bbgmView, helpers) {
     "use strict";
 
     var nbaQuartiles;

@@ -41,7 +41,7 @@ define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.
             if (req.params.rosters === "custom-rosters") {
                 file = document.getElementById("custom-rosters-file").files[0];
                 if (file !== undefined) {
-                    return new Promise(function (resolve, reject) {
+                    return new Promise(function (resolve) {
                         var reader;
 
                         reader = new window.FileReader();
@@ -157,7 +157,7 @@ define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.
 
         // Handle custom roster teams
         setTeams = function (newTeams) {
-            var i, propsToKeep;
+            var i;
 
             if (newTeams !== undefined) {
                 for (i = 0; i < newTeams.length; i++) {

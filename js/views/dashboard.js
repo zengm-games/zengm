@@ -2,10 +2,10 @@
  * @name views.dashboard
  * @namespace Dashboard.
  */
-define(["dao", "ui", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, ui, bbgmView, helpers, viewHelpers) {
+define(["dao", "ui", "util/bbgmView", "util/viewHelpers"], function (dao, ui, bbgmView, viewHelpers) {
     "use strict";
 
-    function updateDashboard(inputs, updateEvents) {
+    function updateDashboard() {
         return dao.leagues.getAll().then(function (leagues) {
             var i;
 
@@ -25,7 +25,7 @@ define(["dao", "ui", "util/bbgmView", "util/helpers", "util/viewHelpers"], funct
         });
     }
 
-    function uiFirst(vm) {
+    function uiFirst() {
         ui.title("Dashboard");
     }
 

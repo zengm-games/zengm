@@ -43,7 +43,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
         }
     };
 
-    function updateDraftSummary(inputs, updateEvents, vm) {
+    function updateDraftSummary(inputs) {
         // Update every time because anything could change this (unless all players from class are retired)
         return dao.players.getAll({
             index: "draft.year",

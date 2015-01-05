@@ -54,8 +54,6 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
         });
 
         $register.on("submit", function (event) {
-            var resetErrors;
-
             event.preventDefault();
 
             // Reset error display

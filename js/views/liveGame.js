@@ -97,7 +97,7 @@ define(["dao", "globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util
         }
     }
 
-    function uiFirst(vm) {
+    function uiFirst() {
         var playByPlayList;
 
         ui.title("Live Game Simulation");

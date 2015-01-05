@@ -2,7 +2,7 @@
  * @name views.loginOrRegister
  * @namespace Login and register forms.
  */
-define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, account, bbgmView, helpers, viewHelpers) {
+define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], function (g, ui, $, bbgmView, viewHelpers) {
     "use strict";
 
     function get(req) {
@@ -11,7 +11,7 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
         };
     }
 
-    function updateToken(inputs, updateEvents, vm) {
+    function updateToken(inputs) {
         return {
             token: inputs.token,
             showForm: null
@@ -43,8 +43,6 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
 
                     $resetpw = $("#resetpw");
                     $resetpw.on("submit", function (event) {
-                        var resetErrors;
-
                         event.preventDefault();
 
                         // Reset error display

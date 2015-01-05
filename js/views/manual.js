@@ -31,13 +31,13 @@ define(["ui", "util/bbgmView", "util/viewHelpers"], function (ui, bbgmView, view
         };
     }
 
-    function updateManual(inputs, updateEvents) {
+    function updateManual(inputs) {
         return {
             page: inputs.page
         };
     }
 
-    function uiFirst(vm) {
+    function uiFirst() {
         ui.title("Manual");
     }
 

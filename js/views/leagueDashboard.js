@@ -313,7 +313,7 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
         }
     }
 
-    function updateStandings(inputs, updateEvents, vm) {
+    function updateStandings(inputs, updateEvents) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
             return team.filter({
                 attrs: ["tid", "cid", "abbrev", "region"],

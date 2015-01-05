@@ -77,7 +77,7 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
         });
     }
 
-    function get(req) {
+    function get() {
         if (g.phase !== g.PHASE.DRAFT && g.phase !== g.PHASE.FANTASY_DRAFT) {
             return {
                 redirectUrl: helpers.leagueUrl(["draft_summary"])
@@ -85,7 +85,7 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
         }
     }
 
-    function updateDraft(inputs, updateEvents, vm) {
+    function updateDraft() {
         return Promise.all([
             dao.players.getAll({
                 index: "tid",
@@ -162,12 +162,12 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
         ui.title("Draft");
 
         startDraft = $("#start-draft");
-        startDraft.click(function (event) {
+        startDraft.click(function () {
             $(startDraft.parent()).hide();
             draftUntilUserOrEnd();
         });
 
-        $("#undrafted").on("click", "button", function (event) {
+        $("#undrafted").on("click", "button", function () {
             $("#undrafted button").attr("disabled", "disabled");
             draftUser(parseInt(this.getAttribute("data-player-id"), 10)).then(function (pid) {
                 updateDraftTables([pid]);

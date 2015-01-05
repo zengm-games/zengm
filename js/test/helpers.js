@@ -7,7 +7,7 @@ define([], function () {
 
    /**
      * Finds the number of times an element appears in an array.
-     * 
+     *
      * @memberOf test.core
      * @param {Array} array The array to search over.
      * @param {*} x Element to search for

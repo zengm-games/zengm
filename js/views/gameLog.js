@@ -74,7 +74,7 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "v
         return inputs;
     }
 
-    function InitViewModel(inputs) {
+    function InitViewModel() {
         this.boxScore = {
             gid: ko.observable(-1),
             prevGid: ko.observable(null),
@@ -131,7 +131,7 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "v
         }
     }
 
-    function updateTeamSeason(inputs, updateEvents, vm) {
+    function updateTeamSeason(inputs) {
         return {
             // Needed for dropdown
             abbrev: inputs.abbrev,

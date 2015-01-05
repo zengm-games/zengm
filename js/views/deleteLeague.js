@@ -2,7 +2,7 @@
  * @name views.deleteLeague
  * @namespace Delete league form.
  */
-define(["dao", "db", "globals", "ui", "core/league", "lib/bluebird", "util/bbgmView", "util/viewHelpers"], function (dao, db, g, ui, league, Promise, bbgmView, viewHelpers) {
+define(["dao", "db", "ui", "core/league", "lib/bluebird", "util/bbgmView", "util/viewHelpers"], function (dao, db, ui, league, Promise, bbgmView, viewHelpers) {
     "use strict";
 
     function get(req) {
@@ -17,7 +17,7 @@ define(["dao", "db", "globals", "ui", "core/league", "lib/bluebird", "util/bbgmV
         });
     }
 
-    function updateDeleteLeague(inputs, updateEvents) {
+    function updateDeleteLeague(inputs) {
         return db.connectLeague(inputs.lid).then(function () {
             var tx;
 
@@ -44,7 +44,7 @@ define(["dao", "db", "globals", "ui", "core/league", "lib/bluebird", "util/bbgmV
         });
     }
 
-    function uiFirst(vm) {
+    function uiFirst() {
         ui.title("Delete League");
     }
 

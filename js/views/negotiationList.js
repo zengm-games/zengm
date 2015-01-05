@@ -7,7 +7,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/bluebird"
 
     var mapping;
 
-    function get(req) {
+    function get() {
         if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
             return {
                 redirectUrl: helpers.leagueUrl(["negotiation", -1])

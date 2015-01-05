@@ -15,7 +15,7 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "u
         }
     };
 
-    function updateHistory(inputs, updateEvents, vm) {
+    function updateHistory(inputs, updateEvents) {
         if (updateEvents.indexOf("firstRun") >= 0) {
             return Promise.all([
                 dao.awards.getAll(),
@@ -115,7 +115,7 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "u
         };
 
         ko.computed(function () {
-            ui.datatable($("#history-all"), 0, _.map(vm.seasons(), function (s) {
+            ui.datatable($("#history-all"), 0, vm.seasons().map(function (s) {
                 var countText, seasonLink;
 
                 if (s.champ) {

@@ -66,7 +66,7 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
      * Records one or more achievements.
      *
      * If logged in, try to record remotely and fall back to IndexedDB if necessary. If not logged in, just write to IndexedDB. Then, create a notification.
-     * 
+     *
      * @memberOf util.helpers
      * @param {Array.<string>} achievements Array of achievement IDs (see allAchievements above).
      * @param {boolean=} silent If true, don't show any notifications (like if achievements are only being moved from IDB to remote). Default false.

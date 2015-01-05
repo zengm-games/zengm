@@ -2,7 +2,7 @@
  * @name views.exportRosters
  * @namespace Export rosters.
  */
-define(["globals", "ui", "core/league", "lib/jquery", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (g, ui, league, $, bbgmView, helpers, viewHelpers) {
+define(["ui", "core/league", "util/bbgmView"], function (ui, league, bbgmView) {
     "use strict";
 
     function post(req) {

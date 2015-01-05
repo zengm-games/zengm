@@ -282,7 +282,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
      * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error".
      */
     function globalError(req) {
-        var contentEl, data, ui, viewHelpers;
+        var contentEl, ui, viewHelpers;
 
         ui = require("ui");
         viewHelpers = require("util/viewHelpers");
@@ -773,7 +773,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
                 if (obj.hasOwnProperty(prop)) {
                     if (typeof obj[prop] === "object" && obj[prop] !== null) {
                         foundNaN = checkObject(obj[prop], foundNaN, replace);
-                    } else if (obj[prop] != obj[prop]) {
+                    } else if (obj[prop] !== obj[prop]) {
                         // NaN check from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
                         foundNaN = true;
                         if (replace) {
@@ -795,7 +795,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
 
         wrapperNaNChecker = function (_super) {
             return function (obj) {
-                var contentNode, err, gSend, output;
+                var err;
 
                 if (checkObject(obj)) {
                     err = new Error("NaN found before writing to IndexedDB");
@@ -804,7 +804,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
                         window.Bugsnag.notifyException(err, "NaNFound", {
                             details: {
                                 objectWithNaN: JSON.stringify(obj, function (key, value) {
-                                    if (value != value) {
+                                    if (value !== value) {
                                         return "FUCKING NaN RIGHT HERE";
                                     }
 

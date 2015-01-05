@@ -2,7 +2,7 @@
  * @name views.player
  * @namespace View a single message.
  */
-define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/viewHelpers"], function (dao, g, ui, freeAgents, player, faces, $, ko, komapping, bbgmView, viewHelpers) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "util/bbgmView"], function (dao, g, ui, freeAgents, player, faces, $, ko, komapping, bbgmView) {
     "use strict";
 
     var mapping;

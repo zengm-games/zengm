@@ -17,7 +17,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
         $("#game-sim-warning").hide();
     }
 
-    function get(req) {
+    function get() {
         if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) {
             if (g.phase === g.PHASE.RESIGN_PLAYERS) {
                 return {

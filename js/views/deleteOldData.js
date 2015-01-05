@@ -74,7 +74,7 @@ define(["dao", "globals", "ui", "core/league", "util/bbgmView"], function (dao, 
         });
     }
 
-    function uiFirst(vm) {
+    function uiFirst() {
         ui.title("Delete Old Data");
     }
 

@@ -2,8 +2,48 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery", "lib/knockout", "lib/underscore", "util/helpers", "util/lock"], function (dao, db, g, templates, Promise, Davis, $, ko, _, helpers, lock) {
+define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery", "lib/knockout", "util/helpers", "util/lock"], function (dao, g, templates, Promise, Davis, $, ko, helpers, lock) {
     "use strict";
+
+    /**
+     * Smartly update the currently loaded view or redirect to a new one.
+     *
+     * This will only refresh or redirect to in-league URLs (and a couple out of league). Otherwise, the callback is just called immediately.
+     *
+     * @memberOf ui
+     * @param {Array.<string>=} updateEvents Optional array of strings containing information about what caused this update, e.g. "gameSim" or "playerMovement".
+     * @param {string=} url Optional URL to redirect to. The current URL is used if this is not defined. If this URL is either undefined or the same as location.pathname, it is considered to be an "refresh" and no entry in the history or stat tracker is made. Otherwise, it's considered to be a new pageview.
+     * @param {function()=} cb Optional callback that will run after the page updates.
+     * @param {Object=} raw Optional object passed through to Davis's req.raw.
+     */
+    function realtimeUpdate(updateEvents, url, cb, raw) {
+        var inLeague, refresh;
+
+//debugger;
+        updateEvents = updateEvents !== undefined ? updateEvents : [];
+        url = url !== undefined ? url : location.pathname + location.search;
+        raw = raw !== undefined ? raw : {};
+
+        inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
+        refresh = url === location.pathname && inLeague;
+
+        // If tracking is enabled, don't track realtime updates for refreshes
+        if (Davis.Request.prototype.noTrack !== undefined && refresh) {
+            Davis.Request.prototype.noTrack();
+        }
+
+        raw.updateEvents = updateEvents;
+        raw.cb = cb;
+
+        // This prevents the Create New League form from inappropriately refreshing after it is submitted
+        if (refresh) {
+            Davis.location.replace(new Davis.Request(url, raw));
+        } else if (inLeague || url === "/" || url.indexOf("/account") === 0) {
+            Davis.location.assign(new Davis.Request(url, raw));
+        } else if (cb !== undefined) {
+            cb();
+        }
+    }
 
     // Things to do on initial page load
     function init() {
@@ -194,46 +234,6 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
         containerEl.dataset.idLoaded = data.template;
     }
 
-    /**
-     * Smartly update the currently loaded view or redirect to a new one.
-     *
-     * This will only refresh or redirect to in-league URLs (and a couple out of league). Otherwise, the callback is just called immediately.
-     *
-     * @memberOf ui
-     * @param {Array.<string>=} updateEvents Optional array of strings containing information about what caused this update, e.g. "gameSim" or "playerMovement".
-     * @param {string=} url Optional URL to redirect to. The current URL is used if this is not defined. If this URL is either undefined or the same as location.pathname, it is considered to be an "refresh" and no entry in the history or stat tracker is made. Otherwise, it's considered to be a new pageview.
-     * @param {function()=} cb Optional callback that will run after the page updates.
-     * @param {Object=} raw Optional object passed through to Davis's req.raw.
-     */
-    function realtimeUpdate(updateEvents, url, cb, raw) {
-        var inLeague, refresh;
-
-//debugger;
-        updateEvents = updateEvents !== undefined ? updateEvents : [];
-        url = url !== undefined ? url : location.pathname + location.search;
-        raw = raw !== undefined ? raw : {};
-
-        inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
-        refresh = url === location.pathname && inLeague;
-
-        // If tracking is enabled, don't track realtime updates for refreshes
-        if (Davis.Request.prototype.noTrack !== undefined && refresh) {
-            Davis.Request.prototype.noTrack();
-        }
-
-        raw.updateEvents = updateEvents;
-        raw.cb = cb;
-
-        // This prevents the Create New League form from inappropriately refreshing after it is submitted
-        if (refresh) {
-            Davis.location.replace(new Davis.Request(url, raw));
-        } else if (inLeague || url === "/" || url.indexOf("/account") === 0) {
-            Davis.location.assign(new Davis.Request(url, raw));
-        } else if (cb !== undefined) {
-            cb();
-        }
-    }
-
     // Data tables
     // fnStateSave and fnStateLoad are based on http://www.datatables.net/blog/localStorage_for_state_saving except the id of the table is used in the key. This means that whatever you do to a table (sorting, viewing page, etc) will apply to every identical table in other leagues.
     function datatable(table, sortCol, data, extraOptions) {
@@ -335,7 +335,7 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
 
                 realtimeUpdate([], url);
             });
-        }
+        };
 
         handleDropdown(select1);
         if (select2 !== undefined) {
@@ -351,7 +351,7 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
 
    /**
      * Update play menu options based on game state.
-     * 
+     *
      * @memberOf ui
      * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, and negotiations; if null is passed, then a new transaction will be used.
      * @return {Promise}
@@ -412,7 +412,7 @@ define(["dao", "db", "globals", "templates", "lib/bluebird", "lib/davis", "lib/j
             lock.gamesInProgress(ot),
             lock.negotiationInProgress(ot)
         ]).spread(function (unreadMessage, gamesInProgress, negotiationInProgress) {
-            var i, ids, j, playButtonElement, someOptions;
+            var i, ids, j, someOptions;
 
             if (unreadMessage) {
                 keys = ["play-menu-message"];

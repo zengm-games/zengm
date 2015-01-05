@@ -5,7 +5,7 @@
 define(["db", "globals", "ui", "core/league", "core/team", "util/bbgmView", "util/helpers"], function (db, g, ui, league, team, bbgmView, helpers) {
     "use strict";
 
-    function get(req) {
+    function get() {
         if (!g.gameOver && !g.godMode) {
             return {
                 errorMessage: "You may only switch to another team after you're fired or when you're in <a href=\"" + helpers.leagueUrl(["god_mode"]) + "\">God Mode</a>."

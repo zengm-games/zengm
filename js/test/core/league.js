@@ -11,7 +11,7 @@ define(["dao", "db", "globals", "core/league", "lib/underscore", "test/helpers"]
                 return league.create("Test", 0, undefined, 2013, false);
             });
         });
-        // After not needed because last test removes 
+        // After not needed because last test removes DB
 
         describe("#create()", function () {
             it("should add entry in meta leagues object store", function () {

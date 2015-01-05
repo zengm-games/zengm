@@ -2,16 +2,17 @@
  * @name util.ads
  * @namespace Everyone loves advertisements, right?
  */
-define(["lib/jquery"], function ($) {
+/*eslint new-cap: 0*/
+define([], function () {
     "use strict";
 
     function showGCS() {
-        TriggerPrompt("http://www.basketball-gm.com/", (new Date()).getTime());
+        window.TriggerPrompt("http://www.basketball-gm.com/", (new Date()).getTime());
     }
 
     function showSurvata() {
-        Survata.ready(function () {
-            var s = Survata.createSurveywall({
+        window.Survata.ready(function () {
+            var s = window.Survata.createSurveywall({
                 brand: "Basketball GM",
                 explainer: "Please take this short survey to support Basketball GM!",
                 disallowClose: true,
@@ -28,15 +29,13 @@ define(["lib/jquery"], function ($) {
             });
         });
 
-        Survata.fail(function() {
-            // If Survata is down, try GCS
-            showGCS();
-        });
+        // If Survata is down, try GCS
+        window.Survata.fail(showGCS);
     }
 
-    function showModal() {
+/*    function showModal() {
         $("#modal-ads").modal("show");
-    }
+    }*/
 
     function show() {
         var now, adTimer;

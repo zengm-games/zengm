@@ -21,6 +21,7 @@ clean up
     instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
       see promises_super_tx branch
       or could be dao.tx().then(function (tx) {}) and resolve that promise oncomplete? but how to pass value to then?
+  IDBCursor used in helpers.js
 
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing

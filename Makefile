@@ -13,6 +13,9 @@ docs:
 	rm -rf docs
 	jsdoc -d=docs -s js js/core js/util js/views
 
+# target: lint - Run ESLint on all source files except third-party libraries.
+lint:
+	node node_modules/eslint/bin/eslint.js js
 
 
 ### Targets below here are generally just called from the targets above.
@@ -51,4 +54,4 @@ cp-cordova:
 
 ###
 
-.PHONY: all check docs build-css build-js clean
+.PHONY: all check docs lint build-css build-js clean

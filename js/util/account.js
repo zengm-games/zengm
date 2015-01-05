@@ -2,6 +2,7 @@
  * @name util.account
  * @namespace Functions for accessing account crap.
  */
+/*eslint camelcase: 0*/
 define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/underscore", "util/eventLog"], function (dao, g, team, Promise, $, _, eventLog) {
     "use strict";
 

@@ -76,16 +76,18 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "core
         }
     }
 
-    function updateNegotiation(inputs, updateEvents, vm) {
+    function updateNegotiation(inputs) {
         // Call getAll so it works on null key
         return dao.negotiations.getAll({key: inputs.pid}).then(function (negotiations) {
+            var negotiation;
+
             if (negotiations.length === 0) {
                 return {
                     errorMessage: "No negotiation with player " + inputs.pid + " in progress."
                 };
             }
 
-            var negotiation = negotiations[0];
+            negotiation = negotiations[0];
 
             negotiation.player.expiration = negotiation.player.years + g.season;
             // Adjust to account for in-season signings

@@ -103,7 +103,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
                     return ui;
                 },
                 cursor: "move",
-                update: function (e, ui) {
+                update: function () {
                     var i, sortedPids;
 
                     sortedPids = $(this).sortable("toArray", {attribute: "data-pid"});
@@ -329,8 +329,8 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
     function uiFirst(vm) {
         // Release and Buy Out buttons, which will only appear if the roster is editable
         // Trade For button is handled by POST
-        $("#roster").on("click", "button", function (event) {
-            var justDrafted, i, pid, players, releaseMessage, tr;
+        $("#roster").on("click", "button", function () {
+            var justDrafted, i, pid, players, releaseMessage;
 
             pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
             players = vm.players();
@@ -349,10 +349,9 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
                     releaseMessage = "Are you sure you want to release " + players[i].name() + "?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in " + players[i].contract.exp() + ".";
                 }
                 if (window.confirm(releaseMessage)) {
-                    tr = this.parentNode.parentNode;
                     doRelease(pid, justDrafted).then(function (error) {
                         if (error) {
-                            alert("Error: " + error);
+                            window.alert("Error: " + error);
                         } else {
                             ui.realtimeUpdate(["playerMovement"]);
                         }
@@ -418,7 +417,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
         });
 
         $("#roster").on("change", "select", function () {
-            var backgroundColor, color, pid, ptModifier;
+            var backgroundColor, color;
 
             // Update select color
 

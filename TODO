@@ -46,7 +46,7 @@ PERFORMANCE CRAP
 
 tooling
   flow
-  scry
+  srcy
   jscs
   https://github.com/ariya/esprima/blob/master/package.json
 

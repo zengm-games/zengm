@@ -40,7 +40,6 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/knockout", "
     function updateLeaders(inputs, updateEvents, vm) {
         // Respond to watchList in case players are listed twice in different categories
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
-
             return Promise.all([
                 dao.teams.getAll(),
                 dao.players.getAll({

@@ -95,7 +95,6 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
                         cursor.continue();
                     }
                 };
-
             }());
         }
 

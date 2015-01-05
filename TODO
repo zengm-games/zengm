@@ -46,8 +46,6 @@ PERFORMANCE CRAP
 
 tooling
   flow
-  eslint
-    go through http://eslint.org/docs/rules/ and see if anything needs to be enabled
   scry
   jscs
   https://github.com/ariya/esprima/blob/master/package.json

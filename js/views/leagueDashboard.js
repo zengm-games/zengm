@@ -271,7 +271,6 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
 
     function updatePlayoffs(inputs, updateEvents) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
-
             return dao.playoffSeries.get({key: g.season}).then(function (playoffSeries) {
                 var found, i, rnd, series, vars;
 

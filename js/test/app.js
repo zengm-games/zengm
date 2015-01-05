@@ -1,3 +1,6 @@
+/*eslint no-unused-vars: 0*/
+var should;
+
 require.config({
     baseUrl: "/js",
     shim: {
@@ -26,7 +29,7 @@ require(["lib/chai", "lib/IndexedDB-getAll-shim", "util/templateHelpers"], funct
         globals: ["console"],
         timeout: 2000000000
     });
-    window.should = chai.should();
+    should = chai.should();
 
     require(["test/core/contractNegotiation", "test/core/draft", "test/core/finances", "test/core/league", "test/core/player", "test/core/season", "test/core/team", "test/core/trade", "test/util/account", "test/util/helpers", "test/views/components", "test/views/gameLog"], function () {
         mocha.run();

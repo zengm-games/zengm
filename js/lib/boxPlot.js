@@ -78,7 +78,6 @@ window.boxPlot = (function () {
         // Either calculate quartiles or use the ones passed directly
         if (plot.hasOwnProperty("data")) {
             val = calculateValues(plot.data);
-
         } else {
             val = {
                 min: plot.quartiles[0],

@@ -232,7 +232,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @return {Object} Updated player object.
      */
     function develop(p, years, generate, coachingRank) {
-        var age, baseChange, baseChangeLocal, calcBaseChange, i, j, r, ratingKeys, sign;
+        var age, baseChange, baseChangeLocal, calcBaseChange, i, j, r, ratingKeys;
 
         years = years !== undefined ? years : 1;
         generate = generate !== undefined ? generate : false;
@@ -302,8 +302,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             baseChange = calcBaseChange(age, p.ratings[r].pot - p.ratings[r].ovr);
 
             // Modulate by coaching
-            sign = baseChange ? baseChange < 0 ? -1 : 1 : 0;
-            if (sign >= 0) { // life is normal
+            if (baseChange >= 0) { // life is normal
                 baseChange *= ((coachingRank - 1) * (-0.5) / (g.numTeams - 1) + 1.25);
             } else {
                 baseChange *= ((coachingRank - 1) * (0.5) / (g.numTeams - 1) + 0.75);

@@ -120,7 +120,6 @@ define(["globals", "ui", "core/team", "lib/boxPlot", "lib/jquery", "lib/knockout
 
             for (stat in vm.statsAll) {
                 if (vm.statsAll.hasOwnProperty(stat)) {
-
                     boxPlot.create({
                         data: vm.statsAll[stat](),
                         scale: scale[stat],

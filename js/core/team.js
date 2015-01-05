@@ -1187,7 +1187,6 @@ console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved)
 console.log([sumValues(add), sumContracts(add)]);
 console.log([sumValues(remove), sumContracts(remove)]);
 console.log(dv);*/
-
         });
     }
 

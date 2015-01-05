@@ -90,7 +90,6 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], fun
                             }
                         });
                     });
-
                 } else {
                     vm.showForm(false);
                 }

@@ -567,7 +567,6 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
                         }
                     }
                     return team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached).then(function (dv) {
-
                         asset.dv = dv;
                     });
                 });

@@ -1,7 +1,5 @@
 Copyright (C) Jeremy Scheff. All rights reserved.
 
-# Plain English summary
-
 **BASKETBALL GM IS NOT OPEN SOURCE!** But it's not completely closed either.
 It's somewhere in between. My goal is to allow others to see and contribute to
 Basketball GM without being able to set up competing versions of the game.
@@ -17,7 +15,8 @@ Basketball GM without being able to set up competing versions of the game.
   TO USE ONLINE!
 
 - **Share it, including changes.** YOU CAN SHARE THE CODE, NOT A PLAYABLE GAME!
-  Your changes must be made under this license.
+  Your changes must be made under this license and you must assign copyright to
+  me, Jeremy Scheff.
 
 # Things you are not allowed to do
 

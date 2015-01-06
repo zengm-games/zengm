@@ -7,7 +7,7 @@ IndexedDB.
 
 Copyright (C) Jeremy Scheff. All rights reserved.
 
-* Email: jdscheff@gmail.com
+* Email: commissioner@basketball-gm.com
 
 * Website: http://www.basketball-gm.com/
 

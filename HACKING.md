@@ -1,4 +1,22 @@
-This file is not guaranteed to be complete and up-to-date.
+This document contains some information that might be useful if you're
+interested in contributing to the development of Basketball GM.
+
+
+
+# License and Copyright Assignment
+
+Basketball GM is NOT open source, but it is also not completely closed. Please
+see LICENSE.md for details.
+
+If you want to contribute code to Basketball GM, you must assign copyright to
+me, Jeremy Scheff. To do this, send an email to commissioner@basketball-gm.com
+with the subject line, "Copyright assignment by YOUR_NAME_HERE
+(GITHUB_USERNAME_HERE)", containing the following statement:
+
+"I, YOUR_NAME_HERE (GitHub username GITHUB_USERNAME_HERE), hereby irrevocably
+assign copyright from my contributions to the Basketball GM project to Jeremy
+Scheff, under the same licensing terms as the rest of the code. I certify that I
+have the right to make such assignment."
 
 
 

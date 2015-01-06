@@ -21,6 +21,8 @@ Contract negotiation revamp
 THE FLATTENING
 --------------
 
+reports of trading block failing earlier than normal (2016)
+
 make sure ads show correctly
 
 clean up
@@ -33,6 +35,7 @@ clean up
   hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake
   what about creating, migrating, and deleting databases? and objectStoreNames?
   don't use "ot" anywhere - it's all transactions so call it tx
+  don't start transaction from nothing in utility function, and don't use oncomplete. always specify transaction if atomicity is needed. use this to put phase changes all in one transaction
   extract it as a library named "baseline"
   improve API
     instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?

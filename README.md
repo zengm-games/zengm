@@ -13,11 +13,14 @@ Copyright (C) Jeremy Scheff. All rights reserved.
 
 * Development website: https://bitbucket.org/dumbmatter/basketball-gm
 
+**Basketball GM is NOT open source, but it is also not completely closed. Please
+see LICENSE.md for details.**
+
 
 
 ## Installing and Running
 
-If you just want to play the game, go to http://www.basketball-gm.com/
+If you just want to play the game, go to http://basketball-gm.com/
 Instructions below are for developers who want to run a copy so that they can
 test changes to the code locally.
 

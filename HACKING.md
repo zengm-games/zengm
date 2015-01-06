@@ -15,7 +15,7 @@ npm). Then, just run:
 
 Alternatively, to use the unminified uncombined JavaScript files, go to Tools >
 Enable Debug Mode. This is quite useful during development, since it avoids the
-need for any compile step
+need for any compile step.
 
 
 

@@ -9,16 +9,14 @@ Copyright (C) Jeremy Scheff. All rights reserved.
 
 * Email: commissioner@basketball-gm.com
 
-* Website: http://www.basketball-gm.com/
-
-* Development website: https://bitbucket.org/dumbmatter/basketball-gm
+* Website: http://basketball-gm.com/
 
 **Basketball GM is NOT open source, but it is also not completely closed. Please
 see LICENSE.md for details.**
 
 
 
-## Installing and Running
+### Installing and Running
 
 If you just want to play the game, go to http://basketball-gm.com/
 Instructions below are for developers who want to run a copy so that they can
@@ -30,7 +28,7 @@ which you use as long as you can get it to run on your computer.
 
 
 
-### 1. Mongoose - Easiest on Windows
+#### 1. Mongoose - Easiest on Windows
 
 Run `mongoose-tiny-4.1.exe`. Point your browser to http://localhost:8080/
 
@@ -42,7 +40,7 @@ newer version of Mongoose available http://cesanta.com/downloads.html
 
 
 
-### 2. web.py - Easiest on Linux
+#### 2. web.py - Easiest on Linux
 
 Install Python and web.py (as simple as `sudo apt-get install python-webpy` on
 Ubuntu). Then, from the command line, run:
@@ -55,7 +53,7 @@ If that URL doesn't work, try http://0.0.0.0:8080/
 
 
 
-### 3. Apache
+#### 3. Apache
 
 If you can't get one of the above methods to work, the mod_rewrite rules in
 `.htaccess` can be used to make Apache run Basketball GM. Everything should work
@@ -64,7 +62,7 @@ enabled.
 
 
 
-## Debugging and Problem Solving
+### Debugging and Problem Solving
 
 For debugging information, go to http://play.basketball-gm.com/ and click on
 Help > Debugging.

@@ -75,10 +75,7 @@ point.
 
 Code is documented as described in the Google Closure Compiler documentation:
 <https://developers.google.com/closure/compiler/docs/js-for-compiler>. Google
-Closure Compiler itself isn't actually used for anything (yet). To update the
-HTML-based documentation in the docs folder, install JsDoc Toolkit 2 (available
-in the Ubuntu repos as `jsdoc-toolkit`) and then run `make docs`, which will
-generate documentation and stick it in the docs folder.
+Closure Compiler itself isn't actually used for anything (yet).
 
 
 

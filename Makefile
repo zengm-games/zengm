@@ -8,11 +8,6 @@ cordova: clean build-js build-css cp-cordova
 check:
 	@echo "Tests can only be run from the browser because there is no IndexedDB support elsewhere. To run tests, go to http://BASKETBALL-GM-URL/test in your web browser."
 
-# target: docs - Regenerate documentation from source code using jsdoc-toolkit.
-docs:
-	rm -rf docs
-	jsdoc -d=docs -s js js/core js/util js/views
-
 # target: lint - Run ESLint on all source files except third-party libraries.
 lint:
 	node node_modules/eslint/bin/eslint.js js

@@ -1,13 +1,20 @@
 var Promise = require("bluebird");
 var execAsync = Promise.promisify(require("child_process").exec);
+var fs = require("fs");
+var CleanCSS = require('clean-css');
 
 execAsync("rm -f gen/*").then(function () {
     console.log("Minifying JS...");
     return execAsync("r.js -o baseUrl=js paths.requireLib=lib/require optimize=uglify2 preserveLicenseComments=false generateSourceMaps=true name=app include=requireLib mainConfigFile=js/app.js out=gen/app.js");
 }).then(function () {
     console.log("Minifying CSS...");
-    return execAsync("cat css/bootstrap.css css/bbgm.css css/bbgm-notifications.css css/DT_bootstrap.css | node_modules/.bin/cleancss -o gen/bbgm.css");
-}).then(function () {
+
+    var source = fs.readFileSync("css/bootstrap.css") +
+                 fs.readFileSync("css/bbgm.css") +
+                 fs.readFileSync("css/bbgm-notifications.css") +
+                 fs.readFileSync("css/DT_bootstrap.css");
+    fs.writeFileSync("gen/bbgm.css", new CleanCSS().minify(source));
+
     console.log("Setting timestamps...");
 
     var d = new Date();

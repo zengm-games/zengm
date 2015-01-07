@@ -541,7 +541,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
 
                 // If we've already added 5 assets or there are no more to try, stop
                 if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
-                    return false;
+                    return [false];
                 }
 
                 // Calculate the value for each asset added to the trade, for use in forward selection
@@ -567,44 +567,46 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
                     return team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached).then(function (dv) {
                         asset.dv = dv;
                     });
+                }).then(function () {
+                    var asset, j;
+
+                    assets.sort(function (a, b) { return b.dv - a.dv; });
+
+                    // Find the asset that will push the trade value the smallest amount above 0
+                    for (j = 0; j < assets.length; j++) {
+                        if (assets[j].dv < 0) {
+                            break;
+                        }
+                    }
+                    if (j > 0) {
+                        j -= 1;
+                    }
+                    asset = assets[j];
+                    if (asset.type === "player") {
+                        if (asset.tid === g.userTid) {
+                            teams[0].pids.push(asset.pid);
+                        } else {
+                            teams[1].pids.push(asset.pid);
+                        }
+                    } else {
+                        if (asset.tid === g.userTid) {
+                            teams[0].dpids.push(asset.dpid);
+                        } else {
+                            teams[1].dpids.push(asset.dpid);
+                        }
+                    }
+
+                    added += 1;
+
+                    return testTrade();
                 });
-            }).then(function () {
-                var asset, j;
-
-                assets.sort(function (a, b) { return b.dv - a.dv; });
-
-                // Find the asset that will push the trade value the smallest amount above 0
-                for (j = 0; j < assets.length; j++) {
-                    if (assets[j].dv < 0) {
-                        break;
-                    }
-                }
-                if (j > 0) {
-                    j -= 1;
-                }
-                asset = assets[j];
-                if (asset.type === "player") {
-                    if (asset.tid === g.userTid) {
-                        teams[0].pids.push(asset.pid);
-                    } else {
-                        teams[1].pids.push(asset.pid);
-                    }
-                } else {
-                    if (asset.tid === g.userTid) {
-                        teams[0].dpids.push(asset.dpid);
-                    } else {
-                        teams[1].dpids.push(asset.dpid);
-                    }
-                }
-
-                added += 1;
-
-                return testTrade();
+            }).catch(function (err) {
+                debugger;
             });
         };
 
         // See if the AI team likes the current trade. If not, try adding something to it.
-        testTrade = function () {
+        testTrade = function (noMoreToAdd) {
             return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
                 if (dv > 0 && initialSign === -1) {
                     return [true, teams];

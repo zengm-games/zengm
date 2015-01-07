@@ -62,7 +62,12 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/b
                 }
             });
 
-            return Promise.all(promises);
+            return Promise.all(promises).then(function (offers) {
+                // Only return actual offers
+                return offers.filter(function (offer) {
+                    return offer !== undefined;
+                });
+            });
         });
     }
 

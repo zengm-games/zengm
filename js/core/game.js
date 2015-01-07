@@ -121,6 +121,10 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 if (t1 === 0) {
                     // Only home team gets attendance...
                     teamSeason.att += att;
+
+                    // This is only used for attendance tracking
+                    if (!teamSeason.hasOwnProperty("gpHome")) { teamSeason.gpHome = Math.round(teamSeason.gp / 2); } // See also team.js and teamFinances.js
+                    teamSeason.gpHome += 1;
                 }
                 teamSeason.gp += 1;
                 teamSeason.revenues.merch.amount += merchRevenue;

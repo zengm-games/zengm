@@ -29,6 +29,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
         newSeason = {
             season: g.season,
             gp: 0,
+            gpHome: 0,
             att: 0,
             cash: 10000,
             won: 0,
@@ -500,8 +501,9 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                         }
                     } else if (options.seasonAttrs[j] === "att") {
                         ft.att = 0;
-                        if (tsa.wonHome > 0 || tsa.lostHome > 0) {
-                            ft.att = tsa.att / (tsa.wonHome + tsa.lostHome);
+                        if (!tsa.hasOwnProperty("gpHome")) { tsa.gpHome = Math.round(tsa.gp / 2); } // See also game.js and teamFinances.js
+                        if (tsa.gpHome > 0) {
+                            ft.att = tsa.att / tsa.gpHome;
                         }
                     } else if (options.seasonAttrs[j] === "cash") {
                         ft.cash = tsa.cash / 1000;  // [millions of dollars]

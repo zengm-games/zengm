@@ -4,14 +4,6 @@ all: clean build-js build-css
 # target: cordova - Minify JavaScript and CSS, and put files ready for Cordova distribution in the cordova folder.
 cordova: clean build-js build-css cp-cordova
 
-# target: check - Run tests.
-check:
-	@echo "Tests can only be run from the browser because there is no IndexedDB support elsewhere. To run tests, go to http://BASKETBALL-GM-URL/test in your web browser."
-
-# target: lint - Run ESLint on all source files except third-party libraries.
-lint:
-	node node_modules/eslint/bin/eslint.js js
-
 
 ### Targets below here are generally just called from the targets above.
 

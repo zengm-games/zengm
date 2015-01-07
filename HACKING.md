@@ -81,7 +81,7 @@ Closure Compiler itself isn't actually used for anything (yet).
 
 # JavaScript coding style
 
-Run ESLint with `make lint`
+Run ESLint with `npm lint`
 
 Documentation of functions is based on
 https://developers.google.com/closure/compiler/docs/js-for-compiler

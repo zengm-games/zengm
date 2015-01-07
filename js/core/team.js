@@ -500,7 +500,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
                         }
                     } else if (options.seasonAttrs[j] === "att") {
                         ft.att = 0;
-                        if (tsa.gp > 0) {
+                        if (tsa.wonHome > 0 || tsa.lostHome > 0) {
                             ft.att = tsa.att / (tsa.wonHome + tsa.lostHome);
                         }
                     } else if (options.seasonAttrs[j] === "cash") {

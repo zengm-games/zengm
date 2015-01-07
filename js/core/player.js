@@ -2,7 +2,7 @@
  * @name core.player
  * @namespace Functions operating on player objects, parts of player objects, or arrays of player objects.
  */
-define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/bluebird", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, g, finances, injuries, names, Promise, faces, _, eventLog, helpers, random) {
+define(["dao", "globals", "core/finances", "data/colleges", "data/injuries", "data/names", "lib/bluebird", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, g, finances, colleges, injuries, names, Promise, faces, _, eventLog, helpers, random) {
     "use strict";
 
     /**
@@ -650,6 +650,20 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         return fn + " " + ln;
     }
 
+    function college() {
+        var c, fnRand, i;
+
+        fnRand = random.uniform(0, 36.0);
+        for (i = 0; i < colleges.college.length; i++) {
+            if (colleges.college[i][1] >= fnRand) {
+                break;
+            }
+        }
+        c = colleges.college[i][0];
+
+        return c;
+    }
+
     /**
      * Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings.
      *
@@ -870,7 +884,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         };
 
         p.name = name(nationality);
-        p.college = "";
+        p.college = college();
         p.imgURL = ""; // Custom rosters can define player image URLs to be used rather than vector faces
 
         p.awards = [];
@@ -1830,6 +1844,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         updateValues: updateValues,
         retire: retire,
         name: name,
+        college: college,
         contractSeasonsRemaining: contractSeasonsRemaining,
         moodColorText: moodColorText,
         augmentPartialPlayer: augmentPartialPlayer

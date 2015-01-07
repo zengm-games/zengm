@@ -26,6 +26,9 @@ To run the game with local files, you need some way of running a web server to
 display the content. There are currently three ways to do it. It doesn't matter
 which you use as long as you can get it to run on your computer.
 
+Then make sure you enable Debug Mode from the Tools menu so you can see your
+changes easily! More info in HACKING.md.
+
 
 
 #### 1. Mongoose - Easiest on Windows

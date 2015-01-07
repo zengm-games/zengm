@@ -4,6 +4,7 @@ var fs = require("fs");
 var CleanCSS = require('clean-css');
 var moment = require("moment");
 var replace = require("replace");
+var fse = require('fs-extra');
 
 function minifyCss() {
     console.log("Minifying CSS...");
@@ -42,6 +43,24 @@ function setTimestamps() {
     });
 }
 
+function copyCordova() {
+    console.log("Copying and processing files for Cordova...");
+
+    // Delete and recreate cordova folder
+    fse.removeSync("cordova");
+    fs.mkdirSync("cordova");
+
+    // Copy over files
+    fse.copySync("index.html", "cordova/index.html");
+    fse.copySync("fonts", "cordova/fonts");
+    fse.copySync("gen/bbgm.css", "cordova/gen/bbgm.css");
+
+    // Delete source maps comment from app.js (last line) while copying
+    var appJs = fs.readFileSync("gen/app.js", "utf8");
+    appJs = appJs.substr(0, appJs.lastIndexOf("sourceMappingURL"));
+    fs.writeFileSync("cordova/gen/app.js", appJs);
+}
+
 execAsync("rm -f gen/*").then(function () {
     console.log("Minifying JS...");
     return execAsync("node_modules/.bin/r.js -o baseUrl=js paths.requireLib=lib/require optimize=uglify2 preserveLicenseComments=false generateSourceMaps=true name=app include=requireLib mainConfigFile=js/app.js out=gen/app.js");
@@ -50,15 +69,8 @@ execAsync("rm -f gen/*").then(function () {
     setTimestamps();
 
     if (process.argv.length > 2 && process.argv[2] === "cordova") {
-        console.log("Copying and processing files for Cordova...");
-
-        return Promise.all([
-            execAsync("cp index.html cordova/index.html"),
-            execAsync("cp fonts/* cordova/fonts"),
-            execAsync("head -n -1 gen/app.js > cordova/gen/app.js"), // Copy while removing source maps comment
-            execAsync("cp gen/bbgm.css cordova/gen/bbgm.css")
-        ]);
+        copyCordova();
     }
-}).then(function () {
+
     console.log("DONE!");
 });

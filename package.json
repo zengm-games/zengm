@@ -24,7 +24,8 @@
     "bluebird": "~2.6.1",
     "requirejs": "~2.1.15",
     "replace": "~0.3.0",
-    "moment": "~2.8.4"
+    "moment": "~2.8.4",
+    "fs-extra": "~0.14.0"
   },
   "private": true
 }

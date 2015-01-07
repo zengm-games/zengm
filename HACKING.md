@@ -27,9 +27,9 @@ templates into one minified file. Installation instructions can be found here
 http://requirejs.org/docs/optimization.html#download (you should install through
 npm). Then, just run:
 
-      make build-requirejs
+      npm run build
 
-(Running  just `make` will run the RequireJS optimizer and minify CSS.)
+(This will also minify CSS.)
 
 Alternatively, to use the unminified uncombined JavaScript files, go to Tools >
 Enable Debug Mode. This is quite useful during development, since it avoids the
@@ -53,9 +53,9 @@ By default, a minified CSS file is used. This is done using YUI Compressor
 other OSes, Google for install instructions). To update the minified CSS file,
 run:
 
-    make build-css
+    npm run build
 
-(Running  just `make` will run the RequireJS optimizer and minify CSS.)
+(This will also run the RequireJS optimizer.)
 
 Alternatively, you can use the unminified CSS files by going to Tools > Enable
 Debug Mode, which removes the need for any compile step during development.
@@ -81,7 +81,7 @@ Closure Compiler itself isn't actually used for anything (yet).
 
 # JavaScript coding style
 
-Run ESLint with `npm lint`
+Run ESLint with `npm run lint`
 
 Documentation of functions is based on
 https://developers.google.com/closure/compiler/docs/js-for-compiler
@@ -121,5 +121,5 @@ For instance, "defensive rebounds" is "drb".
 The game runs equally well within a web browser and within Cordova (Android
 4.4+). The codebase is designed to handle both situations (the main difference
 is absolute vs relative paths, governed by window.inCordova in index.html). To
-collect the files needed for Cordova, run `make cordova` and look in the cordova
-folder.
+collect the files needed for Cordova, run `npm run build-cordova` and look in
+the cordova folder.

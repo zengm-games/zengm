@@ -13,11 +13,12 @@
   },
   "scripts": {
     "test": "echo \"Currently tests can only be run from the browser. To run tests, go to http://BASKETBALL-GM-URL/test in your web browser.\"",
-    "lint": "node_modules/eslint/bin/eslint.js js"
+    "lint": "node_modules/.bin/eslint.js js"
   },
   "dependencies": {},
   "devDependencies": {
-    "eslint": "~0.11.0"
+    "eslint": "~0.11.0",
+    "clean-css": "~2.2.23"
   },
   "private": true
 }

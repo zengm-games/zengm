@@ -4,6 +4,10 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+tooling
+  move to npm scripts
+  test on windows
+
 github
   remove bitbucket URLs
   push branches
@@ -63,12 +67,6 @@ in-memory cache
 
 PERFORMANCE CRAP
 ----------------
-
-tooling
-  flow
-  srcy
-  jscs
-  https://github.com/ariya/esprima/blob/master/package.json
 
 is iOS detector working? getting weird errors in logs
 

@@ -7,7 +7,6 @@ CURRENT
 tooling
   tools/build.js
     convert from linux commands to JS function calls
-      instead of sed: https://www.npmjs.com/package/replace
     test on windows
   command line test runner
   better "setting up the dev enviroment" section in HACKING

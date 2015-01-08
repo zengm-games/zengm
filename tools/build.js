@@ -1,10 +1,25 @@
 var Promise = require("bluebird");
-var execAsync = Promise.promisify(require("child_process").exec);
+var requirejs = require("requirejs");
 var fs = require("fs");
 var CleanCSS = require('clean-css');
 var moment = require("moment");
 var replace = require("replace");
 var fse = require('fs-extra');
+
+function minifyJs(cb) {
+    console.log("Minifying JS...");
+
+    requirejs.optimize({
+        baseUrl: "js",
+        optimize: "uglify2",
+        preserveLicenseComments: false,
+        generateSourceMaps: true,
+        name: "app",
+        include: "lib/require",
+        mainConfigFile: "js/app.js",
+        out: "gen/app.js"
+    }, cb);
+}
 
 function minifyCss() {
     console.log("Minifying CSS...");
@@ -61,10 +76,10 @@ function copyCordova() {
     fs.writeFileSync("cordova/gen/app.js", appJs);
 }
 
-execAsync("rm -f gen/*").then(function () {
-    console.log("Minifying JS...");
-    return execAsync("node_modules/.bin/r.js -o baseUrl=js paths.requireLib=lib/require optimize=uglify2 preserveLicenseComments=false generateSourceMaps=true name=app include=requireLib mainConfigFile=js/app.js out=gen/app.js");
-}).then(function () {
+//execAsync("rm -f gen/*").then(function () {
+//removeOldFiles();
+
+minifyJs(function () {
     minifyCss();
     setTimestamps();
 

@@ -6,13 +6,8 @@ CURRENT
 
 tooling
   tools/build.js
-    convert from linux commands to JS function calls
     test on windows
   command line test runner
-  better "setting up the dev enviroment" section in HACKING
-    how to run server
-    debug mode
-    npm install and npm scripts
 
 github
   remove bitbucket URLs

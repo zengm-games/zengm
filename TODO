@@ -8,6 +8,7 @@ tooling
   tools/build.js
     test on windows
   command line test runner
+  move more stuff from root to tools
 
 github
   remove bitbucket URLs

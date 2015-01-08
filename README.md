@@ -175,12 +175,17 @@ For instance, "defensive rebounds" is "drb".
 ### To do on new version
 
 - Make sure tests all pass (if necessary)
+
 - Write database upgrade code in db.js (if not already done piecemeal)
+
 - Write key changes in js/data/changes.js
+
 - Set version in index.html, CHANGES.md, and README.md, like <http://semver.org/>
+
 - Tag it in git like:
 
-        git tag -a v3.0.0-beta.2 -m '' git push --tags
+        git tag -a v3.0.0-beta.2 -m ''
+        git push --tags
 
 ### Cordova
 

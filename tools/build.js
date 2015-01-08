@@ -1,10 +1,14 @@
-var Promise = require("bluebird");
 var requirejs = require("requirejs");
 var fs = require("fs");
 var CleanCSS = require('clean-css');
 var moment = require("moment");
 var replace = require("replace");
 var fse = require('fs-extra');
+
+function removeOldFiles() {
+    fse.removeSync("gen");
+    fs.mkdirSync("gen");
+}
 
 function minifyJs(cb) {
     console.log("Minifying JS...");
@@ -76,8 +80,9 @@ function copyCordova() {
     fs.writeFileSync("cordova/gen/app.js", appJs);
 }
 
-//execAsync("rm -f gen/*").then(function () {
-//removeOldFiles();
+
+
+removeOldFiles();
 
 minifyJs(function () {
     minifyCss();

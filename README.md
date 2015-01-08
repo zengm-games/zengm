@@ -8,9 +8,9 @@ Copyright (C) Jeremy Scheff. All rights reserved.
 
 * Email: commissioner@basketball-gm.com
 
-* Website: http://basketball-gm.com/
+* Website: <http://basketball-gm.com/>
 
-* Discussion: http://www.reddit.com/r/BasketballGM/
+* Discussion: <http://www.reddit.com/r/BasketballGM/>
 
 **Basketball GM is NOT open source, but it is also not completely closed. Please
 see LICENSE.md for details.**
@@ -19,17 +19,18 @@ see LICENSE.md for details.**
 
 ## Installing and Running
 
-If you just want to play the game, go to http://basketball-gm.com/ Instructions
-below are for developers who want to run a copy so that they can test changes to
-the code locally.
+If you just want to play the game, go to <http://basketball-gm.com/>.
+Instructions below are for developers who want to run a copy locally so they can
+test changes to the code.
 
-To run the game with local files, you need some way of running a web server to
-display the content. There are currently three ways to do it. It doesn't matter
-which you use as long as you can get it to run on your computer.
+To run the game locally, you need some way of running a web server to display
+the content. There are currently three ways to do it. It doesn't matter which
+you use as long as you can get it to run on your computer.
 
 #### 1. Mongoose - Easiest on Windows
 
-Run `mongoose-tiny-4.1.exe`. Point your browser to http://localhost:8080/
+Run the included `mongoose-tiny-4.1.exe`. Point your browser to
+<http://localhost:8080/>.
 
 That's it.
 
@@ -44,9 +45,8 @@ Ubuntu). Then, from the command line, run:
 
     python runserver.py
 
-Point your browser to http://localhost:8080/
-
-If that URL doesn't work, try http://0.0.0.0:8080/
+Point your browser to <http://localhost:8080/>. If that URL doesn't work, try
+<http://0.0.0.0:8080/>.
 
 #### 3. Apache
 
@@ -75,10 +75,10 @@ to help.
 
 ## Important Development Info
 
-# License and Copyright Assignment
+### License and Copyright Assignment
 
-Basketball GM is NOT open source, but it is also not completely closed. Please
-see LICENSE.md for details.
+**Basketball GM is NOT open source, but it is also not completely closed. Please
+see LICENSE.md for details.**
 
 If you want to contribute code to Basketball GM, you must assign copyright to
 me, Jeremy Scheff. To do this, send an email to commissioner@basketball-gm.com
@@ -181,7 +181,7 @@ For instance, "defensive rebounds" is "drb".
 
     git tag -a v3.0.0-beta.2 -m '' git push --tags
 
-# Cordova
+### Cordova
 
 The game runs equally well within a web browser and within Cordova (Android
 4.4+). The codebase is designed to handle both situations (the main difference

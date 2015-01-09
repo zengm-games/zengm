@@ -40,7 +40,7 @@ function setTimestamps() {
 
     var d = moment();
     var mins = d.minutes() + 60 * d.hours();
-    var rev = d.format("YYYY-MM-DD") + "." + mins;
+    var rev = d.format("YYYY.MM.DD") + "." + mins;
 
     replace({
         regex: "LAST UPDATED:.*",

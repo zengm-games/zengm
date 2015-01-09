@@ -600,13 +600,11 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
 
                     return testTrade();
                 });
-            }).catch(function (err) {
-                debugger;
             });
         };
 
         // See if the AI team likes the current trade. If not, try adding something to it.
-        testTrade = function (noMoreToAdd) {
+        testTrade = function () {
             return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
                 if (dv > 0 && initialSign === -1) {
                     return [true, teams];

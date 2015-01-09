@@ -117,7 +117,7 @@ Crockfordian stuff. To run ESLint on the entire codebase, run
 Basketball GM is a single-page app that runs almost entirely client-side by
 storing data in IndexedDB. All the application code is in the `js` folder.
 Modules are defined with RequireJS. Routes are set in `js/app.js`. Most of the
-important stuff is in `js/code`.
+important stuff is in `js/core`.
 
 UI is ultimately driven by `js/utils/bbgmView.js`, a small UI layer I wrote on
 top of Knockout which is used by all the views in the `js/views` folder. Each

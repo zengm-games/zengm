@@ -4,6 +4,14 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
+  EVERYTHING in phase transition should be here, even in common function at the end! and test thoroughly!
+  semi-done newPhasePlayoffs
+
+multi-window race conditions
+  could set a flag in the DB, but then how do I recover from errors?
+  if all phase change is in one transaction, then right at the end make sure the phase hasn't changed yet. if it has, abort transaction
+
 tooling
   tools/build.js
     test on windows
@@ -221,8 +229,6 @@ Commissioner Mode - make multi-player stuff easy
   something for free agents
 "My Career" page with GM stats across teams http://www.reddit.com/r/BasketballGM/comments/2gc4sf/gm_page/
 +/- http://www.reddit.com/r/BasketballGM/comments/2cpdxg/both_individual_and_5man_units/
-newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
-  done newPhasePlayoffs
 total control mode
   select draft pick for every team http://www.reddit.com/r/BasketballGM/comments/2b8g1d/new_multiplayer_league/cj31706
     localStorage.noAutoPick http://www.reddit.com/r/BasketballGM/comments/2dqt3v/i_want_to_start_an_online_league_with_a_faster/cjs51dj

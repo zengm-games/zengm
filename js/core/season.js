@@ -1279,7 +1279,14 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         });
     }
 
-    /*Creates a single day's schedule for an in-progress playoffs.*/
+    /**/
+    /**
+     * Create a single day's schedule for an in-progress playoffs.
+     *
+     * @memberOf core.season
+     * @param {(IDBTransaction|null)} tx An IndexedDB transaction on playoffSeries, schedule, and teams, readwrite.
+     * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
+     */
     function newSchedulePlayoffsDay(tx) {
         var playoffSeries, rnd, series, tids;
 
@@ -1316,7 +1323,9 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
 
             // If series are still in progress, write games and short circuit
             if (tids.length > 0) {
-                return setSchedule(tx, tids);
+                return setSchedule(tx, tids).then(function () {
+                    return false;
+                });
             }
 
             // If playoffs are over, update winner and go to next phase
@@ -1343,7 +1352,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         return t;
                     }
                 }).then(function () {
-                    return newPhase(g.PHASE.BEFORE_DRAFT);
+                    // Playoffs are over! Return true!
+                    return true;
                 });
             }
 
@@ -1402,7 +1412,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 });
             }).then(function () {
                 // Next time, the schedule for the first day of the next round will be set
-                newSchedulePlayoffsDay(tx);
+                return newSchedulePlayoffsDay(tx);
             });
         });
     }

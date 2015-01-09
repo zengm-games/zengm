@@ -724,9 +724,14 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                             if (g.phase === g.PHASE.PLAYOFFS) {
                                 // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
                                 tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
-                                season.newSchedulePlayoffsDay(tx);
-                                tx.complete().then(function () {
-                                    play(numDays - 1, false);
+                                season.newSchedulePlayoffsDay(tx).then(function (playoffsOver) {
+                                    tx.complete().then(function () {
+                                        if (playoffsOver) {
+                                            return season.newPhase(g.PHASE.BEFORE_DRAFT);
+                                        }
+                                    }).then(function () {
+                                        play(numDays - 1, false);
+                                    });
                                 });
                             } else {
                                 play(numDays - 1, false);

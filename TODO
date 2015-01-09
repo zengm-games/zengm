@@ -4,9 +4,6 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
-Error from game.js on end of playoffs
-  newSchedulePlayoffsDay call on line 727 is advancing to next phase, but that doesn't happen in the tx passed to it so oncomplete runs before that finishes
-
 newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
   EVERYTHING in phase transition should be here, even in common function at the end! and test thoroughly!
   semi-done newPhasePlayoffs

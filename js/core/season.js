@@ -1015,15 +1015,15 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         });
     }
 
-    function newPhaseAfterDraft() {
-        var round, tid, tx;
+    function newPhaseAfterDraft(tx) {
+        var promises, round, tid;
 
-        tx = dao.tx("draftPicks", "readwrite");
+        promises = [];
 
         // Add a new set of draft picks
         for (tid = 0; tid < g.numTeams; tid++) {
             for (round = 1; round <= 2; round++) {
-                dao.draftPicks.add({
+                promises.push(dao.draftPicks.add({
                     ot: tx,
                     value: {
                         tid: tid,
@@ -1031,12 +1031,12 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         round: round,
                         season: g.season + 4
                     }
-                });
+                }));
             }
         }
 
-        return tx.complete().then(function () {
-            return newPhaseFinalize(g.PHASE.AFTER_DRAFT, undefined, ["playerMovement"]);
+        return Promise.all(promises).then(function () {
+            return [undefined, ["playerMovement"]];
         });
     }
 
@@ -1254,7 +1254,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 return newPhaseDraft(tx);
             }
             if (phase === g.PHASE.AFTER_DRAFT) {
-                return newPhaseAfterDraft();
+                tx = dao.tx("draftPicks", "readwrite");
+                return newPhaseAfterDraft(tx);
             }
             if (phase === g.PHASE.RESIGN_PLAYERS) {
                 return newPhaseResignPlayers();

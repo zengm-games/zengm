@@ -73,32 +73,26 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         awardsByPlayer = [];
 
         saveAwardsByPlayer = function (awardsByPlayer) {
-            var i, pids, tx;
+            var pids;
 
             pids = _.uniq(_.pluck(awardsByPlayer, "pid"));
 
-            tx = dao.tx("players", "readwrite");
-            for (i = 0; i < pids.length; i++) {
-                dao.players.iterate({
-                    ot: tx,
-                    key: pids[i],
-                    callback: function (p) {
-                        var i;
+            return Promise.map(pids, function (pid) {
+                return dao.players.get({ot: tx, key: pid}).then(function (p) {
+                    var i;
 
-                        for (i = 0; i < awardsByPlayer.length; i++) {
-                            if (p.pid === awardsByPlayer[i].pid) {
-                                p.awards.push({season: g.season, type: awardsByPlayer[i].type});
-                            }
+                    for (i = 0; i < awardsByPlayer.length; i++) {
+                        if (p.pid === awardsByPlayer[i].pid) {
+                            p.awards.push({season: g.season, type: awardsByPlayer[i].type});
                         }
-
-                        return p;
                     }
+
+                    return dao.players.put({ot: tx, value: p});
                 });
-            }
-            return tx.complete();
+            });
         };
 
-        tx = dao.tx(["players", "playerStats", "releasedPlayers", "teams"]);
+        tx = dao.tx(["awards", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
 
         // Get teams for won/loss record for awards, as well as finding the teams with the best records
         return team.filter({
@@ -247,7 +241,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 statsPlayoffs: true
             })];
         }).spread(function (champTid, players) {
-            var p, tx;
+            var p;
 
             players = player.filter(players, { // Only the champions, only playoff stats
                 attrs: ["pid", "name", "tid", "abbrev"],
@@ -261,17 +255,14 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
             awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
 
-            tx = dao.tx("awards", "readwrite");
-            dao.awards.put({ot: tx, value: awards});
-            return tx.complete().then(function () {
+            return dao.awards.put({ot: tx, value: awards}).then(function () {
                 return saveAwardsByPlayer(awardsByPlayer);
             }).then(function () {
-                var i, p, text, tx;
+                var i, p, text;
 
                 // None of this stuff needs to block, it's just notifications of crap
 
                 // Notifications for awards for user's players
-                tx = dao.tx("events", "readwrite");
                 for (i = 0; i < awardsByPlayer.length; i++) {
                     p = awardsByPlayer[i];
                     if (p.tid === g.userTid) {
@@ -281,18 +272,17 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         } else {
                             text += 'won the ' + p.type + ' award.';
                         }
-                        eventLog.add(tx, {
+                        eventLog.add(null, {
                             type: "award",
                             text: text
                         });
                     }
                 }
-                tx.complete().then(function () {
-                    // Achievements after awards
-                    account.checkAchievement.hardware_store();
-                    account.checkAchievement.sleeper_pick();
-                });
             });
+        }).then(function () {
+            // Achievements after awards
+            account.checkAchievement.hardware_store();
+            account.checkAchievement.sleeper_pick();
         });
     }
 

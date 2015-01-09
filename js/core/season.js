@@ -728,6 +728,10 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 });
             }
+        }).catch(function (err) {
+            // If there was any error in the phase change, abort transaction
+            tx.abort();
+            throw err;
         });
 
         return tx.complete().then(function () {
@@ -740,7 +744,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
     }
 
     function newPhasePlayoffs() {
-        var url, tx;
+        var tx;
 
         tx = dao.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
@@ -855,14 +859,21 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 finances.assessPayrollMinLuxury(tx),
                 newSchedulePlayoffsDay(tx)
             ]);
+        }).catch(function (err) {
+            // If there was any error in the phase change, abort transaction
+            tx.abort();
+            throw err;
         });
 
-        // Don't redirect if we're viewing a live game now
-        if (location.pathname.indexOf("/live_game") === -1) {
-            url = helpers.leagueUrl(["playoffs"]);
-        }
 
         return tx.complete().then(function () {
+            var url;
+
+            // Don't redirect if we're viewing a live game now
+            if (location.pathname.indexOf("/live_game") === -1) {
+                url = helpers.leagueUrl(["playoffs"]);
+            }
+
             return newPhaseFinalize(g.PHASE.PLAYOFFS, url, ["teamFinances"]);
         });
     }

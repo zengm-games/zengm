@@ -11,6 +11,9 @@ newPhasePlayoffs (and similar functions) should do all important shit in one tra
   maybe separate phase change functions into own module
     documentation of necessity of one transaction!
   need to pass tx to setGameAttributes? probably yes
+    same with checking achievements
+  abort transaction on any error in phase change - can this be generalized for DRY? how else can i be sure it'll always work this way?
+  test on huge leagues with many windows open
 
 multi-window race conditions
   could set a flag in the DB, but then how do I recover from errors?

@@ -143,8 +143,8 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
         "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}."
     ];
 
-    function generate(deltas) {
-        var activity1, activity2, indMoney, indOvr, indPlayoffs, indWins, m, ownerMoodSum, tx;
+    function generate(tx, deltas) {
+        var activity1, activity2, indMoney, indOvr, indPlayoffs, indWins, m, ownerMoodSum;
 
         ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
 
@@ -231,8 +231,8 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
             }
         }
 
-        tx = dao.tx("messages", "readwrite");
-        dao.messages.add({
+console.log(m);
+        return dao.messages.add({
             ot: tx,
             value: {
                 read: false,
@@ -240,8 +240,7 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
                 year: g.season,
                 text: m
             }
-        });
-        return tx.complete().then(function () {
+        }).then(function () {
             if (ownerMoodSum > -1) {
                 return;
             }

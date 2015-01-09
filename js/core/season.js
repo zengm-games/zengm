@@ -335,12 +335,13 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
     /**
      * Save the schedule to the database, overwriting what's currently there.
      *
+     * @param {(IDBTransaction|null)} options.ot An IndexedDB transaction on schedule readwrite; if null is passed, then a new transaction will be used.
      * @param {Array} tids A list of lists, each containing the team IDs of the home and
             away teams, respectively, for every game in the season, respectively.
      * @return {Promise}
      */
-    function setSchedule(tids) {
-        var i, newSchedule, tx;
+    function setSchedule(tx, tids) {
+        var i, newSchedule;
 
         newSchedule = [];
         for (i = 0; i < tids.length; i++) {
@@ -350,20 +351,13 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             });
         }
 
-        tx = dao.tx("schedule", "readwrite");
+        tx = dao.tx("schedule", "readwrite", tx);
 
-        dao.schedule.clear({ot: tx}).then(function () {
-            var i;
-
-            for (i = 0; i < newSchedule.length; i++) {
-                dao.schedule.add({
-                    ot: tx,
-                    value: newSchedule[i]
-                });
-            }
+        return dao.schedule.clear({ot: tx}).then(function () {
+            return Promise.map(newSchedule, function (matchup) {
+                return dao.schedule.add({ot: tx, value: matchup});
+            });
         });
-
-        return tx.complete();
     }
 
     /**
@@ -683,14 +677,14 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
     }
 
     function newPhaseRegularSeason() {
-        return setSchedule(newSchedule()).then(function () {
-            var tx;
+        var tx;
 
+        tx = dao.tx(["messages", "schedule"], "readwrite");
+
+        setSchedule(tx, newSchedule()).then(function () {
             // First message from owner
             if (g.showFirstOwnerMessage) {
-                return message.generate({wins: 0, playoffs: 0, money: 0}).then(function () {
-                    return newPhaseFinalize(g.PHASE.REGULAR_SEASON);
-                });
+                message.generate(tx, {wins: 0, playoffs: 0, money: 0});
             }
 
             // Spam user with another message?
@@ -699,8 +693,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 localStorage.nagged = "1";
             }
 
-            tx = dao.tx("messages", "readwrite");
             if (g.season === g.startingSeason + 3 && g.lid > 3 && !localStorage.nagged) {
+                localStorage.nagged = "1";
                 dao.messages.add({
                     ot: tx,
                     value: {
@@ -710,8 +704,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>'
                     }
                 });
-                localStorage.nagged = "1";
             } else if ((localStorage.nagged === "1" && Math.random() < 0.25) || (localStorage.nagged === "2" && Math.random < 0.025)) {
+                localStorage.nagged = "2";
                 dao.messages.add({
                     ot: tx,
                     value: {
@@ -721,9 +715,9 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         text: '<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a></p><p><a href="https://www.facebook.com/basketball.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/BasketballGM/">Discuss Basketball GM on Reddit</a></p><p>The more people that play Basketball GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@basketball-gm.com">email me</a>.</p>'
                     }
                 });
-                localStorage.nagged = "2";
             } else if ((localStorage.nagged === "2" && Math.random() < 0.25) || (localStorage.nagged === "3" && Math.random < 0.025)) {
                 _gaq.push(["_trackEvent", "Ad Display", "DraftKings"]);
+                localStorage.nagged = "3";
                 dao.messages.add({
                     ot: tx,
                     value: {
@@ -733,11 +727,11 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         text: '<p>DraftKings is a great new way to play fantasy sports and win money. They are running a special promotion for Basketball GM players: they\'ll waive the entry fee for a $30k fantasy NBA pool and match your first deposit for free! All you have to do is draft the best 8 player team. Your Basketball GM experience may prove to be useful!</p><p><a href="https://www.draftkings.com/gateway?s=640365236"><img src="/img/dk-logo.png"></a></p><p>And better yet, by signing up through <a href="https://www.draftkings.com/gateway?s=640365236">this link</a>, you will be supporting Basketball GM. So even if you\'re not totally sure if you want to try DraftKings, give it a shot as a personal favor to me. In return, I will continue to improve this free game that you\'ve spent hours playing - there is some cool stuff in the works, stay tuned!</p>'
                     }
                 });
-                localStorage.nagged = "3";
             }
-            return tx.complete().then(function () {
-                return newPhaseFinalize(g.PHASE.REGULAR_SEASON);
-            });
+        });
+
+        return tx.complete().then(function () {
+            return newPhaseFinalize(g.PHASE.REGULAR_SEASON);
         });
     }
 
@@ -996,7 +990,9 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             return tx.complete().then(function () {
                 // Update strategies of AI teams (contending or rebuilding)
                 return team.updateStrategies();
-            }).then(updateOwnerMood).then(message.generate).then(function () {
+            }).then(updateOwnerMood).then(function (deltas) {
+                return message.generate(null, deltas);
+            }).then(function () {
                 var url;
 
                 // Don't redirect if we're viewing a live game now
@@ -1239,7 +1235,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
      * @return {Promise}
      */
     function newPhase(phase, extra) {
-        // Prevent code running twice
+        // Prevent at least some cases of code running twice
         if (phase === g.phase) {
             return;
         }
@@ -1316,7 +1312,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
 
             // If series are still in progress, write games and short circuit
             if (tids.length > 0) {
-                return setSchedule(tids);
+                return setSchedule(null, tids);
             }
 
             // If playoffs are over, update winner and go to next phase

@@ -7,6 +7,10 @@ CURRENT
 newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
   EVERYTHING in phase transition should be here, even in common function at the end! and test thoroughly!
   semi-done newPhasePlayoffs
+  make sure fantasy draft still works
+  maybe separate phase change functions into own module
+    documentation of necessity of one transaction!
+  need to pass tx to setGameAttributes? probably yes
 
 multi-window race conditions
   could set a flag in the DB, but then how do I recover from errors?

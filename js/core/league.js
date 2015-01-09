@@ -408,8 +408,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
                         // Initialize rebuilding/contending, when possible
                         if (t2 >= 0) {
-                            dao.teams.get({ot: tx, key: t2}).then(function (t) {
-                                t.startegy = goodNeutralBad === 1 ? "contendeing" : "rebuilding";
+                            dao.teams.get({ ot: tx, key: t2 }).then(function (t) {
+                                t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
                                 dao.teams.put({ot: tx, value: t});
                             });
                         }

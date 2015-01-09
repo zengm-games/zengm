@@ -992,17 +992,14 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         });
     }
 
-    function newPhaseDraft() {
+    function newPhaseDraft(tx) {
         // Achievements after awards
         account.checkAchievement.hardware_store();
         account.checkAchievement.sleeper_pick();
 
-        return draft.genOrder().then(function () {
-            var tx;
-
+        return draft.genOrder(tx).then(function () {
             // This is a hack to handle weird cases where players have draft.year set to the current season, which fucks up the draft UI
-            tx = dao.tx("players", "readwrite");
-            dao.players.iterate({
+            return dao.players.iterate({
                 ot: tx,
                 index: "draft.year",
                 key: g.season,
@@ -1013,9 +1010,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 }
             });
-            return tx.complete();
         }).then(function () {
-            return newPhaseFinalize(g.PHASE.DRAFT, helpers.leagueUrl(["draft"]));
+            return [helpers.leagueUrl(["draft"])];
         });
     }
 
@@ -1254,7 +1250,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 return newPhaseBeforeDraft(tx);
             }
             if (phase === g.PHASE.DRAFT) {
-                return newPhaseDraft();
+                tx = dao.tx(["draftPicks", "draftOrder", "players", "teams"], "readwrite");
+                return newPhaseDraft(tx);
             }
             if (phase === g.PHASE.AFTER_DRAFT) {
                 return newPhaseAfterDraft();

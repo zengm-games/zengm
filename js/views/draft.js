@@ -45,7 +45,11 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
             pick = draftOrder.shift();
             if (pick.tid === g.userTid) {
                 return draft.selectPlayer(pick, pid).then(function () {
-                    return draft.setOrder(draftOrder).then(function () {
+                    var tx;
+
+                    tx = dao.tx("draftOrder", "readwrite");
+                    draft.setOrder(tx, draftOrder);
+                    return tx.complete().then(function () {
                         return pid;
                     });
                 });

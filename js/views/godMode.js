@@ -20,13 +20,15 @@ define(["globals", "ui", "core/league", "util/bbgmView", "util/helpers"], functi
         ui.title("God Mode");
 
         document.getElementById("enable-god-mode").addEventListener("click", function () {
-            league.setGameAttributes({godMode: true, godModeInPast: true, lastDbChange: Date.now()}).then(function () {
+            league.setGameAttributesComplete({godMode: true, godModeInPast: true}).then(function () {
+                league.updateLastDbChange();
                 ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
             });
         });
 
         document.getElementById("disable-god-mode").addEventListener("click", function () {
-            league.setGameAttributes({godMode: false, lastDbChange: Date.now()}).then(function () {
+            league.setGameAttributesCompmlete({godMode: false}).then(function () {
+                league.updateLastDbChange();
                 ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
             });
         });

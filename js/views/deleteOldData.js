@@ -67,10 +67,9 @@ define(["dao", "globals", "ui", "core/league", "util/bbgmView"], function (dao, 
         }
 
         tx.complete().then(function () {
-            league.setGameAttributes({lastDbChange: Date.now()}).then(function () {
-                deleteOldDataEl.disabled = false;
-                deleteOldDataSuccessEl.style.visibility = "visible";
-            });
+            league.updateLastDbChange();
+            deleteOldDataEl.disabled = false;
+            deleteOldDataSuccessEl.style.visibility = "visible";
         });
     }
 

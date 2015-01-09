@@ -19,7 +19,7 @@ define(["db", "globals", "ui", "core/league", "core/team", "util/bbgmView", "uti
         ui.updateStatus("Idle");
         ui.updatePlayMenu();
 
-        league.setGameAttributes({
+        league.setGameAttributesComplete({
             gameOver: false,
             userTid: Math.floor(req.params.tid),
             ownerMood: {
@@ -27,9 +27,9 @@ define(["db", "globals", "ui", "core/league", "core/team", "util/bbgmView", "uti
                 playoffs: 0,
                 money: 0
             },
-            gracePeriodEnd: g.season + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
-            lastDbChange: Date.now()
+            gracePeriodEnd: g.season + 3 // +3 is the same as +2 when staring a new league, since this happens at the end of a season
         }).then(function () {
+            league.updateLastDbChange();
             league.updateMetaNameRegion(g.teamNamesCache[g.userTid], g.teamRegionsCache[g.userTid]);
             ui.realtimeUpdate([], helpers.leagueUrl([]));
         });

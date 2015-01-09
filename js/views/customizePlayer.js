@@ -354,8 +354,7 @@ define(["dao", "globals", "ui", "core/finances", "core/league", "core/player", "
                 });
 
                 tx.complete().then(function () {
-                    return league.setGameAttributes({lastDbChange: Date.now()});
-                }).then(function () {
+                    league.updateLastDbChange();
                     ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
                 });
             });

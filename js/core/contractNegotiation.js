@@ -66,7 +66,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
                     };
 
                     return dao.negotiations.add({ot: ot, value: negotiation}).then(function () {
-                        require("core/league").setGameAttributes({lastDbChange: Date.now()});
+                        require("core/league").updateLastDbChange();
                         ui.updateStatus("Contract negotiation");
                         return ui.updatePlayMenu(ot);
                     });
@@ -212,7 +212,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
         });
 
         return tx.complete().then(function () {
-            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
+            require("core/league").updateLastDbChange();
         });
     }
 
@@ -226,8 +226,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
     function cancel(pid) {
         // Delete negotiation
         return dao.negotiations.delete({key: pid}).then(function () {
-            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
-        }).then(function () {
+            require("core/league").updateLastDbChange();
             // If no negotiations are in progress, update status
             return lock.negotiationInProgress(null);
         }).then(function (negotiationInProgress) {
@@ -253,7 +252,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
      */
     function cancelAll(tx) {
         return dao.negotiations.clear({ot: tx}).then(function () {
-            require("core/league").setGameAttributes({lastDbChange: Date.now()});
+            require("core/league").updateLastDbChange();
             ui.updateStatus("Idle");
             return ui.updatePlayMenu(tx);
         });
@@ -326,7 +325,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
             return tx.complete().then(function () {
                 return cancel(pid);
             }).then(function () {
-                return require("core/league").setGameAttributes({lastDbChange: Date.now()});
+                require("core/league").updateLastDbChange();
             });
         });
     }

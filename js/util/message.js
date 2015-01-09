@@ -143,6 +143,9 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
         "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}."
     ];
 
+    /**
+     * @param {IDBTransaction} tx An IndexedDB transaction on gameAttributes and messages, readwrite.
+     */
     function generate(tx, deltas) {
         var activity1, activity2, indMoney, indOvr, indPlayoffs, indWins, m, ownerMoodSum;
 
@@ -150,7 +153,7 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
 
         if (g.showFirstOwnerMessage) {
             m = random.choice(first);
-            require("core/league").setGameAttributes({showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
+            require("core/league").setGameAttributes(tx, {showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
         } else {
             activity1 = random.choice(activities);
             activity2 = random.choice(activities);
@@ -248,7 +251,7 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
                 return;
             }
             // Fired!
-            return require("core/league").setGameAttributes({
+            return require("core/league").setGameAttributes(tx, {
                 gameOver: true,
                 showFirstOwnerMessage: true
             });

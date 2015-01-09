@@ -130,8 +130,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/league", "core/player",
                     }
                 }
             }).then(function () {
-                return league.setGameAttributes({lastDbChange: Date.now()});
-            }).then(function () {
+                league.updateLastDbChange();
                 ui.realtimeUpdate(["clearWatchList"]);
                 clearWatchListEl.disabled = false;
             });

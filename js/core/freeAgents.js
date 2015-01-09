@@ -227,7 +227,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
 
         // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
         cbNoDays = function () {
-            require("core/league").setGameAttributes({gamesInProgress: false}).then(function () {
+            require("core/league").setGameAttributesComplete({gamesInProgress: false}).then(function () {
                 ui.updatePlayMenu(null).then(function () {
                     // Check to see if free agency is over
                     if (g.daysLeft === 0) {
@@ -247,7 +247,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
             cbYetAnother = function () {
                 decreaseDemands().then(function () {
                     autoSign().then(function () {
-                        require("core/league").setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}).then(function () {
+                        require("core/league").setGameAttributesComplete({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}).then(function () {
                             if (g.daysLeft > 0 && numDays > 0) {
                                 ui.realtimeUpdate(["playerMovement"], undefined, function () {
                                     ui.updateStatus(g.daysLeft + " days left");
@@ -266,7 +266,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                 // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
                 if (start || !g.stopGames) {
                     if (g.stopGames) {
-                        require("core/league").setGameAttributes({stopGames: false}).then(cbYetAnother);
+                        require("core/league").setGameAttributesComplete({stopGames: false}).then(cbYetAnother);
                     } else {
                         cbYetAnother();
                     }
@@ -282,7 +282,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
         if (start) {
             lock.canStartGames(null).then(function (canStartGames) {
                 if (canStartGames) {
-                    require("core/league").setGameAttributes({gamesInProgress: true}).then(function () {
+                    require("core/league").setGameAttributesComplete({gamesInProgress: true}).then(function () {
                         ui.updatePlayMenu(null).then(function () {
                             cbRunDay();
                         });

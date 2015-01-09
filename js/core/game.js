@@ -606,7 +606,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
         cbNoGames = function () {
             ui.updateStatus("Idle");
-            return league.setGameAttributes({gamesInProgress: false}).then(function () {
+            return league.setGameAttributesComplete({gamesInProgress: false}).then(function () {
                 return ui.updatePlayMenu(null);
             }).then(function () {
                 // Check to see if the season is over
@@ -720,23 +720,23 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 // Update all advanced stats every day
                 advStats.calculateAll().then(function () {
                     ui.realtimeUpdate(["gameSim"], url, function () {
-                        league.setGameAttributes({lastDbChange: Date.now()}).then(function () {
-                            if (g.phase === g.PHASE.PLAYOFFS) {
-                                // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                                tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
-                                season.newSchedulePlayoffsDay(tx).then(function (playoffsOver) {
-                                    tx.complete().then(function () {
-                                        if (playoffsOver) {
-                                            return season.newPhase(g.PHASE.BEFORE_DRAFT);
-                                        }
-                                    }).then(function () {
-                                        play(numDays - 1, false);
-                                    });
+                        league.updateLastDbChange();
+
+                        if (g.phase === g.PHASE.PLAYOFFS) {
+                            // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
+                            tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
+                            season.newSchedulePlayoffsDay(tx).then(function (playoffsOver) {
+                                tx.complete().then(function () {
+                                    if (playoffsOver) {
+                                        return season.newPhase(g.PHASE.BEFORE_DRAFT);
+                                    }
+                                }).then(function () {
+                                    play(numDays - 1, false);
                                 });
-                            } else {
-                                play(numDays - 1, false);
-                            }
-                        });
+                            });
+                        } else {
+                            play(numDays - 1, false);
+                        }
                     }, raw);
                 });
             });
@@ -809,7 +809,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 if (start || !g.stopGames) {
                     return Promise.try(function () {
                         if (g.stopGames) {
-                            return league.setGameAttributes({stopGames: false});
+                            return league.setGameAttributesComplete({stopGames: false});
                         }
                     }).then(function () {
                         // Check if it's the playoffs and do some special stuff if it is or isn't
@@ -835,7 +835,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 if (canStartGames) {
                     team.checkRosterSizes().then(function (userTeamSizeError) {
                         if (userTeamSizeError === null) {
-                            league.setGameAttributes({gamesInProgress: true}).then(function () {
+                            league.setGameAttributesComplete({gamesInProgress: true}).then(function () {
                                 ui.updatePlayMenu(null).then(cbRunDay);
                             });
                         } else {

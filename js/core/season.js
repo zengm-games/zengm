@@ -14,6 +14,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
      * This is based on three factors: regular season performance, playoff performance, and finances. Designed to be called after the playoffs end.
      *
      * @memberOf core.season
+     * @param {(IDBTransaction|null)} tx An IndexedDB transaction on gameAttributes and and teams, readwrite.
      * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
      */
     function updateOwnerMood(tx) {
@@ -49,7 +50,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
                     if (ownerMood.money > 1) { ownerMood.money = 1; }
 
-                    return require("core/league").setGameAttributes({ownerMood: ownerMood});
+                    return require("core/league").setGameAttributes(tx, {ownerMood: ownerMood});
                 }
             }).then(function () {
                 return deltas;
@@ -588,30 +589,29 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         updateEvents = updateEvents !== undefined ? updateEvents : [];
 
         // Set phase before updating play menu
-        return require("core/league").setGameAttributes({phase: phase}).then(function () {
+        return require("core/league").setGameAttributesComplete({phase: phase}).then(function () {
             ui.updatePhase(g.season + phaseText[phase]);
             return ui.updatePlayMenu(null).then(function () {
-                // Set lastDbChange last so there is no race condition
-                return require("core/league").setGameAttributes({lastDbChange: Date.now()}).then(function () {
-                    updateEvents.push("newPhase");
-                    ui.realtimeUpdate(updateEvents, url);
-                });
+                // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
+                require("core/league").updateLastDbChange();
+                updateEvents.push("newPhase");
+                ui.realtimeUpdate(updateEvents, url);
             });
         });
     }
 
     function newPhasePreseason() {
+        tx = dao.tx(["gameAttributes", "players", "playerStats", "teams"], "readwrite");
+
         return freeAgents.autoSign().then(function () { // Important: do this before changing the season or contracts and stats are fucked up
-            return require("core/league").setGameAttributes({season: g.season + 1});
+            return require("core/league").setGameAttributes(tx, {season: g.season + 1});
         }).then(function () {
-            var coachingRanks, scoutingRank, tx;
+            var coachingRanks, scoutingRank;
 
             coachingRanks = [];
 
-            tx = dao.tx(["players", "playerStats", "teams"], "readwrite");
-
             // Add row to team stats and season attributes
-            dao.teams.iterate({
+            return dao.teams.iterate({
                 ot: tx,
                 callback: function (t) {
                     // Save the coaching rank for later
@@ -630,7 +630,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 }
             }).then(function () {
                 // Loop through all non-retired players
-                dao.players.iterate({
+                return dao.players.iterate({
                     ot: tx,
                     index: "tid",
                     key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
@@ -649,15 +649,12 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         });
                     }
                 });
-            });
-
-            return tx.complete().then(function () {
+            }).then(function () {
                 if (g.enableLogging && !window.inCordova) {
                     ads.show();
                 }
 
-                // AI teams sign free agents
-                return newPhaseFinalize(g.PHASE.PRESEASON, undefined, ["playerMovement"]);
+                return [undefined, ["playerMovement"]];
             });
         });
     }
@@ -1066,8 +1063,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             });
         }).then(function () {
             // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
-            require("core/league").setGameAttributes({daysLeft: 30});
-        }).then(function () {
+            require("core/league").setGameAttributes(null, {daysLeft: 30});
+
             return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
         });
     }
@@ -1158,15 +1155,13 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
     }
 
     function newPhaseFantasyDraft(position) {
+tx = dao.tx(["gameAttributes", "players", "releasedPlayers"], "readwrite");
+
         return contractNegotiation.cancelAll().then(function () {
             return draft.genOrderFantasy(position);
         }).then(function () {
-            return require("core/league").setGameAttributes({nextPhase: g.phase});
+            return require("core/league").setGameAttributes(tx, {nextPhase: g.phase});
         }).then(function () {
-            var tx;
-
-            tx = dao.tx(["players", "releasedPlayers"], "readwrite");
-
             // Protect draft prospects from being included in this
             dao.players.iterate({
                 ot: tx,
@@ -1224,7 +1219,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 return newPhasePreseason();
             }
             if (phase === g.PHASE.REGULAR_SEASON) {
-                tx = dao.tx(["messages", "schedule"], "readwrite");
+                tx = dao.tx(["gameAttributes", "messages", "schedule"], "readwrite");
                 return newPhaseRegularSeason(tx);
             }
             if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
@@ -1235,7 +1230,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 return newPhasePlayoffs(tx);
             }
             if (phase === g.PHASE.BEFORE_DRAFT) {
-                tx = dao.tx(["awards", "events", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
+                tx = dao.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
                 return newPhaseBeforeDraft(tx);
             }
             if (phase === g.PHASE.DRAFT) {

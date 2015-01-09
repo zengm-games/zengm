@@ -51,7 +51,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
                     }
                 });
                 return tx.complete().then(function () {
-                    league.setGameAttributes({lastDbChange: Date.now()});
+                    league.updateLastDbChange();
                 });
             });
         });
@@ -207,7 +207,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
 
             return tx.complete().then(function () {
                 if (updated) {
-                    return league.setGameAttributes({lastDbChange: Date.now()});
+                    league.updateLastDbChange();
                 }
             });
         }).then(function () {
@@ -342,7 +342,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
             dao.trade.put({ot: tx, value: tr});
         });
         return tx.complete().then(function () {
-            return league.setGameAttributes({lastDbChange: Date.now()});
+            league.updateLastDbChange();
         });
     }
 

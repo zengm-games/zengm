@@ -415,13 +415,13 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                                     }
                                 });
                             }).then(function () {
-                                return require("core/league").setGameAttributes({
-                                    lastDbChange: Date.now(),
+                                return require("core/league").setGameAttributesComplete({
                                     phase: g.nextPhase,
                                     nextPhase: null
                                 }).then(function () {
                                     ui.updatePhase(g.season + season.phaseText[g.phase]);
                                     return ui.updatePlayMenu(null).then(function () {
+                                        require("core/league").updateLastDbChange();
                                         return pids;
                                     });
                                 });
@@ -435,9 +435,8 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                     }
 
                     // Draft is not over, so continue
-                    return require("core/league").setGameAttributes({lastDbChange: Date.now()}).then(function () {
-                        return pids;
-                    });
+                    require("core/league").updateLastDbChange();
+                    return pids;
                 });
             };
 

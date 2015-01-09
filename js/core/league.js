@@ -29,8 +29,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
      * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
      * @returns {Promise} Promise for when it finishes.
      */
-    function setGameAttributes(gameAttributes) {
-        var key, toUpdate, tx;
+    function setGameAttributes(tx, gameAttributes) {
+        var key, toUpdate;
+
+        tx = dao.tx("gameAttributes", "readwrite", tx);
 
         toUpdate = [];
         for (key in gameAttributes) {
@@ -41,19 +43,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
             }
         }
 
-        tx = dao.tx("gameAttributes", "readwrite");
-
-        toUpdate.forEach(function (key) {
-            dao.gameAttributes.put({
-                ot: tx,
-                value: {
-                    key: key,
-                    value: gameAttributes[key]
-                }
-            }).then(function () {
-                g[key] = gameAttributes[key];
-            });
-
+        return Promise.map(toUpdate, function (key) {
             // Trigger a signal for the team finances view. This is stupid.
             if (key === "gamesInProgress") {
                 if (gameAttributes[key]) {
@@ -62,16 +52,32 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                     $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
                 }
             }
-        });
 
-        return tx.complete().then(function () {
-            // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
-            if (gameAttributes.hasOwnProperty("gamesInProgress") && gameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-            } else if (gameAttributes.hasOwnProperty("gamesInProgress") && !gameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-            }
+            return dao.gameAttributes.put({
+                ot: tx,
+                value: {
+                    key: key,
+                    value: gameAttributes[key]
+                }
+            }).then(function () {
+                g[key] = gameAttributes[key];
+            });
         });
+    }
+
+    // Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
+    function setGameAttributesComplete(gameAttributes) {
+        var tx;
+
+        tx = dao.tx("gameAttributes", "readwrite");
+        setGameAttributes(tx, gameAttributes);
+        return tx.complete();
+    }
+
+    // Call this after doing DB stuff so other tabs know there is new data.
+    // Runs in its own transaction, shouldn't be waited for because this only influences other tabs
+    function updateLastDbChange() {
+        setGameAttributes(null, {lastDbChange: Date.now()});
     }
 
     /**
@@ -174,7 +180,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
             // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
             helpers.resetG();
 
-            return setGameAttributes(gameAttributes);
+            return setGameAttributes(null, gameAttributes);
         }).then(function () {
             var i, j, round, scoutingRank, t, toMaybeAdd, tx;
 
@@ -635,8 +641,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
         exportLeague: exportLeague,
         remove: remove,
         setGameAttributes: setGameAttributes,
+        setGameAttributesComplete: setGameAttributesComplete,
         updateMetaNameRegion: updateMetaNameRegion,
         loadGameAttribute: loadGameAttribute,
-        loadGameAttributes: loadGameAttributes
+        loadGameAttributes: loadGameAttributes,
+        updateLastDbChange: updateLastDbChange
     };
 });

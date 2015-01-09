@@ -39,8 +39,8 @@ define(["dao", "globals", "ui", "core/league", "lib/knockout", "util/bbgmView"],
             });
 
             return tx.complete().then(function () {
-                return league.setGameAttributes({lastDbChange: Date.now()});
-            }).then(function () {
+                league.updateLastDbChange();
+
                 if (readThisPageview) {
                     if (g.gameOver) {
                         ui.updateStatus("You're fired!");

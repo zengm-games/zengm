@@ -37,12 +37,12 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/game", "core/leag
                 season.getDaysLeftSchedule().then(game.play);
             }
         } else if (amount === "stop") {
-            league.setGameAttributes({stopGames: true}).then(function () {
+            league.setGameAttributesComplete({stopGames: true}).then(function () {
                 if (g.phase !== g.PHASE.FREE_AGENCY) {
                     // This is needed because we can't be sure if core.game.play will be called again
                     ui.updateStatus("Idle");
                 }
-                league.setGameAttributes({gamesInProgress: false}).then(ui.updatePlayMenu);
+                league.setGameAttributesComplete({gamesInProgress: false}).then(ui.updatePlayMenu);
             });
         } else if (amount === "untilDraft") {
             if (g.phase === g.PHASE.BEFORE_DRAFT) {

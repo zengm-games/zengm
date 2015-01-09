@@ -56,7 +56,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
         }
 
         return tx.complete().then(function () {
-            return league.setGameAttributes({lastDbChange: Date.now()});
+            league.updateLastDbChange();
         });
     }
 
@@ -78,7 +78,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
                 // Don't let the user update CPU-controlled rosters
                 if (p.tid === g.userTid) {
                     return player.release(tx, p, justDrafted).then(function () {
-                        return league.setGameAttributes({lastDbChange: Date.now()});
+                        league.updateLastDbChange();
                     });
                 }
 
@@ -184,7 +184,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
                     p.ptModifier = ptModifier;
 
                     dao.players.put({value: p}).then(function () {
-                        league.setGameAttributes({lastDbChange: Date.now()});
+                        league.updateLastDbChange();
                     });
                 }
             });
@@ -368,10 +368,9 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
             tx = dao.tx("players", "readwrite");
             team.rosterAutoSort(tx, g.userTid);
 
-            Promise.all([
-                tx.complete(), // Explicitly make sure writing is done for rosterAutoSort
-                league.setGameAttributes({lastDbChange: Date.now()})
-            ]).then(function () {
+            // Explicitly make sure writing is done for rosterAutoSort
+            tx.complete().then(function () {
+                league.updateLastDbChange();
                 ui.realtimeUpdate(["playerMovement"]);
             });
         });

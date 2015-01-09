@@ -231,7 +231,6 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
             }
         }
 
-console.log(m);
         return dao.messages.add({
             ot: tx,
             value: {

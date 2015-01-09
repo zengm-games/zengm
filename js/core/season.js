@@ -740,17 +740,22 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
     }
 
     function newPhasePlayoffs() {
+        var url, tx;
+
+        tx = dao.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+
         // Achievements after regular season
         account.checkAchievement.septuawinarian();
 
         // Set playoff matchups
-        return team.filter({
+        team.filter({
+            ot: tx,
             attrs: ["tid", "cid"],
             seasonAttrs: ["winp"],
             season: g.season,
             sortBy: "winp"
         }).then(function (teams) {
-            var cid, i, row, series, teamsConf, tidPlayoffs, tx;
+            var cid, i, series, teamsConf, tidPlayoffs;
 
             // Add entry for wins for each team; delete winp, which was only needed for sorting
             for (i = 0; i < teams.length; i++) {
@@ -783,9 +788,14 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 series[0][3 + cid * 4].away.seed = 7;
             }
 
-            row = {season: g.season, currentRound: 0, series: series};
-            tx = dao.tx(["players", "playerStats", "playoffSeries", "teams"], "readwrite");
-            dao.playoffSeries.put({value: row});
+            dao.playoffSeries.put({
+                ot: tx,
+                value: {
+                    season: g.season,
+                    currentRound: 0,
+                    series: series
+                }
+            });
 
             if (tidPlayoffs.indexOf(g.userTid) >= 0) {
                 eventLog.add(null, {
@@ -840,21 +850,20 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 });
             });
+        }).then(function () {
+            return Promise.all([
+                finances.assessPayrollMinLuxury(tx),
+                newSchedulePlayoffsDay(tx)
+            ]);
+        });
 
-            return tx.complete().then(function () {
-                return Promise.all([
-                    finances.assessPayrollMinLuxury(),
-                    newSchedulePlayoffsDay()
-                ]);
-            }).then(function () {
-                var url;
+        // Don't redirect if we're viewing a live game now
+        if (location.pathname.indexOf("/live_game") === -1) {
+            url = helpers.leagueUrl(["playoffs"]);
+        }
 
-                // Don't redirect if we're viewing a live game now
-                if (location.pathname.indexOf("/live_game") === -1) {
-                    url = helpers.leagueUrl(["playoffs"]);
-                }
-                return newPhaseFinalize(g.PHASE.PLAYOFFS, url, ["teamFinances"]);
-            });
+        return tx.complete().then(function () {
+            return newPhaseFinalize(g.PHASE.PLAYOFFS, url, ["teamFinances"]);
         });
     }
 
@@ -1276,10 +1285,10 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
     }
 
     /*Creates a single day's schedule for an in-progress playoffs.*/
-    function newSchedulePlayoffsDay() {
-        var playoffSeries, rnd, series, tids, tx;
+    function newSchedulePlayoffsDay(tx) {
+        var playoffSeries, rnd, series, tids;
 
-        tx = dao.tx(["playoffSeries", "teams"], "readwrite");
+        tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite", tx);
 
         // This is a little tricky. We're returning this promise, but within the "then"s we're returning tx.complete() for the same transaction. Probably should be refactored.
         return dao.playoffSeries.get({
@@ -1312,7 +1321,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
 
             // If series are still in progress, write games and short circuit
             if (tids.length > 0) {
-                return setSchedule(null, tids);
+                return setSchedule(tx, tids);
             }
 
             // If playoffs are over, update winner and go to next phase
@@ -1322,7 +1331,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 } else if (series[rnd][0].away.won === 4) {
                     key = series[rnd][0].away.tid;
                 }
-                dao.teams.iterate({
+                return dao.teams.iterate({
                     ot: tx,
                     key: key,
                     callback: function (t) {
@@ -1338,8 +1347,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
 
                         return t;
                     }
-                });
-                return tx.complete().then(function () {
+                }).then(function () {
                     return newPhase(g.PHASE.BEFORE_DRAFT);
                 });
             }
@@ -1378,29 +1386,29 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             }
 
             playoffSeries.currentRound += 1;
-            dao.playoffSeries.put({ot: tx, value: playoffSeries});
+            return dao.playoffSeries.put({ot: tx, value: playoffSeries}).then(function () {
+                // Update hype for winning a series
+                return Promise.map(tidsWon, function (tid) {
+                    return dao.teams.get({
+                        ot: tx,
+                        key: tid
+                    }).then(function (t) {
+                        var s;
 
-            // Update hype for winning a series
-            for (i = 0; i < tidsWon.length; i++) {
-                dao.teams.get({
-                    ot: tx,
-                    key: tidsWon[i]
-                }).then(function (t) {
-                    var s;
+                        s = t.seasons.length - 1;
+                        t.seasons[s].playoffRoundsWon = playoffSeries.currentRound;
+                        t.seasons[s].hype += 0.05;
+                        if (t.seasons[s].hype > 1) {
+                            t.seasons[s].hype = 1;
+                        }
 
-                    s = t.seasons.length - 1;
-                    t.seasons[s].playoffRoundsWon = playoffSeries.currentRound;
-                    t.seasons[s].hype += 0.05;
-                    if (t.seasons[s].hype > 1) {
-                        t.seasons[s].hype = 1;
-                    }
-
-                    dao.teams.put({ot: tx, value: t});
+                        return dao.teams.put({ot: tx, value: t});
+                    });
                 });
-            }
-
-            // Next time, the schedule for the first day of the next round will be set
-            return tx.complete().then(newSchedulePlayoffsDay);
+            }).then(function () {
+                // Next time, the schedule for the first day of the next round will be set
+                newSchedulePlayoffsDay(tx);
+            });
         });
     }
 

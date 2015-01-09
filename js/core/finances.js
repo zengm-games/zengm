@@ -11,13 +11,12 @@ define(["dao", "globals", "lib/underscore"], function (dao, g, _) {
      * @memberOf core.finances
      * @return {Promise}
      */
-    function assessPayrollMinLuxury() {
-        return require("core/team").getPayrolls().then(function (payrolls) {
-            var tx;
+    function assessPayrollMinLuxury(tx) {
+        tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite");
 
+        return require("core/team").getPayrolls(tx).then(function (payrolls) {
             // Update teams object store
-            tx = dao.tx("teams", "readwrite");
-            dao.teams.iterate({
+            return dao.teams.iterate({
                 ot: tx,
                 callback: function (t) {
                     var s;
@@ -39,7 +38,6 @@ define(["dao", "globals", "lib/underscore"], function (dao, g, _) {
                     return t;
                 }
             });
-            return tx.complete();
         });
     }
 

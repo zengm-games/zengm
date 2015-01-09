@@ -501,8 +501,11 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
             request.onfailure = function (event) {
                 reject(event);
             };
-            request.onblocked = function (event) {
-                reject(event);
+            request.onblocked = function () {
+                // Necessary because g.dbl.close() doesn't always finish in time and
+                // http://www.w3.org/TR/IndexedDB/#dfn-steps-for-deleting-a-database
+                // says it will still be deleted even if onblocked fires.
+                resolve();
             };
         });
     }

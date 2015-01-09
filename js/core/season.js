@@ -335,13 +335,12 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
     /**
      * Save the schedule to the database, overwriting what's currently there.
      *
-     * @param {(IDBTransaction|null)} options.ot An IndexedDB transaction on schedule readwrite; if null is passed, then a new transaction will be used.
      * @param {Array} tids A list of lists, each containing the team IDs of the home and
             away teams, respectively, for every game in the season, respectively.
      * @return {Promise}
      */
-    function setSchedule(tx, tids) {
-        var i, newSchedule;
+    function setSchedule(tids) {
+        var i, newSchedule, tx;
 
         newSchedule = [];
         for (i = 0; i < tids.length; i++) {
@@ -351,13 +350,20 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             });
         }
 
-        tx = dao.tx("schedule", "readwrite", tx);
+        tx = dao.tx("schedule", "readwrite");
 
-        return dao.schedule.clear({ot: tx}).then(function () {
-            return Promise.map(newSchedule, function (matchup) {
-                return dao.schedule.add({ot: tx, value: matchup});
-            });
+        dao.schedule.clear({ot: tx}).then(function () {
+            var i;
+
+            for (i = 0; i < newSchedule.length; i++) {
+                dao.schedule.add({
+                    ot: tx,
+                    value: newSchedule[i]
+                });
+            }
         });
+
+        return tx.complete();
     }
 
     /**
@@ -677,14 +683,14 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
     }
 
     function newPhaseRegularSeason() {
-        var tx;
+        return setSchedule(newSchedule()).then(function () {
+            var tx;
 
-        tx = dao.tx(["messages", "schedule"], "readwrite");
-
-        setSchedule(tx, newSchedule()).then(function () {
             // First message from owner
             if (g.showFirstOwnerMessage) {
-                message.generate(tx, {wins: 0, playoffs: 0, money: 0});
+                return message.generate({wins: 0, playoffs: 0, money: 0}).then(function () {
+                    return newPhaseFinalize(g.PHASE.REGULAR_SEASON);
+                });
             }
 
             // Spam user with another message?
@@ -693,8 +699,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 localStorage.nagged = "1";
             }
 
+            tx = dao.tx("messages", "readwrite");
             if (g.season === g.startingSeason + 3 && g.lid > 3 && !localStorage.nagged) {
-                localStorage.nagged = "1";
                 dao.messages.add({
                     ot: tx,
                     value: {
@@ -704,8 +710,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>'
                     }
                 });
+                localStorage.nagged = "1";
             } else if ((localStorage.nagged === "1" && Math.random() < 0.25) || (localStorage.nagged === "2" && Math.random < 0.025)) {
-                localStorage.nagged = "2";
                 dao.messages.add({
                     ot: tx,
                     value: {
@@ -715,9 +721,9 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         text: '<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a></p><p><a href="https://www.facebook.com/basketball.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/BasketballGM/">Discuss Basketball GM on Reddit</a></p><p>The more people that play Basketball GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@basketball-gm.com">email me</a>.</p>'
                     }
                 });
+                localStorage.nagged = "2";
             } else if ((localStorage.nagged === "2" && Math.random() < 0.25) || (localStorage.nagged === "3" && Math.random < 0.025)) {
                 _gaq.push(["_trackEvent", "Ad Display", "DraftKings"]);
-                localStorage.nagged = "3";
                 dao.messages.add({
                     ot: tx,
                     value: {
@@ -727,15 +733,11 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         text: '<p>DraftKings is a great new way to play fantasy sports and win money. They are running a special promotion for Basketball GM players: they\'ll waive the entry fee for a $30k fantasy NBA pool and match your first deposit for free! All you have to do is draft the best 8 player team. Your Basketball GM experience may prove to be useful!</p><p><a href="https://www.draftkings.com/gateway?s=640365236"><img src="/img/dk-logo.png"></a></p><p>And better yet, by signing up through <a href="https://www.draftkings.com/gateway?s=640365236">this link</a>, you will be supporting Basketball GM. So even if you\'re not totally sure if you want to try DraftKings, give it a shot as a personal favor to me. In return, I will continue to improve this free game that you\'ve spent hours playing - there is some cool stuff in the works, stay tuned!</p>'
                     }
                 });
+                localStorage.nagged = "3";
             }
-        }).catch(function (err) {
-            // If there was any error in the phase change, abort transaction
-            tx.abort();
-            throw err;
-        });
-
-        return tx.complete().then(function () {
-            return newPhaseFinalize(g.PHASE.REGULAR_SEASON);
+            return tx.complete().then(function () {
+                return newPhaseFinalize(g.PHASE.REGULAR_SEASON);
+            });
         });
     }
 
@@ -744,22 +746,17 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
     }
 
     function newPhasePlayoffs() {
-        var tx;
-
-        tx = dao.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
-
         // Achievements after regular season
         account.checkAchievement.septuawinarian();
 
         // Set playoff matchups
-        team.filter({
-            ot: tx,
+        return team.filter({
             attrs: ["tid", "cid"],
             seasonAttrs: ["winp"],
             season: g.season,
             sortBy: "winp"
         }).then(function (teams) {
-            var cid, i, series, teamsConf, tidPlayoffs;
+            var cid, i, row, series, teamsConf, tidPlayoffs, tx;
 
             // Add entry for wins for each team; delete winp, which was only needed for sorting
             for (i = 0; i < teams.length; i++) {
@@ -792,14 +789,9 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 series[0][3 + cid * 4].away.seed = 7;
             }
 
-            dao.playoffSeries.put({
-                ot: tx,
-                value: {
-                    season: g.season,
-                    currentRound: 0,
-                    series: series
-                }
-            });
+            row = {season: g.season, currentRound: 0, series: series};
+            tx = dao.tx(["players", "playerStats", "playoffSeries", "teams"], "readwrite");
+            dao.playoffSeries.put({value: row});
 
             if (tidPlayoffs.indexOf(g.userTid) >= 0) {
                 eventLog.add(null, {
@@ -854,27 +846,21 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 });
             });
-        }).then(function () {
-            return Promise.all([
-                finances.assessPayrollMinLuxury(tx),
-                newSchedulePlayoffsDay(tx)
-            ]);
-        }).catch(function (err) {
-            // If there was any error in the phase change, abort transaction
-            tx.abort();
-            throw err;
-        });
 
+            return tx.complete().then(function () {
+                return Promise.all([
+                    finances.assessPayrollMinLuxury(),
+                    newSchedulePlayoffsDay()
+                ]);
+            }).then(function () {
+                var url;
 
-        return tx.complete().then(function () {
-            var url;
-
-            // Don't redirect if we're viewing a live game now
-            if (location.pathname.indexOf("/live_game") === -1) {
-                url = helpers.leagueUrl(["playoffs"]);
-            }
-
-            return newPhaseFinalize(g.PHASE.PLAYOFFS, url, ["teamFinances"]);
+                // Don't redirect if we're viewing a live game now
+                if (location.pathname.indexOf("/live_game") === -1) {
+                    url = helpers.leagueUrl(["playoffs"]);
+                }
+                return newPhaseFinalize(g.PHASE.PLAYOFFS, url, ["teamFinances"]);
+            });
         });
     }
 
@@ -1010,9 +996,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             return tx.complete().then(function () {
                 // Update strategies of AI teams (contending or rebuilding)
                 return team.updateStrategies();
-            }).then(updateOwnerMood).then(function (deltas) {
-                return message.generate(null, deltas);
-            }).then(function () {
+            }).then(updateOwnerMood).then(message.generate).then(function () {
                 var url;
 
                 // Don't redirect if we're viewing a live game now
@@ -1255,7 +1239,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
      * @return {Promise}
      */
     function newPhase(phase, extra) {
-        // Prevent at least some cases of code running twice
+        // Prevent code running twice
         if (phase === g.phase) {
             return;
         }
@@ -1296,10 +1280,10 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
     }
 
     /*Creates a single day's schedule for an in-progress playoffs.*/
-    function newSchedulePlayoffsDay(tx) {
-        var playoffSeries, rnd, series, tids;
+    function newSchedulePlayoffsDay() {
+        var playoffSeries, rnd, series, tids, tx;
 
-        tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite", tx);
+        tx = dao.tx(["playoffSeries", "teams"], "readwrite");
 
         // This is a little tricky. We're returning this promise, but within the "then"s we're returning tx.complete() for the same transaction. Probably should be refactored.
         return dao.playoffSeries.get({
@@ -1332,7 +1316,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
 
             // If series are still in progress, write games and short circuit
             if (tids.length > 0) {
-                return setSchedule(tx, tids);
+                return setSchedule(tids);
             }
 
             // If playoffs are over, update winner and go to next phase
@@ -1342,7 +1326,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 } else if (series[rnd][0].away.won === 4) {
                     key = series[rnd][0].away.tid;
                 }
-                return dao.teams.iterate({
+                dao.teams.iterate({
                     ot: tx,
                     key: key,
                     callback: function (t) {
@@ -1358,7 +1342,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
 
                         return t;
                     }
-                }).then(function () {
+                });
+                return tx.complete().then(function () {
                     return newPhase(g.PHASE.BEFORE_DRAFT);
                 });
             }
@@ -1397,29 +1382,29 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             }
 
             playoffSeries.currentRound += 1;
-            return dao.playoffSeries.put({ot: tx, value: playoffSeries}).then(function () {
-                // Update hype for winning a series
-                return Promise.map(tidsWon, function (tid) {
-                    return dao.teams.get({
-                        ot: tx,
-                        key: tid
-                    }).then(function (t) {
-                        var s;
+            dao.playoffSeries.put({ot: tx, value: playoffSeries});
 
-                        s = t.seasons.length - 1;
-                        t.seasons[s].playoffRoundsWon = playoffSeries.currentRound;
-                        t.seasons[s].hype += 0.05;
-                        if (t.seasons[s].hype > 1) {
-                            t.seasons[s].hype = 1;
-                        }
+            // Update hype for winning a series
+            for (i = 0; i < tidsWon.length; i++) {
+                dao.teams.get({
+                    ot: tx,
+                    key: tidsWon[i]
+                }).then(function (t) {
+                    var s;
 
-                        return dao.teams.put({ot: tx, value: t});
-                    });
+                    s = t.seasons.length - 1;
+                    t.seasons[s].playoffRoundsWon = playoffSeries.currentRound;
+                    t.seasons[s].hype += 0.05;
+                    if (t.seasons[s].hype > 1) {
+                        t.seasons[s].hype = 1;
+                    }
+
+                    dao.teams.put({ot: tx, value: t});
                 });
-            }).then(function () {
-                // Next time, the schedule for the first day of the next round will be set
-                newSchedulePlayoffsDay(tx);
-            });
+            }
+
+            // Next time, the schedule for the first day of the next round will be set
+            return tx.complete().then(newSchedulePlayoffsDay);
         });
     }
 

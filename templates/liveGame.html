@@ -20,7 +20,7 @@
         <span data-bind="visible: boxScore.gameOver">Final Score</span>
       </center>
       <!-- ko foreach: boxScore.teams -->
-        <h3><a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.boxScore.season]}, text: region() + ' ' + name()"></a></h2>
+        <h3><a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.boxScore.season]}, text: region() + ' ' + name()"></a></h3>
         <div class="table-responsive">
           <table class="table table-striped table-bordered table-condensed box-score-team">
             <thead>

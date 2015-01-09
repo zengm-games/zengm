@@ -4,13 +4,15 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+PLAYOFF SERIES OFTEN GO TO 5 GAMES TO WIN!
+
 newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
   EVERYTHING in phase transition should be here, even in common function at the end! and test thoroughly!
   semi-done newPhasePlayoffs
   make sure fantasy draft still works
   documentation of necessity of one transaction!
-  need to pass tx to setGameAttributes? probably yes
-    same with checking achievements, needed for awards ones
+  need to pass tx to setGameAttributes? probably yes, maybe no
+    same with checking achievements, needed for awards ones - or can just put in a later phase
   abort transaction on any error in phase change - can this be generalized for DRY? how else can i be sure it'll always work this way?
     define tx in newPhase, pass to specific function, then catch and tx.complete() at end
   test

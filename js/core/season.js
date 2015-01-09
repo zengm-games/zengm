@@ -16,8 +16,9 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
      * @memberOf core.season
      * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
      */
-    function updateOwnerMood() {
+    function updateOwnerMood(tx) {
         return team.filter({
+            ot: tx,
             seasonAttrs: ["won", "playoffRoundsWon", "profit"],
             season: g.season,
             tid: g.userTid
@@ -62,10 +63,11 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
      * The awards are saved to the "awards" object store.
      *
      * @memberOf core.season
+     * @param {(IDBTransaction)} tx An IndexedDB transaction on awards, players, playerStats, releasedPlayers, and teams, readwrite.
      * @return {Promise}
      */
-    function awards() {
-        var awards, awardsByPlayer, saveAwardsByPlayer, tx;
+    function awards(tx) {
+        var awards, awardsByPlayer, saveAwardsByPlayer;
 
         awards = {season: g.season};
 
@@ -91,8 +93,6 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 });
             });
         };
-
-        tx = dao.tx(["awards", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
 
         // Get teams for won/loss record for awards, as well as finding the teams with the best records
         return team.filter({
@@ -279,10 +279,6 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 }
             });
-        }).then(function () {
-            // Achievements after awards
-            account.checkAchievement.hardware_store();
-            account.checkAchievement.sleeper_pick();
         });
     }
 
@@ -849,9 +845,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         });
     }
 
-    function newPhaseBeforeDraft() {
-        var tx;
-
+    function newPhaseBeforeDraft(tx) {
         // Achievements after playoffs
         account.checkAchievement.fo_fo_fo();
         account.checkAchievement["98_degrees"]();
@@ -863,18 +857,17 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         account.checkAchievement.small_market();
 
         // Select winners of the season's awards
-        return awards().then(function () {
-            tx = dao.tx(["events", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
+        return awards(tx).then(function () {
 
             // Add award for each player on the championship team
             return team.filter({
+                ot: tx,
                 attrs: ["tid"],
                 seasonAttrs: ["playoffRoundsWon"],
-                season: g.season,
-                ot: tx
+                season: g.season
             });
         }).then(function (teams) {
-            var i, maxAge, minPot, tid;
+            var i, tid;
 
             // Give award to all players on the championship team
             for (i = 0; i < teams.length; i++) {
@@ -883,7 +876,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     break;
                 }
             }
-            dao.players.iterate({
+            return dao.players.iterate({
                 ot: tx,
                 index: "tid",
                 key: tid,
@@ -892,6 +885,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     return p;
                 }
             });
+        }).then(function () {
+            var maxAge, minPot;
 
             // Do annual tasks for each player, like checking for retirement
 
@@ -899,7 +894,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             maxAge = 34;
             minPot = 40;
 
-            dao.players.iterate({
+            return dao.players.iterate({
                 ot: tx,
                 index: "tid",
                 key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
@@ -964,9 +959,9 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     });
                 }
             });
-
+        }).then(function () {
             // Remove released players' salaries from payrolls if their contract expired this year
-            dao.releasedPlayers.iterate({
+            return dao.releasedPlayers.iterate({
                 ot: tx,
                 index: "contract.exp",
                 key: IDBKeyRange.upperBound(g.season),
@@ -977,28 +972,31 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     });
                 }
             });
+        }).then(function () {
+            return team.updateStrategies(tx);
+        }).then(function () {
+            return updateOwnerMood(tx);
+        }).then(function (deltas) {
+            return message.generate(tx, deltas);
+        }).then(function () {
+            var url;
 
-            return tx.complete().then(function () {
-                // Update strategies of AI teams (contending or rebuilding)
-                return team.updateStrategies();
-            }).then(updateOwnerMood).then(function (deltas) {
-                return message.generate(null, deltas);
-            }).then(function () {
-                var url;
+            // Don't redirect if we're viewing a live game now
+            if (location.pathname.indexOf("/live_game") === -1) {
+                url = helpers.leagueUrl(["history"]);
+            }
 
-                // Don't redirect if we're viewing a live game now
-                if (location.pathname.indexOf("/live_game") === -1) {
-                    url = helpers.leagueUrl(["history"]);
-                }
+            helpers.bbgmPing("season");
 
-                return newPhaseFinalize(g.PHASE.BEFORE_DRAFT, url, ["playerMovement"]);
-            }).then(function () {
-                helpers.bbgmPing("season");
-            });
+            return [url, ["playerMovement"]];
         });
     }
 
     function newPhaseDraft() {
+        // Achievements after awards
+        account.checkAchievement.hardware_store();
+        account.checkAchievement.sleeper_pick();
+
         return draft.genOrder().then(function () {
             var tx;
 
@@ -1252,7 +1250,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 return newPhasePlayoffs(tx);
             }
             if (phase === g.PHASE.BEFORE_DRAFT) {
-                return newPhaseBeforeDraft();
+                tx = dao.tx(["awards", "events", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
+                return newPhaseBeforeDraft(tx);
             }
             if (phase === g.PHASE.DRAFT) {
                 return newPhaseDraft();

@@ -1072,23 +1072,20 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         });
     }
 
-    function newPhaseFreeAgency() {
+    function newPhaseFreeAgency(tx) {
         var strategies;
 
         return team.filter({
+            ot: tx,
             attrs: ["strategy"],
             season: g.season
         }).then(function (teams) {
             strategies = _.pluck(teams, "strategy");
 
             // Delete all current negotiations to resign players
-            return contractNegotiation.cancelAll();
+            return contractNegotiation.cancelAll(tx);
         }).then(function () {
-            var tx;
-
-            tx = dao.tx(["players", "teams"], "readwrite");
-
-            player.genBaseMoods(tx).then(function (baseMoods) {
+            return player.genBaseMoods(tx).then(function (baseMoods) {
                 // Reset contract demands of current free agents and undrafted players
                 return dao.players.iterate({
                     ot: tx,
@@ -1130,7 +1127,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 });
             }).then(function () {
                 // Bump up future draft classes (nested so tid updates don't cause race conditions)
-                dao.players.iterate({
+                return dao.players.iterate({
                     ot: tx,
                     index: "tid",
                     key: g.PLAYER.UNDRAFTED_2,
@@ -1140,7 +1137,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         return p;
                     }
                 }).then(function () {
-                    dao.players.iterate({
+                    return dao.players.iterate({
                         ot: tx,
                         index: "tid",
                         key: g.PLAYER.UNDRAFTED_3,
@@ -1151,13 +1148,11 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         }
                     });
                 });
-            });
-
-            return tx.complete().then(function () {
-                // Create new draft class for 3 years in the future
-                return draft.genPlayers(null, g.PLAYER.UNDRAFTED_3);
             }).then(function () {
-                return newPhaseFinalize(g.PHASE.FREE_AGENCY, helpers.leagueUrl(["free_agents"]), ["playerMovement"]);
+                // Create new draft class for 3 years in the future
+                return draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3);
+            }).then(function () {
+                return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];
             });
         });
     }
@@ -1256,7 +1251,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 return newPhaseResignPlayers(tx);
             }
             if (phase === g.PHASE.FREE_AGENCY) {
-                return newPhaseFreeAgency();
+                tx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
+                return newPhaseFreeAgency(tx);
             }
             if (phase === g.PHASE.FANTASY_DRAFT) {
                 return newPhaseFantasyDraft(extra);

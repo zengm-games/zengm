@@ -248,14 +248,14 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
      * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is re-signing players at the end of the season, although that should probably change eventually.
      *
      * @memberOf core.contractNegotiation
+     * @param {IDBTransaction} tx An IndexedDB transaction on gameAttributes, messages, and negotiations, readwrite.
      * @return {Promise}
      */
-    function cancelAll() {
-        return dao.negotiations.clear().then(function () {
-            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
-        }).then(function () {
+    function cancelAll(tx) {
+        return dao.negotiations.clear({ot: tx}).then(function () {
+            require("core/league").setGameAttributes({lastDbChange: Date.now()});
             ui.updateStatus("Idle");
-            return ui.updatePlayMenu(null);
+            return ui.updatePlayMenu(tx);
         });
     }
 

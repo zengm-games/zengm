@@ -1198,7 +1198,7 @@ console.log(dv);*/
      * Basically.. switch to rebuilding if you're old and your success is fading, and switch to contending if you have a good amount of young talent on rookie deals and your success is growing.
      *
      * @memberOf core.team
-     * @param {(IDBTransaction)} tx An IndexedDB transaction on players, playerStats, and teams, readwrite.
+     * @param {IDBTransaction} tx An IndexedDB transaction on players, playerStats, and teams, readwrite.
      * @return {Promise}
      */
     function updateStrategies(tx) {

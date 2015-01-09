@@ -10,7 +10,9 @@ newPhasePlayoffs (and similar functions) should do all important shit in one tra
   make sure fantasy draft still works
   documentation of necessity of one transaction!
   need to pass tx to setGameAttributes? probably yes, maybe no
-    the one in newPhaseResignPlayers would be nice to include in main tx...
+    would be nice to have for:
+      the one in newPhaseResignPlayers would be nice to include in main tx...
+      contractNegotiation.cancelAll
     same with checking achievements, needed for awards ones - or can just put in a later phase
   abort transaction on any error in phase change - can this be generalized for DRY? how else can i be sure it'll always work this way?
     define tx in newPhase, pass to specific function, then catch and tx.complete() at end

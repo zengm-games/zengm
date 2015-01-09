@@ -1040,14 +1040,10 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         });
     }
 
-    function newPhaseResignPlayers() {
-        var tx;
-
-        tx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
-
-        player.genBaseMoods(tx).then(function (baseMoods) {
+    function newPhaseResignPlayers(tx) {
+        return player.genBaseMoods(tx).then(function (baseMoods) {
             // Re-sign players on user's team, and some AI players
-            dao.players.iterate({
+            return dao.players.iterate({
                 ot: tx,
                 index: "tid",
                 key: IDBKeyRange.lowerBound(0),
@@ -1068,13 +1064,11 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 }
             });
-        });
-
-        return tx.complete().then(function () {
-            // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
-            return require("core/league").setGameAttributes({daysLeft: 30});
         }).then(function () {
-            return newPhaseFinalize(g.PHASE.RESIGN_PLAYERS, helpers.leagueUrl(["negotiation"]), ["playerMovement"]);
+            // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
+            require("core/league").setGameAttributes({daysLeft: 30});
+        }).then(function () {
+            return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
         });
     }
 
@@ -1258,7 +1252,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 return newPhaseAfterDraft(tx);
             }
             if (phase === g.PHASE.RESIGN_PLAYERS) {
-                return newPhaseResignPlayers();
+                tx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
+                return newPhaseResignPlayers(tx);
             }
             if (phase === g.PHASE.FREE_AGENCY) {
                 return newPhaseFreeAgency();

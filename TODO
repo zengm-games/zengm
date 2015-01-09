@@ -8,8 +8,7 @@ newPhasePlayoffs (and similar functions) should do all important shit in one tra
   EVERYTHING in phase transition should be here, even in common function at the end! and test thoroughly!
   semi-done newPhasePlayoffs
   make sure fantasy draft still works
-  maybe separate phase change functions into own module
-    documentation of necessity of one transaction!
+  documentation of necessity of one transaction!
   need to pass tx to setGameAttributes? probably yes
     same with checking achievements, needed for awards ones
   abort transaction on any error in phase change - can this be generalized for DRY? how else can i be sure it'll always work this way?

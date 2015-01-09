@@ -666,15 +666,11 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         });
     }
 
-    function newPhaseRegularSeason() {
-        var tx;
-
-        tx = dao.tx(["messages", "schedule"], "readwrite");
-
-        setSchedule(tx, newSchedule()).then(function () {
+    function newPhaseRegularSeason(tx) {
+        return setSchedule(tx, newSchedule()).then(function () {
             // First message from owner
             if (g.showFirstOwnerMessage) {
-                message.generate(tx, {wins: 0, playoffs: 0, money: 0});
+                return message.generate(tx, {wins: 0, playoffs: 0, money: 0});
             }
 
             // Spam user with another message?
@@ -685,7 +681,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
 
             if (g.season === g.startingSeason + 3 && g.lid > 3 && !localStorage.nagged) {
                 localStorage.nagged = "1";
-                dao.messages.add({
+                return dao.messages.add({
                     ot: tx,
                     value: {
                         read: false,
@@ -694,9 +690,10 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>'
                     }
                 });
-            } else if ((localStorage.nagged === "1" && Math.random() < 0.25) || (localStorage.nagged === "2" && Math.random < 0.025)) {
+            }
+            if ((localStorage.nagged === "1" && Math.random() < 0.25) || (localStorage.nagged === "2" && Math.random < 0.025)) {
                 localStorage.nagged = "2";
-                dao.messages.add({
+                return dao.messages.add({
                     ot: tx,
                     value: {
                         read: false,
@@ -705,10 +702,11 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         text: '<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a></p><p><a href="https://www.facebook.com/basketball.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/BasketballGM/">Discuss Basketball GM on Reddit</a></p><p>The more people that play Basketball GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@basketball-gm.com">email me</a>.</p>'
                     }
                 });
-            } else if ((localStorage.nagged === "2" && Math.random() < 0.25) || (localStorage.nagged === "3" && Math.random < 0.025)) {
+            }
+            if ((localStorage.nagged === "2" && Math.random() < 0.25) || (localStorage.nagged === "3" && Math.random < 0.025)) {
                 _gaq.push(["_trackEvent", "Ad Display", "DraftKings"]);
                 localStorage.nagged = "3";
-                dao.messages.add({
+                return dao.messages.add({
                     ot: tx,
                     value: {
                         read: false,
@@ -718,14 +716,6 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 });
             }
-        }).catch(function (err) {
-            // If there was any error in the phase change, abort transaction
-            tx.abort();
-            throw err;
-        });
-
-        return tx.complete().then(function () {
-            return newPhaseFinalize(g.PHASE.REGULAR_SEASON);
         });
     }
 
@@ -733,16 +723,12 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         return newPhaseFinalize(g.PHASE.AFTER_TRADE_DEADLINE);
     }
 
-    function newPhasePlayoffs() {
-        var tx;
-
-        tx = dao.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
-
+    function newPhasePlayoffs(tx) {
         // Achievements after regular season
         account.checkAchievement.septuawinarian();
 
         // Set playoff matchups
-        team.filter({
+        return team.filter({
             ot: tx,
             attrs: ["tid", "cid"],
             seasonAttrs: ["winp"],
@@ -782,15 +768,6 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 series[0][3 + cid * 4].away.seed = 7;
             }
 
-            dao.playoffSeries.put({
-                ot: tx,
-                value: {
-                    season: g.season,
-                    currentRound: 0,
-                    series: series
-                }
-            });
-
             if (tidPlayoffs.indexOf(g.userTid) >= 0) {
                 eventLog.add(null, {
                     type: "playoffs",
@@ -803,60 +780,64 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 });
             }
 
-            // Add row to team stats and team season attributes
-            dao.teams.iterate({
-                ot: tx,
-                callback: function (t) {
-                    var teamSeason;
-
-                    teamSeason = t.seasons[t.seasons.length - 1];
-
-                    if (tidPlayoffs.indexOf(t.tid) >= 0) {
-                        t = team.addStatsRow(t, true);
-
-                        teamSeason.playoffRoundsWon = 0;
-
-                        // More hype for making the playoffs
-                        teamSeason.hype += 0.05;
-                        if (teamSeason.hype > 1) {
-                            teamSeason.hype = 1;
-                        }
-                    } else {
-                        // Less hype for missing the playoffs
-                        teamSeason.hype -= 0.05;
-                        if (teamSeason.hype < 0) {
-                            teamSeason.hype = 0;
-                        }
-                    }
-
-                    return t;
-                }
-            });
-
-            // Add row to player stats
-            tidPlayoffs.forEach(function (tid) {
-                dao.players.iterate({
+            return Promise.all([
+                dao.playoffSeries.put({
                     ot: tx,
-                    index: "tid",
-                    key: tid,
-                    callback: function (p) {
-                        return player.addStatsRow(tx, p, true);
+                    value: {
+                        season: g.season,
+                        currentRound: 0,
+                        series: series
                     }
-                });
-            });
+                }),
+
+                // Add row to team stats and team season attributes
+                dao.teams.iterate({
+                    ot: tx,
+                    callback: function (t) {
+                        var teamSeason;
+
+                        teamSeason = t.seasons[t.seasons.length - 1];
+
+                        if (tidPlayoffs.indexOf(t.tid) >= 0) {
+                            t = team.addStatsRow(t, true);
+
+                            teamSeason.playoffRoundsWon = 0;
+
+                            // More hype for making the playoffs
+                            teamSeason.hype += 0.05;
+                            if (teamSeason.hype > 1) {
+                                teamSeason.hype = 1;
+                            }
+                        } else {
+                            // Less hype for missing the playoffs
+                            teamSeason.hype -= 0.05;
+                            if (teamSeason.hype < 0) {
+                                teamSeason.hype = 0;
+                            }
+                        }
+
+                        return t;
+                    }
+                }),
+
+                // Add row to player stats
+                Promise.map(tidPlayoffs, function (tid) {
+                    return dao.players.iterate({
+                        ot: tx,
+                        index: "tid",
+                        key: tid,
+                        callback: function (p) {
+                            return player.addStatsRow(tx, p, true);
+                        }
+                    });
+                })
+            ]);
         }).then(function () {
             return Promise.all([
                 finances.assessPayrollMinLuxury(tx),
                 newSchedulePlayoffsDay(tx)
             ]);
-        }).catch(function (err) {
-            // If there was any error in the phase change, abort transaction
-            tx.abort();
-            throw err;
-        });
-
-
-        return tx.complete().then(function () {
+        }).then(function () {
             var url;
 
             // Don't redirect if we're viewing a live game now
@@ -864,7 +845,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 url = helpers.leagueUrl(["playoffs"]);
             }
 
-            return newPhaseFinalize(g.PHASE.PLAYOFFS, url, ["teamFinances"]);
+            return [url, ["teamFinances"]];
         });
     }
 
@@ -1245,6 +1226,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
      * @return {Promise}
      */
     function newPhase(phase, extra) {
+        var tx;
+
         // Prevent at least some cases of code running twice
         if (phase === g.phase) {
             return;
@@ -1253,36 +1236,48 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         // Prevent new phase from being clicked twice by deleting all options from the play menu. The options will be restored after the new phase is set or if there is an error by calling ui.updatePlayMenu.
         g.vm.topMenu.options([]);
 
-        if (phase === g.PHASE.PRESEASON) {
-            return newPhasePreseason();
-        }
-        if (phase === g.PHASE.REGULAR_SEASON) {
-            return newPhaseRegularSeason();
-        }
-        if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
-            return newPhaseAfterTradeDeadline();
-        }
-        if (phase === g.PHASE.PLAYOFFS) {
-            return newPhasePlayoffs();
-        }
-        if (phase === g.PHASE.BEFORE_DRAFT) {
-            return newPhaseBeforeDraft();
-        }
-        if (phase === g.PHASE.DRAFT) {
-            return newPhaseDraft();
-        }
-        if (phase === g.PHASE.AFTER_DRAFT) {
-            return newPhaseAfterDraft();
-        }
-        if (phase === g.PHASE.RESIGN_PLAYERS) {
-            return newPhaseResignPlayers();
-        }
-        if (phase === g.PHASE.FREE_AGENCY) {
-            return newPhaseFreeAgency();
-        }
-        if (phase === g.PHASE.FANTASY_DRAFT) {
-            return newPhaseFantasyDraft(extra);
-        }
+        return Promise.try(function () {
+            if (phase === g.PHASE.PRESEASON) {
+                return newPhasePreseason();
+            }
+            if (phase === g.PHASE.REGULAR_SEASON) {
+                tx = dao.tx(["messages", "schedule"], "readwrite");
+                return newPhaseRegularSeason(tx);
+            }
+            if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
+                return newPhaseAfterTradeDeadline();
+            }
+            if (phase === g.PHASE.PLAYOFFS) {
+                tx = dao.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+                return newPhasePlayoffs(tx);
+            }
+            if (phase === g.PHASE.BEFORE_DRAFT) {
+                return newPhaseBeforeDraft();
+            }
+            if (phase === g.PHASE.DRAFT) {
+                return newPhaseDraft();
+            }
+            if (phase === g.PHASE.AFTER_DRAFT) {
+                return newPhaseAfterDraft();
+            }
+            if (phase === g.PHASE.RESIGN_PLAYERS) {
+                return newPhaseResignPlayers();
+            }
+            if (phase === g.PHASE.FREE_AGENCY) {
+                return newPhaseFreeAgency();
+            }
+            if (phase === g.PHASE.FANTASY_DRAFT) {
+                return newPhaseFantasyDraft(extra);
+            }
+        }).catch(function (err) {
+            // If there was any error in the phase change, abort transaction
+            tx.abort();
+            throw err;
+        }).spread(function (url, updateEvents) {
+            return tx.complete().then(function () {
+                return newPhaseFinalize(phase, url, updateEvents);
+            });
+        });
     }
 
     /*Creates a single day's schedule for an in-progress playoffs.*/

@@ -491,7 +491,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
             if (g.dbl !== undefined) {
                 g.dbl.close();
             }
-         
+
             dao.leagues.delete({key: lid});
             request = indexedDB.deleteDatabase("league" + lid);
             request.onsuccess = function () {
@@ -499,11 +499,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                 resolve();
             };
             request.onfailure = function (event) {
-                debugger;
                 reject(event);
             };
             request.onblocked = function (event) {
-                debugger;
                 reject(event);
             };
         });

@@ -23,13 +23,17 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "v
                 }
 
                 for (i = 0; i < game.teams.length; i++) {
+                    var team = game.teams[i];
                     // Team metadata
-                    game.teams[i].abbrev = g.teamAbbrevsCache[game.teams[i].tid];
-                    game.teams[i].region = g.teamRegionsCache[game.teams[i].tid];
-                    game.teams[i].name = g.teamNamesCache[game.teams[i].tid];
+                    team.abbrev = g.teamAbbrevsCache[game.teams[i].tid];
+                    team.region = g.teamRegionsCache[game.teams[i].tid];
+                    team.name = g.teamNamesCache[game.teams[i].tid];
 
-                    // for oReb% calculation
-                    game.teams[i].oppDrb = game.teams[1 - i].drb;
+                    // four factors
+                    team.efg = (team.fg + (team.tp / 2)) / team.fga;
+                    team.tovp = team.tov / (team.fga + 0.44 * team.fta + team.tov);
+                    team.orbp = team.orb / (team.orb + game.teams[1 - i].drb);
+                    team.ftpfga = team.ft / team.fga;
 
                     // Fix the total minutes calculation, which is usually fucked up for some unknown reason
                     game.teams[i].min = 240 + 25 * game.overtimes;

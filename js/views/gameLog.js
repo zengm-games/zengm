@@ -15,7 +15,7 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "v
     function boxScore(gid) {
         if (gid >= 0) {
             return dao.games.get({key: gid}).then(function (game) {
-                var i;
+                var i, t;
 
                 // If game doesn't exist (bad gid or deleted box scores), show nothing
                 if (!game) {
@@ -23,23 +23,24 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "v
                 }
 
                 for (i = 0; i < game.teams.length; i++) {
-                    var team = game.teams[i];
+                    t = game.teams[i];
+
                     // Team metadata
-                    team.abbrev = g.teamAbbrevsCache[game.teams[i].tid];
-                    team.region = g.teamRegionsCache[game.teams[i].tid];
-                    team.name = g.teamNamesCache[game.teams[i].tid];
+                    t.abbrev = g.teamAbbrevsCache[t.tid];
+                    t.region = g.teamRegionsCache[t.tid];
+                    t.name = g.teamNamesCache[t.tid];
 
                     // four factors
-                    team.efg = 100 * (team.fg + (team.tp / 2)) / team.fga;
-                    team.tovp = 100 * team.tov / (team.fga + 0.44 * team.fta + team.tov);
-                    team.orbp = 100 * team.orb / (team.orb + game.teams[1 - i].drb);
-                    team.ftpfga = team.ft / team.fga;
+                    t.efg = 100 * (t.fg + (t.tp / 2)) / t.fga;
+                    t.tovp = 100 * t.tov / (t.fga + 0.44 * t.fta + t.tov);
+                    t.orbp = 100 * t.orb / (t.orb + game.teams[1 - i].drb);
+                    t.ftpfga = t.ft / t.fga;
 
                     // Fix the total minutes calculation, which is usually fucked up for some unknown reason
-                    game.teams[i].min = 240 + 25 * game.overtimes;
+                    t.min = 240 + 25 * game.overtimes;
 
                     // Put injured players at the bottom, then sort by GS and roster position
-                    game.teams[i].players.sort(function (a, b) {
+                    t.players.sort(function (a, b) {
                         // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed at the end, if they didn't play.
                         return (b.gs * 100000 + b.min * 1000 - b.injury.gamesRemaining) - (a.gs * 100000 + a.min * 1000 - a.injury.gamesRemaining);
                     });

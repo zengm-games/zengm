@@ -640,7 +640,9 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             if (!phaseChangeInProgress) {
                 return require("core/league").setGameAttributesComplete({phaseChangeInProgress: true}).then(function () {
                     ui.updatePlayMenu(null);
-                    require("core/league").updateLastDbChange(); // Update play menu in other windows
+
+                    // In Chrome, this will update play menu in other windows. In Firefox, it won't because ui.updatePlayMenu gets blocked until phaseChangeTx finishes for some reason.
+                    require("core/league").updateLastDbChange();
 
                     if (phase === g.PHASE.PRESEASON) {
                         phaseChangeTx = dao.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");

@@ -6,12 +6,6 @@ CURRENT
 
 newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
   documentation of necessity of one transaction!
-  need to pass tx to setGameAttributes? probably yes, maybe no
-    would be nice to have for:
-      the one in newPhaseResignPlayers would be nice to include in main tx...
-    same with checking achievements, needed for awards ones - or can just put in a later phase
-  abort transaction on any error in phase change - can this be generalized for DRY? how else can i be sure it'll always work this way?
-    define tx in newPhase, pass to specific function, then catch and tx.complete() at end
   test
     huge leagues with many windows open
     make sure awards are written to player objects
@@ -20,6 +14,9 @@ newPhasePlayoffs (and similar functions) should do all important shit in one tra
 
 multi-window race conditions
   could set a flag in the DB, but then how do I recover from errors?
+    in catch block!
+    but what if something goes wrong and that doesn't happen?
+      need a "stop" button that aborts the transaction
   if all phase change is in one transaction, then right at the end make sure the phase hasn't changed yet. if it has, abort transaction
 
 tooling

@@ -806,24 +806,33 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         // This simulates a day, including game simulation and any other bookkeeping that needs to be done
         cbRunDay = function () {
             if (numDays > 0) {
-                // If we didn't just stop games, let's play
-                // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
-                if (start || !g.stopGames) {
-                    return Promise.try(function () {
-                        if (g.stopGames) {
-                            return league.setGameAttributesComplete({stopGames: false});
-                        }
-                    }).then(function () {
-                        // Check if it's the playoffs and do some special stuff if it is or isn't
+                // Hit the DB to check stopGames in case it came from another tab
+                return league.loadGameAttribute(null, "stopGames").then(function () {
+                    // If we didn't just stop games, let's play
+                    // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
+                    if (start || !g.stopGames) {
                         return Promise.try(function () {
-                            if (g.phase !== g.PHASE.PLAYOFFS) {
-                                // Decrease free agent demands and let AI teams sign them
-                                return freeAgents.decreaseDemands().then(freeAgents.autoSign);
+                            // If start is set, then reset stopGames
+                            if (g.stopGames) {
+                                return league.setGameAttributesComplete({stopGames: false});
                             }
-                        }).then(cbPlayGames);
-                    });
-                }
-            } else if (numDays === 0) {
+                        }).then(function () {
+                            // Check if it's the playoffs and do some special stuff if it is or isn't
+                            return Promise.try(function () {
+                                if (g.phase !== g.PHASE.PLAYOFFS) {
+                                    // Decrease free agent demands and let AI teams sign them
+                                    return freeAgents.decreaseDemands().then(freeAgents.autoSign);
+                                }
+                            }).then(cbPlayGames);
+                        });
+                    }
+
+                    // Update UI if stopped
+                    return cbNoGames();
+                });
+            }
+
+            if (numDays === 0) {
                 // If this is the last day, update play menu
                 return cbNoGames();
             }

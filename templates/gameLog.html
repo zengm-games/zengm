@@ -36,10 +36,10 @@
                   <!-- ko foreach: boxScore.teams -->
                   <tr>
                       <td ><a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.boxScore.season]}, text: abbrev"></a></td>
-                      <td data-bind="round: [100 * efg(),1] "></td>
-                      <td data-bind="round: [100 * tovp(),1] "></td>
-                      <td data-bind="round: [100 * orbp(),1] "></td>
-                      <td data-bind="round: [100 * ftpfga(),3] "></td>
+                      <td data-bind="round: [100 * efg(),1], css: { success: efg() >= $root.boxScore.teams()[1-$index()].efg() }"></td>
+                      <td data-bind="round: [100 * tovp(),1], css: { success: tovp() <= $root.boxScore.teams()[1-$index()].tovp()} "></td>
+                      <td data-bind="round: [100 * orbp(),1], css: { success: orbp() >= $root.boxScore.teams()[1-$index()].orbp() }"></td>
+                      <td data-bind="round: [ftpfga(),3], css: { success: ftpfga() >= $root.boxScore.teams()[1-$index()].ftpfga()} "></td>
                   </tr>
                   <!-- /ko -->
               </tbody>

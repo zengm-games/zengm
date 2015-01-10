@@ -99,8 +99,8 @@ define(["dao", "db", "globals", "ui", "core/league", "lib/bluebird", "lib/jquery
         g.lid = null;
         g.vm.topMenu.lid(undefined);
 
-        updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
-        reqCb = req.raw.cb !== undefined ? req.raw.cb : function () {};
+        updateEvents = (req !== undefined && req.raw.updateEvents !== undefined) ? req.raw.updateEvents : [];
+        reqCb = (req !== undefined && req.raw.cb !== undefined) ? req.raw.cb : function () {};
         return Promise.resolve([updateEvents, reqCb]);
     }
 

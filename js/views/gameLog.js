@@ -67,7 +67,6 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "v
                     game.qtrs.push("OT" + (i + 1));
                 }
                 game.qtrs.push("F");
-console.log(game.qtrs);
 
                 return game;
             });

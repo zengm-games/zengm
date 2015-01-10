@@ -13,9 +13,9 @@
         <table>
           <tr><td>
             <a class="btn btn-default disabled" style="margin-right: 30px" data-bind="css: {disabled: boxScore.prevGid() === null}, attrLeagueUrl: {href: ['game_log', abbrev, season, boxScore.prevGid]}">Prev</a>
-          </td><td>
-            <div style="float: left; margin-right: 30px">
-              <table class="table table-bordered table-condensed" style="width: auto; margin-top: 15px">
+          </td><td align="center">
+            <div class="game-log-score">
+              <table class="table table-bordered table-condensed">
                 <thead>
                   <tr>
                     <th></th>
@@ -35,8 +35,8 @@
                 </tbody>
               </table>
             </div>
-            <div style="float: left">
-              <table class="table table-bordered table-condensed" style="width: auto; margin-top: 15px">
+            <div class="game-log-four-factors">
+              <table class="table table-bordered table-condensed">
                 <thead><tr></tr><tr><th title="Four Factors: Effective Field Goal Percentage">eFG%</th><th title="Four Factors: Turnover Percentage">TOV%</th><th title="Four Factors: Offensive Rebound Percentage">ORB%</th><th title="Four Factors: Free Throws Made Over Field Goal Attempts">FT/FGA</th></tr></thead>
                 <tbody data-bind="foreach: boxScore.teams">
                   <tr>

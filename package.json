@@ -15,7 +15,7 @@
   "scripts": {
     "build": "node tools/build.js",
     "build-cordova": "node tools/build.js cordova",
-    "test": "echo \"Currently tests can only be run from the browser. To run tests, go to http://BASKETBALL-GM-URL/test in your web browser.\"",
+    "test": "./node_modules/karma/bin/karma start",
     "lint": "node_modules/.bin/eslint js"
   },
   "dependencies": {},
@@ -25,7 +25,12 @@
     "requirejs": "~2.1.15",
     "replace": "~0.3.0",
     "moment": "~2.8.4",
-    "fs-extra": "~0.14.0"
+    "fs-extra": "~0.14.0",
+    "karma": "~0.12.31",
+    "karma-chrome-launcher": "~0.1.7",
+    "mocha": "~2.1.0",
+    "karma-mocha": "~0.1.10",
+    "karma-requirejs": "~0.2.2"
   },
   "private": true
 }

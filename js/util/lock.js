@@ -107,13 +107,9 @@ define(["dao", "globals"], function (dao, g) {
                     }
                 }
 
-                return phaseChangeInProgress(ot).then(function (phaseChangeInProgressBool) {
-                    if (phaseChangeInProgressBool) {
-                        return false;
-                    }
+                return true;
 
-                    return true;
-                });
+                // Don't also check phase change because negotiations are auto-started in phase change
             });
         });
     }

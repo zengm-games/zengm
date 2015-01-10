@@ -119,17 +119,21 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/league", "core/player",
 
         clearWatchListEl = document.getElementById("clear-watch-list");
         clearWatchListEl.addEventListener("click", function () {
+            var tx;
+
             clearWatchListEl.disabled = true;
 
+            tx = dao.tx("players", "readwrite");
             dao.players.iterate({
-                ot: dao.tx("players", "readwrite"),
+                ot: tx,
                 callback: function (p) {
                     if (p.watch) {
                         p.watch = false;
                         return p;
                     }
                 }
-            }).then(function () {
+            });
+            tx.complete().then(function () {
                 league.updateLastDbChange();
                 ui.realtimeUpdate(["clearWatchList"]);
                 clearWatchListEl.disabled = false;

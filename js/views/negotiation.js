@@ -47,14 +47,18 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "core
         } else if (req.params.hasOwnProperty("new")) {
             // If there is no active negotiation with this pid, create it
             dao.negotiations.get({key: pid}).then(function (negotiation) {
+                var tx;
                 if (!negotiation) {
-                    contractNegotiation.create(null, pid, false).then(function (error) {
-                        if (error !== undefined && error) {
-                            helpers.errorNotify(error);
-                            ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
-                        } else {
-                            ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
-                        }
+                    tx = dao.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
+                    contractNegotiation.create(tx, pid, false).then(function (error) {
+                        tx.complete().then(function () {
+                            if (error !== undefined && error) {
+                                helpers.errorNotify(error);
+                                ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
+                            } else {
+                                ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
+                            }
+                        });
                     });
                 } else {
                     ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));

@@ -4,16 +4,19 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
-newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
+phase changes in atomic transactions
   test
     huge leagues with many windows open
     benchmark, especially playoffs
     ads
+    contract negotiation start/stop and menu/phase updating
+    UI and other glitches due to tx race conditions
 
 tooling
   tools/build.js
     test on windows
   command line test runner
+    get karma running with dummy tests, then try to get mine running
   move more stuff from root to tools
 
 github

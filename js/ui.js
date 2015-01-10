@@ -178,12 +178,13 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
 
         // Watch list toggle
         $(document).on("click", ".watch", function () {
-            var pid, watchEl;
+            var pid, tx, watchEl;
 
             watchEl = this;
             pid = parseInt(watchEl.dataset.pid, 10);
 
-            dao.players.get({key: pid}).then(function (p) {
+            tx = dao.tx("players", "readwrite");
+            dao.players.get({ot: tx, key: pid}).then(function (p) {
                 if (watchEl.classList.contains("watch-active")) {
                     p.watch = false;
                     watchEl.classList.remove("watch-active");
@@ -194,8 +195,9 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
                     watchEl.title = "Remove from Watch List";
                 }
 
-                return dao.players.put({value: p});
-            }).then(function () {
+                return dao.players.put({ot: tx, value: p});
+            });
+            tx.complete().then(function () {
                 require("core/league").updateLastDbChange();
                 realtimeUpdate(["watchList"]);
             });

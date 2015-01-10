@@ -77,7 +77,8 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
             return dao.players.get({ot: tx, key: pid}).then(function (p) {
                 // Don't let the user update CPU-controlled rosters
                 if (p.tid === g.userTid) {
-                    return player.release(tx, p, justDrafted).then(function () {
+                    player.release(tx, p, justDrafted);
+                    return tx.complete().then(function () {
                         league.updateLastDbChange();
                     });
                 }

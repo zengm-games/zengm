@@ -99,8 +99,8 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             return false;
         });
         playMenu.on("click", "#play-menu-abort-phase-change", function () {
-console.log("ABORT");
             require("core/phase").abort();
+            $("#play-menu .dropdown-toggle").dropdown("toggle");
             return false;
         });
 

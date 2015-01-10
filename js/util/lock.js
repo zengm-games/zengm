@@ -71,7 +71,13 @@ define(["dao", "globals"], function (dao, g) {
                     return false;
                 }
 
-                return true;
+                return phaseChangeInProgress(ot).then(function (phaseChangeInProgressBool) {
+                    if (phaseChangeInProgressBool) {
+                        return false;
+                    }
+
+                    return true;
+                });
             });
         });
     }
@@ -101,7 +107,13 @@ define(["dao", "globals"], function (dao, g) {
                     }
                 }
 
-                return true;
+                return phaseChangeInProgress(ot).then(function (phaseChangeInProgressBool) {
+                    if (phaseChangeInProgressBool) {
+                        return false;
+                    }
+
+                    return true;
+                });
             });
         });
     }

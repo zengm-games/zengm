@@ -623,6 +623,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
      *
      * This function is called to do all the crap that must be done during transitions between phases of the game, such as moving from the regular season to the playoffs. Phases are defined in the g.PHASE.* global variables. The phase update may happen asynchronously if the database must be accessed, so do not rely on g.phase being updated immediately after this function is called. Instead, pass a callback.
      *
+     * phaseChangeTx contains the transaction for the phase change. Phase changes are atomic: if there is an error, it all gets cancelled. The user can also manually abort the phase change. IMPORTANT: For this reason, gameAttributes must be included in every phaseChangeTx to prevent g.phaseChangeInProgress from being changed. Since phaseChangeTx is readwrite, nothing else will be able to touch phaseChangeInProgress until it finishes.
+     *
      * @memberOf core.phase
      * @param {number} phase Numeric phase ID. This should always be one of the g.PHASE.* variables defined in globals.js.
      * @param {} extra Parameter containing extra info to be passed to phase changing function. Currently only used for newPhaseFantasyDraft.
@@ -635,7 +637,6 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         }
 
         return lock.phaseChangeInProgress().then(function (phaseChangeInProgress) {
-console.log("phaseChangeInProgress: " + phaseChangeInProgress);
             if (!phaseChangeInProgress) {
                 return require("core/league").setGameAttributesComplete({phaseChangeInProgress: true}).then(function () {
                     ui.updatePlayMenu(null);
@@ -690,24 +691,17 @@ console.log("phaseChangeInProgress: " + phaseChangeInProgress);
                         throw err;
                     });
                 }).spread(function (url, updateEvents) {
-// is this needed if gameAttributes is in readwrite query above? then phaseChangeInProgress will never be set false!
-/*                    return lock.phaseChangeInProgress(phaseChangeTx).then(function (phaseChangeInProgress) {
-                        // If we somehow got here
-                        if (phaseChangeTx && phaseChangeTx.abort && !phaseChangeInProgress) {
-                            phaseChangeTx.abort();
-                        }
-                    });*/
-
                     return phaseChangeTx.complete().then(function () {
                         return finalize(phase, url, updateEvents);
                     });
                 });
             }
+
+            helpers.errorNotify("Phase change already in progress, maybe in another tab.");
         });
     }
 
     function abort() {
-        // Hide errors because tx might have already ended
         try {
             // Stop error from bubbling up, since this function is only called on purpose
             phaseChangeTx.onerror = function (e) {
@@ -716,7 +710,13 @@ console.log("phaseChangeInProgress: " + phaseChangeInProgress);
             };
 
             phaseChangeTx.abort();
+        } catch (err) {
+            // Could be here because tx already ended, phase change is happening in another tab, or something weird.
+            console.log("This is probably not actually an error:");
+            console.log(err.stack);
+            helpers.errorNotify("If \"Abort\" doesn't work, check if you have another tab open.");
         } finally {
+            // If another window has a phase change in progress, this won't do anything until that finishes
             require("core/league").setGameAttributesComplete({phaseChangeInProgress: false}).then(function () {
                 return ui.updatePlayMenu(null);
             });

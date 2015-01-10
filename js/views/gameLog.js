@@ -30,9 +30,9 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "v
                     team.name = g.teamNamesCache[game.teams[i].tid];
 
                     // four factors
-                    team.efg = (team.fg + (team.tp / 2)) / team.fga;
-                    team.tovp = team.tov / (team.fga + 0.44 * team.fta + team.tov);
-                    team.orbp = team.orb / (team.orb + game.teams[1 - i].drb);
+                    team.efg = 100 * (team.fg + (team.tp / 2)) / team.fga;
+                    team.tovp = 100 * team.tov / (team.fga + 0.44 * team.fta + team.tov);
+                    team.orbp = 100 * team.orb / (team.orb + game.teams[1 - i].drb);
                     team.ftpfga = team.ft / team.fga;
 
                     // Fix the total minutes calculation, which is usually fucked up for some unknown reason
@@ -53,8 +53,6 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "v
                 game.lost.name = g.teamNamesCache[game.lost.tid];
                 game.lost.abbrev = g.teamAbbrevsCache[game.lost.tid];
 
-                
-
                 if (game.overtimes === 1) {
                     game.overtime = " (OT)";
                 } else if (game.overtimes > 1) {
@@ -62,6 +60,14 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "v
                 } else {
                     game.overtime = "";
                 }
+
+                // Quarter/overtime labels
+                game.qtrs = ["Q1", "Q2", "Q3", "Q4"];
+                for (i = 0; i < game.teams[1].ptsQtrs.length - 4; i++) {
+                    game.qtrs.push("OT" + (i + 1));
+                }
+                game.qtrs.push("F");
+console.log(game.qtrs);
 
                 return game;
             });

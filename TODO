@@ -17,7 +17,9 @@ tooling
     test on windows
   command line test runner
     get karma running with dummy tests, then try to get mine running
+  istanbul - can be run by karma
   move more stuff from root to tools
+    replace runserver.py with something from npm?
 
 github
   bitbucket issues

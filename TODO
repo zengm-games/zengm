@@ -6,6 +6,7 @@ CURRENT
 
 phase changes in atomic transactions
   test
+    in firefox, abort doesn't appear on menu in other tab
     huge leagues with many windows open
     benchmark, especially playoffs
     ads

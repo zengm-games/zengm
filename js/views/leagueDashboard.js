@@ -2,7 +2,7 @@
  * @name views.leagueDashboard
  * @namespace League dashboard, displaying several bits of information about the league/team.
  */
-define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, season, team, ko, _, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/knockout", "lib/knockout.mapping", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, season, team, ko, komapping, _, bbgmView, helpers) {
     "use strict";
 
     function InitViewModel() {
@@ -269,7 +269,7 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
         }
     }
 
-    function updatePlayoffs(inputs, updateEvents) {
+    function updatePlayoffs(inputs, updateEvents, vm) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
             return dao.playoffSeries.get({key: g.season}).then(function (playoffSeries) {
                 var found, i, rnd, series, vars;
@@ -298,6 +298,9 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                                 } else if (rnd === 3) {
                                     vars.seriesTitle = "League Finals";
                                 }
+
+                                // Update here rather than by returning vars because returning vars doesn't guarantee order of updates, so it can cause an error when showPlayoffSeries is true before the other stuff is set (try it with the same league in two tabs)
+                                komapping.fromJS({series: vars.series, seriesTitle: vars.seriesTitle}, vm);
                                 break;
                             }
                         }
@@ -307,7 +310,7 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                     }
                 }
 
-                return vars;
+                return {showPlayoffSeries: vars.showPlayoffSeries};
             });
         }
     }

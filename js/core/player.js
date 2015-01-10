@@ -236,7 +236,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
         years = years !== undefined ? years : 1;
         generate = generate !== undefined ? generate : false;
-        coachingRank = coachingRank !== undefined ? coachingRank : 15.5;
+        coachingRank = coachingRank !== undefined ? coachingRank : 15.5; // This applies to free agents!
 
         r = p.ratings.length - 1;
 

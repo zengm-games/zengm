@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/player", "core/season", "core/team", "lib/bluebird", "lib/jquery", "lib/underscore", "util/helpers", "util/random"], function (dao, db, g, ui, draft, finances, player, season, team, Promise, $, _, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase", "core/player", "core/team", "lib/bluebird", "lib/jquery", "lib/underscore", "util/helpers", "util/random"], function (dao, db, g, ui, draft, finances, phase, player, team, Promise, $, _, helpers, random) {
     "use strict";
 
     // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
@@ -29,8 +29,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
      * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
      * @returns {Promise} Promise for when it finishes.
      */
-    function setGameAttributes(gameAttributes) {
-        var key, toUpdate, tx;
+    function setGameAttributes(tx, gameAttributes) {
+        var key, toUpdate;
+
+        tx = dao.tx("gameAttributes", "readwrite", tx);
 
         toUpdate = [];
         for (key in gameAttributes) {
@@ -41,10 +43,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
             }
         }
 
-        tx = dao.tx("gameAttributes", "readwrite");
-
-        toUpdate.forEach(function (key) {
-            dao.gameAttributes.put({
+        return Promise.map(toUpdate, function (key) {
+            return dao.gameAttributes.put({
                 ot: tx,
                 value: {
                     key: key,
@@ -52,26 +52,32 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                 }
             }).then(function () {
                 g[key] = gameAttributes[key];
-            });
-
-            // Trigger a signal for the team finances view. This is stupid.
-            if (key === "gamesInProgress") {
-                if (gameAttributes[key]) {
-                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-                } else {
-                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
+            }).then(function () {
+                // Trigger a signal for the team finances view. This is stupid.
+                if (key === "gamesInProgress") {
+                    if (gameAttributes[key]) {
+                        $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
+                    } else {
+                        $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
+                    }
                 }
-            }
+            });
         });
+    }
 
-        return tx.complete().then(function () {
-            // Trigger signal for the team finances view again, or else sometimes it gets stuck. This is even more stupid.
-            if (gameAttributes.hasOwnProperty("gamesInProgress") && gameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-            } else if (gameAttributes.hasOwnProperty("gamesInProgress") && !gameAttributes.gamesInProgress) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-            }
-        });
+    // Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
+    function setGameAttributesComplete(gameAttributes) {
+        var tx;
+
+        tx = dao.tx("gameAttributes", "readwrite");
+        setGameAttributes(tx, gameAttributes);
+        return tx.complete();
+    }
+
+    // Call this after doing DB stuff so other tabs know there is new data.
+    // Runs in its own transaction, shouldn't be waited for because this only influences other tabs
+    function updateLastDbChange() {
+        setGameAttributes(null, {lastDbChange: Date.now()});
     }
 
     /**
@@ -139,6 +145,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                 nextPhase: null, // Used only for fantasy draft
                 daysLeft: 0, // Used only for free agency
                 gamesInProgress: false,
+                phaseChangeInProgress: false,
                 stopGames: false,
                 lastDbChange: 0,
                 leagueName: name,
@@ -174,7 +181,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
             // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
             helpers.resetG();
 
-            return setGameAttributes(gameAttributes);
+            return setGameAttributes(null, gameAttributes);
         }).then(function () {
             var i, j, round, scoutingRank, t, toMaybeAdd, tx;
 
@@ -458,7 +465,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                     }
 
                     // Make schedule, start season
-                    return season.newPhase(g.PHASE.REGULAR_SEASON).then(function () {
+                    return phase.newPhase(g.PHASE.REGULAR_SEASON).then(function () {
                         var lid;
 
                         ui.updateStatus("Idle");
@@ -467,7 +474,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
                         helpers.bbgmPing("league");
 
-                        // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
+                        // Auto sort player's roster (other teams will be done in phase.newPhase(g.PHASE.REGULAR_SEASON))
                         return team.rosterAutoSort(null, g.userTid).then(function () {
                             return lid;
                         });
@@ -586,6 +593,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                     g.godMode = false;
                 } else if (key === "godModeInPast") {
                     g.godModeInPast = false;
+                } else if (key === "phaseChangeInProgress") {
+                    g.godModeInPast = false;
                 } else {
                     throw new Error("Unknown game attribute: " + key);
                 }
@@ -635,8 +644,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
         exportLeague: exportLeague,
         remove: remove,
         setGameAttributes: setGameAttributes,
+        setGameAttributesComplete: setGameAttributesComplete,
         updateMetaNameRegion: updateMetaNameRegion,
         loadGameAttribute: loadGameAttribute,
-        loadGameAttributes: loadGameAttributes
+        loadGameAttributes: loadGameAttributes,
+        updateLastDbChange: updateLastDbChange
     };
 });

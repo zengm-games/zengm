@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/league", "core/player", "core/season", "core/team", "lib/bluebird", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, db, g, ui, freeAgents, finances, gameSim, league, player, season, team, Promise, advStats, eventLog, lock, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/league", "core/phase", "core/player", "core/season", "core/team", "lib/bluebird", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, db, g, ui, freeAgents, finances, gameSim, league, phase, player, season, team, Promise, advStats, eventLog, lock, helpers, random) {
     "use strict";
 
     function writeTeamStats(tx, results) {
@@ -606,15 +606,15 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
         cbNoGames = function () {
             ui.updateStatus("Idle");
-            return league.setGameAttributes({gamesInProgress: false}).then(function () {
+            return league.setGameAttributesComplete({gamesInProgress: false}).then(function () {
                 return ui.updatePlayMenu(null);
             }).then(function () {
                 // Check to see if the season is over
                 if (g.phase < g.PHASE.PLAYOFFS) {
                     return season.getSchedule().then(function (schedule) {
                         if (schedule.length === 0) {
-                            // No return here, meaning no need to wait for season.newPhase to resolve - is that correct?
-                            season.newPhase(g.PHASE.PLAYOFFS);
+                            // No return here, meaning no need to wait for phase.newPhase to resolve - is that correct?
+                            phase.newPhase(g.PHASE.PLAYOFFS);
                             ui.updateStatus("Idle");  // Just to be sure..
                         }
                     });
@@ -697,7 +697,9 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 });
             };
 
-            cbSaveResult(results.length - 1);
+            if (results.length > 0) {
+                cbSaveResult(results.length - 1);
+            }
 
             tx.complete().then(function () {
                 var i, raw, url;
@@ -720,15 +722,23 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 // Update all advanced stats every day
                 advStats.calculateAll().then(function () {
                     ui.realtimeUpdate(["gameSim"], url, function () {
-                        league.setGameAttributes({lastDbChange: Date.now()}).then(function () {
-                            if (g.phase === g.PHASE.PLAYOFFS) {
-                                season.newSchedulePlayoffsDay().then(function () {
+                        league.updateLastDbChange();
+
+                        if (g.phase === g.PHASE.PLAYOFFS) {
+                            // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
+                            tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
+                            season.newSchedulePlayoffsDay(tx).then(function (playoffsOver) {
+                                tx.complete().then(function () {
+                                    if (playoffsOver) {
+                                        return phase.newPhase(g.PHASE.BEFORE_DRAFT);
+                                    }
+                                }).then(function () {
                                     play(numDays - 1, false);
                                 });
-                            } else {
-                                play(numDays - 1, false);
-                            }
-                        });
+                            });
+                        } else {
+                            play(numDays - 1, false);
+                        }
                     }, raw);
                 });
             });
@@ -770,12 +780,18 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
                 return loadTeams(tx).then(function (teams) {
+                    var tx;
+
                     // Play games
                     // Will loop through schedule and simulate all games
                     if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
                         // Sometimes the playoff schedule isn't made the day before, so make it now
                         // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
-                        return season.newSchedulePlayoffsDay().then(function () {
+
+                        // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
+                        tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
+                        season.newSchedulePlayoffsDay(tx);
+                        tx.complete().then(function () {
                             return season.getSchedule({oneDay: true}).then(function (schedule) {
 // Can't merge easily with next call because of schedule overwriting
                                 return cbSimGames(schedule, teams);
@@ -790,24 +806,33 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
         // This simulates a day, including game simulation and any other bookkeeping that needs to be done
         cbRunDay = function () {
             if (numDays > 0) {
-                // If we didn't just stop games, let's play
-                // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
-                if (start || !g.stopGames) {
-                    return Promise.try(function () {
-                        if (g.stopGames) {
-                            return league.setGameAttributes({stopGames: false});
-                        }
-                    }).then(function () {
-                        // Check if it's the playoffs and do some special stuff if it is or isn't
+                // Hit the DB to check stopGames in case it came from another tab
+                return league.loadGameAttribute(null, "stopGames").then(function () {
+                    // If we didn't just stop games, let's play
+                    // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
+                    if (start || !g.stopGames) {
                         return Promise.try(function () {
-                            if (g.phase !== g.PHASE.PLAYOFFS) {
-                                // Decrease free agent demands and let AI teams sign them
-                                return freeAgents.decreaseDemands().then(freeAgents.autoSign);
+                            // If start is set, then reset stopGames
+                            if (g.stopGames) {
+                                return league.setGameAttributesComplete({stopGames: false});
                             }
-                        }).then(cbPlayGames);
-                    });
-                }
-            } else if (numDays === 0) {
+                        }).then(function () {
+                            // Check if it's the playoffs and do some special stuff if it is or isn't
+                            return Promise.try(function () {
+                                if (g.phase !== g.PHASE.PLAYOFFS) {
+                                    // Decrease free agent demands and let AI teams sign them
+                                    return freeAgents.decreaseDemands().then(freeAgents.autoSign);
+                                }
+                            }).then(cbPlayGames);
+                        });
+                    }
+
+                    // Update UI if stopped
+                    return cbNoGames();
+                });
+            }
+
+            if (numDays === 0) {
                 // If this is the last day, update play menu
                 return cbNoGames();
             }
@@ -821,7 +846,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 if (canStartGames) {
                     team.checkRosterSizes().then(function (userTeamSizeError) {
                         if (userTeamSizeError === null) {
-                            league.setGameAttributes({gamesInProgress: true}).then(function () {
+                            league.setGameAttributesComplete({gamesInProgress: true}).then(function () {
                                 ui.updatePlayMenu(null).then(cbRunDay);
                             });
                         } else {

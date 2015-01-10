@@ -4,26 +4,21 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
-newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
-  EVERYTHING in phase transition should be here, even in common function at the end! and test thoroughly!
-  semi-done newPhasePlayoffs
-  make sure fantasy draft still works
-  maybe separate phase change functions into own module
-    documentation of necessity of one transaction!
-  need to pass tx to setGameAttributes? probably yes
-    same with checking achievements
-  abort transaction on any error in phase change - can this be generalized for DRY? how else can i be sure it'll always work this way?
-  test on huge leagues with many windows open
-
-multi-window race conditions
-  could set a flag in the DB, but then how do I recover from errors?
-  if all phase change is in one transaction, then right at the end make sure the phase hasn't changed yet. if it has, abort transaction
+phase changes in atomic transactions
+  test
+    huge leagues with many windows open
+    benchmark, especially playoffs
+    ads
+    UI and other glitches due to tx race conditions
 
 tooling
   tools/build.js
     test on windows
   command line test runner
+    get karma running with dummy tests, then try to get mine running
+  istanbul - can be run by karma
   move more stuff from root to tools
+    replace runserver.py with something from npm?
 
 github
   bitbucket issues

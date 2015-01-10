@@ -12,7 +12,7 @@ define(["dao", "globals", "lib/underscore"], function (dao, g, _) {
      * @return {Promise}
      */
     function assessPayrollMinLuxury(tx) {
-        tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite");
+        tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite", tx);
 
         return require("core/team").getPayrolls(tx).then(function (payrolls) {
             // Update teams object store

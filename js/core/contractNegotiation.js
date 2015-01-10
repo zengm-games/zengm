@@ -8,29 +8,25 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
     /**
      * Start a new contract negotiation with a player.
      *
-     * If ot is null, then the callback will run only after the transaction finishes (i.e. only after the new negotiation is actually saved to the database). If ot is not null, then the callback might run earlier, so don't rely on the negotiation actually being in the database yet.
-     *
-     * So, ot should NOT be null if you're starting multiple negotiations as a component of some larger operation, but the presence of a particular negotiation in the database doesn't matter. ot should be null if you need to ensure that the roster order is updated before you do something that will read the roster order (like updating the UI). (WARNING: This means that there is actually a race condition for when this is called from season.newPhaseResignPlayers is the UI is updated before the user's teams negotiations are all saved to the database! In practice, this doesn't seem to be a problem now, but it could be eventually.)
-     *
      * @memberOf core.contractNegotiation
-     * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.
+     * @param {IDBTransaction|null} tx An IndexedDB transaction on gameAttributes, messages, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
      * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
      * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
      */
-    function create(ot, pid, resigning) {
+    function create(tx, pid, resigning) {
         if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) && !resigning) {
             return Promise.resolve("You're not allowed to sign free agents now.");
         }
 
         // Can't flatten because of error callbacks
-        return lock.canStartNegotiation(ot).then(function (canStartNegotiation) {
+        return lock.canStartNegotiation(tx).then(function (canStartNegotiation) {
             if (!canStartNegotiation) {
                 return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.";
             }
 
             return dao.players.count({
-                ot: ot,
+                ot: tx,
                 index: "tid",
                 key: g.userTid
             }).then(function (numPlayersOnRoster) {
@@ -38,7 +34,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
                     return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
                 }
 
-                return dao.players.get({ot: ot, key: pid}).then(function (p) {
+                return dao.players.get({ot: tx, key: pid}).then(function (p) {
                     var negotiation, playerAmount, playerYears;
 
                     if (p.tid !== g.PLAYER.FREE_AGENT) {
@@ -65,10 +61,10 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
                         resigning: resigning
                     };
 
-                    return dao.negotiations.add({ot: ot, value: negotiation}).then(function () {
-                        require("core/league").setGameAttributes({lastDbChange: Date.now()});
+                    return dao.negotiations.add({ot: tx, value: negotiation}).then(function () {
+                        require("core/league").updateLastDbChange();
                         ui.updateStatus("Contract negotiation");
-                        return ui.updatePlayMenu(ot);
+                        return ui.updatePlayMenu(tx);
                     });
                 });
             });
@@ -212,7 +208,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
         });
 
         return tx.complete().then(function () {
-            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
+            require("core/league").updateLastDbChange();
         });
     }
 
@@ -224,12 +220,14 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
      * @return {Promise}
      */
     function cancel(pid) {
+        var tx;
+
+        tx = dao.tx(["gameAttributes", "messages", "negotiations"], "readwrite");
+
         // Delete negotiation
-        return dao.negotiations.delete({key: pid}).then(function () {
-            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
-        }).then(function () {
+        dao.negotiations.delete({ot: tx, key: pid}).then(function () {
             // If no negotiations are in progress, update status
-            return lock.negotiationInProgress(null);
+            return lock.negotiationInProgress(tx);
         }).then(function (negotiationInProgress) {
             if (!negotiationInProgress) {
                 if (g.phase === g.PHASE.FREE_AGENCY) {
@@ -237,8 +235,12 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
                 } else {
                     ui.updateStatus("Idle");
                 }
-                ui.updatePlayMenu();
+                ui.updatePlayMenu(tx);
             }
+        });
+
+        return tx.complete().then(function () {
+            require("core/league").updateLastDbChange();
         });
     }
 
@@ -248,14 +250,14 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
      * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is re-signing players at the end of the season, although that should probably change eventually.
      *
      * @memberOf core.contractNegotiation
+     * @param {IDBTransaction} tx An IndexedDB transaction on gameAttributes, messages, and negotiations, readwrite.
      * @return {Promise}
      */
-    function cancelAll() {
-        return dao.negotiations.clear().then(function () {
-            return require("core/league").setGameAttributes({lastDbChange: Date.now()});
-        }).then(function () {
+    function cancelAll(tx) {
+        return dao.negotiations.clear({ot: tx}).then(function () {
+            require("core/league").updateLastDbChange();
             ui.updateStatus("Idle");
-            return ui.updatePlayMenu(null);
+            return ui.updatePlayMenu(tx);
         });
     }
 
@@ -326,7 +328,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
             return tx.complete().then(function () {
                 return cancel(pid);
             }).then(function () {
-                return require("core/league").setGameAttributes({lastDbChange: Date.now()});
+                require("core/league").updateLastDbChange();
             });
         });
     }

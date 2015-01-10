@@ -98,6 +98,11 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             api.play("untilRegularSeason");
             return false;
         });
+        playMenu.on("click", "#play-menu-abort-phase-change", function () {
+            require("core/phase").abort();
+            $("#play-menu .dropdown-toggle").dropdown("toggle");
+            return false;
+        });
 
         // Bootstrap's collapsable nav doesn't play nice with single page apps
         // unless you manually close it when a link is clicked. However, I need
@@ -173,12 +178,13 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
 
         // Watch list toggle
         $(document).on("click", ".watch", function () {
-            var pid, watchEl;
+            var pid, tx, watchEl;
 
             watchEl = this;
             pid = parseInt(watchEl.dataset.pid, 10);
 
-            dao.players.get({key: pid}).then(function (p) {
+            tx = dao.tx("players", "readwrite");
+            dao.players.get({ot: tx, key: pid}).then(function (p) {
                 if (watchEl.classList.contains("watch-active")) {
                     p.watch = false;
                     watchEl.classList.remove("watch-active");
@@ -189,10 +195,10 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
                     watchEl.title = "Remove from Watch List";
                 }
 
-                return dao.players.put({value: p});
-            }).then(function () {
-                return require("core/league").setGameAttributes({lastDbChange: Date.now()});
-            }).then(function () {
+                return dao.players.put({ot: tx, value: p});
+            });
+            tx.complete().then(function () {
+                require("core/league").updateLastDbChange();
                 realtimeUpdate(["watchList"]);
             });
         });
@@ -376,7 +382,8 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
                       {id: "play-menu-contract-negotiation-list", url: helpers.leagueUrl(["negotiation"]), label: "Continue re-signing players"},
                       {id: "play-menu-message", url: helpers.leagueUrl(["message"]), label: "Read new message"},
                       {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"},
-                      {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"}];
+                      {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
+                      {id: "play-menu-abort-phase-change", url: "", label: "Abort"}];
 
         if (g.phase === g.PHASE.PRESEASON) {
             // Preseason
@@ -404,14 +411,15 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             keys = ["play-menu-contract-negotiation-list", "play-menu-until-free-agency"];
         } else if (g.phase === g.PHASE.FREE_AGENCY) {
             // Offseason - free agency
-            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-preseason"];
+            keys = ["play-menu-day", "play-menu-week", "play-menu-until-preseason"];
         }
 
         return Promise.all([
             lock.unreadMessage(ot),
             lock.gamesInProgress(ot),
-            lock.negotiationInProgress(ot)
-        ]).spread(function (unreadMessage, gamesInProgress, negotiationInProgress) {
+            lock.negotiationInProgress(ot),
+            lock.phaseChangeInProgress(ot)
+        ]).spread(function (unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress) {
             var i, ids, j, someOptions;
 
             if (unreadMessage) {
@@ -422,6 +430,9 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             }
             if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
                 keys = ["play-menu-contract-negotiation"];
+            }
+            if (phaseChangeInProgress) {
+                keys = ["play-menu-abort-phase-change"];
             }
 
             // If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.
@@ -469,7 +480,7 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
         if (statusText === undefined) {
             g.vm.topMenu.statusText(oldStatus);
         } else if (statusText !== oldStatus) {
-            require("core/league").setGameAttributes({statusText: statusText}).then(function () {
+            require("core/league").setGameAttributes(null, {statusText: statusText}).then(function () {
                 g.vm.topMenu.statusText(statusText);
 //                console.log("Set status: " + statusText);
             });
@@ -492,7 +503,7 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
         if (phaseText === undefined) {
             g.vm.topMenu.phaseText(oldPhaseText);
         } else if (phaseText !== oldPhaseText) {
-            require("core/league").setGameAttributes({phaseText: phaseText}).then(function () {
+            require("core/league").setGameAttributes(null, {phaseText: phaseText}).then(function () {
                 g.vm.topMenu.phaseText(phaseText);
 //                console.log("Set phase: " + phaseText);
             });

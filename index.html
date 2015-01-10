@@ -201,11 +201,11 @@
                 <li data-bind="visible: lid() !== undefined && godMode" style="display: none"><a data-bind="attrLeagueUrl: {href: ['new_team']}" class="god-mode">Switch Team</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none" role="presentation" class="divider"></li>
                 <li role="presentation" class="dropdown-header">Use at your own risk!</li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PLAYOFFS); }())">Skip To Playoffs</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.BEFORE_DRAFT); }())">Skip To Before Draft</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.AFTER_DRAFT); }())">Skip To After Draft</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); season = require('core/season'); season.newPhase(g.PHASE.PRESEASON); }())">Skip To Preseason</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { draft = require('core/draft'); draft.untilUserOrEnd(); }())">Force Resume Draft</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); require('core/phase').newPhase(g.PHASE.PLAYOFFS); }())">Skip To Playoffs</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); require('core/phase').newPhase(g.PHASE.BEFORE_DRAFT); }())">Skip To Before Draft</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); require('core/phase').newPhase(g.PHASE.AFTER_DRAFT); }())">Skip To After Draft</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); require('core/phase').newPhase(g.PHASE.PRESEASON); }())">Skip To Preseason</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { require('core/draft').untilUserOrEnd(); }())">Force Resume Draft</a></li>
                 <li><a href="" onclick="toggleDebugMode()" id="toggle-debug-mode">Toggle Debug Mode</a></li>
                 <li><a href="" onclick="resetDb()">Reset DB</a></li>
               </ul>

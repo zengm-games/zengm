@@ -39,6 +39,19 @@ define(["dao", "globals"], function (dao, g) {
     }
 
     /**
+     * Is a phase change in progress?
+     *
+     * @memberOf util.lock
+     * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
+     * @return {Promise.boolean}
+     */
+    function phaseChangeInProgress(ot) {
+        return require("core/league").loadGameAttribute(ot, "phaseChangeInProgress").then(function () {
+            return g.phaseChangeInProgress;
+        });
+    }
+
+    /**
      * Can new game simulations be started?
      *
      * Calls the callback function with either true or false. If games are in progress or any contract negotiation is in progress, false.
@@ -58,7 +71,13 @@ define(["dao", "globals"], function (dao, g) {
                     return false;
                 }
 
-                return true;
+                return phaseChangeInProgress(ot).then(function (phaseChangeInProgressBool) {
+                    if (phaseChangeInProgressBool) {
+                        return false;
+                    }
+
+                    return true;
+                });
             });
         });
     }
@@ -89,6 +108,8 @@ define(["dao", "globals"], function (dao, g) {
                 }
 
                 return true;
+
+                // Don't also check phase change because negotiations are auto-started in phase change
             });
         });
     }
@@ -119,6 +140,7 @@ define(["dao", "globals"], function (dao, g) {
     return {
         gamesInProgress: gamesInProgress,
         negotiationInProgress: negotiationInProgress,
+        phaseChangeInProgress: phaseChangeInProgress,
         canStartGames: canStartGames,
         canStartNegotiation: canStartNegotiation,
         unreadMessage: unreadMessage

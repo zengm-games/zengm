@@ -1198,13 +1198,11 @@ console.log(dv);*/
      * Basically.. switch to rebuilding if you're old and your success is fading, and switch to contending if you have a good amount of young talent on rookie deals and your success is growing.
      *
      * @memberOf core.team
+     * @param {IDBTransaction} tx An IndexedDB transaction on players, playerStats, and teams, readwrite.
      * @return {Promise}
      */
-    function updateStrategies() {
-        var tx;
-
-        tx = dao.tx(["players", "playerStats", "teams"], "readwrite");
-        dao.teams.iterate({
+    function updateStrategies(tx) {
+        return dao.teams.iterate({
             ot: tx,
             callback: function (t) {
                 var dWon, s, won;
@@ -1274,8 +1272,6 @@ console.log(dv);*/
                 });
             }
         });
-
-        return tx.complete();
     }
 
     /**

@@ -13,22 +13,24 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
      * @memberOf core.freeAgents
      * @return {Promise}
      */
-    function autoSign() {
+    function autoSign(tx) {
+        tx = dao.tx(["players", "playerStats", "releasedPlayers", "teams"], "readwrite", tx);
+
         return Promise.all([
             team.filter({
+                ot: tx,
                 attrs: ["strategy"],
                 season: g.season
             }),
             dao.players.getAll({
+                ot: tx,
                 index: "tid",
                 key: g.PLAYER.FREE_AGENT
             })
         ]).spread(function (teams, players) {
-            var i, signTeam, strategies, tids, tx;
+            var i, signTeam, strategies, tids;
 
             strategies = _.pluck(teams, "strategy");
-
-            tx = dao.tx(["players", "playerStats", "releasedPlayers"], "readwrite");
 
             // List of free agents, sorted by value
             players.sort(function (a, b) { return b.value - a.value; });
@@ -49,7 +51,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
 
                 tid = tids[ti];
 
-                // Run callback when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
+                // Finish when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
                 if (ti >= tids.length) {
                     return;
                 }
@@ -220,18 +222,18 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
      * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
      */
     function play(numDays, start) {
-        var cbNoDays, cbRunDay, season;
+        var cbNoDays, cbRunDay, phase;
 
         start = start !== undefined ? start : true;
-        season = require("core/season");
+        phase = require("core/phase");
 
         // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
         cbNoDays = function () {
-            require("core/league").setGameAttributes({gamesInProgress: false}).then(function () {
+            require("core/league").setGameAttributesComplete({gamesInProgress: false}).then(function () {
                 ui.updatePlayMenu(null).then(function () {
                     // Check to see if free agency is over
                     if (g.daysLeft === 0) {
-                        season.newPhase(g.PHASE.PRESEASON).then(function () {
+                        phase.newPhase(g.PHASE.PRESEASON).then(function () {
                             ui.updateStatus("Idle");
                         });
                     }
@@ -247,7 +249,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
             cbYetAnother = function () {
                 decreaseDemands().then(function () {
                     autoSign().then(function () {
-                        require("core/league").setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}).then(function () {
+                        require("core/league").setGameAttributesComplete({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}).then(function () {
                             if (g.daysLeft > 0 && numDays > 0) {
                                 ui.realtimeUpdate(["playerMovement"], undefined, function () {
                                     ui.updateStatus(g.daysLeft + " days left");
@@ -266,7 +268,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                 // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
                 if (start || !g.stopGames) {
                     if (g.stopGames) {
-                        require("core/league").setGameAttributes({stopGames: false}).then(cbYetAnother);
+                        require("core/league").setGameAttributesComplete({stopGames: false}).then(cbYetAnother);
                     } else {
                         cbYetAnother();
                     }
@@ -282,7 +284,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
         if (start) {
             lock.canStartGames(null).then(function (canStartGames) {
                 if (canStartGames) {
-                    require("core/league").setGameAttributes({gamesInProgress: true}).then(function () {
+                    require("core/league").setGameAttributesComplete({gamesInProgress: true}).then(function () {
                         ui.updatePlayMenu(null).then(function () {
                             cbRunDay();
                         });

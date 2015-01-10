@@ -30,13 +30,13 @@ define(["dao", "db", "globals", "ui", "core/league", "core/team", "lib/underscor
             // Update meta cache of user's team
             return league.updateMetaNameRegion(userName, userRegion);
         }).then(function () {
-            return league.setGameAttributes({
-                lastDbChange: Date.now(),
+            return league.setGameAttributesComplete({
                 teamAbbrevsCache: req.params.abbrev,
                 teamRegionsCache: req.params.region,
                 teamNamesCache: req.params.name
             });
         }).then(function () {
+            league.updateLastDbChange();
             button.disabled = false;
             ui.realtimeUpdate([], helpers.leagueUrl(["edit_team_info"]));
         });
@@ -145,13 +145,13 @@ define(["dao", "db", "globals", "ui", "core/league", "core/team", "lib/underscor
                     // Update meta cache of user's team
                     return league.updateMetaNameRegion(userName, userRegion);
                 }).then(function () {
-                    return league.setGameAttributes({
-                        lastDbChange: Date.now(),
+                    return league.setGameAttributesComplete({
                         teamAbbrevsCache: _.pluck(newTeams, "abbrev"),
                         teamRegionsCache: _.pluck(newTeams, "region"),
                         teamNamesCache: _.pluck(newTeams, "name")
                     });
                 }).then(function () {
+                    league.updateLastDbChange();
                     ui.realtimeUpdate(["dbChange"]);
                 });
             };

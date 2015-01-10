@@ -44,15 +44,6 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
         }
 
         return Promise.map(toUpdate, function (key) {
-            // Trigger a signal for the team finances view. This is stupid.
-            if (key === "gamesInProgress") {
-                if (gameAttributes[key]) {
-                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-                } else {
-                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-                }
-            }
-
             return dao.gameAttributes.put({
                 ot: tx,
                 value: {
@@ -61,6 +52,15 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                 }
             }).then(function () {
                 g[key] = gameAttributes[key];
+            }).then(function () {
+                // Trigger a signal for the team finances view. This is stupid.
+                if (key === "gamesInProgress") {
+                    if (gameAttributes[key]) {
+                        $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
+                    } else {
+                        $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
+                    }
+                }
             });
         });
     }

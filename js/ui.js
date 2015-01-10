@@ -403,7 +403,7 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             keys = ["play-menu-contract-negotiation-list", "play-menu-until-free-agency"];
         } else if (g.phase === g.PHASE.FREE_AGENCY) {
             // Offseason - free agency
-            keys = ["play-menu-day", "play-menu-week", "play-menu-month", "play-menu-until-preseason"];
+            keys = ["play-menu-day", "play-menu-week", "play-menu-until-preseason"];
         }
 
         return Promise.all([

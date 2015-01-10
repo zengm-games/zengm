@@ -13,22 +13,24 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
      * @memberOf core.freeAgents
      * @return {Promise}
      */
-    function autoSign() {
+    function autoSign(tx) {
+        tx = dao.tx(["players", "playerStats", "releasedPlayers", "teams"], "readwrite", tx);
+
         return Promise.all([
             team.filter({
+                ot: tx,
                 attrs: ["strategy"],
                 season: g.season
             }),
             dao.players.getAll({
+                ot: tx,
                 index: "tid",
                 key: g.PLAYER.FREE_AGENT
             })
         ]).spread(function (teams, players) {
-            var i, signTeam, strategies, tids, tx;
+            var i, signTeam, strategies, tids;
 
             strategies = _.pluck(teams, "strategy");
-
-            tx = dao.tx(["players", "playerStats", "releasedPlayers"], "readwrite");
 
             // List of free agents, sorted by value
             players.sort(function (a, b) { return b.value - a.value; });
@@ -49,7 +51,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
 
                 tid = tids[ti];
 
-                // Run callback when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
+                // Finish when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
                 if (ti >= tids.length) {
                     return;
                 }

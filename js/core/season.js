@@ -600,10 +600,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         });
     }
 
-    function newPhasePreseason() {
-        tx = dao.tx(["gameAttributes", "players", "playerStats", "teams"], "readwrite");
-
-        return freeAgents.autoSign().then(function () { // Important: do this before changing the season or contracts and stats are fucked up
+    function newPhasePreseason(tx) {
+        return freeAgents.autoSign(tx).then(function () { // Important: do this before changing the season or contracts and stats are fucked up
             return require("core/league").setGameAttributes(tx, {season: g.season + 1});
         }).then(function () {
             var coachingRanks, scoutingRank;
@@ -1216,7 +1214,8 @@ tx = dao.tx(["gameAttributes", "players", "releasedPlayers"], "readwrite");
 
         return Promise.try(function () {
             if (phase === g.PHASE.PRESEASON) {
-                return newPhasePreseason();
+                tx = dao.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
+                return newPhasePreseason(tx);
             }
             if (phase === g.PHASE.REGULAR_SEASON) {
                 tx = dao.tx(["gameAttributes", "messages", "schedule"], "readwrite");

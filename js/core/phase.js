@@ -661,11 +661,11 @@ console.log("phaseChangeInProgress: " + phaseChangeInProgress);
                         return newPhaseBeforeDraft(phaseChangeTx);
                     }
                     if (phase === g.PHASE.DRAFT) {
-                        phaseChangeTx = dao.tx(["draftPicks", "draftOrder", "players", "teams"], "readwrite");
+                        phaseChangeTx = dao.tx(["draftPicks", "draftOrder", "gameAttributes", "players", "teams"], "readwrite");
                         return newPhaseDraft(phaseChangeTx);
                     }
                     if (phase === g.PHASE.AFTER_DRAFT) {
-                        phaseChangeTx = dao.tx("draftPicks", "readwrite");
+                        phaseChangeTx = dao.tx(["draftPicks", "gameAttributes"], "readwrite");
                         return newPhaseAfterDraft(phaseChangeTx);
                     }
                     if (phase === g.PHASE.RESIGN_PLAYERS) {
@@ -690,8 +690,14 @@ console.log("phaseChangeInProgress: " + phaseChangeInProgress);
                         throw err;
                     });
                 }).spread(function (url, updateEvents) {
-                    
-                    
+// is this needed if gameAttributes is in readwrite query above? then phaseChangeInProgress will never be set false!
+/*                    return lock.phaseChangeInProgress(phaseChangeTx).then(function (phaseChangeInProgress) {
+                        // If we somehow got here
+                        if (phaseChangeTx && phaseChangeTx.abort && !phaseChangeInProgress) {
+                            phaseChangeTx.abort();
+                        }
+                    });*/
+
                     return phaseChangeTx.complete().then(function () {
                         return finalize(phase, url, updateEvents);
                     });
@@ -701,7 +707,8 @@ console.log("phaseChangeInProgress: " + phaseChangeInProgress);
     }
 
     function abort() {
-        if (phaseChangeTx && phaseChangeTx.abort) {
+        // Hide errors because tx might have already ended
+        try {
             // Stop error from bubbling up, since this function is only called on purpose
             phaseChangeTx.onerror = function (e) {
                 e.stopPropagation();
@@ -709,11 +716,11 @@ console.log("phaseChangeInProgress: " + phaseChangeInProgress);
             };
 
             phaseChangeTx.abort();
+        } finally {
+            require("core/league").setGameAttributesComplete({phaseChangeInProgress: false}).then(function () {
+                return ui.updatePlayMenu(null);
+            });
         }
-
-        return require("core/league").setGameAttributesComplete({phaseChangeInProgress: false}).then(function () {
-            return ui.updatePlayMenu(null);
-        });
     }
 
     return {

@@ -28,6 +28,9 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "v
                     game.teams[i].region = g.teamRegionsCache[game.teams[i].tid];
                     game.teams[i].name = g.teamNamesCache[game.teams[i].tid];
 
+                    // for oReb% calculation
+                    game.teams[i].oppDrb = game.teams[1 - i].drb;
+
                     // Fix the total minutes calculation, which is usually fucked up for some unknown reason
                     game.teams[i].min = 240 + 25 * game.overtimes;
 
@@ -45,6 +48,8 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "v
                 game.lost.region = g.teamRegionsCache[game.lost.tid];
                 game.lost.name = g.teamNamesCache[game.lost.tid];
                 game.lost.abbrev = g.teamAbbrevsCache[game.lost.tid];
+
+                
 
                 if (game.overtimes === 1) {
                     game.overtime = " (OT)";

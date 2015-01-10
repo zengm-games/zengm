@@ -1,4 +1,4 @@
-/*eslint no-unused-vars: 0*/
+/*eslint no-unused-vars: 0, no-underscore-dangle: 0*/
 var baseUrl, inKarma, should, startTests;
 
 inKarma = window.__karma__ !== undefined;

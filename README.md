@@ -7,9 +7,8 @@ The game is implemented entirely in client-side JavaScript, backed by IndexedDB.
 Copyright (C) Jeremy Scheff. All rights reserved.
 
 * Email: commissioner@basketball-gm.com
-
 * Website: <http://basketball-gm.com/>
-
+* Development: <https://github.com/dumbmatter/basketball-gm>
 * Discussion: <http://www.reddit.com/r/BasketballGM/>
 
 **Basketball GM is NOT open source, but it is also not completely closed. Please
@@ -65,10 +64,9 @@ enabled.
 see LICENSE.md for details.**
 
 In production, JavaScript and CSS files are minified. See below for more info.
-But if you just want to play around with the code a bit, you don't have to worry
-about that. You can bypass minification by going to Tools > Enable Debug Mode
-within the game. Then, edit any file in the `css`, `js`, or `templates` folders
-and reload the game to see your changes.
+But you don't really have to worry about that. You can bypass minification by
+going to Tools > Enable Debug Mode within the game. Then, edit any file in the
+`css`, `js`, or `templates` folders and reload the game to see your changes.
 
 If you want to contribute but get stuck somewhere, please contact me! I'm happy
 to help.
@@ -159,7 +157,7 @@ working on something to keep me in the loop.
 
 
 
-## Even More Development Info
+## Less Important Development Info
 
 ### Bootstrap
 
@@ -177,9 +175,9 @@ For instance, "defensive rebounds" is "drb".
 
 - Make sure tests all pass (if necessary)
 
-- Write database upgrade code in db.js (if not already done piecemeal)
+- Write database upgrade code in `db.js` (if not already done piecemeal)
 
-- Write key changes in js/data/changes.js
+- Write key changes in `js/data/changes.js`
 
 - Set version in index.html, CHANGES.md, and README.md, like <http://semver.org/>
 

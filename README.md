@@ -112,6 +112,12 @@ Crockfordian stuff. To run ESLint on the entire codebase, run
 
     npm run lint
 
+Integration and unit tests are bunched together in the `js/test` folder.
+Coverage is not great. They can be run manually within a web browser by going to
+<http://localhost:8080/test> or from the command line in Karma with
+
+    npm run test
+
 ### Code Overview
 
 Basketball GM is a single-page app that runs almost entirely client-side by
@@ -137,13 +143,6 @@ Code should ideally be documented as described in the Google Closure Compiler
 documentation:
 <https://developers.google.com/closure/compiler/docs/js-for-compiler>.
 Google Closure Compiler itself isn't actually used for anything (yet).
-
-### Tests
-
-Integration and unit tests are bunched together in the `js/test` folder.
-Coverage is not great. Also, they can only be run from within a web browser by
-manually going to <http://localhost:8080/test>. It would be great if someone
-could improve the testing situation!
 
 ### Git Workflow
 

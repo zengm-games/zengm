@@ -2,7 +2,7 @@
  * @name core.league
  * @namespace Creating and removing leagues.
  */
-define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/player", "core/season", "core/team", "lib/bluebird", "lib/jquery", "lib/underscore", "util/helpers", "util/random"], function (dao, db, g, ui, draft, finances, player, season, team, Promise, $, _, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase", "core/player", "core/team", "lib/bluebird", "lib/jquery", "lib/underscore", "util/helpers", "util/random"], function (dao, db, g, ui, draft, finances, phase, player, team, Promise, $, _, helpers, random) {
     "use strict";
 
     // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
@@ -464,7 +464,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
                     }
 
                     // Make schedule, start season
-                    return season.newPhase(g.PHASE.REGULAR_SEASON).then(function () {
+                    return phase.newPhase(g.PHASE.REGULAR_SEASON).then(function () {
                         var lid;
 
                         ui.updateStatus("Idle");
@@ -473,7 +473,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/playe
 
                         helpers.bbgmPing("league");
 
-                        // Auto sort player's roster (other teams will be done in season.newPhase(g.PHASE.REGULAR_SEASON))
+                        // Auto sort player's roster (other teams will be done in phase.newPhase(g.PHASE.REGULAR_SEASON))
                         return team.rosterAutoSort(null, g.userTid).then(function () {
                             return lid;
                         });

@@ -44,6 +44,19 @@ define(["lib/knockout"], function (ko) {
         UNDRAFTED_FANTASY_TEMP: -6 // Store current draft class here during fantasy draft
     };
 
+    g.PHASE_TEXT = {
+        "-1": " fantasy draft",
+        "0": " preseason",
+        "1": " regular season",
+        "2": " regular season",
+        "3": " playoffs",
+        "4": " before draft",
+        "5": " draft",
+        "6": " after draft",
+        "7": " re-sign players",
+        "8": " free agency"
+    };
+
 /*    // Web workers - create only if we're not already inside a web worker!
     g.gameSimWorkers = [];
     if (typeof document !== "undefined") {
@@ -78,7 +91,7 @@ define(["lib/knockout"], function (ko) {
     g.sport = "basketball"; // For account ajax stuff
 
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "gameSimWorkers", "vm", "enableLogging", "tld", "sport", "notInDb"];
+    g.notInDb = ["dbm", "dbl", "lid", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "gameSimWorkers", "vm", "enableLogging", "tld", "sport", "notInDb"];
 
     return g;
 });

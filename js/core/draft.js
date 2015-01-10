@@ -384,11 +384,11 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
             // Called after either the draft is over or it's the user's pick
             afterDoneAuto = function (draftOrder, pids) {
                 return setOrder(null, draftOrder).then(function () {
-                    var season, tx;
+                    var phase, tx;
 
                     // Is draft over?;
                     if (draftOrder.length === 0) {
-                        season = require("core/season"); // Circular reference
+                        phase = require("core/phase"); // Circular reference
 
                         // Fantasy draft special case!
                         if (g.phase === g.PHASE.FANTASY_DRAFT) {
@@ -421,7 +421,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                                     phase: g.nextPhase,
                                     nextPhase: null
                                 }).then(function () {
-                                    ui.updatePhase(g.season + season.phaseText[g.phase]);
+                                    ui.updatePhase(g.season + g.PHASE_TEXT[g.phase]);
                                     return ui.updatePlayMenu(null).then(function () {
                                         require("core/league").updateLastDbChange();
                                         return pids;
@@ -431,7 +431,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                         }
 
                         // Non-fantasy draft
-                        return season.newPhase(g.PHASE.AFTER_DRAFT).then(function () {
+                        return phase.newPhase(g.PHASE.AFTER_DRAFT).then(function () {
                             return pids;
                         });
                     }

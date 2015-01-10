@@ -2,7 +2,7 @@
  * @name api
  * @namespace Functions called directly in response to user action (clicking a button, etc).
  */
-define(["dao", "db", "globals", "ui", "core/freeAgents", "core/game", "core/league", "core/season", "lib/jquery"], function (dao, db, g, ui, freeAgents, game, league, season, $) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/game", "core/league", "core/phase", "core/season", "lib/jquery"], function (dao, g, ui, freeAgents, game, league, phase, season, $) {
     "use strict";
 
     function play(amount) {
@@ -46,18 +46,18 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/game", "core/leag
             });
         } else if (amount === "untilDraft") {
             if (g.phase === g.PHASE.BEFORE_DRAFT) {
-                season.newPhase(g.PHASE.DRAFT);
+                phase.newPhase(g.PHASE.DRAFT);
             }
         } else if (amount === "untilResignPlayers") {
             if (g.phase === g.PHASE.AFTER_DRAFT) {
-                season.newPhase(g.PHASE.RESIGN_PLAYERS);
+                phase.newPhase(g.PHASE.RESIGN_PLAYERS);
             }
         } else if (amount === "untilFreeAgency") {
             if (g.phase === g.PHASE.RESIGN_PLAYERS) {
                 dao.negotiations.count().then(function (numRemaining) {
                     // Show warning dialog only if there are players remaining un-re-signed
                     if (numRemaining === 0 || window.confirm("Are you sure you want to proceed to free agency while " + numRemaining + " of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.")) {
-                        season.newPhase(g.PHASE.FREE_AGENCY).then(function () {
+                        phase.newPhase(g.PHASE.FREE_AGENCY).then(function () {
                             ui.updateStatus(g.daysLeft + " days left");
                         });
                     }
@@ -65,7 +65,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/game", "core/leag
             }
         } else if (amount === "untilRegularSeason") {
             if (g.phase === g.PHASE.PRESEASON) {
-                season.newPhase(g.PHASE.REGULAR_SEASON);
+                phase.newPhase(g.PHASE.REGULAR_SEASON);
             }
         }
 

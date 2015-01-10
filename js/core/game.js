@@ -2,7 +2,7 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/league", "core/player", "core/season", "core/team", "lib/bluebird", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, db, g, ui, freeAgents, finances, gameSim, league, player, season, team, Promise, advStats, eventLog, lock, helpers, random) {
+define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/league", "core/phase", "core/player", "core/season", "core/team", "lib/bluebird", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, db, g, ui, freeAgents, finances, gameSim, league, phase, player, season, team, Promise, advStats, eventLog, lock, helpers, random) {
     "use strict";
 
     function writeTeamStats(tx, results) {
@@ -613,8 +613,8 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 if (g.phase < g.PHASE.PLAYOFFS) {
                     return season.getSchedule().then(function (schedule) {
                         if (schedule.length === 0) {
-                            // No return here, meaning no need to wait for season.newPhase to resolve - is that correct?
-                            season.newPhase(g.PHASE.PLAYOFFS);
+                            // No return here, meaning no need to wait for phase.newPhase to resolve - is that correct?
+                            phase.newPhase(g.PHASE.PLAYOFFS);
                             ui.updateStatus("Idle");  // Just to be sure..
                         }
                     });
@@ -728,7 +728,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                             season.newSchedulePlayoffsDay(tx).then(function (playoffsOver) {
                                 tx.complete().then(function () {
                                     if (playoffsOver) {
-                                        return season.newPhase(g.PHASE.BEFORE_DRAFT);
+                                        return phase.newPhase(g.PHASE.BEFORE_DRAFT);
                                     }
                                 }).then(function () {
                                     play(numDays - 1, false);

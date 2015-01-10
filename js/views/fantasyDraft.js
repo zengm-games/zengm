@@ -2,7 +2,7 @@
  * @name views.fantasyDraft
  * @namespace Fantasy draft confirmation.
  */
-define(["globals", "ui", "core/season", "util/bbgmView", "util/helpers"], function (g, ui, season, bbgmView, helpers) {
+define(["globals", "ui", "core/phase", "util/bbgmView", "util/helpers"], function (g, ui, phase, bbgmView, helpers) {
     "use strict";
 
     function get() {
@@ -25,7 +25,7 @@ define(["globals", "ui", "core/season", "util/bbgmView", "util/helpers"], functi
 
         document.getElementById("start-fantasy-draft").disabled = true;
 
-        season.newPhase(g.PHASE.FANTASY_DRAFT, position);
+        phase.newPhase(g.PHASE.FANTASY_DRAFT, position);
     }
 
     function uiFirst() {

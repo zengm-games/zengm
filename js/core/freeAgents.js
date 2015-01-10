@@ -222,10 +222,10 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
      * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
      */
     function play(numDays, start) {
-        var cbNoDays, cbRunDay, season;
+        var cbNoDays, cbRunDay, phase;
 
         start = start !== undefined ? start : true;
-        season = require("core/season");
+        phase = require("core/phase");
 
         // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
         cbNoDays = function () {
@@ -233,7 +233,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                 ui.updatePlayMenu(null).then(function () {
                     // Check to see if free agency is over
                     if (g.daysLeft === 0) {
-                        season.newPhase(g.PHASE.PRESEASON).then(function () {
+                        phase.newPhase(g.PHASE.PRESEASON).then(function () {
                             ui.updateStatus("Idle");
                         });
                     }

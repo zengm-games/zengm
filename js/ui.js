@@ -98,6 +98,11 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             api.play("untilRegularSeason");
             return false;
         });
+        playMenu.on("click", "#play-menu-abort-phase-change", function () {
+console.log("ABORT");
+            require("core/phase").abort();
+            return false;
+        });
 
         // Bootstrap's collapsable nav doesn't play nice with single page apps
         // unless you manually close it when a link is clicked. However, I need
@@ -375,7 +380,8 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
                       {id: "play-menu-contract-negotiation-list", url: helpers.leagueUrl(["negotiation"]), label: "Continue re-signing players"},
                       {id: "play-menu-message", url: helpers.leagueUrl(["message"]), label: "Read new message"},
                       {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"},
-                      {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"}];
+                      {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
+                      {id: "play-menu-abort-phase-change", url: "", label: "Abort"}];
 
         if (g.phase === g.PHASE.PRESEASON) {
             // Preseason
@@ -409,8 +415,9 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
         return Promise.all([
             lock.unreadMessage(ot),
             lock.gamesInProgress(ot),
-            lock.negotiationInProgress(ot)
-        ]).spread(function (unreadMessage, gamesInProgress, negotiationInProgress) {
+            lock.negotiationInProgress(ot),
+            lock.phaseChangeInProgress(ot)
+        ]).spread(function (unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress) {
             var i, ids, j, someOptions;
 
             if (unreadMessage) {
@@ -421,6 +428,9 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             }
             if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
                 keys = ["play-menu-contract-negotiation"];
+            }
+            if (phaseChangeInProgress) {
+                keys = ["play-menu-abort-phase-change"];
             }
 
             // If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.

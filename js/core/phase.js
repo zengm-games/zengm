@@ -5,6 +5,8 @@
 define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/season", "core/team", "lib/bluebird", "lib/underscore", "util/account", "util/ads", "util/eventLog", "util/helpers", "util/lock", "util/message", "util/random"], function (dao, g, ui, contractNegotiation, draft, finances, freeAgents, player, season, team, Promise, _, account, ads, eventLog, helpers, lock, message, random) {
     "use strict";
 
+    var phaseChangeTx;
+
     /**
      * Common tasks run after a new phrase is set.
      *
@@ -20,7 +22,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         updateEvents = updateEvents !== undefined ? updateEvents : [];
 
         // Set phase before updating play menu
-        return require("core/league").setGameAttributesComplete({phase: phase}).then(function () {
+        return require("core/league").setGameAttributesComplete({phase: phase, phaseChangeInProgress: false}).then(function () {
             ui.updatePhase(g.season + g.PHASE_TEXT[phase]);
             return ui.updatePlayMenu(null).then(function () {
                 // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
@@ -627,8 +629,6 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
      * @return {Promise}
      */
     function newPhase(phase, extra) {
-        var tx;
-
         // Prevent at least some cases of code running twice
         if (phase === g.phase) {
             return;
@@ -638,62 +638,78 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
 console.log("phaseChangeInProgress: " + phaseChangeInProgress);
             if (!phaseChangeInProgress) {
                 return require("core/league").setGameAttributesComplete({phaseChangeInProgress: true}).then(function () {
+                    ui.updatePlayMenu(null);
+
                     if (phase === g.PHASE.PRESEASON) {
-                        tx = dao.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
-                        return newPhasePreseason(tx);
+                        phaseChangeTx = dao.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
+                        return newPhasePreseason(phaseChangeTx);
                     }
                     if (phase === g.PHASE.REGULAR_SEASON) {
-                        tx = dao.tx(["gameAttributes", "messages", "schedule"], "readwrite");
-                        return newPhaseRegularSeason(tx);
+                        phaseChangeTx = dao.tx(["gameAttributes", "messages", "schedule"], "readwrite");
+                        return newPhaseRegularSeason(phaseChangeTx);
                     }
                     if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
                         return newPhaseAfterTradeDeadline();
                     }
                     if (phase === g.PHASE.PLAYOFFS) {
-                        tx = dao.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
-                        return newPhasePlayoffs(tx);
+                        phaseChangeTx = dao.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+                        return newPhasePlayoffs(phaseChangeTx);
                     }
                     if (phase === g.PHASE.BEFORE_DRAFT) {
-                        tx = dao.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
-                        return newPhaseBeforeDraft(tx);
+                        phaseChangeTx = dao.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
+                        return newPhaseBeforeDraft(phaseChangeTx);
                     }
                     if (phase === g.PHASE.DRAFT) {
-                        tx = dao.tx(["draftPicks", "draftOrder", "players", "teams"], "readwrite");
-                        return newPhaseDraft(tx);
+                        phaseChangeTx = dao.tx(["draftPicks", "draftOrder", "players", "teams"], "readwrite");
+                        return newPhaseDraft(phaseChangeTx);
                     }
                     if (phase === g.PHASE.AFTER_DRAFT) {
-                        tx = dao.tx("draftPicks", "readwrite");
-                        return newPhaseAfterDraft(tx);
+                        phaseChangeTx = dao.tx("draftPicks", "readwrite");
+                        return newPhaseAfterDraft(phaseChangeTx);
                     }
                     if (phase === g.PHASE.RESIGN_PLAYERS) {
-                        tx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
-                        return newPhaseResignPlayers(tx);
+                        phaseChangeTx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
+                        return newPhaseResignPlayers(phaseChangeTx);
                     }
                     if (phase === g.PHASE.FREE_AGENCY) {
-                        tx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
-                        return newPhaseFreeAgency(tx);
+                        phaseChangeTx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
+                        return newPhaseFreeAgency(phaseChangeTx);
                     }
                     if (phase === g.PHASE.FANTASY_DRAFT) {
-                        tx = dao.tx(["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"], "readwrite");
-                        return newPhaseFantasyDraft(tx, extra);
+                        phaseChangeTx = dao.tx(["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"], "readwrite");
+                        return newPhaseFantasyDraft(phaseChangeTx, extra);
                     }
                 }).catch(function (err) {
                     // If there was any error in the phase change, abort transaction
-                    tx.abort();
-                    throw err;
+                    phaseChangeTx.abort();
+                    require("core/league").setGameAttributesComplete({phaseChangeInProgress: false}).then(function () {
+                        throw err;
+                    });
                 }).spread(function (url, updateEvents) {
-                    return tx.complete().then(function () {
+                    return phaseChangeTx.complete().then(function () {
                         return finalize(phase, url, updateEvents);
                     });
-                }).finally(function () {
-console.log("finally");
-                    return require("core/league").setGameAttributesComplete({phaseChangeInProgress: false});
                 });
             }
         });
     }
 
+    function abort() {
+        // Stop error from bubbling up, since this function is only called on purpose
+        phaseChangeTx.onerror = function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        };
+
+        phaseChangeTx.abort();
+
+        return require("core/league").setGameAttributesComplete({phaseChangeInProgress: false}).then(function () {
+            return ui.updatePlayMenu(null);
+        });
+    }
+
     return {
-        newPhase: newPhase
+        newPhase: newPhase,
+        abort: abort
     };
 });

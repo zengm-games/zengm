@@ -13,6 +13,7 @@
     "url": "https://github.com/dumbmatter/basketball-gm.git"
   },
   "scripts": {
+    "start": "node tools/server.js",
     "build": "node tools/build.js",
     "build-cordova": "node tools/build.js cordova",
     "test": "node_modules/karma/bin/karma start",
@@ -31,7 +32,8 @@
     "karma-firefox-launcher": "~0.1.4",
     "mocha": "~2.1.0",
     "karma-mocha": "~0.1.10",
-    "karma-requirejs": "~0.2.2"
+    "karma-requirejs": "~0.2.2",
+    "express": "~4.10.7"
   },
   "private": true
 }

@@ -19,13 +19,11 @@ RewriteRule ^export_3.3$ export_3.3.html
 RewriteRule ^manifest_hack$ manifest_hack.html
 RewriteRule ^test$ test.html
 RewriteRule ^test_case$ test_case.html
-RewriteRule ^docs$ docs/
 
 RewriteCond %{REQUEST_URI} !^/bbgm.appcache
 RewriteCond %{REQUEST_URI} !^/robots.txt
 RewriteCond %{REQUEST_URI} !^/css
 RewriteCond %{REQUEST_URI} !^/data
-RewriteCond %{REQUEST_URI} !^/docs
 RewriteCond %{REQUEST_URI} !^/export_3.3
 RewriteCond %{REQUEST_URI} !^/fonts
 RewriteCond %{REQUEST_URI} !^/gen

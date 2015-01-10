@@ -15,6 +15,7 @@ tooling
   istanbul - can be run by karma
   move more stuff from root to tools
     replace runserver.py with something from npm?
+    mongoose?
 
 github
   bitbucket issues

@@ -29,24 +29,26 @@ you use as long as you can get it to run on your computer.
 
 #### 1. Mongoose - Easiest on Windows
 
-Run the included `mongoose-tiny-4.1.exe`. Point your browser to
+Run the included `mongoose-tiny-4.1.exe` and point your browser to
 <http://localhost:8080/>.
 
 That's it.
 
 If that doesn't work, try right clicking on the Mongoose icon in your
 notification area and poke around in there. You can also see if there is a newer
-version of Mongoose available http://cesanta.com/downloads.html
+version of Mongoose available <http://cesanta.com/downloads.html>.
 
-#### 2. web.py - Easiest on Linux
+#### 2. Express - Also quite easy
 
-Install Python and web.py (as simple as `sudo apt-get install python-webpy` on
-Ubuntu). Then, from the command line, run:
+Install Node, NPM, and Express. The easiest way to do that is to install Node
+and NPM from <http://nodejs.org/> and then run `npm install` from this folder
+to intall Express (and some other things you might want later, see below). Then
+run
 
-    python runserver.py
+    npm start
 
-Point your browser to <http://localhost:8080/>. If that URL doesn't work, try
-<http://0.0.0.0:8080/>.
+and point your browser to <http://localhost:3000/>. If that URL doesn't work,
+try <http://0.0.0.0:3000/>.
 
 #### 3. Apache
 
@@ -116,7 +118,7 @@ Integration and unit tests are bunched together in the `js/test` folder.
 Coverage is not great. They can be run manually within a web browser by going to
 <http://localhost:8080/test> or from the command line in Karma with
 
-    npm run test
+    npm test
 
 ### Code Overview
 

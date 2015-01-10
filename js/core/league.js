@@ -502,7 +502,6 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             dao.leagues.delete({key: lid});
             request = indexedDB.deleteDatabase("league" + lid);
             request.onsuccess = function () {
-                console.log("Database league" + lid + " successfully deleted");
                 resolve();
             };
             request.onfailure = function (event) {

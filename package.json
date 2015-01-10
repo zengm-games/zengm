@@ -15,7 +15,7 @@
   "scripts": {
     "build": "node tools/build.js",
     "build-cordova": "node tools/build.js cordova",
-    "test": "./node_modules/karma/bin/karma start",
+    "test": "node_modules/karma/bin/karma start",
     "lint": "node_modules/.bin/eslint js"
   },
   "dependencies": {},
@@ -28,6 +28,7 @@
     "fs-extra": "~0.14.0",
     "karma": "~0.12.31",
     "karma-chrome-launcher": "~0.1.7",
+    "karma-firefox-launcher": "~0.1.4",
     "mocha": "~2.1.0",
     "karma-mocha": "~0.1.10",
     "karma-requirejs": "~0.2.2"

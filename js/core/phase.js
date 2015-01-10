@@ -639,6 +639,7 @@ console.log("phaseChangeInProgress: " + phaseChangeInProgress);
             if (!phaseChangeInProgress) {
                 return require("core/league").setGameAttributesComplete({phaseChangeInProgress: true}).then(function () {
                     ui.updatePlayMenu(null);
+                    require("core/league").updateLastDbChange(); // Update play menu in other windows
 
                     if (phase === g.PHASE.PRESEASON) {
                         phaseChangeTx = dao.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
@@ -681,11 +682,16 @@ console.log("phaseChangeInProgress: " + phaseChangeInProgress);
                     }
                 }).catch(function (err) {
                     // If there was any error in the phase change, abort transaction
-                    phaseChangeTx.abort();
+                    if (phaseChangeTx && phaseChangeTx.abort) {
+                        phaseChangeTx.abort();
+                    }
+
                     require("core/league").setGameAttributesComplete({phaseChangeInProgress: false}).then(function () {
                         throw err;
                     });
                 }).spread(function (url, updateEvents) {
+                    
+                    
                     return phaseChangeTx.complete().then(function () {
                         return finalize(phase, url, updateEvents);
                     });
@@ -695,13 +701,15 @@ console.log("phaseChangeInProgress: " + phaseChangeInProgress);
     }
 
     function abort() {
-        // Stop error from bubbling up, since this function is only called on purpose
-        phaseChangeTx.onerror = function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-        };
+        if (phaseChangeTx && phaseChangeTx.abort) {
+            // Stop error from bubbling up, since this function is only called on purpose
+            phaseChangeTx.onerror = function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            };
 
-        phaseChangeTx.abort();
+            phaseChangeTx.abort();
+        }
 
         return require("core/league").setGameAttributesComplete({phaseChangeInProgress: false}).then(function () {
             return ui.updatePlayMenu(null);

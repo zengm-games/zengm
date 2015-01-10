@@ -2,7 +2,7 @@
  * @name core.phase
  * @namespace Anything related to moving between phases of the game (e.g. regular season, playoffs, draft, etc.).
  */
-define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/season", "core/team", "lib/bluebird", "lib/underscore", "util/account", "util/ads", "util/eventLog", "util/helpers", "util/message", "util/random"], function (dao, g, ui, contractNegotiation, draft, finances, freeAgents, player, season, team, Promise, _, account, ads, eventLog, helpers, message, random) {
+define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/finances", "core/freeAgents", "core/player", "core/season", "core/team", "lib/bluebird", "lib/underscore", "util/account", "util/ads", "util/eventLog", "util/helpers", "util/lock", "util/message", "util/random"], function (dao, g, ui, contractNegotiation, draft, finances, freeAgents, player, season, team, Promise, _, account, ads, eventLog, helpers, lock, message, random) {
     "use strict";
 
     /**
@@ -634,57 +634,62 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             return;
         }
 
-        // Prevent new phase from being clicked twice by deleting all options from the play menu. The options will be restored after the new phase is set or if there is an error by calling ui.updatePlayMenu.
-        g.vm.topMenu.options([]);
-
-        return Promise.try(function () {
-            if (phase === g.PHASE.PRESEASON) {
-                tx = dao.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
-                return newPhasePreseason(tx);
+        return lock.phaseChangeInProgress().then(function (phaseChangeInProgress) {
+console.log("phaseChangeInProgress: " + phaseChangeInProgress);
+            if (!phaseChangeInProgress) {
+                return require("core/league").setGameAttributesComplete({phaseChangeInProgress: true}).then(function () {
+                    if (phase === g.PHASE.PRESEASON) {
+                        tx = dao.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
+                        return newPhasePreseason(tx);
+                    }
+                    if (phase === g.PHASE.REGULAR_SEASON) {
+                        tx = dao.tx(["gameAttributes", "messages", "schedule"], "readwrite");
+                        return newPhaseRegularSeason(tx);
+                    }
+                    if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
+                        return newPhaseAfterTradeDeadline();
+                    }
+                    if (phase === g.PHASE.PLAYOFFS) {
+                        tx = dao.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+                        return newPhasePlayoffs(tx);
+                    }
+                    if (phase === g.PHASE.BEFORE_DRAFT) {
+                        tx = dao.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
+                        return newPhaseBeforeDraft(tx);
+                    }
+                    if (phase === g.PHASE.DRAFT) {
+                        tx = dao.tx(["draftPicks", "draftOrder", "players", "teams"], "readwrite");
+                        return newPhaseDraft(tx);
+                    }
+                    if (phase === g.PHASE.AFTER_DRAFT) {
+                        tx = dao.tx("draftPicks", "readwrite");
+                        return newPhaseAfterDraft(tx);
+                    }
+                    if (phase === g.PHASE.RESIGN_PLAYERS) {
+                        tx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
+                        return newPhaseResignPlayers(tx);
+                    }
+                    if (phase === g.PHASE.FREE_AGENCY) {
+                        tx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
+                        return newPhaseFreeAgency(tx);
+                    }
+                    if (phase === g.PHASE.FANTASY_DRAFT) {
+                        tx = dao.tx(["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"], "readwrite");
+                        return newPhaseFantasyDraft(tx, extra);
+                    }
+                }).catch(function (err) {
+                    // If there was any error in the phase change, abort transaction
+                    tx.abort();
+                    throw err;
+                }).spread(function (url, updateEvents) {
+                    return tx.complete().then(function () {
+                        return finalize(phase, url, updateEvents);
+                    });
+                }).finally(function () {
+console.log("finally");
+                    return require("core/league").setGameAttributesComplete({phaseChangeInProgress: false});
+                });
             }
-            if (phase === g.PHASE.REGULAR_SEASON) {
-                tx = dao.tx(["gameAttributes", "messages", "schedule"], "readwrite");
-                return newPhaseRegularSeason(tx);
-            }
-            if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
-                return newPhaseAfterTradeDeadline();
-            }
-            if (phase === g.PHASE.PLAYOFFS) {
-                tx = dao.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
-                return newPhasePlayoffs(tx);
-            }
-            if (phase === g.PHASE.BEFORE_DRAFT) {
-                tx = dao.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
-                return newPhaseBeforeDraft(tx);
-            }
-            if (phase === g.PHASE.DRAFT) {
-                tx = dao.tx(["draftPicks", "draftOrder", "players", "teams"], "readwrite");
-                return newPhaseDraft(tx);
-            }
-            if (phase === g.PHASE.AFTER_DRAFT) {
-                tx = dao.tx("draftPicks", "readwrite");
-                return newPhaseAfterDraft(tx);
-            }
-            if (phase === g.PHASE.RESIGN_PLAYERS) {
-                tx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
-                return newPhaseResignPlayers(tx);
-            }
-            if (phase === g.PHASE.FREE_AGENCY) {
-                tx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
-                return newPhaseFreeAgency(tx);
-            }
-            if (phase === g.PHASE.FANTASY_DRAFT) {
-                tx = dao.tx(["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"], "readwrite");
-                return newPhaseFantasyDraft(tx, extra);
-            }
-        }).catch(function (err) {
-            // If there was any error in the phase change, abort transaction
-            tx.abort();
-            throw err;
-        }).spread(function (url, updateEvents) {
-            return tx.complete().then(function () {
-                return finalize(phase, url, updateEvents);
-            });
         });
     }
 

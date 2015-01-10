@@ -145,6 +145,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 nextPhase: null, // Used only for fantasy draft
                 daysLeft: 0, // Used only for free agency
                 gamesInProgress: false,
+                phaseChangeInProgress: false,
                 stopGames: false,
                 lastDbChange: 0,
                 leagueName: name,
@@ -591,6 +592,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 } else if (key === "godMode") {
                     g.godMode = false;
                 } else if (key === "godModeInPast") {
+                    g.godModeInPast = false;
+                } else if (key === "phaseChangeInProgress") {
                     g.godModeInPast = false;
                 } else {
                     throw new Error("Unknown game attribute: " + key);

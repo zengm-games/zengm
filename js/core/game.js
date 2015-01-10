@@ -697,7 +697,9 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 });
             };
 
-            cbSaveResult(results.length - 1);
+            if (results.length > 0) {
+                cbSaveResult(results.length - 1);
+            }
 
             tx.complete().then(function () {
                 var i, raw, url;

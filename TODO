@@ -6,19 +6,20 @@ CURRENT
 
 newPhasePlayoffs (and similar functions) should do all important shit in one transaction. Will cut back on bugs
   documentation of necessity of one transaction!
+    multi-window race conditions
+      could set a flag in the DB, but then how do I recover from errors?
+        in catch block!
+        but what if something goes wrong and that doesn't happen?
+          need a "stop" button that aborts the transaction, phaseChange.abort()
+      if all phase change is in one transaction, then right at the end make sure the phase hasn't changed yet. if it has, abort transaction?
   test
     huge leagues with many windows open
+      add delay with bluebird
     make sure awards are written to player objects
     benchmark, especially playoffs
     make sure fantasy draft still works
     ads
 
-multi-window race conditions
-  could set a flag in the DB, but then how do I recover from errors?
-    in catch block!
-    but what if something goes wrong and that doesn't happen?
-      need a "stop" button that aborts the transaction, phaseChange.abort()
-  if all phase change is in one transaction, then right at the end make sure the phase hasn't changed yet. if it has, abort transaction
 
 tooling
   tools/build.js

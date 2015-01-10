@@ -1152,16 +1152,14 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         });
     }
 
-    function newPhaseFantasyDraft(position) {
-tx = dao.tx(["gameAttributes", "players", "releasedPlayers"], "readwrite");
-
-        return contractNegotiation.cancelAll().then(function () {
-            return draft.genOrderFantasy(position);
+    function newPhaseFantasyDraft(tx, position) {
+        return contractNegotiation.cancelAll(tx).then(function () {
+            return draft.genOrderFantasy(tx, position);
         }).then(function () {
             return require("core/league").setGameAttributes(tx, {nextPhase: g.phase});
         }).then(function () {
             // Protect draft prospects from being included in this
-            dao.players.iterate({
+            return dao.players.iterate({
                 ot: tx,
                 index: "tid",
                 key: g.PLAYER.UNDRAFTED,
@@ -1181,13 +1179,10 @@ tx = dao.tx(["gameAttributes", "players", "releasedPlayers"], "readwrite");
                     }
                 });
             });
-
-            // Delete all records of released players
-            dao.releasedPlayers.clear({ot: tx});
-
-            return tx.complete();
         }).then(function () {
-            return newPhaseFinalize(g.PHASE.FANTASY_DRAFT, helpers.leagueUrl(["draft"]), ["playerMovement"]);
+            return dao.releasedPlayers.clear({ot: tx});
+        }).then(function () {
+            return [helpers.leagueUrl(["draft"]), ["playerMovement"]];
         });
     }
 
@@ -1249,7 +1244,8 @@ tx = dao.tx(["gameAttributes", "players", "releasedPlayers"], "readwrite");
                 return newPhaseFreeAgency(tx);
             }
             if (phase === g.PHASE.FANTASY_DRAFT) {
-                return newPhaseFantasyDraft(extra);
+                tx = dao.tx(["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"], "readwrite");
+                return newPhaseFantasyDraft(tx, extra);
             }
         }).catch(function (err) {
             // If there was any error in the phase change, abort transaction

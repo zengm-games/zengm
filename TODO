@@ -8,18 +8,12 @@ CURRENT
 -------
 
 transaction log
-  add entry for
-    trade
-  text needs to be general enough that it can go in notification, log, and player page
   event log UI
-    allow filtering based on season and team in dropdowns
     allow filtering type with checkboxes
-    what about events with no team?
-    why URL reloads after click to base?
+    what about events with no tid?
   show a player's transactions on their player page
     which ones to show? release, reSigned, freeAgent, draft, trade
     responsive
-  go through existing events and add tid and pid as necessary
   performance?
     include in delete old data?
   anything else to add or anywhere else to use this feature? ask

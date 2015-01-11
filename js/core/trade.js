@@ -2,7 +2,7 @@
  * @name core.trade
  * @namespace Trades between the user's team and other teams.
  */
-define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/helpers"], function (dao, db, g, league, player, team, Promise, _, helpers) {
+define(["dao", "globals", "core/league", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/eventLog", "util/helpers"], function (dao, g, league, player, team, Promise, _, eventLog, helpers) {
     "use strict";
 
     /**
@@ -423,6 +423,53 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team", "lib/
                                     dp.abbrev = g.teamAbbrevsCache[tids[k]];
                                     dao.draftPicks.put({ot: tx, value: dp});
                                 });
+                            });
+                        });
+
+                        
+
+                        // Log event
+                        summary(teams).then(function (s) {
+                            var formatAssetsEventLog;
+
+                            formatAssetsEventLog = function (t) {
+                                var i, strings, text;
+
+                                strings = [];
+
+                                t.trade.forEach(function (p) {
+                                    strings.push('<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>');
+                                });
+                                t.picks.forEach(function (dp) {
+                                    strings.push('a ' + dp.desc);
+                                });
+
+                                if (strings.length === 0) {
+                                    text = "nothing";
+                                } else if (strings.length === 1) {
+                                    text = strings[0];
+                                } else if (strings.length === 2) {
+                                    text = strings[0] + " and " + strings[1];
+                                } else {
+                                    text = strings[0];
+                                    for (i = 1; i < strings.length; i++) {
+                                        if (i === strings.length - 1) {
+                                            text += ", and " + strings[i];
+                                        } else {
+                                            text += ", " + strings[i];
+                                        }
+                                    }
+                                }
+
+                                return text;
+                            };
+
+                            eventLog.add(null, {
+                                type: "trade",
+                                text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season]) + '">' + g.teamNamesCache[tids[0]] + '</a> traded ' + formatAssetsEventLog(s.teams[0]) + ' to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season]) + '">' + g.teamNamesCache[tids[1]] + '</a> for ' + formatAssetsEventLog(s.teams[1]) + '.',
+                                showNotification: false,
+                                pids: pids[0].concat(pids[1]),
+                                tids: tids
                             });
                         });
                     }

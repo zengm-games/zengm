@@ -2,7 +2,7 @@
  * @name core.freeAgents
  * @namespace Functions related to free agents that didn't make sense to put anywhere else.
  */
-define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/helpers", "util/lock", "util/random"], function (dao, g, ui, player, team, Promise, _, helpers, lock, random) {
+define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/eventLog", "util/helpers", "util/lock", "util/random"], function (dao, g, ui, player, team, Promise, _, eventLog, helpers, lock, random) {
     "use strict";
 
     /**
@@ -97,6 +97,14 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                                 }
                                 p = player.setContract(p, p.contract, true);
                                 p.gamesUntilTradable = 15;
+
+                                eventLog.add(null, {
+                                    type: "freeAgent",
+                                    text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                                    showNotification: false,
+                                    pids: [p.pid],
+                                    tids: [p.tid]
+                                });
 
                                 // If we found one, stop looking for this team
                                 return dao.players.put({ot: tx, value: p}).then(function () {

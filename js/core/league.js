@@ -317,7 +317,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
 
                                 // If no stats in League File, create blank stats rows for active players if necessary
                                 if (playerStats.length === 0) {
-                                    if (p.tid >= 0) {
+                                    if (p.tid >= 0 && g.phase <= g.PHASE.PLAYOFFS) {
                                         // Needs pid, so must be called after put. It's okay, statsTid was already set in player.augmentPartialPlayer
                                         p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
                                     }

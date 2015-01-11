@@ -9,13 +9,6 @@ phase changes in atomic transactions
     ads
     UI and other glitches due to tx race conditions
 
-tooling
-  tools/build.js
-    test on windows
-  istanbul - can be run by karma
-  move more stuff from root to tools
-    mongoose?
-
 github
   bitbucket issues
 
@@ -30,11 +23,6 @@ Contract negotiation revamp
 
 THE FLATTENING
 --------------
-
-reports of trading block failing earlier than normal (2016)
-  use latest NBA rosters, play as dallas, try to trade away tyson chandler
-
-make sure ads show correctly
 
 clean up
   replace getObjectStore with tx_
@@ -507,6 +495,10 @@ schedule page (and dashboard and maybe gamelog) should show opponent records
 LOW PRIORITY
 ------------
 
+tooling
+  tools/build.js
+    test on windows
+  istanbul https://github.com/karma-runner/karma-coverage
 simple advanced stats
   TS%, etc
   pace-weighted stats

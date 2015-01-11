@@ -19,6 +19,7 @@ transaction log
     re-signing
       AI
       user
+    anything else.. any time a player's tid changes
   text needs to be general enough that it can go in notification, log, and player page
   event log UI
     allow filtering based on season and team in dropdowns, type with checkboxes

@@ -1683,12 +1683,13 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @return {Object} p Updated (retired) player object.
      */
     function retire(tx, p, playerStats) {
-        if (p.tid === g.userTid) {
-            eventLog.add(tx, {
-                type: "retired",
-                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> retired.'
-            });
-        }
+        eventLog.add(tx, {
+            type: "retired",
+            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season]) + '">' + g.teamAbbrevsCache[g.userTid] + '</a>) retired.',
+            showNotification: p.tid === g.userTid,
+            pids: [p.pid],
+            tids: [p.tid]
+        });
 
         p.tid = g.PLAYER.RETIRED;
         p.retiredYear = g.season;
@@ -1697,12 +1698,13 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         if (madeHof(p, playerStats)) {
             p.hof = true;
             p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
-            if (p.statsTids.indexOf(g.userTid) >= 0) {
-                eventLog.add(tx, {
-                    type: "hallOfFame",
-                    text: 'Your former player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> was inducted into the <a href="' + helpers.leagueUrl(["hall_of_fame"]) + '">Hall of Fame</a>.'
-                });
-            }
+            eventLog.add(tx, {
+                type: "hallOfFame",
+                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> was inducted into the <a href="' + helpers.leagueUrl(["hall_of_fame"]) + '">Hall of Fame</a>.',
+                showNotification: p.statsTids.indexOf(g.userTid) >= 0,
+                pids: [p.pid],
+                tids: p.statsTids
+            });
         }
 
         return p;

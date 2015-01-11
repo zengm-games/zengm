@@ -166,13 +166,6 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
             p = players[0];
             awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
             awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
-            // Notification unless it's the user's player, in which case it'll be shown below
-            if (p.tid !== g.userTid) {
-                eventLog.add(null, {
-                    type: "award",
-                    text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", p.abbrev]) + '">' + p.abbrev + '</a>) won the Most Valuable Player award.'
-                });
-            }
 
             // Sixth Man of the Year - same sort as MVP
             for (i = 0; i < players.length; i++) {
@@ -264,18 +257,20 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 // Notifications for awards for user's players
                 for (i = 0; i < awardsByPlayer.length; i++) {
                     p = awardsByPlayer[i];
-                    if (p.tid === g.userTid) {
-                        text = 'Your player <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ';
-                        if (p.type.indexOf("Team") >= 0) {
-                            text += 'made the ' + p.type + '.';
-                        } else {
-                            text += 'won the ' + p.type + ' award.';
-                        }
-                        eventLog.add(null, {
-                            type: "award",
-                            text: text
-                        });
+
+                    text = '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season]) + '">' + g.teamAbbrevsCache[g.userTid] + '</a>) ';
+                    if (p.type.indexOf("Team") >= 0) {
+                        text += 'made the ' + p.type + '.';
+                    } else {
+                        text += 'won the ' + p.type + ' award.';
                     }
+                    eventLog.add(null, {
+                        type: "award",
+                        text: text,
+                        showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",
+                        pids: [p.pid],
+                        tids: [p.tid]
+                    });
                 }
             });
         });

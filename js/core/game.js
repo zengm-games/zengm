@@ -244,14 +244,13 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                                 if (injuredThisGame) {
                                     p_.injury = player.injury(t.healthRank);
                                     p.injury = p_.injury; // So it gets written to box score
-                                    if (t.id === g.userTid) {
-                                        eventLog.add(tx, {
-                                            type: "injured",
-                                            text: '<a href="' + helpers.leagueUrl(["player", p_.pid]) + '">' + p_.name + '</a> was injured! (' + p_.injury.type + ', out for ' + p_.injury.gamesRemaining + ' games)',
-                                            pid: p_.pid,
-                                            tids: [p_.tid]
-                                        });
-                                    }
+                                    eventLog.add(tx, {
+                                        type: "injured",
+                                        text: '<a href="' + helpers.leagueUrl(["player", p_.pid]) + '">' + p_.name + '</a> was injured! (' + p_.injury.type + ', out for ' + p_.injury.gamesRemaining + ' games)',
+                                        showNotification: p_.tid === g.userTid,
+                                        pid: p_.pid,
+                                        tids: [p_.tid]
+                                    });
                                 }
 
                                 // Player value depends on ratings and regular season stats, neither of which can change in the playoffs

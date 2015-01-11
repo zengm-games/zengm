@@ -64,8 +64,6 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
 
                 currentRatings = p.ratings[p.ratings.length - 1];
 
-console.log(events);
-
                 return {
                     player: p,
                     currentRatings: currentRatings,

@@ -195,7 +195,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             tidPlayoffs.forEach(function (tid) {
                 eventLog.add(null, {
                     type: "playoffs",
-                    text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season]) + '">' + g.teamNamesCache[tid] + '</a> made <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.',
+                    text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season]) + '">' + g.teamNamesCache[tid] + '</a> made the <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">playoffs</a>.',
                     showNotification: tid === g.userTid,
                     tids: [tid]
                 });

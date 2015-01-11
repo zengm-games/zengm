@@ -2,7 +2,7 @@
  * @name views.player
  * @namespace View a single message.
  */
-define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "util/bbgmView"], function (dao, g, ui, freeAgents, player, faces, $, ko, komapping, bbgmView) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/bluebird", "util/bbgmView"], function (dao, g, ui, freeAgents, player, faces, $, ko, komapping, Promise, bbgmView) {
     "use strict";
 
     var mapping;
@@ -33,11 +33,18 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
 
     function updatePlayer(inputs, updateEvents, vm) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
-            return dao.players.get({
-                key: inputs.pid,
-                statsSeasons: "all",
-                statsPlayoffs: true
-            }).then(function (p) {
+
+            return Promise.all([
+                dao.players.get({
+                    key: inputs.pid,
+                    statsSeasons: "all",
+                    statsPlayoffs: true
+                }),
+                dao.events.getAll({
+                    index: "pids",
+                    key: inputs.pid
+                })
+            ]).spread(function (p, events) {
                 var currentRatings;
 
                 p = player.filter(p, {
@@ -57,6 +64,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
 
                 currentRatings = p.ratings[p.ratings.length - 1];
 
+console.log(events);
+
                 return {
                     player: p,
                     currentRatings: currentRatings,
@@ -65,7 +74,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
                     retired: p.tid === g.PLAYER.RETIRED,
                     showContract: p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && p.tid !== g.PLAYER.UNDRAFTED_FANTASY_TEMP && p.tid !== g.PLAYER.RETIRED,
                     injured: p.injury.type !== "Healthy",
-                    godMode: g.godMode
+                    godMode: g.godMode,
+                    events: events
                 };
             });
         }

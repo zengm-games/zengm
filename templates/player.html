@@ -159,15 +159,26 @@
 </table>
 <p data-bind="visible: player.awardsGrouped().length === 0">None.</p>
 
-<h2>Salaries</h2>
-<table class="table table-nonfluid table-striped table-bordered table-condensed" id="player-salaries">
-  <thead>
-    <tr><th>Season</th><th>Amount</th></tr>
-  </thead>
-  <tbody data-bind="foreach: player.salaries">
-    <tr><td data-bind="text: season"></td><td data-bind="currency: [amount, 'M']"></td></tr>
-  </tbody>
-  <tfoot>
-    <tr><th>Total</th><th data-bind="currency: [player.salariesTotal, 'M']"></th></tr>
-  </tfoot>
-</table>
+<div class="row">
+  <div class="col-md-9">
+    <h2>Transactions</h2>
+    <!-- ko foreach: events -->
+      <p><strong data-bind="text: season"></strong>: <span data-bind="html: text"></span></p>
+    <!-- /ko -->
+    <p data-bind="visible: events().length === 0">None.</p>
+  </div>
+  <div class="col-md-3">
+    <h2>Salaries</h2>
+    <table class="table table-nonfluid table-striped table-bordered table-condensed" id="player-salaries">
+      <thead>
+        <tr><th>Season</th><th>Amount</th></tr>
+      </thead>
+      <tbody data-bind="foreach: player.salaries">
+        <tr><td data-bind="text: season"></td><td data-bind="currency: [amount, 'M']"></td></tr>
+      </tbody>
+      <tfoot>
+        <tr><th>Total</th><th data-bind="currency: [player.salariesTotal, 'M']"></th></tr>
+      </tfoot>
+    </table>
+  </div>
+</div>

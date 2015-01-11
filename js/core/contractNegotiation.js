@@ -310,14 +310,18 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
                     if (negotiation.resigning) {
                         eventLog.add(null, {
                             type: "reSigned",
-                            text: 'You re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
-                            showNotification: false
+                            text: 'The ' + g.teamRegionsCache[g.userTid] + ' ' + g.teamNamesCache[g.userTid] + ' re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                            showNotification: false,
+                            pids: [p.pid],
+                            tids: [g.userTid]
                         });
                     } else {
                         eventLog.add(null, {
                             type: "freeAgent",
-                            text: 'You signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
-                            showNotification: false
+                            text: 'The ' + g.teamRegionsCache[g.userTid] + ' ' + g.teamNamesCache[g.userTid] + ' signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                            showNotification: false,
+                            pids: [p.pid],
+                            tids: [g.userTid]
                         });
                     }
 

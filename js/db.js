@@ -185,6 +185,8 @@ console.log(event);
         draftPickStore.createIndex("season", "season", {unique: false});
         draftPickStore.createIndex("tid", "tid", {unique: false});
         eventStore.createIndex("season", "season", {unique: false});
+        eventStore.createIndex("pids", "pids", {unique: false, multiEntry: true});
+        eventStore.createIndex("tids", "tids", {unique: false, multiEntry: true});
     }
 
     /**

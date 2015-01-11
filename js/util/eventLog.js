@@ -17,7 +17,9 @@ define(["dao", "globals", "lib/bbgm-notifications"], function (dao, g, bbgmNotif
                 value: {
                     season: g.season,
                     type: options.type,
-                    text: options.text
+                    text: options.text,
+                    pids: options.pids,
+                    tids: options.tids
                 }
             });
         }

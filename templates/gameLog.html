@@ -12,23 +12,48 @@
 
         <table>
           <tr><td>
-            <a class="btn btn-default disabled" style="margin-right: 1em" data-bind="css: {disabled: boxScore.prevGid() === null}, attrLeagueUrl: {href: ['game_log', abbrev, season, boxScore.prevGid]}"">Prev</a>
+            <a class="btn btn-default disabled" style="margin-right: 30px" data-bind="css: {disabled: boxScore.prevGid() === null}, attrLeagueUrl: {href: ['game_log', abbrev, season, boxScore.prevGid]}">Prev</a>
+          </td><td align="center">
+            <div class="game-log-score">
+              <table class="table table-bordered table-condensed">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <!-- ko foreach: boxScore.qtrs -->
+                      <th data-bind="text: $data"></th>
+                    <!-- /ko -->
+                  </tr>
+                </thead>
+                <tbody data-bind="foreach: boxScore.teams">
+                  <tr>
+                    <th><a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.boxScore.season]}, text: abbrev"></a></th>
+                    <!-- ko foreach: ptsQtrs -->
+                      <td data-bind="text: $data"></td>
+                    <!-- /ko -->
+                    <th data-bind="text: pts"></th>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="game-log-four-factors">
+              <table class="table table-bordered table-condensed">
+                <thead><tr></tr><tr><th title="Four Factors: Effective Field Goal Percentage">eFG%</th><th title="Four Factors: Turnover Percentage">TOV%</th><th title="Four Factors: Offensive Rebound Percentage">ORB%</th><th title="Four Factors: Free Throws Made Over Field Goal Attempts">FT/FGA</th></tr></thead>
+                <tbody data-bind="foreach: boxScore.teams">
+                  <tr>
+                    <td data-bind="round: [efg(), 1], css: {success: efg() >= $root.boxScore.teams()[1 - $index()].efg()}"></td>
+                    <td data-bind="round: [tovp(), 1], css: {success: tovp() <= $root.boxScore.teams()[1 - $index()].tovp()} "></td>
+                    <td data-bind="round: [orbp(), 1], css: {success: orbp() >= $root.boxScore.teams()[1 - $index()].orbp()}"></td>
+                    <td data-bind="round: [ftpfga(), 3], css: {success: ftpfga() >= $root.boxScore.teams()[1 - $index()].ftpfga()} "></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </td><td>
-            <table class="table table-bordered" style="margin-top: 0.5em; width: auto; float: left">
-              <tbody data-bind="foreach: boxScore.teams">
-                <th><a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.boxScore.season]}, text: abbrev"></a></th>
-                <!-- ko foreach: ptsQtrs -->
-                  <td data-bind="text: $data"></td>
-                <!-- /ko -->
-                <th data-bind="text: pts"></th>
-              </tbody>
-            </table>
-          </td><td>
-            <a class="btn btn-default disabled" style="margin-left: 1em" data-bind="css: {disabled: boxScore.nextGid() === null}, attrLeagueUrl: {href: ['game_log', abbrev, season, boxScore.nextGid]}">Next</a>
+            <a class="btn btn-default disabled" style="margin-left: 30px" data-bind="css: {disabled: boxScore.nextGid() === null}, attrLeagueUrl: {href: ['game_log', abbrev, season, boxScore.nextGid]}">Next</a>
           </td></tr>
         </table>
-
       </center>
+
       <!-- ko foreach: boxScore.teams -->
         <h3><a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.boxScore.season]}, text: region() + ' ' + name()"></a></h3>
         <div class="table-responsive">

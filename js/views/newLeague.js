@@ -2,8 +2,16 @@
  * @name views.newLeague
  * @namespace Create new league form.
  */
-define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.mapping", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, ui, league, Promise, $, komapping, bbgmView, helpers, viewHelpers) {
+define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "util/bbgmView", "util/helpers", "util/viewHelpers"], function (dao, ui, league, Promise, $, ko, komapping, bbgmView, helpers, viewHelpers) {
     "use strict";
+
+    function InitViewModel() {
+        this.invalidLeagueFile = ko.observable(false);
+        this.uploadSelected = ko.observable(false);
+        this.disableSubmit = ko.computed(function () {
+            return this.invalidLeagueFile() && this.uploadSelected();
+        }, this);
+    }
 
     // Keep only relevant information, otherwise Knockout has to do extra work creating all kinds of observables
     function removeUnneededTeamProps(teams) {
@@ -142,9 +150,11 @@ define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.
             if (selectRosters.val() === "custom-rosters") {
                 $("#custom-rosters").show();
                 $("#randomize-rosters").show();
+                vm.uploadSelected(true);
             } else {
                 $("#custom-rosters").hide();
                 $("#randomize-rosters").hide();
+                vm.uploadSelected(false);
             }
         };
 
@@ -189,6 +199,8 @@ define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.
             var file, reader;
 
             if (fileEl.files.length) {
+                vm.invalidLeagueFile(false);
+
                 file = fileEl.files[0];
 
                 reader = new window.FileReader();
@@ -199,9 +211,8 @@ define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.
                     try {
                         leagueFile = JSON.parse(event.target.result);
                     } catch (e) {
-                        // addresses 'unexpected token' error: https://bugsnag.com/dumbmatter/basketball-gm/errors/546abaa0c3d637ae229a224e
-                        window.alert("The upload file is not in a valid format.");
-                        return window.location.replace("../");
+                        vm.invalidLeagueFile(true);
+                        return;
                     }
 
                     newTeams = leagueFile.teams;
@@ -237,6 +248,7 @@ define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.
     return bbgmView.init({
         id: "newLeague",
         beforeReq: viewHelpers.beforeNonLeague,
+        InitViewModel: InitViewModel,
         post: post,
         runBefore: [updateNewLeague],
         uiFirst: uiFirst

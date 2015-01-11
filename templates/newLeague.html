@@ -30,6 +30,7 @@
       </div>
       <div id="custom-rosters" style="display: none">
         <input type="file" name="custom-rosters" id="custom-rosters-file">
+        <p class="text-danger" style="margin-top: 1em" data-bind="visible: invalidLeagueFile">Error: Invalid League File</p>
       </div>
       <div id="randomize-rosters" class="checkbox" style="display: none">
         <label>
@@ -42,7 +43,7 @@
 
     <div class="col-md-12 col-sm-5 text-center">
       <div class="visible-sm invisible-xs"><br><br></div>
-      <button type="submit" class="btn btn-lg btn-primary" id="create-new-league">Create New League</button>
+      <button type="submit" class="btn btn-lg btn-primary" id="create-new-league" data-bind="disable: disableSubmit">Create New League</button>
     </div>
   </div>
 </form>

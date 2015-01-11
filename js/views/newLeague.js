@@ -32,7 +32,7 @@ define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.
 
             document.getElementById("create-new-league").disabled = true;
 
-            startingSeason = 2013;
+            startingSeason = 2015;
 
             tid = parseInt(req.params.tid, 10);
             localStorage.lastSelectedTid = tid;

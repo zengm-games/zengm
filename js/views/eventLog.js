@@ -6,12 +6,19 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
     "use strict";
 
     function get(req) {
+        var out;
+
+        out = helpers.validateAbbrev(req.params.abbrev);
+
         return {
+            tid: out[0],
+            abbrev: out[1],
             season: helpers.validateSeason(req.params.season)
         };
     }
 
     function InitViewModel() {
+        this.abbrev = ko.observable();
         this.season = ko.observable();
         this.events = ko.observableArray([]);
     }
@@ -19,8 +26,8 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
     function updateEventLog(inputs, updateEvents, vm) {
         var maxEid, newEvents;
 
-        if (updateEvents.length >= 0 || inputs.season !== vm.season()) {
-            if (inputs.season !== vm.season()) {
+        if (updateEvents.length >= 0 || inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev()) {
+            if (inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev()) {
                 vm.events([]);
             }
 
@@ -28,7 +35,16 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
                 // Show all events, newest at top
                 return dao.events.getAll({index: "season", key: inputs.season}).then(function (events) {
                     events.reverse(); // Newest first
+
+                    // Filter by team
+                    events = events.filter(function (event) {
+                        if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
+                            return true;
+                        }
+                    });
+
                     return {
+                        abbrev: inputs.abbrev,
                         events: events,
                         season: inputs.season
                     };
@@ -47,7 +63,9 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
                         var i;
 
                         if (event.eid > maxEid) {
-                            newEvents.push(event);
+                            if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
+                                newEvents.push(event);
+                            }
                         } else {
                             shortCircuit();
                             // Oldest first (cursor is in "prev" direction and we're adding to the front of vm.events)
@@ -72,7 +90,7 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
     }
 
     function uiEvery(updateEvents, vm) {
-        components.dropdown("event-log-dropdown", ["seasons"], [vm.season()], updateEvents);
+        components.dropdown("event-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
     }
 
     return bbgmView.init({

@@ -17,7 +17,10 @@ transaction log
       user (due to manual action)
   text needs to be general enough that it can go in notification, log, and player page
   event log UI
-    allow filtering based on season and team in dropdowns, type with checkboxes
+    allow filtering based on season and team in dropdowns
+    allow filtering type with checkboxes
+    what about events with no team?
+    why URL reloads after click to base?
   put index on pids involved, so then events involving a player can be shown on player page
   show a player's transactions on their player page
     which ones to filter out?

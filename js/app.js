@@ -252,7 +252,8 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
             this.get("/l/:lid/live_game", views.liveGame.get);
             this.post("/l/:lid/live_game", views.liveGame.post);
             this.get("/l/:lid/event_log", views.eventLog.get);
-            this.get("/l/:lid/event_log/:season", views.eventLog.get);
+            this.get("/l/:lid/event_log/:abbrev", views.eventLog.get);
+            this.get("/l/:lid/event_log/:abbrev/:season", views.eventLog.get);
             this.get("/l/:lid/delete_old_data", views.deleteOldData.get);
             this.post("/l/:lid/delete_old_data", views.deleteOldData.post);
             this.get("/l/:lid/draft_scouting", views.draftScouting.get);

@@ -549,7 +549,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                                         text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
                                         showNotification: false,
                                         pids: [p.pid],
-                                        tids: [g.userTid]
+                                        tids: [p.tid]
                                     });
 
                                     return p; // Other endpoints include calls to addToFreeAgents, which handles updating the database

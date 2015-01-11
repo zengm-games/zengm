@@ -4,6 +4,15 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+upgrade datatables
+
+transaction log
+  put index on pids involved, so then events involving a player can be shown on player page
+
+don't fail silently when exceeding quota
+  http://www.html5rocks.com/en/tutorials/offline/quota-research/#toc-how_to_handle_going_over_quota
+  how to test? VM?
+
 phase changes in atomic transactions
   test
     ads
@@ -343,8 +352,6 @@ notification system
     refuse to sign
     retire
   colors/icons for good/bad things http://www.reddit.com/r/BasketballGM/comments/22bpwm/suggestion_notification_improvements/
-NaN http://www.reddit.com/r/BasketballGM/comments/1ts98f/nan_and_nanm_errors/cerc924
-gracefully handle disk space errors
 
 BIG NEW FEATURES
 ----------------
@@ -478,7 +485,6 @@ replace random.gauss with random.realGauss
 current season shouldn't show in league history page dropdown
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 document things that affect player mood
-show four factors somewhere
 security
   validate any user-added content, like custom team names (both in file and through form), custom players, and league names
 in playoffs, replace "play week" with "play until end of round"
@@ -514,15 +520,10 @@ show abbrev and highlight user's players in retired players list gavin.handley@g
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 awards
   show awards count in hall of fame
-NaN
-  NaN in EWA: http://www.reddit.com/r/BasketballGM/comments/1r1i1e/nan_on_ewa_estimated_wins_added/
-  NaN appears in new contract demands for some players sometimes, mainly when I'm skipping stuff
 add numbers for players
   ability to retire numbers
 some players should make bad plays - not everyone should have same basketball IQ in gameSim
   add a rating for basketball IQ?
-client-side error tracking
-  see kentavious for the problems with that
 fantasy draft
   when fantasy draft is over, go to summary of the draft
     do this in core.draft.untilUserOrEnd
@@ -544,30 +545,17 @@ mobile UI, bootstrap 3
   any columns: *em css - can't i make columns use bootstrap?
 some kind of playoff series overview page, including box scores for easy access
 luxury tax money should be redistributed to non-taxpaying teams (or teams under the cap?)
-jslint errors
-  currently just "Don't make functions within a loop." which should all be fixed eventually
-  can I get rid of all the "is OK" lines?
-  jshint?
 A year-to-date comparison of team finances with the previous year.
 better core.player.ovr formula
   regression: player = require('core/player'); player.regressRatingsPer();
     weight by minutes played
   THIS NEEDS TO BE UPDATED WHEN PLAYER GENERATION/DEVELOPMENT OR GAMESIM CHANGES!
-team names from db
-  option to load from JSON file on "Edit Team Info"
-  export rosters should include teams
-    option to include just team names or just players
-    should update popRank when custom teams are supplied
-  not so simple to allow abbrevs to be changed, since they are used elsewhere for convenience - damn indexeddb and denormalization!
-popRank never updates, but I don't think it matters.
 different owner personalities, with different priorities
 trades
   "undo" button for accidental trades
     transaction log first. put "Undo" button after message from other GM only right after a trade finishes. make sure it doesn't show up at other time
       only allow undo if dbChange hasn't changed since the transaction was logged
   "When signing free agents, if you offer then a contract 2 years longer/shorter than the one they want, they'll counter offer one with 1 more/less year. If you offer the same amount of money you previously offered, and change the year to what they want, they'll automatically offer the lowest $ for that amount of years."
-transaction log
-  put index on pids involved, so then events involving a player can be shown on player page
 more detailed player moods - http://www.reddit.com/r/BasketballGM/comments/1k4val/players_refusing_to_sign_bug/cbln1oo?context=3
   player personality, team chemistry
   http://www.reddit.com/r/BasketballGM/comments/1tkw3e/idea_player_traits/
@@ -713,10 +701,6 @@ PER
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
   also can respond to budget changes
   more general: have "media" reporting things like 10 worst contracts, etc
-more tests
-  https://github.com/gotwarlost/istanbul
-  how to run indexeddb-based tests from command line?
-  multi-browser testing?
 like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   inline anything from the manual?
@@ -756,21 +740,13 @@ boxplots for shot location stats, plus comparison to NBA data
 import/export stuff
   online "locker" that you can sync saved games to
   https://unhosted.org/adventures/7/Adding-remote-storage-to-unhosted-web-apps.html
-  data urls don't work with more than ~1 MB. downloadifydoesn't seem to work with more than several MBs of data. until a better solution comes (online sync?), wait.
   league names
     "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
       move delete/edit/export under one button, "manage". have the 3 buttons pop out in place when you hit manage, then it functions as it does now. popped buttons can be colored too, then
-  import league
-    ignore old lid
 other advanced stats
   WS - http://www.basketball-reference.com/about/ws.html requires Basketball on Paper - http://www.sports-reference.com/cbb/about/ws.html is simpler
   +/- and other stats needed to calculate above - track in game
   APM?
-hitting the phase twice shouldn't be possible. but if i, for instance, hit "until preseason" twice quickly, i skip a year
-  maybe have something like lock.phaseChangeInProgress? but some timeout would be needed to reset
-worth it to switch to closure library?
-  http://stackoverflow.com/questions/10782612/what-is-the-sturdiest-way-to-get-the-closure-compilers-type-safety-together-wit
-  http://www.nonblocking.io/2011/12/experimental-support-for-common-js-and.html
 moving to other cities
 expansion teams (add population growth, expand when certain conditions are met)
 team finances view
@@ -914,22 +890,10 @@ git fetch origin pull/8/head:pr-8
 player view
   next, previous buttons (also active on left/right arrows)
 
-Client-side game simulation
-  Robustness of javascript code
-    make sure play menu doesn't ever get stuck - some kind of timeout
-
 include sidebar(s) showing all relevant information, plus make that stuff generated by a separate function so it can eventually be kept static as JS updates other content
 
-security
-  csrf protection
-    http://flask.pocoo.org/docs/security/#cross-site-request-forgery-csrf
-    http://packages.python.org/Flask-SeaSurf/
-    http://flask.pocoo.org/snippets/3/
-    even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
-
-warning when window is closed and game simulation is in progress
-  http://stackoverflow.com/questions/1244535/alert-when-browser-window-closed-accidentally
-  https://developer.mozilla.org/en/DOM/window.onbeforeunload
+csrf protection
+  even for ajax https://docs.djangoproject.com/en/1.2/releases/1.2.5/#csrf-exception-for-ajax-requests
 
 # BELOW IS OLD STUFF
 
@@ -947,13 +911,6 @@ trade
 AI teams release/buy out players to sign a better free agent
 
 ---
-
-HOW TO MAKE BBGM HUGE
----------------------
-
-Hire real designer to make logos and layout
-Make game everywhere, including iOS and game consoles
-Get licensing from NBA - then charge $10 for access to real NBA rosters
 
 Potential Translators
 - brazilian: henrique.andrade@ufrj.br

@@ -65,8 +65,6 @@ PERFORMANCE CRAP
 
 is iOS detector working? getting weird errors in logs
 
-YWT bug: http://www.reddit.com/r/BasketballGM/comments/2qerb2/bug_ywt_and_you/
-
 IDEA: when writing injury info in game.writePlayerStats, use cached player object from when players are initially loaded
 
 license

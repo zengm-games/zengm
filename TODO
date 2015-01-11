@@ -5,7 +5,16 @@ CURRENT
 -------
 
 transaction log
+  add entry for
+    trade
+    draft pick
+    free agent signing
+    re-signing
+  text needs to be general enough that it can go in notification, log, and player page
+  event log UI
+    allow filtering based on type
   put index on pids involved, so then events involving a player can be shown on player page
+  show a player's transactions on their player page
 
 don't fail silently when exceeding quota
   http://www.html5rocks.com/en/tutorials/offline/quota-research/#toc-how_to_handle_going_over_quota
@@ -202,8 +211,6 @@ game log for individual player
   in each box score, include an array of players in the game. index on that.
 foreign player names
   draftexpress? emailed them, if no reply, maybe scrape
-career transactions page
-  multientry index in event log to pull every event involving a player
 great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_questions_and_feedback_feel_free_to_add/
 create a player during the playoffs and his stats row won't show up until the next season. basic problem seems to be that no playoff stats are returned if htere are no regular season stats
 a 0 day injury doesn't show up in box score, so it looks like player was just benched http://www.reddit.com/message/messages/2pfuyr
@@ -253,7 +260,6 @@ blog about cordova/web hybrid
   upload roster files problem
 firefox market
 windows 8
-event log for trades
 upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page
@@ -331,19 +337,12 @@ notification system
   when fading out, hover should stop animation, remove notification-delete, reset timer to 1s (or something)
     hover on fading in should also stop animation so there is no stutter
   what about for small screens? maybe just show one at a time. is this actually a problem?
-  event log
-    allow filtering based on type
   also log these events:
-    trades
-      for user, don't show notification, but log
-    user draft picks
-      don't show notification, but log
     fired - log, but don't show
     new team
+  notify
+    when something happens to a player on the watch list
     big AI moves - trades, free agent signings
-      only show big moves, not all. need some threshold
-      all could still be stored to db, just not shown http://www.reddit.com/r/BasketballGM/comments/1valwk/suggestion_running_list_of_fa_signing/
-  notify when something happens to a player on the watch list
   merge "retired" and "HOF" notifications for a player on the user's team
   important notifications should be a different color, maybe require acknowledgement before closing
     errors
@@ -501,6 +500,7 @@ tooling
   tools/build.js
     test on windows
   istanbul https://github.com/karma-runner/karma-coverage
+  flow - doesn't seem to like requirejs or promises
 simple advanced stats
   TS%, etc
   pace-weighted stats

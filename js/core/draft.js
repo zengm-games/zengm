@@ -2,7 +2,7 @@
  * @name core.draft
  * @namespace The annual draft of new prospects.
  */
-define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "lib/bluebird", "util/helpers", "util/random"], function (dao, g, ui, finances, player, team, Promise, helpers, random) {
+define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "lib/bluebird", "util/eventLog", "util/helpers", "util/random"], function (dao, g, ui, finances, player, team, Promise, eventLog, helpers, random) {
     "use strict";
 
     /**
@@ -322,7 +322,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
             ot: tx,
             key: pid
         }).then(function (p) {
-            var i, rookieSalaries, years;
+            var draftName, i, rookieSalaries, years;
 
             // Draft player
             p.tid = pick.tid;
@@ -354,6 +354,20 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
             if (g.phase === g.PHASE.FANTASY_DRAFT && g.nextPhase <= g.PHASE.PLAYOFFS) {
                 p = player.addStatsRow(tx, p, g.nextPhase === g.PHASE.PLAYOFFS);
             }
+
+
+            if (g.phase === g.PHASE.FANTASY_DRAFT) {
+                draftName = g.season + ' fantasy draft';
+            } else {
+                draftName = g.season + ' draft';
+            }
+            eventLog.add(null, {
+                type: "draft",
+                text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season]) + '">' + g.teamNamesCache[pick.tid] + '</a> selected <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> with the ' + helpers.ordinal(pick.pick + (pick.round - 1) * 30) + ' pick in the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season]) + '">' + draftName + '</a>.',
+                showNotification: false,
+                pids: [p.pid],
+                tids: [p.tid]
+            });
 
             dao.players.put({ot: tx, value: p});
         });

@@ -10,21 +10,18 @@ CURRENT
 transaction log
   add entry for
     trade
-    draft pick
-      AI
-      user
     free agent signing
       AI
-      user
     re-signing
       AI
-      user
     anything else.. any time a player's tid changes
   text needs to be general enough that it can go in notification, log, and player page
   event log UI
     allow filtering based on season and team in dropdowns, type with checkboxes
   put index on pids involved, so then events involving a player can be shown on player page
   show a player's transactions on their player page
+    which ones to filter out?
+    responsive
   go through existing events and add tid and pid as necessary
   performance?
 

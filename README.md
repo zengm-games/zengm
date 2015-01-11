@@ -41,7 +41,7 @@ version of Mongoose available <http://cesanta.com/downloads.html>.
 
 Install Node, NPM, and Express. The easiest way to do that is to install Node
 and NPM from <http://nodejs.org/> and then run `npm install` from this folder
-to intall Express (and some other things you might want later, see below). Then
+to install Express (and some other things you might want later, see below). Then
 run
 
     npm start

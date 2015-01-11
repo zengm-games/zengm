@@ -27,7 +27,7 @@ define(["globals", "ui", "core/league", "util/bbgmView", "util/helpers"], functi
         });
 
         document.getElementById("disable-god-mode").addEventListener("click", function () {
-            league.setGameAttributesCompmlete({godMode: false}).then(function () {
+            league.setGameAttributesComplete({godMode: false}).then(function () {
                 league.updateLastDbChange();
                 ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
             });

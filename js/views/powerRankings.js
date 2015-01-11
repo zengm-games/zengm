@@ -105,17 +105,17 @@ define(["dao", "globals", "ui", "core/team", "lib/bluebird", "lib/jquery", "lib/
                 performanceRank = t.gp > 0 ? String(t.performanceRank) : "-";
                 return [String(t.overallRank), performanceRank, String(t.talentRank), '<a href="' + helpers.leagueUrl(["roster", t.abbrev]) + '">' + t.region + ' ' + t.name + '</a>', String(t.won), String(t.lost), t.lastTen, helpers.round(t.diff, 1), t.tid === g.userTid];
             }), {
-                fnRowCallback: function (nRow, aData) {
+                rowCallback: function (row, data) {
                     // Show point differential in green or red for positive or negative
-                    if (aData[aData.length - 2] > 0) {
-                        nRow.childNodes[nRow.childNodes.length - 1].classList.add("text-success");
-                    } else if (aData[aData.length - 2] < 0) {
-                        nRow.childNodes[nRow.childNodes.length - 1].classList.add("text-danger");
+                    if (data[data.length - 2] > 0) {
+                        row.childNodes[row.childNodes.length - 1].classList.add("text-success");
+                    } else if (data[data.length - 2] < 0) {
+                        row.childNodes[row.childNodes.length - 1].classList.add("text-danger");
                     }
 
                     // Highlight user team
-                    if (aData[aData.length - 1]) {
-                        nRow.classList.add("info");
+                    if (data[data.length - 1]) {
+                        row.classList.add("info");
                     }
                 }
             });

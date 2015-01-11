@@ -302,7 +302,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/b
 
         ko.computed(function () {
             ui.datatableSinglePage($("#roster-user"), 5, tradeable(vm.userRoster()),
-                                   {aoColumnDefs: [{bSortable: false, aTargets: [0]}]});
+                                   {columnDefs: [{orderable: false, targets: [0]}]});
         }).extend({throttle: 1});
 
         ui.tableClickableRows($("#roster-user"));

@@ -160,14 +160,14 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "vi
             }
 
             ui.datatable($("#player-stats"), 2, rows, {
-                fnRowCallback: function (nRow, aData) {
+                rowCallback: function (row, data) {
                     // Highlight HOF players
-                    if (aData[aData.length - 2]) {
-                        nRow.classList.add("danger");
+                    if (data[data.length - 2]) {
+                        row.classList.add("danger");
                     }
                     // Highlight user's team
-                    if (aData[aData.length - 1]) {
-                        nRow.classList.add("info");
+                    if (data[data.length - 1]) {
+                        row.classList.add("info");
                     }
                 }
             });

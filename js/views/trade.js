@@ -402,12 +402,12 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/bluebird", "li
 
         ko.computed(function () {
             ui.datatableSinglePage($("#roster-user"), 5, tradeable("user", vm.userRoster()),
-                                   {aoColumnDefs: [{bSortable: false, aTargets: [0]}]});
+                                   {columnDefs: [{orderable: false, targets: [0]}]});
         }).extend({throttle: 1});
 
         ko.computed(function () {
             ui.datatableSinglePage($("#roster-other"), 5, tradeable("other", vm.otherRoster()),
-                                   {aoColumnDefs: [{bSortable: false, aTargets: [0]}]});
+                                   {columnDefs: [{orderable: false, targets: [0]}]});
         }).extend({throttle: 1});
 
         ui.tableClickableRows($("#roster-user"));

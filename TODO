@@ -4,10 +4,6 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
-upgrade datatables
-  commented out stuff in app.js
-  README: I commented out the RequireJS stuff in jquery.dataTables.js because it is even more annoying to use that way than to just shim it. I also hacked jquery.dataTables to do some custom stuff when it's wrapped in a .table-responsive div (search for BBGM).
-
 transaction log
   put index on pids involved, so then events involving a player can be shown on player page
 

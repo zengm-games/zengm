@@ -19,7 +19,6 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
     function realtimeUpdate(updateEvents, url, cb, raw) {
         var inLeague, refresh;
 
-//debugger;
         updateEvents = updateEvents !== undefined ? updateEvents : [];
         url = url !== undefined ? url : location.pathname + location.search;
         raw = raw !== undefined ? raw : {};
@@ -246,48 +245,36 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
         var options;
 
         options = $.extend({
-            aaData: data,
-            aaSorting: [[sortCol, "desc"]],
-            bDestroy: true,
-            bDeferRender: true,
-            bStateSave: true,
-            fnStateSave: function (oSettings, oData) {
-                localStorage.setItem("DataTables_" + table[0].id, JSON.stringify(oData));
-            },
-            fnStateLoad: function () {
-                return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
-            },
-            sPaginationType: "bootstrap",
-            oLanguage: {
-                sLengthMenu: "_MENU_ per page",
-                sInfo: "_START_ to _END_ of _TOTAL_",
-                sInfoEmpty: "",
-                sInfoFiltered: "(filtered from _MAX_)"
+            data: data,
+            order: [[sortCol, "desc"]],
+            destroy: true,
+            deferRender: true,
+            stateSave: true,
+            pagingType: "bootstrap",
+            language: {
+                lengthMenu: "_MENU_ per page",
+                info: "_START_ to _END_ of _TOTAL_",
+                infoEmpty: "",
+                infoFiltered: "(filtered from _MAX_)"
             }
         }, extraOptions);
 
-        table.dataTable(options);
+        table.DataTable(options);
     }
     function datatableSinglePage(table, sortCol, data, extraOptions) {
         var options;
 
         options = $.extend({
-            aaData: data,
-            aaSorting: [[sortCol, "desc"]],
-            bDestroy: true,
-            bFilter: false,
-            bInfo: false,
-            bPaginate: false,
-            bStateSave: true,
-            fnStateSave: function (oSettings, oData) {
-                localStorage.setItem("DataTables_" + table[0].id, JSON.stringify(oData));
-            },
-            fnStateLoad: function () {
-                return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
-            }
+            data: data,
+            order: [[sortCol, "desc"]],
+            destroy: true,
+            searching: false,
+            info: false,
+            paging: false,
+            stateSave: true
         }, extraOptions);
 
-        table.dataTable(options);
+        table.DataTable(options);
     }
 
     function tableClickableRows(tableEl) {

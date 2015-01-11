@@ -101,14 +101,14 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "li
             ui.datatable($("#team-history-players"), 2, _.map(vm.players(), function (p) {
                 return [helpers.playerNameLabels(p.pid, p.name, p.injury, [], p.watch), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== vm.team.tid(), p.tid === vm.team.tid()];
             }), {
-                fnRowCallback: function (nRow, aData) {
+                rowCallback: function (row, data) {
                     // Highlight active players
-                    if (aData[aData.length - 1]) {
-                        nRow.classList.add("success"); // On this team
-                    } else if (aData[aData.length - 2]) {
-                        nRow.classList.add("info"); // On other team
-                    } else if (aData[aData.length - 3]) {
-                        nRow.classList.add("danger"); // Hall of Fame
+                    if (data[data.length - 1]) {
+                        row.classList.add("success"); // On this team
+                    } else if (data[data.length - 2]) {
+                        row.classList.add("info"); // On other team
+                    } else if (data[data.length - 3]) {
+                        row.classList.add("danger"); // Hall of Fame
                     }
                 }
             });

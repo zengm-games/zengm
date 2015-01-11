@@ -12,9 +12,9 @@ transaction log
     trade
     free agent signing
       AI
-    re-signing
-      AI
-    anything else.. any time a player's tid changes
+    releasing player
+      AI (due to roster limit)
+      user (due to manual action)
   text needs to be general enough that it can go in notification, log, and player page
   event log UI
     allow filtering based on season and team in dropdowns, type with checkboxes

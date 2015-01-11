@@ -653,7 +653,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                             index: "tid",
                             key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
                             callback: function (p) {
-                                var changed, showNotification;
+                                var changed;
 
                                 changed = false;
                                 if (p.injury.gamesRemaining > 0) {
@@ -665,15 +665,10 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                                     p.injury = {type: "Healthy", gamesRemaining: 0};
                                     changed = true;
 
-                                    if (p.tid === g.userTid) {
-                                        showNotification = true;
-                                    } else {
-                                        showNotification = false;
-                                    }
                                     eventLog.add(tx, {
                                         type: "healed",
                                         text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.',
-                                        showNotification: showNotification,
+                                        showNotification: p.tid === g.userTid,
                                         pids: [p.pid],
                                         tids: [p.tid]
                                     });

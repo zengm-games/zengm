@@ -192,17 +192,14 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 series[0][3 + cid * 4].away.seed = 7;
             }
 
-            if (tidPlayoffs.indexOf(g.userTid) >= 0) {
+            tidPlayoffs.forEach(function (tid) {
                 eventLog.add(null, {
                     type: "playoffs",
-                    text: 'Your team made <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
+                    text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season]) + '">' + g.teamNamesCache[tid] + '</a> made <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.',
+                    showNotification: tid === g.userTid,
+                    tids: [tid]
                 });
-            } else {
-                eventLog.add(null, {
-                    type: "playoffs",
-                    text: 'Your team didn\'t make <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">the playoffs</a>.'
-                });
-            }
+            });
 
             return Promise.all([
                 dao.playoffSeries.put({
@@ -469,7 +466,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
 
     function newPhaseResignPlayers(tx) {
         return player.genBaseMoods(tx).then(function (baseMoods) {
-            // Re-sign players on user's team, and some AI players
+            // Re-sign players on user's team
             return dao.players.iterate({
                 ot: tx,
                 index: "tid",
@@ -483,7 +480,9 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                                 if (error !== undefined && error) {
                                     eventLog.add(null, {
                                         type: "refuseToSign",
-                                        text: error
+                                        text: error,
+                                        pids: [p.pid],
+                                        tids: [p.tid]
                                     });
                                 }
                             });

@@ -299,8 +299,10 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                                     vars.seriesTitle = "League Finals";
                                 }
 
-                                // Update here rather than by returning vars because returning vars doesn't guarantee order of updates, so it can cause an error when showPlayoffSeries is true before the other stuff is set (try it with the same league in two tabs)
-                                komapping.fromJS({series: vars.series, seriesTitle: vars.seriesTitle}, vm);
+                                // Update here rather than by returning vars because returning vars doesn't guarantee order of updates, so it can cause an error when showPlayoffSeries is true before the other stuff is set (try it with the same league in two tabs). But otherwise (for normal page loads), this isn't sufficient and we need to return vars. I don't understand, but it works.
+                                if (updateEvents.indexOf("dbChange") >= 0) {
+                                    komapping.fromJS({series: vars.series, seriesTitle: vars.seriesTitle}, vm);
+                                }
                                 break;
                             }
                         }
@@ -310,7 +312,7 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                     }
                 }
 
-                return {showPlayoffSeries: vars.showPlayoffSeries};
+                return vars;
             });
         }
     }

@@ -344,7 +344,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
             }
 
             return dao.playoffSeries.get({ot: tx, key: g.season}).then(function (playoffSeries) {
-                var currentRoundText, i, loserWon, otherTid, playoffRound, series, won0;
+                var currentRoundText, i, loserTid, loserWon, playoffRound, series, showNotification, winnerTid, won0;
 
                 playoffRound = playoffSeries.series[playoffSeries.currentRound];
 
@@ -375,48 +375,39 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                     }
                 }
 
-                // Check if the user's team won/lost a playoff series (before the finals)
-                if ((g.userTid === results.team[0].id || g.userTid === results.team[1].id) && playoffSeries.currentRound < 3) {
-                    if (series.away.won === 4 || series.home.won === 4) {
-                        otherTid = g.userTid === results.team[0].id ? results.team[1].id : results.team[0].id;
-                        loserWon = series.away.won === 4 ? series.home.won : series.away.won;
-                        if (playoffSeries.currentRound === 0) {
-                            currentRoundText = "first round of the playoffs";
-                        } else if (playoffSeries.currentRound === 1) {
-                            currentRoundText = "second round of the playoffs";
-                        } else if (playoffSeries.currentRound === 2) {
-                            currentRoundText = "conference finals";
-                        }
-                        // ...no finals because that is handled separately
-
-                        if ((series.away.tid === g.userTid && series.away.won === 4) || (series.home.tid === g.userTid && series.home.won === 4)) {
-                            eventLog.add(tx, {
-                                type: "playoffs",
-                                text: 'Your team defeated the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[otherTid], g.season]) + '">' + g.teamNamesCache[otherTid] + '</a> in the ' + currentRoundText + ', 4-' + loserWon + '.'
-                            });
-                        } else {
-                            eventLog.add(tx, {
-                                type: "playoffs",
-                                text: 'Your team was eliminated by the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[otherTid], g.season]) + '">' + g.teamNamesCache[otherTid] + '</a> in the ' + currentRoundText + ', 4-' + loserWon + '.'
-                            });
-                        }
-                    }
-                }
-
-                // If somebody just won the title, announce it
-                if (playoffSeries.currentRound === 3 && (series.away.won === 4 || series.home.won === 4)) {
-                    if ((series.away.tid === g.userTid && series.away.won === 4) || (series.home.tid === g.userTid && series.home.won === 4)) {
-                        eventLog.add(tx, {
-                            type: "playoffs",
-                            text: 'Your team won the ' + g.season + ' league championship!'
-                        });
+                // Log result of playoff series
+                if (series.away.won === 4 || series.home.won === 4) {
+                    if (series.away.won === 4) {
+                        winnerTid = series.away.tid;
+                        loserTid = series.home.tid;
+                        loserWon = series.home.won;
                     } else {
-                        otherTid = series.away.won === 4 ? series.away.tid : series.home.tid;
-                        eventLog.add(tx, {
-                            type: "playoffs",
-                            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[otherTid], g.season]) + '">' + g.teamRegionsCache[otherTid] + ' ' + g.teamNamesCache[otherTid] + '</a> won the ' + g.season + ' league championship!'
-                        });
+                        winnerTid = series.home.tid;
+                        loserTid = series.away.tid;
+                        loserWon = series.away.won;
                     }
+
+                    if (playoffSeries.currentRound === 0) {
+                        currentRoundText = "first round of the playoffs";
+                    } else if (playoffSeries.currentRound === 1) {
+                        currentRoundText = "second round of the playoffs";
+                    } else if (playoffSeries.currentRound === 2) {
+                        currentRoundText = "conference finals";
+                    } else if (playoffSeries.currentRound === 3) {
+                        currentRoundText = "league championship";
+                    }
+
+                    if (series.away.tid === g.userTid  || series.home.tid === g.userTid || playoffSeries.currentRound === 3) {
+                        showNotification = true;
+                    } else {
+                        showNotification = false;
+                    }
+                    eventLog.add(tx, {
+                        type: "playoffs",
+                        text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season]) + '">' + g.teamNamesCache[winnerTid] + '</a> defeated the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season]) + '">' + g.teamNamesCache[loserTid] + '</a> in the ' + currentRoundText + ', 4-' + loserWon + '.',
+                        showNotification: showNotification,
+                        tid: [winnerTid, loserTid]
+                    });
                 }
 
                 dao.playoffSeries.put({ot: tx, value: playoffSeries});
@@ -662,7 +653,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                             index: "tid",
                             key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
                             callback: function (p) {
-                                var changed;
+                                var changed, showNotification;
 
                                 changed = false;
                                 if (p.injury.gamesRemaining > 0) {
@@ -672,13 +663,20 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                                 // Is it already over?
                                 if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
                                     p.injury = {type: "Healthy", gamesRemaining: 0};
-                                    if (p.tid === g.userTid) {
-                                        eventLog.add(tx, {
-                                            type: "healed",
-                                            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.'
-                                        });
-                                    }
                                     changed = true;
+
+                                    if (p.tid === g.userTid) {
+                                        showNotification = true;
+                                    } else {
+                                        showNotification = false;
+                                    }
+                                    eventLog.add(tx, {
+                                        type: "healed",
+                                        text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.',
+                                        showNotification: showNotification,
+                                        pids: [p.pid],
+                                        tids: [p.tid]
+                                    });
                                 }
 
                                 // Also check for gamesUntilTradable

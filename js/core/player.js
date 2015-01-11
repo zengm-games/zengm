@@ -522,6 +522,14 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             });
         }
 
+        eventLog.add(null, {
+            type: "release",
+            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> released <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>.',
+            showNotification: false,
+            pids: [p.pid],
+            tids: [p.tid]
+        });
+
         return genBaseMoods(tx).then(function (baseMoods) {
             return addToFreeAgents(tx, p, g.phase, baseMoods);
         });

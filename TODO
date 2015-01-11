@@ -10,21 +10,19 @@ CURRENT
 transaction log
   add entry for
     trade
-    releasing player
-      AI (due to roster limit)
-      user (due to manual action)
   text needs to be general enough that it can go in notification, log, and player page
   event log UI
     allow filtering based on season and team in dropdowns
     allow filtering type with checkboxes
     what about events with no team?
     why URL reloads after click to base?
-  put index on pids involved, so then events involving a player can be shown on player page
   show a player's transactions on their player page
-    which ones to filter out?
+    which ones to show? release, reSigned, freeAgent, draft, trade
     responsive
   go through existing events and add tid and pid as necessary
   performance?
+    include in delete old data?
+  anything else to add or anywhere else to use this feature? ask
 
 in core.game, cache player objects on initial read, then don't need to read back after games
   use in two places: writing injuries and updating injuries/gamesUntilTradable

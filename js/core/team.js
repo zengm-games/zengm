@@ -2,7 +2,7 @@
  * @name core.team
  * @namespace Functions operating on team objects, parts of team objects, or arrays of team objects.
  */
-define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util/helpers", "util/random"], function (dao, g, player, Promise, _, helpers, random) {
+define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, g, player, Promise, _, eventLog, helpers, random) {
     "use strict";
 
     /**
@@ -1310,11 +1310,21 @@ console.log(dv);*/
                         // Auto-add players
 //console.log([tid, minFreeAgents.length, numPlayersOnRoster]);
                         while (numPlayersOnRoster < g.minRosterSize) {
+                            // See also core.phase
                             p = minFreeAgents.shift();
                             p.tid = tid;
                             p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
                             p = player.setContract(p, p.contract, true);
                             p.gamesUntilTradable = 15;
+
+                            eventLog.add(null, {
+                                type: "freeAgent",
+                                text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                                showNotification: false,
+                                pids: [p.pid],
+                                tids: [p.tid]
+                            });
+
                             dao.players.put({ot: tx, value: p});
 
                             numPlayersOnRoster += 1;

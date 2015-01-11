@@ -310,7 +310,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
                     if (negotiation.resigning) {
                         eventLog.add(null, {
                             type: "reSigned",
-                            text: 'The ' + g.teamRegionsCache[g.userTid] + ' ' + g.teamNamesCache[g.userTid] + ' re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season]) + '">' + g.teamNamesCache[g.userTid] + '</a> re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
                             showNotification: false,
                             pids: [p.pid],
                             tids: [g.userTid]
@@ -318,7 +318,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
                     } else {
                         eventLog.add(null, {
                             type: "freeAgent",
-                            text: 'The ' + g.teamRegionsCache[g.userTid] + ' ' + g.teamNamesCache[g.userTid] + ' signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season]) + '">' + g.teamNamesCache[g.userTid] + '</a> signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
                             showNotification: false,
                             pids: [p.pid],
                             tids: [g.userTid]

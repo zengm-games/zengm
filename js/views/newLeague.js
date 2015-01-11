@@ -196,7 +196,14 @@ define(["dao", "ui", "core/league", "lib/bluebird", "lib/jquery", "lib/knockout.
                 reader.onload = function (event) {
                     var leagueFile, newTeams;
 
-                    leagueFile = JSON.parse(event.target.result);
+                    try {
+                        leagueFile = JSON.parse(event.target.result);
+                    } catch (e) {
+                        // addresses 'unexpected token' error: https://bugsnag.com/dumbmatter/basketball-gm/errors/546abaa0c3d637ae229a224e
+                        window.alert("The upload file is not in a valid format.");
+                        return window.location.replace("../");
+                    }
+
                     newTeams = leagueFile.teams;
                     setTeams(newTeams);
 

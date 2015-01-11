@@ -258,7 +258,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 for (i = 0; i < awardsByPlayer.length; i++) {
                     p = awardsByPlayer[i];
 
-                    text = '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season]) + '">' + g.teamAbbrevsCache[g.userTid] + '</a>) ';
+                    text = '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamAbbrevsCache[p.tid] + '</a>) ';
                     if (p.type.indexOf("Team") >= 0) {
                         text += 'made the ' + p.type + '.';
                     } else {

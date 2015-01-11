@@ -8,15 +8,19 @@ CURRENT
 -------
 
 transaction log
+  events included in export?
   event log UI
     allow filtering type with checkboxes
     what about events with no tid?
   show a player's transactions on their player page
+    correct order?
     which ones to show? release, reSigned, freeAgent, draft, trade
     responsive
-  performance?
+  benchmark
     include in delete old data?
+    do i really need to save every game and injury? others?
   anything else to add or anywhere else to use this feature? ask
+    big AI free agent signings
 
 in core.game, cache player objects on initial read, then don't need to read back after games
   use in two places: writing injuries and updating injuries/gamesUntilTradable
@@ -501,6 +505,7 @@ schedule page (and dashboard and maybe gamelog) should show opponent records
 LOW PRIORITY
 ------------
 
+option to stop sim when player is injured http://www.reddit.com/r/BasketballGM/comments/2s265y/suggestion_option_to_automatically_stop/
 tooling
   tools/build.js
     test on windows

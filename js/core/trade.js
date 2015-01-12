@@ -426,8 +426,6 @@ define(["dao", "globals", "core/league", "core/player", "core/team", "lib/bluebi
                             });
                         });
 
-                        
-
                         // Log event
                         summary(teams).then(function (s) {
                             var formatAssetsEventLog;

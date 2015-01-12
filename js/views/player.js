@@ -33,7 +33,6 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
 
     function updatePlayer(inputs, updateEvents, vm) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
-
             return Promise.all([
                 dao.players.get({
                     key: inputs.pid,

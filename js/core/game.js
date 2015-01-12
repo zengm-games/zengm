@@ -398,7 +398,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         currentRoundText = "league championship";
                     }
 
-                    if (series.away.tid === g.userTid  || series.home.tid === g.userTid || playoffSeries.currentRound === 3) {
+                    if (series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3) {
                         showNotification = true;
                     } else {
                         showNotification = false;

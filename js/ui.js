@@ -259,8 +259,9 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             }
         }, extraOptions);
 
-        table.DataTable(options);
+        table.dataTable(options);
     }
+
     function datatableSinglePage(table, sortCol, data, extraOptions) {
         var options;
 
@@ -274,7 +275,7 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             stateSave: true
         }, extraOptions);
 
-        table.DataTable(options);
+        table.dataTable(options);
     }
 
     function tableClickableRows(tableEl) {

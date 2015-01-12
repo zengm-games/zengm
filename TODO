@@ -10,14 +10,9 @@ CURRENT
 when progressing to regular season, weird bluebird error. abort and try again works
 
 transaction log
-  events included in export?
-  event log UI
-    allow filtering type with checkboxes
-    what about events with no tid?
-  benchmark
-    include in delete old data?
   anything else to add or anywhere else to use this feature? ask
     big AI free agent signings
+  DB upgrade code
 
 in core.game, cache player objects on initial read, then don't need to read back after games
   use in two places: writing injuries and updating injuries/gamesUntilTradable
@@ -724,6 +719,10 @@ update formulas
 FUTURE
 ------
 
+
+event log UI
+  allow filtering type with checkboxes
+  what about events with no tid? they are currently not viewable
 draftOrder should just be in globals, not a real table
 shot charts showing hot spots (red/yellow/green) based on shot location data
 most improved player

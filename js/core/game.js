@@ -407,7 +407,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         type: "playoffs",
                         text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season]) + '">' + g.teamNamesCache[winnerTid] + '</a> defeated the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season]) + '">' + g.teamNamesCache[loserTid] + '</a> in the ' + currentRoundText + ', 4-' + loserWon + '.',
                         showNotification: showNotification,
-                        tid: [winnerTid, loserTid]
+                        tids: [winnerTid, loserTid]
                     });
                 }
 

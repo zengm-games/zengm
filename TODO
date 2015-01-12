@@ -1,9 +1,6 @@
 DB CHANGES SINCE 3.4.0
 ----------------------
 
-pids and tids in event log
-  need to add everywhere? or just add index?
-
 CURRENT
 -------
 
@@ -12,7 +9,6 @@ when progressing to regular season, weird bluebird error. abort and try again wo
 transaction log
   anything else to add or anywhere else to use this feature? ask
     big AI free agent signings
-  DB upgrade code
 
 in core.game, cache player objects on initial read, then don't need to read back after games
   use in two places: writing injuries and updating injuries/gamesUntilTradable

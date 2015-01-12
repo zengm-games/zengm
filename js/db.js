@@ -186,7 +186,7 @@ console.log(event);
         draftPickStore.createIndex("tid", "tid", {unique: false});
         eventStore.createIndex("season", "season", {unique: false});
         eventStore.createIndex("pids", "pids", {unique: false, multiEntry: true});
-        eventStore.createIndex("tids", "tids", {unique: false, multiEntry: true});
+//        eventStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used currently, but might need to be added later
     }
 
     /**
@@ -744,6 +744,11 @@ console.log(event);
                     };
                 }());
             }
+            if (event.oldVersion <= 11) {
+                (function () {
+                    tx.objectStore("events").createIndex("pids", "pids", {unique: false, multiEntry: true});
+                }());
+            }
         });
     }
 
@@ -752,7 +757,7 @@ console.log(event);
             var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-            request = indexedDB.open("league" + lid, 11);
+            request = indexedDB.open("league" + lid, 12);
             request.onerror = function (event) {
                 if (event.target.webkitErrorMessage) {
                     throw new Error("League connection error: " + event.target.webkitErrorMessage);

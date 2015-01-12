@@ -1693,7 +1693,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
     function retire(tx, p, playerStats) {
         eventLog.add(tx, {
             type: "retired",
-            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season]) + '">' + g.teamAbbrevsCache[g.userTid] + '</a>) retired.',
+            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>  retired.',
             showNotification: p.tid === g.userTid,
             pids: [p.pid],
             tids: [p.tid]

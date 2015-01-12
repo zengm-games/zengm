@@ -64,7 +64,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
                 currentRatings = p.ratings[p.ratings.length - 1];
 
                 events = events.filter(function (event) {
-                    if (event.type === "award" || event.type === "injured" || event.type === "healed") {
+                    if (event.type === "award" || event.type === "injured" || event.type === "healed" || event.type === "hallOfFame") {
                         return false;
                     }
 

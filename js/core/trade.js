@@ -382,7 +382,7 @@ define(["dao", "globals", "core/league", "core/player", "core/team", "lib/bluebi
                 outcome = "rejected"; // Default
 
                 return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(function (dv) {
-                    var tx;
+                    var formatAssetsEventLog, tx;
 
                     tx = dao.tx(["draftPicks", "players", "playerStats"], "readwrite");
 
@@ -427,48 +427,44 @@ define(["dao", "globals", "core/league", "core/player", "core/team", "lib/bluebi
                         });
 
                         // Log event
-                        summary(teams).then(function (s) {
-                            var formatAssetsEventLog;
+                        formatAssetsEventLog = function (t) {
+                            var i, strings, text;
 
-                            formatAssetsEventLog = function (t) {
-                                var i, strings, text;
+                            strings = [];
 
-                                strings = [];
+                            t.trade.forEach(function (p) {
+                                strings.push('<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>');
+                            });
+                            t.picks.forEach(function (dp) {
+                                strings.push('a ' + dp.desc);
+                            });
 
-                                t.trade.forEach(function (p) {
-                                    strings.push('<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>');
-                                });
-                                t.picks.forEach(function (dp) {
-                                    strings.push('a ' + dp.desc);
-                                });
-
-                                if (strings.length === 0) {
-                                    text = "nothing";
-                                } else if (strings.length === 1) {
-                                    text = strings[0];
-                                } else if (strings.length === 2) {
-                                    text = strings[0] + " and " + strings[1];
-                                } else {
-                                    text = strings[0];
-                                    for (i = 1; i < strings.length; i++) {
-                                        if (i === strings.length - 1) {
-                                            text += ", and " + strings[i];
-                                        } else {
-                                            text += ", " + strings[i];
-                                        }
+                            if (strings.length === 0) {
+                                text = "nothing";
+                            } else if (strings.length === 1) {
+                                text = strings[0];
+                            } else if (strings.length === 2) {
+                                text = strings[0] + " and " + strings[1];
+                            } else {
+                                text = strings[0];
+                                for (i = 1; i < strings.length; i++) {
+                                    if (i === strings.length - 1) {
+                                        text += ", and " + strings[i];
+                                    } else {
+                                        text += ", " + strings[i];
                                     }
                                 }
+                            }
 
-                                return text;
-                            };
+                            return text;
+                        };
 
-                            eventLog.add(null, {
-                                type: "trade",
-                                text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season]) + '">' + g.teamNamesCache[tids[0]] + '</a> traded ' + formatAssetsEventLog(s.teams[0]) + ' to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season]) + '">' + g.teamNamesCache[tids[1]] + '</a> for ' + formatAssetsEventLog(s.teams[1]) + '.',
-                                showNotification: false,
-                                pids: pids[0].concat(pids[1]),
-                                tids: tids
-                            });
+                        eventLog.add(null, {
+                            type: "trade",
+                            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season]) + '">' + g.teamNamesCache[tids[0]] + '</a> traded ' + formatAssetsEventLog(s.teams[0]) + ' to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season]) + '">' + g.teamNamesCache[tids[1]] + '</a> for ' + formatAssetsEventLog(s.teams[1]) + '.',
+                            showNotification: false,
+                            pids: pids[0].concat(pids[1]),
+                            tids: tids
                         });
                     }
 

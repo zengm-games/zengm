@@ -272,7 +272,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
     }
 
     function writeGameStats(tx, results, att) {
-        var gameStats, i, keys, p, showNotification, t, text, tl, tw;
+        var gameStats, i, keys, p, t, text, tl, tw;
 
         gameStats = {
             gid: results.gid,
@@ -324,17 +324,19 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
         // Event log
         if (results.team[0].id === g.userTid || results.team[1].id === g.userTid) {
-            showNotification = true;
-        } else {
-            showNotification = false;
+            if (results.team[tw].id === g.userTid) {
+                text = 'Your team defeated the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tl].id], g.season]) + '">' + g.teamNamesCache[results.team[tl].id];
+            } else {
+                text = 'Your team lost to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tw].id], g.season]) + '">' + g.teamNamesCache[results.team[tw].id];
+            }
+            text += '</a> <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid]) + '">' + results.team[tw].stat.pts + "-" + results.team[tl].stat.pts + "</a>.";
+            eventLog.add(tx, {
+                type: results.team[tw].id === g.userTid ? "gameWon" : "gameLost",
+                text: text,
+                saveToDb: false,
+                tids: [results.team[0].id, results.team[1].id]
+            });
         }
-        text = 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tw].id], g.season]) + '">' + g.teamNamesCache[results.team[tw].id] + '</a> defeated the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tl].id], g.season]) + '">' + g.teamNamesCache[results.team[tl].id] + '</a> <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid]) + '">' + results.team[tw].stat.pts + "-" + results.team[tl].stat.pts + "</a>.";
-        eventLog.add(tx, {
-            type: results.team[tw].id === g.userTid ? "gameWon" : "gameLost",
-            text: text,
-            showNotification: showNotification,
-            tids: [results.team[0].id, results.team[1].id]
-        });
 
         return dao.games.add({ot: tx, value: gameStats}).then(function () {
             // Record progress of playoff series, if appropriate

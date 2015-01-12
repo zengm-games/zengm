@@ -14,9 +14,6 @@ transaction log
   event log UI
     allow filtering type with checkboxes
     what about events with no tid?
-  show a player's transactions on their player page
-    correct order?
-    which ones to show? release, reSigned, freeAgent, draft, trade
   benchmark
     include in delete old data?
   anything else to add or anywhere else to use this feature? ask

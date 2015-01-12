@@ -64,6 +64,19 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
 
                 currentRatings = p.ratings[p.ratings.length - 1];
 
+                events = events.filter(function (event) {
+                    if (event.type === "award" || event.type === "injured" || event.type === "healed") {
+                        return false;
+                    }
+
+                    return true;
+                }).map(function (event) {
+                    return {
+                        season: event.season,
+                        text: event.text
+                    };
+                });
+
                 return {
                     player: p,
                     currentRatings: currentRatings,

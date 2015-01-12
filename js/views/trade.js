@@ -28,7 +28,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/bluebird", "li
                 var i;
 
                 vars.summary = {
-                    enablePropose: !summary.warning && (teams[0].pids.length > 0 || teams[0].dpids.length > 0 || teams[0].dpids.length > 0 || teams[1].dpids.length > 0),
+                    enablePropose: !summary.warning && (teams[0].pids.length > 0 || teams[0].dpids.length > 0 || teams[1].pids.length > 0 || teams[1].dpids.length > 0),
                     warning: summary.warning
                 };
 

@@ -482,7 +482,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                                         type: "refuseToSign",
                                         text: error,
                                         pids: [p.pid],
-                                        tids: [p.tid]
+                                        tids: [g.userTid] // Not p.tid because that might have changed by now
                                     });
                                 }
                             });

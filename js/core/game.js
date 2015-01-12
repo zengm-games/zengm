@@ -2,8 +2,11 @@
  * @name core.game
  * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
  */
-define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/league", "core/phase", "core/player", "core/season", "core/team", "lib/bluebird", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, db, g, ui, freeAgents, finances, gameSim, league, phase, player, season, team, Promise, advStats, eventLog, lock, helpers, random) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSim", "core/league", "core/phase", "core/player", "core/season", "core/team", "lib/bluebird", "util/advStats", "util/eventLog", "util/lock", "util/helpers", "util/random"], function (dao, g, ui, freeAgents, finances, gameSim, league, phase, player, season, team, Promise, advStats, eventLog, lock, helpers, random) {
     "use strict";
+
+    // Each day, players are read from the database before games. Save them here so they don't need to be reloaded after the games.
+    var playersCache;
 
     function writeTeamStats(tx, results) {
         return Promise.reduce([0, 1], function (att, t1) {
@@ -239,7 +242,11 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
 
                         // Only update player object (values and injuries) every 10 regular season games or on injury
                         if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
-                            dao.players.get({ot: tx, key: p.id}).then(function (p_) {
+                            Promise.try(function () {
+                                var p_;
+
+                                p_ = playersCache[p.id];
+
                                 // Injury crap - assign injury type if player does not already have an injury in the database
                                 if (injuredThisGame) {
                                     p_.injury = player.injury(t.healthRank);
@@ -477,12 +484,20 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
     function loadTeams(ot) {
         var loadTeam, promises, tid;
 
+        // Reset players cache
+        playersCache = {};
+
         loadTeam = function (tid) {
             return Promise.all([
                 dao.players.getAll({ot: ot, index: "tid", key: tid}),
                 dao.teams.get({ot: ot, key: tid})
             ]).spread(function (players, team) {
                 var i, j, numPlayers, p, rating, t, teamSeason;
+
+                // Cache players
+                for (i = 0; i < players.length; i++) {
+                    playersCache[players[i].pid] = players[i];
+                }
 
                 players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
 
@@ -635,7 +650,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                 }).then(function () {
                     return writePlayerStats(tx, results[i]);
                 }).then(function () {
-                    var j;
+                    var changed, j, p, pid;
 
                     if (i > 0) {
                         cbSaveResult(i - 1);
@@ -649,7 +664,44 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                         finances.updateRanks(tx, ["expenses", "revenues"]);
 
                         // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-                        dao.players.iterate({
+                        for (pid in playersCache) {
+                            if (playersCache.hasOwnProperty(pid)) {
+                                p = playersCache[pid];
+
+                                changed = false;
+                                if (p.injury.gamesRemaining > 0) {
+                                    p.injury.gamesRemaining -= 1;
+                                    changed = true;
+                                }
+                                // Is it already over?
+                                if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
+                                    p.injury = {type: "Healthy", gamesRemaining: 0};
+                                    changed = true;
+
+                                    eventLog.add(tx, {
+                                        type: "healed",
+                                        text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.',
+                                        showNotification: p.tid === g.userTid,
+                                        pids: [p.pid],
+                                        tids: [p.tid]
+                                    });
+                                }
+
+                                // Also check for gamesUntilTradable
+                                if (!p.hasOwnProperty("gamesUntilTradable")) {
+                                    p.gamesUntilTradable = 0; // Initialize for old leagues
+                                    changed = true;
+                                } else if (p.gamesUntilTradable > 0) {
+                                    p.gamesUntilTradable -= 1;
+                                    changed = true;
+                                }
+
+                                if (changed) {
+                                    dao.players.put({ot: tx, value: p});
+                                }
+                            }
+                        }
+/*                        dao.players.iterate({
                             ot: tx,
                             index: "tid",
                             key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
@@ -688,7 +740,7 @@ define(["dao", "db", "globals", "ui", "core/freeAgents", "core/finances", "core/
                                     return p;
                                 }
                             }
-                        });
+                        });*/
                     }
                 });
             };

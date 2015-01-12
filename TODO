@@ -4,12 +4,15 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+in core.game, cache player objects on initial read, then don't need to read back after games
+  use in two places
+    writing injuries
+    updating injuries/gamesUntilTradable
+  what about other changes to player objects, like watch list? need a more comprehensive solution
+
 transaction log
   anything else to add or anywhere else to use this feature? ask
     big AI free agent signings
-
-in core.game, cache player objects on initial read, then don't need to read back after games
-  use in two places: writing injuries and updating injuries/gamesUntilTradable
 
 don't fail silently when exceeding quota
   http://www.html5rocks.com/en/tutorials/offline/quota-research/#toc-how_to_handle_going_over_quota

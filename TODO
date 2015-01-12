@@ -7,6 +7,8 @@ pids and tids in event log
 CURRENT
 -------
 
+when progressing to regular season, weird bluebird error. abort and try again works
+
 transaction log
   events included in export?
   event log UI
@@ -15,7 +17,6 @@ transaction log
   show a player's transactions on their player page
     correct order?
     which ones to show? release, reSigned, freeAgent, draft, trade
-    responsive
   benchmark
     include in delete old data?
     do i really need to save every game and injury? others?

@@ -160,14 +160,14 @@
 <p data-bind="visible: player.awardsGrouped().length === 0">None.</p>
 
 <div class="row">
-  <div class="col-md-9">
+  <div class="col-md-6 col-sm-9">
     <h2>Transactions</h2>
     <!-- ko foreach: events -->
       <p><strong data-bind="text: season"></strong>: <span data-bind="html: text"></span></p>
     <!-- /ko -->
     <p data-bind="visible: events().length === 0">None.</p>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-6 col-sm-3">
     <h2>Salaries</h2>
     <table class="table table-nonfluid table-striped table-bordered table-condensed" id="player-salaries">
       <thead>

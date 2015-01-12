@@ -4,6 +4,10 @@ number or not.
 
 # 3.5.0 (???)
 
+## Gameplay and UI
+
+- More detailed info display: four factors in box scores, transaction log in player pages
+
 ## Techincal details
 
 - Wrapped all IndexedDB calls in a Promises-based abstraction layer

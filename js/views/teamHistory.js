@@ -44,7 +44,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "li
                     statsTid: inputs.tid
                 })
             ]).spread(function (userTeam, players) {
-                var championships, history, i, playoffAppearances, totalLost, totalWon;
+                var championships, history, i, j, playoffAppearances, totalLost, totalWon;
 
                 history = [];
                 totalWon = 0;
@@ -60,18 +60,31 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "li
                     });
                     totalWon += userTeam.seasons[i].won;
                     totalLost += userTeam.seasons[i].lost;
-                    if (userTeam.seasons[i].playoffRoundsWon >= 0) { playoffAppearances += 1; }
-                    if (userTeam.seasons[i].playoffRoundsWon === 4) { championships += 1; }
+                    if (userTeam.seasons[i].playoffRoundsWon >= 0) {
+                        playoffAppearances += 1;
+                    }
+                    if (userTeam.seasons[i].playoffRoundsWon === 4) {
+                        championships += 1;
+                    }
                 }
                 history.reverse(); // Show most recent season first
 
                 players = player.filter(players, {
                     attrs: ["pid", "name", "pos", "injury", "tid", "hof", "watch"],
-                    stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
+                    stats: ["season", "abbrev", "gp", "min", "pts", "trb", "ast", "per", "ewa"],
                     tid: inputs.tid
                 });
 
                 for (i = 0; i < players.length; i++) {
+                    players[i].stats.reverse();
+
+                    for (j = 0; j < players[i].stats.length; j++) {
+                        if (players[i].stats[j].abbrev === userTeam.abbrev) {
+                            players[i].lastYr = players[i].stats[j].season + ' ';
+                            break;
+                        }
+                    }
+
                     delete players[i].ratings;
                     delete players[i].stats;
                 }
@@ -99,7 +112,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "li
 
         ko.computed(function () {
             ui.datatable($("#team-history-players"), 2, _.map(vm.players(), function (p) {
-                return [helpers.playerNameLabels(p.pid, p.name, p.injury, [], p.watch), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== vm.team.tid(), p.tid === vm.team.tid()];
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, [], p.watch), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.lastYr, p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== vm.team.tid(), p.tid === vm.team.tid()];
             }), {
                 rowCallback: function (row, data) {
                     // Highlight active players

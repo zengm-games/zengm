@@ -67,7 +67,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "li
 
                 players = player.filter(players, {
                     attrs: ["pid", "name", "pos", "injury", "tid", "hof", "watch"],
-                    stats: ["season","abbrev","gp", "min", "pts", "trb", "ast", "per", "ewa"],
+                    stats: ["season", "abbrev", "gp", "min", "pts", "trb", "ast", "per", "ewa"],
                     tid: inputs.tid
                 });
 
@@ -99,9 +99,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "li
         ko.computed(function () {
             ui.datatable($("#team-history-players"), 2, _.map(vm.players(), function (p) {
                 var i, lastYr;
-
                 p.stats.reverse();
-               
                 for (i = 0; i < p.stats.length; i++) {
                     if (p.stats[i].abbrev === vm.abbrev()) {
                         lastYr = p.stats[i].season + ' ';

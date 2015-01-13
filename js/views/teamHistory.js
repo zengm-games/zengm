@@ -67,13 +67,12 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "li
 
                 players = player.filter(players, {
                     attrs: ["pid", "name", "pos", "injury", "tid", "hof", "watch"],
-                    stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
+                    stats: ["season","abbrev","gp", "min", "pts", "trb", "ast", "per", "ewa"],
                     tid: inputs.tid
                 });
 
                 for (i = 0; i < players.length; i++) {
                     delete players[i].ratings;
-                    delete players[i].stats;
                 }
 
                 return {
@@ -99,7 +98,18 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "li
 
         ko.computed(function () {
             ui.datatable($("#team-history-players"), 2, _.map(vm.players(), function (p) {
-                return [helpers.playerNameLabels(p.pid, p.name, p.injury, [], p.watch), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== vm.team.tid(), p.tid === vm.team.tid()];
+                var i, lastYr;
+
+                p.stats.reverse();
+               
+                for (i = 0; i < p.stats.length; i++) {
+                    if (p.stats[i].abbrev === vm.abbrev()) {
+                        lastYr = p.stats[i].season + ' ';
+                        break;
+                    }
+                }
+                delete p.stats;
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, [], p.watch), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), lastYr, p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== vm.team.tid(), p.tid === vm.team.tid()];
             }), {
                 rowCallback: function (row, data) {
                     // Highlight active players

@@ -129,7 +129,7 @@ UI is ultimately driven by `js/utils/bbgmView.js`, a small UI layer I wrote on
 top of Knockout which is used by all the views in the `js/views` folder. Each
 view also has a corresponding HTML file in the `templates` folder. Adding a new
 page is kind of a bitch. You need to explicitly include the template file in
-`js/templates.js`, and explicitly include the view in `js/views.js`. Beyond
+`templates`, and explicitly include the view in `js/views`. Beyond
 that, my best guidance is to copy from an existing page and use that as a
 starting point.
 

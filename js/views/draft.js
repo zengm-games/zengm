@@ -154,7 +154,8 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
                     undrafted: undrafted,
                     drafted: drafted,
                     started: started,
-                    fantasyDraft: g.phase === g.PHASE.FANTASY_DRAFT
+                    fantasyDraft: g.phase === g.PHASE.FANTASY_DRAFT,
+                    userTid: g.userTid
                 };
             });
         });

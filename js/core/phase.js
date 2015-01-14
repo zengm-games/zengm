@@ -23,7 +23,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
 
         // Set phase before updating play menu
         return require("core/league").setGameAttributesComplete({phase: phase, phaseChangeInProgress: false}).then(function () {
-            ui.updatePhase(g.season + g.PHASE_TEXT[phase]);
+            ui.updatePhase(g.season + " " + g.PHASE_TEXT[phase]);
             return ui.updatePlayMenu(null).then(function () {
                 // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
                 require("core/league").updateLastDbChange();

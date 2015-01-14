@@ -6,7 +6,7 @@ number or not.
 
 ## Gameplay and UI
 
-- More detailed info display: four factors in box scores, transaction log in player pages
+- More detailed info display: four factors in box scores, transaction log in player pages, etc.
 
 ## Techincal details
 

@@ -2,8 +2,41 @@
  * @name views.exportRosters
  * @namespace Export rosters.
  */
-define(["ui", "core/league", "util/bbgmView"], function (ui, league, bbgmView) {
+define(["globals", "ui", "core/league", "util/bbgmView"], function (g, ui, league, bbgmView) {
     "use strict";
+
+    function genFileName(data) {
+        var fileName, i, leagueName, playoffSeries, rnd, season, series;
+
+        leagueName = data.meta !== undefined ? data.meta.name : ("League " + g.lid);
+
+        fileName = "BBGM_" + leagueName.replace(/[^a-z0-9]/gi, '_') + "_" + g.season + "_" + g.PHASE_TEXT[g.phase].replace(/[^a-z0-9]/gi, '_');
+
+        if (g.phase === g.PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
+            season = data.teams[g.userTid].seasons[data.teams[g.userTid].seasons.length - 1];
+            fileName += "_" + season.won + "-" + season.lost;
+        }
+
+        if (g.phase === g.PHASE.PLAYOFFS && data.hasOwnProperty("playoffSeries")) {
+            console.log(data.playoffSeries);
+            // Most recent series info
+            playoffSeries = data.playoffSeries[data.playoffSeries.length - 1];
+            rnd = playoffSeries.currentRound;
+            fileName += "_Round_" + (playoffSeries.currentRound + 1);
+
+            // Find the latest playoff series with the user's team in it
+            series = playoffSeries.series;
+            for (i = 0; i < series[rnd].length; i++) {
+                if (series[rnd][i].home.tid === g.userTid) {
+                    fileName += "_" + series[rnd][i].home.won + "-" + series[rnd][i].away.won;
+                } else if (series[rnd][i].away.tid === g.userTid) {
+                    fileName += "_" + series[rnd][i].away.won + "-" + series[rnd][i].home.won;
+                }
+            }
+        }
+
+        return fileName + ".json";
+    }
 
     function post(req) {
         var downloadLink, objectStores;
@@ -27,10 +60,10 @@ define(["ui", "core/league", "util/bbgmView"], function (ui, league, bbgmView) {
             blob = new Blob([json], {type: "application/json"});
             url = window.URL.createObjectURL(blob);
 
-            fileName = data.meta !== undefined ? data.meta.name : "League";
+            fileName = genFileName(data);
 
             a = document.createElement("a");
-            a.download = "BBGM - " + fileName + ".json";
+            a.download = fileName;
             a.href = url;
             a.textContent = "Download Exported League File";
             a.dataset.noDavis = "true";

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -296,6 +296,7 @@
       var body = document.getElementsByTagName('body').item(0);
       var script = document.createElement('script');
       script.type = 'text/javascript';
+      if (!window.console) console = { log: function () { } };
       if (localStorage.debug === "debug") {
         console.log("If you want better performance, click Tools > Disable Debug Mode.");
         script.src = bbgmPrefix + "js/lib/require.js";

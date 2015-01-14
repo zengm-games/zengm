@@ -139,7 +139,7 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                         return dao.players.delete({ot: tx, key: p.pid});
                     }
                 }).then(function () {
-                    var i, uploadedSeason;
+                    var draftYear, i, uploadedSeason;
 
                     // Find season from uploaded file, for age adjusting
                     if (uploadedFile.hasOwnProperty("gameAttributes")) {
@@ -151,6 +151,13 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                         }
                     } else if (uploadedFile.hasOwnProperty("startingSeason")) {
                         uploadedSeason = uploadedFile.startingSeason;
+                    }
+
+                    // Set draft year
+                    draftYear = g.season + seasonOffset;
+                    if (g.phase >= g.PHASE.FREE_AGENCY) {
+                        // Already generated next year's draft, so bump up one
+                        draftYear += 1;
                     }
 
                     // Add new players to database
@@ -170,6 +177,10 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                         if (uploadedSeason !== undefined) {
                             p.born.year += g.season - uploadedSeason;
                         }
+
+                        // Adjust seasons
+                        p.ratings[0].season = draftYear;
+                        p.draft.year = draftYear;
 
                         // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
                         delete p.stats;

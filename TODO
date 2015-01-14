@@ -4,6 +4,10 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+komapping things should use update as well as create!
+  get rid of mapping where possible
+  related to roster bug?
+
 click from one player page right to another (such as in trade info at bottom) - picture, ratings, skills don't change (anything else?)
   http://www.reddit.com/r/BasketballGM/comments/2s4hph/new_feature_player_transaction_logs/cnnitci
   http://www.reddit.com/r/BasketballGM/comments/2s4hph/new_feature_player_transaction_logs/cnmms7w - images too!

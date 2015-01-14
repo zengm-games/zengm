@@ -13,24 +13,6 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
         };
     }
 
-    mapping = {
-        player: {
-            create: function (options) {
-                return new function () {
-                    komapping.fromJS(options.data, {
-                        face: {
-                            create: function (options) {
-//console.log('mapping');
-//console.log(options.data);
-                                return ko.observable(options.data);
-                            }
-                        }
-                    }, this);
-                }();
-            }
-        }
-    };
-
     function updatePlayer(inputs, updateEvents, vm) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
             return Promise.all([
@@ -61,8 +43,6 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
                     p.contract.amount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
                 }
 
-                currentRatings = p.ratings[p.ratings.length - 1];
-
                 events = events.filter(function (event) {
                     if (event.type === "award" || event.type === "injured" || event.type === "healed" || event.type === "hallOfFame") {
                         return false;
@@ -78,7 +58,6 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
 
                 return {
                     player: p,
-                    currentRatings: currentRatings,
                     showTradeFor: p.tid !== g.userTid && p.tid >= 0,
                     freeAgent: p.tid === g.PLAYER.FREE_AGENT,
                     retired: p.tid === g.PLAYER.RETIRED,
@@ -99,16 +78,21 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
         ko.computed(function () {
             var img, pic;
 
+            // Manually clear picture, since we're not using Knockout for this
+            pic = document.getElementById("picture");
+            while (pic.firstChild) {
+                pic.removeChild(pic.firstChild);
+            }
+
             // If playerImgURL is not an empty string, use it instead of the generated face
             if (vm.player.imgURL()) {
-                pic = document.getElementById("picture");
                 img = document.createElement("img");
                 img.src = vm.player.imgURL();
                 img.style.maxHeight = "100%";
                 img.style.maxWidth = "100%";
                 pic.appendChild(img);
             } else {
-                faces.display("picture", vm.player.face());
+                faces.display("picture", komapping.toJS(vm.player.face));
             }
         }).extend({throttle: 1});
 
@@ -118,7 +102,6 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
     return bbgmView.init({
         id: "player",
         get: get,
-        mapping: mapping,
         runBefore: [updatePlayer],
         uiFirst: uiFirst
     });

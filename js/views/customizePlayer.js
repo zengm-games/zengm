@@ -85,7 +85,10 @@ define(["dao", "globals", "ui", "core/finances", "core/league", "core/player", "
                 return g.season - this.p.born.year();
             },
             write: function (value) {
-                this.p.born.year(g.season - parseInt(value, 10));
+                var age;
+                age = parseInt(value, 10);
+                if (age !== age) { age = 25; } // NaN check
+                this.p.born.year(g.season - age);
             },
             owner: this
         });

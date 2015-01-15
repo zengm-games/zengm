@@ -44,7 +44,7 @@
         <tr><th>Pick</th><th>Team</th><th>Name</th><th title="Position">Pos</th><th>Age</th><th title="Overall rating">Ovr</th><th title="Potential rating">Pot</th><th data-bind="visible: fantasyDraft">Contract</th><th title="Player Efficiency Rating" data-bind="visible: fantasyDraft">PER</th><th title="Estimated Wins Added" data-bind="visible: fantasyDraft">EWA</th></tr>
       </thead>
       <tbody data-bind="foreach: drafted">
-        <tr>
+        <tr data-bind="css: {info: $root.userTid() === draft.tid()}">
           <td><span data-bind="text: draft.round"></span>-<span data-bind="text: draft.pick"></span></td>
           <td data-bind="draftAbbrev: [draft.tid, draft.originalTid]"></td>
           <!-- ko if: pid() >= 0 -->

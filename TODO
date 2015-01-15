@@ -15,10 +15,12 @@ click from one player page right to another (such as in trade info at bottom) - 
 transaction log
   anything else to add or anywhere else to use this feature? ask
     big AI free agent signings
+    team transactions page
 
 in core.game, cache player objects on initial read, then don't need to read back after games
   use in two places: writing injuries and updating injuries/gamesUntilTradable
   see mini_player_cache branch
+    try putting watch list in g, then are there any problems?
 
 don't fail silently when exceeding quota
   http://www.html5rocks.com/en/tutorials/offline/quota-research/#toc-how_to_handle_going_over_quota

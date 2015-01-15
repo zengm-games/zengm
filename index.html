@@ -297,11 +297,11 @@
       var script = document.createElement('script');
       script.type = 'text/javascript';
       if (localStorage.debug === "debug") {
-        console.log("If you want better performance, click Tools > Disable Debug Mode.");
+        if (window.console) { console.log("If you want better performance, click Tools > Disable Debug Mode."); }
         script.src = bbgmPrefix + "js/lib/require.js";
         script.dataset.main = bbgmPrefix + "js/app.js";
       } else {
-        console.log("If you want to see accurate error messages, click Tools > Enable Debug Mode.");
+        if (window.console) { console.log("If you want to see accurate error messages, click Tools > Enable Debug Mode."); }
         script.src = bbgmPrefix + "gen/app.js";
       }
       body.appendChild(script);

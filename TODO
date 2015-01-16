@@ -9,6 +9,7 @@ in core.game, cache player objects on initial read, then don't need to read back
     writing injuries
     updating injuries/gamesUntilTradable
   what about other changes to player objects, like watch list? need a more comprehensive solution
+    watch list, release player, reorder roster, ...
 
 transaction log
   anything else to add or anywhere else to use this feature? ask

@@ -4,9 +4,11 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
-komapping things should use update as well as create!
-  get rid of mapping where possible
-  related to roster bug?
+team and league records (highest scoring game, etc)
+  should show an event for cool single game feats
+
+BBGM Gold?
+  $5/month, pay whatever you want and get that many days with no recurrence, no ads, no feature changes
 
 transaction log
   anything else to add or anywhere else to use this feature? ask
@@ -15,11 +17,10 @@ transaction log
 
 don't fail silently when exceeding quota
   http://www.html5rocks.com/en/tutorials/offline/quota-research/#toc-how_to_handle_going_over_quota
-  how to test? VM?
+  how to test? VM? seems to unreliably produce error
 
 phase changes in atomic transactions
   test
-    ads
     UI and other glitches due to tx race conditions
 
 github
@@ -98,8 +99,6 @@ knockout upgrade
   http://www.knockmeout.net/2014/03/knockout-3-1-released.html
   http://knockoutjs.com/documentation/computed-pure.html
   http://knockoutjs.com/documentation/component-overview.html
-
-confirm new error messages for safari
 
 test!
   write unit tests for dao.players.getAll
@@ -370,8 +369,6 @@ trade improvements
     call team.checkRosterSizes after this if it's in between days
 team switching after being fired
   keep track of what team the user controlled, so stats for the user (not the team) can be shown
-team and league records (highest scoring game, etc)
-  should show an event for cool single game feats
 random events
   like.. player gets suspended, out X games. or player gets into fight, fan support drops. etc.
   need a notification system first
@@ -434,6 +431,9 @@ mode with ratings hidden
 MINOR FIXES
 -----------
 
+komapping things should use update as well as create!
+  get rid of mapping where possible
+  related to roster bug?
 show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
 retired players should be eligible for season awards
 TS%

@@ -5,7 +5,17 @@ CURRENT
 -------
 
 team and league records (highest scoring game, etc)
-  should show an event for cool single game feats
+  log in event log as playerFeat or teamFeat, text should link to box score
+    then can show in team history, league history, player page
+  feats
+    triple double
+    5x5
+    50 points
+    30 rebounds
+    20 assists
+    10 steals
+    10 blocks
+  http://www.reddit.com/r/BasketballGM/comments/2sl13h/many_people_have_requested_some_kind_of_all_time/
 
 BBGM Gold?
   $5/month, pay whatever you want and get that many days with no recurrence, no ads, no feature changes

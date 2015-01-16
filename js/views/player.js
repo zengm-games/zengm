@@ -5,8 +5,6 @@
 define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/bluebird", "util/bbgmView"], function (dao, g, ui, freeAgents, player, faces, $, ko, komapping, Promise, bbgmView) {
     "use strict";
 
-    var mapping;
-
     function get(req) {
         return {
             pid: req.params.pid !== undefined ? parseInt(req.params.pid, 10) : undefined
@@ -26,8 +24,6 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
                     key: inputs.pid
                 })
             ]).spread(function (p, events) {
-                var currentRatings;
-
                 p = player.filter(p, {
                     attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch"],
                     ratings: ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],

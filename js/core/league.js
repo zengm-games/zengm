@@ -304,6 +304,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
 
                         p = player.augmentPartialPlayer(p, scoutingRank);
 
+                        // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
+                        p.contract.amount = Math.max(10 * helpers.round(p.contract.amount / 10), g.minContract);
+
                         // Separate out stats
                         playerStats = p.stats;
                         delete p.stats;

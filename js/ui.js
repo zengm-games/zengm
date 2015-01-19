@@ -250,6 +250,13 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             destroy: true,
             deferRender: true,
             stateSave: true,
+            // DataTables 1.10 includes something like this, but seems glitchy and URL-dependent
+            stateSaveCallback: function (settings, data) {
+                localStorage.setItem("DataTables_" + table[0].id, JSON.stringify(data));
+            },
+            stateLoadCallback: function () {
+                return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
+            },
             pagingType: "bootstrap",
             language: {
                 lengthMenu: "_MENU_ per page",
@@ -272,7 +279,13 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             searching: false,
             info: false,
             paging: false,
-            stateSave: true
+            stateSave: true,
+            stateSaveCallback: function (settings, data) {
+                localStorage.setItem("DataTables_" + table[0].id, JSON.stringify(data));
+            },
+            stateLoadCallback: function () {
+                return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
+            }
         }, extraOptions);
 
         table.dataTable(options);

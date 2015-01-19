@@ -42,7 +42,7 @@
                 <td data-bind="text: blk"></td>
                 <td data-bind="text: pf"></td>
                 <td data-bind="text: pts"></td>
-                <td data-bind="round: [pts() + 0.4  * fg() - 0.7 * fga() - 0.4*(fta() - ft()) + 0.7 * orb() + 0.3 * (trb() - orb())  + stl() + 0.7 * ast() + 0.7 * blk() - 0.4 * pf() - tov(),0]"></td>
+                <td data-bind="gameScore: $data"></td>
               </tr>
             </tbody>
             <tfoot>

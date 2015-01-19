@@ -245,4 +245,12 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             });
         }
     };
+
+    ko.bindingHandlers.gameScore = {
+        update: function(element, valueAccessor) {
+            return ko.bindingHandlers.html.update(element, function () {
+                return helpers.round(valueAccessor().pts() + 0.4 * valueAccessor().fg() - 0.7 * valueAccessor().fga() - 0.4 * (valueAccessor().fta() - valueAccessor().ft()) + 0.7 * valueAccessor().orb() + 0.3 * (valueAccessor().trb() - valueAccessor().orb()) + valueAccessor().stl() + 0.7 * valueAccessor().ast() + 0.7 * valueAccessor().blk() - 0.4 * valueAccessor().pf() - valueAccessor().tov(), 0);
+            });
+        }
+    }
 });

@@ -338,7 +338,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
             });
         }
 
-        return dao.games.add({ot: tx, value: gameStats}).then(function () {
+        return dao.games.put({ot: tx, value: gameStats}).then(function () {
             // Record progress of playoff series, if appropriate
             if (!gameStats.playoffs) {
                 return;

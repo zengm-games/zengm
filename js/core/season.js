@@ -372,7 +372,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                         teams[j].awayGames += 1;
                     }
 
-                    // Constraint: 2 home schedule vs. each team in same division
+                    // Constraint: 2 home games vs. each team in same division
                     if (teams[i].did === teams[j].did) {
                         tids.push(game);
                         tids.push(game);
@@ -380,7 +380,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                         teams[j].awayGames += 2;
                     }
 
-                    // Constraint: 1-2 home schedule vs. each team in same conference and different division
+                    // Constraint: 1-2 home games vs. each team in same conference and different division
                     // Only do 1 now
                     if (teams[i].cid === teams[j].cid && teams[i].did !== teams[j].did) {
                         tids.push(game);
@@ -391,7 +391,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
             }
         }
 
-        // Constraint: 1-2 home schedule vs. each team in same conference and different division
+        // Constraint: 1-2 home games vs. each team in same conference and different division
         // Constraint: We need 8 more of these games per home team!
         tidsByConf = [[], []];
         dids = [[], []];

@@ -238,25 +238,29 @@ define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, pl
         });
     }
 
+    // debug.exportPlayerStats(2015) - just 2015 stats
+    // debug.exportPlayerStats("all") - all stats
     function exportPlayerStats(season) {
         dao.players.getAll({
-            statsSeasons: [season]
+            statsSeasons: season === "all" ? "all" : [season]
         }).then(function (players) {
-            var i, output, p;
+            var output, seasons;
 
-            players = player.filter(players, {
-                attrs: ["pid", "name", "pos", "age"],
-                stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
-                season: season
+            // Array of seasons in stats, either just one or all of them
+            seasons = _.uniq(_.pluck(_.flatten(_.pluck(players, "stats")), "season"));
+
+            output = "<h1>Export Player Stats</h1><p>Copy/paste this into a spreadsheet:</p><textarea style=\"width: 100%; height: 300px\">pid,Name,Pos,Age,Team,Season,GP,GS,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,PF,Pts,PER,EWA\n";
+
+            seasons.forEach(function (s) {
+                player.filter(players, {
+                    attrs: ["pid", "name", "pos", "age"],
+                    stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
+                    season: s
+                }).forEach(function (p) {
+                    output += [p.pid, p.name, p.pos, p.age, p.stats.abbrev, s, p.stats.gp, p.stats.gs, p.stats.min, p.stats.fg, p.stats.fga, p.stats.fgp, p.stats.tp, p.stats.tpa, p.stats.tpp, p.stats.ft, p.stats.fta, p.stats.ftp, p.stats.orb, p.stats.drb, p.stats.trb, p.stats.ast, p.stats.tov, p.stats.stl, p.stats.blk, p.stats.pf, p.stats.pts, p.stats.per, p.stats.ewa] + "\n";
+                });
             });
-
-            output = "<pre>pid,Name,Pos,Age,Team,Season,GP,GS,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,PF,Pts,PER,EWA\n";
-
-            for (i = 0; i < players.length; i++) {
-                p = players[i];
-                output += [p.pid, p.name, p.pos, p.age, p.stats.abbrev, season, p.stats.gp, p.stats.gs, p.stats.min, p.stats.fg, p.stats.fga, p.stats.fgp, p.stats.tp, p.stats.tpa, p.stats.tpp, p.stats.ft, p.stats.fta, p.stats.ftp, p.stats.orb, p.stats.drb, p.stats.trb, p.stats.ast, p.stats.tov, p.stats.stl, p.stats.blk, p.stats.pf, p.stats.pts, p.stats.per, p.stats.ewa] + "\n";
-            }
-            output += "</pre>";
+            output += "</textarea>";
 
             document.getElementById("league_content").innerHTML = output;
         });

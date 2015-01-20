@@ -166,6 +166,8 @@ current beta issues:
   newly-generated players don't have right skill labels
   tune with debug.averageCareerArc(30, 80)
 
+Too many good free agents available at the minimum: http://www.reddit.com/r/BasketballGM/comments/2sxs4l/love_the_game_suggestion_for_free_agency/
+
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
@@ -437,6 +439,7 @@ fuzz should affect potential more than other variables, when pot is different th
 mode with ratings hidden
   implement like fuzz?
   maybe use very rough letter grades like A/B/C/D/F to replace the ratings
+"My Player" mode http://www.reddit.com/r/BasketballGM/comments/2swmwj/there_should_be_a_game_like_myplayer_in_2k/cntkvj4
 
 MINOR FIXES
 -----------

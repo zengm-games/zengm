@@ -238,6 +238,30 @@ define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, pl
         });
     }
 
+    function exportPlayerStats(season) {
+        dao.players.getAll({
+            statsSeasons: [season]
+        }).then(function (players) {
+            var i, output, p;
+
+            players = player.filter(players, {
+                attrs: ["pid", "name", "pos", "age"],
+                stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
+                season: season
+            });
+
+            output = "<pre>pid,Name,Pos,Age,Team,Season,GP,GS,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,PF,Pts,PER,EWA\n";
+
+            for (i = 0; i < players.length; i++) {
+                p = players[i];
+                output += [p.pid, p.name, p.pos, p.age, p.stats.abbrev, season, p.stats.gp, p.stats.gs, p.stats.min, p.stats.fg, p.stats.fga, p.stats.fgp, p.stats.tp, p.stats.tpa, p.stats.tpp, p.stats.ft, p.stats.fta, p.stats.ftp, p.stats.orb, p.stats.drb, p.stats.trb, p.stats.ast, p.stats.tov, p.stats.stl, p.stats.blk, p.stats.pf, p.stats.pts, p.stats.per, p.stats.ewa] + "\n";
+            }
+            output += "</pre>";
+
+            document.getElementById("league_content").innerHTML = output;
+        });
+    }
+
     function averageCareerArc(baseOvr, basePot, ratingToSave) {
         var averageOvr, averagePot, averageRat, i, j, k, numPlayers, numSeasons, p, profiles;
 
@@ -283,6 +307,7 @@ define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, pl
         regressRatingsPer: regressRatingsPer,
         leagueAverageContract: leagueAverageContract,
         exportPlayerInfo: exportPlayerInfo,
+        exportPlayerStats: exportPlayerStats,
         averageCareerArc: averageCareerArc
     };
 });

@@ -30,6 +30,7 @@ don't fail silently when exceeding quota
   how to test? VM? seems to unreliably produce error
 
 phase changes in atomic transactions
+  phaseChangeInProgress checks should be in same tx too!
   test
     UI and other glitches due to tx race conditions
 

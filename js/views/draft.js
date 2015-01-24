@@ -90,18 +90,47 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
     }
 
     function updateDraft() {
-        return Promise.all([
-            dao.players.getAll({
-                index: "tid",
-                key: g.PLAYER.UNDRAFTED,
-                statsSeasons: [g.season]
-            }),
-            dao.players.getAll({
-                index: "draft.year",
-                key: g.season,
-                statsSeasons: [g.season]
-            })
-        ]).spread(function (undrafted, players) {
+        // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
+        // This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
+        var tx = dao.tx("players", "readwrite");
+        dao.players.get({
+            ot: tx,
+            index: "tid",
+            key: g.PLAYER.UNDRAFTED
+        }).then(function (p) {
+            var season;
+
+            season = p.ratings[0].season;
+            if (season !== g.season && g.phase === g.PHASE.DRAFT) {
+console.log("FIXING FUCKED UP DRAFT CLASS");
+console.log(season);
+                dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: g.PLAYER.UNDRAFTED,
+                    callback: function (p) {
+                        p.ratings[0].season = g.season;
+                        p.draft.year = g.season;
+                        return p;
+                    }
+                });
+            }
+        });
+
+        return tx.complete().then(function () {
+            return Promise.all([
+                dao.players.getAll({
+                    index: "tid",
+                    key: g.PLAYER.UNDRAFTED,
+                    statsSeasons: [g.season]
+                }),
+                dao.players.getAll({
+                    index: "draft.year",
+                    key: g.season,
+                    statsSeasons: [g.season]
+                })
+            ]);
+        }).spread(function (undrafted, players) {
             var drafted, i, started;
 
             undrafted.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });

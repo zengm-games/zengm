@@ -4,6 +4,9 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+draft classes being generated with the wrong season, leading to empty draft classes
+  added back old hack to views/draft.js, but that is not satisfying
+
 team and league records (highest scoring game, etc)
   log in event log as playerFeat or teamFeat, text should link to box score
     then can show in team history, league history, player page

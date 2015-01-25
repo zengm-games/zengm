@@ -48,8 +48,8 @@
         </td>
         <td data-bind="visible: $parent.showTradeFor">
           <form method="POST" style="margin: 0" data-bind="attrLeagueUrl: {action: ['trade']}">
-            <input type="hidden" name="pid" data-bind="attr: {value: pid}">
-            <button type="submit" class="btn btn-default btn-xs">Trade For</button>
+              <input type="hidden" name="pid" data-bind="attr: {value: pid}">
+            <button type="submit" class="btn btn-default btn-xs" data-bind="enable: canTrade()">Trade For</button>
           </form>
         </td>
       </tr>

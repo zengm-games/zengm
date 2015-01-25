@@ -232,7 +232,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
 
                 vars.team = t;
 
-                attrs = ["pid", "tid", "draft", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier", "watch"];  // tid and draft are used for checking if a player can be released without paying his salary
+                attrs = ["pid", "tid", "draft", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier", "watch", "gamesUntilTradable"];  // tid and draft are used for checking if a player can be released without paying his salary
                 ratings = ["ovr", "pot", "dovr", "dpot", "skills"];
                 stats = ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"];
 
@@ -282,6 +282,8 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
 
                             // Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
                             players[i].ptModifier = String(players[i].ptModifier);
+
+                            players[i].canTrade = player.isTradable(players[i]);
                         }
 
                         vars.players = players;

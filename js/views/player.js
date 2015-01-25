@@ -25,7 +25,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
                 })
             ]).spread(function (p, events) {
                 p = player.filter(p, {
-                    attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch"],
+                    attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch", "gamesUntilTradable"],
                     ratings: ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],
                     stats: ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
                     playoffs: true,
@@ -54,7 +54,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/faces", "
 
                 return {
                     player: p,
-                    showTradeFor: p.tid !== g.userTid && p.tid >= 0,
+                    showTradeFor: p.tid !== g.userTid && p.tid >= 0 && player.isTradable(p),
                     freeAgent: p.tid === g.PLAYER.FREE_AGENT,
                     retired: p.tid === g.PLAYER.RETIRED,
                     showContract: p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && p.tid !== g.PLAYER.UNDRAFTED_FANTASY_TEMP && p.tid !== g.PLAYER.RETIRED,

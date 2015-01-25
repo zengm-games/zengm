@@ -1820,6 +1820,17 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         return p;
     }
 
+    function isTradable(p) {
+        if (p.contract.exp <= g.season && g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
+            // If the season is over, can't trade players whose contracts are expired
+            return false;
+        } else if (p.gamesUntilTradable > 0) {
+            // Can't trade players who recently were signed or traded
+            return false;
+        }
+        return true;
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1842,6 +1853,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         name: name,
         contractSeasonsRemaining: contractSeasonsRemaining,
         moodColorText: moodColorText,
-        augmentPartialPlayer: augmentPartialPlayer
+        augmentPartialPlayer: augmentPartialPlayer,
+        isTradable: isTradable
     };
 });

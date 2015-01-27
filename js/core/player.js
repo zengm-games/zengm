@@ -107,7 +107,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         if (hasSkill(ratings, ['drb', 'pss'], [0.4, 1])) {
             sk.push("Ps");
         }
-        if (hasSkill(ratings, ['hgt', 'stre', 'jmp', 'reb'], [1.5, 0.1, 0.1, 0.7])) {
+        if (hasSkill(ratings, compositeWeights().rebounds.ratings, compositeWeights().rebounds.weights)) {
             sk.push("R");
         }
 
@@ -1820,6 +1820,15 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         return p;
     }
 
+    function compositeWeights() {
+        var weights = {
+            rebounds: { ratings: ['hgt', 'stre', 'jmp', 'reb'], weights: [1.5, 0.1, 0.1, 0.7] }
+            // ...
+        };
+               
+        return weights;
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1842,6 +1851,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         name: name,
         contractSeasonsRemaining: contractSeasonsRemaining,
         moodColorText: moodColorText,
-        augmentPartialPlayer: augmentPartialPlayer
+        augmentPartialPlayer: augmentPartialPlayer,
+        compositeWeights: compositeWeights
     };
 });

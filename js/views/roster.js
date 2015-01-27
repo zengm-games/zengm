@@ -2,7 +2,7 @@
  * @name views.roster
  * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
  */
-define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "core/team", "lib/bluebird", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, league, player, season, team, Promise, ko, $, components, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "core/team", "core/trade", "lib/bluebird", "lib/knockout", "lib/jquery", "views/components", "util/bbgmView", "util/helpers"], function (dao, g, ui, league, player, season, team, trade, Promise, ko, $, components, bbgmView, helpers) {
     "use strict";
 
     var mapping;
@@ -283,7 +283,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
                             // Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
                             players[i].ptModifier = String(players[i].ptModifier);
 
-                            players[i].canTrade = player.isTradable(players[i]);
+                            players[i].canTrade = !trade.filterUntradable([players[i]])[0].untradable;
                         }
 
                         vars.players = players;

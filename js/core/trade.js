@@ -730,7 +730,7 @@ define(["dao", "globals", "core/league", "core/player", "core/team", "lib/bluebi
         ]).spread(function (estValues, teams0) {
             return makeItWork(helpers.deepCopy(teams0), false, estValues).spread(function (found, teams) {
                 if (!found) {
-                    return 'Opposing GM: "I can\'t afford to give up so much."';
+                    return g.teamRegionsCache[teams0[1].tid] + ' GM: "I can\'t afford to give up so much."';
                 }
 
                 return summary(teams).then(function (s) {

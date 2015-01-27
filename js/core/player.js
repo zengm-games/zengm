@@ -107,7 +107,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         if (hasSkill(ratings, ['drb', 'pss'], [0.4, 1])) {
             sk.push("Ps");
         }
-        if (hasSkill(ratings, ['hgt', 'stre', 'jmp', 'reb'], [1, 0.1, 0.1, 0.7])) {
+        if (hasSkill(ratings, ['hgt', 'stre', 'jmp', 'reb'], [1.5, 0.1, 0.1, 0.7])) {
             sk.push("R");
         }
 

@@ -43,7 +43,7 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
             var pick;
 
             pick = draftOrder.shift();
-            if (pick.tid === g.userTid) {
+            if (pick.tid === g.userTid || localStorage.noAutoPick) {
                 return draft.selectPlayer(pick, pid).then(function () {
                     var tx;
 

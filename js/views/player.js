@@ -52,9 +52,12 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", 
                     };
                 });
 
+                // Add untradable property
+                p = trade.filterUntradable([p])[0];
+
                 return {
                     player: p,
-                    showTradeFor: p.tid !== g.userTid && p.tid >= 0 && !trade.filterUntradable([p])[0].untradable,
+                    showTradeFor: p.tid !== g.userTid && p.tid >= 0,
                     freeAgent: p.tid === g.PLAYER.FREE_AGENT,
                     retired: p.tid === g.PLAYER.RETIRED,
                     showContract: p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && p.tid !== g.PLAYER.UNDRAFTED_FANTASY_TEMP && p.tid !== g.PLAYER.RETIRED,

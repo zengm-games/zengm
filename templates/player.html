@@ -70,7 +70,7 @@
 
 <p></p>
 
-<form method="POST" data-bind="visible: showTradeFor, attrLeagueUrl: {action: ['trade']}"><input type="hidden" name="pid" data-bind="attr: {value: player.pid}"><button type="submit" class="btn btn-default">Trade For</button></form>
+<form method="POST" data-bind="visible: showTradeFor, attrLeagueUrl: {action: ['trade']}, attr: {title: player.untradableMsg}"><input type="hidden" name="pid" data-bind="attr: {value: player.pid}"><button type="submit" class="btn btn-default" data-bind="enable: !player.untradable()">Trade For</button></form>
 <form method="POST" data-bind="visible: freeAgent, attrLeagueUrl: {action: ['negotiation', player.pid]}"><input type="hidden" name="new" value="1"><button type="submit" class="btn btn-default">Sign free agent</button></form>
 
 <h2>Regular Season</h2>

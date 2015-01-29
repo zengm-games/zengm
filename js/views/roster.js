@@ -272,6 +272,9 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
                         });
                         players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
 
+                        // Add untradable property
+                        players = trade.filterUntradable(players);
+
                         for (i = 0; i < players.length; i++) {
                             // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
                             if (inputs.tid === g.userTid && (g.phase !== g.PHASE.PLAYOFFS || players.length > 15)) {
@@ -282,8 +285,6 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
 
                             // Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
                             players[i].ptModifier = String(players[i].ptModifier);
-
-                            players[i].canTrade = !trade.filterUntradable([players[i]])[0].untradable;
                         }
 
                         vars.players = players;

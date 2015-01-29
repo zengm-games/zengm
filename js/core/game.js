@@ -530,7 +530,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                     p.compositeRating.shootingMidRange = makeComposite(rating, ['hgt', 'fg'], [0.2, 1]);  // Two point jump shot
                     p.compositeRating.shootingThreePointer = makeComposite(rating, ['hgt', 'tp'], [0.2, 1]);  // Three point jump shot
                     p.compositeRating.shootingFT = makeComposite(rating, ['ft']);  // Free throw
-                    p.compositeRating.rebounding = makeComposite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1.5, 0.1, 0.1, 0.7]);
+                    debugger;
+                    p.compositeRating.rebounding = makeComposite(rating, player.compositeWeights().rebounding.ratings, player.compositeWeights().rebounding.weights);
                     p.compositeRating.stealing = makeComposite(rating, ['constant', 'spd', 'stl'], [1, 1, 1]);
                     p.compositeRating.blocking = makeComposite(rating, ['hgt', 'jmp', 'blk'], [1.5, 0.5, 0.5]);
                     p.compositeRating.fouling = makeComposite(rating, ['constant', 'hgt', 'blk', 'spd'], [1.5, 1, 1, -1]);

@@ -90,8 +90,85 @@ define(["lib/knockout"], function (ko) {
 
     g.sport = "basketball"; // For account ajax stuff
 
+    g.compositeWeights = {
+        pace: {
+            ratings: ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']
+        },
+        usage: {
+            ratings: ['ins', 'dnk', 'fg', 'tp', 'spd', 'drb'],
+            weights: [1.5, 1, 1, 1, 0.15, 0.15]
+        },
+        dribbling: {
+            ratings: ['drb', 'spd']
+        },
+        passing: {
+            ratings: ['drb', 'pss'],
+            weights: [0.4, 1]
+        },
+        turnovers: {
+            ratings: ['drb', 'pss', 'spd', 'hgt', 'ins'],
+            weights: [1, 1, -1, 1, 1]
+        },
+        shootingAtRim: {
+            ratings: ['hgt', 'spd', 'jmp', 'dnk'],
+            weights: [1, 0.2, 0.6, 0.4]
+        },
+        shootingLowPost: {
+            ratings: ['hgt', 'stre', 'spd', 'ins'],
+            weights: [1, 0.6, 0.2, 1]
+        },
+        shootingMidRange: {
+            ratings: ['hgt', 'fg'],
+            weights: [0.2, 1]
+        },
+        shootingThreePointer: {
+            ratings: ['hgt', 'tp'],
+            weights: [0.2, 1]
+        },
+        shootingFT: {
+            ratings: ['ft']
+        },
+        rebounding: {
+            ratings: ['hgt', 'stre', 'jmp', 'reb'],
+            weights: [1.5, 0.1, 0.1, 0.7]
+        },
+        stealing: {
+            ratings: ['constant', 'spd', 'stl'],
+            weights: [1, 1, 1]
+        },
+        blocking: {
+            ratings: ['hgt', 'jmp', 'blk'],
+            weights: [1.5, 0.5, 0.5]
+        },
+        fouling: {
+            ratings: ['constant', 'hgt', 'blk', 'spd'],
+            weights: [1.5, 1, 1, -1]
+        },
+        defense: {
+            ratings: ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'],
+            weights: [1, 1, 1, 0.5, 1, 1]
+        },
+        defenseInterior: {
+            ratings: ['hgt', 'stre', 'spd', 'jmp', 'blk'],
+            weights: [2, 1, 0.5, 0.5, 1]
+        },
+        defensePerimeter: {
+            ratings: ['hgt', 'stre', 'spd', 'jmp', 'stl'],
+            weights: [1, 1, 2, 0.5, 1]
+        },
+        endurance: {
+            ratings: ['constant', 'endu', 'hgt'],
+            weights: [1, 1, -0.1]
+        },
+        athleticism: {
+            ratings: ['stre', 'spd', 'jmp', 'hgt'],
+            weights: [1, 1, 1, 0.5]
+        }
+    };
+
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "gameSimWorkers", "vm", "enableLogging", "tld", "sport", "notInDb"];
+    g.notInDb = ["dbm", "dbl", "lid", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "gameSimWorkers", "vm", "enableLogging", "tld", "sport", "compositeWeights", "notInDb"];
+
 
     return g;
 });

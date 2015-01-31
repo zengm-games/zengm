@@ -110,7 +110,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore",
             a.href = url;
             a.textContent = "Download Exported Stats";
             a.dataset.noDavis = "true";
-//                a.click(); // Works in Chrome to auto-download, but not Firefox
+//                a.click(); // Works in Chrome to auto-download, but not Firefox http://stackoverflow.com/a/20194533/786644
 
             downloadLink.innerHTML = ""; // Clear "Generating..."
             downloadLink.appendChild(a);

@@ -1,0 +1,109 @@
+/**
+ * @name views.exportRosters
+ * @namespace Export rosters.
+ */
+define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, Promise, _, bbgmView, helpers) {
+    "use strict";
+
+    function genFileName(leagueName, season) {
+        var fileName, i, leagueName, playoffSeries, rnd, season, series;
+
+        fileName = "BBGM_" + leagueName.replace(/[^a-z0-9]/gi, '_') + "_" + season + "_" + (season === "all" ? "seasons" : "season") + "_Average_Stats";
+
+        return fileName + ".csv";
+    }
+
+    // playerAveragesCSV(2015) - just 2015 stats
+    // playerAveragesCSV("all") - all stats
+    function playerAveragesCSV(season) {
+        return dao.players.getAll({
+            statsSeasons: season === "all" ? "all" : [season]
+        }).then(function (players) {
+            var output, seasons;
+
+            // Array of seasons in stats, either just one or all of them
+            seasons = _.uniq(_.pluck(_.flatten(_.pluck(players, "stats")), "season"));
+
+            output = "pid,Name,Pos,Age,Team,Season,GP,GS,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,PF,Pts,PER,EWA\n";
+
+            seasons.forEach(function (s) {
+                player.filter(players, {
+                    attrs: ["pid", "name", "pos", "age"],
+                    stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per", "ewa"],
+                    season: s
+                }).forEach(function (p) {
+                    output += [p.pid, p.name, p.pos, p.age, p.stats.abbrev, s, p.stats.gp, p.stats.gs, p.stats.min, p.stats.fg, p.stats.fga, p.stats.fgp, p.stats.tp, p.stats.tpa, p.stats.tpp, p.stats.ft, p.stats.fta, p.stats.ftp, p.stats.orb, p.stats.drb, p.stats.trb, p.stats.ast, p.stats.tov, p.stats.stl, p.stats.blk, p.stats.pf, p.stats.pts, p.stats.per, p.stats.ewa].join(",") + "\n";
+                });
+            });
+
+            return output;
+        });
+    }
+
+    function post(req) {
+        var downloadLink, objectStores, season, statsSeasons;
+
+        downloadLink = document.getElementById("download-link");
+        downloadLink.innerHTML = "Generating...";
+
+        season = req.params.season === "all" ? "all" : parseInt(req.params.season, 10);
+
+        Promise.all([
+            playerAveragesCSV(season),
+            dao.leagues.get({key: g.lid})
+        ]).spread(function (output, l) {
+            var a, blob, fileName, url;
+
+            blob = new Blob([output], {type: "text/csv"});
+            url = window.URL.createObjectURL(blob);
+
+            fileName = genFileName(l.name, season);
+
+            a = document.createElement("a");
+            a.download = fileName;
+            a.href = url;
+            a.textContent = "Download Exported Stats";
+            a.dataset.noDavis = "true";
+//                a.click(); // Works in Chrome to auto-download, but not Firefox
+
+            downloadLink.innerHTML = ""; // Clear "Generating..."
+            downloadLink.appendChild(a);
+
+            // Delete object, eventually
+            window.setTimeout(function () {
+                window.URL.revokeObjectURL(url);
+                downloadLink.innerHTML = "Download link expired."; // Remove expired link
+            }, 60 * 1000);
+        });
+    }
+
+    function updateExportStats(inputs, updateEvents) {
+        var j, options, seasons;
+
+        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("newPhase") >= 0 || updateEvents.indexOf("dbChange") >= 0) {
+            seasons = helpers.getSeasons();
+            options = [{
+                key: "all",
+                val: "All Seasons"
+            }];
+            for (j = 0; j < seasons.length; j++) {
+                options.push({
+                    key: seasons[j].season,
+                    val: seasons[j].season + " season"
+                });
+            }
+            return {seasons: options};
+        }
+    }
+
+    function uiFirst() {
+        ui.title("Export League");
+    }
+
+    return bbgmView.init({
+        id: "exportStats",
+        post: post,
+        runBefore: [updateExportStats],
+        uiFirst: uiFirst
+    });
+});

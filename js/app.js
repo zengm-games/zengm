@@ -268,6 +268,8 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
             this.get("/l/:lid/upcoming_free_agents/:season", views.upcomingFreeAgents.get);
             this.get("/l/:lid/god_mode", views.godMode.get);
             this.get("/l/:lid/power_rankings", views.powerRankings.get);
+            this.get("/l/:lid/export_stats", views.exportStats.get);
+            this.post("/l/:lid/export_stats", views.exportStats.post);
         });
 
         app.start();

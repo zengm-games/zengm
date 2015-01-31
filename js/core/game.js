@@ -482,7 +482,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 dao.players.getAll({ot: ot, index: "tid", key: tid}),
                 dao.teams.get({ot: ot, key: tid})
             ]).spread(function (players, team) {
-                var i, j, numPlayers, p, rating, t, teamSeason;
+                var i, j, k, numPlayers, p, rating, t, teamSeason;
 
                 players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
 
@@ -520,25 +520,12 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                     p.ovr = rating.ovr;
 
                     // These use the same formulas as the skill definitions in player.skills!
-                    p.compositeRating.pace = makeComposite(rating, ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']);
-                    p.compositeRating.usage = Math.pow(makeComposite(rating, ['ins', 'dnk', 'fg', 'tp', 'spd', 'drb'], [1.5, 1, 1, 1, 0.15, 0.15]), 1.9);
-                    p.compositeRating.dribbling = makeComposite(rating, ['drb', 'spd']);
-                    p.compositeRating.passing = makeComposite(rating, ['drb', 'pss'], [0.4, 1]);
-                    p.compositeRating.turnovers = makeComposite(rating, ['drb', 'pss', 'spd', 'hgt', 'ins'], [1, 1, -1, 1, 1]);  // This should not influence whether a turnover occurs, it should just be used to assign players
-                    p.compositeRating.shootingAtRim = makeComposite(rating, ['hgt', 'spd', 'jmp', 'dnk'], [1, 0.2, 0.6, 0.4]);  // Dunk or layup, fast break or half court
-                    p.compositeRating.shootingLowPost = makeComposite(rating, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1]);  // Post scoring
-                    p.compositeRating.shootingMidRange = makeComposite(rating, ['hgt', 'fg'], [0.2, 1]);  // Two point jump shot
-                    p.compositeRating.shootingThreePointer = makeComposite(rating, ['hgt', 'tp'], [0.2, 1]);  // Three point jump shot
-                    p.compositeRating.shootingFT = makeComposite(rating, ['ft']);  // Free throw
-                    p.compositeRating.rebounding = makeComposite(rating, ['hgt', 'stre', 'jmp', 'reb'], [1.5, 0.1, 0.1, 0.7]);
-                    p.compositeRating.stealing = makeComposite(rating, ['constant', 'spd', 'stl'], [1, 1, 1]);
-                    p.compositeRating.blocking = makeComposite(rating, ['hgt', 'jmp', 'blk'], [1.5, 0.5, 0.5]);
-                    p.compositeRating.fouling = makeComposite(rating, ['constant', 'hgt', 'blk', 'spd'], [1.5, 1, 1, -1]);
-                    p.compositeRating.defense = makeComposite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'], [1, 1, 1, 0.5, 1, 1]);
-                    p.compositeRating.defenseInterior = makeComposite(rating, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1]);
-                    p.compositeRating.defensePerimeter = makeComposite(rating, ['hgt', 'stre', 'spd', 'jmp', 'stl'], [1, 1, 2, 0.5, 1]);
-                    p.compositeRating.endurance = makeComposite(rating, ['constant', 'endu', 'hgt'], [1, 1, -0.1]);
-                    p.compositeRating.athleticism = makeComposite(rating, ['stre', 'spd', 'jmp', 'hgt'], [1, 1, 1, 0.5]); // Currently only used for synergy calculation
+                    for (k in g.compositeWeights) {
+                        if (g.compositeWeights.hasOwnProperty(k)) {
+                            p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
+                        }
+                    }
+                    p.compositeRating.usage = Math.pow(p.compositeRating.usage, 1.9);
 
                     p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
 

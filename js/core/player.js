@@ -86,28 +86,28 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         };
 
         // These use the same formulas as the composite rating definitions in core.game!
-        if (hasSkill(ratings, ['hgt', 'tp'], [0.2, 1])) {
+        if (hasSkill(ratings, g.compositeWeights.shootingThreePointer.ratings, g.compositeWeights.shootingThreePointer.weights)) {
             sk.push("3");
         }
-        if (hasSkill(ratings, ['stre', 'spd', 'jmp', 'hgt'], [1, 1, 1, 0.5])) {
+        if (hasSkill(ratings, g.compositeWeights.athleticism.ratings, g.compositeWeights.athleticism.weights)) {
             sk.push("A");
         }
-        if (hasSkill(ratings, ['drb', 'spd'])) {
+        if (hasSkill(ratings, g.compositeWeights.dribbling.ratings)) {
             sk.push("B");
         }
-        if (hasSkill(ratings, ['hgt', 'stre', 'spd', 'jmp', 'blk'], [2, 1, 0.5, 0.5, 1])) {
+        if (hasSkill(ratings, g.compositeWeights.defenseInterior.ratings, g.compositeWeights.defenseInterior.weights)) {
             sk.push("Di");
         }
-        if (hasSkill(ratings, ['hgt', 'stre', 'spd', 'jmp', 'stl'], [1, 1, 2, 0.5, 1])) {
+        if (hasSkill(ratings, g.compositeWeights.defensePerimeter.ratings, g.compositeWeights.defensePerimeter.weights)) {
             sk.push("Dp");
         }
-        if (hasSkill(ratings, ['hgt', 'stre', 'spd', 'ins'], [1, 0.6, 0.2, 1])) {
+        if (hasSkill(ratings, g.compositeWeights.shootingLowPost.ratings, g.compositeWeights.shootingLowPost.weights)) {
             sk.push("Po");
         }
-        if (hasSkill(ratings, ['drb', 'pss'], [0.4, 1])) {
+        if (hasSkill(ratings, g.compositeWeights.passing.ratings, g.compositeWeights.passing.weights)) {
             sk.push("Ps");
         }
-        if (hasSkill(ratings, ['hgt', 'stre', 'jmp', 'reb'], [1.5, 0.1, 0.1, 0.7])) {
+        if (hasSkill(ratings, g.compositeWeights.rebounding.ratings, g.compositeWeights.rebounding.weights)) {
             sk.push("R");
         }
 

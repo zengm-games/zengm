@@ -75,6 +75,52 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
       }
     };
 
+    ko.bindingHandlers.highlow = {
+      update: function(element, valueAccessor) {
+        var arg, output;
+        arg = ko.unwrap(valueAccessor());
+
+        if (arg < 0.20) {
+          output = 'Very Low';
+        } else if (arg < 0.40) {
+          output = 'Low';
+        } else if (arg < 0.60) {
+          output = 'Average';
+        }else if (arg < 0.80) {
+          output = 'High';
+        } else {
+          output = 'Very High';
+        }
+
+        return ko.bindingHandlers.text.update(element, function() {
+          return output;
+        });
+      }
+    };
+
+    ko.bindingHandlers.fastslow = {
+      update: function(element, valueAccessor) {
+        var arg, output;
+        arg = ko.unwrap(valueAccessor());
+
+        if (arg < 0.20) {
+          output = 'Very Slow';
+        } else if (arg < 0.40) {
+          output = 'Slow';
+        } else if (arg < 0.60) {
+          output = 'Average';
+        }else if (arg < 0.80) {
+          output = 'Fast';
+        } else {
+          output = 'Very Fast';
+        }
+
+        return ko.bindingHandlers.text.update(element, function() {
+          return output;
+        });
+      }
+    };
+
     // It would be better if this took the series object directly
     ko.bindingHandlers.matchup = {
         update: function (element, valueAccessor, allBindingsAccessor, viewModel) {

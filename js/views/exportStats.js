@@ -71,6 +71,13 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore",
         });
     }
 
+    function InitViewModel() {
+        this.formChanged = function () {
+            // Clear old link when form changes
+            document.getElementById("download-link").innerHTML = ""; // Clear "Generating..."
+        };
+    }
+
     function post(req) {
         var csvPromise, downloadLink, objectStores, season, statsSeasons;
 
@@ -141,6 +148,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore",
 
     return bbgmView.init({
         id: "exportStats",
+        InitViewModel: InitViewModel,
         post: post,
         runBefore: [updateExportStats],
         uiFirst: uiFirst

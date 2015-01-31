@@ -4,9 +4,6 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
-export stats
-  clear download link on any change to form
-
 draft classes being generated with the wrong season, leading to empty draft classes
   added back old hack to views/draft.js, but that is not satisfying
 

@@ -5,10 +5,10 @@
 define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore", "util/bbgmView", "util/helpers"], function (dao, g, ui, player, Promise, _, bbgmView, helpers) {
     "use strict";
 
-    function genFileName(leagueName, season) {
-        var fileName, i, leagueName, playoffSeries, rnd, season, series;
+    function genFileName(leagueName, season, grouping) {
+        var fileName;
 
-        fileName = "BBGM_" + leagueName.replace(/[^a-z0-9]/gi, '_') + "_" + season + "_" + (season === "all" ? "seasons" : "season") + "_Average_Stats";
+        fileName = "BBGM_" + leagueName.replace(/[^a-z0-9]/gi, '_') + "_" + season + "_" + (season === "all" ? "seasons" : "season") + (grouping === "averages" ? "_Average_Stats" : "_Game_Stats");
 
         return fileName + ".csv";
     }
@@ -40,16 +40,55 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore",
         });
     }
 
+    // playerAveragesCSV(2015) - just 2015 games
+    // playerAveragesCSV("all") - all games
+    function playerGamesCSV(season) {
+        var gamesPromise;
+
+        if (season === "all") {
+            gamesPromise = dao.games.getAll();
+        } else {
+            gamesPromise = dao.games.getAll({index: "season", key: season});
+        }
+        return gamesPromise.then(function (games) {
+            var i, j, output, seasons, gameStats, t, t2, teams;
+
+            output = "pid,Name,Pos,Team,Opp,Score,WL,Season,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,PF,Pts\n";
+
+            teams = _.pluck(games, "teams");
+            seasons = _.pluck(games, "season");
+            for (i = 0; i < teams.length; i++) {
+                for (j = 0; j < 2; j++) {
+                    t = teams[i][j];
+                    t2 = teams[i][j === 0 ? 1 : 0];
+                    t.players.forEach(function (p) {
+                        output += [p.pid, p.name, p.pos, g.teamAbbrevsCache[t.tid], g.teamAbbrevsCache[t2.tid], t.pts + "-" + t2.pts, t.pts > t2.pts ? "W" : "L", seasons[i], p.min, p.fg, p.fga, p.fgp, p.tp, p.tpa, p.tpp, p.ft, p.fta, p.ftp, p.orb, p.drb, p.trb, p.ast, p.tov, p.stl, p.blk, p.pf, p.pts].join(",") + "\n";
+                    });
+                }
+            }
+
+            return output;
+        });
+    }
+
     function post(req) {
-        var downloadLink, objectStores, season, statsSeasons;
+        var csvPromise, downloadLink, objectStores, season, statsSeasons;
 
         downloadLink = document.getElementById("download-link");
         downloadLink.innerHTML = "Generating...";
 
         season = req.params.season === "all" ? "all" : parseInt(req.params.season, 10);
 
+        if (req.params.grouping === "averages") {
+            csvPromise = playerAveragesCSV(season);
+        } else if (req.params.grouping === "games") {
+            csvPromise = playerGamesCSV(season);
+        } else {
+            throw new Error("This should never happen");
+        }
+
         Promise.all([
-            playerAveragesCSV(season),
+            csvPromise,
             dao.leagues.get({key: g.lid})
         ]).spread(function (output, l) {
             var a, blob, fileName, url;
@@ -57,7 +96,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore",
             blob = new Blob([output], {type: "text/csv"});
             url = window.URL.createObjectURL(blob);
 
-            fileName = genFileName(l.name, season);
+            fileName = genFileName(l.name, season, req.params.grouping);
 
             a = document.createElement("a");
             a.download = fileName;
@@ -97,7 +136,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore",
     }
 
     function uiFirst() {
-        ui.title("Export League");
+        ui.title("Export Stats");
     }
 
     return bbgmView.init({

@@ -55,6 +55,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", 
                 // Add untradable property
                 p = trade.filterUntradable([p])[0];
 
+                p.compositeRatings = player.getCompositeRatings(p.ratings[p.ratings.length - 1]);
+
                 return {
                     player: p,
                     showTradeFor: p.tid !== g.userTid && p.tid >= 0,

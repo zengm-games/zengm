@@ -36,6 +36,45 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
         }
     };
 
+    ko.bindingHandlers.letterGrade = {
+      update: function(element, valueAccessor) {
+        var arg, output;
+        arg = ko.unwrap(valueAccessor());
+
+        if (arg < 0.20) {
+          output = 'F';
+        } else if (arg < 0.25) {
+          output = 'D-';
+        } else if (arg < 0.35) {
+          output = 'D';
+        } else if (arg < 0.40) {
+          output = 'D+';
+        } else if (arg < 0.45) {
+          output = 'C-';
+        } else if (arg < 0.55) {
+          output = 'C';
+        } else if (arg < 0.60) {
+          output = 'C+';
+        } else if (arg < 0.65) {
+          output = 'B-';
+        } else if (arg < 0.75) {
+          output = 'B';
+        } else if (arg < 0.80) {
+          output = 'B+';
+        } else if (arg < 0.85) {
+          output = 'A-';
+        } else if (arg < 0.95) {
+          output = 'A';
+        } else {
+          output = 'A+';
+        }
+
+        return ko.bindingHandlers.text.update(element, function() {
+          return output;
+        });
+      }
+    };
+
     // It would be better if this took the series object directly
     ko.bindingHandlers.matchup = {
         update: function (element, valueAccessor, allBindingsAccessor, viewModel) {

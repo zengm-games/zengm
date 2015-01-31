@@ -6,6 +6,7 @@ number or not.
 
 ## Gameplay and UI
 
+- Export Stats feature (player average stats or individual game stats)
 - More detailed info display: four factors in box scores, transaction log in player pages, etc.
 
 ## Techincal details

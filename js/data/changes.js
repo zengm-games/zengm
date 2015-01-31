@@ -82,6 +82,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2014-12-05",
         msg: 'Game simulation is about 20% faster now. This is most visible after you\'re many seasons into a league.'
+    }, {
+        date: "2015-01-31",
+        msg: 'Want to really nerd out? Go to Tools > Export Stats.'
     }];
 
     function check() {

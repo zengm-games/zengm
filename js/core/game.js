@@ -521,10 +521,11 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
                     // These use the same formulas as the skill definitions in player.skills!
                     for (k in g.compositeWeights) {
-                        if ({}.hasOwnProperty.call(g.compositeWeights, k)) {
+                        if (g.compositeWeights.hasOwnProperty(k)) {
                             p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
                         }
                     }
+                    p.compositeRating.usage = Math.pow(p.compositeRating.usage, 1.9);
 
                     p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
 

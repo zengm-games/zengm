@@ -40,39 +40,69 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-3">
-        <strong>Physical</strong><br>
-        Height: <span data-bind="text: player.ratings()[player.ratings().length - 1].hgt"></span><br>
-        Strength: <span data-bind="text: player.ratings()[player.ratings().length - 1].stre"></span><br>
-        Speed: <span data-bind="text: player.ratings()[player.ratings().length - 1].spd"></span><br>
-        Jumping: <span data-bind="text: player.ratings()[player.ratings().length - 1].jmp"></span><br>
-        Endurance: <span data-bind="text: player.ratings()[player.ratings().length - 1].endu"></span>
+      <div class="col-xs-4">
+          <strong>Physical</strong><br>
+          Height: <span data-bind="text: player.ratings()[player.ratings().length - 1].hgt"></span><br>
+          Strength: <span data-bind="text: player.ratings()[player.ratings().length - 1].stre"></span><br>
+          Speed: <span data-bind="text: player.ratings()[player.ratings().length - 1].spd"></span><br>
+          Jumping: <span data-bind="text: player.ratings()[player.ratings().length - 1].jmp"></span><br>
+          Endurance: <span data-bind="text: player.ratings()[player.ratings().length - 1].endu"></span>
       </div>
-      <div class="col-xs-3">
-        <strong>Shooting</strong><br>
-        Inside: <span data-bind="text: player.ratings()[player.ratings().length - 1].ins"></span><br>
-        Dunks/Layups: <span data-bind="text: player.ratings()[player.ratings().length - 1].dnk"></span><br>
-        Free Throws: <span data-bind="text: player.ratings()[player.ratings().length - 1].ft"></span><br>
-        Two Pointers: <span data-bind="text: player.ratings()[player.ratings().length - 1].fg"></span><br>
-        Three Pointers: <span data-bind="text: player.ratings()[player.ratings().length - 1].tp"></span>
+      <div class="col-xs-4">
+          <strong>Shooting</strong><br>
+          Inside: <span data-bind="text: player.ratings()[player.ratings().length - 1].ins"></span><br>
+          Dunks/Layups: <span data-bind="text: player.ratings()[player.ratings().length - 1].dnk"></span><br>
+          Free Throws: <span data-bind="text: player.ratings()[player.ratings().length - 1].ft"></span><br>
+          Two Pointers: <span data-bind="text: player.ratings()[player.ratings().length - 1].fg"></span><br>
+          Three Pointers: <span data-bind="text: player.ratings()[player.ratings().length - 1].tp"></span>
       </div>
-      <div class="col-xs-3">
-        <strong>Skill</strong><br>
-        Blocks: <span data-bind="text: player.ratings()[player.ratings().length - 1].blk"></span><br>
-        Steals: <span data-bind="text: player.ratings()[player.ratings().length - 1].stl"></span><br>
-        Dribbling: <span data-bind="text: player.ratings()[player.ratings().length - 1].drb"></span><br>
-        Passing: <span data-bind="text: player.ratings()[player.ratings().length - 1].pss"></span><br>
-        Rebounding: <span data-bind="text: player.ratings()[player.ratings().length - 1].reb"></span>
+      <div class="col-xs-4">
+          <strong>Skill</strong><br>
+          Blocks: <span data-bind="text: player.ratings()[player.ratings().length - 1].blk"></span><br>
+          Steals: <span data-bind="text: player.ratings()[player.ratings().length - 1].stl"></span><br>
+          Dribbling: <span data-bind="text: player.ratings()[player.ratings().length - 1].drb"></span><br>
+          Passing: <span data-bind="text: player.ratings()[player.ratings().length - 1].pss"></span><br>
+          Rebounding: <span data-bind="text: player.ratings()[player.ratings().length - 1].reb"></span>
       </div>
-      <div class="col-xs-3">
-        <strong>Composite</strong><br>   
-        Interior Defense: <span data-bind="letterGrade: player.compositeRatings.defenseInterior"></span><br>
-        Perimeter Defense: <span data-bind="letterGrade: player.compositeRatings.defensePerimeter"></span><br>
-        Athleticism: <span data-bind="letterGrade: player.compositeRatings.athleticism"></span><br>
-        Usage: <span data-bind="highlow: player.compositeRatings.usage"></span><br>
-        Pace: <span data-bind="fastslow: player.compositeRatings.pace"></span><br>
-      </div>
-		</div>
+
+    </div>
+    <div class="row"><div class="col-xs-12"><h2>Scouting Report</h2></div></div>
+      <div class="row">
+          <div class="col-xs-3">
+              <strong>Inside</strong><br>  
+              Rebounding: <span data-bind="letterGrade: player.compositeRatings.rebounding"></span><br>   
+              At Rim: <span data-bind="letterGrade: player.compositeRatings.shootingAtRim"></span><br>   
+              Low Post: <span data-bind="letterGrade: player.compositeRatings.shootingLowPost"></span><br>
+              Interior Defense: <span data-bind="letterGrade: player.compositeRatings.defenseInterior"></span><br>
+              Fouls: <span data-bind="letterGrade: player.compositeRatings.fouling"></span><br>
+          </div>
+          <div class="col-xs-3">
+              <strong>Shooting</strong><br>              
+              Mid Range: <span data-bind="letterGrade: player.compositeRatings.shootingMidRange"></span><br>
+              Three Pt: <span data-bind="letterGrade: player.compositeRatings.shootingThreePointer"></span><br>
+              Free Throw: <span data-bind="letterGrade: player.compositeRatings.shootingFT"></span><br>
+              Usage: <span data-bind="highlow: player.compositeRatings.usage"></span><br>
+              <br>
+              <strong>Ball Skills</strong><br>
+              Dribbling: <span data-bind="letterGrade: player.compositeRatings.dribbling"></span><br>
+              Passing: <span data-bind="letterGrade: player.compositeRatings.passing"></span><br>
+              Turnovers: <span data-bind="letterGrade: player.compositeRatings.turnovers"></span><br>
+          </div>
+          <div class="col-xs-3">
+              <strong>Defense</strong><br>   
+              Overall: <span data-bind="letterGrade: player.compositeRatings.defense"></span><br>               
+              Perimeter: <span data-bind="letterGrade: player.compositeRatings.defensePerimeter"></span><br>
+              Steals: <span data-bind="letterGrade: player.compositeRatings.stealing"></span><br>
+              Blocks: <span data-bind="letterGrade: player.compositeRatings.blocking"></span><br>
+          </div>
+          <div class="col-xs-3">
+              <strong>Physical</strong><br> 
+              Pace: <span data-bind="fastslow: player.compositeRatings.pace"></span><br>                
+              Athleticism: <span data-bind="letterGrade: player.compositeRatings.dribbling"></span><br>
+              Endurance: <span data-bind="letterGrade: player.compositeRatings.passing"></span><br>
+          </div>
+      </div>         
+    </div>
   </div>
 </div>
 

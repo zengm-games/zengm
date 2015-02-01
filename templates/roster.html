@@ -46,7 +46,7 @@
         <td data-bind="visible: $parent.editable">
           <button class="btn btn-default btn-xs" data-action="release" data-bind="enable: canRelease">Release</button>
         </td>
-        <td data-bind="visible: $parent.showTradeFor">
+        <td data-bind="visible: $parent.showTradeFor, if: $parent.showTradeFor">
           <form method="POST" style="margin: 0" data-bind="attrLeagueUrl: {action: ['trade']}, attr: {title: untradableMsg}">
             <input type="hidden" name="pid" data-bind="attr: {value: pid}">
             <button type="submit" class="btn btn-default btn-xs" data-bind="enable: !untradable()">Trade For</button>

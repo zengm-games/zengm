@@ -40,7 +40,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-xs-4">
+      <div class="col-xs-3">
         <strong>Physical</strong><br>
         Height: <span data-bind="text: player.ratings()[player.ratings().length - 1].hgt"></span><br>
         Strength: <span data-bind="text: player.ratings()[player.ratings().length - 1].stre"></span><br>
@@ -48,7 +48,7 @@
         Jumping: <span data-bind="text: player.ratings()[player.ratings().length - 1].jmp"></span><br>
         Endurance: <span data-bind="text: player.ratings()[player.ratings().length - 1].endu"></span>
       </div>
-      <div class="col-xs-4">
+      <div class="col-xs-3">
         <strong>Shooting</strong><br>
         Inside: <span data-bind="text: player.ratings()[player.ratings().length - 1].ins"></span><br>
         Dunks/Layups: <span data-bind="text: player.ratings()[player.ratings().length - 1].dnk"></span><br>
@@ -56,7 +56,7 @@
         Two Pointers: <span data-bind="text: player.ratings()[player.ratings().length - 1].fg"></span><br>
         Three Pointers: <span data-bind="text: player.ratings()[player.ratings().length - 1].tp"></span>
       </div>
-      <div class="col-xs-4">
+      <div class="col-xs-3">
         <strong>Skill</strong><br>
         Blocks: <span data-bind="text: player.ratings()[player.ratings().length - 1].blk"></span><br>
         Steals: <span data-bind="text: player.ratings()[player.ratings().length - 1].stl"></span><br>
@@ -64,7 +64,15 @@
         Passing: <span data-bind="text: player.ratings()[player.ratings().length - 1].pss"></span><br>
         Rebounding: <span data-bind="text: player.ratings()[player.ratings().length - 1].reb"></span>
       </div>
-    </div>
+      <div class="col-xs-3">
+        <strong>Composite</strong><br>   
+        Interior Defense: <span data-bind="letterGrade: player.compositeRatings.defenseInterior"></span><br>
+        Perimeter Defense: <span data-bind="letterGrade: player.compositeRatings.defensePerimeter"></span><br>
+        Athleticism: <span data-bind="letterGrade: player.compositeRatings.athleticism"></span><br>
+        Usage: <span data-bind="highlow: player.compositeRatings.usage"></span><br>
+        Pace: <span data-bind="fastslow: player.compositeRatings.pace"></span><br>
+      </div>
+		</div>
   </div>
 </div>
 

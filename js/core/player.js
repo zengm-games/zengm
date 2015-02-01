@@ -1820,6 +1820,74 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         return p;
     }
 
+      /**
+     * Build a composite rating.
+     *
+     * Composite ratings are combinations of player ratings meant to represent one facet of the game, like the ability to make a jump shot. All composite ratings are scaled from 0 to 1.
+     *
+     * @memberOf core.player
+     * @param {Object.<string, number>} ratings Player's ratings object.
+     * @param {Array.<string>} components List of player ratings to include in the composite ratings. In addition to the normal ones, "constant" is a constant value of 50 for every player, which can be used to add a baseline value for a stat.
+     * @param {Array.<number>=} weights Optional array of weights used in the linear combination of components. If undefined, then all weights are assumed to be 1. If defined, this must be the same size as components.
+     * @return {number} Composite rating, a number between 0 and 1.
+     */
+    function makeComposite(rating, components, weights) {
+        var component, divideBy, i, r, rcomp;
+
+        if (weights === undefined) {
+            // Default: array of ones with same size as components
+            weights = [];
+            for (i = 0; i < components.length; i++) {
+                weights.push(1);
+            }
+        }
+
+        rating.constant = 50;
+
+        r = 0;
+        divideBy = 0;
+        for (i = 0; i < components.length; i++) {
+            component = components[i];
+            // Sigmoidal transformation
+            //y = (rating[component] - 70) / 10;
+            //rcomp = y / Math.sqrt(1 + Math.pow(y, 2));
+            //rcomp = (rcomp + 1) * 50;
+            rcomp = weights[i] * rating[component];
+
+            r = r + rcomp;
+
+            divideBy = divideBy + 100 * weights[i];
+        }
+
+        r = r / divideBy;  // Scale from 0 to 1
+        if (r > 1) {
+            r = 1;
+        } else if (r < 0) {
+            r = 0;
+        }
+
+        return r;
+    }
+
+      /**
+     * Calculate composite ratings from base ratings.
+     *
+     * @memberOf core.player
+     * @param {Object.<string, number>} rating Player's ratings object.
+     * @return {Object.<string, number>} Composite ratings object, representing the full set of composite ratings for a player.
+     */
+		function getCompositeRatings(rating) {
+      var compositeRating, k;
+      compositeRating = {};
+			for (k in g.compositeWeights) {
+          if (g.compositeWeights.hasOwnProperty(k)) {
+              compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
+          }
+      }
+      compositeRating.usage = Math.pow(compositeRating.usage, 1.9);
+			return compositeRating;
+		}
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1842,6 +1910,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         name: name,
         contractSeasonsRemaining: contractSeasonsRemaining,
         moodColorText: moodColorText,
+        getCompositeRatings: getCompositeRatings,
         augmentPartialPlayer: augmentPartialPlayer
     };
 });

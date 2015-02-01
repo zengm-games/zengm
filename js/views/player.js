@@ -99,7 +99,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", 
         }).extend({throttle: 1});
 
         ui.tableClickableRows($(".table-clickable-rows"));
-      
+
         ratingDisplayStyle = localStorage.getItem("RatingDisplayStyle");
         if (ratingDisplayStyle === 'Composite') {
           $('#compositePill').tab("show");
@@ -109,7 +109,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", 
           //$("ul.nav-pills :not(li.active)")[0].innerText.trim();  // why doesnt this work?
           r = $("ul.nav-pills :not(li.active)")[0].innerText.trim(); // this is the tab we are coming from, since I can't get the one we're going to using the line above
           r = (r === 'Composite') ? 'Basic' : 'Composite'; // so I have to do this , ugh
-          localStorage.setItem("RatingDisplayStyle", r); 
+          localStorage.setItem("RatingDisplayStyle", r);
         });
     }
 

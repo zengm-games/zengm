@@ -44,7 +44,7 @@
           <ul class="nav nav-pills" role="tablist">
               <li role="presentation" class="active small"><a href="#basic" data-toggle="pill">Basic</a></li>
               <li role="presentation" class="small" ><a id="compositePill" href="#composite" data-toggle="pill">Composite</a></li>
-          </ul></div>
+          </ul></div><p>&nbsp;</p>
           <div id="ratingsContent" class="tab-content">
               <div class="tab-pane active " id="basic">
                   <div class="col-xs-4">
@@ -77,8 +77,8 @@
                       <div class="col-xs-4">
                           <strong>Physical</strong><br> 
                           Height: <span data-bind="letterGrade: player.ratings()[player.ratings().length - 1].height"></span><br>
-                          Endurance: <span data-bind="letterGrade: player.compositeRatings.passing"></span><br>
-                          Athleticism: <span data-bind="letterGrade: player.compositeRatings.dribbling"></span><br>
+                          Endurance: <span data-bind="letterGrade: player.compositeRatings.endurance"></span><br>
+                          Athleticism: <span data-bind="letterGrade: player.compositeRatings.athleticism"></span><br>
                           <br>
                           <strong>Ball Handling</strong><br>  
                           Dribbling: <span data-bind="letterGrade: player.compositeRatings.dribbling"></span><br>
@@ -98,7 +98,7 @@
                       </div>
                       <div class="col-xs-4">
                           <strong>Rebounding</strong><br>  
-                          Rebounding: <span data-bind="letterGrade: player.compositeRatings.pace"></span><br>   
+                          Rebounding: <span data-bind="letterGrade: player.compositeRatings.rebounding"></span><br>   
                           <br>        
                           <strong>Defense</strong><br>    
                           Overall: <span data-bind="letterGrade: player.compositeRatings.defense"></span><br>

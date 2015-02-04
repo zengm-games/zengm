@@ -85,6 +85,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2015-01-31",
         msg: 'Want to really nerd out? Go to Tools > Export Stats.'
+    }, {
+        date: "2015-02-03",
+        msg: 'Keep an eye on great individual performances in the new Statistical Feats page.'
     }];
 
     function check() {

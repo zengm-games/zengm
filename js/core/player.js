@@ -1821,20 +1821,67 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
     }
 
     function checkStatisticalFeat(tx, pid, tid, p, results) {
-        var feat, i, j, saveFeat, won;
+        var doubles, feat, logFeat, i, j, saveFeat, won;
 
         saveFeat = false;
 
-//        ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts']
-        if (p.stat.pts >= 5) {
+        logFeat = function (text) {
             eventLog.add(tx, {
-                type: "injured",
-                text: '<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> scored <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.pts + ' points in a game</a>.',
+                type: "playerFeat",
+                text: text,
                 showNotification: tid === g.userTid,
                 pids: [pid],
                 tids: [tid]
             });
+        };
 
+//        ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts']
+
+        doubles = ["pts", "ast", "stl", "blk"].reduce(function (count, stat) {
+            if (p.stat[stat] >= 10) {
+                return count + 1;
+            }
+            return count;
+        }, 0);
+        if (p.stat.orb + p.stat.drb >= 10) {
+            doubles += 1;
+        }
+
+        if (doubles >= 3) {
+            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> got <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">a triple double</a>.');
+            saveFeat = true;
+        }
+        if (p.stat.pts >= 5 && p.stat.ast >= 5 && p.stat.stl >= 5 && p.stat.blk >= 5 && (p.stat.orb + p.stat.drb) >= 5) {
+            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> got <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">a 5x5 game</a>.');
+            saveFeat = true;
+        }
+        if (p.stat.pts >= 50) {
+            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> scored <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.pts + ' points in a game</a>.');
+            saveFeat = true;
+        }
+
+        if (p.stat.orb + p.stat.drb >= 25) {
+            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> grabbed <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + (p.stat.orb + p.stat.drb) + ' rebounds in a game</a>.');
+            saveFeat = true;
+        }
+
+        if (p.stat.ast >= 20) {
+            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> recorded <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.ast + ' assists in a game</a>.');
+            saveFeat = true;
+        }
+
+        if (p.stat.stl >= 10) {
+            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> got <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.stl + ' steals in a game</a>.');
+            saveFeat = true;
+        }
+
+        if (p.stat.blk >= 10) {
+            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> got <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.blk + ' blocks in a game</a>.');
+            saveFeat = true;
+        }
+
+        if (p.stat.tp >= 10) {
+            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> made <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.tp + ' three pointers in a game</a>.');
             saveFeat = true;
         }
 

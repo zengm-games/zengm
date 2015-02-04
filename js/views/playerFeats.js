@@ -36,7 +36,7 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "views/components"
     }
 
     mapping = {
-        players: {
+        feats: {
             create: function (options) {
                 return options.data;
             }
@@ -81,7 +81,7 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "views/components"
                 });
 
                 return {
-                    players: feats,
+                    feats: feats,
                     abbrev: inputs.abbrev,
                     season: inputs.season,
                     playoffs: inputs.playoffs
@@ -94,12 +94,12 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "views/components"
         ui.title("Statistical Feats");
 
         ko.computed(function () {
-            var abbrev, i, oppAbbrev, p, players, rows;
+            var abbrev, i, oppAbbrev, p, feats, rows;
 
             rows = [];
-            players = vm.players();
-            for (i = 0; i < vm.players().length; i++) {
-                p = players[i];
+            feats = vm.feats();
+            for (i = 0; i < feats.length; i++) {
+                p = feats[i];
                 abbrev = g.teamAbbrevsCache[p.tid];
                 oppAbbrev = g.teamAbbrevsCache[p.oppTid];
 

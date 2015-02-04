@@ -248,8 +248,8 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
 
     ko.bindingHandlers.gameScore = {
         update: function(element, valueAccessor) {
-            var stat;
-            var arg = valueAccessor();
+            var arg, stat;
+            arg = valueAccessor();
             for (stat in arg) {
                 if (arg.hasOwnProperty(stat)) {
                     arg[stat] = ko.unwrap(arg[stat]);

@@ -1821,7 +1821,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
     }
 
     function checkStatisticalFeat(tx, pid, tid, p, results) {
-        var doubles, feat, logFeat, i, j, saveFeat, won;
+        var doubles, feat, i, j, logFeat, saveFeat, won;
 
         saveFeat = false;
 

@@ -45,7 +45,6 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "views/components"
 
     function updatePlayers(inputs, updateEvents, vm) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.playoffs !== vm.playoffs()) {
-
             return dao.playerFeats.getAll().then(function (feats) {
                 if (inputs.abbrev !== "all") {
                     feats = feats.filter(function (feat) {
@@ -94,7 +93,7 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "views/components"
         ui.title("Statistical Feats");
 
         ko.computed(function () {
-            var abbrev, i, oppAbbrev, p, feats, rows;
+            var abbrev, feats, i, oppAbbrev, p, rows;
 
             rows = [];
             feats = vm.feats();

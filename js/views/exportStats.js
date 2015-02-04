@@ -51,7 +51,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore",
             gamesPromise = dao.games.getAll({index: "season", key: season});
         }
         return gamesPromise.then(function (games) {
-            var i, j, output, seasons, gameStats, t, t2, teams;
+            var i, j, output, seasons, t, t2, teams;
 
             output = "pid,Name,Pos,Team,Opp,Score,WL,Season,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,PF,Pts\n";
 
@@ -79,7 +79,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore",
     }
 
     function post(req) {
-        var csvPromise, downloadLink, objectStores, season, statsSeasons;
+        var csvPromise, downloadLink, season;
 
         downloadLink = document.getElementById("download-link");
         downloadLink.innerHTML = "Generating...";

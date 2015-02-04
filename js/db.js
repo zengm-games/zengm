@@ -752,6 +752,14 @@ console.log(event);
                     tx.objectStore("events").createIndex("pids", "pids", {unique: false, multiEntry: true});
                 }());
             }
+            if (event.oldVersion <= 12) {
+                (function () {
+                    var playerFeatStore;
+                    playerFeatStore = dbl.createObjectStore("playerFeats", {keyPath: "fid", autoIncrement: true});
+                    playerFeatStore.createIndex("pid", "pid", {unique: false});
+                    playerFeatStore.createIndex("tid", "tid", {unique: false});
+                }());
+            }
         });
     }
 
@@ -760,7 +768,7 @@ console.log(event);
             var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-            request = indexedDB.open("league" + lid, 12);
+            request = indexedDB.open("league" + lid, 13);
             request.onerror = function (event) {
                 if (event.target.webkitErrorMessage) {
                     throw new Error("League connection error: " + event.target.webkitErrorMessage);

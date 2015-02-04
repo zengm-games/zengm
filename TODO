@@ -1,6 +1,8 @@
 DB CHANGES SINCE 3.4.0
 ----------------------
 
+playerFeats store
+
 CURRENT
 -------
 
@@ -17,15 +19,20 @@ draft classes being generated with the wrong season, leading to empty draft clas
 team and league records (highest scoring game, etc)
   log in event log as playerFeat or teamFeat, text should link to box score
     then can show in team history, league history, player page
-  feats
+  feats (implement in player.checkStatisticalFeat)
     triple double
     5x5
     50 points
-    30 rebounds
+    25 rebounds
     20 assists
     10 steals
     10 blocks
+    10 threes
   http://www.reddit.com/r/BasketballGM/comments/2sl13h/many_people_have_requested_some_kind_of_all_time/
+  show in
+    player page
+    team history page
+    season summary page
 
 BBGM Gold?
   $5/month, pay whatever you want and get that many days with no recurrence, no ads, no feature changes

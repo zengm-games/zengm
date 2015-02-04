@@ -1820,6 +1820,56 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         return p;
     }
 
+    function checkStatisticalFeat(tx, pid, tid, p, results) {
+        var feat, i, j, saveFeat, won;
+
+        saveFeat = false;
+
+//        ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts']
+        if (p.stat.pts >= 5) {
+            eventLog.add(tx, {
+                type: "injured",
+                text: '<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> scored <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.pts + ' points in a game</a>.',
+                showNotification: tid === g.userTid,
+                pids: [pid],
+                tids: [tid]
+            });
+
+            saveFeat = true;
+        }
+
+
+        if (saveFeat) {
+            if (results.team[0].id === tid) {
+                i = 0;
+                j = 1;
+            } else {
+                i = 1;
+                j = 0;
+            }
+
+            if (results.team[i].stat.pts > results.team[j].stat.pts) {
+                won = true;
+            } else {
+                won = false;
+            }
+
+            feat = {
+                pid: pid,
+                season: g.season,
+                tid: tid,
+                playoffs: g.phase === g.PHASE.PLAYOFFS,
+                gid: results.gid,
+                stats: p.stat,
+                won: won,
+                score: results.team[i].stat.pts + "-" + results.team[j].stat.pts,
+                overtimes: results.overtimes
+            };
+
+            dao.playerFeats.add({ot: tx, value: feat});
+        }
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1842,6 +1892,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         name: name,
         contractSeasonsRemaining: contractSeasonsRemaining,
         moodColorText: moodColorText,
-        augmentPartialPlayer: augmentPartialPlayer
+        augmentPartialPlayer: augmentPartialPlayer,
+        checkStatisticalFeat: checkStatisticalFeat
     };
 });

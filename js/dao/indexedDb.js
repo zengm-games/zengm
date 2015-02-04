@@ -280,6 +280,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
     dao.games = generateBasicDao("dbl", "games");
     dao.messages = generateBasicDao("dbl", "messages");
     dao.negotiations = generateBasicDao("dbl", "negotiations");
+    dao.playerFeats = generateBasicDao("dbl", "playerFeats");
     dao.playerStats = generateBasicDao("dbl", "playerStats");
     dao.playoffSeries = generateBasicDao("dbl", "playoffSeries");
     dao.releasedPlayers = generateBasicDao("dbl", "releasedPlayers");

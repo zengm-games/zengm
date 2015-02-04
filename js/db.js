@@ -150,7 +150,7 @@ console.log(event);
      * @param {number} lid Integer league ID number for new league.
      */
     function createLeague(event, lid) {
-        var dbl, draftPickStore, eventStore, gameStore, playerStatsStore, playerStore, releasedPlayerStore;
+        var dbl, draftPickStore, eventStore, gameStore, playerFeatStore, playerStatsStore, playerStore, releasedPlayerStore;
 
         console.log("Creating league" + lid + " database");
 
@@ -172,6 +172,7 @@ console.log(event);
         dbl.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
         draftPickStore = dbl.createObjectStore("draftPicks", {keyPath: "dpid", autoIncrement: true});
         eventStore = dbl.createObjectStore("events", {keyPath: "eid", autoIncrement: true});
+        playerFeatStore = dbl.createObjectStore("playerFeats", {keyPath: "fid", autoIncrement: true});
 
         playerStore.createIndex("tid", "tid", {unique: false});
         playerStore.createIndex("draft.year", "draft.year", {unique: false});
@@ -186,6 +187,9 @@ console.log(event);
         draftPickStore.createIndex("tid", "tid", {unique: false});
         eventStore.createIndex("season", "season", {unique: false});
         eventStore.createIndex("pids", "pids", {unique: false, multiEntry: true});
+        playerFeatStore.createIndex("pid", "pid", {unique: false});
+        playerFeatStore.createIndex("tid", "tid", {unique: false});
+        playerFeatStore.createIndex("season", "season", {unique: false});
 //        eventStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used currently, but might need to be added later
     }
 

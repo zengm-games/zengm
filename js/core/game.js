@@ -211,6 +211,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                     return;
                 }
 
+                player.checkStatisticalFeat(tx, p.id, t.id, p, results);
+
                 dao.playerStats.iterate({
                     ot: tx,
                     index: "pid, season, tid",
@@ -609,7 +611,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
             gidsFinished = [];
 
-            tx = dao.tx(["events", "games", "players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+            tx = dao.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
             cbSaveResult = function (i) {
 //console.log('cbSaveResult ' + i)

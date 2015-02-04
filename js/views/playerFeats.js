@@ -8,7 +8,7 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "views/components"
     var mapping;
 
     function get(req) {
-        var abbrev;
+        var abbrev, season;
 
         if (g.teamAbbrevsCache.indexOf(req.params.abbrev) >= 0) {
             abbrev = req.params.abbrev;
@@ -16,9 +16,15 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "views/components"
             abbrev = "all";
         }
 
+        if (req.params.season && req.params.season !== "all") {
+            season = helpers.validateSeason(req.params.season);
+        } else {
+            season = "all";
+        }
+
         return {
             abbrev: abbrev,
-            season: helpers.validateSeason(req.params.season),
+            season: season,
             playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season"
         };
     }
@@ -41,6 +47,25 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "views/components"
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.playoffs !== vm.playoffs()) {
 
             return dao.playerFeats.getAll().then(function (feats) {
+                if (inputs.abbrev !== "all") {
+                    feats = feats.filter(function (feat) {
+                        return g.teamAbbrevsCache[feat.tid] === inputs.abbrev;
+                    });
+                }
+                if (inputs.season !== "all") {
+                    feats = feats.filter(function (feat) {
+                        return feat.season === inputs.season;
+                    });
+                }
+                feats = feats.filter(function (feat) {
+                    if (inputs.playoffs === "regular_season") {
+                        return !feat.playoffs;
+                    }
+                    if (inputs.playoffs === "playoffs") {
+                        return feat.playoffs;
+                    }
+                });
+
                 feats.forEach(function (feat) {
                     feat.stats.trb = feat.stats.orb + feat.stats.drb;
 
@@ -95,7 +120,7 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "views/components"
     }
 
     function uiEvery(updateEvents, vm) {
-        components.dropdown("player-feats-dropdown", ["teamsAndAll", "seasons", "playoffs"], [vm.abbrev(), vm.season(), vm.playoffs()], updateEvents);
+        components.dropdown("player-feats-dropdown", ["teamsAndAll", "seasonsAndAll", "playoffs"], [vm.abbrev(), vm.season(), vm.playoffs()], updateEvents);
     }
 
     return bbgmView.init({

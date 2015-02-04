@@ -189,7 +189,6 @@ console.log(event);
         eventStore.createIndex("pids", "pids", {unique: false, multiEntry: true});
         playerFeatStore.createIndex("pid", "pid", {unique: false});
         playerFeatStore.createIndex("tid", "tid", {unique: false});
-        playerFeatStore.createIndex("season", "season", {unique: false});
 //        eventStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used currently, but might need to be added later
     }
 

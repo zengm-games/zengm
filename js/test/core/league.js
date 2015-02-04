@@ -22,7 +22,7 @@ define(["dao", "db", "globals", "core/league", "lib/underscore", "test/helpers"]
                 });
             });
             it("should create all necessary object stores", function () {
-                g.dbl.objectStoreNames.should.have.length(15);
+                g.dbl.objectStoreNames.should.have.length(16);
                 g.dbl.objectStoreNames.contains("awards").should.equal(true);
                 g.dbl.objectStoreNames.contains("events").should.equal(true);
                 g.dbl.objectStoreNames.contains("draftOrder").should.equal(true);
@@ -31,6 +31,7 @@ define(["dao", "db", "globals", "core/league", "lib/underscore", "test/helpers"]
                 g.dbl.objectStoreNames.contains("messages").should.equal(true);
                 g.dbl.objectStoreNames.contains("negotiations").should.equal(true);
                 g.dbl.objectStoreNames.contains("players").should.equal(true);
+                g.dbl.objectStoreNames.contains("playerFeats").should.equal(true);
                 g.dbl.objectStoreNames.contains("playerStats").should.equal(true);
                 g.dbl.objectStoreNames.contains("playoffSeries").should.equal(true);
                 g.dbl.objectStoreNames.contains("releasedPlayers").should.equal(true);

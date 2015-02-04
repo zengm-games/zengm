@@ -1856,8 +1856,11 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
             feat = {
                 pid: pid,
+                name: p.name,
+                pos: p.pos,
                 season: g.season,
                 tid: tid,
+                oppTid: results.team[j].id,
                 playoffs: g.phase === g.PHASE.PLAYOFFS,
                 gid: results.gid,
                 stats: p.stat,

@@ -248,9 +248,15 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
 
     ko.bindingHandlers.gameScore = {
         update: function(element, valueAccessor) {
+            var stat;
             var arg = valueAccessor();
+            for (stat in arg) {
+                if (arg.hasOwnProperty(stat)) {
+                    arg[stat] = ko.unwrap(arg[stat]);
+                }
+            }
             return ko.bindingHandlers.html.update(element, function () {
-                return helpers.round(arg.pts() + 0.4 * arg.fg() - 0.7 * arg.fga() - 0.4 * (arg.fta() - arg.ft()) + 0.7 * arg.orb() + 0.3 * (arg.trb() - arg.orb()) + arg.stl() + 0.7 * arg.ast() + 0.7 * arg.blk() - 0.4 * arg.pf() - arg.tov(), 1);
+                return helpers.gameScore(arg);
             });
         }
     };

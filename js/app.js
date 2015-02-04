@@ -270,6 +270,10 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
             this.get("/l/:lid/power_rankings", views.powerRankings.get);
             this.get("/l/:lid/export_stats", views.exportStats.get);
             this.post("/l/:lid/export_stats", views.exportStats.post);
+            this.get("/l/:lid/player_feats", views.playerFeats.get);
+            this.get("/l/:lid/player_feats/:abbrev", views.playerFeats.get);
+            this.get("/l/:lid/player_feats/:abbrev/:season", views.playerFeats.get);
+            this.get("/l/:lid/player_feats/:abbrev/:season/:playoffs", views.playerFeats.get);
         });
 
         app.start();

@@ -1821,7 +1821,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
     }
 
     function checkStatisticalFeat(tx, pid, tid, p, results) {
-        var doubles, feat, i, j, logFeat, saveFeat, won;
+        var doubles, feat, i, j, k, logFeat, saveFeat, won, statArr, featTextArr, featText;
 
         saveFeat = false;
 
@@ -1846,42 +1846,46 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         if (p.stat.orb + p.stat.drb >= 10) {
             doubles += 1;
         }
-
-        if (doubles >= 3) {
-            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> got <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">a triple double</a>.');
+        
+        statArr = [];
+        if (p.stat.pts >= 5 && p.stat.ast >= 5 && p.stat.stl >= 5 && p.stat.blk >= 5 && (p.stat.orb + p.stat.drb) >= 5) {
+            statArr["points"] = p.stat.pts;
+            statArr["rebounds"] = p.stat.orb + p.stat.drb;
+            statArr["assists"] = p.stat.ast;
+            statArr["steals"] = p.stat.stl;
+            statArr["blocks"] = p.stat.blk;
             saveFeat = true;
         }
-        if (p.stat.pts >= 5 && p.stat.ast >= 5 && p.stat.stl >= 5 && p.stat.blk >= 5 && (p.stat.orb + p.stat.drb) >= 5) {
-            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> got <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">a 5x5 game</a>.');
+        if (doubles >= 3) {
+            if(p.stat.pts >= 10) statArr["points"] = p.stat.pts;
+            if(p.stat.orb + p.stat.drb >= 10) statArr["rebounds"] = p.stat.orb + p.stat.drb;
+            if(p.stat.ast >= 10) statArr["assists"] = p.stat.ast;
+            if(p.stat.stl >= 10) statArr["steals"] = p.stat.stl;
+            if(p.stat.blk >= 10) statArr["blocks"] = p.stat.blk;
             saveFeat = true;
         }
         if (p.stat.pts >= 50) {
-            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> scored <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.pts + ' points in a game</a>.');
+            statArr["points"] = p.stat.pts;
             saveFeat = true;
         }
-
         if (p.stat.orb + p.stat.drb >= 25) {
-            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> grabbed <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + (p.stat.orb + p.stat.drb) + ' rebounds in a game</a>.');
+            statArr["rebounds"] = p.stat.orb + p.stat.drb;
             saveFeat = true;
         }
-
         if (p.stat.ast >= 20) {
-            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> recorded <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.ast + ' assists in a game</a>.');
+            statArr["assists"] = p.stat.ast;
             saveFeat = true;
         }
-
         if (p.stat.stl >= 10) {
-            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> got <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.stl + ' steals in a game</a>.');
+            statArr["steals"] = p.stat.stl;
             saveFeat = true;
         }
-
         if (p.stat.blk >= 10) {
-            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> got <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.blk + ' blocks in a game</a>.');
-            saveFeat = true;
+              statArr["blocks"] = p.stat.blk;
+              saveFeat = true;
         }
-
         if (p.stat.tp >= 10) {
-            logFeat('<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> made <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">' + p.stat.tp + ' three pointers in a game</a>.');
+            statArr["three-pointers"] = p.stat.tp;
             saveFeat = true;
         }
 
@@ -1900,6 +1904,30 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             } else {
                 won = false;
             }
+        
+            featTextArr = [];
+            for(var key in statArr) {
+                featTextArr.push(statArr[key] + " " + key);
+            }
+          
+            featText = '<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> had <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">';
+
+            for(k = 0; k < featTextArr.length; k++) {              
+
+              if(featTextArr.length > 1 && k == featTextArr.length - 1) {
+                    featText += " and ";
+                }
+                
+                featText += featTextArr[k];
+                
+                if(featTextArr.length > 2 && k < featTextArr.length - 2) {
+                    featText += ", "
+                }
+                
+            }
+            featText += '</a> in a ' + results.team[i].stat.pts + "-" + results.team[j].stat.pts + (won ? ' win over the ' : ' loss to the ') + g.teamNamesCache[results.team[j].id] + '.';
+            
+            logFeat(featText);
 
             feat = {
                 pid: pid,

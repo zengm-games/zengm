@@ -248,15 +248,16 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
 
     ko.bindingHandlers.gameScore = {
         update: function(element, valueAccessor) {
-            var arg, stat;
+            var arg, newArg, stat;
             arg = valueAccessor();
+            newArg = {}; // To prevent unwrapping the underlying observable
             for (stat in arg) {
                 if (arg.hasOwnProperty(stat)) {
-                    arg[stat] = ko.unwrap(arg[stat]);
+                    newArg[stat] = ko.unwrap(arg[stat]);
                 }
             }
             return ko.bindingHandlers.html.update(element, function () {
-                return helpers.gameScore(arg);
+                return helpers.gameScore(newArg);
             });
         }
     };

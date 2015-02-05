@@ -13,6 +13,8 @@ composite ratings / scouting report
   - make it position-dependent.. but then should all this be position dependent?
 - "The Shooting, Defense, and Style groups are the ones I'm finding Im paying most attention to"
 
+revisit trade AI, 100 pennies for a dollar
+
 draft classes being generated with the wrong season, leading to empty draft classes
   added back old hack to views/draft.js, but that is not satisfying
 

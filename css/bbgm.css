@@ -100,6 +100,12 @@ footer {
   border-bottom-color: #777777;
 }
 
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+    background-color: #b3c2cf;   
+}
+
 .god-mode {
   background-color: #563d7c !important;
   color: #fff !important;

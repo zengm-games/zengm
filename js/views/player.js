@@ -72,45 +72,45 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", 
     }
 
     function uiFirst(vm) {
-        var ratingDisplayStyle;
-        ko.computed(function () {
-            ui.title(vm.player.name());
-        }).extend({throttle: 1});
+      var ratingDisplayStyle;
+      ko.computed(function () {
+          ui.title(vm.player.name());
+      }).extend({throttle: 1});
 
-        ko.computed(function () {
-            var img, pic;
+      ko.computed(function () {
+          var img, pic;
 
-            // Manually clear picture, since we're not using Knockout for this
-            pic = document.getElementById("picture");
-            while (pic.firstChild) {
-                pic.removeChild(pic.firstChild);
-            }
+          // Manually clear picture, since we're not using Knockout for this
+          pic = document.getElementById("picture");
+          while (pic.firstChild) {
+              pic.removeChild(pic.firstChild);
+          }
 
-            // If playerImgURL is not an empty string, use it instead of the generated face
-            if (vm.player.imgURL()) {
-                img = document.createElement("img");
-                img.src = vm.player.imgURL();
-                img.style.maxHeight = "100%";
-                img.style.maxWidth = "100%";
-                pic.appendChild(img);
-            } else {
-                faces.display("picture", komapping.toJS(vm.player.face));
-            }
-        }).extend({throttle: 1});
+          // If playerImgURL is not an empty string, use it instead of the generated face
+          if (vm.player.imgURL()) {
+              img = document.createElement("img");
+              img.src = vm.player.imgURL();
+              img.style.maxHeight = "100%";
+              img.style.maxWidth = "100%";
+              pic.appendChild(img);
+          } else {
+              faces.display("picture", komapping.toJS(vm.player.face));
+          }
+      }).extend({throttle: 1});
 
-        ui.tableClickableRows($(".table-clickable-rows"));
+      ui.tableClickableRows($(".table-clickable-rows"));
 
-        ratingDisplayStyle = localStorage.getItem("RatingDisplayStyle");
-        if (ratingDisplayStyle === 'Composite') {
-          $('#compositePill').tab("show");
-        }
-        $('.nav-pills a').click(function() {
-          var r;
-          //$("ul.nav-pills :not(li.active)")[0].innerText.trim();  // why doesnt this work?
-          r = $("ul.nav-pills :not(li.active)")[0].innerText.trim(); // this is the tab we are coming from, since I can't get the one we're going to using the line above
-          r = (r === 'Composite') ? 'Basic' : 'Composite'; // so I have to do this , ugh
-          localStorage.setItem("RatingDisplayStyle", r);
-        });
+      ratingDisplayStyle = localStorage.getItem("RatingDisplayStyle");
+      if (ratingDisplayStyle === 'Composite') {
+        $('#compositePill').tab("show");
+      }
+      $('.nav-pills a').click(function() {
+        var r;
+        //$("ul.nav-pills :not(li.active)")[0].innerText.trim();  // why doesnt this work?
+        r = $("ul.nav-pills :not(li.active)")[0].innerText.trim(); // this is the tab we are coming from, since I can't get the one we're going to using the line above
+        r = (r === 'Composite') ? 'Basic' : 'Composite'; // so I have to do this , ugh
+        localStorage.setItem("RatingDisplayStyle", r);
+      });
     }
 
     return bbgmView.init({

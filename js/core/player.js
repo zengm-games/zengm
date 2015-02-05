@@ -1832,41 +1832,41 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @return {number} Composite rating, a number between 0 and 1.
      */
     function makeComposite(rating, components, weights) {
-        var component, divideBy, i, r, rcomp;
+      var component, divideBy, i, r, rcomp;
 
-        if (weights === undefined) {
-            // Default: array of ones with same size as components
-            weights = [];
-            for (i = 0; i < components.length; i++) {
-                weights.push(1);
-            }
-        }
-
-        rating.constant = 50;
-
-        r = 0;
-        divideBy = 0;
+      if (weights === undefined) {
+        // Default: array of ones with same size as components
+        weights = [];
         for (i = 0; i < components.length; i++) {
-            component = components[i];
-            // Sigmoidal transformation
-            //y = (rating[component] - 70) / 10;
-            //rcomp = y / Math.sqrt(1 + Math.pow(y, 2));
-            //rcomp = (rcomp + 1) * 50;
-            rcomp = weights[i] * rating[component];
-
-            r = r + rcomp;
-
-            divideBy = divideBy + 100 * weights[i];
+          weights.push(1);
         }
+      }
 
-        r = r / divideBy;  // Scale from 0 to 1
-        if (r > 1) {
-            r = 1;
-        } else if (r < 0) {
-            r = 0;
-        }
+      rating.constant = 50;
 
-        return r;
+      r = 0;
+      divideBy = 0;
+      for (i = 0; i < components.length; i++) {
+        component = components[i];
+        // Sigmoidal transformation
+        //y = (rating[component] - 70) / 10;
+        //rcomp = y / Math.sqrt(1 + Math.pow(y, 2));
+        //rcomp = (rcomp + 1) * 50;
+        rcomp = weights[i] * rating[component];
+
+        r = r + rcomp;
+
+        divideBy = divideBy + 100 * weights[i];
+      }
+
+      r = r / divideBy;  // Scale from 0 to 1
+      if (r > 1) {
+        r = 1;
+      } else if (r < 0) {
+        r = 0;
+      }
+
+      return r;
     }
 
       /**

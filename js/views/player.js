@@ -24,6 +24,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", 
                     key: inputs.pid
                 })
             ]).spread(function (p, events) {
+                var feats;
+
                 p = player.filter(p, {
                     attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "pos", "age", "hgtFt", "hgtIn", "weight", "born", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch", "gamesUntilTradable"],
                     ratings: ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills"],
@@ -39,8 +41,22 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", 
                     p.contract.amount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
                 }
 
+                feats = events.filter(function (event) {
+                    if (event.type === "playerFeat") {
+                        return true;
+                    }
+
+                    return false;
+                }).map(function (event) {
+                    return {
+                        season: event.season,
+                        text: event.text
+                    };
+                });
+console.log(feats);
+
                 events = events.filter(function (event) {
-                    if (event.type === "award" || event.type === "injured" || event.type === "healed" || event.type === "hallOfFame") {
+                    if (event.type === "award" || event.type === "injured" || event.type === "healed" || event.type === "hallOfFame" || event.type === "playerFeat") {
                         return false;
                     }
 
@@ -63,7 +79,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", 
                     showContract: p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && p.tid !== g.PLAYER.UNDRAFTED_FANTASY_TEMP && p.tid !== g.PLAYER.RETIRED,
                     injured: p.injury.type !== "Healthy",
                     godMode: g.godMode,
-                    events: events
+                    events: events,
+                    feats: feats
                 };
             });
         }

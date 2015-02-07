@@ -33,6 +33,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         }).then(function () {
             // If auto-simulating, initiate next action
             if (g.autoPlaySeasons > 0) {
+                // Not totally sure why setTimeout is needed, but why not?
                 setTimeout(function () {
                     require("core/league").autoPlay();
                 }, 100);

@@ -668,13 +668,18 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             return phase.newPhase(g.PHASE.DRAFT);
         }
         if (g.phase === g.PHASE.DRAFT) {
+            return draft.untilUserOrEnd();
         }
         if (g.phase === g.PHASE.AFTER_DRAFT) {
             return phase.newPhase(g.PHASE.RESIGN_PLAYERS);
         }
         if (g.phase === g.PHASE.RESIGN_PLAYERS) {
+// Rewrite code so user auto-resigns
+// Advance to next phase after resigning from all teams
         }
         if (g.phase === g.PHASE.FREE_AGENCY) {
+// Rewrite code so user auto-resigns
+// Play all free agency days
         }
     }
 

@@ -660,7 +660,6 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             return phase.newPhase(g.PHASE.REGULAR_SEASON);
         }
         if (g.phase === g.PHASE.REGULAR_SEASON) {
-return phase.newPhase(g.PHASE.PLAYOFFS);
             return season.getDaysLeftSchedule().then(game.play);
         }
         if (g.phase === g.PHASE.PLAYOFFS) {
@@ -683,6 +682,18 @@ return phase.newPhase(g.PHASE.PLAYOFFS);
         }
     }
 
+    function initAutoPlay() {
+        var numSeasons, result;
+
+        result = window.prompt("This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?", "5");
+        numSeasons = parseInt(result, 10);
+
+        if (Number.isInteger(numSeasons)) {
+            setGameAttributesComplete({autoPlaySeasons: numSeasons})
+                .then(autoPlay);
+        }
+    }
+
     return {
         create: create,
         exportLeague: exportLeague,
@@ -693,6 +704,7 @@ return phase.newPhase(g.PHASE.PLAYOFFS);
         loadGameAttribute: loadGameAttribute,
         loadGameAttributes: loadGameAttributes,
         updateLastDbChange: updateLastDbChange,
-        autoPlay: autoPlay
+        autoPlay: autoPlay,
+        initAutoPlay: initAutoPlay
     };
 });

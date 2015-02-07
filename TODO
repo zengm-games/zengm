@@ -4,9 +4,6 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
-"simulate X seasons" mode
-- Add "Auto Play Seasons" to Tools menu
-
 view rewrite
 - react to handle updating DOM
   - rebind every time view changes? or some react-specific router?

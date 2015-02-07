@@ -283,18 +283,11 @@ define(["dao", "globals", "core/league", "core/player", "lib/underscore"], funct
         if (ratingToSave) { console.log(ratingToSave + ":"); console.log(averageRat); }
     }
 
-    function autoPlaySeasons(numSeasons) {
-        return league.setGameAttributesComplete({autoPlaySeasons: numSeasons}).then(function () {
-            return league.autoPlay();
-        });
-    }
-
     return {
         regressRatingsPer: regressRatingsPer,
         leagueAverageContract: leagueAverageContract,
         exportPlayerInfo: exportPlayerInfo,
         exportPlayerStats: exportPlayerStats,
-        averageCareerArc: averageCareerArc,
-        autoPlaySeasons: autoPlaySeasons
+        averageCareerArc: averageCareerArc
     };
 });

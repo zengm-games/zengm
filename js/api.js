@@ -70,6 +70,10 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/game", "core/league", "
         } else if (amount === "stopAutoPlay") {
             league.setGameAttributesComplete({autoPlaySeasons: 0}).then(function () {
                 ui.updatePlayMenu();
+                play("stop");
+
+                // Extra toggle to counteract play("stop");
+                $("#play-menu .dropdown-toggle").dropdown("toggle");
             });
         }
 

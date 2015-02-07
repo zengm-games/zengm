@@ -5,10 +5,6 @@ CURRENT
 -------
 
 "simulate X seasons" mode
-- allow stopping auto play
-  - multiple windows?
-- how to handle reload or error leading to interrupted auto play with g.autoPlaySeasons > 0?
-  - not a problem, only menu option will be to stop auto play
 - Add "Auto Play Seasons" to Tools menu
 
 view rewrite

@@ -68,7 +68,9 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/game", "core/league", "
                 phase.newPhase(g.PHASE.REGULAR_SEASON);
             }
         } else if (amount === "stopAutoPlay") {
-        console.log("STOP AUTO");
+            league.setGameAttributesComplete({autoPlaySeasons: 0}).then(function () {
+                ui.updatePlayMenu();
+            });
         }
 
         // Close the menu

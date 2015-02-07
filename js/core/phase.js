@@ -30,6 +30,13 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 updateEvents.push("newPhase");
                 ui.realtimeUpdate(updateEvents, url);
             });
+        }).then(function () {
+            // If auto-simulating, initiate next action
+            if (g.autoPlaySeasons > 0) {
+                setTimeout(function () {
+                    require("core/league").autoPlay();
+                }, 100);
+            }
         });
     }
 

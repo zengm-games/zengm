@@ -596,7 +596,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 } else if (key === "godModeInPast") {
                     g.godModeInPast = false;
                 } else if (key === "phaseChangeInProgress") {
-                    g.godModeInPast = false;
+                    g.phaseChangeInProgress = false;
+                } else if (key === "autoPlaySeasons") {
+                    g.autoPlaySeasons = 0;
                 } else {
                     throw new Error("Unknown game attribute: " + key);
                 }
@@ -635,10 +637,45 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             if (g.godModeInPast === undefined) {
                 g.godModeInPast = false;
             }
+            if (g.phaseChangeInProgress === undefined) {
+                g.phaseChangeInProgress = false;
+            }
+            if (g.autoPlaySeasons === undefined) {
+                g.autoPlaySeasons = 0;
+            }
 
             // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
             g.vm.topMenu.godMode(g.godMode);
         });
+    }
+
+    // Depending on phase, initiate action that will lead to the next phase
+    function autoPlay() {
+        var game, season;
+        game = require("core/game");
+        season = require("core/season");
+
+        if (g.phase === g.PHASE.PRESEASON) {
+            return phase.newPhase(g.PHASE.REGULAR_SEASON);
+        }
+        if (g.phase === g.PHASE.REGULAR_SEASON) {
+            return season.getDaysLeftSchedule().then(game.play);
+        }
+        if (g.phase === g.PHASE.PLAYOFFS) {
+            return game.play(100);
+        }
+        if (g.phase === g.PHASE.BEFORE_DRAFT) {
+            return phase.newPhase(g.PHASE.DRAFT);
+        }
+        if (g.phase === g.PHASE.DRAFT) {
+        }
+        if (g.phase === g.PHASE.AFTER_DRAFT) {
+            return phase.newPhase(g.PHASE.RESIGN_PLAYERS);
+        }
+        if (g.phase === g.PHASE.RESIGN_PLAYERS) {
+        }
+        if (g.phase === g.PHASE.FREE_AGENCY) {
+        }
     }
 
     return {
@@ -650,6 +687,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
         updateMetaNameRegion: updateMetaNameRegion,
         loadGameAttribute: loadGameAttribute,
         loadGameAttributes: loadGameAttributes,
-        updateLastDbChange: updateLastDbChange
+        updateLastDbChange: updateLastDbChange,
+        autoPlay: autoPlay
     };
 });

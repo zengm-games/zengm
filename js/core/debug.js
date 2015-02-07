@@ -2,7 +2,7 @@
  * @name core.debug
  * @namespace Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
  */
-define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, player, _) {
+define(["dao", "globals", "core/league", "core/player", "lib/underscore"], function (dao, g, league, player, _) {
     "use strict";
 
     function regressRatingsPer() {
@@ -283,11 +283,18 @@ define(["dao", "globals", "core/player", "lib/underscore"], function (dao, g, pl
         if (ratingToSave) { console.log(ratingToSave + ":"); console.log(averageRat); }
     }
 
+    function autoPlaySeasons(numSeasons) {
+        return league.setGameAttributesComplete({autoPlaySeasons: numSeasons}).then(function () {
+            return league.autoPlay();
+        });
+    }
+
     return {
         regressRatingsPer: regressRatingsPer,
         leagueAverageContract: leagueAverageContract,
         exportPlayerInfo: exportPlayerInfo,
         exportPlayerStats: exportPlayerStats,
-        averageCareerArc: averageCareerArc
+        averageCareerArc: averageCareerArc,
+        autoPlaySeasons: autoPlaySeasons
     };
 });

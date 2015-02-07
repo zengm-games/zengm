@@ -67,6 +67,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/game", "core/league", "
             if (g.phase === g.PHASE.PRESEASON) {
                 phase.newPhase(g.PHASE.REGULAR_SEASON);
             }
+        } else if (amount === "stopAutoPlay") {
+        console.log("STOP AUTO");
         }
 
         // Close the menu

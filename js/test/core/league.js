@@ -65,7 +65,7 @@ define(["dao", "db", "globals", "core/league", "lib/underscore", "test/helpers"]
                         }
                     }
 
-                    count.should.equal(21);
+                    count.should.equal(22);
                 });
             });
             it("should initialize draftOrder object store", function () {

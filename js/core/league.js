@@ -160,7 +160,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 teamNamesCache: _.pluck(teams, "name"),
                 showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
                 gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
-                numTeams: teams.length // Will be 30 if the user doesn't supply custom rosters
+                numTeams: teams.length, // Will be 30 if the user doesn't supply custom rosters
+                autoPlaySeasons: 0
             };
 
             // gameAttributes from input

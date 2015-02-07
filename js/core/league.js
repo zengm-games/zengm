@@ -660,6 +660,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             return phase.newPhase(g.PHASE.REGULAR_SEASON);
         }
         if (g.phase === g.PHASE.REGULAR_SEASON) {
+return phase.newPhase(g.PHASE.PLAYOFFS);
             return season.getDaysLeftSchedule().then(game.play);
         }
         if (g.phase === g.PHASE.PLAYOFFS) {

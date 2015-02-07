@@ -5,8 +5,9 @@ CURRENT
 -------
 
 "simulate X seasons" mode
-- g.autoPlaySeasons = N, decrement every preseason. if > 0, autopilot mode
-- show "Stop multi-season simulation (N left)" in play menu
+- show "Stop auto play (N seasons left)" in play menu
+- allow stopping auto play
+- Add "Auto Play Seasons" to Tools menu
 
 view rewrite
 - react to handle updating DOM

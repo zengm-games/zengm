@@ -89,6 +89,10 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 });
             }).then(function () {
+                if (g.autoPlaySeasons > 0) {
+                    return require("core/league").setGameAttributes(tx, {autoPlaySeasons: g.autoPlaySeasons - 1});
+                }
+            }).then(function () {
                 if (g.enableLogging && !window.inCordova) {
                     ads.show();
                 }

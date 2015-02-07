@@ -1043,6 +1043,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
             add = doSkillBonuses(add, rosterAndRemove);
             remove = doSkillBonuses(remove, rosterAndAdd);
 
+            // This actually doesn't do anything because I'm an idiot
             base = 1.25;
 
             sumValues = function (players, includeInjuries) {
@@ -1181,7 +1182,7 @@ console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved)
             // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
             // This is a fudge factor, since it's one-sided to punish the player
             if (add.length > remove.length) {
-                dv *= Math.pow(0.9, add.length - remove.length);
+                dv -= add.length - remove.length;
             }
 
             return dv;

@@ -27,7 +27,7 @@ team and league records (highest scoring game, etc)
   option to exclude notable games box scores from deletion
 
 BBGM Gold?
-  $5/month, pay whatever you want and get that many days with no recurrence, no ads, no feature changes
+  $5/month, no ads, no feature changes
 
 best stats for every player (e.g. most points in a game)
   could cache previous value from player objects when read in, and only write on new best
@@ -101,12 +101,6 @@ PERFORMANCE CRAP
 ----------------
 
 is iOS detector working? getting weird errors in logs
-
-IDEA: when writing injury info in game.writePlayerStats, use cached player object from when players are initially loaded
-
-license
-  http://www.reddit.com/r/gamedev/comments/2ogq7b/very_niche_webbased_video_game_with_a_stable/cmnhpd8
-  email draft
 
 nan checker: check every object before it is written to db (add, put, cursor.update)
   contract can be set to NaN

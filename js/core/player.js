@@ -316,7 +316,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                 } else if (age <= 30) {
                     baseChangeLocal = baseChange - 1;
                 } else {
-                    baseChangeLocal = baseChange - 2;
+                    baseChangeLocal = baseChange - 2.5;
                 }
                 p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChangeLocal * random.uniform(0.5, 1.5), -20, 10));
             }
@@ -341,7 +341,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                 } else if (age <= 30) {
                     baseChangeLocal = baseChange + 1;
                 } else {
-                    baseChangeLocal = baseChange + 3;
+                    baseChangeLocal = baseChange + 2.5;
                 }
                 p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChangeLocal * random.uniform(0.5, 1.5));
             }

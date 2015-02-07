@@ -1,10 +1,16 @@
 DB CHANGES SINCE 3.4.0
 ----------------------
 
-playerFeats store
-
 CURRENT
 -------
+
+"simulate X seasons" mode
+
+view rewrite
+- react to handle updating DOM
+  - rebind every time view changes? or some react-specific router?
+- pubsub to pages know when to update? say like "player 5 was updated" or "team 6 was updated", is that level of granularity possible? or just updateEvents like now?
+  - how would i handle the situation of redirecting and updating at the same time? maybe that's too uncommon to worry about
 
 composite ratings / scouting report
 - "Shooting", "PG Skills", "Paint Scoring", rebounding
@@ -176,6 +182,7 @@ Too many good free agents available at the minimum: http://www.reddit.com/r/Bask
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
+http://www.reddit.com/r/BasketballGM/comments/2v26p1/how_are_you_exploiting_the_trade_ai/
 http://www.reddit.com/r/BasketballGM/comments/255sta/i_think_we_need_longer_dynasty_achievements/che050a?context=3
 IMPORTANT http://www.reddit.com/r/BasketballGM/comments/20i6v3/still_too_easy_to_trade_for_drafted_players/
   just drafted players are undervalued, possibly related to the following issue

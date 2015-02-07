@@ -400,7 +400,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         if (g.enableLogging) {
             if (type === "league") {
                 _gaq.push(["_trackEvent", "BBGM", "New league", g.lid.toString()]);
-            } else if (type === "season") {
+            } else if (type === "season" && g.autoPlaySeasons === 0) {
                 _gaq.push(["_trackEvent", "BBGM", "Completed season", g.season.toString()]);
             }
         }

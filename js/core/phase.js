@@ -136,7 +136,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 });
             }
             if ((localStorage.nagged === "2" && Math.random() < 0.25) || (localStorage.nagged === "3" && Math.random < 0.025)) {
-                _gaq.push(["_trackEvent", "Ad Display", "DraftKings"]);
+                if (g.enableLogging) { _gaq.push(["_trackEvent", "Ad Display", "DraftKings"]); }
                 localStorage.nagged = "3";
                 return dao.messages.add({
                     ot: tx,
@@ -518,7 +518,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 index: "tid",
                 key: IDBKeyRange.lowerBound(0),
                 callback: function (p) {
-                    if (p.contract.exp <= g.season && p.tid === g.userTid) {
+                    if (p.contract.exp <= g.season && p.tid === g.userTid && g.autoPlaySeasons === 0) {
                         // Add to free agents first, to generate a contract demand
                         return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods).then(function () {
                             // Open negotiations with player
@@ -538,8 +538,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             });
         }).then(function () {
             // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
-            require("core/league").setGameAttributes(null, {daysLeft: 30});
-
+            return require("core/league").setGameAttributes(tx, {daysLeft: 30});
+        }).then(function () {
             return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
         });
     }
@@ -576,7 +576,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         callback: function (p) {
                             var contract, factor;
 
-                            if (p.contract.exp <= g.season && p.tid !== g.userTid) {
+                            if (p.contract.exp <= g.season && (p.tid !== g.userTid || g.autoPlaySeasons > 0)) {
                                 // Automatically negotiate with teams
                                 if (strategies[p.tid] === "rebuilding") {
                                     factor = 0.4;

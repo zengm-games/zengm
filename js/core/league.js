@@ -651,7 +651,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
 
     // Depending on phase, initiate action that will lead to the next phase
     function autoPlay() {
-        var game, season;
+        var freeAgents, game, season;
+        freeAgents = require("core/freeAgents");
         game = require("core/game");
         season = require("core/season");
 
@@ -674,12 +675,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             return phase.newPhase(g.PHASE.RESIGN_PLAYERS);
         }
         if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-// Rewrite code so user auto-resigns
-// Advance to next phase after resigning from all teams
+            return phase.newPhase(g.PHASE.FREE_AGENCY);
         }
         if (g.phase === g.PHASE.FREE_AGENCY) {
-// Rewrite code so user auto-resigns
-// Play all free agency days
+            return freeAgents.play(g.daysLeft);
         }
     }
 

@@ -1295,7 +1295,7 @@ console.log(dv);*/
 
                 numPlayersOnRoster = players.length;
                 if (numPlayersOnRoster > 15) {
-                    if (tid === g.userTid) {
+                    if (tid === g.userTid && g.autoPlaySeasons === 0) {
                         userTeamSizeError = 'Your team currently has more than the maximum number of players (15). You must remove players (by <a href="' + helpers.leagueUrl(["roster"]) + '">releasing them from your roster</a> or through <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
                     } else {
                         // Automatically drop lowest value players until we reach 15
@@ -1307,7 +1307,7 @@ console.log(dv);*/
                         return Promise.all(promises);
                     }
                 } else if (numPlayersOnRoster < g.minRosterSize) {
-                    if (tid === g.userTid) {
+                    if (tid === g.userTid && g.autoPlaySeasons === 0) {
                         userTeamSizeError = 'Your team currently has less than the minimum number of players (' + g.minRosterSize + '). You must add players (through <a href="' + helpers.leagueUrl(["free_agents"]) + '">free agency</a> or <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
                     } else {
                         // Auto-add players

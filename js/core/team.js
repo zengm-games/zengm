@@ -445,7 +445,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
     function filter(options) {
         var filterAttrs, filterSeasonAttrs, filterStats, filterStatsPartial;
 
-if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
+        if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
         options = options !== undefined ? options : {};
         options.season = options.season !== undefined ? options.season : null;

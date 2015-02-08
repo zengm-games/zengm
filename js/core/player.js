@@ -186,7 +186,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
         amount = 50 * Math.round(amount / 50);  // Make it a multiple of 50k
 
-        return {amount: amount, exp: expiration};
+        return { amount: amount, exp: expiration };
     }
 
     /**
@@ -212,7 +212,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             }
 
             for (i = start; i <= p.contract.exp; i++) {
-                p.salaries.push({season: i, amount: contract.amount});
+                p.salaries.push({ season: i, amount: contract.amount });
             }
         }
 
@@ -346,7 +346,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                 p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChangeLocal * random.uniform(0.5, 1.5));
             }
 
-//console.log([age, p.ratings[r].pot - p.ratings[r].ovr, ovr(p.ratings[r]) - p.ratings[r].ovr])
+            //console.log([age, p.ratings[r].pot - p.ratings[r].ovr, ovr(p.ratings[r]) - p.ratings[r].ovr])
             // Update overall and potential
             p.ratings[r].ovr = ovr(p.ratings[r]);
             p.ratings[r].pot += -2 + Math.round(random.realGauss(0, 2));
@@ -413,7 +413,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @return {Promise} Array of base moods, one for each team.
      */
     function genBaseMoods(ot) {
-        return dao.teams.getAll({ot: ot}).then(function (teams) {
+        return dao.teams.getAll({ ot: ot }).then(function (teams) {
             var baseMoods, i, s;
 
             baseMoods = [];
@@ -492,7 +492,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         p.ptModifier = 1; // Reset
 
         // The put doesn't always work in Chrome. No idea why.
-        return dao.players.put({ot: ot, value: p}).then(function () {
+        return dao.players.put({ ot: ot, value: p }).then(function () {
             return; // No output
         });
     }
@@ -774,7 +774,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
         playoffs = playoffs !== undefined ? playoffs : false;
 
-        statsRow = {pid: p.pid, season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0, yearsWithTeam: 1};
+        statsRow = { pid: p.pid, season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0, yearsWithTeam: 1 };
 
         p.statsTids.push(p.tid);
         p.statsTids = _.uniq(p.statsTids);
@@ -833,7 +833,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                 }
             }
 
-            dao.playerStats.add({ot: ot, value: statsRow});
+            dao.playerStats.add({ ot: ot, value: statsRow });
         });
 
         return p;
@@ -901,7 +901,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         };
 
         p.face = faces.generate();
-        p.injury = {type: "Healthy", gamesRemaining: 0};
+        p.injury = { type: "Healthy", gamesRemaining: 0 };
 
         p.ptModifier = 1;
 
@@ -1061,7 +1061,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                         fp.teamName = "Retired";
                     }
                 } else if (options.attrs[i] === "injury" && options.season !== null && options.season < g.season) {
-                    fp.injury = {type: "Healthy", gamesRemaining: 0};
+                    fp.injury = { type: "Healthy", gamesRemaining: 0 };
                 } else if (options.attrs[i] === "salaries") {
                     fp.salaries = _.map(p.salaries, function (salary) { salary.amount /= 1000; return salary; });
                 } else if (options.attrs[i] === "salariesTotal") {
@@ -1468,8 +1468,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             va = mins[i] * (pers[i] - prls[p.pos]) / 67;
             ewas.push(va / 30 * 0.8); // 0.8 is a fudge factor to approximate the difference between (in-game) EWA and (real) win shares
         }
-//console.log(ewas)
-//console.log(_.pluck(p.stats, "ewa"))
+        //console.log(ewas)
+        //console.log(_.pluck(p.stats, "ewa"))
 
         // Calculate career EWA and "dominance factor" DF (top 5 years EWA - 50)
         ewas.sort(function (a, b) { return b - a; }); // Descending order
@@ -1671,10 +1671,10 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             }
         }).then(function () {
             p.value = value(p, ps);
-            p.valueNoPot = value(p, ps, {noPot: true});
-            p.valueFuzz = value(p, ps, {fuzz: true});
-            p.valueNoPotFuzz = value(p, ps, {noPot: true, fuzz: true});
-            p.valueWithContract = value(p, ps, {withContract: true});
+            p.valueNoPot = value(p, ps, { noPot: true });
+            p.valueFuzz = value(p, ps, { fuzz: true });
+            p.valueNoPotFuzz = value(p, ps, { noPot: true, fuzz: true });
+            p.valueWithContract = value(p, ps, { withContract: true });
 
             return p;
         });
@@ -1705,7 +1705,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         // Add to Hall of Fame?
         if (madeHof(p, playerStats)) {
             p.hof = true;
-            p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
+            p.awards.push({ season: g.season, type: "Inducted into the Hall of Fame" });
             eventLog.add(tx, {
                 type: "hallOfFame",
                 text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> was inducted into the <a href="' + helpers.leagueUrl(["hall_of_fame"]) + '">Hall of Fame</a>.',
@@ -1820,73 +1820,73 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         return p;
     }
 
-      /**
-     * Build a composite rating.
-     *
-     * Composite ratings are combinations of player ratings meant to represent one facet of the game, like the ability to make a jump shot. All composite ratings are scaled from 0 to 1.
-     *
-     * @memberOf core.player
-     * @param {Object.<string, number>} ratings Player's ratings object.
-     * @param {Array.<string>} components List of player ratings to include in the composite ratings. In addition to the normal ones, "constant" is a constant value of 50 for every player, which can be used to add a baseline value for a stat.
-     * @param {Array.<number>=} weights Optional array of weights used in the linear combination of components. If undefined, then all weights are assumed to be 1. If defined, this must be the same size as components.
-     * @return {number} Composite rating, a number between 0 and 1.
-     */
+    /**
+   * Build a composite rating.
+   *
+   * Composite ratings are combinations of player ratings meant to represent one facet of the game, like the ability to make a jump shot. All composite ratings are scaled from 0 to 1.
+   *
+   * @memberOf core.player
+   * @param {Object.<string, number>} ratings Player's ratings object.
+   * @param {Array.<string>} components List of player ratings to include in the composite ratings. In addition to the normal ones, "constant" is a constant value of 50 for every player, which can be used to add a baseline value for a stat.
+   * @param {Array.<number>=} weights Optional array of weights used in the linear combination of components. If undefined, then all weights are assumed to be 1. If defined, this must be the same size as components.
+   * @return {number} Composite rating, a number between 0 and 1.
+   */
     function makeComposite(rating, components, weights) {
-      var component, divideBy, i, r, rcomp;
+        var component, divideBy, i, r, rcomp;
 
-      if (weights === undefined) {
-        // Default: array of ones with same size as components
-        weights = [];
-        for (i = 0; i < components.length; i++) {
-          weights.push(1);
+        if (weights === undefined) {
+            // Default: array of ones with same size as components
+            weights = [];
+            for (i = 0; i < components.length; i++) {
+                weights.push(1);
+            }
         }
-      }
 
-      rating.constant = 50;
+        rating.constant = 50;
 
-      r = 0;
-      divideBy = 0;
-      for (i = 0; i < components.length; i++) {
-        component = components[i];
-        // Sigmoidal transformation
-        //y = (rating[component] - 70) / 10;
-        //rcomp = y / Math.sqrt(1 + Math.pow(y, 2));
-        //rcomp = (rcomp + 1) * 50;
-        rcomp = weights[i] * rating[component];
-
-        r = r + rcomp;
-
-        divideBy = divideBy + 100 * weights[i];
-      }
-
-      r = r / divideBy;  // Scale from 0 to 1
-      if (r > 1) {
-        r = 1;
-      } else if (r < 0) {
         r = 0;
-      }
+        divideBy = 0;
+        for (i = 0; i < components.length; i++) {
+            component = components[i];
+            // Sigmoidal transformation
+            //y = (rating[component] - 70) / 10;
+            //rcomp = y / Math.sqrt(1 + Math.pow(y, 2));
+            //rcomp = (rcomp + 1) * 50;
+            rcomp = weights[i] * rating[component];
 
-      return r;
+            r = r + rcomp;
+
+            divideBy = divideBy + 100 * weights[i];
+        }
+
+        r = r / divideBy;  // Scale from 0 to 1
+        if (r > 1) {
+            r = 1;
+        } else if (r < 0) {
+            r = 0;
+        }
+
+        return r;
     }
 
-      /**
-     * Calculate composite ratings from base ratings.
-     *
-     * @memberOf core.player
-     * @param {Object.<string, number>} rating Player's ratings object.
-     * @return {Object.<string, number>} Composite ratings object, representing the full set of composite ratings for a player.
-     */
-		function getCompositeRatings(rating) {
-      var compositeRating, k;
-      compositeRating = {};
-			for (k in g.compositeWeights) {
-          if (g.compositeWeights.hasOwnProperty(k)) {
-              compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
-          }
-      }
-      compositeRating.usage = Math.pow(compositeRating.usage, 1.9);
-			return compositeRating;
-		}
+    /**
+   * Calculate composite ratings from base ratings.
+   *
+   * @memberOf core.player
+   * @param {Object.<string, number>} rating Player's ratings object.
+   * @return {Object.<string, number>} Composite ratings object, representing the full set of composite ratings for a player.
+   */
+    function getCompositeRatings(rating) {
+        var compositeRating, k;
+        compositeRating = {};
+        for (k in g.compositeWeights) {
+            if (g.compositeWeights.hasOwnProperty(k)) {
+                compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
+            }
+        }
+        compositeRating.usage = Math.pow(compositeRating.usage, 1.9);
+        return compositeRating;
+    }
 
     return {
         addRatingsRow: addRatingsRow,

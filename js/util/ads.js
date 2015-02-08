@@ -3,7 +3,7 @@
  * @namespace Everyone loves advertisements, right?
  */
 /*eslint new-cap: 0*/
-define([], function () {
+define(["globals"], function (g) {
     "use strict";
 
     function showGCS() {

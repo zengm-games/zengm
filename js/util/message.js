@@ -246,7 +246,7 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
             if (ownerMoodSum > -1) {
                 return;
             }
-            if (g.season < g.gracePeriodEnd || g.godMode) {
+            if (g.season < g.gracePeriodEnd || g.godMode || g.autoPlaySeasons > 0) {
                 // Can't get fired yet... or because of God Mode
                 return;
             }

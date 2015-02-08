@@ -41,7 +41,7 @@ define([], function () {
         var adTimer, now;
 
         // No ads during multi season auto sim
-        if (g.autoPlaySeasons > 0) {
+        if (g && g.autoPlaySeasons > 0) {
             return;
         }
 

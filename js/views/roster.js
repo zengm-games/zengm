@@ -277,7 +277,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
 
                         for (i = 0; i < players.length; i++) {
                             // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
-                            if (inputs.tid === g.userTid && (g.phase !== g.PHASE.PLAYOFFS || players.length > 15)) {
+                            if (inputs.tid === g.userTid && (g.phase !== g.PHASE.PLAYOFFS || players.length > 15) && !g.gameOver) {
                                 players[i].canRelease = true;
                             } else {
                                 players[i].canRelease = false;

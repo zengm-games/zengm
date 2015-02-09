@@ -5,17 +5,17 @@ CURRENT
 -------
 
 view rewrite
-- react to handle updating DOM
-  - rebind every time view changes? or some react-specific router?
-- pubsub to pages know when to update? say like "player 5 was updated" or "team 6 was updated", is that level of granularity possible? or just updateEvents like now?
-  - how would i handle the situation of redirecting and updating at the same time? maybe that's too uncommon to worry about
+  react to handle updating DOM
+    rebind every time view changes? or some react-specific router?
+  pubsub to pages know when to update? say like "player 5 was updated" or "team 6 was updated", is that level of granularity possible? or just updateEvents like now?
+    how would i handle the situation of redirecting and updating at the same time? maybe that's too uncommon to worry about
 
 composite ratings / scouting report
-- "Shooting", "PG Skills", "Paint Scoring", rebounding
-  - are these ones really complicated enough to warrant display?
-- height trait http://www.reddit.com/r/BasketballGM/comments/2uccrl/viewable_composite_ratings_what_do_you_think/co7a4gr
-  - make it position-dependent.. but then should all this be position dependent?
-- "The Shooting, Defense, and Style groups are the ones I'm finding Im paying most attention to"
+  "Shooting", "PG Skills", "Paint Scoring", rebounding
+    are these ones really complicated enough to warrant display?
+  height trait http://www.reddit.com/r/BasketballGM/comments/2uccrl/viewable_composite_ratings_what_do_you_think/co7a4gr
+    make it position-dependent.. but then should all this be position dependent?
+  "The Shooting, Defense, and Style groups are the ones I'm finding Im paying most attention to"
 
 draft classes being generated with the wrong season, leading to empty draft classes
   added back old hack to views/draft.js, but that is not satisfying
@@ -30,6 +30,7 @@ team and league records (highest scoring game, etc)
 
 BBGM Gold?
   $5/month, no ads, no feature changes
+  https://www.namecheap.com/security/ssl-certificates/comodo/positivessl-multi-domain.aspx
 
 best stats for every player (e.g. most points in a game)
   could cache previous value from player objects when read in, and only write on new best
@@ -104,21 +105,6 @@ PERFORMANCE CRAP
 
 is iOS detector working? getting weird errors in logs
 
-nan checker: check every object before it is written to db (add, put, cursor.update)
-  contract can be set to NaN
-    https://bugsnag.com/dumbmatter/basketball-gm/errors/545f10adc3d637ae2288a7ec?event_id=545f787379622ace33266e88#last%20event
-    https://mail.google.com/mail/u/0/#inbox/14994f4f9c07b19e
-    phase is still regular season (although could be changing)
-    player is free agent and has never been on a team
-    js/core/freeAgents.js:186 - decreaseDemands
-    must be something weird on contract amount before then? maybe from either random.realGauss or p.value in player.genContract?
-
-knockout upgrade
-  http://www.knockmeout.net/2014/10/knockout-cleaning-up.html
-  http://www.knockmeout.net/2014/03/knockout-3-1-released.html
-  http://knockoutjs.com/documentation/computed-pure.html
-  http://knockoutjs.com/documentation/component-overview.html
-
 test!
   write unit tests for dao.players.getAll
     if you request a stats season that doesn't exist, does the callback still get executed?
@@ -136,9 +122,9 @@ player.updateValues.getStats doesn't really make sense. Should get all from past
 
 more normalization? team stats, team seasons, player ratings
 
-PHASE TWO/THREE: store retired players in a different object store
+PHASE TWO: store retired players in a different object store
 
-PHASE TWO/THREE: store non-retired players and playerStats in memory
+PHASE THREE: store non-retired players and playerStats in memory
   PROBLEM: to do anything fancy with this, like avoiding writing to DB, it'd make multi-window play impossible
     https://groups.google.com/forum/#!topic/lovefield-users/Xs97HL4tDfk
   on page load, read all into g.playersCache and g.playerStatsCache

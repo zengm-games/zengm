@@ -346,7 +346,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
 
             if (this.dataset.action === "release") {
                 // If a player was just drafted by his current team and the regular season hasn't started, then he can be released without paying anything
-                justDrafted = players[i].tid() === players[i].draft.tid() && ((players[i].draft.year() === g.season && g.phase >= g.PHASE.DRAFT) || (players[i].draft.year() === g.season - 1 && g.phase < g.PHASE.REGULAR_SEASON));
+                justDrafted = players[i].draft && players[i].tid() === players[i].draft.tid() && ((players[i].draft.year() === g.season && g.phase >= g.PHASE.DRAFT) || (players[i].draft.year() === g.season - 1 && g.phase < g.PHASE.REGULAR_SEASON));
                 if (justDrafted) {
                     releaseMessage = "Are you sure you want to release " + players[i].name() + "?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.";
                 } else {

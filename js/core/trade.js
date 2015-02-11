@@ -278,7 +278,6 @@ define(["dao", "globals", "core/league", "core/player", "core/team", "lib/bluebi
             // Test if any warnings need to be displayed
             overCap = [false, false];
             ratios = [0, 0];
-
             return Promise.map([0, 1], function (j) {
                 var k;
                 if (j === 0) {
@@ -316,7 +315,7 @@ define(["dao", "globals", "core/league", "core/player", "core/team", "lib/bluebi
                         k = 0;
                     }
 
-                    s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away. Currently, that value is " + ratios[j] + "%.  ";
+                    s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away. Currently, that value is " + ratios[j] + "%.";
                     s.warning += "Bring the contribution of the " + s.teams[j].name + " up to $" + helpers.round(s.teams[k].total * 0.8, 2) + "M, lower the contribution of the " + s.teams[k].name + " to $" + helpers.round(s.teams[j].total * 1.25, 2) + "M, or otherwise rebalance the salaries involved.";
                 }
 

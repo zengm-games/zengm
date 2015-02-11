@@ -314,7 +314,7 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
                         tid: inputs.tid,
                         fuzz: true
                     });
-                    players.sort(function (a, b) {  return b.stats.gp * b.stats.min - a.stats.gp * a.stats.min; });
+                    players.sort(function (a, b) { return b.stats.gp * b.stats.min - a.stats.gp * a.stats.min; });
 
                     for (i = 0; i < players.length; i++) {
                         players[i].age = players[i].age - (g.season - inputs.season);

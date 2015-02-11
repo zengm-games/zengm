@@ -445,7 +445,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
     function filter(options) {
         var filterAttrs, filterSeasonAttrs, filterStats, filterStatsPartial;
 
-if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
+        if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
         options = options !== undefined ? options : {};
         options.season = options.season !== undefined ? options.season : null;
@@ -1043,6 +1043,7 @@ if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
             add = doSkillBonuses(add, rosterAndRemove);
             remove = doSkillBonuses(remove, rosterAndAdd);
 
+            // This actually doesn't do anything because I'm an idiot
             base = 1.25;
 
             sumValues = function (players, includeInjuries) {
@@ -1181,7 +1182,7 @@ console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved)
             // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
             // This is a fudge factor, since it's one-sided to punish the player
             if (add.length > remove.length) {
-                dv *= Math.pow(0.9, add.length - remove.length);
+                dv -= add.length - remove.length;
             }
 
             return dv;
@@ -1294,7 +1295,7 @@ console.log(dv);*/
 
                 numPlayersOnRoster = players.length;
                 if (numPlayersOnRoster > 15) {
-                    if (tid === g.userTid) {
+                    if (tid === g.userTid && g.autoPlaySeasons === 0) {
                         userTeamSizeError = 'Your team currently has more than the maximum number of players (15). You must remove players (by <a href="' + helpers.leagueUrl(["roster"]) + '">releasing them from your roster</a> or through <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
                     } else {
                         // Automatically drop lowest value players until we reach 15
@@ -1306,7 +1307,7 @@ console.log(dv);*/
                         return Promise.all(promises);
                     }
                 } else if (numPlayersOnRoster < g.minRosterSize) {
-                    if (tid === g.userTid) {
+                    if (tid === g.userTid && g.autoPlaySeasons === 0) {
                         userTeamSizeError = 'Your team currently has less than the minimum number of players (' + g.minRosterSize + '). You must add players (through <a href="' + helpers.leagueUrl(["free_agents"]) + '">free agency</a> or <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
                     } else {
                         // Auto-add players
@@ -1337,7 +1338,7 @@ console.log(dv);*/
             }).then(function () {
                 // Auto sort rosters (except player's team)
                 // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
-                if (tid !== g.userTid) {
+                if (tid !== g.userTid || g.autoPlaySeasons > 0) {
                     return rosterAutoSort(tx, tid);
                 }
             });

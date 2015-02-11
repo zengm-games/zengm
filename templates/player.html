@@ -151,13 +151,24 @@
   </table>
 </div>
 
-<h2>Awards</h2>
-<table class="table table-nonfluid table-striped table-bordered table-condensed" id="player-awards" data-bind="visible: player.awardsGrouped().length > 0">
-  <tbody data-bind="foreach: player.awardsGrouped">
-    <tr><td><span data-bind="visible: count() > 1, text: count() + 'x '"></span><span data-bind="text: type"></span> (<span data-bind="text: seasons().join(', ')"></span>)</td></tr>
-  </tbody>
-</table>
-<p data-bind="visible: player.awardsGrouped().length === 0">None.</p>
+<div class="row">
+  <div class="col-sm-6">
+    <h2>Awards</h2>
+    <table class="table table-nonfluid table-striped table-bordered table-condensed" id="player-awards" data-bind="visible: player.awardsGrouped().length > 0">
+      <tbody data-bind="foreach: player.awardsGrouped">
+        <tr><td><span data-bind="visible: count() > 1, text: count() + 'x '"></span><span data-bind="text: type"></span> (<span data-bind="text: seasons().join(', ')"></span>)</td></tr>
+      </tbody>
+    </table>
+    <p data-bind="visible: player.awardsGrouped().length === 0">None.</p>
+  </div>
+  <div class="col-sm-6">
+    <h2>Statistical Feats</h2>
+    <!-- ko foreach: feats -->
+      <p><strong data-bind="text: season"></strong>: <span data-bind="html: text"></span></p>
+    <!-- /ko -->
+    <p data-bind="visible: feats().length === 0">None.</p>
+  </div>
+</div>
 
 <div class="row">
   <div class="col-md-10 col-md-push-2 col-sm-9 col-sm-push-3">

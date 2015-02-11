@@ -102,6 +102,10 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             $("#play-menu .dropdown-toggle").dropdown("toggle");
             return false;
         });
+        playMenu.on("click", "#play-menu-stop-auto", function () {
+            api.play("stopAutoPlay");
+            return false;
+        });
 
         // Bootstrap's collapsable nav doesn't play nice with single page apps
         // unless you manually close it when a link is clicked. However, I need
@@ -384,7 +388,8 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
                       {id: "play-menu-message", url: helpers.leagueUrl(["message"]), label: "Read new message"},
                       {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"},
                       {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
-                      {id: "play-menu-abort-phase-change", url: "", label: "Abort"}];
+                      {id: "play-menu-abort-phase-change", url: "", label: "Abort"},
+                      {id: "play-menu-stop-auto", url: "", label: "Stop auto play (" + g.autoPlaySeasons + " seasons left)"}];
 
         if (g.phase === g.PHASE.PRESEASON) {
             // Preseason
@@ -439,6 +444,10 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
             // If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.
             if (g.gameOver && !unreadMessage) {
                 keys = ["play-menu-new-team", "play-menu-new-league"];
+            }
+
+            if (g.autoPlaySeasons > 0) {
+                keys = ["play-menu-stop-auto"];
             }
 
             // This code is very ugly. Basically I just want to filter all_options into

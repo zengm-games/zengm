@@ -160,7 +160,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 teamNamesCache: _.pluck(teams, "name"),
                 showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
                 gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
-                numTeams: teams.length // Will be 30 if the user doesn't supply custom rosters
+                numTeams: teams.length, // Will be 30 if the user doesn't supply custom rosters
+                autoPlaySeasons: 0
             };
 
             // gameAttributes from input
@@ -596,7 +597,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 } else if (key === "godModeInPast") {
                     g.godModeInPast = false;
                 } else if (key === "phaseChangeInProgress") {
-                    g.godModeInPast = false;
+                    g.phaseChangeInProgress = false;
+                } else if (key === "autoPlaySeasons") {
+                    g.autoPlaySeasons = 0;
                 } else {
                     throw new Error("Unknown game attribute: " + key);
                 }
@@ -635,10 +638,61 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             if (g.godModeInPast === undefined) {
                 g.godModeInPast = false;
             }
+            if (g.phaseChangeInProgress === undefined) {
+                g.phaseChangeInProgress = false;
+            }
+            if (g.autoPlaySeasons === undefined) {
+                g.autoPlaySeasons = 0;
+            }
 
             // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
             g.vm.topMenu.godMode(g.godMode);
         });
+    }
+
+    // Depending on phase, initiate action that will lead to the next phase
+    function autoPlay() {
+        var freeAgents, game, season;
+        freeAgents = require("core/freeAgents");
+        game = require("core/game");
+        season = require("core/season");
+
+        if (g.phase === g.PHASE.PRESEASON) {
+            return phase.newPhase(g.PHASE.REGULAR_SEASON);
+        }
+        if (g.phase === g.PHASE.REGULAR_SEASON) {
+            return season.getDaysLeftSchedule().then(game.play);
+        }
+        if (g.phase === g.PHASE.PLAYOFFS) {
+            return game.play(100);
+        }
+        if (g.phase === g.PHASE.BEFORE_DRAFT) {
+            return phase.newPhase(g.PHASE.DRAFT);
+        }
+        if (g.phase === g.PHASE.DRAFT) {
+            return draft.untilUserOrEnd();
+        }
+        if (g.phase === g.PHASE.AFTER_DRAFT) {
+            return phase.newPhase(g.PHASE.RESIGN_PLAYERS);
+        }
+        if (g.phase === g.PHASE.RESIGN_PLAYERS) {
+            return phase.newPhase(g.PHASE.FREE_AGENCY);
+        }
+        if (g.phase === g.PHASE.FREE_AGENCY) {
+            return freeAgents.play(g.daysLeft);
+        }
+    }
+
+    function initAutoPlay() {
+        var numSeasons, result;
+
+        result = window.prompt("This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?", "5");
+        numSeasons = parseInt(result, 10);
+
+        if (Number.isInteger(numSeasons)) {
+            setGameAttributesComplete({autoPlaySeasons: numSeasons})
+                .then(autoPlay);
+        }
     }
 
     return {
@@ -650,6 +704,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
         updateMetaNameRegion: updateMetaNameRegion,
         loadGameAttribute: loadGameAttribute,
         loadGameAttributes: loadGameAttributes,
-        updateLastDbChange: updateLastDbChange
+        updateLastDbChange: updateLastDbChange,
+        autoPlay: autoPlay,
+        initAutoPlay: initAutoPlay
     };
 });

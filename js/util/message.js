@@ -210,7 +210,7 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
                     "<p>" + random.choice(wins[indWins]) + " " + random.choice(playoffs[indPlayoffs]) + "</p>" +
                     "<p>" + random.choice(money[indMoney]) + "</p>" +
                     "<p>" + random.choice(ovr[indOvr]).replace("{{activity}}", activity2) + "</p>";
-            } else if (g.season < g.gracePeriodEnd || g.godMode) {
+            } else if (g.season < g.gracePeriodEnd || g.godMode || g.autoPlaySeasons > 0) {
                 if (deltas.wins < 0 && deltas.playoffs < 0 && deltas.money < 0) {
                     m = "<p>What the hell did you do to my franchise?! I'd fire you, but I can't find anyone who wants to clean up your mess.</p>";
                 } else if (deltas.money < 0 && deltas.wins >= 0 && deltas.playoffs >= 0) {
@@ -246,7 +246,7 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
             if (ownerMoodSum > -1) {
                 return;
             }
-            if (g.season < g.gracePeriodEnd || g.godMode) {
+            if (g.season < g.gracePeriodEnd || g.godMode || g.autoPlaySeasons > 0) {
                 // Can't get fired yet... or because of God Mode
                 return;
             }

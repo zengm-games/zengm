@@ -517,6 +517,10 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                         }
                     }
 
+                    if (rating === undefined) {
+                        throw new Error("Player with no ratings for this season: " + players[i].name + "(ID: " + players[i].pid + ")");
+                    }
+
                     p.skills = rating.skills;
 
                     p.ovr = rating.ovr;

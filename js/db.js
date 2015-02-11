@@ -131,7 +131,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
             request.onsuccess = function () {
                 g.dbm = request.result;
                 g.dbm.onerror = function (event) {
-console.log(event);
+                    console.log(event);
                     if (event.target.webkitErrorMessage) {
                         throw new Error("Meta database error: " + event.target.webkitErrorMessage);
                     } else {
@@ -789,7 +789,7 @@ console.log(event);
             request.onsuccess = function () {
                 g.dbl = request.result;
                 g.dbl.onerror = function (event) {
-console.log(event);
+                    console.log(event);
                     if (event.target.webkitErrorMessage) {
                         throw new Error("League database error: " + event.target.webkitErrorMessage);
                     } else {

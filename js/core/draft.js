@@ -468,7 +468,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                     // noAutoPick is for people who want to switch to each AI team and control
                     // their selection, like someone manually running a multiplayer league.
                     // Eventually this should have a better implementation.
-                    if (pick.tid === g.userTid || localStorage.noAutoPick) {
+                    if ((pick.tid === g.userTid && g.autoPlaySeasons === 0) || localStorage.noAutoPick) {
                         draftOrder.unshift(pick);
                         return afterDoneAuto(draftOrder, pids);
                     }

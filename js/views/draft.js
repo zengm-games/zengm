@@ -102,8 +102,8 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
 
             season = p.ratings[0].season;
             if (season !== g.season && g.phase === g.PHASE.DRAFT) {
-console.log("FIXING FUCKED UP DRAFT CLASS");
-console.log(season);
+                console.log("FIXING FUCKED UP DRAFT CLASS");
+                console.log(season);
                 dao.players.iterate({
                     ot: tx,
                     index: "tid",

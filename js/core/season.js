@@ -148,7 +148,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
             }
 
             // Rookie of the Year
-            players.sort(function (a, b) {  return b.stats.ewa - a.stats.ewa; }); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
+            players.sort(function (a, b) { return b.stats.ewa - a.stats.ewa; }); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
             for (i = 0; i < players.length; i++) {
                 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
                 if (players[i].draft.year === g.season - 1) {
@@ -162,7 +162,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
             }
 
             // Most Valuable Player
-            players.sort(function (a, b) {  return (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won); });
+            players.sort(function (a, b) { return (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won); });
             p = players[0];
             awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
             awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
@@ -195,7 +195,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
             }
 
             // Defensive Player of the Year
-            players.sort(function (a, b) {  return b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl); });
+            players.sort(function (a, b) { return b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl); });
             p = players[0];
             awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
             awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
@@ -242,7 +242,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 playoffs: true,
                 tid: champTid
             });
-            players.sort(function (a, b) {  return b.statsPlayoffs.ewa - a.statsPlayoffs.ewa; });
+            players.sort(function (a, b) { return b.statsPlayoffs.ewa - a.statsPlayoffs.ewa; });
             p = players[0];
             awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
             awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});

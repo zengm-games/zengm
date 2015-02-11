@@ -291,8 +291,6 @@ define(["dao", "globals", "core/league", "core/player", "core/team", "lib/bluebi
 
                 if (s.teams[j].total > 0) {
                     ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
-              //      lowerHighSideTo[j] = helpers.round(s.teams[j].total * 1.25, 2);
-               //     raiseLowSideTo[j] = helpers.round(s.teams[k].total * 0.8, 2);
                 } else if (s.teams[k].total > 0) {
                     ratios[j] = Infinity;
                 } else {

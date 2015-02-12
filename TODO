@@ -4,8 +4,6 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
-after you get fired, you shouldn't be able to trade players or sign free agents
-
 view rewrite
   react to handle updating DOM
     rebind every time view changes? or some react-specific router?

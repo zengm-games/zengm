@@ -8,8 +8,8 @@ BBGM Gold?
   $5/month, no ads, no feature changes
   https://www.namecheap.com/security/ssl-certificates/comodo/positivessl-multi-domain.aspx
   account page UI
-    cancel
     update card
+      use same method as sign up form, pass token to gold_card_update.php
     test
   change basketball to gold coin
 

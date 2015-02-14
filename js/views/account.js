@@ -24,9 +24,9 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
                 goldUntilDateString = goldUntilDate.toDateString();
 
                 currentTimestamp = Math.floor(Date.now() / 1000);
-                showGoldActive = true;//!g.vm.topMenu.goldCancelled && currentTimestamp <= g.vm.topMenu.goldUntil;
-                showGoldCancelled = true;//g.vm.topMenu.goldCancelled && currentTimestamp <= g.vm.topMenu.goldUntil;
-                showGoldPitch = true;//!showGoldActive;
+                showGoldActive = !g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil();
+                showGoldCancelled = g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil();
+                showGoldPitch = !showGoldActive;
 
                 return {
                     username: g.vm.topMenu.username,
@@ -77,7 +77,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
                 token: function (token) {
                     Promise.resolve($.ajax({
                         type: "POST",
-                        url: "http://accoaaaaunt.basketball-gm." + g.tld + "/gold_start.php",
+                        url: "http://account.basketball-gm." + g.tld + "/gold_start.php",
                         data: {
                             sport: "basketball",
                             token: token.id,
@@ -133,7 +133,6 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
                         withCredentials: true
                     }
                 })).then(function (data) {
-console.log(data);
                     ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
                 }).catch(function (err) {
                     console.log(err);

@@ -34,7 +34,7 @@ define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/vi
                         g.vm.topMenu.username(data.username);
 
                         // Check for participation achievement, if this is the first time logging in to this sport
-                        account.getAchievements(function (achievements) {
+                        account.getAchievements().then(function (achievements) {
                             if (achievements[0].count === 0) {
                                 account.addAchievements(["participation"]).then(function () {
                                     ui.realtimeUpdate([], "/account");

@@ -75,7 +75,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             numerator = 0;
             denominator = 0;
             for (i = 0; i < components.length; i++) {
-                numerator += (ratings[components[i]] * weights[i]) + ratings.fuzz;
+                numerator += (ratings[components[i]] + ratings.fuzz) * weights[i];
                 denominator += 100 * weights[i];
             }
 

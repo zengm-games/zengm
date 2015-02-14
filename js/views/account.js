@@ -2,23 +2,28 @@
  * @name views.loginOrRegister
  * @namespace Login and register forms.
  */
-define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgmView", "util/helpers", "util/random", "util/viewHelpers"], function (g, ui, league, $, account, bbgmView, helpers, random, viewHelpers) {
+define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/viewHelpers"], function (g, ui, $, account, bbgmView, viewHelpers) {
     "use strict";
 
     function updateAccount(inputs, updateEvents) {
         if (updateEvents.indexOf("firstRun") >= 0) {
             return account.check().then(function () {
-                var currentTimestamp, showGoldPitch;
+                var currentTimestamp, goldUntilDate, goldUntilDateString, showGoldActive, showGoldCancelled, showGoldPitch;
+
+                goldUntilDate = new Date(g.vm.topMenu.goldUntil() * 1000);
+                goldUntilDateString = goldUntilDate.toDateString();
 
                 currentTimestamp = Math.floor(Date.now() / 1000);
-
-                showGoldPitch = true || g.vm.topMenu.goldUntil < currentTimestamp || g.vm.topMenu.goldCancelled;
+                showGoldActive = true;//!g.vm.topMenu.goldCancelled && currentTimestamp <= g.vm.topMenu.goldUntil;
+                showGoldCancelled = true;//g.vm.topMenu.goldCancelled && currentTimestamp <= g.vm.topMenu.goldUntil;
+                showGoldPitch = true;//!showGoldActive;
 
                 return {
                     username: g.vm.topMenu.username,
-                    showGoldPitch: showGoldPitch,
-                    showGoldActive: true,
-                    showGoldCancelled: true
+                    goldUntilDateString: goldUntilDateString,
+                    showGoldActive: showGoldActive,
+                    showGoldCancelled: showGoldCancelled,
+                    showGoldPitch: showGoldPitch
                 };
             });
         }

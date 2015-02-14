@@ -16,7 +16,9 @@ define(["globals", "ui", "core/league", "lib/jquery", "util/account", "util/bbgm
 
                 return {
                     username: g.vm.topMenu.username,
-                    showGoldPitch: showGoldPitch
+                    showGoldPitch: showGoldPitch,
+                    showGoldActive: true,
+                    showGoldCancelled: true
                 };
             });
         }

@@ -5,20 +5,24 @@
     <p data-bind="visible: username() === null || username() === ''">You are not logged in! <a href="/account/login_or_register">Click here to log in create an account.</a> If you have an account, your achievements will be stored in the cloud, combining achievements from leagues in different browsers and different computers.</p>
     <p data-bind="visible: username() !== null && username() !== ''">Logged in as: <b data-bind="text: username"></b> (<a href="" id="logout" data-no-davis="true">Logout</a>)</p>
     <p id="logout-error" class="text-danger"></p>
+    <p data-bind="visible: showGoldActive">Basketball GM Gold status: Active, renews for $5 on 6/6/6 (<a href="">Update card</a> or <a href="">cancel</a>)</p>
+    <p data-bind="visible: showGoldCancelled">Basketball GM Gold status: Cancelled, expires 6/6/6</p>
   </div>
 </div>
 
-<h2>Basketball GM Gold</h2>
+<div data-bind="visible: showGoldPitch">
+  <h2>Basketball GM Gold</h2>
 
-<div class="row" data-bind="visible: showGoldPitch">
-  <div class="col-lg-8 col-md-10">
-    <p>Basketball GM is completely free. There will never be any <a href="http://en.wikipedia.org/wiki/Freemium" target="_blank">"freemium"</a> or <a href="http://en.wikipedia.org/wiki/Free-to-play" target="_blank">"pay-to-win"</a> bullshit here. Why? Because if a game charges you money for power-ups, the developer makes more money if they make their game frustratingly annoying to play without the power-ups. Because of this, <b>freemium games always suck</b>.</p>
+  <div class="row">
+    <div class="col-lg-8 col-md-10">
+      <p>Basketball GM is completely free. There will never be any <a href="http://en.wikipedia.org/wiki/Freemium" target="_blank">"freemium"</a> or <a href="http://en.wikipedia.org/wiki/Free-to-play" target="_blank">"pay-to-win"</a> bullshit here. Why? Because if a game charges you money for power-ups, the developer makes more money if they make their game frustratingly annoying to play without the power-ups. Because of this, <b>freemium games always suck</b>.</p>
 
-    <p>If you want to support Basketball GM continuing to be a non-sucky game, sign up for Basketball GM Gold! It's only <b>$5/month</b>. What do you get? More like, what don't you get? You get no new features, no new improvements, no new anything. Just <b>no more ads</b>. That's it. Why? For basically the same reason I won't make Basketball GM freemium. I don't want the free version to become a crippled advertisement for the pay version. If you agree that the world is a better place when anyone anywhere can play Basketball GM, sign up for Basketball GM Gold today!</p>
+      <p>If you want to support Basketball GM continuing to be a non-sucky game, sign up for Basketball GM Gold! It's only <b>$5/month</b>. What do you get? More like, what don't you get? You get no new features, no new improvements, no new anything. Just <b>no more ads</b>. That's it. Why? For basically the same reason I won't make Basketball GM freemium. I don't want the free version to become a crippled advertisement for the pay version. If you agree that the world is a better place when anyone anywhere can play Basketball GM, sign up for Basketball GM Gold today!</p>
 
 
-    <script src="https://checkout.stripe.com/checkout.js"></script>
-    <button id="customButton">Sign Up for Basketball GM Gold</button>
+      <script src="https://checkout.stripe.com/checkout.js"></script>
+      <button id="customButton">Sign Up for Basketball GM Gold</button>
+    </div>
   </div>
 </div>
 

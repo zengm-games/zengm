@@ -12,6 +12,7 @@ BBGM Gold?
     goldUntil <= current && !gold_cancelled -> active show current expiration, link to change CC#
     goldUntil > current -> not signed up, show sign up form
     sign up form should check for login status
+  change basketball to gold coin
 
 view rewrite
   react to handle updating DOM

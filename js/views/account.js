@@ -5,6 +5,9 @@
 define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbgmView", "util/viewHelpers"], function (g, ui, Promise, $, account, bbgmView, viewHelpers) {
     "use strict";
 
+    var ajaxErrorMsg;
+    ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
+
     function get(req) {
         return {
             goldSuccess: req.raw.goldResult !== undefined && req.raw.goldResult.success !== undefined ? req.raw.goldResult.success : null,
@@ -48,6 +51,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
         }
     }
 
+
     function handleStripeButton() {
         var buttonEl, s, sc;
 
@@ -73,7 +77,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
                 token: function (token) {
                     Promise.resolve($.ajax({
                         type: "POST",
-                        url: "http://account.basketball-gm." + g.tld + "/gold_start.php",
+                        url: "http://accoaaaaunt.basketball-gm." + g.tld + "/gold_start.php",
                         data: {
                             sport: "basketball",
                             token: token.id,
@@ -84,10 +88,13 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
                             withCredentials: true
                         }
                     })).then(function (data) {
-console.log(data);
                         ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
                     }).catch(function (err) {
-                        throw err;
+                        console.log(err);
+                        ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
+                            success: false,
+                            message: ajaxErrorMsg
+                        }});
                     });
                 }
             });
@@ -104,6 +111,39 @@ console.log(data);
                 e.preventDefault();
             });
         };
+    }
+
+    function handleCancelLink() {
+        document.getElementById("gold-cancel").addEventListener("click", function (e) {
+            var result;
+
+            e.preventDefault();
+
+            result = window.confirm("Are you sure you want to cancel your Basketball GM Gold subscription?");
+
+            if (result) {
+                Promise.resolve($.ajax({
+                    type: "POST",
+                    url: "http://account.basketball-gm." + g.tld + "/gold_cancel.php",
+                    data: {
+                        sport: "basketball"
+                    },
+                    dataType: "json",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                })).then(function (data) {
+console.log(data);
+                    ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
+                }).catch(function (err) {
+                    console.log(err);
+                    ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
+                        success: false,
+                        message: ajaxErrorMsg
+                    }});
+                });
+            }
+        });
     }
 
     function uiFirst() {
@@ -136,6 +176,7 @@ console.log(data);
         });
 
         handleStripeButton();
+        handleCancelLink();
     }
 
     return bbgmView.init({

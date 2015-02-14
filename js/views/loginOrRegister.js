@@ -32,6 +32,9 @@ define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/vi
                 success: function (data) {
                     if (data.success) {
                         g.vm.topMenu.username(data.username);
+                        g.vm.topMenu.email(data.email);
+                        g.vm.topMenu.goldUntil(data.gold_until);
+                        g.vm.topMenu.goldCancelled(data.gold_cancelled);
 
                         // Check for participation achievement, if this is the first time logging in to this sport
                         account.getAchievements().then(function (achievements) {

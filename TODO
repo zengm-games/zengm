@@ -4,6 +4,15 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+BBGM Gold?
+  $5/month, no ads, no feature changes
+  https://www.namecheap.com/security/ssl-certificates/comodo/positivessl-multi-domain.aspx
+  account page
+    goldUntil <= current && gold_cancelled -> cancelled, allow them to sign up again, but also show current expiration
+    goldUntil <= current && !gold_cancelled -> active show current expiration, link to change CC#
+    goldUntil > current -> not signed up, show sign up form
+    sign up form should check for login status
+
 view rewrite
   react to handle updating DOM
     rebind every time view changes? or some react-specific router?
@@ -27,10 +36,6 @@ team and league records (highest scoring game, etc)
     team history page
     season summary page
   option to exclude notable games box scores from deletion
-
-BBGM Gold?
-  $5/month, no ads, no feature changes
-  https://www.namecheap.com/security/ssl-certificates/comodo/positivessl-multi-domain.aspx
 
 best stats for every player (e.g. most points in a game)
   could cache previous value from player objects when read in, and only write on new best

@@ -151,6 +151,9 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
 
             // Save username for display
             g.vm.topMenu.username(data.username);
+            g.vm.topMenu.email(data.email);
+            g.vm.topMenu.goldUntil(data.gold_until);
+            g.vm.topMenu.goldCancelled(data.gold_cancelled);
 
             // If user is logged in, upload any locally saved achievements
             if (data.username !== "") {

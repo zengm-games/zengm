@@ -7,11 +7,10 @@ CURRENT
 BBGM Gold?
   $5/month, no ads, no feature changes
   https://www.namecheap.com/security/ssl-certificates/comodo/positivessl-multi-domain.aspx
-  account page
-    goldUntil <= current && gold_cancelled -> cancelled, allow them to sign up again, but also show current expiration
-    goldUntil <= current && !gold_cancelled -> active show current expiration, link to change CC#
-    goldUntil > current -> not signed up, show sign up form
-    sign up form should check for login status
+  account page UI
+    cancel
+    update card
+    test
   change basketball to gold coin
 
 view rewrite

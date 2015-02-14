@@ -40,10 +40,10 @@ define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/vi
                         account.getAchievements().then(function (achievements) {
                             if (achievements[0].count === 0) {
                                 account.addAchievements(["participation"]).then(function () {
-                                    ui.realtimeUpdate([], "/account");
+                                    ui.realtimeUpdate(["account"], "/account");
                                 });
                             } else {
-                                ui.realtimeUpdate([], "/account");
+                                ui.realtimeUpdate(["account"], "/account");
                             }
                         });
                     } else {

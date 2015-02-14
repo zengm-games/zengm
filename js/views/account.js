@@ -2,11 +2,18 @@
  * @name views.loginOrRegister
  * @namespace Login and register forms.
  */
-define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/viewHelpers"], function (g, ui, $, account, bbgmView, viewHelpers) {
+define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbgmView", "util/viewHelpers"], function (g, ui, Promise, $, account, bbgmView, viewHelpers) {
     "use strict";
 
+    function get(req) {
+        return {
+            goldSuccess: req.raw.goldResult !== undefined && req.raw.goldResult.success !== undefined ? req.raw.goldResult.success : null,
+            goldMessage: req.raw.goldResult !== undefined && req.raw.goldResult.message !== undefined ? req.raw.goldResult.message : null
+        };
+    }
+
     function updateAccount(inputs, updateEvents) {
-        if (updateEvents.indexOf("firstRun") >= 0) {
+        if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("account") >= 0) {
             return account.check().then(function () {
                 var currentTimestamp, goldUntilDate, goldUntilDateString, showGoldActive, showGoldCancelled, showGoldPitch;
 
@@ -23,7 +30,9 @@ define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/vi
                     goldUntilDateString: goldUntilDateString,
                     showGoldActive: showGoldActive,
                     showGoldCancelled: showGoldCancelled,
-                    showGoldPitch: showGoldPitch
+                    showGoldPitch: showGoldPitch,
+                    goldSuccess: inputs.goldSuccess,
+                    goldMessage: inputs.goldMessage
                 };
             });
         }
@@ -40,12 +49,11 @@ define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/vi
     }
 
     function handleStripeButton() {
-        var customButtonEl, s, sc;
+        var buttonEl, s, sc;
 
-        customButtonEl = document.getElementById("customButton");
+        buttonEl = document.getElementById("stripe-button");
 
-        if (!customButtonEl) { return; }
-
+        if (!buttonEl) { return; }
 
         sc = document.createElement("script");
         sc.type = "text/javascript";
@@ -58,7 +66,6 @@ define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/vi
             var email, handler;
 
             email = g.vm.topMenu.email();
-console.log(email);
 
             handler = window.StripeCheckout.configure({
                 key: 'pk_test_gFqvUZCI8RgSl5KMIYTmZ5yI',
@@ -78,15 +85,14 @@ console.log(email);
                         }
                     })).then(function (data) {
 console.log(data);
+                        ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
                     }).catch(function (err) {
-console.log(err);
                         throw err;
                     });
                 }
             });
 
-            customButtonEl.addEventListener("click", function (e) {
-                // Open Checkout with further options
+            buttonEl.addEventListener("click", function (e) {
                 handler.open({
                     name: 'Basketball GM Gold',
                     description: '',
@@ -96,11 +102,6 @@ console.log(err);
                     panelLabel: "Subscribe for $5/month"
                 });
                 e.preventDefault();
-            });
-
-            // Close Checkout on page navigation
-            window.addEventListener("popstate", function () {
-                handler.close();
             });
         };
     }
@@ -126,7 +127,7 @@ console.log(err);
                     document.getElementById("logout-error").innerHTML = "";
 
                     g.vm.topMenu.username("");
-                    ui.realtimeUpdate([], "/");
+                    ui.realtimeUpdate(["account"], "/");
                 },
                 error: function () {
                     document.getElementById("logout-error").innerHTML = "Error connecting to server. Check your Internet connection or try again later.";
@@ -139,6 +140,7 @@ console.log(err);
 
     return bbgmView.init({
         id: "account",
+        get: get,
         beforeReq: viewHelpers.beforeNonLeague,
         runBefore: [updateAccount, updateAchievements],
         uiFirst: uiFirst

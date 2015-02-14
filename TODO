@@ -100,6 +100,19 @@ in-memory cache
     iterate: maybe cache query and check for duplicate query? not sure. this is tricky
     others: maybe not needed for this application
 
+store some data in memory
+  goals
+    playerStats first
+    then non-retired players
+    then teams
+  method
+    generic layer over IDB?
+    wrapper function specific to how data is actually queried?
+  transaction management
+    should be fine if the cache is synchronous
+  multi-window
+    service worker or shared worker
+
 PERFORMANCE CRAP
 ----------------
 

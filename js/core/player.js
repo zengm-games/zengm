@@ -75,7 +75,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             numerator = 0;
             denominator = 0;
             for (i = 0; i < components.length; i++) {
-                numerator += ratings[components[i]] * weights[i];
+                numerator += (ratings[components[i]] * weights[i]) + ratings.fuzz;
                 denominator += 100 * weights[i];
             }
 
@@ -626,9 +626,9 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         ratings.ovr = ovr(ratings);
         ratings.pot = pot;
 
-        ratings.skills = skills(ratings);
-
         ratings.fuzz = genFuzz(scoutingRank);
+
+        ratings.skills = skills(ratings);
 
         return ratings;
     }

@@ -8,6 +8,9 @@
 }());
 
 require.config({
+    paths: {
+        "stripe-checkout": 'https://checkout.stripe.com/checkout'
+    },
     shim: {
         "lib/bootstrap-affix": {
             deps: ["lib/jquery"]
@@ -71,6 +74,9 @@ require.config({
         },
         "lib/underscore": {
             exports: "_"
+        },
+        "stripe-checkout": {
+            exports: "StripeCheckout"
         }
     }
 });

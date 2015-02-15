@@ -53,25 +53,18 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
 
 
     function handleStripeButton() {
-        var buttonEl, s, sc;
+        var buttonEl;
 
         buttonEl = document.getElementById("stripe-button");
 
         if (!buttonEl) { return; }
 
-        sc = document.createElement("script");
-        sc.type = "text/javascript";
-        sc.async = true;
-        sc.src = "https://checkout.stripe.com/checkout.js";
-        s = document.getElementsByTagName('script')[0];
-        s.parentNode.insertBefore(sc, s);
-
-        sc.onload = function () {
+        require(["stripe-checkout"], function (StripeCheckout) {
             var email, handler;
 
             email = g.vm.topMenu.email();
 
-            handler = window.StripeCheckout.configure({
+            handler = StripeCheckout.configure({
                 key: 'pk_test_gFqvUZCI8RgSl5KMIYTmZ5yI',
                 image: '/ico/icon128.png',
                 token: function (token) {
@@ -110,7 +103,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
                 });
                 e.preventDefault();
             });
-        };
+        });
     }
 
     function handleCancelLink() {

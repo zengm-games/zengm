@@ -8,6 +8,7 @@ BBGM Gold?
   $5/month, no ads, no feature changes
   https://www.namecheap.com/security/ssl-certificates/comodo/positivessl-multi-domain.aspx
   account page UI
+    if user's account exists but has not been paid, should show warning and link to card update rather than stripe button
     update card
       pass token to gold_card_update.php
       needs to display info from saved card

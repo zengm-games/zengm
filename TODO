@@ -11,7 +11,10 @@ BBGM Gold?
     update card
       pass token to gold_card_update.php
       needs to display info from saved card
-      use stripe.js and a new view https://stripe.com/docs/tutorials/forms
+      use stripe.js and a new view
+        https://stripe.com/docs/tutorials/forms
+        https://stripe.com/blog/jquery-payment
+        https://coderwall.com/p/y4vk_q/requirejs-and-external-scripts
       ask in IRC - anyway to use Checkout or something for this?
     test
   change basketball to gold coin

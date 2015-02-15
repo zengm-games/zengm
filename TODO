@@ -9,7 +9,9 @@ BBGM Gold?
   https://www.namecheap.com/security/ssl-certificates/comodo/positivessl-multi-domain.aspx
   account page UI
     update card
-      use same method as sign up form, pass token to gold_card_update.php
+      pass token to gold_card_update.php
+      needs to display info from saved card
+      use stripe.js and a new view
     test
   change basketball to gold coin
 

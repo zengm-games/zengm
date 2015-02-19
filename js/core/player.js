@@ -38,6 +38,10 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         return Math.round((4 * ratings.hgt + ratings.stre + 4 * ratings.spd + 2 * ratings.jmp + 3 * ratings.endu + 3 * ratings.ins + 4 * ratings.dnk + ratings.ft + ratings.fg + 2 * ratings.tp + ratings.blk + ratings.stl + ratings.drb + 3 * ratings.pss + ratings.reb) / 32);
     }
 
+    function fuzzRating(rating, fuzz) {
+        return Math.round(helpers.bound(rating + fuzz, 0, 100));
+    }
+
     /**
      * Assign "skills" based on ratings.
      *
@@ -75,7 +79,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             numerator = 0;
             denominator = 0;
             for (i = 0; i < components.length; i++) {
-                numerator += (ratings[components[i]] + ratings.fuzz) * weights[i];
+                numerator += fuzzRating(ratings[components[i]], ratings.fuzz) * weights[i];
                 denominator += 100 * weights[i];
             }
 
@@ -558,10 +562,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         }
 
         return fuzz;
-    }
-
-    function fuzzRating(rating, fuzz) {
-        return Math.round(helpers.bound(rating + fuzz, 0, 100));
     }
 
     /**

@@ -1535,8 +1535,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
         // Fuzz?
         if (options.fuzz) {
-            pr.ovr = Math.round(helpers.bound(p.ratings[s].ovr + p.ratings[s].fuzz, 0, 100));
-            pr.pot = Math.round(helpers.bound(p.ratings[s].pot + p.ratings[s].fuzz, 0, 100));
+            pr.ovr = fuzzRating(p.ratings[s].ovr, p.ratings[s].fuzz);
+            pr.pot = fuzzRating(p.ratings[s].pot, p.ratings[s].fuzz);
         } else {
             pr.ovr = p.ratings[s].ovr;
             pr.pot = p.ratings[s].pot;

@@ -108,10 +108,13 @@ store some data in memory
   method
     generic layer over IDB?
     wrapper function specific to how data is actually queried?
+    need to flush to db some time?
+    will inherently be more risky than using a "real" transaction, shit could get out of sync
   transaction management
     should be fine if the cache is synchronous
   multi-window
     service worker or shared worker
+      but how do they use transactions?
 
 PERFORMANCE CRAP
 ----------------

@@ -73,8 +73,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
                         url: "http://account.basketball-gm." + g.tld + "/gold_start.php",
                         data: {
                             sport: "basketball",
-                            token: token.id,
-                            email: email
+                            token: token.id
                         },
                         dataType: "json",
                         xhrFields: {

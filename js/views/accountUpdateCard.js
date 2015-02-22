@@ -63,13 +63,30 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "util/acc
 
         $form = $('#payment-form');
 
-console.log(response);
         if (response.error) {
             vm.formError(response.error.message);
             $form.find('button').prop('disabled', false);
         } else {
             token = response.id;
-console.log(token);
+
+            Promise.resolve($.ajax({
+                type: "POST",
+                url: "http://account.basketball-gm." + g.tld + "/gold_card_update.php",
+                data: {
+                    sport: "basketball",
+                    token: token
+                },
+                dataType: "json",
+                xhrFields: {
+                    withCredentials: true
+                }
+            })).then(function (data) {
+                ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
+            }).catch(function (err) {
+console.log(err);
+                vm.formError(ajaxErrorMsg);
+                $form.find('button').prop('disabled', false);
+            });
         }
     }
 

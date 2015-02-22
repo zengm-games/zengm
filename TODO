@@ -15,6 +15,7 @@ BBGM Gold?
       use stripe.js and a new view
         https://stripe.com/docs/tutorials/forms
         https://stripe.com/blog/jquery-payment
+          if not this, make sure it handles formatting errors gracefully
     test
   change basketball to gold coin
 

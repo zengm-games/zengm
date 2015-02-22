@@ -30,6 +30,30 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "util/acc
                         errorMessage: "Cannot update card because your Basketball GM Gold account is cancelled."
                     };
                 }
+
+                return Promise.resolve($.ajax({
+                    type: "GET",
+                    url: "http://account.basketball-gm." + g.tld + "/gold_card_info.php",
+                    data: {
+                        sport: "basketball"
+                    },
+                    dataType: "json",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                })).then(function (data) {
+                    return {
+                        last4: data.last4,
+                        expMonth: data.expMonth,
+                        expYear: data.expYear
+                    };
+                }).catch(function () {
+                    return {
+                        last4: "????",
+                        expMonth: "??",
+                        expYear: "????"
+                    };
+                });
             });
         }
     }

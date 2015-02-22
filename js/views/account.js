@@ -65,7 +65,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
             email = g.vm.topMenu.email();
 
             handler = StripeCheckout.configure({
-                key: 'pk_test_gFqvUZCI8RgSl5KMIYTmZ5yI',
+                key: g.stripePublishableKey,
                 image: '/ico/icon128.png',
                 token: function (token) {
                     Promise.resolve($.ajax({

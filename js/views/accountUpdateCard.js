@@ -2,11 +2,15 @@
  * @name views.loginOrRegister
  * @namespace Login and register forms.
  */
-define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbgmView", "util/viewHelpers"], function (g, ui, Promise, $, account, bbgmView, viewHelpers) {
+define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "util/account", "util/bbgmView", "util/viewHelpers"], function (g, ui, Promise, $, ko, account, bbgmView, viewHelpers) {
     "use strict";
 
     var ajaxErrorMsg;
     ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
+
+    function InitViewModel() {
+        this.formError = ko.observable();
+    }
 
     function updateAccountUpdateCard(inputs, updateEvents) {
         if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("account") >= 0) {
@@ -30,16 +34,42 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
         }
     }
 
-    function uiFirst() {
+    function stripeResponseHandler(vm, status, response) {
+        var $form, token;
+
+        $form = $('#payment-form');
+
+console.log(response);
+        if (response.error) {
+            vm.formError(response.error.message);
+            $form.find('button').prop('disabled', false);
+        } else {
+            token = response.id;
+console.log(token);
+        }
+    }
+
+    function uiFirst(vm) {
         ui.title("Update Card");
 
         require(["stripe"], function (Stripe) {
-console.log("HI");
+            Stripe.setPublishableKey(g.stripePublishableKey);
+
+            $('#payment-form').submit(function () {
+                var $form = $(this);
+
+                $form.find('button').prop('disabled', true);
+
+                Stripe.card.createToken($form, stripeResponseHandler.bind(null, vm));
+
+                return false;
+            });
         });
     }
 
     return bbgmView.init({
         id: "accountUpdateCard",
+        InitViewModel: InitViewModel,
         beforeReq: viewHelpers.beforeNonLeague,
         runBefore: [updateAccountUpdateCard],
         uiFirst: uiFirst

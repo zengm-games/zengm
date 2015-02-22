@@ -5,7 +5,7 @@
     <p data-bind="visible: username() === null || username() === ''">You are not logged in! <a href="/account/login_or_register">Click here to log in create an account.</a> If you have an account, your achievements will be stored in the cloud, combining achievements from leagues in different browsers and different computers.</p>
     <p data-bind="visible: username() !== null && username() !== ''">Logged in as: <b data-bind="text: username"></b> (<a href="" id="logout" data-no-davis="true">Logout</a>)</p>
     <p id="logout-error" class="text-danger"></p>
-    <p data-bind="visible: showGoldActive">Basketball GM Gold: Active, renews for $5 on <span data-bind="text: goldUntilDateString"></span> (<a href="">Update card</a> or <a href="#" id="gold-cancel" data-no-davis="true">cancel</a>)</p>
+    <p data-bind="visible: showGoldActive">Basketball GM Gold: Active, renews for $5 on <span data-bind="text: goldUntilDateString"></span> (<a href="/account/update_card">Update card</a> or <a href="#" id="gold-cancel" data-no-davis="true">cancel</a>)</p>
     <p data-bind="visible: showGoldCancelled">Basketball GM Gold: Cancelled, expires <span data-bind="text: goldUntilDateString"></span></p>
   </div>
 </div>

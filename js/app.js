@@ -9,7 +9,8 @@
 
 require.config({
     paths: {
-        "stripe-checkout": 'https://checkout.stripe.com/checkout'
+        "stripe-checkout": "https://checkout.stripe.com/checkout",
+        "stripe": "https://js.stripe.com/v2/?1" // https://coderwall.com/p/y4vk_q/requirejs-and-external-scripts
     },
     shim: {
         "lib/bootstrap-affix": {
@@ -77,6 +78,9 @@ require.config({
         },
         "stripe-checkout": {
             exports: "StripeCheckout"
+        },
+        'stripe': {
+            exports: 'Stripe'
         }
     }
 });
@@ -181,6 +185,7 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
             this.get("/account/login_or_register", views.loginOrRegister.get);
             this.get("/account/lost_password", views.lostPassword.get);
             this.get("/account/reset_password/:token", views.resetPassword.get);
+            this.get("/account/update_card", views.accountUpdateCard.get);
 
             // League views
             this.get("/l/:lid", views.leagueDashboard.get);

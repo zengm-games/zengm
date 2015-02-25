@@ -112,6 +112,14 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/player", "core
                     fuzz: true
                 });
 
+                // This can happen if a negotiation is somehow started with a retired player
+                if (!p) {
+                    contractNegotiation.cancel(negotiation.pid);
+                    return {
+                        errorMessage: "Invalid negotiation. Please try again."
+                    };
+                }
+
                 // See views.freeAgents for moods as well
                 if (p.freeAgentMood[g.userTid] < 0.25) {
                     p.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';

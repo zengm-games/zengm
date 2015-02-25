@@ -11,6 +11,7 @@ BBGM Gold?
     test on beta
   account page UI
     if user's account exists but has not been paid, should show warning and link to card update rather than stripe button
+      if not cancelled but timestamp too low
   change basketball to gold coin
 
 view rewrite

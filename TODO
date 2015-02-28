@@ -6,13 +6,25 @@ CURRENT
 
 BBGM Gold?
   $5/month, no ads, no feature changes
-  https://www.namecheap.com/security/ssl-certificates/comodo/positivessl-multi-domain.aspx
-    change all http URLs to https (maybe conditional switch)
-    test on beta
+  test on beta
+    either support this somehow, or switch play to beta and disable normal accounts temporarily
   account page UI
     if user's account exists but has not been paid, should show warning and link to card update rather than stripe button
       if not cancelled but timestamp too low
   change basketball to gold coin
+  http vs https URLs
+    indexeddb stuff on http is lost when you switch to https!
+      currently support both
+    plan: ...?
+      could put export only thing on http page (similar to IE)
+        add Restore Old Leagues button after New League, hardlinks to http://play/export
+      OR, just keep them both up for now
+        New League button goes always to https
+        http version gets no more updates
+        extra button after New League linking to old/new
+        eventually could delete old version
+    redirect http to https: http://docs.webfaction.com/software/static.html#static-redirecting-from-http-to-https
+      done for root
 
 view rewrite
   react to handle updating DOM

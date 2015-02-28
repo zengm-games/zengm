@@ -4,6 +4,12 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+displayed rating doesn't fuzz height, because height can never change
+but the composite checking code fuzzes everything
+i forgot about this before
+a good solution would be to have fuzzrating take the whole ratings object and a key, so it can do the logic about what gets fuzzed and what doesn't
+bc this logic is already copy/pasted twice in player.filter (line 1137 and 1180)
+
 view rewrite
   react to handle updating DOM
     rebind every time view changes? or some react-specific router?

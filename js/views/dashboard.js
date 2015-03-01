@@ -7,7 +7,7 @@ define(["dao", "ui", "util/bbgmView", "util/viewHelpers"], function (dao, ui, bb
 
     function updateDashboard() {
         return dao.leagues.getAll().then(function (leagues) {
-            var i, otherUrl;
+            var i, newLeagueUrl, otherUrl;
 
             for (i = 0; i < leagues.length; i++) {
                 if (leagues[i].teamRegion === undefined) {
@@ -26,8 +26,16 @@ define(["dao", "ui", "util/bbgmView", "util/viewHelpers"], function (dao, ui, bb
                 otherUrl = "http://" + window.location.hostname + "/";
             }
 
+            // Rewrite new league URL to https, except on localhost
+            if (window.location.hostname.indexOf("basketball-gm") >= 0) {
+                newLeagueUrl = "https://" + window.location.hostname + "/new_league";
+            } else {
+                newLeagueUrl = "/new_league";
+            }
+
             return {
                 leagues: leagues,
+                newLeagueUrl: newLeagueUrl,
                 otherUrl: otherUrl
             };
         });

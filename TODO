@@ -12,6 +12,7 @@ BBGM Gold?
       if not cancelled but timestamp too low
   change basketball to gold coin
   http vs https URLs
+    switch all account.bbgm URLs to HTTPS
     indexeddb stuff on http is lost when you switch to https!
       currently support both
     plan: ...?

@@ -41,6 +41,14 @@ define(["dao", "db", "ui", "core/league", "lib/bluebird", "util/bbgmView", "util
                     numSeasons: numSeasons
                 };
             });
+        }).catch(function () {
+            return {
+                lid: inputs.lid,
+                name: null,
+                numGames: null,
+                numPlayers: null,
+                numSeasons: null
+            };
         });
     }
 

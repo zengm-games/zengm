@@ -24,6 +24,12 @@ BBGM Gold?
       DONE for root
       remaining: beta, play, and account
 
+displayed rating doesn't fuzz height, because height can never change
+but the composite checking code fuzzes everything
+i forgot about this before
+a good solution would be to have fuzzrating take the whole ratings object and a key, so it can do the logic about what gets fuzzed and what doesn't
+bc this logic is already copy/pasted twice in player.filter (line 1137 and 1180)
+
 view rewrite
   react to handle updating DOM
     rebind every time view changes? or some react-specific router?
@@ -124,10 +130,13 @@ store some data in memory
   method
     generic layer over IDB?
     wrapper function specific to how data is actually queried?
+    need to flush to db some time?
+    will inherently be more risky than using a "real" transaction, shit could get out of sync
   transaction management
     should be fine if the cache is synchronous
   multi-window
     service worker or shared worker
+      but how do they use transactions?
 
 PERFORMANCE CRAP
 ----------------
@@ -531,6 +540,7 @@ schedule page (and dashboard and maybe gamelog) should show opponent records
 LOW PRIORITY
 ------------
 
+track longest W/L streaks
 option to stop sim when player is injured http://www.reddit.com/r/BasketballGM/comments/2s265y/suggestion_option_to_automatically_stop/
 tooling
   tools/build.js

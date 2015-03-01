@@ -38,10 +38,16 @@ define(["globals"], function (g) {
     }*/
 
     function show() {
-        var adTimer, now;
+        var adTimer, currentTimestamp, now;
 
         // No ads during multi season auto sim
         if (g.autoPlaySeasons > 0) {
+            return;
+        }
+
+        // No ads for Gold members
+        currentTimestamp = Math.floor(Date.now() / 1000);
+        if (!g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil()) {
             return;
         }
 

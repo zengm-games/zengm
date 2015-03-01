@@ -7,7 +7,7 @@ define(["dao", "ui", "util/bbgmView", "util/viewHelpers"], function (dao, ui, bb
 
     function updateDashboard() {
         return dao.leagues.getAll().then(function (leagues) {
-            var i, newLeagueUrl, otherUrl;
+            var i, otherUrl;
 
             for (i = 0; i < leagues.length; i++) {
                 if (leagues[i].teamRegion === undefined) {

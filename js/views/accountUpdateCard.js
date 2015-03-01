@@ -83,7 +83,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "util/acc
             })).then(function (data) {
                 ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
             }).catch(function (err) {
-console.log(err);
+                console.log(err);
                 vm.formError(ajaxErrorMsg);
                 $form.find('button').prop('disabled', false);
             });

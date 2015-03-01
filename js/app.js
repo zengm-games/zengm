@@ -183,7 +183,7 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
                         view(req);
                     }
                 };
-            }
+            };
 
             // Non-league views
             this.get("/", views.dashboard.get);

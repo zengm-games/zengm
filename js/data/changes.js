@@ -60,10 +60,10 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
         msg: "New Create A Player feature, under the Tools menu."
     }, {
         date: "2014-02-15",
-        msg: '<a href="http://basketball-gm.com/blog/2014/02/new-improved-trade-ai/" target="_blank">Big changes to the trade AI</a>, which hopefully will fix some loopholes and make things more realistic.'
+        msg: '<a href="https://basketball-gm.com/blog/2014/02/new-improved-trade-ai/" target="_blank">Big changes to the trade AI</a>, which hopefully will fix some loopholes and make things more realistic.'
     }, {
         date: "2014-03-03",
-        msg: '<a href="http://basketball-gm.com/blog/2014/03/new-feature-achievements/" target="_blank">Achievements!</a>'
+        msg: '<a href="https://basketball-gm.com/blog/2014/03/new-feature-achievements/" target="_blank">Achievements!</a>'
     }, {
         date: "2014-03-05",
         msg: 'Upcoming Free Agents page, accessible from Players > Free Agents.'
@@ -72,13 +72,13 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
         msg: 'Player Stats and Player Ratings pages now let you easily filter by team.'
     }, {
         date: "2014-06-17",
-        msg: 'New customization features: <a href="http://basketball-gm.com/blog/2014/06/new-customization-features-full-league-importexport-and-draft-class-import/">full league import/export and custom draft class import</a>.'
+        msg: 'New customization features: <a href="https://basketball-gm.com/blog/2014/06/new-customization-features-full-league-importexport-and-draft-class-import/">full league import/export and custom draft class import</a>.'
     }, {
         date: "2014-07-05",
         msg: 'New "God Mode" allows you to create players, edit players, and force trades. Enable it by going to Tools > God Mode within a league.'
     }, {
         date: "2014-09-28",
-        msg: 'Player development should now be much more realistic. <a href="http://basketball-gm.com/blog/2014/09/revamped-player-development-algorithm/">Check out the blog for more.</a>'
+        msg: 'Player development should now be much more realistic. <a href="https://basketball-gm.com/blog/2014/09/revamped-player-development-algorithm/">Check out the blog for more.</a>'
     }, {
         date: "2014-12-05",
         msg: 'Game simulation is about 20% faster now. This is most visible after you\'re many seasons into a league.'

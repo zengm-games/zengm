@@ -13,6 +13,7 @@ BBGM Gold?
   change basketball to gold coin
   http vs https URLs
     switch all account.bbgm URLs to HTTPS
+      grep -r http: js
     indexeddb stuff on http is lost when you switch to https!
       currently support both
     plan: ...?

@@ -6,7 +6,6 @@ CURRENT
 
 BBGM Gold?
   $5/month, no ads, no feature changes
-  test on beta
   account page UI
     if user's account exists but has not been paid, should show warning and link to card update rather than stripe button
       if not cancelled but timestamp too low
@@ -17,12 +16,13 @@ BBGM Gold?
       DONE button linking to https after New League
       DONE account links always go to new version (make sure login persists, it seems to)
       DONE auto redirect to https if no leagues
-      http version gets no more updates?
+      http version gets no more updates? would require splitting to another site on webfaction
       eventually could delete old version (would need GA-based evidence it's not used)
     https version
       DONE button linking to http after New League
     redirect domain http to https: http://docs.webfaction.com/software/static.html#static-redirecting-from-http-to-https
-      done for root
+      DONE for root
+      remaining: beta, play, and account
 
 view rewrite
   react to handle updating DOM

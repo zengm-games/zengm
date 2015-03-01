@@ -26,16 +26,8 @@ define(["dao", "ui", "util/bbgmView", "util/viewHelpers"], function (dao, ui, bb
                 otherUrl = "http://" + window.location.hostname + "/";
             }
 
-            // Rewrite new league URL to https, except on localhost
-            if (window.location.hostname.indexOf("basketball-gm") >= 0) {
-                newLeagueUrl = "https://" + window.location.hostname + "/new_league";
-            } else {
-                newLeagueUrl = "/new_league";
-            }
-
             return {
                 leagues: leagues,
-                newLeagueUrl: newLeagueUrl,
                 otherUrl: otherUrl
             };
         });

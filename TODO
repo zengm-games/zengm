@@ -21,10 +21,8 @@ BBGM Gold?
         http version
           DONE New League button goes always to https
           DONE button linking to https after New League
-          account links always go to new version (make sure login persists, it seems to)
-            how? should happen within account route
+          DONE account links always go to new version (make sure login persists, it seems to)
           auto redirect to https if no leagues
-            how?
           http version gets no more updates
           eventually could delete old version (would need GA-based evidence it's not used)
         https version

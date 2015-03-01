@@ -145,6 +145,8 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
 
     db.connectMeta().then(function () {
         var app = new Davis(function () {
+            var tryForceHttps;
+
             this.configure(function () {
                 this.generateRequestOnPageLoad = true;
                 this.handleRouteNotFound = true;
@@ -172,20 +174,31 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
                 helpers.error("Page not found.", req.raw.cb);
             });
 
+            // Redirect a route to https URL always, unless the URL doesn't include basketball-gm (e.g. localhost)
+            tryForceHttps = function (view) {
+                return function (req) {
+                    if (window.location.protocol === "http:" && window.location.hostname.indexOf("basketball-gm") >= 0) {
+                        window.location.replace("https://" + window.location.hostname + req.fullPath);
+                    } else {
+                        view(req);
+                    }
+                };
+            }
+
             // Non-league views
             this.get("/", views.dashboard.get);
-            this.get("/new_league", views.newLeague.get);
+            this.get("/new_league", tryForceHttps(views.newLeague.get));
             this.post("/new_league", views.newLeague.post);
             this.get("/delete_league/:lid", views.deleteLeague.get);
             this.post("/delete_league", views.deleteLeague.post);
             this.get("/manual", views.manual.get);
             this.get("/manual/:page", views.manual.get);
             this.get("/changes", views.changes.get);
-            this.get("/account", views.account.get);
-            this.get("/account/login_or_register", views.loginOrRegister.get);
-            this.get("/account/lost_password", views.lostPassword.get);
-            this.get("/account/reset_password/:token", views.resetPassword.get);
-            this.get("/account/update_card", views.accountUpdateCard.get);
+            this.get("/account", tryForceHttps(views.account.get));
+            this.get("/account/login_or_register", tryForceHttps(views.loginOrRegister.get));
+            this.get("/account/lost_password", tryForceHttps(views.lostPassword.get));
+            this.get("/account/reset_password/:token", tryForceHttps(views.resetPassword.get));
+            this.get("/account/update_card", tryForceHttps(views.accountUpdateCard.get));
 
             // League views
             this.get("/l/:lid", views.leagueDashboard.get);

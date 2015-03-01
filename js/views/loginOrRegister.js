@@ -23,7 +23,7 @@ define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/vi
 
             $.ajax({
                 type: "POST",
-                url: "http://account.basketball-gm." + g.tld + "/login.php",
+                url: "//account.basketball-gm." + g.tld + "/login.php",
                 data: $login.serialize() + "&sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {
@@ -72,7 +72,7 @@ define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/vi
 
             $.ajax({
                 type: "POST",
-                url: "http://account.basketball-gm." + g.tld + "/register.php",
+                url: "//account.basketball-gm." + g.tld + "/register.php",
                 data: $register.serialize() + "&sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {

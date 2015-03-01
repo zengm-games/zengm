@@ -23,7 +23,7 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], fun
 
             $.ajax({
                 type: "POST",
-                url: "http://account.basketball-gm." + g.tld + "/lost_password.php",
+                url: "//account.basketball-gm." + g.tld + "/lost_password.php",
                 data: $lostpw.serialize() + "&sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {

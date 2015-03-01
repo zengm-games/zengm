@@ -33,7 +33,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "util/acc
 
                 return Promise.resolve($.ajax({
                     type: "GET",
-                    url: "http://account.basketball-gm." + g.tld + "/gold_card_info.php",
+                    url: "//account.basketball-gm." + g.tld + "/gold_card_info.php",
                     data: {
                         sport: "basketball"
                     },
@@ -71,7 +71,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "util/acc
 
             Promise.resolve($.ajax({
                 type: "POST",
-                url: "http://account.basketball-gm." + g.tld + "/gold_card_update.php",
+                url: "//account.basketball-gm." + g.tld + "/gold_card_update.php",
                 data: {
                     sport: "basketball",
                     token: token

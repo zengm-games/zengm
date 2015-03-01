@@ -70,7 +70,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
                 token: function (token) {
                     Promise.resolve($.ajax({
                         type: "POST",
-                        url: "http://account.basketball-gm." + g.tld + "/gold_start.php",
+                        url: "//account.basketball-gm." + g.tld + "/gold_start.php",
                         data: {
                             sport: "basketball",
                             token: token.id
@@ -116,7 +116,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
             if (result) {
                 Promise.resolve($.ajax({
                     type: "POST",
-                    url: "http://account.basketball-gm." + g.tld + "/gold_cancel.php",
+                    url: "//account.basketball-gm." + g.tld + "/gold_cancel.php",
                     data: {
                         sport: "basketball"
                     },
@@ -148,7 +148,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "util/account", "util/bbg
 
             $.ajax({
                 type: "POST",
-                url: "http://account.basketball-gm." + g.tld + "/logout.php",
+                url: "//account.basketball-gm." + g.tld + "/logout.php",
                 data: "sport=" + g.sport,
                 xhrFields: {
                     withCredentials: true

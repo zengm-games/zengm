@@ -19,10 +19,15 @@ BBGM Gold?
       could put export only thing on http page (similar to IE)
         add Restore Old Leagues button after New League, hardlinks to http://play/export
       OR, just keep them both up for now
-        New League button goes always to https
-        http version gets no more updates
-        extra button after New League linking to old/new
-        eventually could delete old version
+        http version
+          New League button goes always to https
+          button linking to https after New League
+          account links always go to new version (make sure login persists, it seems to)
+          auto redirect to https if no leagues
+          http version gets no more updates
+          eventually could delete old version (would need GA-based evidence it's not used)
+        https version
+          button linking to http after New League
     redirect http to https: http://docs.webfaction.com/software/static.html#static-redirecting-from-http-to-https
       done for root
 

@@ -66,7 +66,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         sk = [];
 
         hasSkill = function (ratings, components, weights) {
-            var denominator, i, numerator;
+            var denominator, i, numerator, rating;
 
             if (weights === undefined) {
                 // Default: array of ones with same size as components
@@ -79,7 +79,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             numerator = 0;
             denominator = 0;
             for (i = 0; i < components.length; i++) {
-                numerator += fuzzRating(ratings[components[i]], ratings.fuzz) * weights[i];
+                rating = components[i] === 'hgt' ? ratings[components[i]] : fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
+                numerator += rating * weights[i];
                 denominator += 100 * weights[i];
             }
 

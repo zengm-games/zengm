@@ -33,12 +33,12 @@ define(["globals"], function (g) {
         window.Survata.fail(showGCS);
     }
 
-/*    function showModal() {
+    function showModal() {
         $("#modal-ads").modal("show");
-    }*/
+    }
 
     function show() {
-        var adTimer, currentTimestamp, now;
+        var adTimer, currentTimestamp, now, r;
 
         // No ads during multi season auto sim
         if (g.autoPlaySeasons > 0) {
@@ -51,8 +51,11 @@ define(["globals"], function (g) {
             return;
         }
 
-        if (Math.random() < 0.75) {
+        r = Math.random();
+        if (r < 0.7) {
             showGCS();
+        } else if (r < 0.75) {
+            showModal();
         } else {
             // This is all in milliseconds!
             adTimer = localStorage.adTimer !== undefined ? parseInt(localStorage.adTimer, 10) : 0;
@@ -67,6 +70,7 @@ define(["globals"], function (g) {
     }
 
     return {
-        show: show
+        show: show,
+        showModal: showModal
     };
 });

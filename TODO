@@ -5,7 +5,7 @@ CURRENT
 -------
 
 BBGM Gold?
-  $5/month, no ads, no feature changes
+  add achievement
   account page UI
     if user's account exists but has not been paid, should show warning and link to card update rather than stripe button
       if not cancelled but timestamp too low
@@ -24,11 +24,15 @@ BBGM Gold?
       DONE for root
       remaining: beta, play, and account
 
+league settings http://www.reddit.com/r/BasketballGM/comments/2xlqnp/request_allow_editing_of_salary_cap_numbers_in/
+
 displayed rating doesn't fuzz height, because height can never change
 but the composite checking code fuzzes everything
 i forgot about this before
 a good solution would be to have fuzzrating take the whole ratings object and a key, so it can do the logic about what gets fuzzed and what doesn't
 bc this logic is already copy/pasted twice in player.filter (line 1137 and 1180)
+
+end of season -> screenshot -> imgur -> share
 
 view rewrite
   react to handle updating DOM

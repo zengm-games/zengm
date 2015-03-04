@@ -3,7 +3,7 @@
  * @namespace Everyone loves advertisements, right?
  */
 /*eslint new-cap: 0*/
-define(["globals"], function (g) {
+define(["globals", "lib/jquery"], function (g, $) {
     "use strict";
 
     function showGCS() {

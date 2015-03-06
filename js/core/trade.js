@@ -313,6 +313,7 @@ define(["dao", "globals", "core/league", "core/player", "core/team", "lib/bluebi
                         j = 1;
                     }
                     s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
+                    s.warning += "Bring the contribution of the " + s.teams[j].name + " up to " + helpers.formatCurrency(s.teams[1-j].total * 0.8, 'M', 2) + ", lower the contribution of the " + s.teams[1-j].name + " to " + helpers.formatCurrency(s.teams[j].total * 1.25, 'M', 2) + ", or otherwise rebalance the salaries involved.";
                 }
 
                 return s;

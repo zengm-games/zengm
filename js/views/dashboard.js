@@ -21,7 +21,7 @@ define(["dao", "ui", "util/bbgmView", "util/viewHelpers"], function (dao, ui, bb
 
             // http/https crap
             if (window.location.protocol === "http:") {
-                if (leagues.length === 0) {
+                if (leagues.length === 0 && window.location.hostname.indexOf("basketball-gm") >= 0) {
                     window.location.replace("https://" + window.location.hostname + "/");
                 }
                 otherUrl = "https://" + window.location.hostname + "/";

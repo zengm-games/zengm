@@ -358,15 +358,15 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
                 p.ratings[r].pot = p.ratings[r].ovr;
             }
-
-            // Skills
-            p.ratings[r].skills = skills(p.ratings[r]);
         }
 
         // If this isn't here outside the loop, then 19 year old players could still have ovr > pot
         if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
             p.ratings[r].pot = p.ratings[r].ovr;
         }
+
+        // Likewise, If this isn't outside the loop, then 19 year old players don't get skills
+        p.ratings[r].skills = skills(p.ratings[r]);
 
         if (generate) {
             age = g.season - p.born.year + years;

@@ -633,11 +633,11 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         ratings.pot = pot;
 
         ratings.fuzz = genFuzz(scoutingRank);
-         
+
         if (tid === g.PLAYER.UNDRAFTED_2) {
-            p.ratings[0].fuzz *= 2;
+            ratings.fuzz *= 2;
         } else if (tid === g.PLAYER.UNDRAFTED_3) {
-            p.ratings[0].fuzz *= 4;
+            ratings.fuzz *= 4;
         }
 
         ratings.skills = skills(ratings);
@@ -859,7 +859,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         p.statsTids = [];
         p.rosterOrder = 666;  // Will be set later
         p.ratings = [];
-        
+
         if (newLeague) {
             // Create player for new league
             p.ratings.push(genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank, tid));

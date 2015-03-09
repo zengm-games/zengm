@@ -23,7 +23,7 @@ define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/vi
 
             $.ajax({
                 type: "POST",
-                url: "http://account.basketball-gm." + g.tld + "/login.php",
+                url: "//account.basketball-gm." + g.tld + "/login.php",
                 data: $login.serialize() + "&sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {
@@ -32,15 +32,18 @@ define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/vi
                 success: function (data) {
                     if (data.success) {
                         g.vm.topMenu.username(data.username);
+                        g.vm.topMenu.email(data.email);
+                        g.vm.topMenu.goldUntil(data.gold_until);
+                        g.vm.topMenu.goldCancelled(data.gold_cancelled);
 
                         // Check for participation achievement, if this is the first time logging in to this sport
-                        account.getAchievements(function (achievements) {
+                        account.getAchievements().then(function (achievements) {
                             if (achievements[0].count === 0) {
                                 account.addAchievements(["participation"]).then(function () {
-                                    ui.realtimeUpdate([], "/account");
+                                    ui.realtimeUpdate(["account"], "/account");
                                 });
                             } else {
-                                ui.realtimeUpdate([], "/account");
+                                ui.realtimeUpdate(["account"], "/account");
                             }
                         });
                     } else {
@@ -69,7 +72,7 @@ define(["globals", "ui", "lib/jquery", "util/account", "util/bbgmView", "util/vi
 
             $.ajax({
                 type: "POST",
-                url: "http://account.basketball-gm." + g.tld + "/register.php",
+                url: "//account.basketball-gm." + g.tld + "/register.php",
                 data: $register.serialize() + "&sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {

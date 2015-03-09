@@ -3,7 +3,7 @@
  * @namespace Everyone loves advertisements, right?
  */
 /*eslint new-cap: 0*/
-define(["globals"], function (g) {
+define(["globals", "lib/jquery"], function (g, $) {
     "use strict";
 
     function showGCS() {
@@ -33,20 +33,29 @@ define(["globals"], function (g) {
         window.Survata.fail(showGCS);
     }
 
-/*    function showModal() {
+    function showModal() {
         $("#modal-ads").modal("show");
-    }*/
+    }
 
     function show() {
-        var adTimer, now;
+        var adTimer, currentTimestamp, now, r;
 
         // No ads during multi season auto sim
         if (g.autoPlaySeasons > 0) {
             return;
         }
 
-        if (Math.random() < 0.75) {
+        // No ads for Gold members
+        currentTimestamp = Math.floor(Date.now() / 1000);
+        if (!g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil()) {
+            return;
+        }
+
+        r = Math.random();
+        if (r < 0.7) {
             showGCS();
+        } else if (r < 0.75) {
+            showModal();
         } else {
             // This is all in milliseconds!
             adTimer = localStorage.adTimer !== undefined ? parseInt(localStorage.adTimer, 10) : 0;
@@ -61,6 +70,7 @@ define(["globals"], function (g) {
     }
 
     return {
-        show: show
+        show: show,
+        showModal: showModal
     };
 });

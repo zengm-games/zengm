@@ -5,7 +5,7 @@
 define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/helpers"], function (dao, g, Promise, Davis, _, helpers) {
     "use strict";
 
-    var migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="http://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
+    var migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="https://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
 
     /**
      * Create new meta database with the latest structure.
@@ -106,17 +106,13 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
     }
 
     function connectMeta() {
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             var request;
 
 //        console.log('Connecting to database "meta"');
             request = indexedDB.open("meta", 7);
             request.onerror = function (event) {
-                if (event.target.webkitErrorMessage) {
-                    throw new Error("Meta connection error: " + event.target.webkitErrorMessage);
-                } else {
-                    throw new Error("Meta connection error: " + event.target.error.name + " - " + event.target.error.message);
-                }
+                reject(new Error("Meta connection error: " + event.target.error.name + " - " + event.target.error.message));
             };
             request.onblocked = function () {
                 window.alert("Please close all other tabs with this site open!");
@@ -764,17 +760,13 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
     }
 
     function connectLeague(lid) {
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
             request = indexedDB.open("league" + lid, 13);
             request.onerror = function (event) {
-                if (event.target.webkitErrorMessage) {
-                    throw new Error("League connection error: " + event.target.webkitErrorMessage);
-                } else {
-                    throw new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message);
-                }
+                reject(new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message));
             };
             request.onblocked = function () {
                 window.alert("Please close all other tabs with this site open!");

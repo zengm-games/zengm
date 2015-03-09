@@ -53,7 +53,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore",
         return gamesPromise.then(function (games) {
             var i, j, output, seasons, t, t2, teams;
 
-            output = "pid,Name,Pos,Team,Opp,Score,WL,Season,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,PF,Pts\n";
+            output = "pid,Name,Pos,Team,Opp,Score,WL,Season,Playoffs,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,PF,Pts\n";
 
             teams = _.pluck(games, "teams");
             seasons = _.pluck(games, "season");
@@ -62,7 +62,7 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/underscore",
                     t = teams[i][j];
                     t2 = teams[i][j === 0 ? 1 : 0];
                     t.players.forEach(function (p) {
-                        output += [p.pid, p.name, p.pos, g.teamAbbrevsCache[t.tid], g.teamAbbrevsCache[t2.tid], t.pts + "-" + t2.pts, t.pts > t2.pts ? "W" : "L", seasons[i], p.min, p.fg, p.fga, p.fgp, p.tp, p.tpa, p.tpp, p.ft, p.fta, p.ftp, p.orb, p.drb, p.trb, p.ast, p.tov, p.stl, p.blk, p.pf, p.pts].join(",") + "\n";
+                        output += [p.pid, p.name, p.pos, g.teamAbbrevsCache[t.tid], g.teamAbbrevsCache[t2.tid], t.pts + "-" + t2.pts, t.pts > t2.pts ? "W" : "L", seasons[i], games[i].playoffs, p.min, p.fg, p.fga, p.fgp, p.tp, p.tpa, p.tpp, p.ft, p.fta, p.ftp, p.orb, p.drb, p.trb, p.ast, p.tov, p.stl, p.blk, p.pf, p.pts].join(",") + "\n";
                     });
                 }
             }

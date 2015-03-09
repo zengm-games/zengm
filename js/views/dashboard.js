@@ -7,7 +7,7 @@ define(["dao", "ui", "util/bbgmView", "util/viewHelpers"], function (dao, ui, bb
 
     function updateDashboard() {
         return dao.leagues.getAll().then(function (leagues) {
-            var i;
+            var i, otherUrl;
 
             for (i = 0; i < leagues.length; i++) {
                 if (leagues[i].teamRegion === undefined) {
@@ -19,8 +19,19 @@ define(["dao", "ui", "util/bbgmView", "util/viewHelpers"], function (dao, ui, bb
                 delete leagues[i].tid;
             }
 
+            // http/https crap
+            if (window.location.protocol === "http:") {
+                if (leagues.length === 0 && window.location.hostname.indexOf("basketball-gm") >= 0) {
+                    window.location.replace("https://" + window.location.hostname + "/");
+                }
+                otherUrl = "https://" + window.location.hostname + "/";
+            } else {
+                otherUrl = "http://" + window.location.hostname + "/";
+            }
+
             return {
-                leagues: leagues
+                leagues: leagues,
+                otherUrl: otherUrl
             };
         });
     }

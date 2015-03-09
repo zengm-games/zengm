@@ -73,7 +73,10 @@ define(["lib/knockout"], function (ko) {
             phaseText: ko.observable(),
             statusText: ko.observable(),
             template: ko.observable(), // Used for left menu on large screens for highlighting active page, so g.vm.topMenu should really be g.vm.menu, since it's used by both
-            username: ko.observable(null)
+            username: ko.observable(null),
+            email: ko.observable(null),
+            goldUntil: ko.observable(0),
+            goldCancelled: ko.observable(0)
         }
     };
 
@@ -166,8 +169,10 @@ define(["lib/knockout"], function (ko) {
         }
     };
 
+    g.stripePublishableKey = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
+
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-    g.notInDb = ["dbm", "dbl", "lid", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "gameSimWorkers", "vm", "enableLogging", "tld", "sport", "compositeWeights", "notInDb"];
+    g.notInDb = ["dbm", "dbl", "lid", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "gameSimWorkers", "vm", "enableLogging", "tld", "sport", "compositeWeights", "stripeKey", "notInDb"];
 
 
     return g;

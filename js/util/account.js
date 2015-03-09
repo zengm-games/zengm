@@ -60,7 +60,7 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
     }, {
         slug: "hacker",
         name: "Hacker",
-        desc: 'Privately <a href="http://basketball-gm.com/contact/">report</a> a security issue in <a href="https://bitbucket.org/dumbmatter/bbgm-account">the account system</a> or some other part of the site.'
+        desc: 'Privately <a href="https://basketball-gm.com/contact/">report</a> a security issue in <a href="https://bitbucket.org/dumbmatter/bbgm-account">the account system</a> or some other part of the site.'
     }];
 
     /**
@@ -116,7 +116,7 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
 
         return Promise.resolve($.ajax({
             type: "POST",
-            url: "http://account.basketball-gm." + g.tld + "/add_achievements.php",
+            url: "//account.basketball-gm." + g.tld + "/add_achievements.php",
             data: {achievements: achievements, sport: g.sport},
             dataType: "json",
             xhrFields: {
@@ -140,7 +140,7 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
     function check() {
         return Promise.resolve($.ajax({
             type: "GET",
-            url: "http://account.basketball-gm." + g.tld + "/user_info.php",
+            url: "//account.basketball-gm." + g.tld + "/user_info.php",
             data: "sport=" + g.sport,
             dataType: "json",
             xhrFields: {
@@ -151,6 +151,9 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
 
             // Save username for display
             g.vm.topMenu.username(data.username);
+            g.vm.topMenu.email(data.email);
+            g.vm.topMenu.goldUntil(data.gold_until);
+            g.vm.topMenu.goldCancelled(data.gold_cancelled);
 
             // If user is logged in, upload any locally saved achievements
             if (data.username !== "") {
@@ -194,7 +197,7 @@ define(["dao", "globals", "core/team", "lib/bluebird", "lib/jquery", "lib/unders
             // Handle any achievements stored in the cloud
             return Promise.resolve($.ajax({
                 type: "GET",
-                url: "http://account.basketball-gm." + g.tld + "/get_achievements.php",
+                url: "//account.basketball-gm." + g.tld + "/get_achievements.php",
                 data: "sport=" + g.sport,
                 dataType: "json",
                 xhrFields: {

@@ -363,7 +363,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
             }
             eventLog.add(null, {
                 type: "draft",
-                text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season]) + '">' + g.teamNamesCache[pick.tid] + '</a> selected <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> with the ' + helpers.ordinal(pick.pick + (pick.round - 1) * 30) + ' pick in the <a href="' + helpers.leagueUrl(["draft_summary", g.teamAbbrevsCache[pick.tid], g.season]) + '">' + draftName + '</a>.',
+                text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season]) + '">' + g.teamNamesCache[pick.tid] + '</a> selected <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> with the ' + helpers.ordinal(pick.pick + (pick.round - 1) * 30) + ' pick in the <a href="' + helpers.leagueUrl(["draft_summary", g.season]) + '">' + draftName + '</a>.',
                 showNotification: false,
                 pids: [p.pid],
                 tids: [p.tid]

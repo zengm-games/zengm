@@ -38,6 +38,10 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         return Math.round((4 * ratings.hgt + ratings.stre + 4 * ratings.spd + 2 * ratings.jmp + 3 * ratings.endu + 3 * ratings.ins + 4 * ratings.dnk + ratings.ft + ratings.fg + 2 * ratings.tp + ratings.blk + ratings.stl + ratings.drb + 3 * ratings.pss + ratings.reb) / 32);
     }
 
+    function fuzzRating(rating, fuzz) {
+        return Math.round(helpers.bound(rating + fuzz, 0, 100));
+    }
+
     /**
      * Assign "skills" based on ratings.
      *
@@ -62,7 +66,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         sk = [];
 
         hasSkill = function (ratings, components, weights) {
-            var denominator, i, numerator;
+            var denominator, i, numerator, rating;
 
             if (weights === undefined) {
                 // Default: array of ones with same size as components
@@ -75,7 +79,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             numerator = 0;
             denominator = 0;
             for (i = 0; i < components.length; i++) {
-                numerator += ratings[components[i]] * weights[i];
+                rating = components[i] === 'hgt' ? ratings[components[i]] : fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
+                numerator += rating * weights[i];
                 denominator += 100 * weights[i];
             }
 
@@ -353,15 +358,15 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
                 p.ratings[r].pot = p.ratings[r].ovr;
             }
-
-            // Skills
-            p.ratings[r].skills = skills(p.ratings[r]);
         }
 
         // If this isn't here outside the loop, then 19 year old players could still have ovr > pot
         if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
             p.ratings[r].pot = p.ratings[r].ovr;
         }
+
+        // Likewise, If this isn't outside the loop, then 19 year old players don't get skills
+        p.ratings[r].skills = skills(p.ratings[r]);
 
         if (generate) {
             age = g.season - p.born.year + years;
@@ -568,9 +573,10 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @param {number} pot [description]
      * @param {number} season [description]
      * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
+     * @param {number} tid [description]
      * @return {Object} Ratings object
      */
-    function genRatings(profile, baseRating, pot, season, scoutingRank) {
+    function genRatings(profile, baseRating, pot, season, scoutingRank, tid) {
         var i, j, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
 
         if (profile === "Point") {
@@ -626,9 +632,15 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         ratings.ovr = ovr(ratings);
         ratings.pot = pot;
 
-        ratings.skills = skills(ratings);
-
         ratings.fuzz = genFuzz(scoutingRank);
+
+        if (tid === g.PLAYER.UNDRAFTED_2) {
+            ratings.fuzz *= 2;
+        } else if (tid === g.PLAYER.UNDRAFTED_3) {
+            ratings.fuzz *= 4;
+        }
+
+        ratings.skills = skills(ratings);
 
         return ratings;
     }
@@ -847,18 +859,13 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         p.statsTids = [];
         p.rosterOrder = 666;  // Will be set later
         p.ratings = [];
+
         if (newLeague) {
             // Create player for new league
-            p.ratings.push(genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank));
+            p.ratings.push(genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank, tid));
         } else {
             // Create player to be drafted
-            p.ratings.push(genRatings(profile, baseRating, pot, draftYear, scoutingRank));
-        }
-
-        if (tid === g.PLAYER.UNDRAFTED_2) {
-            p.ratings[0].fuzz *= 2;
-        } else if (tid === g.PLAYER.UNDRAFTED_3) {
-            p.ratings[0].fuzz *= 4;
+            p.ratings.push(genRatings(profile, baseRating, pot, draftYear, scoutingRank, tid));
         }
 
         minHgt = 71;  // 5'11"
@@ -1027,8 +1034,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                     fp.draft = p.draft;
                     fp.draft.age = p.draft.year - p.born.year;
                     if (options.fuzz) {
-                        fp.draft.ovr = Math.round(helpers.bound(fp.draft.ovr + p.ratings[0].fuzz, 0, 100));
-                        fp.draft.pot = Math.round(helpers.bound(fp.draft.pot + p.ratings[0].fuzz, 0, 100));
+                        fp.draft.ovr = fuzzRating(fp.draft.ovr, p.ratings[0].fuzz);
+                        fp.draft.pot = fuzzRating(fp.draft.pot, p.ratings[0].fuzz);
                     }
                     // Inject abbrevs
                     fp.draft.abbrev = g.teamAbbrevsCache[fp.draft.tid];
@@ -1126,12 +1133,12 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                             // Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
                             cat = options.ratings[k].slice(1); // either ovr or pot
                             if (j > 0) {
-                                fp.ratings[options.ratings[k]] = Math.round(helpers.bound(p.ratings[j][cat] + p.ratings[j].fuzz, 0, 100)) - Math.round(helpers.bound(p.ratings[j - 1][cat] + p.ratings[j - 1].fuzz, 0, 100));
+                                fp.ratings[options.ratings[k]] = fuzzRating(p.ratings[j][cat], p.ratings[j].fuzz) - fuzzRating(p.ratings[j - 1][cat], p.ratings[j - 1].fuzz);
                             } else {
                                 fp.ratings[options.ratings[k]] = 0;
                             }
                         } else if (options.fuzz && options.ratings[k] !== "fuzz" && options.ratings[k] !== "season" && options.ratings[k] !== "skills" && options.ratings[k] !== "hgt") {
-                            fp.ratings[options.ratings[k]] = Math.round(helpers.bound(fp.ratings[options.ratings[k]] + pr.fuzz, 0, 100));
+                            fp.ratings[options.ratings[k]] = fuzzRating(fp.ratings[options.ratings[k]], pr.fuzz);
                         }
                     }
                 }
@@ -1174,7 +1181,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                         } else {
                             fp.ratings[kk][options.ratings[j]] = p.ratings[k][options.ratings[j]];
                             if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills" && options.ratings[j] !== "hgt") {
-                                fp.ratings[kk][options.ratings[j]] = Math.round(helpers.bound(p.ratings[k][options.ratings[j]] + p.ratings[k].fuzz, 0, 100));
+                                fp.ratings[kk][options.ratings[j]] = fuzzRating(p.ratings[k][options.ratings[j]], p.ratings[k].fuzz);
                             }
                         }
                     }
@@ -1531,8 +1538,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
         // Fuzz?
         if (options.fuzz) {
-            pr.ovr = Math.round(helpers.bound(p.ratings[s].ovr + p.ratings[s].fuzz, 0, 100));
-            pr.pot = Math.round(helpers.bound(p.ratings[s].pot + p.ratings[s].fuzz, 0, 100));
+            pr.ovr = fuzzRating(p.ratings[s].ovr, p.ratings[s].fuzz);
+            pr.pot = fuzzRating(p.ratings[s].pot, p.ratings[s].fuzz);
         } else {
             pr.ovr = p.ratings[s].ovr;
             pr.pot = p.ratings[s].pot;

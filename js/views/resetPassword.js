@@ -30,7 +30,7 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], fun
         // First, see if this is a valid token
         $.ajax({
             type: "POST",
-            url: "http://account.basketball-gm." + g.tld + "/reset_password.php",
+            url: "//account.basketball-gm." + g.tld + "/reset_password.php",
             data: {action: "check_token", token: token, sport: g.sport},
             dataType: "json",
             xhrFields: {
@@ -54,7 +54,7 @@ define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], fun
 
                         $.ajax({
                             type: "POST",
-                            url: "http://account.basketball-gm." + g.tld + "/reset_password.php",
+                            url: "//account.basketball-gm." + g.tld + "/reset_password.php",
                             data: $resetpw.serialize() + "&sport=" + g.sport,
                             dataType: "json",
                             xhrFields: {

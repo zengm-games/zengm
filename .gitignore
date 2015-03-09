@@ -4,3 +4,4 @@
 *.sublime-workspace
 node_modules
 test_case.html
+npm-debug.log

@@ -358,15 +358,15 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
                 p.ratings[r].pot = p.ratings[r].ovr;
             }
-
-            // Skills
-            p.ratings[r].skills = skills(p.ratings[r]);
         }
 
         // If this isn't here outside the loop, then 19 year old players could still have ovr > pot
         if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
             p.ratings[r].pot = p.ratings[r].ovr;
         }
+
+        // Likewise, If this isn't outside the loop, then 19 year old players don't get skills
+        p.ratings[r].skills = skills(p.ratings[r]);
 
         if (generate) {
             age = g.season - p.born.year + years;
@@ -573,9 +573,10 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @param {number} pot [description]
      * @param {number} season [description]
      * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
+     * @param {number} tid [description]
      * @return {Object} Ratings object
      */
-    function genRatings(profile, baseRating, pot, season, scoutingRank) {
+    function genRatings(profile, baseRating, pot, season, scoutingRank, tid) {
         var i, j, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
 
         if (profile === "Point") {
@@ -632,6 +633,12 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         ratings.pot = pot;
 
         ratings.fuzz = genFuzz(scoutingRank);
+
+        if (tid === g.PLAYER.UNDRAFTED_2) {
+            ratings.fuzz *= 2;
+        } else if (tid === g.PLAYER.UNDRAFTED_3) {
+            ratings.fuzz *= 4;
+        }
 
         ratings.skills = skills(ratings);
 
@@ -852,18 +859,13 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         p.statsTids = [];
         p.rosterOrder = 666;  // Will be set later
         p.ratings = [];
+
         if (newLeague) {
             // Create player for new league
-            p.ratings.push(genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank));
+            p.ratings.push(genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank, tid));
         } else {
             // Create player to be drafted
-            p.ratings.push(genRatings(profile, baseRating, pot, draftYear, scoutingRank));
-        }
-
-        if (tid === g.PLAYER.UNDRAFTED_2) {
-            p.ratings[0].fuzz *= 2;
-        } else if (tid === g.PLAYER.UNDRAFTED_3) {
-            p.ratings[0].fuzz *= 4;
+            p.ratings.push(genRatings(profile, baseRating, pot, draftYear, scoutingRank, tid));
         }
 
         minHgt = 71;  // 5'11"

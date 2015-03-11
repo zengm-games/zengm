@@ -2,10 +2,27 @@
  * @name db
  * @namespace Creating, migrating, and connecting to databases; working with transactions.
  */
-define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/helpers"], function (dao, g, Promise, Davis, _, helpers) {
+define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/eventLog", "util/helpers"], function (dao, g, Promise, Davis, _, eventLog, helpers) {
     "use strict";
 
     var migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="https://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
+
+    function abortHandler(event) {
+        if (!event.target.error) {
+            // Transaction was manually aborted in code, such as during phase change. This is not an error.
+            return;
+        }
+
+        if (event.target.error.name === "QuotaExceededError") {
+            eventLog.add(null, {
+                type: "error",
+                text: 'Your browser isn\'t letting Basketball GM store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Improve Performance within a league). Clearing space elsewhere on your hard drive might help too.',
+                saveToDb: false
+            });
+        } else {
+            throw new Error("Database abort: " + event.target.error.name + " - " + event.target.error.message);
+        }
+    }
 
     /**
      * Create new meta database with the latest structure.
@@ -36,6 +53,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
 
         dbm = event.target.result;
         tx = event.currentTarget.transaction;
+        tx.onabort = abortHandler;
 
         if (event.oldVersion <= 1) {
             dbm.deleteObjectStore("teams");
@@ -124,6 +142,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
                     migrateMeta(event);
                 }
             };
+            request.onabort = abortHandler;
             request.onsuccess = function () {
                 g.dbm = request.result;
                 g.dbm.onerror = function (event) {
@@ -134,6 +153,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
                         throw new Error("Meta database error: " + event.target.error.name + " - " + event.target.error.message);
                     }
                 };
+                g.dbm.onabort = abortHandler;
                 resolve();
             };
         });
@@ -203,6 +223,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
 
         dbl = event.target.result;
         tx = event.currentTarget.transaction;
+        tx.onabort = abortHandler;
 
         // Make sure game attributes (i.e. g.startingSeason) are loaded first
         require("core/league").loadGameAttributes(tx).then(function () {
@@ -778,6 +799,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
                     migrateLeague(event, lid);
                 }
             };
+            request.onabort = abortHandler;
             request.onsuccess = function () {
                 g.dbl = request.result;
                 g.dbl.onerror = function (event) {
@@ -788,6 +810,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/h
                         throw new Error("League database error: " + event.target.error.name + " - " + event.target.error.message);
                     }
                 };
+                g.dbl.onabort = abortHandler;
                 resolve();
             };
         });

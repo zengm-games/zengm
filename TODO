@@ -18,6 +18,7 @@ BBGM Gold?
       DONE auto redirect to https if no leagues
       http version gets no more updates? would require splitting to another site on webfaction
       eventually could delete old version (would need GA-based evidence it's not used)
+        could delete old upgrade code
     https version
       DONE button linking to http after New League
     redirect domain http to https: http://docs.webfaction.com/software/static.html#static-redirecting-from-http-to-https
@@ -66,14 +67,11 @@ transaction log
     big AI free agent signings
     team transactions page
 
-don't fail silently when exceeding quota
-  http://www.html5rocks.com/en/tutorials/offline/quota-research/#toc-how_to_handle_going_over_quota
-  how to test? VM? seems to unreliably produce error
-
 phase changes in atomic transactions
   phaseChangeInProgress checks should be in same tx too!
   test
     UI and other glitches due to tx race conditions
+  http://www.reddit.com/r/BasketballGM/comments/2yd2lb/the_curious_case_of_meddford_jones/
 
 github
   bitbucket issues

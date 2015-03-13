@@ -29,12 +29,24 @@ define(["globals", "lib/jquery"], function (g, $) {
             });
         });
 
-        // If Survata is down, try GCS
-        window.Survata.fail(showGCS);
+        // If Survata is down, try other ad
+        window.Survata.fail(show);
     }
 
     function showModal() {
         $("#modal-ads").modal("show");
+    }
+
+    function showInsticator() {
+        $("#modal-insticator").modal("show");
+        window.instciator_WidgetSettingUUID = '2d2cebf4-d347-43c9-a5af-8a9ee4f251f4';
+        (function () {
+            var iscript = document.createElement('script');
+            iscript.type = 'text/javascript';
+            iscript.async = true;
+            iscript.src = 'https://' + 'insticator.com' + '/public/versions/desktop/js/insticator-api-embed2.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(iscript);
+        }());
     }
 
     function show() {
@@ -52,10 +64,12 @@ define(["globals", "lib/jquery"], function (g, $) {
         }
 
         r = Math.random();
-        if (r < 0.7) {
+        if (r < 0.6) {
             showGCS();
-        } else if (r < 0.75) {
+        } else if (r < 0.65) {
             showModal();
+        } else if (r < 0.75) {
+            showInsticator();
         } else {
             // This is all in milliseconds!
             adTimer = localStorage.adTimer !== undefined ? parseInt(localStorage.adTimer, 10) : 0;
@@ -71,6 +85,6 @@ define(["globals", "lib/jquery"], function (g, $) {
 
     return {
         show: show,
-        showModal: showModal
+        showInsticator: showInsticator
     };
 });

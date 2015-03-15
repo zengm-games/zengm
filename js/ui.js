@@ -230,10 +230,11 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
                     contentEl.style.padding = "";
 
                     Promise.resolve($.ajax({
-                        url: "https://api.imgur.com/3/image",
+                        url: "https://imgur-apiv3.p.mashape.com/3/image",
                         type: "post",
                         headers: {
-                            Authorization: "Client-ID c2593243d3ea679"
+                            Authorization: "Client-ID c2593243d3ea679",
+                            "X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H"
                         },
                         data: {
                             image: canvas.toDataURL().split(',')[1]

@@ -50,6 +50,9 @@ require.config({
         "lib/faces": {
             exports: "faces"
         },
+        "lib/html2canvas": {
+            exports: "html2canvas"
+        },
         "lib/html5-dataset": {},
         "lib/IndexedDB-getAll-shim": {},
         "lib/jquery": {

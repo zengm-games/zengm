@@ -207,16 +207,24 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
         });
 
         document.getElementById("screenshot").addEventListener("click", function (event) {
-            var contentEl;
+            var contentEl, watermark;
 
             event.preventDefault();
 
             contentEl = document.getElementById("league_content");
             if (!contentEl) { contentEl = document.getElementById("content"); }
 
+            // Add watermark
+            watermark = document.createElement("div");
+            watermark.innerHTML = "<hr>Play your own league free at basketball-gm.com"
+            contentEl.appendChild(watermark);
+
             html2canvas(contentEl, {
                 background: "#fff",
                 onrendered: function (canvas) {
+                    // Remove watermark
+                    contentEl.removeChild(watermark);
+return document.body.appendChild(canvas);
                     Promise.resolve($.ajax({
                         url: "https://api.imgur.com/3/image",
                         type: "post",

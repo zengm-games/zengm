@@ -228,8 +228,7 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
                         },
                         dataType: "json"
                     })).then(function (data) {
-console.log(data.data);
-console.log("http://imgur.com/" + data.data.id);
+                        window.open("http://imgur.com/" + data.data.id)
                     }).catch(function (err) {
                         console.log(err);
                         if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {

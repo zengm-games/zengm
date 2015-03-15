@@ -216,15 +216,18 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
 
             // Add watermark
             watermark = document.createElement("div");
-            watermark.innerHTML = "<hr>Play your own league free at basketball-gm.com"
-            contentEl.appendChild(watermark);
+            watermark.innerHTML = '<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">' +
+                document.getElementsByClassName("navbar-brand")[0].parentNode.innerHTML +
+                '</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>';
+            //contentEl.appendChild(watermark);
+            contentEl.insertBefore(watermark, contentEl.firstChild);
 
             html2canvas(contentEl, {
                 background: "#fff",
                 onrendered: function (canvas) {
                     // Remove watermark
                     contentEl.removeChild(watermark);
-return document.body.appendChild(canvas);
+
                     Promise.resolve($.ajax({
                         url: "https://api.imgur.com/3/image",
                         type: "post",

@@ -88,6 +88,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2015-02-03",
         msg: 'Keep an eye on great individual performances in the new Statistical Feats page.'
+    }, {
+        date: "2015-03-15",
+        msg: 'Did something cool in the game that you want to share? Go to Tools > Screenshot from any page.'
     }];
 
     function check() {

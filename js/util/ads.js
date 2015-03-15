@@ -30,6 +30,7 @@ define(["globals", "lib/jquery"], function (g, $) {
         });
 
         // If Survata is down, try other ad
+        /*eslint no-use-before-define: 0*/
         window.Survata.fail(show);
     }
 
@@ -39,6 +40,7 @@ define(["globals", "lib/jquery"], function (g, $) {
 
     function showInsticator() {
         $("#modal-insticator").modal("show");
+        /*eslint camelcase: 0*/
         window.instciator_WidgetSettingUUID = '2d2cebf4-d347-43c9-a5af-8a9ee4f251f4';
         (function () {
             var iscript = document.createElement('script');

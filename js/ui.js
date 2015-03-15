@@ -253,7 +253,6 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
                     });
                 }
             });
-console.log("CLICK");
         });
     }
 

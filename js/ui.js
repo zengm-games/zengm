@@ -216,11 +216,19 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
 
             html2canvas(contentEl, {
                 onrendered: function (canvas) {
-                    Promise.resolve($.post("http://api.imgur.com/2/upload.json", {
-                        key: "6528448c258cff474ca9701c5bab6927",
-                        image: canvas.toDataURL().split(',')[1]
+                    Promise.resolve($.ajax({
+                        url: "https://api.imgur.com/3/image",
+                        type: "post",
+                        headers: {
+                            Authorization: "Client-ID c2593243d3ea679"
+                        },
+                        data: {
+                            image: canvas.toDataURL().split(',')[1]
+                        },
+                        dataType: "json"
                     })).then(function (data) {
-                        console.log(data.upload.links.imgur_page);
+console.log(data.data);
+console.log("http://imgur.com/" + data.data.id);
                     }).catch(function (err) {
                         console.log(err);
                         if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {

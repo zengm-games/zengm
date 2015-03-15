@@ -215,6 +215,7 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
             if (!contentEl) { contentEl = document.getElementById("content"); }
 
             html2canvas(contentEl, {
+                background: "#fff",
                 onrendered: function (canvas) {
                     Promise.resolve($.ajax({
                         url: "https://api.imgur.com/3/image",

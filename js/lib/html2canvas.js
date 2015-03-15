@@ -2815,7 +2815,8 @@ _html2canvas.Renderer.Canvas = function(options) {
     canvas.height = canvas.style.height = options.height || zStack.ctx.height;
 
     fstyle = ctx.fillStyle;
-    ctx.fillStyle = (Util.isTransparent(zStack.backgroundColor) && options.background !== undefined) ? options.background : parsedData.backgroundColor;
+    //ctx.fillStyle = (Util.isTransparent(zStack.backgroundColor) && options.background !== undefined) ? options.background : parsedData.backgroundColor;
+    ctx.fillStyle = options.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = fstyle;
 

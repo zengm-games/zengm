@@ -219,14 +219,15 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
             watermark.innerHTML = '<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">' +
                 document.getElementsByClassName("navbar-brand")[0].parentNode.innerHTML +
                 '</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>';
-            //contentEl.appendChild(watermark);
             contentEl.insertBefore(watermark, contentEl.firstChild);
+            contentEl.style.padding = "8px";
 
             html2canvas(contentEl, {
                 background: "#fff",
                 onrendered: function (canvas) {
                     // Remove watermark
                     contentEl.removeChild(watermark);
+                    contentEl.style.padding = "";
 
                     Promise.resolve($.ajax({
                         url: "https://api.imgur.com/3/image",
@@ -239,7 +240,8 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
                         },
                         dataType: "json"
                     })).then(function (data) {
-                        window.open("http://imgur.com/" + data.data.id)
+                        document.getElementById("screenshot-link").href = "http://imgur.com/" + data.data.id;
+                        $("#modal-screenshot").modal("show");
                     }).catch(function (err) {
                         console.log(err);
                         if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {

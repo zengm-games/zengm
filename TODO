@@ -5,10 +5,8 @@ CURRENT
 -------
 
 screenshot
-  image display
-    window.open is shit because of popup blockers
-    open modal with image and links to tweet, etc?
-  mashape URL
+  what do i link to? Imgur landing page? or include social links directly?
+  mashape API URL
   add prompts to take screenshots at various points
 
 get rid of html5-dataset?

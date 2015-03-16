@@ -6,9 +6,16 @@ CURRENT
 
 screenshot
   what do i link to? Imgur landing page? or include social links directly?
+    include social links directly. actually that should be the first-level UI - you don't click "Screenshot" you click "Share to X" where X is Twitter, FB, Reddit, etc
+      probably still save to imgur first
+      autocomplete wording: "Draft players, manage teams, go for the championship. How good a Basketball GM are you? Find out at http://basketball-gm.com"
+      also autocomplete hashtag
   add prompts to take screenshots at various points
 
-get rid of html5-dataset?
+event tracking
+  in addition to GA, have my own system that is more in depth
+    tricky part: users who aren't logged in
+  what else to track?
 
 BBGM Gold?
   add achievement

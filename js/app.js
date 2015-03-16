@@ -53,7 +53,6 @@ require.config({
         "lib/html2canvas": {
             exports: "html2canvas"
         },
-        "lib/html5-dataset": {},
         "lib/IndexedDB-getAll-shim": {},
         "lib/jquery": {
             exports: "$"
@@ -88,7 +87,7 @@ require.config({
     }
 });
 
-require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util/helpers", "lib/bluebird", "lib/bootstrap-affix", "lib/bootstrap-alert", "lib/bootstrap-collapse", "lib/bootstrap-dropdown", "lib/bootstrap-modal", "lib/bootstrap-popover", "lib/davis.google_analytics", "lib/html5-dataset", "lib/IndexedDB-getAll-shim", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery-ui", "lib/jquery-ui.touch-punch", "util/templateHelpers", "api"], function (db, views, ui, changes, Davis, account, helpers) {
+require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util/helpers", "lib/bluebird", "lib/bootstrap-affix", "lib/bootstrap-alert", "lib/bootstrap-collapse", "lib/bootstrap-dropdown", "lib/bootstrap-modal", "lib/bootstrap-popover", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery-ui", "lib/jquery-ui.touch-punch", "util/templateHelpers", "api"], function (db, views, ui, changes, Davis, account, helpers) {
     "use strict";
 
     var errorMsg;

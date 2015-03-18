@@ -369,6 +369,10 @@ select.teams {
   width: 100px;
 }
 
+#player-awards {
+  white-space: normal;
+}
+
 .team-picture {
   display: none; /* Hide by default, shown in views/roster.js */
 	background-position: center center;

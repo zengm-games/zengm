@@ -152,6 +152,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 });*/
             }
+        }).then(function () {
+            return [undefined, ["playerMovement"]];
         });
     }
 

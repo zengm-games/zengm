@@ -843,6 +843,12 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                 } else {
                     break;
                 }
+
+                // Is this a complete duplicate entry? If so, not needed. This can happen e.g. in fantasy draft
+                // This is not quite a unique constraint because if a player is traded away from a team then back again, this check won't be reached because of the "break" above. That's fine. It shows the stints separately, which is probably best.
+                if (ps[i].pid === statsRow.pid && ps[i].season === statsRow.season && ps[i].tid === statsRow.tid && ps[i].playoffs === statsRow.playoffs) {
+                    return;
+                }
             }
 
             dao.playerStats.add({ot: ot, value: statsRow});

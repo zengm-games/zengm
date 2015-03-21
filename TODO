@@ -1,6 +1,9 @@
 DB CHANGES SINCE 3.4.0
 ----------------------
 
+g.userTids
+  also add others from league.js g
+
 CURRENT
 -------
 

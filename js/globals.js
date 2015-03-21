@@ -77,6 +77,10 @@ define(["lib/knockout"], function (ko) {
             email: ko.observable(null),
             goldUntil: ko.observable(0),
             goldCancelled: ko.observable(0)
+        },
+        multiTeam: {
+            userTid: ko.observable(null),
+            userTids: ko.observable([])
         }
     };
 

@@ -52,6 +52,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 }
             }).then(function () {
                 g[key] = gameAttributes[key];
+
+                if (key === "userTid" || key === "userTids") {
+                    g.vm.multiTeam[key](gameAttributes[key]);
+                }
             }).then(function () {
                 // Trigger a signal for the team finances view. This is stupid.
                 if (key === "gamesInProgress") {
@@ -139,6 +143,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             // Default values
             gameAttributes = {
                 userTid: tid,
+                userTids: [tid, 0, 1, 2, 3],
                 season: startingSeason,
                 startingSeason: startingSeason,
                 phase: 0,
@@ -605,6 +610,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 }
             } else {
                 g[key] = gameAttribute.value;
+
+                if (key === "userTid" || key === "userTids") {
+                    g.vm.multiTeam[key](gameAttribute.value);
+                }
             }
 
             // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
@@ -644,6 +653,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             if (g.autoPlaySeasons === undefined) {
                 g.autoPlaySeasons = 0;
             }
+
+            g.vm.multiTeam.userTid(g.userTid);
+            g.vm.multiTeam.userTids(g.userTids);
 
             // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
             g.vm.topMenu.godMode(g.godMode);

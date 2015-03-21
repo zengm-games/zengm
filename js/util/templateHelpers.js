@@ -247,7 +247,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
     };
 
     ko.bindingHandlers.gameScore = {
-        update: function(element, valueAccessor) {
+        update: function (element, valueAccessor) {
             var arg, newArg, stat;
             arg = valueAccessor();
             newArg = {}; // To prevent unwrapping the underlying observable
@@ -258,6 +258,33 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             }
             return ko.bindingHandlers.html.update(element, function () {
                 return helpers.gameScore(newArg);
+            });
+        }
+    };
+
+    ko.bindingHandlers.multiTeamMenu = {
+        update: function (element, valueAccessor) {
+            var arg, userTid, userTids;
+            arg = valueAccessor();
+            userTid = ko.unwrap(arg[0]);
+            userTids = ko.unwrap(arg[1]);
+console.log(userTid);
+console.log(userTids);
+
+            // Hide if not multi team
+            if (userTids.length <= 1) {
+                return ko.bindingHandlers.visible.update(element, function () {
+                    return false;
+                });
+            }
+
+            ko.bindingHandlers.visible.update(element, function () {
+                return true;
+            });
+
+            var options = '';
+            return ko.bindingHandlers.html.update(element, function () {
+                return '<label>Currently controlling:<br><select class="form-control"><option>1</option></select></label>';
             });
         }
     };

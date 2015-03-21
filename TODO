@@ -7,11 +7,10 @@ g.userTids
 CURRENT
 -------
 
-Multi Team Mode - see email draft
+Multi Team Mode
   https://mail.google.com/mail/u/0/#inbox/14c2cf6d763a5a94
   https://www.youtube.com/watch?v=4kly-bxCBZg
   g.userTids array - for each team in there, don't do any AI stuff
-  overlay dropdown to switch from g.userTids options (set g.userTid)
   Only available in God Mode?
   Disables ability to be fired
   Disables messages from owner (this should happen in multi season play to)
@@ -19,8 +18,8 @@ Multi Team Mode - see email draft
   fix updating userTid when switching teams normal way
   New stuff:
     Disable auto AI stuff
-      signing/releasing players to hit roster limits - needs to show error
       auto ordering roster
+  fix tests
   intro video
     applications
       live in-person multiplayer

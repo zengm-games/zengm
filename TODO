@@ -4,8 +4,25 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
-commissioner mode - see email draft
+Multi Team Mode - see email draft
   https://mail.google.com/mail/u/0/#inbox/14c2cf6d763a5a94
+  https://www.youtube.com/watch?v=4kly-bxCBZg
+  g.userTids array - for each team in there, don't do any AI stuff
+  overlay dropdown to switch from g.userTids options (set g.userTid)
+  Only available in God Mode
+  Enables draft pick control
+  Disables ability to be fired
+  Disables messages from owner (this should happen in multi season play to)
+  New stuff:
+    Trades – how hard would it be to let you pick both teams?
+    Free Agents – Add dropdown top right for “sign as”
+    Resigning – Add dropdown at top right, similar to free agents list. Also add warning check of all teams. Also get rid of redirect when only 1 player to negotiate with
+    Roster reordering – allow all
+    Team finances – allow all
+    Disable auto AI stuff
+      signing free agents
+      signing/releasing players to hit roster limits
+      ordering roster
 
 screenshot
   what do i link to? Imgur landing page? or include social links directly?

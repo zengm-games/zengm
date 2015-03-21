@@ -300,6 +300,7 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
             this.get("/l/:lid/player_feats/:abbrev", views.playerFeats.get);
             this.get("/l/:lid/player_feats/:abbrev/:season", views.playerFeats.get);
             this.get("/l/:lid/player_feats/:abbrev/:season/:playoffs", views.playerFeats.get);
+            this.get("/l/:lid/multi_team_mode", views.multiTeamMode.get);
         });
 
         app.start();

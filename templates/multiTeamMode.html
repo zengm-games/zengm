@@ -1,0 +1,14 @@
+<h1>Multi Team Mode</h1>
+
+<p>Here you can switch from controlling one team to controlling multiple teams. Why would you want to do this? A few reasons I can think of:</p>
+
+<ul>
+  <li>Live in-person multiplayer - two people using one computer can play in the same league together</li>
+  <li>Extreme control - if for whatever reason you want to control how other teams behave</li>
+  <li>Online multiplayer - if you want to run a league where you are the commissioner and other people email you roster moves to make manually, you don't want AI fucking things up</li>
+</ul>
+
+<p>In other words, <a href="https://www.youtube.com/watch?v=4kly-bxCBZg">multi til the motherfucking sun die</a>.</p>
+
+<p data-bind="visible: userTids().length > 1"><b class="text-danger">Multi team mode disabled!</b> To enable it, select all the teams you want to control below.</p>
+<p data-bind="visible: userTids().length <= 1"><b class="text-success">Multi team mode enabled!</b> To disable it, unselect all but one team.</p>

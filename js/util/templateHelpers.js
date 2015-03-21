@@ -261,4 +261,15 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             });
         }
     };
+    
+    ko.bindingHandlers.plusMinus = {
+        update: function (element, valueAccessor) {
+            var arg = valueAccessor();
+            return ko.bindingHandlers.html.update(element, function () {
+                var val = helpers.plusMinus(ko.unwrap(arg)); 
+                return (isNaN(val) ? "" : val);
+            });
+        }
+    };
+       
 });

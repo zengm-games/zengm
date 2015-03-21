@@ -169,6 +169,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
             tov: 0,
             stl: 0,
             blk: 0,
+            ba: 0,
             pf: 0,
             pts: 0,
             oppPts: 0

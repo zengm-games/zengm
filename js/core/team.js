@@ -286,12 +286,14 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
 
                     for (i = 0; i < players.length; i++) {
                         if (players[i].pid === p.pid) {
-                            p.rosterOrder = players[i].rosterOrder;
+                            if (p.rosterOrder !== players[i].rosterOrder) {
+                                // Only write to DB if this actually changes
+                                p.rosterOrder = players[i].rosterOrder;
+                                return p;
+                            }
                             break;
                         }
                     }
-
-                    return p;
                 }
             });
         });

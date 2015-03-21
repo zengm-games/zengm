@@ -475,7 +475,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
 
                     // Make schedule, start season
                     return phase.newPhase(g.PHASE.REGULAR_SEASON).then(function () {
-                        var lid;
+                        var lid, tx;
 
                         ui.updateStatus("Idle");
 
@@ -483,8 +483,11 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
 
                         helpers.bbgmPing("league");
 
-                        // Auto sort player's roster (other teams will be done in phase.newPhase(g.PHASE.REGULAR_SEASON))
-                        return team.rosterAutoSort(null, g.userTid).then(function () {
+                        // Auto sort rosters
+                        tx = dao.tx("players", "readwrite");
+                        return Promise.each(teams, function (t) {
+                            return team.rosterAutoSort(tx, t.tid);
+                        }).then(function () {
                             return lid;
                         });
                     });

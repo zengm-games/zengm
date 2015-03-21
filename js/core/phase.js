@@ -524,9 +524,9 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 index: "tid",
                 key: IDBKeyRange.lowerBound(0),
                 callback: function (p) {
-                    if (p.contract.exp <= g.season && g.userTids.indexOf(p.tid) >= 0 && g.autoPlaySeasons === 0) {
-                        var tid;
+                    var tid;
 
+                    if (p.contract.exp <= g.season && g.userTids.indexOf(p.tid) >= 0 && g.autoPlaySeasons === 0) {
                         tid = p.tid;
 
                         // Add to free agents first, to generate a contract demand

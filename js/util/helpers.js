@@ -867,6 +867,16 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         return round(arg.pts + 0.4 * arg.fg - 0.7 * arg.fga - 0.4 * (arg.fta - arg.ft) + 0.7 * arg.orb + 0.3 * (arg.trb - arg.orb) + arg.stl + 0.7 * arg.ast + 0.7 * arg.blk - 0.4 * arg.pf - arg.tov, 1);
     }
 
+    function updateMultiTeam(tid) {
+        require("core/league").setGameAttributesComplete({
+            userTid: tid
+        }).then(function () {
+            // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
+            require("ui").realtimeUpdate(["dbChange"]);
+            require("core/league").updateLastDbChange();
+        });
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -897,6 +907,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         formatCompletedGame: formatCompletedGame,
         gb: gb,
         checkNaNs: checkNaNs,
-        gameScore: gameScore
+        gameScore: gameScore,
+        updateMultiTeam: updateMultiTeam
     };
 });

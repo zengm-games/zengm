@@ -264,12 +264,10 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
 
     ko.bindingHandlers.multiTeamMenu = {
         update: function (element, valueAccessor) {
-            var arg, userTid, userTids;
+            var arg, i, options, teamNames, userTid, userTids;
             arg = valueAccessor();
             userTid = ko.unwrap(arg[0]);
             userTids = ko.unwrap(arg[1]);
-console.log(userTid);
-console.log(userTids);
 
             // Hide if not multi team
             if (userTids.length <= 1) {
@@ -282,9 +280,21 @@ console.log(userTids);
                 return true;
             });
 
-            var options = '';
+            teamNames = userTids.map(function (t) {
+                return g.teamRegionsCache[t] + " " + g.teamNamesCache[t];
+            });
+
+            options = "";
+            for (i = 0; i < userTids.length; i++) {
+                if (userTid === userTids[i]) {
+                    options += '<option value="' + userTids[i] + '" selected>' + teamNames[i] + '</option>';
+                } else {
+                    options += '<option value="' + userTids[i] + '">' + teamNames[i] + '</option>';
+                }
+            }
+
             return ko.bindingHandlers.html.update(element, function () {
-                return '<label>Currently controlling:<br><select class="form-control"><option>1</option></select></label>';
+                return '<label for="multi-team-select">Currently controlling:</label><br><select class="form-control" id="multi-team-select" onchange="require(\'util/helpers\').updateMultiTeam(parseInt(this.options[this.selectedIndex].value, 10))">' + options + '</select>';
             });
         }
     };

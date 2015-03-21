@@ -49,7 +49,6 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
         var $playMenuDropdown, api, playMenu, playMenuOptions, screenshotEl, topMenuCollapse;
 
         ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
-console.log(g.vm.multiTeam);
         ko.applyBindings(g.vm.multiTeam, document.getElementById("multi-team-menu"));
 
         // Handle clicks from play menu

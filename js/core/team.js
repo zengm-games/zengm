@@ -1350,7 +1350,7 @@ console.log(dv);*/
             }).then(function () {
                 // Auto sort rosters (except player's team)
                 // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
-                if (tid !== g.userTid || g.autoPlaySeasons > 0) {
+                if (g.userTids.indexOf(tid) < 0 || g.autoPlaySeasons > 0) {
                     return rosterAutoSort(tx, tid);
                 }
             });

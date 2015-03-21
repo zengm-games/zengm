@@ -16,9 +16,6 @@ Multi Team Mode
   Disables messages from owner (this should happen in multi season play to)
   disable fuzz
   fix updating userTid when switching teams normal way
-  New stuff:
-    Disable auto AI stuff
-      auto ordering roster
   fix tests
   intro video
     applications

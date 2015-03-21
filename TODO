@@ -16,14 +16,12 @@ Multi Team Mode - see email draft
   Disables ability to be fired
   Disables messages from owner (this should happen in multi season play to)
   disable fuzz
+  fix updating userTid when switching teams normal way
   New stuff:
-    Resigning – Add dropdown at top right, similar to free agents list. Also add warning check of all teams. Also get rid of redirect when only 1 player to negotiate with
-    Roster reordering – allow all
-    Team finances – allow all
     Disable auto AI stuff
-      signing free agents
-      signing/releasing players to hit roster limits
-      ordering roster
+      signing free agents during season
+      signing/releasing players to hit roster limits - needs to show error
+      auto ordering roster
   intro video
     applications
       live in-person multiplayer

@@ -12,9 +12,12 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
      * @param {IDBTransaction|null} tx An IndexedDB transaction on gameAttributes, messages, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
      * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
+     * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.userTid.
      * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
      */
-    function create(tx, pid, resigning) {
+    function create(tx, pid, resigning, tid) {
+        tid = tid !== undefined ? tid : g.userTid;
+
         if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) && !resigning) {
             return Promise.resolve("You're not allowed to sign free agents now.");
         }
@@ -55,6 +58,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
 
                     negotiation = {
                         pid: pid,
+                        tid: tid,
                         team: {amount: playerAmount, years: playerYears},
                         player: {amount: playerAmount, years: playerYears},
                         orig: {amount: playerAmount, years: playerYears},

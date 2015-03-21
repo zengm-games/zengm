@@ -43,7 +43,7 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
             var pick;
 
             pick = draftOrder.shift();
-            if (pick.tid === g.userTid || localStorage.noAutoPick) {
+            if (g.userTids.indexOf(pick.tid) >= 0) {
                 return draft.selectPlayer(pick, pid).then(function () {
                     var tx;
 
@@ -184,7 +184,7 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
                     drafted: drafted,
                     started: started,
                     fantasyDraft: g.phase === g.PHASE.FANTASY_DRAFT,
-                    userTid: g.userTid
+                    userTids: g.userTids
                 };
             });
         });

@@ -2,7 +2,7 @@
  * @name views.multiTeamMode
  * @namespace Enable or disable Multi Team Mode.
  */
-define(["globals", "ui", "core/league", "lib/knockout", "util/bbgmView", "util/helpers"], function (g, ui, league, ko, bbgmView, helpers) {
+define(["globals", "ui", "core/league", "lib/knockout", "util/bbgmView"], function (g, ui, league, ko, bbgmView) {
     "use strict";
 
     function updateMultiTeamMode(inputs, updateEvents) {

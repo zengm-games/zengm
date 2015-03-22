@@ -777,6 +777,44 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
                     playerFeatStore.createIndex("tid", "tid", {unique: false});
                 }());
             }
+            if (event.oldVersion <= 13) {
+                (function () {
+                    tx.objectStore("gameAttributes").put({
+                        key: "userTids",
+                        value: [g.userTid]
+                    });
+                    if (g.numTeams === undefined) {
+                        tx.objectStore("gameAttributes").put({
+                            key: "numTeams",
+                            value: 30
+                        });
+                    }
+                    if (g.godMode === undefined) {
+                        tx.objectStore("gameAttributes").put({
+                            key: "godMode",
+                            value: false
+                        });
+                    }
+                    if (g.godModeInPast === undefined) {
+                        tx.objectStore("gameAttributes").put({
+                            key: "godModeInPast",
+                            value: false
+                        });
+                    }
+                    if (g.phaseChangeInProgress === undefined) {
+                        tx.objectStore("gameAttributes").put({
+                            key: "phaseChangeInProgress",
+                            value: false
+                        });
+                    }
+                    if (g.autoPlaySeasons === undefined) {
+                        tx.objectStore("gameAttributes").put({
+                            key: "autoPlaySeasons",
+                            value: 0
+                        });
+                    }
+                }());
+            }
         });
     }
 
@@ -785,7 +823,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
             var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-            request = indexedDB.open("league" + lid, 13);
+            request = indexedDB.open("league" + lid, 14);
             request.onerror = function (event) {
                 reject(new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message));
             };

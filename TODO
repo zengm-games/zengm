@@ -1,9 +1,6 @@
 DB CHANGES SINCE 3.4.0
 ----------------------
 
-g.userTids
-  also add others from league.js g
-
 CURRENT
 -------
 
@@ -48,7 +45,7 @@ BBGM Gold?
       DONE auto redirect to https if no leagues
       http version gets no more updates? would require splitting to another site on webfaction
       eventually could delete old version (would need GA-based evidence it's not used)
-        could delete old upgrade code
+        could delete old upgrade code, 12 and older
     https version
       DONE button linking to http after New League
     redirect domain http to https: http://docs.webfaction.com/software/static.html#static-redirecting-from-http-to-https

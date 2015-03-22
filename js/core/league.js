@@ -597,31 +597,17 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
     function loadGameAttribute(ot, key) {
         return dao.gameAttributes.get({ot: ot, key: key}).then(function (gameAttribute) {
             if (gameAttribute === undefined) {
-                // Default values for old leagues - see also loadGameAttributes
-                if (key === "numTeams") {
-                    g.numTeams = 30;
-                } else if (key === "godMode") {
-                    g.godMode = false;
-                } else if (key === "godModeInPast") {
-                    g.godModeInPast = false;
-                } else if (key === "phaseChangeInProgress") {
-                    g.phaseChangeInProgress = false;
-                } else if (key === "autoPlaySeasons") {
-                    g.autoPlaySeasons = 0;
-                } else {
-                    throw new Error("Unknown game attribute: " + key);
-                }
-            } else {
-                g[key] = gameAttribute.value;
-
-                if (key === "userTid" || key === "userTids") {
-                    g.vm.multiTeam[key](gameAttribute.value);
-                }
+                throw new Error("Unknown game attribute: " + key);
             }
 
-            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
+            g[key] = gameAttribute.value;
+
+            // UI stuff - see also loadGameAttribute
             if (key === "godMode") {
                 g.vm.topMenu.godMode(g.godMode);
+            }
+            if (key === "userTid" || key === "userTids") {
+                g.vm.multiTeam[key](gameAttribute.value);
             }
         });
     }
@@ -640,28 +626,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 g[gameAttributes[i].key] = gameAttributes[i].value;
             }
 
-            // Default values for old leagues - see also loadGameAttribute
-            if (g.numTeams === undefined) {
-                g.numTeams = 30;
-            }
-            if (g.godMode === undefined) {
-                g.godMode = false;
-            }
-            if (g.godModeInPast === undefined) {
-                g.godModeInPast = false;
-            }
-            if (g.phaseChangeInProgress === undefined) {
-                g.phaseChangeInProgress = false;
-            }
-            if (g.autoPlaySeasons === undefined) {
-                g.autoPlaySeasons = 0;
-            }
-
+            // UI stuff - see also loadGameAttribute
+            g.vm.topMenu.godMode(g.godMode);
             g.vm.multiTeam.userTid(g.userTid);
             g.vm.multiTeam.userTids(g.userTids);
-
-            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
-            g.vm.topMenu.godMode(g.godMode);
         });
     }
 

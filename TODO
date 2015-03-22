@@ -13,7 +13,6 @@ Multi Team Mode
   g.userTids array - for each team in there, don't do any AI stuff
   Disables ability to be fired
   Disables messages from owner (this should happen in multi season play to)
-  disable fuzz
   fix tests
   when negotiation is in progress, can switch teams and steal negotiation
     check tid before completing negotiation

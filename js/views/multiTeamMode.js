@@ -44,8 +44,14 @@ define(["globals", "ui", "core/league", "lib/knockout", "util/bbgmView"], functi
                 if (newUserTids.indexOf(g.userTid) < 0) {
                     gameAttributes.userTid = newUserTids[0];
                 }
-
                 league.setGameAttributes(null, gameAttributes);
+
+                if (newUserTids.length === 1) {
+                    league.updateMetaNameRegion(g.teamNamesCache[newUserTids[0]], g.teamRegionsCache[newUserTids[0]]);
+                } else {
+                    league.updateMetaNameRegion("Multi Team Mode", "");
+                }
+
                 league.updateLastDbChange();
             }
         });

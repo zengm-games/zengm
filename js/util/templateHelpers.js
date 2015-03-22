@@ -270,7 +270,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             userTids = ko.unwrap(arg[1]);
 
             // Hide if not multi team or not loaded yet
-            if (userTids === undefined || userTids.length <= 1 || g.teamRegionsCache === undefined) {
+            if (userTids.length <= 1 || g.teamRegionsCache === undefined) {
                 return ko.bindingHandlers.visible.update(element, function () {
                     return false;
                 });

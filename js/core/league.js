@@ -604,7 +604,12 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
 
             g[key] = gameAttribute.value;
 
-            // UI stuff - see also loadGameAttribute
+            // Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w - see also loadGameAttributes
+            if (key === "userTids") {
+                g.userTids = [g.userTid];
+            }
+
+            // UI stuff - see also loadGameAttributes
             if (key === "godMode") {
                 g.vm.topMenu.godMode(g.godMode);
             }
@@ -627,6 +632,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             for (i = 0; i < gameAttributes.length; i++) {
                 g[gameAttributes[i].key] = gameAttributes[i].value;
             }
+
+            // Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w - see also loadGameAttribute
+            g.userTids = [g.userTid];
 
             // UI stuff - see also loadGameAttribute
             g.vm.topMenu.godMode(g.godMode);

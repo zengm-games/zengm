@@ -14,14 +14,19 @@ define(["db", "globals", "ui", "core/league", "core/team", "util/bbgmView", "uti
     }
 
     function post(req) {
+        var newUserTid;
+
         document.getElementById("new-team").disabled = true;
+
+        newUserTid = parseInt(req.params.tid, 10);
 
         ui.updateStatus("Idle");
         ui.updatePlayMenu();
 
         league.setGameAttributesComplete({
             gameOver: false,
-            userTid: Math.floor(req.params.tid),
+            userTid: newUserTid,
+            userTids: [newUserTid],
             ownerMood: {
                 wins: 0,
                 playoffs: 0,

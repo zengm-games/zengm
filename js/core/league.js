@@ -143,7 +143,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             // Default values
             gameAttributes = {
                 userTid: tid,
-                userTids: [tid, 0, 1, 2, 3],
+                userTids: [tid],
                 season: startingSeason,
                 startingSeason: startingSeason,
                 phase: 0,

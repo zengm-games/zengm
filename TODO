@@ -14,8 +14,6 @@ Multi Team Mode
   Disables ability to be fired
   Disables messages from owner (this should happen in multi season play to)
   disable fuzz
-  fix updating userTid when switching teams normal way
-    should this form be active in multi team mode?
   fix tests
   when negotiation is in progress, can switch teams and steal negotiation
     check tid before completing negotiation

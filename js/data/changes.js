@@ -91,6 +91,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2015-03-15",
         msg: 'Did something cool in the game that you want to share? Go to Tools > Screenshot from any page.'
+    }, {
+        date: "2015-03-21",
+        msg: 'Enable God Mode (in the Tools menu) and then go to Tools > Multi Team Mode for some new ways to play!'
     }];
 
     function check() {

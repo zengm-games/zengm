@@ -11,6 +11,7 @@ number or not.
 - Statistical Feats feature
 - Auto play multiple seasons
 - Screenshots
+- Multi Team Mode
 
 ## Techincal details
 

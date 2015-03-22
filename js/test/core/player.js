@@ -20,6 +20,7 @@ define(["globals", "core/player", "lib/underscore", "util/helpers"], function (g
     // Default values needed
     g.teamAbbrevsCache = _.pluck(helpers.getTeamsDefault(), "abbrev");
     g.numTeams = 30;
+    g.userTids = [0];
 
     describe("core/player", function () {
         describe("#generate()", function () {

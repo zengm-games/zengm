@@ -9,10 +9,7 @@ CURRENT
 
 Multi Team Mode
   https://mail.google.com/mail/u/0/#inbox/14c2cf6d763a5a94
-  https://www.youtube.com/watch?v=4kly-bxCBZg
   g.userTids array - for each team in there, don't do any AI stuff
-  Disables ability to be fired
-  Disables messages from owner (this should happen in multi season play to)
   fix tests
   when negotiation is in progress, can switch teams and steal negotiation
     check tid before completing negotiation

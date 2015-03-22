@@ -41,7 +41,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
     function fuzzRating(rating, fuzz) {
         // Turn off fuzz in multi team mode, because it doesn't have any meaning there in its current form
         if (g.userTids.length > 1) {
-            return rating;
+            return Math.round(rating);
         }
 
         return Math.round(helpers.bound(rating + fuzz, 0, 100));

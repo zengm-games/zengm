@@ -180,6 +180,12 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                         gameAttributes[leagueFile.gameAttributes[i].key] = leagueFile.gameAttributes[i].value;
                     }
 
+                    // Special case for userTids - don't use saved value if userTid is not in it
+                    if (gameAttributes.userTids.indexOf(gameAttributes.userTid) < 0) {
+                        gameAttributes.userTids = [gameAttributes.userTid];
+                    }
+
+
                     if (leagueFile.gameAttributes[i].key === "phase") {
                         skipNewPhase = true;
                     }

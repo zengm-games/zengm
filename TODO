@@ -5,7 +5,8 @@ CURRENT
 -------
 
 DEATH
-  need some kind of persistent notification - maybe a red bubble that requires a click to close
+  prettier close button for persistent notifications
+  stop gamesim when showing persistent notification (do in util/eventLog)
   need marker of death
     retired players should eventually die
     when a death happens for an active player, first retire them and then mark them as dead

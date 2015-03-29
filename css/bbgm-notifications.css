@@ -22,6 +22,10 @@
   -webkit-animation: fadeIn 0.75s;
   animation: fadeIn 0.75s;
 }
+.notification-persistent {
+  background-color: darkred;
+}
+
 .notification:hover {
   opacity: 1;
   box-shadow: #000 0 0 12px;
@@ -32,6 +36,7 @@
 .notification a:hover {
   color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
 }
+
 .notification-delete {
   -webkit-animation: fadeOut 0.75s;
   animation: fadeOut 0.75s;

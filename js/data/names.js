@@ -20080,7 +20080,7 @@ define(["globals"], function (g) {
             return {
                 first: (g.names && g.names.first) ? g.names.first : first,
                 last: (g.names && g.names.last) ? g.names.last : last
-            }
+            };
         }
     };
 });

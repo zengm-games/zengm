@@ -5,6 +5,8 @@
 define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/bluebird", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, g, finances, injuries, names, Promise, faces, _, eventLog, helpers, random) {
     "use strict";
 
+    var playerNames;
+
     /**
      * Limit a rating to between 0 and 100.
      *
@@ -650,7 +652,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         return ratings;
     }
 
-    var playerNames;
     function name() {
         var fn, fnRand, i, ln, lnRand;
 

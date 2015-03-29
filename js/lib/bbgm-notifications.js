@@ -55,11 +55,11 @@ console.log(persistent);
             });
         } else {
             // Add close link to persistent ones
-            closeLink = document.createElement("div");
-            closeLink.innerHTML = "CLOSE";
+            closeLink = document.createElement("button");
+            closeLink.classList.add("notification-close");
+            closeLink.innerHTML = "&times;";
             notificationElement.classList.add("notification-persistent");
             closeLink.addEventListener("click", function () {
-                console.log("close");
                 notificationElement.classList.add("notification-delete");
             });
 

@@ -5,17 +5,21 @@ CURRENT
 -------
 
 DEATH
-  prettier close button for persistent notifications
+  persistent notifications
+    notify = require("lib/bbgm-notifications").notify;
+    notify("Message", "Title", true)
   stop gamesim when showing persistent notification (do in util/eventLog)
   need marker of death
     retired players should eventually die
     when a death happens for an active player, first retire them and then mark them as dead
-  injury
-  car crash
-  plane crash (team)
-    what if in playoffs, need free agents
-  drug overdose
-  gambling fight
+  types
+    injury
+    car crash
+    plane crash (team)
+      what if in playoffs, need free agents
+    drug overdose
+    gambling fight
+  screenshot should show notifications at bottom
 
 multi team UI - click from league to main dashboard and switch teams menu persists
 

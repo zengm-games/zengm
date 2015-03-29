@@ -650,27 +650,32 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         return ratings;
     }
 
+    var playerNames;
     function name() {
         var fn, fnRand, i, ln, lnRand;
 
+        if (!playerNames) {
+            // This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
+            playerNames = names.load();
+        }
+
         // First name
-        fnRand = random.uniform(0, 90.04);
-        for (i = 0; i < names.first.length; i++) {
-            if (names.first[i][1] >= fnRand) {
+        fnRand = random.uniform(0, playerNames.first[playerNames.first.length - 1][1]);
+        for (i = 0; i < playerNames.first.length; i++) {
+            if (playerNames.first[i][1] >= fnRand) {
                 break;
             }
         }
-        fn = names.first[i][0];
-
+        fn = playerNames.first[i][0];
 
         // Last name
-        lnRand = random.uniform(0, 77.48);
-        for (i = 0; i < names.last.length; i++) {
-            if (names.last[i][1] >= lnRand) {
+        lnRand = random.uniform(0, playerNames.last[playerNames.last.length - 1][1]);
+        for (i = 0; i < playerNames.last.length; i++) {
+            if (playerNames.last[i][1] >= lnRand) {
                 break;
             }
         }
-        ln = names.last[i][0];
+        ln = playerNames.last[i][0];
 
         return fn + " " + ln;
     }

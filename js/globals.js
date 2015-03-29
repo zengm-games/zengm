@@ -178,6 +178,5 @@ define(["lib/knockout"], function (ko) {
     // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
     g.notInDb = ["dbm", "dbl", "lid", "confs", "divs", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "gameSimWorkers", "vm", "enableLogging", "tld", "sport", "compositeWeights", "stripeKey", "notInDb"];
 
-
     return g;
 });

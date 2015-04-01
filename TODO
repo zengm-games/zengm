@@ -4,6 +4,30 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+DEATH
+  need some kind of persistent notification - maybe a red bubble that requires a click to close
+  injury
+  car crash
+  plane crash (team)
+    what if in playoffs, need free agents
+  drug overdose
+  gambling fight
+
+multi team UI - click from league to main dashboard and switch teams menu persists
+
+screenshot
+  what do i link to? Imgur landing page? or include social links directly?
+    include social links directly. actually that should be the first-level UI - you don't click "Screenshot" you click "Share to X" where X is Twitter, FB, Reddit, etc
+      probably still save to imgur first
+      autocomplete wording: "Draft players, manage teams, go for the championship. How good a Basketball GM are you? Find out at http://basketball-gm.com"
+      also autocomplete hashtag
+  add prompts to take screenshots at various points
+
+event tracking
+  in addition to GA, have my own system that is more in depth
+    tricky part: users who aren't logged in
+  what else to track?
+
 BBGM Gold?
   add achievement
   account page UI
@@ -18,6 +42,7 @@ BBGM Gold?
       DONE auto redirect to https if no leagues
       http version gets no more updates? would require splitting to another site on webfaction
       eventually could delete old version (would need GA-based evidence it's not used)
+        could delete old upgrade code, 12 and older
     https version
       DONE button linking to http after New League
     redirect domain http to https: http://docs.webfaction.com/software/static.html#static-redirecting-from-http-to-https
@@ -31,8 +56,6 @@ but the composite checking code fuzzes everything
 i forgot about this before
 a good solution would be to have fuzzrating take the whole ratings object and a key, so it can do the logic about what gets fuzzed and what doesn't
 bc this logic is already copy/pasted twice in player.filter (line 1137 and 1180)
-
-end of season -> screenshot -> imgur -> share
 
 view rewrite
   react to handle updating DOM
@@ -66,14 +89,11 @@ transaction log
     big AI free agent signings
     team transactions page
 
-don't fail silently when exceeding quota
-  http://www.html5rocks.com/en/tutorials/offline/quota-research/#toc-how_to_handle_going_over_quota
-  how to test? VM? seems to unreliably produce error
-
 phase changes in atomic transactions
   phaseChangeInProgress checks should be in same tx too!
   test
     UI and other glitches due to tx race conditions
+  http://www.reddit.com/r/BasketballGM/comments/2yd2lb/the_curious_case_of_meddford_jones/
 
 github
   bitbucket issues
@@ -544,6 +564,7 @@ schedule page (and dashboard and maybe gamelog) should show opponent records
 LOW PRIORITY
 ------------
 
+attendance should change faster http://www.reddit.com/r/BasketballGM/comments/30i8ts/should_attendance_be_more_responsive_to_extremely/
 track longest W/L streaks
 option to stop sim when player is injured http://www.reddit.com/r/BasketballGM/comments/2s265y/suggestion_option_to_automatically_stop/
 tooling

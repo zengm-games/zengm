@@ -52,6 +52,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 }
             }).then(function () {
                 g[key] = gameAttributes[key];
+
+                if (key === "userTid" || key === "userTids") {
+                    g.vm.multiTeam[key](gameAttributes[key]);
+                }
             }).then(function () {
                 // Trigger a signal for the team finances view. This is stupid.
                 if (key === "gamesInProgress") {
@@ -139,6 +143,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             // Default values
             gameAttributes = {
                 userTid: tid,
+                userTids: [tid],
                 season: startingSeason,
                 startingSeason: startingSeason,
                 phase: 0,
@@ -161,7 +166,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
                 gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
                 numTeams: teams.length, // Will be 30 if the user doesn't supply custom rosters
-                autoPlaySeasons: 0
+                autoPlaySeasons: 0,
+                godMode: false,
+                godModeInPast: false
             };
 
             // gameAttributes from input
@@ -176,6 +183,11 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                     if (leagueFile.gameAttributes[i].key === "phase") {
                         skipNewPhase = true;
                     }
+                }
+
+                // Special case for userTids - don't use saved value if userTid is not in it
+                if (gameAttributes.userTids.indexOf(gameAttributes.userTid) < 0) {
+                    gameAttributes.userTids = [gameAttributes.userTid];
                 }
             }
 
@@ -470,7 +482,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
 
                     // Make schedule, start season
                     return phase.newPhase(g.PHASE.REGULAR_SEASON).then(function () {
-                        var lid;
+                        var lid, tx;
 
                         ui.updateStatus("Idle");
 
@@ -478,8 +490,11 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
 
                         helpers.bbgmPing("league");
 
-                        // Auto sort player's roster (other teams will be done in phase.newPhase(g.PHASE.REGULAR_SEASON))
-                        return team.rosterAutoSort(null, g.userTid).then(function () {
+                        // Auto sort rosters
+                        tx = dao.tx("players", "readwrite");
+                        return Promise.each(teams, function (t) {
+                            return team.rosterAutoSort(tx, t.tid);
+                        }).then(function () {
                             return lid;
                         });
                     });
@@ -589,27 +604,17 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
     function loadGameAttribute(ot, key) {
         return dao.gameAttributes.get({ot: ot, key: key}).then(function (gameAttribute) {
             if (gameAttribute === undefined) {
-                // Default values for old leagues - see also loadGameAttributes
-                if (key === "numTeams") {
-                    g.numTeams = 30;
-                } else if (key === "godMode") {
-                    g.godMode = false;
-                } else if (key === "godModeInPast") {
-                    g.godModeInPast = false;
-                } else if (key === "phaseChangeInProgress") {
-                    g.phaseChangeInProgress = false;
-                } else if (key === "autoPlaySeasons") {
-                    g.autoPlaySeasons = 0;
-                } else {
-                    throw new Error("Unknown game attribute: " + key);
-                }
-            } else {
-                g[key] = gameAttribute.value;
+                throw new Error("Unknown game attribute: " + key);
             }
 
-            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
+            g[key] = gameAttribute.value;
+
+            // UI stuff - see also loadGameAttributes
             if (key === "godMode") {
                 g.vm.topMenu.godMode(g.godMode);
+            }
+            if (key === "userTid" || key === "userTids") {
+                g.vm.multiTeam[key](gameAttribute.value);
             }
         });
     }
@@ -628,25 +633,15 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                 g[gameAttributes[i].key] = gameAttributes[i].value;
             }
 
-            // Default values for old leagues - see also loadGameAttribute
-            if (g.numTeams === undefined) {
-                g.numTeams = 30;
-            }
-            if (g.godMode === undefined) {
-                g.godMode = false;
-            }
-            if (g.godModeInPast === undefined) {
-                g.godModeInPast = false;
-            }
-            if (g.phaseChangeInProgress === undefined) {
-                g.phaseChangeInProgress = false;
-            }
-            if (g.autoPlaySeasons === undefined) {
-                g.autoPlaySeasons = 0;
+            // Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w
+            if (g.userTids === undefined) {
+                g.userTids = [g.userTid];
             }
 
-            // Make sure God Mode is correctly recognized for the UI - see also loadGameAttribute
+            // UI stuff - see also loadGameAttribute
             g.vm.topMenu.godMode(g.godMode);
+            g.vm.multiTeam.userTid(g.userTid);
+            g.vm.multiTeam.userTids(g.userTids);
         });
     }
 

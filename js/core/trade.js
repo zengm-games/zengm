@@ -470,9 +470,11 @@ define(["dao", "globals", "core/league", "core/player", "core/team", "lib/bluebi
 
                     return tx.complete().then(function () {
                         if (outcome === "accepted") {
-                            // Auto-sort CPU team roster
-                            return team.rosterAutoSort(null, tids[1]).then(function () {
-                                return clear(); // This includes dbChange
+                            return clear().then(function () { // This includes dbChange
+                                // Auto-sort CPU team roster
+                                if (g.userTids.indexOf(tids[1]) < 0) {
+                                    return team.rosterAutoSort(null, tids[1]);
+                                }
                             }).then(function () {
                                 return [true, 'Trade accepted! "Nice doing business with you!"'];
                             });

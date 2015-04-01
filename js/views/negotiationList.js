@@ -36,6 +36,11 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "lib/bluebird"
         ]).spread(function (negotiations, players) {
             var i, j, negotiationPids;
 
+            // For Multi Team Mode, might have other team's negotiations going on
+            negotiations = negotiations.filter(function (negotiation) {
+                return negotiation.tid === g.userTid;
+            });
+
             negotiationPids = _.pluck(negotiations, "pid");
 
             players = players.filter(function (p) {

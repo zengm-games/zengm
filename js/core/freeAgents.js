@@ -57,7 +57,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                 }
 
                 // Skip the user's team
-                if (tid === g.userTid && g.autoPlaySeasons === 0) {
+                if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
                     return signTeam(ti + 1);
                 }
 

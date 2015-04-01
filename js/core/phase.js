@@ -152,6 +152,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 });*/
             }
+        }).then(function () {
+            return [undefined, ["playerMovement"]];
         });
     }
 
@@ -522,17 +524,21 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 index: "tid",
                 key: IDBKeyRange.lowerBound(0),
                 callback: function (p) {
-                    if (p.contract.exp <= g.season && p.tid === g.userTid && g.autoPlaySeasons === 0) {
+                    var tid;
+
+                    if (p.contract.exp <= g.season && g.userTids.indexOf(p.tid) >= 0 && g.autoPlaySeasons === 0) {
+                        tid = p.tid;
+
                         // Add to free agents first, to generate a contract demand
                         return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods).then(function () {
                             // Open negotiations with player
-                            return contractNegotiation.create(tx, p.pid, true).then(function (error) {
+                            return contractNegotiation.create(tx, p.pid, true, tid).then(function (error) {
                                 if (error !== undefined && error) {
                                     eventLog.add(null, {
                                         type: "refuseToSign",
                                         text: error,
                                         pids: [p.pid],
-                                        tids: [g.userTid] // Not p.tid because that might have changed by now
+                                        tids: [tid]
                                     });
                                 }
                             });
@@ -580,7 +586,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         callback: function (p) {
                             var contract, factor;
 
-                            if (p.contract.exp <= g.season && (p.tid !== g.userTid || g.autoPlaySeasons > 0)) {
+                            if (p.contract.exp <= g.season && (g.userTids.indexOf(p.tid) < 0 || g.autoPlaySeasons > 0)) {
                                 // Automatically negotiate with teams
                                 if (strategies[p.tid] === "rebuilding") {
                                     factor = 0.4;

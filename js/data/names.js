@@ -2,7 +2,7 @@
  * @name data.names
  * @namespace First names and last names.
  */
-define([], function () {
+define(["globals"], function (g) {
     "use strict";
 
     var first, last;
@@ -20076,7 +20076,11 @@ define([], function () {
     ];
 
     return {
-        first: first,
-        last: last
+        load: function () {
+            return {
+                first: (g.names && g.names.first) ? g.names.first : first,
+                last: (g.names && g.names.last) ? g.names.last : last
+            };
+        }
     };
 });

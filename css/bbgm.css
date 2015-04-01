@@ -369,6 +369,10 @@ select.teams {
   width: 100px;
 }
 
+#player-awards {
+  white-space: normal;
+}
+
 .team-picture {
   display: none; /* Hide by default, shown in views/roster.js */
 	background-position: center center;
@@ -643,4 +647,11 @@ tr.warning > td {
   border-right: 4px solid #428bca;
   color: #333;
   font-weight: bold;
+}
+
+#multi-team-menu {
+  background-color: #fff;
+  position: fixed;
+  right: 6px;
+  bottom: 6px;
 }

@@ -2,7 +2,7 @@
  * @name ui
  * @namespace Anything that directly updates the UI.
  */
-define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery", "lib/knockout", "util/helpers", "util/lock"], function (dao, g, templates, Promise, Davis, $, ko, helpers, lock) {
+define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2canvas", "lib/jquery", "lib/knockout", "util/helpers", "util/lock"], function (dao, g, templates, Promise, Davis, html2canvas, $, ko, helpers, lock) {
     "use strict";
 
     /**
@@ -46,9 +46,10 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
 
     // Things to do on initial page load
     function init() {
-        var $playMenuDropdown, api, playMenu, playMenuOptions, topMenuCollapse;
+        var $playMenuDropdown, api, playMenu, playMenuOptions, screenshotEl, topMenuCollapse;
 
         ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
+        ko.applyBindings(g.vm.multiTeam, document.getElementById("multi-team-menu"));
 
         // Handle clicks from play menu
         api = require("api");
@@ -205,6 +206,58 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/jquery"
                 realtimeUpdate(["watchList"]);
             });
         });
+
+        screenshotEl = document.getElementById("screenshot");
+        if (screenshotEl) { // Some errors were showing up otherwise for people with stale index.html maybe
+            screenshotEl.addEventListener("click", function (event) {
+                var contentEl, watermark;
+
+                event.preventDefault();
+
+                contentEl = document.getElementById("league_content");
+                if (!contentEl) { contentEl = document.getElementById("content"); }
+
+                // Add watermark
+                watermark = document.createElement("div");
+                watermark.innerHTML = '<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">' +
+                    document.getElementsByClassName("navbar-brand")[0].parentNode.innerHTML +
+                    '</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>';
+                contentEl.insertBefore(watermark, contentEl.firstChild);
+                contentEl.style.padding = "8px";
+
+                html2canvas(contentEl, {
+                    background: "#fff",
+                    onrendered: function (canvas) {
+                        // Remove watermark
+                        contentEl.removeChild(watermark);
+                        contentEl.style.padding = "";
+
+                        Promise.resolve($.ajax({
+                            url: "https://imgur-apiv3.p.mashape.com/3/image",
+                            type: "post",
+                            headers: {
+                                Authorization: "Client-ID c2593243d3ea679",
+                                "X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H"
+                            },
+                            data: {
+                                image: canvas.toDataURL().split(',')[1]
+                            },
+                            dataType: "json"
+                        })).then(function (data) {
+                            document.getElementById("screenshot-link").href = "http://imgur.com/" + data.data.id;
+                            $("#modal-screenshot").modal("show");
+                        }).catch(function (err) {
+                            console.log(err);
+                            if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {
+                                helpers.error('Error saving screenshot. Error message from Imgur: "' + err.responseJSON.error.message + '"');
+                            } else {
+                                helpers.error("Error saving screenshot.");
+                            }
+                        });
+                    }
+                });
+            });
+        }
     }
 
     /**

@@ -10,6 +10,8 @@ number or not.
 - More detailed info display: four factors in box scores, transaction log in player pages, etc.
 - Statistical Feats feature
 - Auto play multiple seasons
+- Screenshots
+- Multi Team Mode
 
 ## Techincal details
 

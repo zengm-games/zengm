@@ -50,7 +50,7 @@
             data-apikey="c10b95290070cb8888a7a79cc5408555"></script>
     <script type="text/javascript">
       if (Bugsnag) {
-        Bugsnag.appVersion = "2015.03.06.997";
+        Bugsnag.appVersion = "2015.03.29.605";
         if (location.host.indexOf("localhost") === 0) {
           Bugsnag.releaseStage = "development";
         } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
@@ -201,7 +201,9 @@
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['fantasy_draft']}">Fantasy Draft</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['god_mode']}">God Mode</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['delete_old_data']}">Improve Performance</a></li>
+                <li data-bind="visible: lid() !== undefined && godMode" style="display: none"><a data-bind="attrLeagueUrl: {href: ['multi_team_mode']}" class="god-mode">Multi Team Mode</a></li>
                 <li data-bind="visible: lid() !== undefined && godMode" style="display: none"><a data-bind="attrLeagueUrl: {href: ['new_team']}" class="god-mode">Switch Team</a></li>
+                <li><a href="" id="screenshot" data-no-davis="true"><span class="glyphicon glyphicon-camera"></span> Screenshot</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none" role="presentation" class="divider"></li>
                 <li role="presentation" class="dropdown-header">Use at your own risk!</li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); require('core/phase').newPhase(g.PHASE.PLAYOFFS); }())">Skip To Playoffs</a></li>
@@ -244,7 +246,7 @@
           <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> · 
           <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> · 
           <a href="http://basketball-gm.com/share/" target="_blank">Share</a><br>
-          <p class="rev">v3.4 · <!--rev-->2015.03.06.997</p>
+          <p class="rev">v3.4 · <!--rev-->2015.03.29.605</p>
         </p>
       </footer>
     </div>
@@ -266,6 +268,32 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="modal-insticator">
+      <div class="modal-dialog" style="width: 1100px">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Please support Basketball GM!</h4>
+          </div>
+          <div class="modal-body">
+            <div id="insticator-api-div"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modal-screenshot">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <a id="screenshot-link" target="_blank">Click here to view your screenshot.</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="multi-team-menu" data-bind="multiTeamMenu: [userTid, userTids]" style="display: none"></div>
 
     <iframe style="display: none;" src="/manifest_hack"></iframe> 
 

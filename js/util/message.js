@@ -2,7 +2,7 @@
  * @name util.message
  * @namespace Messages from the owner of the team to the GM.
  */
-define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, helpers, random) {
+define(["dao", "globals", "lib/bluebird", "util/helpers", "util/random"], function (dao, g, Promise, helpers, random) {
     "use strict";
 
     var activities, first, intro, money, ovr, playoffs, wins;
@@ -149,6 +149,11 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
     function generate(tx, deltas) {
         var activity1, activity2, indMoney, indOvr, indPlayoffs, indWins, m, ownerMoodSum;
 
+        // If auto play seasons or multi team mode, no messages
+        if (g.autoPlaySeasons > 0 || g.userTids.length > 1) {
+            return Promise.resolve();
+        }
+
         ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
 
         if (g.showFirstOwnerMessage) {
@@ -210,7 +215,7 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
                     "<p>" + random.choice(wins[indWins]) + " " + random.choice(playoffs[indPlayoffs]) + "</p>" +
                     "<p>" + random.choice(money[indMoney]) + "</p>" +
                     "<p>" + random.choice(ovr[indOvr]).replace("{{activity}}", activity2) + "</p>";
-            } else if (g.season < g.gracePeriodEnd || g.godMode || g.autoPlaySeasons > 0) {
+            } else if (g.season < g.gracePeriodEnd || g.godMode) {
                 if (deltas.wins < 0 && deltas.playoffs < 0 && deltas.money < 0) {
                     m = "<p>What the hell did you do to my franchise?! I'd fire you, but I can't find anyone who wants to clean up your mess.</p>";
                 } else if (deltas.money < 0 && deltas.wins >= 0 && deltas.playoffs >= 0) {
@@ -246,7 +251,7 @@ define(["dao", "globals", "util/helpers", "util/random"], function (dao, g, help
             if (ownerMoodSum > -1) {
                 return;
             }
-            if (g.season < g.gracePeriodEnd || g.godMode || g.autoPlaySeasons > 0) {
+            if (g.season < g.gracePeriodEnd || g.godMode) {
                 // Can't get fired yet... or because of God Mode
                 return;
             }

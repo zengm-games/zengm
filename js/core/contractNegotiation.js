@@ -12,9 +12,12 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
      * @param {IDBTransaction|null} tx An IndexedDB transaction on gameAttributes, messages, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.
      * @param {number} pid An integer that must correspond with the player ID of a free agent.
      * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
+     * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.userTid.
      * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
      */
-    function create(tx, pid, resigning) {
+    function create(tx, pid, resigning, tid) {
+        tid = tid !== undefined ? tid : g.userTid;
+
         if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) && !resigning) {
             return Promise.resolve("You're not allowed to sign free agents now.");
         }
@@ -55,6 +58,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
 
                     negotiation = {
                         pid: pid,
+                        tid: tid,
                         team: {amount: playerAmount, years: playerYears},
                         player: {amount: playerAmount, years: playerYears},
                         orig: {amount: playerAmount, years: playerYears},
@@ -279,9 +283,13 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/team", "
 
             // If this contract brings team over the salary cap, it's not a minimum;
             // contract, and it's not re-signing a current player, ERROR!
-
             if (!negotiation.resigning && (payroll + negotiation.player.amount > g.salaryCap && negotiation.player.amount !== g.minContract)) {
                 return "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.";
+            }
+
+            // This error is for sanity checking in multi team mode. Need to check for existence of negotiation.tid because it wasn't there originally and I didn't write upgrade code. Can safely get rid of it later.
+            if (negotiation.tid !== undefined && negotiation.tid !== g.userTid) {
+                return "This negotiation was started by the " + g.teamRegionsCache[negotiation.tid] + " " + g.teamNamesCache[negotiation.tid] + " but you are the " + g.teamRegionsCache[g.userTid] + " " + g.teamNamesCache[g.userTid] + ". Either switch teams or cancel this negotiation.";
             }
 
             // Adjust to account for in-season signings;

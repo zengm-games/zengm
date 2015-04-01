@@ -5,6 +5,8 @@
 define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/bluebird", "lib/faces", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, g, finances, injuries, names, Promise, faces, _, eventLog, helpers, random) {
     "use strict";
 
+    var playerNames;
+
     /**
      * Limit a rating to between 0 and 100.
      *
@@ -39,6 +41,11 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
     }
 
     function fuzzRating(rating, fuzz) {
+        // Turn off fuzz in multi team mode, because it doesn't have any meaning there in its current form
+        if (g.userTids.length > 1) {
+            fuzz = 0;
+        }
+
         return Math.round(helpers.bound(rating + fuzz, 0, 100));
     }
 
@@ -648,24 +655,28 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
     function name() {
         var fn, fnRand, i, ln, lnRand;
 
+        if (!playerNames) {
+            // This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
+            playerNames = names.load();
+        }
+
         // First name
-        fnRand = random.uniform(0, 90.04);
-        for (i = 0; i < names.first.length; i++) {
-            if (names.first[i][1] >= fnRand) {
+        fnRand = random.uniform(0, playerNames.first[playerNames.first.length - 1][1]);
+        for (i = 0; i < playerNames.first.length; i++) {
+            if (playerNames.first[i][1] >= fnRand) {
                 break;
             }
         }
-        fn = names.first[i][0];
-
+        fn = playerNames.first[i][0];
 
         // Last name
-        lnRand = random.uniform(0, 77.48);
-        for (i = 0; i < names.last.length; i++) {
-            if (names.last[i][1] >= lnRand) {
+        lnRand = random.uniform(0, playerNames.last[playerNames.last.length - 1][1]);
+        for (i = 0; i < playerNames.last.length; i++) {
+            if (playerNames.last[i][1] >= lnRand) {
                 break;
             }
         }
-        ln = names.last[i][0];
+        ln = playerNames.last[i][0];
 
         return fn + " " + ln;
     }
@@ -842,6 +853,12 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                     statsRow.yearsWithTeam += 1;
                 } else {
                     break;
+                }
+
+                // Is this a complete duplicate entry? If so, not needed. This can happen e.g. in fantasy draft
+                // This is not quite a unique constraint because if a player is traded away from a team then back again, this check won't be reached because of the "break" above. That's fine. It shows the stints separately, which is probably best.
+                if (ps[i].pid === statsRow.pid && ps[i].season === statsRow.season && ps[i].tid === statsRow.tid && ps[i].playoffs === statsRow.playoffs) {
+                    return;
                 }
             }
 

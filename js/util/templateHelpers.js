@@ -247,7 +247,7 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
     };
 
     ko.bindingHandlers.gameScore = {
-        update: function(element, valueAccessor) {
+        update: function (element, valueAccessor) {
             var arg, newArg, stat;
             arg = valueAccessor();
             newArg = {}; // To prevent unwrapping the underlying observable
@@ -258,6 +258,43 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             }
             return ko.bindingHandlers.html.update(element, function () {
                 return helpers.gameScore(newArg);
+            });
+        }
+    };
+
+    ko.bindingHandlers.multiTeamMenu = {
+        update: function (element, valueAccessor) {
+            var arg, i, options, teamNames, userTid, userTids;
+            arg = valueAccessor();
+            userTid = ko.unwrap(arg[0]);
+            userTids = ko.unwrap(arg[1]);
+
+            // Hide if not multi team or not loaded yet
+            if (userTids.length <= 1 || g.teamRegionsCache === undefined) {
+                return ko.bindingHandlers.visible.update(element, function () {
+                    return false;
+                });
+            }
+
+            ko.bindingHandlers.visible.update(element, function () {
+                return true;
+            });
+
+            teamNames = userTids.map(function (t) {
+                return g.teamRegionsCache[t] + " " + g.teamNamesCache[t];
+            });
+
+            options = "";
+            for (i = 0; i < userTids.length; i++) {
+                if (userTid === userTids[i]) {
+                    options += '<option value="' + userTids[i] + '" selected>' + teamNames[i] + '</option>';
+                } else {
+                    options += '<option value="' + userTids[i] + '">' + teamNames[i] + '</option>';
+                }
+            }
+
+            return ko.bindingHandlers.html.update(element, function () {
+                return '<label for="multi-team-select">Currently controlling:</label><br><select class="form-control" id="multi-team-select" onchange="require(\'util/helpers\').updateMultiTeam(parseInt(this.options[this.selectedIndex].value, 10))">' + options + '</select>';
             });
         }
     };

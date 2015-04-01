@@ -286,12 +286,14 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
 
                     for (i = 0; i < players.length; i++) {
                         if (players[i].pid === p.pid) {
-                            p.rosterOrder = players[i].rosterOrder;
+                            if (p.rosterOrder !== players[i].rosterOrder) {
+                                // Only write to DB if this actually changes
+                                p.rosterOrder = players[i].rosterOrder;
+                                return p;
+                            }
                             break;
                         }
                     }
-
-                    return p;
                 }
             });
         });
@@ -1295,8 +1297,13 @@ console.log(dv);*/
 
                 numPlayersOnRoster = players.length;
                 if (numPlayersOnRoster > 15) {
-                    if (tid === g.userTid && g.autoPlaySeasons === 0) {
-                        userTeamSizeError = 'Your team currently has more than the maximum number of players (15). You must remove players (by <a href="' + helpers.leagueUrl(["roster"]) + '">releasing them from your roster</a> or through <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
+                    if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
+                        if (g.userTids.length <= 1) {
+                            userTeamSizeError = 'Your team has ';
+                        } else {
+                            userTeamSizeError = 'The ' + g.teamRegionsCache[tid] + ' ' + g.teamNamesCache[tid] + ' have ';
+                        }
+                        userTeamSizeError += 'more than the maximum number of players (15). You must remove players (by <a href="' + helpers.leagueUrl(["roster"]) + '">releasing them from your roster</a> or through <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
                     } else {
                         // Automatically drop lowest value players until we reach 15
                         players.sort(function (a, b) { return a.value - b.value; }); // Lowest first
@@ -1307,8 +1314,13 @@ console.log(dv);*/
                         return Promise.all(promises);
                     }
                 } else if (numPlayersOnRoster < g.minRosterSize) {
-                    if (tid === g.userTid && g.autoPlaySeasons === 0) {
-                        userTeamSizeError = 'Your team currently has less than the minimum number of players (' + g.minRosterSize + '). You must add players (through <a href="' + helpers.leagueUrl(["free_agents"]) + '">free agency</a> or <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
+                    if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
+                        if (g.userTids.length <= 1) {
+                            userTeamSizeError = 'Your team has ';
+                        } else {
+                            userTeamSizeError = 'The ' + g.teamRegionsCache[tid] + ' ' + g.teamNamesCache[tid] + ' have ';
+                        }
+                        userTeamSizeError += 'less than the minimum number of players (' + g.minRosterSize + '). You must add players (through <a href="' + helpers.leagueUrl(["free_agents"]) + '">free agency</a> or <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
                     } else {
                         // Auto-add players
                         promises = [];
@@ -1338,7 +1350,7 @@ console.log(dv);*/
             }).then(function () {
                 // Auto sort rosters (except player's team)
                 // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
-                if (tid !== g.userTid || g.autoPlaySeasons > 0) {
+                if (g.userTids.indexOf(tid) < 0 || g.autoPlaySeasons > 0) {
                     return rosterAutoSort(tx, tid);
                 }
             });

@@ -132,7 +132,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/bluebird", "li
     }
 
     function InitViewModel() {
-        this.teams = [];
+        this.teams = ko.observable([]);
         this.userTeamName = undefined;
         this.summary = {
             enablePropose: ko.observable(false)
@@ -272,11 +272,10 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/bluebird", "li
                 };
             });
         }).then(updateSummary).then(function (vars) {
-            if (vm.teams.length === 0) {
-                vars.teams = helpers.getTeams(otherTid);
-                vars.teams.splice(g.userTid, 1); // Can't trade with yourself
-                vars.userTeamName = g.teamRegionsCache[g.userTid] + " " + g.teamNamesCache[g.userTid];
-            }
+            // Always run this, for multi team mode
+            vars.teams = helpers.getTeams(otherTid);
+            vars.teams.splice(g.userTid, 1); // Can't trade with yourself
+            vars.userTeamName = g.teamRegionsCache[g.userTid] + " " + g.teamNamesCache[g.userTid];
 
             // If the season is over, can't trade players whose contracts are expired
             if (g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {

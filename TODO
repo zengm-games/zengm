@@ -13,13 +13,28 @@ DEATH
     retired players should eventually die
     when a death happens for an active player, first retire them and then mark them as dead
   types
-    injury
-    car crash
-    plane crash (team)
-      what if in playoffs, need free agents
-    drug overdose
-    gambling fight
+    plane crash (whole team, 1 every 200 years)
+    individual player (1 every 50 years)
+      drug overdose
+      bar fight
+      car crash
+      gerald ford
+  what if in playoffs, need free agents
+  give extra draft picks as compensation?
+    what would the nba do?
+  reset owner mood, new owner message
   screenshot should show notifications at bottom
+
+god mode
+  options
+    disable injuries
+    disable ratings display
+    disable salary cap
+  edit player
+    edit injury
+
+too many games in season
+  are there ever games scheduled when season starts?
 
 multi team UI - click from league to main dashboard and switch teams menu persists
 
@@ -313,11 +328,6 @@ power rankings
   cache values for preseason and after season
     teamSeason.powerRankings = {overall, performance, talent, preseason}
   only show live during regular season
-god mode
-  options
-    disable injuries
-    disable ratings display
-    disable salary cap
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade
   email

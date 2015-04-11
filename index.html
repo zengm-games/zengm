@@ -60,6 +60,11 @@
         } else {
           Bugsnag.releaseStage = "unknown";
         }
+
+        // For errors inside Bluebird
+        window.onunhandledrejection = function (err) {
+            Bugsnag.notifyException(err);
+        };
       }
     </script>
   </head>

@@ -9,10 +9,7 @@ DEATH
     notify = require("lib/bbgm-notifications").notify;
     notify("Message", "Title", true)
   stop gamesim when showing persistent notification (do in util/eventLog)
-  diedYear
-    retired players should eventually die
-    allow setting in god mode
-    when a death happens for an active player, first retire them and then mark them as dead
+  when a death happens for an active player, first retire them and then mark them as dead (diedYear)
   types
     plane crash (whole team, 1 every 200 years)
       give extra draft picks as compensation?
@@ -34,6 +31,7 @@ god mode
     disable salary cap
   edit player
     edit injury
+    edit diedYear (or null if blank)
 
 too many games in season
   are there ever games scheduled when season starts?

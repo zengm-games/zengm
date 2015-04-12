@@ -62,9 +62,9 @@
         }
 
         // For errors inside Bluebird
-        window.onunhandledrejection = function (err) {
+        window.addEventListener("unhandledrejection", function (err) {
             Bugsnag.notifyException(err);
-        };
+        });
       }
     </script>
   </head>

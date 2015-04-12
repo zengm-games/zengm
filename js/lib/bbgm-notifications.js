@@ -16,10 +16,10 @@ define(function () {
 
         persistent = persistent !== undefined ? persistent : false;
         timeoutRemaining = timeOut || 5000;
-console.log(persistent);
 
         notificationElement = document.createElement("div");
         notificationElement.classList.add("notification");
+        notificationElement.classList.add("notification-fadein");
 
         textElement = document.createElement("div");
 

@@ -55,7 +55,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", 
                 });
 
                 events = events.filter(function (event) {
-                    if (event.type === "award" || event.type === "injured" || event.type === "healed" || event.type === "hallOfFame" || event.type === "playerFeat") {
+                    if (event.type === "award" || event.type === "injured" || event.type === "healed" || event.type === "hallOfFame" || event.type === "playerFeat" || event.type === "tragedy") {
                         return false;
                     }
 

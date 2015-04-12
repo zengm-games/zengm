@@ -1717,14 +1717,18 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @param {Object} p Player object.
      * @return {Object} p Updated (retired) player object.
      */
-    function retire(tx, p, playerStats) {
-        eventLog.add(tx, {
-            type: "retired",
-            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>  retired.',
-            showNotification: p.tid === g.userTid,
-            pids: [p.pid],
-            tids: [p.tid]
-        });
+    function retire(tx, p, playerStats, retiredNotification) {
+        retiredNotification = retiredNotification !== undefined ? retiredNotification : true;
+
+        if (retiredNotification) {
+            eventLog.add(tx, {
+                type: "retired",
+                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>  retired.',
+                showNotification: p.tid === g.userTid,
+                pids: [p.pid],
+                tids: [p.tid]
+            });
+        }
 
         p.tid = g.PLAYER.RETIRED;
         p.retiredYear = g.season;
@@ -1972,6 +1976,51 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         }
     }
 
+    function killOne() {
+        var p, tid, tx;
+
+        // Pick random team
+        tid = g.userTid;//random.randInt(0, g.numTeams);
+
+        tx = dao.tx(["events", "playerStats", "players"], "readwrite");
+
+        return dao.players.getAll({
+            ot: tx,
+            index: "tid",
+            key: tid
+        }).then(function (players) {
+            // Pick a random player on that team
+            p = random.choice(players);
+
+            // Get player stats, used for HOF calculation
+            return dao.playerStats.getAll({
+                ot: tx,
+                index: "pid, season, tid",
+                key: IDBKeyRange.bound([p.pid], [p.pid, ''])
+            });
+        }).then(function (playerStats) {
+            p = retire(tx, p, playerStats, false);
+
+            p.diedYear = g.season;
+
+            return dao.players.put({
+                ot: tx,
+                value: p
+            });
+        }).then(function () {
+            eventLog.add(tx, {
+                type: "tragedy",
+                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>  died.',
+                showNotification: tid === g.userTid,
+                pids: [p.pid],
+                tids: [p.tid],
+                persistent: true
+            });
+
+            return tx.complete();
+        });
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1995,6 +2044,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         contractSeasonsRemaining: contractSeasonsRemaining,
         moodColorText: moodColorText,
         augmentPartialPlayer: augmentPartialPlayer,
-        checkStatisticalFeat: checkStatisticalFeat
+        checkStatisticalFeat: checkStatisticalFeat,
+        killOne: killOne
     };
 });

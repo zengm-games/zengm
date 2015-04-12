@@ -5,11 +5,6 @@ CURRENT
 -------
 
 DEATH
-  persistent notifications
-    notify = require("lib/bbgm-notifications").notify;
-    notify("Message", "Title", true)
-  stop gamesim when showing persistent notification (do in util/eventLog)
-  when a death happens for an active player, first retire them and then mark them as dead (diedYear)
   types
     plane crash (whole team, 1 every 200 years)
       give extra draft picks as compensation?

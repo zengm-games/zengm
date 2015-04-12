@@ -1977,7 +1977,17 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
     }
 
     function killOne() {
-        var p, tid, tx;
+        var p, reason, tid, tx;
+
+        reason = random.choice([
+            "died from a drug overdose",
+            "was killed by a gunshot during an altercation at a night club",
+            "was eaten by wolves",
+            "died in a car crash",
+            "was stabbed to death by a jealous ex-girlfriend",
+            "committed suicide",
+            "died from a rapidly progressing case of ebola"
+        ]);
 
         // Pick random team
         tid = g.userTid;//random.randInt(0, g.numTeams);
@@ -2010,7 +2020,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         }).then(function () {
             eventLog.add(tx, {
                 type: "tragedy",
-                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>  died.',
+                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ' + reason + '.',
                 showNotification: tid === g.userTid,
                 pids: [p.pid],
                 tids: [p.tid],

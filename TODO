@@ -14,16 +14,17 @@ DEATH
     when a death happens for an active player, first retire them and then mark them as dead
   types
     plane crash (whole team, 1 every 200 years)
+      give extra draft picks as compensation?
+        what would the nba do?
+      reset owner mood, new owner message
     individual player (1 every 50 years)
       drug overdose
       bar fight
       car crash
       gerald ford
-  what if in playoffs, need free agents
-  give extra draft picks as compensation?
-    what would the nba do?
-  reset owner mood, new owner message
-  screenshot should show notifications at bottom
+  only in regular season. in playoffs, would create problems with free agent
+  screenshot should show notifications
+    try move div there and back
 
 god mode
   options

@@ -1990,7 +1990,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         ]);
 
         // Pick random team
-        tid = g.userTid;//random.randInt(0, g.numTeams);
+        tid = random.randInt(0, g.numTeams - 1);
 
         tx = dao.tx(["events", "playerStats", "players"], "readwrite");
 
@@ -2002,6 +2002,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             // Pick a random player on that team
             p = random.choice(players);
 
+console.log("KILL ONE", p);
             // Get player stats, used for HOF calculation
             return dao.playerStats.getAll({
                 ot: tx,

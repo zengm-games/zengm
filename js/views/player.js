@@ -86,7 +86,6 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", 
     }
 
     function uiFirst(vm) {
-console.log(vm.player)
         ko.computed(function () {
             ui.title(vm.player.name());
         }).extend({throttle: 1});

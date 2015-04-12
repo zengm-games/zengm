@@ -167,7 +167,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/bluebird", "li
         }
     };
 
-    function updateTrade(inputs, updateEvents, vm) {
+    function updateTrade(inputs) {
         var otherTid;
 
         return Promise.all([

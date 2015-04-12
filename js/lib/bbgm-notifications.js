@@ -12,7 +12,7 @@ define(function () {
     Notifier = {};
 
     Notifier.notify = function (message, title, persistent, timeOut) {
-        var closeLink, i, notificationElement, remaining, removeOnFadeOut, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
+        var closeLink, i, notificationElement, notificationTimeout, remaining, removeOnFadeOut, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
 
         persistent = persistent !== undefined ? persistent : false;
         timeoutRemaining = timeOut || 5000;
@@ -35,14 +35,14 @@ define(function () {
 
         if (!persistent) {
             // Hide notification after timeout
-            function notificationTimeout() {
+            notificationTimeout = function () {
                 timeoutId = window.setTimeout(function () {
                     if (container.contains(notificationElement)) {
                         notificationElement.classList.add("notification-delete");
                     }
                 }, timeoutRemaining);
                 timeoutStart = new Date();
-            }
+            };
             notificationTimeout();
 
             // When hovering over, don't count towards timeout

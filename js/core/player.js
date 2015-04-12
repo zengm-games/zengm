@@ -1047,6 +1047,9 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             for (i = 0; i < options.attrs.length; i++) {
                 if (options.attrs[i] === "age") {
                     fp.age = g.season - p.born.year;
+                } else if (options.attrs[i] === "diedYear") {
+                    // Non-dead players wil not have any diedYear property
+                    fp.diedYear = p.hasOwnProperty("diedYear") ? p.diedYear : null;
                 } else if (options.attrs[i] === "draft") {
                     fp.draft = p.draft;
                     fp.draft.age = p.draft.year - p.born.year;

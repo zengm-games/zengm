@@ -2023,7 +2023,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                 text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ' + reason + '.',
                 showNotification: tid === g.userTid,
                 pids: [p.pid],
-                tids: [p.tid],
+                tids: [tid],
                 persistent: true
             });
 

@@ -2002,7 +2002,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             // Pick a random player on that team
             p = random.choice(players);
 
-console.log("KILL ONE", p);
             // Get player stats, used for HOF calculation
             return dao.playerStats.getAll({
                 ot: tx,

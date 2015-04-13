@@ -6,8 +6,13 @@
       <strong><span data-bind="text: player.pos"></span>, <span data-bind="text: player.teamRegion"></span> <span data-bind="text: player.teamName"></span></strong><br>
       Height: <span data-bind="text: player.hgtFt"></span>'<span data-bind="text: player.hgtIn"></span>"<br>
       Weight: <span data-bind="text: player.weight"></span> lbs<br>
-      Age: <span data-bind="text: player.age"></span><br>
       Born: <span data-bind="text: player.born.year"></span> - <span data-bind="text: player.born.loc"></span><br>
+      <!-- ko if: !player.diedYear() -->
+        Age: <span data-bind="text: player.age"></span><br>
+      <!-- /ko -->
+      <!-- ko if: player.diedYear -->
+        Died: <span data-bind="text: player.diedYear"></span><br>
+      <!-- /ko -->
       <!-- ko if: player.draft.round -->
         Draft: <a data-bind="text: player.draft.year, attrLeagueUrl: {href: ['draft_summary', player.draft.year]}"></a> - Round <span data-bind="text: player.draft.round"></span> (Pick <span data-bind="text: player.draft.pick"></span>) by <span data-bind="text: player.draft.abbrev"></span><br>
       <!-- /ko -->

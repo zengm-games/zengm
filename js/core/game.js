@@ -726,7 +726,17 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                                 });
                             });
                         } else {
-                            play(numDays - 1, false);
+                            // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
+                            Promise.try(function () {
+                                // 100 days in a season (roughly), and we want a death every 50 years on average
+                                if (Math.random() < 1 / (100 * 50)) {
+                                    return player.killOne().then(function () {
+                                        ui.realtimeUpdate(["playerMovement"]);
+                                    });
+                                }
+                            }).then(function () {
+                                play(numDays - 1, false);
+                            });
                         }
                     }, raw);
                 });

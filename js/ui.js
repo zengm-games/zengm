@@ -210,7 +210,7 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
         screenshotEl = document.getElementById("screenshot");
         if (screenshotEl) { // Some errors were showing up otherwise for people with stale index.html maybe
             screenshotEl.addEventListener("click", function (event) {
-                var contentEl, watermark;
+                var contentEl, i, notifications, watermark;
 
                 event.preventDefault();
 
@@ -225,12 +225,24 @@ define(["dao", "globals", "templates", "lib/bluebird", "lib/davis", "lib/html2ca
                 contentEl.insertBefore(watermark, contentEl.firstChild);
                 contentEl.style.padding = "8px";
 
+                // Add notifications
+                notifications = document.getElementsByClassName('notification-container')[0].cloneNode(true);
+                notifications.classList.remove('notification-container');
+                for (i = 0; i < notifications.childNodes.length; i++) {
+                    // Otherwise screeenshot is taken before fade in is complete
+                    notifications.childNodes[0].classList.remove('notification-fadein');
+                }
+                contentEl.appendChild(notifications);
+
                 html2canvas(contentEl, {
                     background: "#fff",
                     onrendered: function (canvas) {
                         // Remove watermark
                         contentEl.removeChild(watermark);
                         contentEl.style.padding = "";
+
+                        // Remove notifications
+                        contentEl.removeChild(notifications);
 
                         Promise.resolve($.ajax({
                             url: "https://imgur-apiv3.p.mashape.com/3/image",

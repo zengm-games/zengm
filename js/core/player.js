@@ -1047,6 +1047,9 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             for (i = 0; i < options.attrs.length; i++) {
                 if (options.attrs[i] === "age") {
                     fp.age = g.season - p.born.year;
+                } else if (options.attrs[i] === "diedYear") {
+                    // Non-dead players wil not have any diedYear property
+                    fp.diedYear = p.hasOwnProperty("diedYear") ? p.diedYear : null;
                 } else if (options.attrs[i] === "draft") {
                     fp.draft = p.draft;
                     fp.draft.age = p.draft.year - p.born.year;
@@ -1714,14 +1717,18 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @param {Object} p Player object.
      * @return {Object} p Updated (retired) player object.
      */
-    function retire(tx, p, playerStats) {
-        eventLog.add(tx, {
-            type: "retired",
-            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>  retired.',
-            showNotification: p.tid === g.userTid,
-            pids: [p.pid],
-            tids: [p.tid]
-        });
+    function retire(tx, p, playerStats, retiredNotification) {
+        retiredNotification = retiredNotification !== undefined ? retiredNotification : true;
+
+        if (retiredNotification) {
+            eventLog.add(tx, {
+                type: "retired",
+                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>  retired.',
+                showNotification: p.tid === g.userTid,
+                pids: [p.pid],
+                tids: [p.tid]
+            });
+        }
 
         p.tid = g.PLAYER.RETIRED;
         p.retiredYear = g.season;
@@ -1969,6 +1976,62 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         }
     }
 
+    function killOne() {
+        var p, reason, tid, tx;
+
+        reason = random.choice([
+            "died from a drug overdose",
+            "was killed by a gunshot during an altercation at a night club",
+            "was eaten by wolves",
+            "died in a car crash",
+            "was stabbed to death by a jealous ex-girlfriend",
+            "committed suicide",
+            "died from a rapidly progressing case of ebola"
+        ]);
+
+        // Pick random team
+        tid = random.randInt(0, g.numTeams - 1);
+
+        tx = dao.tx(["events", "playerStats", "players"], "readwrite");
+
+        return dao.players.getAll({
+            ot: tx,
+            index: "tid",
+            key: tid
+        }).then(function (players) {
+            // Pick a random player on that team
+            p = random.choice(players);
+
+console.log("KILL ONE", p);
+            // Get player stats, used for HOF calculation
+            return dao.playerStats.getAll({
+                ot: tx,
+                index: "pid, season, tid",
+                key: IDBKeyRange.bound([p.pid], [p.pid, ''])
+            });
+        }).then(function (playerStats) {
+            p = retire(tx, p, playerStats, false);
+
+            p.diedYear = g.season;
+
+            return dao.players.put({
+                ot: tx,
+                value: p
+            });
+        }).then(function () {
+            eventLog.add(tx, {
+                type: "tragedy",
+                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ' + reason + '.',
+                showNotification: tid === g.userTid,
+                pids: [p.pid],
+                tids: [tid],
+                persistent: true
+            });
+
+            return tx.complete();
+        });
+    }
+
     return {
         addRatingsRow: addRatingsRow,
         addStatsRow: addStatsRow,
@@ -1992,6 +2055,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         contractSeasonsRemaining: contractSeasonsRemaining,
         moodColorText: moodColorText,
         augmentPartialPlayer: augmentPartialPlayer,
-        checkStatisticalFeat: checkStatisticalFeat
+        checkStatisticalFeat: checkStatisticalFeat,
+        killOne: killOne
     };
 });

@@ -40,6 +40,10 @@
         <span data-bind="css: {'bg-info': tid() === $root.userTid()}"><a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev"></a>)</span><br>
       <!-- /ko -->
     <!-- /ko -->
+    <h4>All-Rookie Team</h4>
+    <!-- ko foreach: awards.allRookie -->
+      <span data-bind="css: {'bg-info': tid() === $root.userTid()}"><a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev"></a>)</span><br>
+    <!-- /ko -->
     <br>
   </div>
   <div class="col-md-3 col-sm-4 col-xs-6">
@@ -52,7 +56,7 @@
     <!-- /ko -->
     <br>
   </div>
-  <div class="clearfix visible-sm"></div>
+  <div class="clearfix visible-sm visible-xs"></div>
   <div class="col-md-3 col-sm-12">
     <h4>Retired Players</h4>
     <p style="-moz-column-width: 12em; -moz-columns: 12em; -webkit-columns: 12em; columns: 12em;">

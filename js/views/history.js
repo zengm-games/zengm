@@ -45,6 +45,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
             ]).spread(function (awards, retiredPlayers, teams) {
                 var champ, i;
 
+console.log(awards);
                 // Hack placeholder for old seasons before Finals MVP existed
                 if (!awards.hasOwnProperty("finalsMvp")) {
                     awards.finalsMvp = {
@@ -54,6 +55,11 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                         trb: 0,
                         ast: 0
                     };
+                }
+
+                // Hack placeholder for old seasons before Finals MVP existed
+                if (!awards.hasOwnProperty("allRookie")) {
+                    awards.allRookie = [];
                 }
 
                 // Get list of retired players

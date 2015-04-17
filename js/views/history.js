@@ -45,7 +45,6 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
             ]).spread(function (awards, retiredPlayers, teams) {
                 var champ, i;
 
-console.log(awards);
                 // Hack placeholder for old seasons before Finals MVP existed
                 if (!awards.hasOwnProperty("finalsMvp")) {
                     awards.finalsMvp = {

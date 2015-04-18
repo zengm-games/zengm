@@ -28,7 +28,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                 key: g.PLAYER.FREE_AGENT
             })
         ]).spread(function (teams, players) {
-            var i, signTeam, strategies, tids;
+            var i, strategies, tids;
 
             strategies = _.pluck(teams, "strategy");
 

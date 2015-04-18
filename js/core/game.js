@@ -622,13 +622,12 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
             tx = dao.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
             return Promise.map(results, function (result) {
-
                 return writeTeamStats(tx, result).then(function (att) {
                     return writeGameStats(tx, result, att);
                 }).then(function () {
                     return writePlayerStats(tx, result);
                 }).then(function () {
-                    return result.gid
+                    return result.gid;
                 });
             }, {concurrency: Infinity}).then(function (gidsFinished) {
                 var j;

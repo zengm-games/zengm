@@ -621,6 +621,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
             tx = dao.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
+            // No concurrency for this map, otherwise playoff series won't be recorded correctly. That should probably be refactored
             return Promise.map(results, function (result) {
                 return writeTeamStats(tx, result).then(function (att) {
                     return writeGameStats(tx, result, att);
@@ -629,19 +630,21 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 }).then(function () {
                     return result.gid;
                 });
-            }, {concurrency: Infinity}).then(function (gidsFinished) {
-                var j;
+            }, {concurrency: 1}).then(function (gidsFinished) {
+                var j, promises;
+
+                promises = [];
 
                 // Delete finished games from schedule
                 for (j = 0; j < gidsFinished.length; j++) {
-                    dao.schedule.delete({ot: tx, key: gidsFinished[j]});
+                    promises.push(dao.schedule.delete({ot: tx, key: gidsFinished[j]}));
                 }
 
                 // Update ranks
-                finances.updateRanks(tx, ["expenses", "revenues"]);
+                promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
 
                 // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-                dao.players.iterate({
+                promises.push(dao.players.iterate({
                     ot: tx,
                     index: "tid",
                     key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
@@ -680,7 +683,9 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                             return p;
                         }
                     }
-                });
+                }));
+
+                return Promise.all(promises);
             }).then(function () {
                 return tx.complete().then(function () {
                     var i, raw, url;

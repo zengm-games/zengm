@@ -710,7 +710,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                             if (g.phase === g.PHASE.PLAYOFFS) {
                                 // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
                                 tx2 = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
-                                season.newSchedulePlayoffsDay(tx).then(function (playoffsOver) {
+                                season.newSchedulePlayoffsDay(tx2).then(function (playoffsOver) {
                                     tx2.complete().then(function () {
                                         if (playoffsOver) {
                                             return phase.newPhase(g.PHASE.BEFORE_DRAFT);
@@ -774,7 +774,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
                 return loadTeams(tx).then(function (teams) {
-                    var tx;
+                    var tx2;
 
                     // Play games
                     // Will loop through schedule and simulate all games
@@ -783,9 +783,9 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                         // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
 
                         // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                        tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
-                        season.newSchedulePlayoffsDay(tx);
-                        tx.complete().then(function () {
+                        tx2 = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
+                        season.newSchedulePlayoffsDay(tx2);
+                        return tx2.complete().then(function () {
                             return season.getSchedule({oneDay: true}).then(function (schedule) {
 // Can't merge easily with next call because of schedule overwriting
                                 return cbSimGames(schedule, teams);

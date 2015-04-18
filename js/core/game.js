@@ -346,19 +346,20 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
             });
         }
 
-        return dao.games.put({ot: tx, value: gameStats}).then(function () {
-            // Record progress of playoff series, if appropriate
-            if (!gameStats.playoffs) {
-                return;
-            }
+        return dao.games.put({ot: tx, value: gameStats});
+    }
 
-            return dao.playoffSeries.get({ot: tx, key: g.season}).then(function (playoffSeries) {
-                var currentRoundText, i, loserTid, loserWon, playoffRound, series, showNotification, winnerTid, won0;
+    function updatePlayoffSeries(tx, results) {
+        return dao.playoffSeries.get({ot: tx, key: g.season}).then(function (playoffSeries) {
+            var playoffRound;
 
-                playoffRound = playoffSeries.series[playoffSeries.currentRound];
+            playoffRound = playoffSeries.series[playoffSeries.currentRound];
+
+            results.forEach(function (result) {
+                var currentRoundText, i, loserTid, loserWon, series, showNotification, winnerTid, won0;
 
                 // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
-                if (results.team[0].stat.pts > results.team[1].stat.pts) {
+                if (result.team[0].stat.pts > result.team[1].stat.pts) {
                     won0 = true;
                 } else {
                     won0 = false;
@@ -367,14 +368,14 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 for (i = 0; i < playoffRound.length; i++) {
                     series = playoffRound[i];
 
-                    if (series.home.tid === results.team[0].id) {
+                    if (series.home.tid === result.team[0].id) {
                         if (won0) {
                             series.home.won += 1;
                         } else {
                             series.away.won += 1;
                         }
                         break;
-                    } else if (series.away.tid === results.team[0].id) {
+                    } else if (series.away.tid === result.team[0].id) {
                         if (won0) {
                             series.away.won += 1;
                         } else {
@@ -418,9 +419,9 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                         tids: [winnerTid, loserTid]
                     });
                 }
-
-                return dao.playoffSeries.put({ot: tx, value: playoffSeries});
             });
+
+            return dao.playoffSeries.put({ot: tx, value: playoffSeries});
         });
     }
 
@@ -621,7 +622,6 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
             tx = dao.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
-            // No concurrency for this map, otherwise playoff series won't be recorded correctly. That should probably be refactored
             return Promise.map(results, function (result) {
                 return writeTeamStats(tx, result).then(function (att) {
                     return writeGameStats(tx, result, att);
@@ -630,10 +630,15 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 }).then(function () {
                     return result.gid;
                 });
-            }, {concurrency: 1}).then(function (gidsFinished) {
+            }, {concurrency: Infinity}).then(function (gidsFinished) {
                 var j, promises;
 
                 promises = [];
+
+                // Update playoff series W/L
+                if (g.phase === g.PHASE.PLAYOFFS) {
+                    promises.push(updatePlayoffSeries(tx, results));
+                }
 
                 // Delete finished games from schedule
                 for (j = 0; j < gidsFinished.length; j++) {

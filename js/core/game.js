@@ -275,8 +275,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 }));
 
                 return Promise.all(promises);
-            });
-        });
+            }, {concurrency: Infinity});
+        }, {concurrency: Infinity});
     }
 
     function writeGameStats(tx, results, att) {
@@ -617,23 +617,20 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
         // Saves a vector of results objects for a day, as is output from cbSimGames
         cbSaveResults = function (results) {
-            var cbSaveResult, gidsFinished, tx;
-
-            gidsFinished = [];
+            var tx;
 
             tx = dao.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
-            return Promise.each(results, function (result) {
-
-                // Save the game ID so it can be deleted from the schedule below
-                gidsFinished.push(result.gid);
+            return Promise.map(results, function (result) {
 
                 return writeTeamStats(tx, result).then(function (att) {
                     return writeGameStats(tx, result, att);
                 }).then(function () {
                     return writePlayerStats(tx, result);
+                }).then(function () {
+                    return result.gid
                 });
-            }).then(function () {
+            }, {concurrency: Infinity}).then(function (gidsFinished) {
                 var j;
 
                 // Delete finished games from schedule

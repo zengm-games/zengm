@@ -206,14 +206,18 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
     function writePlayerStats(tx, results) {
         return Promise.map(results.team, function (t) {
             return Promise.map(t.player, function (p) {
+                var promises;
+
                 // Only need to write stats if player got minutes
                 if (p.stat.min === 0) {
                     return;
                 }
 
-                player.checkStatisticalFeat(tx, p.id, t.id, p, results);
+                promises = [];
 
-                dao.playerStats.iterate({
+                promises.push(player.checkStatisticalFeat(tx, p.id, t.id, p, results));
+
+                promises.push(dao.playerStats.iterate({
                     ot: tx,
                     index: "pid, season, tid",
                     key: [p.id, g.season, t.id],
@@ -268,7 +272,9 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
                         return ps;
                     }
-                });
+                }));
+
+                return Promise.all(promises);
             });
         });
     }
@@ -413,7 +419,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                     });
                 }
 
-                dao.playoffSeries.put({ot: tx, value: playoffSeries});
+                return dao.playoffSeries.put({ot: tx, value: playoffSeries});
             });
         });
     }
@@ -617,128 +623,121 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
             tx = dao.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
-            cbSaveResult = function (i) {
-//console.log('cbSaveResult ' + i)
+            return Promise.each(results, function (result) {
+
                 // Save the game ID so it can be deleted from the schedule below
-                gidsFinished.push(results[i].gid);
+                gidsFinished.push(result.gid);
 
-//console.log(results[i]);
-                writeTeamStats(tx, results[i]).then(function (att) {
-                    return writeGameStats(tx, results[i], att);
+                return writeTeamStats(tx, result).then(function (att) {
+                    return writeGameStats(tx, result, att);
                 }).then(function () {
-                    return writePlayerStats(tx, results[i]);
-                }).then(function () {
-                    var j;
-
-                    if (i > 0) {
-                        cbSaveResult(i - 1);
-                    } else {
-                        // Delete finished games from schedule
-                        for (j = 0; j < gidsFinished.length; j++) {
-                            dao.schedule.delete({ot: tx, key: gidsFinished[j]});
-                        }
-
-                        // Update ranks
-                        finances.updateRanks(tx, ["expenses", "revenues"]);
-
-                        // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-                        dao.players.iterate({
-                            ot: tx,
-                            index: "tid",
-                            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-                            callback: function (p) {
-                                var changed;
-
-                                changed = false;
-                                if (p.injury.gamesRemaining > 0) {
-                                    p.injury.gamesRemaining -= 1;
-                                    changed = true;
-                                }
-                                // Is it already over?
-                                if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
-                                    p.injury = {type: "Healthy", gamesRemaining: 0};
-                                    changed = true;
-
-                                    eventLog.add(tx, {
-                                        type: "healed",
-                                        text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.',
-                                        showNotification: p.tid === g.userTid,
-                                        pids: [p.pid],
-                                        tids: [p.tid]
-                                    });
-                                }
-
-                                // Also check for gamesUntilTradable
-                                if (!p.hasOwnProperty("gamesUntilTradable")) {
-                                    p.gamesUntilTradable = 0; // Initialize for old leagues
-                                    changed = true;
-                                } else if (p.gamesUntilTradable > 0) {
-                                    p.gamesUntilTradable -= 1;
-                                    changed = true;
-                                }
-
-                                if (changed) {
-                                    return p;
-                                }
-                            }
-                        });
-                    }
+                    return writePlayerStats(tx, result);
                 });
-            };
+            }).then(function () {
+                var j;
 
-            if (results.length > 0) {
-                cbSaveResult(results.length - 1);
-            }
-
-            tx.complete().then(function () {
-                var i, raw, url;
-
-                // If there was a play by play done for one of these games, get it
-                if (gidPlayByPlay !== undefined) {
-                    for (i = 0; i < results.length; i++) {
-                        if (results[i].playByPlay !== undefined) {
-                            raw = {
-                                gidPlayByPlay: gidPlayByPlay,
-                                playByPlay: results[i].playByPlay
-                            };
-                            url = helpers.leagueUrl(["live_game"]);
-                        }
-                    }
-                } else {
-                    url = undefined;
+                // Delete finished games from schedule
+                for (j = 0; j < gidsFinished.length; j++) {
+                    dao.schedule.delete({ot: tx, key: gidsFinished[j]});
                 }
 
-                // Update all advanced stats every day
-                advStats.calculateAll().then(function () {
-                    ui.realtimeUpdate(["gameSim"], url, function () {
-                        league.updateLastDbChange();
+                // Update ranks
+                finances.updateRanks(tx, ["expenses", "revenues"]);
 
-                        if (g.phase === g.PHASE.PLAYOFFS) {
-                            // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                            tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
-                            season.newSchedulePlayoffsDay(tx).then(function (playoffsOver) {
-                                tx.complete().then(function () {
-                                    if (playoffsOver) {
-                                        return phase.newPhase(g.PHASE.BEFORE_DRAFT);
+                // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
+                dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                    callback: function (p) {
+                        var changed;
+
+                        changed = false;
+                        if (p.injury.gamesRemaining > 0) {
+                            p.injury.gamesRemaining -= 1;
+                            changed = true;
+                        }
+                        // Is it already over?
+                        if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
+                            p.injury = {type: "Healthy", gamesRemaining: 0};
+                            changed = true;
+
+                            eventLog.add(tx, {
+                                type: "healed",
+                                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.',
+                                showNotification: p.tid === g.userTid,
+                                pids: [p.pid],
+                                tids: [p.tid]
+                            });
+                        }
+
+                        // Also check for gamesUntilTradable
+                        if (!p.hasOwnProperty("gamesUntilTradable")) {
+                            p.gamesUntilTradable = 0; // Initialize for old leagues
+                            changed = true;
+                        } else if (p.gamesUntilTradable > 0) {
+                            p.gamesUntilTradable -= 1;
+                            changed = true;
+                        }
+
+                        if (changed) {
+                            return p;
+                        }
+                    }
+                });
+            }).then(function () {
+                return tx.complete().then(function () {
+                    var i, raw, url;
+
+                    // If there was a play by play done for one of these games, get it
+                    if (gidPlayByPlay !== undefined) {
+                        for (i = 0; i < results.length; i++) {
+                            if (results[i].playByPlay !== undefined) {
+                                raw = {
+                                    gidPlayByPlay: gidPlayByPlay,
+                                    playByPlay: results[i].playByPlay
+                                };
+                                url = helpers.leagueUrl(["live_game"]);
+                            }
+                        }
+                    } else {
+                        url = undefined;
+                    }
+
+                    // Update all advanced stats every day
+                    return advStats.calculateAll().then(function () {
+                        ui.realtimeUpdate(["gameSim"], url, function () {
+                            var tx2;
+
+                            league.updateLastDbChange();
+
+                            if (g.phase === g.PHASE.PLAYOFFS) {
+                                // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
+                                tx2 = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
+                                season.newSchedulePlayoffsDay(tx).then(function (playoffsOver) {
+                                    tx2.complete().then(function () {
+                                        if (playoffsOver) {
+                                            return phase.newPhase(g.PHASE.BEFORE_DRAFT);
+                                        }
+                                    }).then(function () {
+                                        play(numDays - 1, false);
+                                    });
+                                });
+                            } else {
+                                // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
+                                Promise.try(function () {
+                                    // 100 days in a season (roughly), and we want a death every 50 years on average
+                                    if (Math.random() < 1 / (100 * 50)) {
+                                        return player.killOne().then(function () {
+                                            ui.realtimeUpdate(["playerMovement"]);
+                                        });
                                     }
                                 }).then(function () {
                                     play(numDays - 1, false);
                                 });
-                            });
-                        } else {
-                            // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
-                            Promise.try(function () {
-                                // 100 days in a season (roughly), and we want a death every 50 years on average
-                                if (Math.random() < 1 / (100 * 50)) {
-                                    return player.killOne().then(function () {
-                                        ui.realtimeUpdate(["playerMovement"]);
-                                    });
-                                }
-                            }).then(function () {
-                                play(numDays - 1, false);
-                            });
-                        }
-                    }, raw);
+                            }
+                        }, raw);
+                    });
                 });
             });
         };

@@ -40,6 +40,7 @@
         <span data-bind="css: {'bg-info': tid() === $root.userTid()}"><a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev"></a>)</span><br>
       <!-- /ko -->
     <!-- /ko -->
+    <br>
     <h4>All-Rookie Team</h4>
     <!-- ko foreach: awards.allRookie -->
       <span data-bind="css: {'bg-info': tid() === $root.userTid()}"><a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.season]}, text: abbrev"></a>)</span><br>

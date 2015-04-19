@@ -90,7 +90,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
 
                     return dao.players.put({ot: tx, value: p});
                 });
-            });
+            }, {concurrency: Infinity});
         };
 
         // Get teams for won/loss record for awards, as well as finding the teams with the best records
@@ -341,7 +341,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
         tx = dao.tx("schedule", "readwrite", tx);
 
         return dao.schedule.clear({ot: tx}).then(function () {
-            return Promise.map(newSchedule, function (matchup) {
+            return Promise.each(newSchedule, function (matchup) {
                 return dao.schedule.add({ot: tx, value: matchup});
             });
         });
@@ -691,7 +691,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
 
                         return dao.teams.put({ot: tx, value: t});
                     });
-                });
+                }, {concurrency: Infinity});
             }).then(function () {
                 // Next time, the schedule for the first day of the next round will be set
                 return newSchedulePlayoffsDay(tx);

@@ -347,7 +347,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                 return contracts;
             }
 
-            return Promise.map(releasedPlayers, function (releasedPlayer) {
+            return Promise.each(releasedPlayers, function (releasedPlayer) {
                 return dao.players.get({
                     ot: tx,
                     key: releasedPlayer.pid

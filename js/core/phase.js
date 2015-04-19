@@ -303,7 +303,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                             return player.addStatsRow(tx, p, true);
                         }
                     });
-                })
+                }, {concurrency: Infinity})
             ]);
         }).then(function () {
             return Promise.all([

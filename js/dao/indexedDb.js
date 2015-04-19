@@ -380,7 +380,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
                 }).then(function () {
                     return p;
                 });
-            });
+            }, {concurrency: Infinity});
         });
     };
 

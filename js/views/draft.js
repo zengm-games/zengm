@@ -2,10 +2,10 @@
  * @name views.playoffs
  * @namespace Show current or archived playoffs, or projected matchups for an in-progress season.
  */
-define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "lib/jquery", "util/bbgmView", "util/helpers"], function (dao, g, ui, draft, player, Promise, $, bbgmView, helpers) {
+define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "lib/jquery", "lib/knockout", "util/bbgmView", "util/helpers"], function (dao, g, ui, draft, player, Promise, $, ko, bbgmView, helpers) {
     "use strict";
 
-    function updateDraftTables(pids) {
+    /*function updateDraftTables(pids) {
         var draftedPlayer, draftedRows, i, j, jMax, undraftedTds;
 
         for (i = 0; i < pids.length; i++) {
@@ -36,7 +36,7 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
                 }
             }
         }
-    }
+    }*/
 
     function draftUser(pid) {
         return draft.getOrder().then(function (draftOrder) {
@@ -50,7 +50,7 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
                     tx = dao.tx("draftOrder", "readwrite");
                     draft.setOrder(tx, draftOrder);
                     return tx.complete().then(function () {
-                        return pid;
+                        return [pid, pick];
                     });
                 });
             }
@@ -59,21 +59,52 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
         });
     }
 
-    function draftUntilUserOrEnd() {
+    function updateUiAfterPick(vm, pid, pick) {
+        var i, j, p, p2;
+
+        for (i = 0; i < vm.undrafted().length; i++) {
+console.log(vm.undrafted()[i].pid(), pid, vm.undrafted()[i].pid() === pid)
+            if (vm.undrafted()[i].pid() === pid) {
+                p = vm.undrafted.splice(i, 1)[0];
+                p.tid = pick.tid;
+                p.draft = {
+                    round: ko.observable(pick.round),
+                    pick: ko.observable(pick.pick),
+                    tid: ko.observable(pick.tid),
+                    year: ko.observable(g.season),
+                    originalTid: ko.observable(pick.originalTid),
+                    pot: ko.observable(p.ratings.pot),
+                    ovr: ko.observable(p.ratings.ovr),
+                    skills: ko.observable(p.ratings.skills)
+                };
+
+                for (j = 0; j < vm.drafted().length; j++) {
+                    p2 = vm.drafted()[j];
+                    if (p2.draft.round() === pick.round && p2.draft.pick() === pick.pick) {
+                        vm.drafted.replace(p2, p);
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    function draftUntilUserOrEnd(vm) {
         ui.updateStatus("Draft in progress...");
-        draft.untilUserOrEnd().then(function (pids) {
+        draft.untilUserOrEnd().spread(function (pids, picks) {
             draft.getOrder().then(function (draftOrder) {
-                var done;
+                var done, i;
 
                 done = false;
                 if (draftOrder.length === 0) {
                     done = true;
                     ui.updateStatus("Idle");
-
-                    $("#undrafted th:last-child, #undrafted td:last-child").remove();
                 }
 
-                updateDraftTables(pids);
+                for (i = 0; i < pids.length; i++) {
+                    updateUiAfterPick(vm, pids[i], picks[i]);
+                }
+
                 if (!done) {
                     $("#undrafted button").removeAttr("disabled");
                 }
@@ -190,7 +221,7 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
         });
     }
 
-    function uiFirst() {
+    function uiFirst(vm) {
         var startDraft, undraftedContainer;
 
         ui.title("Draft");
@@ -198,14 +229,14 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
         startDraft = $("#start-draft");
         startDraft.click(function () {
             $(startDraft.parent()).hide();
-            draftUntilUserOrEnd();
+            draftUntilUserOrEnd(vm);
         });
 
         $("#undrafted").on("click", "button", function () {
             $("#undrafted button").attr("disabled", "disabled");
-            draftUser(parseInt(this.getAttribute("data-player-id"), 10)).then(function (pid) {
-                updateDraftTables([pid]);
-                draftUntilUserOrEnd();
+            draftUser(parseInt(this.getAttribute("data-player-id"), 10)).spread(function (pid, pick) {
+                updateUiAfterPick(vm, pid, pick);
+                draftUntilUserOrEnd(vm);
             });
         });
 

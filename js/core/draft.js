@@ -384,9 +384,10 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
      * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to array. First argument is the list of draft picks (from getOrder). Second argument is a list of player IDs who were drafted during this function call, in order.
      */
     function untilUserOrEnd() {
-        var pids;
+        var picks, pids;
 
         pids = [];
+        picks = [];
 
         return Promise.all([
             dao.players.getAll({
@@ -442,7 +443,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                                     ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
                                     return ui.updatePlayMenu(null).then(function () {
                                         require("core/league").updateLastDbChange();
-                                        return pids;
+                                        return [pids, picks];
                                     });
                                 });
                             });
@@ -450,13 +451,13 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
 
                         // Non-fantasy draft
                         return phase.newPhase(g.PHASE.AFTER_DRAFT).then(function () {
-                            return pids;
+                            return [pids, picks];
                         });
                     }
 
                     // Draft is not over, so continue
                     require("core/league").updateLastDbChange();
-                    return pids;
+                    return [pids, picks];
                 });
             };
 
@@ -474,6 +475,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                     pid = playersAll[selection].pid;
                     return selectPlayer(pick, pid).then(function () {
                         pids.push(pid);
+                        picks.push(pick);
                         playersAll.splice(selection, 1);  // Delete from the list of undrafted players
 
                         return autoSelectPlayer();

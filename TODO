@@ -5,6 +5,10 @@ CURRENT
 -------
 
 refactor draft code
+  get rid of data elements in draft.html
+  add sorting of columns in undrafted table
+  add sorting of columns in drafted table (will this work?)
+  make sure fantasy draft works (copy over stats too)
 
 expansion/contraction
 

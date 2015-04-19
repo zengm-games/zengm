@@ -61,7 +61,9 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
                         // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
                         budget[key] = helpers.round(budget[key] * 100) * 10;
                     }
-                    t.budget[key].amount = budget[key];
+                    if (budget[key] !== budget[key]) { // NaN check
+                        t.budget[key].amount = budget[key];
+                    }
                 }
             }
 

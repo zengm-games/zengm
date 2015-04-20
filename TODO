@@ -4,6 +4,17 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+view rewrite
+  browserify
+    ok if not everything is off npm, if it's something i edit
+    what about shimmed files that add to global scope? should be ok just to do require('aaa') on them, maybe?
+  react to handle updating DOM
+    rebind every time view changes? or some react-specific router?
+  pubsub to pages know when to update? say like "player 5 was updated" or "team 6 was updated", is that level of granularity possible? or just updateEvents like now?
+    how would i handle the situation of redirecting and updating at the same time? maybe that's too uncommon to worry about
+    https://facebook.github.io/react/tips/communicate-between-components.html "Subscribe to events in componentDidMount(), unsubscribe in componentWillUnmount()"
+  need a new grid component
+
 refactor draft code
 
 expansion/contraction
@@ -70,12 +81,6 @@ but the composite checking code fuzzes everything
 i forgot about this before
 a good solution would be to have fuzzrating take the whole ratings object and a key, so it can do the logic about what gets fuzzed and what doesn't
 bc this logic is already copy/pasted twice in player.filter (line 1137 and 1180)
-
-view rewrite
-  react to handle updating DOM
-    rebind every time view changes? or some react-specific router?
-  pubsub to pages know when to update? say like "player 5 was updated" or "team 6 was updated", is that level of granularity possible? or just updateEvents like now?
-    how would i handle the situation of redirecting and updating at the same time? maybe that's too uncommon to worry about
 
 composite ratings / scouting report
   "Shooting", "PG Skills", "Paint Scoring", rebounding

@@ -671,6 +671,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         var p, p2, ratios;
 
         p = this.playersOnCourt[this.o][shooter];
+        this.recordStat(this.o, p, "ba");
         this.recordStat(this.o, p, "fga");
         if (type === "atRim") {
             this.recordStat(this.o, p, "fgaAtRim");
@@ -909,6 +910,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @param {number} amt Amount to increment (default is 1).
      */
     GameSim.prototype.recordStat = function (t, p, s, amt) {
+        var i, j, k;
         amt = amt !== undefined ? amt : 1;
         this.team[t].player[p].stat[s] += amt;
         if (s !== "gs" && s !== "courtTime" && s !== "benchTime" && s !== "energy") {
@@ -916,6 +918,12 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             // Record quarter-by-quarter scoring too
             if (s === "pts") {
                 this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] += amt;
+                for (i = 0; i < 2; i++) {
+                    for (j = 0; j < 5; j++) {
+                        k = this.playersOnCourt[i][j];
+                        this.team[i].player[k].stat.plusminus += (i === t ? amt : -amt);
+                    }
+                }
             }
             if (this.playByPlay !== undefined) {
                 this.playByPlay.push({

@@ -196,7 +196,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
 
             return setGameAttributes(null, gameAttributes);
         }).then(function () {
-            var i, j, round, scoutingRank, t, toMaybeAdd, tx;
+            var i, j, k, round, scoutingRank, t, toMaybeAdd, tx;
 
             // Probably is fastest to use this transaction for everything done to create a new league
             tx = dao.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games"], "readwrite");
@@ -242,6 +242,14 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
             for (i = 0; i < g.numTeams; i++) {
                 t = team.generate(teams[i]);
+
+                // If needed for imported league files, set missing blocks against to 0
+                for (j = 0; j < t.stats.length; j++) {
+                    if (!t.stats[j].hasOwnProperty("ba")) {
+                        t.stats[j].ba = 0;
+                    }
+                }
+
                 dao.teams.add({ot: tx, value: t});
 
                 // Save scoutingRank for later
@@ -273,6 +281,26 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                         ]
                     }
                 });
+            }
+
+            // Fix missing +/-, blocks against in boxscore
+            if (leagueFile.hasOwnProperty("games")) {
+                for (i = 0; i < leagueFile.games.length; i++) {
+                    if (!leagueFile.games[i].teams[0].hasOwnProperty("ba")) {
+                        leagueFile.games[i].teams[0].ba = 0;
+                        leagueFile.games[i].teams[1].ba = 0;
+                    }
+                    for (j = 0; j < leagueFile.games[i].teams.length; j++) {
+                        for (k = 0; k < leagueFile.games[i].teams[j].players.length; k++) {
+                            if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("ba")) {
+                                leagueFile.games[i].teams[j].players[k].ba = 0;
+                            }
+                            if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("plusminus")) {
+                                leagueFile.games[i].teams[j].players[k].plusminus = 0;
+                            }
+                        }
+                    }
+                }
             }
 
             // These object stores are blank by default
@@ -350,6 +378,14 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                                         // Could be calculated correctly if I wasn't lazy
                                         if (!ps.hasOwnProperty("yearsWithTeam")) {
                                             ps.yearsWithTeam = 1;
+                                        }
+
+                                        // If needed, set missing +/-, blocks against to 0
+                                        if (!ps.hasOwnProperty("ba")) {
+                                            ps.ba = 0;
+                                        }
+                                        if (!ps.hasOwnProperty("plusminus")) {
+                                            ps.plusminus = 0;
                                         }
 
                                         // Delete psid because it can cause problems due to interaction addStatsRow above

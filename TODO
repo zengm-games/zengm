@@ -4,6 +4,15 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+god mode
+  options
+    disable injuries
+    disable ratings display
+    disable salary cap
+  edit player
+    edit injury
+    edit diedYear (or null if blank)
+
 view rewrite
   browserify
     ok if not everything is off npm, if it's something i edit
@@ -25,15 +34,6 @@ DEATH
       give extra draft picks as compensation?
         what would the nba do?
       reset owner mood, new owner message
-
-god mode
-  options
-    disable injuries
-    disable ratings display
-    disable salary cap
-  edit player
-    edit injury
-    edit diedYear (or null if blank)
 
 too many games in season
   are there ever games scheduled when season starts?

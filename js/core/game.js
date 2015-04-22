@@ -6,7 +6,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
     "use strict";
 
     function writeTeamStats(tx, results) {
-        return Promise.reduce([0, 1], function (att, t1) {
+        return Promise.reduce([0, 1], function (cache, t1) {
             var t2;
 
             t2 = t1 === 1 ? 0 : 1;
@@ -15,7 +15,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 team.getPayroll(tx, results.team[t1].id).get(0),
                 dao.teams.get({ot: tx, key: results.team[t1].id})
             ]).spread(function (payroll, t) {
-                var coachingPaid, count, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketRevenue, winp, winpOld, won;
+                var att, coachingPaid, count, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketPrice, ticketRevenue, winp, winpOld, won;
 
                 teamSeason = t.seasons[t.seasons.length - 1];
                 teamStats = t.stats[t.stats.length - 1];
@@ -27,11 +27,14 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 }
 
                 // Attendance - base calculation now, which is used for other revenue estimates
+                att = cache.att;
+                ticketPrice = cache.ticketPrice;
                 if (t1 === 0) { // Base on home team
                     att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
                     if (g.phase === g.PHASE.PLAYOFFS) {
                         att *= 1.5;  // Playoff bonus
                     }
+                    ticketPrice = t.budget.ticketPrice.amount;
                 }
 
                 // Some things are only paid for regular season games.
@@ -69,7 +72,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 // Attendance - final estimate
                 if (t1 === 0) { // Base on home team
                     att = random.gauss(att, 1000);
-                    att *= 30 / t.budget.ticketPrice.amount;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
+                    att *= 30 / ticketPrice;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
                     att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(t, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
                     if (att > 25000) {
                         att = 25000;
@@ -79,7 +82,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                     att = Math.round(att);
                 }
                 // This doesn't really make sense
-                ticketRevenue = t.budget.ticketPrice.amount * att / 1000;  // [thousands of dollars]
+                ticketRevenue = ticketPrice * att / 1000;  // [thousands of dollars]
 
                 // Hype - relative to the expectations of prior seasons
                 if (teamSeason.gp > 5 && g.phase !== g.PHASE.PLAYOFFS) {
@@ -197,7 +200,10 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 }
 
                 return dao.teams.put({ot: tx, value: t}).then(function () {
-                    return att;
+                    return {
+                        att: att,
+                        ticketPrice: ticketPrice
+                    };
                 });
             });
         }, 0);
@@ -623,8 +629,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
             tx = dao.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
             return Promise.map(results, function (result) {
-                return writeTeamStats(tx, result).then(function (att) {
-                    return writeGameStats(tx, result, att);
+                return writeTeamStats(tx, result).then(function (cache) {
+                    return writeGameStats(tx, result, cache.att);
                 }).then(function () {
                     return writePlayerStats(tx, result);
                 }).then(function () {

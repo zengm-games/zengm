@@ -226,7 +226,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                         ot: tx,
                         key: draftPick.dpid
                     });
-                }).then(function () {
+                }, {concurrency: Infinity}).then(function () {
                     return setOrder(tx, draftOrder);
                 });
             });

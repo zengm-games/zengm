@@ -28,7 +28,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                 key: g.PLAYER.FREE_AGENT
             })
         ]).spread(function (teams, players) {
-            var i, signTeam, strategies, tids;
+            var i, strategies, tids;
 
             strategies = _.pluck(teams, "strategy");
 
@@ -46,29 +46,20 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
             }
             random.shuffle(tids);
 
-            signTeam = function (ti) {
-                var tid;
-
-                tid = tids[ti];
-
-                // Finish when all teams have had a turn to sign players. This extra iteration of signTeam is required in case the user's team is the last one.
-                if (ti >= tids.length) {
-                    return;
-                }
-
+            return Promise.each(tids, function(tid) {
                 // Skip the user's team
                 if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
-                    return signTeam(ti + 1);
+                    return;
                 }
 
                 // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
                 if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
-                    return signTeam(ti + 1);
+                    return;
                 }
 
                 // Skip rebuilding teams sometimes
                 if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
-                    return signTeam(ti + 1);
+                    return;
                 }
 
 /*                    // Randomly don't try to sign some players this day
@@ -106,23 +97,17 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                                     tids: [p.tid]
                                 });
 
+                                players.splice(i, 1); // Remove from list of free agents
+
                                 // If we found one, stop looking for this team
                                 return dao.players.put({ot: tx, value: p}).then(function () {
                                     return team.rosterAutoSort(tx, tid);
-                                }).then(function () {
-                                    players.splice(i, 1); // Remove from list of free agents
-                                    return signTeam(ti + 1);
                                 });
                             }
                         }
                     }
-
-                    // If this is reached, no player was found
-                    return signTeam(ti + 1);
                 });
-            };
-
-            return signTeam(0);
+            });
         });
     }
 

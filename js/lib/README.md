@@ -28,7 +28,9 @@ jquery.tabSlideOut.js is currently not used.
 
 bluebird.js is mostly needed because I'm not comfortable with Chrome's native
 promise support, e.g. https://code.google.com/p/v8/issues/detail?id=3093 and
-http://stackoverflow.com/q/26667598/786644
+http://stackoverflow.com/q/26667598/786644. And also because of the IndexedDB-
+promises weirdness
+https://lists.w3.org/Archives/Public/public-webapps/2015AprJun/0126.html
 
 html2canvas.js has a change on lines 2818-2819 to fix background color always
 being set to transparent.

@@ -4,14 +4,28 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+refactor draft code
+
+expansion/contraction
+
 DEATH
-  need some kind of persistent notification - maybe a red bubble that requires a click to close
-  injury
-  car crash
-  plane crash (team)
-    what if in playoffs, need free agents
-  drug overdose
-  gambling fight
+  types
+    plane crash (whole team, 1 every 200 years)
+      give extra draft picks as compensation?
+        what would the nba do?
+      reset owner mood, new owner message
+
+god mode
+  options
+    disable injuries
+    disable ratings display
+    disable salary cap
+  edit player
+    edit injury
+    edit diedYear (or null if blank)
+
+too many games in season
+  are there ever games scheduled when season starts?
 
 multi team UI - click from league to main dashboard and switch teams menu persists
 
@@ -305,11 +319,6 @@ power rankings
   cache values for preseason and after season
     teamSeason.powerRankings = {overall, performance, talent, preseason}
   only show live during regular season
-god mode
-  options
-    disable injuries
-    disable ratings display
-    disable salary cap
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade
   email

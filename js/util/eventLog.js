@@ -10,6 +10,7 @@ define(["dao", "globals", "lib/bbgm-notifications"], function (dao, g, bbgmNotif
 
         options.saveToDb = options.saveToDb !== undefined ? options.saveToDb : true;
         options.showNotification = options.showNotification !== undefined ? options.showNotification : true;
+        options.persistent = options.persistent !== undefined ? options.persistent : false;
 
         if (options.saveToDb && g.lid) { // Only save to league event log if within a league
             dao.events.add({
@@ -32,9 +33,14 @@ define(["dao", "globals", "lib/bbgm-notifications"], function (dao, g, bbgmNotif
                 title = "Changes since your last visit";
             }
 
-            // Don't show notification if we're viewing a live game now
-            if (location.pathname.indexOf("/live") === -1) {
-                bbgmNotifications.notify(options.text, title);
+            // Don't show non-critical notification if we're viewing a live game now
+            if (location.pathname.indexOf("/live") === -1 || options.persistent) {
+                bbgmNotifications.notify(options.text, title, options.persistent);
+
+                // Persistent notifications are very rare and should stop game sim when displayed
+                if (options.persistent && g.autoPlaySeasons <= 0) {
+                    require("core/league").setGameAttributes(null, {stopGames: true});
+                }
             }
         }
     }

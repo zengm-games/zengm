@@ -90,7 +90,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
 
                     return dao.players.put({ot: tx, value: p});
                 });
-            });
+            }, {concurrency: Infinity});
         };
 
         // Get teams for won/loss record for awards, as well as finding the teams with the best records
@@ -129,7 +129,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 statsSeasons: [g.season]
             })];
         }).spread(function (teams, players) {
-            var champTid, i, p, type;
+            var champTid, i, p, rookies, type;
 
             players = player.filter(players, {
                 attrs: ["pid", "name", "tid", "abbrev", "draft"],
@@ -148,17 +148,24 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
             }
 
             // Rookie of the Year
-            players.sort(function (a, b) { return b.stats.ewa - a.stats.ewa; }); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
-            for (i = 0; i < players.length; i++) {
+            rookies = players.filter(function (p) {
                 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-                if (players[i].draft.year === g.season - 1) {
-                    break;
-                }
-            }
-            p = players[i];
+                return p.draft.year === g.season - 1;
+            }).sort(function (a, b) { return b.stats.ewa - a.stats.ewa; }); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
+            p = rookies[0];
             if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
                 awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
                 awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
+            }
+
+            // All Rookie Team - same sort as ROY
+            awards.allRookie = [];
+            for (i = 0; i < 5; i++) {
+                p = rookies[i];
+                if (p !== undefined) {
+                    awards.allRookie.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
+                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "All Rookie Team"});
+                }
             }
 
             // Most Valuable Player
@@ -334,7 +341,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
         tx = dao.tx("schedule", "readwrite", tx);
 
         return dao.schedule.clear({ot: tx}).then(function () {
-            return Promise.map(newSchedule, function (matchup) {
+            return Promise.each(newSchedule, function (matchup) {
                 return dao.schedule.add({ot: tx, value: matchup});
             });
         });
@@ -684,7 +691,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
 
                         return dao.teams.put({ot: tx, value: t});
                     });
-                });
+                }, {concurrency: Infinity});
             }).then(function () {
                 // Next time, the schedule for the first day of the next round will be set
                 return newSchedulePlayoffsDay(tx);

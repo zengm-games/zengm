@@ -876,7 +876,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
 
             Promise.map(leagues, function (l) {
                 return require("core/league").remove(l.lid);
-            }).then(function () {
+            }, {concurrency: Infinity}).then(function () {
                 var request;
 
                 // Delete any current meta database

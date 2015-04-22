@@ -56,6 +56,11 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                     };
                 }
 
+                // Hack placeholder for old seasons before Finals MVP existed
+                if (!awards.hasOwnProperty("allRookie")) {
+                    awards.allRookie = [];
+                }
+
                 // Get list of retired players
                 retiredPlayers = player.filter(retiredPlayers, {
                     attrs: ["pid", "name", "age", "hof"],

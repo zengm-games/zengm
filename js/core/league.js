@@ -66,7 +66,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                     }
                 }
             });
-        });
+        }, {concurrency: Infinity});
     }
 
     // Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
@@ -492,9 +492,9 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
 
                         // Auto sort rosters
                         tx = dao.tx("players", "readwrite");
-                        return Promise.each(teams, function (t) {
+                        return Promise.map(teams, function (t) {
                             return team.rosterAutoSort(tx, t.tid);
-                        }).then(function () {
+                        }, {concurrency: Infinity}).then(function () {
                             return lid;
                         });
                     });
@@ -557,7 +557,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             return dao[store].getAll().then(function (contents) {
                 exportedLeague[store] = contents;
             });
-        }).then(function () {
+        }, {concurrency: Infinity}).then(function () {
             // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
             var i, j, pid;
 

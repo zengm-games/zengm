@@ -206,14 +206,18 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
     function writePlayerStats(tx, results) {
         return Promise.map(results.team, function (t) {
             return Promise.map(t.player, function (p) {
+                var promises;
+
                 // Only need to write stats if player got minutes
                 if (p.stat.min === 0) {
                     return;
                 }
 
-                player.checkStatisticalFeat(tx, p.id, t.id, p, results);
+                promises = [];
 
-                dao.playerStats.iterate({
+                promises.push(player.checkStatisticalFeat(tx, p.id, t.id, p, results));
+
+                promises.push(dao.playerStats.iterate({
                     ot: tx,
                     index: "pid, season, tid",
                     key: [p.id, g.season, t.id],
@@ -268,9 +272,11 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
                         return ps;
                     }
-                });
-            });
-        });
+                }));
+
+                return Promise.all(promises);
+            }, {concurrency: Infinity});
+        }, {concurrency: Infinity});
     }
 
     function writeGameStats(tx, results, att) {
@@ -340,19 +346,20 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
             });
         }
 
-        return dao.games.put({ot: tx, value: gameStats}).then(function () {
-            // Record progress of playoff series, if appropriate
-            if (!gameStats.playoffs) {
-                return;
-            }
+        return dao.games.put({ot: tx, value: gameStats});
+    }
 
-            return dao.playoffSeries.get({ot: tx, key: g.season}).then(function (playoffSeries) {
-                var currentRoundText, i, loserTid, loserWon, playoffRound, series, showNotification, winnerTid, won0;
+    function updatePlayoffSeries(tx, results) {
+        return dao.playoffSeries.get({ot: tx, key: g.season}).then(function (playoffSeries) {
+            var playoffRound;
 
-                playoffRound = playoffSeries.series[playoffSeries.currentRound];
+            playoffRound = playoffSeries.series[playoffSeries.currentRound];
+
+            results.forEach(function (result) {
+                var currentRoundText, i, loserTid, loserWon, series, showNotification, winnerTid, won0;
 
                 // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
-                if (results.team[0].stat.pts > results.team[1].stat.pts) {
+                if (result.team[0].stat.pts > result.team[1].stat.pts) {
                     won0 = true;
                 } else {
                     won0 = false;
@@ -361,14 +368,14 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 for (i = 0; i < playoffRound.length; i++) {
                     series = playoffRound[i];
 
-                    if (series.home.tid === results.team[0].id) {
+                    if (series.home.tid === result.team[0].id) {
                         if (won0) {
                             series.home.won += 1;
                         } else {
                             series.away.won += 1;
                         }
                         break;
-                    } else if (series.away.tid === results.team[0].id) {
+                    } else if (series.away.tid === result.team[0].id) {
                         if (won0) {
                             series.away.won += 1;
                         } else {
@@ -412,9 +419,9 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                         tids: [winnerTid, loserTid]
                     });
                 }
-
-                dao.playoffSeries.put({ot: tx, value: playoffSeries});
             });
+
+            return dao.playoffSeries.put({ot: tx, value: playoffSeries});
         });
     }
 
@@ -611,124 +618,132 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
         // Saves a vector of results objects for a day, as is output from cbSimGames
         cbSaveResults = function (results) {
-            var cbSaveResult, gidsFinished, tx;
-
-            gidsFinished = [];
+            var tx;
 
             tx = dao.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
 
-            cbSaveResult = function (i) {
-//console.log('cbSaveResult ' + i)
-                // Save the game ID so it can be deleted from the schedule below
-                gidsFinished.push(results[i].gid);
-
-//console.log(results[i]);
-                writeTeamStats(tx, results[i]).then(function (att) {
-                    return writeGameStats(tx, results[i], att);
+            return Promise.map(results, function (result) {
+                return writeTeamStats(tx, result).then(function (att) {
+                    return writeGameStats(tx, result, att);
                 }).then(function () {
-                    return writePlayerStats(tx, results[i]);
+                    return writePlayerStats(tx, result);
                 }).then(function () {
-                    var j;
-
-                    if (i > 0) {
-                        cbSaveResult(i - 1);
-                    } else {
-                        // Delete finished games from schedule
-                        for (j = 0; j < gidsFinished.length; j++) {
-                            dao.schedule.delete({ot: tx, key: gidsFinished[j]});
-                        }
-
-                        // Update ranks
-                        finances.updateRanks(tx, ["expenses", "revenues"]);
-
-                        // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-                        dao.players.iterate({
-                            ot: tx,
-                            index: "tid",
-                            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-                            callback: function (p) {
-                                var changed;
-
-                                changed = false;
-                                if (p.injury.gamesRemaining > 0) {
-                                    p.injury.gamesRemaining -= 1;
-                                    changed = true;
-                                }
-                                // Is it already over?
-                                if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
-                                    p.injury = {type: "Healthy", gamesRemaining: 0};
-                                    changed = true;
-
-                                    eventLog.add(tx, {
-                                        type: "healed",
-                                        text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.',
-                                        showNotification: p.tid === g.userTid,
-                                        pids: [p.pid],
-                                        tids: [p.tid]
-                                    });
-                                }
-
-                                // Also check for gamesUntilTradable
-                                if (!p.hasOwnProperty("gamesUntilTradable")) {
-                                    p.gamesUntilTradable = 0; // Initialize for old leagues
-                                    changed = true;
-                                } else if (p.gamesUntilTradable > 0) {
-                                    p.gamesUntilTradable -= 1;
-                                    changed = true;
-                                }
-
-                                if (changed) {
-                                    return p;
-                                }
-                            }
-                        });
-                    }
+                    return result.gid;
                 });
-            };
+            }, {concurrency: Infinity}).then(function (gidsFinished) {
+                var j, promises;
 
-            if (results.length > 0) {
-                cbSaveResult(results.length - 1);
-            }
+                promises = [];
 
-            tx.complete().then(function () {
-                var i, raw, url;
-
-                // If there was a play by play done for one of these games, get it
-                if (gidPlayByPlay !== undefined) {
-                    for (i = 0; i < results.length; i++) {
-                        if (results[i].playByPlay !== undefined) {
-                            raw = {
-                                gidPlayByPlay: gidPlayByPlay,
-                                playByPlay: results[i].playByPlay
-                            };
-                            url = helpers.leagueUrl(["live_game"]);
-                        }
-                    }
-                } else {
-                    url = undefined;
+                // Update playoff series W/L
+                if (g.phase === g.PHASE.PLAYOFFS) {
+                    promises.push(updatePlayoffSeries(tx, results));
                 }
 
-                // Update all advanced stats every day
-                advStats.calculateAll().then(function () {
-                    ui.realtimeUpdate(["gameSim"], url, function () {
-                        league.updateLastDbChange();
+                // Delete finished games from schedule
+                for (j = 0; j < gidsFinished.length; j++) {
+                    promises.push(dao.schedule.delete({ot: tx, key: gidsFinished[j]}));
+                }
 
-                        if (g.phase === g.PHASE.PLAYOFFS) {
-                            // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                            tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
-                            season.newSchedulePlayoffsDay(tx).then(function (playoffsOver) {
-                                tx.complete().then(function () {
-                                    if (playoffsOver) {
-                                        return phase.newPhase(g.PHASE.BEFORE_DRAFT);
+                // Update ranks
+                promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
+
+                // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
+                promises.push(dao.players.iterate({
+                    ot: tx,
+                    index: "tid",
+                    key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                    callback: function (p) {
+                        var changed;
+
+                        changed = false;
+                        if (p.injury.gamesRemaining > 0) {
+                            p.injury.gamesRemaining -= 1;
+                            changed = true;
+                        }
+                        // Is it already over?
+                        if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
+                            p.injury = {type: "Healthy", gamesRemaining: 0};
+                            changed = true;
+
+                            eventLog.add(tx, {
+                                type: "healed",
+                                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.',
+                                showNotification: p.tid === g.userTid,
+                                pids: [p.pid],
+                                tids: [p.tid]
+                            });
+                        }
+
+                        // Also check for gamesUntilTradable
+                        if (!p.hasOwnProperty("gamesUntilTradable")) {
+                            p.gamesUntilTradable = 0; // Initialize for old leagues
+                            changed = true;
+                        } else if (p.gamesUntilTradable > 0) {
+                            p.gamesUntilTradable -= 1;
+                            changed = true;
+                        }
+
+                        if (changed) {
+                            return p;
+                        }
+                    }
+                }));
+
+                return Promise.all(promises);
+            }).then(function () {
+                return tx.complete().then(function () {
+                    var i, raw, url;
+
+                    // If there was a play by play done for one of these games, get it
+                    if (gidPlayByPlay !== undefined) {
+                        for (i = 0; i < results.length; i++) {
+                            if (results[i].playByPlay !== undefined) {
+                                raw = {
+                                    gidPlayByPlay: gidPlayByPlay,
+                                    playByPlay: results[i].playByPlay
+                                };
+                                url = helpers.leagueUrl(["live_game"]);
+                            }
+                        }
+                    } else {
+                        url = undefined;
+                    }
+
+                    // Update all advanced stats every day
+                    return advStats.calculateAll().then(function () {
+                        ui.realtimeUpdate(["gameSim"], url, function () {
+                            var tx2;
+
+                            league.updateLastDbChange();
+
+                            if (g.phase === g.PHASE.PLAYOFFS) {
+                                // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
+                                tx2 = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
+                                season.newSchedulePlayoffsDay(tx2).then(function (playoffsOver) {
+                                    tx2.complete().then(function () {
+                                        if (playoffsOver) {
+                                            return phase.newPhase(g.PHASE.BEFORE_DRAFT);
+                                        }
+                                    }).then(function () {
+                                        play(numDays - 1, false);
+                                    });
+                                });
+                            } else {
+                                // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
+                                Promise.try(function () {
+                                    // 100 days in a season (roughly), and we want a death every 50 years on average
+                                    if (Math.random() < 1 / (100 * 50)) {
+                                        return player.killOne().then(function () {
+                                            ui.realtimeUpdate(["playerMovement"]);
+                                        });
                                     }
                                 }).then(function () {
                                     play(numDays - 1, false);
                                 });
-                            });
-                        } else {
-                            play(numDays - 1, false);
-                        }
-                    }, raw);
+                            }
+                        }, raw);
+                    });
                 });
             });
         };
@@ -769,7 +784,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
                 return loadTeams(tx).then(function (teams) {
-                    var tx;
+                    var tx2;
 
                     // Play games
                     // Will loop through schedule and simulate all games
@@ -778,9 +793,9 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                         // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
 
                         // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                        tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
-                        season.newSchedulePlayoffsDay(tx);
-                        tx.complete().then(function () {
+                        tx2 = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
+                        season.newSchedulePlayoffsDay(tx2);
+                        return tx2.complete().then(function () {
                             return season.getSchedule({oneDay: true}).then(function (schedule) {
 // Can't merge easily with next call because of schedule overwriting
                                 return cbSimGames(schedule, teams);

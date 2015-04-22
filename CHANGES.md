@@ -12,6 +12,7 @@ number or not.
 - Auto play multiple seasons
 - Screenshots
 - Multi Team Mode
+- Players can die
 
 ## Techincal details
 

@@ -303,7 +303,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                             return player.addStatsRow(tx, p, true);
                         }
                     });
-                })
+                }, {concurrency: Infinity})
             ]);
         }).then(function () {
             return Promise.all([
@@ -473,7 +473,28 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         account.checkAchievement.hardware_store();
         account.checkAchievement.sleeper_pick();
 
-        return draft.genOrder(tx).then(function () {
+        // Kill off old retired players (done here since not much else happens in this phase change, so making it a little slower is fine)
+        return dao.players.iterate({
+            ot: tx,
+            index: "tid",
+            key: g.PLAYER.RETIRED,
+            callback: function (p) {
+                var probDeath;
+                if (p.hasOwnProperty("diedYear") && p.diedYear) {
+                    return;
+                }
+
+                // Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
+                probDeath = 0.0001165111 * Math.exp(0.0761889274 * (g.season - p.born.year));
+
+                if (Math.random() < probDeath) {
+                    p.diedYear = g.season;
+                    return p;
+                }
+            }
+        }).then(function () {
+            return draft.genOrder(tx);
+        }).then(function () {
             // This is a hack to handle weird cases where players have draft.year set to the current season, which fucks up the draft UI
             return dao.players.iterate({
                 ot: tx,

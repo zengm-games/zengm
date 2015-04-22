@@ -49,6 +49,10 @@ define(["dao", "globals", "ui", "core/finances", "core/league", "core/player", "
             contract: {
                 amount: ko.observable(),
                 exp: ko.observable()
+            },
+            injury: {
+                type: ko.observable(),
+                gamesRemaining: ko.observable()
             }
         };
         this.positions = [];
@@ -128,6 +132,34 @@ define(["dao", "globals", "ui", "core/finances", "core/league", "core/player", "
                     }
 
                     this.p.contract.exp(season);
+                },
+                owner: this
+            })
+        };
+
+        // Injury stuff
+        this.injury = {
+            type: ko.computed({
+                read: function () {
+                    return this.p.injury.type();
+                },
+                write: function (value) {
+                    this.p.injury.type(value);
+                },
+                owner: this
+            }),
+            gamesRemaining: ko.computed({
+                read: function () {
+                    return this.p.injury.gamesRemaining();
+                },
+                write: function (value) {
+                    var gamesRemaining;
+                    gamesRemaining = parseInt(value, 10);
+                    if (isNaN(gamesRemaining)) { gamesRemaining = 0; }
+
+                    if (gamesRemaining < 0) { gamesRemaining = 0; }
+
+                    this.p.injury.gamesRemaining(gamesRemaining);
                 },
                 owner: this
             })

@@ -123,6 +123,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             sk.push("R");
         }
 
+
+
         return sk;
     }
 
@@ -412,6 +414,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
             p.ratings[r].pot = p.ratings[r].ovr;
         }
+
+        p.ratings[r].skills = skills(p.ratings[r]);
 
         return p;
     }

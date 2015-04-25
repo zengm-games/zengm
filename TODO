@@ -4,6 +4,29 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+store some data in memory
+  goals
+    playerStats first
+    then non-retired players
+    then teams
+  method
+    generic layer over IDB?
+    wrapper function specific to how data is actually queried?
+    need to flush to db some time?
+    will inherently be more risky than using a "real" transaction, shit could get out of sync
+  transaction management
+    should be fine if the cache is synchronous
+  multi-window
+    service worker or shared worker
+      but how do they use transactions?
+
+in-memory cache
+  when starting to play games (>1 day), "get" and "getAll" add object stores to cache (if they aren't already there) and "put" updates cached values and set marker saying they were updated
+  When games are over, write to database any cached values that were updated
+  what about other types of operations?
+    iterate: maybe cache query and check for duplicate query? not sure. this is tricky
+    others: maybe not needed for this application
+
 god mode
   options
     disable injuries
@@ -156,29 +179,6 @@ rewrite old upgrading code? eventually, leave it there for now
 after fully abstracting IndexedDB, could i improve performance by running it locally in node and using another database?
   same with mobile on phonegap
   same with web - "turbo mode" where only one window (db connection) is allowed and caching is heavy
-
-in-memory cache
-  when starting to play games (>1 day), "get" and "getAll" add object stores to cache (if they aren't already there) and "put" updates cached values and set marker saying they were updated
-  When games are over, write to database any cached values that were updated
-  what about other types of operations?
-    iterate: maybe cache query and check for duplicate query? not sure. this is tricky
-    others: maybe not needed for this application
-
-store some data in memory
-  goals
-    playerStats first
-    then non-retired players
-    then teams
-  method
-    generic layer over IDB?
-    wrapper function specific to how data is actually queried?
-    need to flush to db some time?
-    will inherently be more risky than using a "real" transaction, shit could get out of sync
-  transaction management
-    should be fine if the cache is synchronous
-  multi-window
-    service worker or shared worker
-      but how do they use transactions?
 
 PERFORMANCE CRAP
 ----------------

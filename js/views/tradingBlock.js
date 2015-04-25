@@ -20,7 +20,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/b
         tids.splice(11, 19);
 
         return trade.getPickValues().then(function (estValues) {
-            var done, numTeams, promises;
+            var done, numTeams, offers;
 
             // For width of progress bar
             numTeams = tids.length;
@@ -29,8 +29,8 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/b
             }
             done = 0;
 
-            promises = [];
-            tids.forEach(function (tid) {
+            offers = [];
+            return Promise.each(tids, function (tid) {
                 var teams;
 
                 teams = [
@@ -47,7 +47,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/b
                 ];
 
                 if (tid !== g.userTid) {
-                    promises.push(trade.makeItWork(teams, true, estValues).spread(function (found, teams) {
+                    return trade.makeItWork(teams, true, estValues).spread(function (found, teams) {
                         // Update progress bar
                         done += 1;
                         progressBar.style.width = Math.round(10 + 90 * done / numTeams) + "%";
@@ -55,18 +55,13 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/b
                         if (found) {
                             return trade.summary(teams).then(function (summary) {
                                 teams[1].warning = summary.warning;
-                                return teams[1];
+                                offers.push(teams[1]);
                             });
                         }
-                    }));
+                    });
                 }
-            });
-
-            return Promise.all(promises).then(function (offers) {
-                // Only return actual offers
-                return offers.filter(function (offer) {
-                    return offer !== undefined;
-                });
+            }).then(function () {
+                return offers;
             });
         });
     }

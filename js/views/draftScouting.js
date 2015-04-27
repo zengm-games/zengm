@@ -139,7 +139,7 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                         return dao.players.delete({ot: tx, key: p.pid});
                     }
                 }).then(function () {
-                    var draftYear, i, uploadedSeason;
+                    var draftYear, i, seasonOffset2, uploadedSeason;
 
                     // Find season from uploaded file, for age adjusting
                     if (uploadedFile.hasOwnProperty("gameAttributes")) {
@@ -153,12 +153,13 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                         uploadedSeason = uploadedFile.startingSeason;
                     }
 
-                    // Set draft year
-                    draftYear = g.season + seasonOffset;
+                    seasonOffset2 = seasonOffset;
                     if (g.phase >= g.PHASE.FREE_AGENCY) {
                         // Already generated next year's draft, so bump up one
-                        draftYear += 1;
+                        seasonOffset2 += 1;
                     }
+
+                    draftYear = g.season + seasonOffset2;
 
                     // Add new players to database
                     players.forEach(function (p) {
@@ -175,7 +176,7 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
 
                         // Adjust age
                         if (uploadedSeason !== undefined) {
-                            p.born.year += g.season - uploadedSeason;
+                            p.born.year += g.season - uploadedSeason + seasonOffset2;
                         }
 
                         // Adjust seasons

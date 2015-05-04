@@ -833,8 +833,8 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
                                         game.teams[i].players[j].ba = 0;
                                         update = true;
                                     }
-                                    if (game.teams[i].players[j].plusminus === undefined) {
-                                        game.teams[i].players[j].plusminus = 0;
+                                    if (game.teams[i].players[j].pm === undefined) {
+                                        game.teams[i].players[j].pm = 0;
                                         update = true;
                                     }
                                 }
@@ -865,8 +865,8 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
                                 ps.ba = 0;
                                 update = true;
                             }
-                            if (!ps.hasOwnProperty("plusminus")) {
-                                ps.plusminus = 0;
+                            if (!ps.hasOwnProperty("pm")) {
+                                ps.pm = 0;
                                 update = true;
                             }
 

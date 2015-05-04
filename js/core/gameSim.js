@@ -921,7 +921,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 for (i = 0; i < 2; i++) {
                     for (j = 0; j < 5; j++) {
                         k = this.playersOnCourt[i][j];
-                        this.team[i].player[k].stat.plusminus += (i === t ? amt : -amt);
+                        this.team[i].player[k].stat.pm += (i === t ? amt : -amt);
                     }
                 }
             }

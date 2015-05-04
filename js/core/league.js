@@ -295,8 +295,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                             if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("ba")) {
                                 leagueFile.games[i].teams[j].players[k].ba = 0;
                             }
-                            if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("plusminus")) {
-                                leagueFile.games[i].teams[j].players[k].plusminus = 0;
+                            if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("pm")) {
+                                leagueFile.games[i].teams[j].players[k].pm = 0;
                             }
                         }
                     }
@@ -384,8 +384,8 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                                         if (!ps.hasOwnProperty("ba")) {
                                             ps.ba = 0;
                                         }
-                                        if (!ps.hasOwnProperty("plusminus")) {
-                                            ps.plusminus = 0;
+                                        if (!ps.hasOwnProperty("pm")) {
+                                            ps.pm = 0;
                                         }
 
                                         // Delete psid because it can cause problems due to interaction addStatsRow above

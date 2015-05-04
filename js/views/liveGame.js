@@ -49,7 +49,7 @@ define(["dao", "globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util
                 var i, j, resetStats, s;
 
                 // Stats to set to 0
-                resetStats = ["min", "fg", "fga", "tp", "tpa", "ft", "fta", "orb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "plusminus"];
+                resetStats = ["min", "fg", "fga", "tp", "tpa", "ft", "fta", "orb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm"];
 
                 boxScore.overtime = "";
                 boxScore.quarter = "1st quarter";
@@ -199,7 +199,7 @@ define(["dao", "globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util
                                 for (j = 0; j < 2; j++) {
                                     for (k = 0; k < vm.boxScore.teams()[j].players().length; k++) {
                                         if (vm.boxScore.teams()[j].players()[k].inGame() === true) {
-                                            vm.boxScore.teams()[j].players()[k].plusminus(vm.boxScore.teams()[j].players()[k].plusminus() + (e.t === j ? e.amt : -e.amt));
+                                            vm.boxScore.teams()[j].players()[k].pm(vm.boxScore.teams()[j].players()[k].pm() + (e.t === j ? e.amt : -e.amt));
                                         }
                                     }
                                 }

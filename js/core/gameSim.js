@@ -125,11 +125,6 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
         // Play overtime periods if necessary
         while (this.team[0].stat.pts === this.team[1].stat.pts) {
-            this.t = 5;
-            this.overtimes += 1;
-            this.team[0].stat.ptsQtrs.push(0);
-            this.team[1].stat.ptsQtrs.push(0);
-            this.recordPlay("overtime");
             this.simOvertime();
         }
 
@@ -170,7 +165,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
         while (true) {
             while (this.t > 0) {
-                this.simPossessions();
+                this.simPossession();
             }
             quarter += 1;
 
@@ -185,15 +180,19 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
     };
 
     GameSim.prototype.simOvertime = function() {
-        this.o = 0;
-        this.d = 1;
         this.t = 5;
+        this.overtimes += 1;
+        this.team[0].stat.ptsQtrs.push(0);
+        this.team[1].stat.ptsQtrs.push(0);
+        this.recordPlay("overtime");
+        this.o = random.randInt(0, 1);
+        this.d = this.o - 1;
         while (this.t > 0) {
-            this.simPossessions();
+            this.simPossession();
         }
     };
 
-    GameSim.prototype.simPossessions = function() {
+    GameSim.prototype.simPossession = function() {
         var outcome, substitutions;
 
         // Clock
@@ -208,7 +207,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
         this.updateTeamCompositeRatings();
 
-        outcome = this.simPossession();
+        outcome = this.getPossessionOutcome();
 
         // Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
         if (outcome === "orb") {
@@ -481,7 +480,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @memberOf core.gameSim
      * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
      */
-    GameSim.prototype.simPossession = function () {
+    GameSim.prototype.getPossessionOutcome = function () {
         var ratios, shooter;
 
         // Turnover?

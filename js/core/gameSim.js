@@ -34,14 +34,15 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @param {Object} team2 Same as team1, but for the away team.
      */
     function GameSim(gid, team1, team2, doPlayByPlay) {
+        var numPossessions;
         if (doPlayByPlay) {
             this.playByPlay = [];
         }
 
         this.id = gid;
         this.team = [team1, team2];  // If a team plays twice in a day, this needs to be a deep copy
-        this.numPossessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.uniform(0.9, 1.1));
-        this.dt = 48 / (2 * this.numPossessions); // Time elapsed per possession
+        numPossessions = Math.round((this.team[0].pace + this.team[1].pace) / 2 * random.uniform(0.9, 1.1));
+        this.dt = 48 / (2 * numPossessions); // Time elapsed per possession
 
         // Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
         this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
@@ -120,20 +121,16 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         var out, p, t;
 
         // Simulate the game up to the end of regulation
-        this.simPossessions();
+        this.simRegulation();
 
         // Play overtime periods if necessary
         while (this.team[0].stat.pts === this.team[1].stat.pts) {
-            if (this.overtimes === 0) {
-                this.numPossessions = Math.round(this.numPossessions * 5 / 48);  // 5 minutes of possessions
-                this.dt = 5 / (2 * this.numPossessions);
-            }
             this.t = 5;
             this.overtimes += 1;
             this.team[0].stat.ptsQtrs.push(0);
             this.team[1].stat.ptsQtrs.push(0);
             this.recordPlay("overtime");
-            this.simPossessions();
+            this.simOvertime();
         }
 
         // Delete stuff that isn't needed before returning
@@ -164,63 +161,70 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         return out;
     };
 
-    /**
-     * Simulate this.numPossessions possessions.
-     *
-     * To simulate regulation or overtime, just set this.numPossessions to the appropriate value and call this function.
-     *
-     * @memberOf core.gameSim
-     */
-    GameSim.prototype.simPossessions = function () {
-        var i, outcome, substitutions;
+    GameSim.prototype.simRegulation = function () {
+        var quarter;
 
         this.o = 0;
         this.d = 1;
+        quarter = 1;
 
-        i = 0;
-        while (i < this.numPossessions * 2) {
-            // Keep track of quarters
-            if ((i * this.dt > 12 && this.team[0].stat.ptsQtrs.length === 1) ||
-                    (i * this.dt > 24 && this.team[0].stat.ptsQtrs.length === 2) ||
-                    (i * this.dt > 36 && this.team[0].stat.ptsQtrs.length === 3)) {
-                this.team[0].stat.ptsQtrs.push(0);
-                this.team[1].stat.ptsQtrs.push(0);
-                this.t = 12;
-                this.recordPlay("quarter");
+        while (true) {
+            while (this.t > 0) {
+                this.simPossessions();
             }
+            quarter += 1;
 
-            // Clock
-            this.t -= this.dt;
-            if (this.t < 0) {
-                this.t = 0;
+            if (quarter === 5) {
+                break;
             }
+            this.team[0].stat.ptsQtrs.push(0);
+            this.team[1].stat.ptsQtrs.push(0);
+            this.t = 12;
+            this.recordPlay("quarter");
+        }
+    };
 
-            // Possession change
+    GameSim.prototype.simOvertime = function() {
+        this.o = 0;
+        this.d = 1;
+        this.t = 5;
+        while (this.t > 0) {
+            this.simPossessions();
+        }
+    };
+
+    GameSim.prototype.simPossessions = function() {
+        var outcome, substitutions;
+
+        // Clock
+        this.t -= this.dt;
+        if (this.t < 0) {
+            this.t = 0;
+        }
+
+        // Possession change
+        this.o = (this.o === 1) ? 0 : 1;
+        this.d = (this.o === 1) ? 0 : 1;
+
+        this.updateTeamCompositeRatings();
+
+        outcome = this.simPossession();
+
+        // Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
+        if (outcome === "orb") {
             this.o = (this.o === 1) ? 0 : 1;
             this.d = (this.o === 1) ? 0 : 1;
+        }
 
-            this.updateTeamCompositeRatings();
+        this.updatePlayingTime();
 
-            outcome = this.simPossession();
+        this.injuries();
 
-            // Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
-            if (outcome === "orb") {
-                this.o = (this.o === 1) ? 0 : 1;
-                this.d = (this.o === 1) ? 0 : 1;
+        if (random.randInt(1, this.subsEveryN) === 1) {
+            substitutions = this.updatePlayersOnCourt();
+            if (substitutions) {
+                this.updateSynergy();
             }
-
-            this.updatePlayingTime();
-
-            this.injuries();
-
-            if (i % this.subsEveryN === 0) {
-                substitutions = this.updatePlayersOnCourt();
-                if (substitutions) {
-                    this.updateSynergy();
-                }
-            }
-
-            i += 1;
         }
     };
 

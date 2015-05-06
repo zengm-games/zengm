@@ -244,7 +244,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             // Overall values scaled by fatigue
             ovrs = [];
             for (p = 0; p < this.team[t].player.length; p++) {
-                // Injured or foulded out players can't play
+                // Injured or fouled out players can't play
                 if (this.team[t].player[p].injured || this.team[t].player[p].stat.pf >= 6) {
                     ovrs[p] = -Infinity;
                 } else {

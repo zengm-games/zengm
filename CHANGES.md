@@ -13,6 +13,7 @@ number or not.
 - Screenshots
 - Multi Team Mode
 - Players can die
+- +/- and blocks against are recorded
 
 ## Techincal details
 

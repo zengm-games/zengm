@@ -4,6 +4,8 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+is ba/pm upgrade code too slow?
+
 fix errors like http://www.reddit.com/message/messages/3e3s76 with timestamped app.js
 
 store some data in memory

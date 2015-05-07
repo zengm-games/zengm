@@ -94,6 +94,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2015-03-21",
         msg: 'Enable God Mode (in the Tools menu) and then go to Tools > Multi Team Mode for some new ways to play!'
+    }, {
+        date: "2015-05-06",
+        msg: 'Two new stats are tracked: blocks against and +/-'
     }];
 
     function check() {

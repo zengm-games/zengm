@@ -877,6 +877,11 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         });
     }
 
+    function plusMinus(arg, d) {
+        if (arg !== arg) { return ""; }
+        return (arg > 0 ? "+" : "") + round(arg, d);
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -908,6 +913,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         gb: gb,
         checkNaNs: checkNaNs,
         gameScore: gameScore,
-        updateMultiTeam: updateMultiTeam
+        updateMultiTeam: updateMultiTeam,
+        plusMinus: plusMinus
     };
 });

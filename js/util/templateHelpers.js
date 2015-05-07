@@ -298,4 +298,18 @@ define(["globals", "lib/faces", "lib/knockout", "util/helpers"], function (g, fa
             });
         }
     };
+
+    ko.bindingHandlers.plusMinus = {
+        update: function (element, valueAccessor) {
+            var arg, plusminus, round;
+            arg = valueAccessor();
+            plusminus = ko.unwrap(arg[0]);
+            round = ko.unwrap(arg[1]);
+
+            return ko.bindingHandlers.html.update(element, function () {
+                var val = helpers.plusMinus(plusminus, round);
+                return (val !== val ? "" : val);
+            });
+        }
+    };
 });

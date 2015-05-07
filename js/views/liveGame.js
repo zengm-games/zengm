@@ -49,7 +49,7 @@ define(["dao", "globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util
                 var i, j, resetStats, s;
 
                 // Stats to set to 0
-                resetStats = ["min", "fg", "fga", "tp", "tpa", "ft", "fta", "orb", "trb", "ast", "tov", "stl", "blk", "pf", "pts"];
+                resetStats = ["min", "fg", "fga", "tp", "tpa", "ft", "fta", "orb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm"];
 
                 boxScore.overtime = "";
                 boxScore.quarter = "1st quarter";
@@ -125,7 +125,7 @@ define(["dao", "globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util
             overtimes = 0;
 
             processToNextPause = function () {
-                var e, i, ptsQtrs, stop, text;
+                var e, i, j, k, ptsQtrs, stop, text;
 
                 stop = false;
                 while (!stop && events.length > 0) {
@@ -191,9 +191,19 @@ define(["dao", "globals", "ui", "core/game", "lib/jquery", "lib/knockout", "util
                             vm.boxScore.teams()[e.t].trb(vm.boxScore.teams()[e.t].trb() + e.amt);
                             vm.boxScore.teams()[e.t].players()[e.p][e.s](vm.boxScore.teams()[e.t].players()[e.p][e.s]() + e.amt);
                             vm.boxScore.teams()[e.t][e.s](vm.boxScore.teams()[e.t][e.s]() + e.amt);
-                        } else if (e.s === "min" || e.s === "fg" || e.s === "fga" || e.s === "tp" || e.s === "tpa" || e.s === "ft" || e.s === "fta" || e.s === "ast" || e.s === "tov" || e.s === "stl" || e.s === "blk" || e.s === "pf" || e.s === "pts") {
+                        } else if (e.s === "min" || e.s === "fg" || e.s === "fga" || e.s === "tp" || e.s === "tpa" || e.s === "ft" || e.s === "fta" || e.s === "ast" || e.s === "tov" || e.s === "stl" || e.s === "blk" || e.s === "ba" || e.s === "pf" || e.s === "pts") {
                             vm.boxScore.teams()[e.t].players()[e.p][e.s](vm.boxScore.teams()[e.t].players()[e.p][e.s]() + e.amt);
                             vm.boxScore.teams()[e.t][e.s](vm.boxScore.teams()[e.t][e.s]() + e.amt);
+
+                            if (e.s === "pts") {
+                                for (j = 0; j < 2; j++) {
+                                    for (k = 0; k < vm.boxScore.teams()[j].players().length; k++) {
+                                        if (vm.boxScore.teams()[j].players()[k].inGame() === true) {
+                                            vm.boxScore.teams()[j].players()[k].pm(vm.boxScore.teams()[j].players()[k].pm() + (e.t === j ? e.amt : -e.amt));
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

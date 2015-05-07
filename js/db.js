@@ -815,6 +815,88 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
                     }
                 }());
             }
+            if (event.oldVersion <= 14) {
+                (function () {
+                    tx.objectStore("games").openCursor().onsuccess = function (event) {
+                        var cursor, game, i, j, update;
+
+                        cursor = event.target.result;
+                        update = false;
+
+                        if (cursor) {
+                            game = cursor.value;
+
+                            // set BA, +/- to zero for boxscores
+                            for (i = 0; i < game.teams.length; i++) {
+                                for (j = 0; j < game.teams[i].players.length; j++) {
+                                    if (game.teams[i].players[j].ba === undefined) {
+                                        game.teams[i].players[j].ba = 0;
+                                        update = true;
+                                    }
+                                    if (game.teams[i].players[j].pm === undefined) {
+                                        game.teams[i].players[j].pm = 0;
+                                        update = true;
+                                    }
+                                }
+                            }
+
+                            if (game.teams[0].ba === undefined) {
+                                game.teams[0].ba = 0;
+                                game.teams[1].ba = 0;
+                                update = true;
+                            }
+
+                            if (update) { cursor.update(game); }
+                            cursor.continue();
+                        }
+                    };
+
+                    // set BA, +/- to zero for player stats
+                    tx.objectStore("playerStats").openCursor().onsuccess = function (event) {
+                        var cursor, ps, update;
+
+                        cursor = event.target.result;
+                        update = false;
+
+                        if (cursor) {
+                            ps = cursor.value;
+
+                            if (!ps.hasOwnProperty("ba")) {
+                                ps.ba = 0;
+                                update = true;
+                            }
+                            if (!ps.hasOwnProperty("pm")) {
+                                ps.pm = 0;
+                                update = true;
+                            }
+
+                            if (update) { cursor.update(ps); }
+                            cursor.continue();
+                        }
+                    };
+
+                    // set BA to zero for team stats, +/- already handled
+                    tx.objectStore("teams").openCursor().onsuccess = function (event) {
+                        var cursor, i, t, update;
+
+                        cursor = event.target.result;
+                        update = false;
+
+                        if (cursor) {
+                            t = cursor.value;
+                            for (i = 0; i < t.stats.length; i++) {
+                                if (!t.stats[i].hasOwnProperty("ba")) {
+                                    t.stats[i].ba = 0;
+                                    update = true;
+                                }
+                            }
+
+                            if (update) { cursor.update(t); }
+                            cursor.continue();
+                        }
+                    };
+                }());
+            }
         });
     }
 
@@ -823,7 +905,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
             var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-            request = indexedDB.open("league" + lid, 14);
+            request = indexedDB.open("league" + lid, 15);
             request.onerror = function (event) {
                 reject(new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message));
             };

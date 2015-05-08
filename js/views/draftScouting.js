@@ -134,7 +134,7 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                 dao.players.iterate({
                     ot: tx,
                     index: "tid",
-                    key: IDBKeyRange.only(draftClassTid),
+                    key: FDBKeyRange.only(draftClassTid),
                     callback: function (p) {
                         return dao.players.delete({ot: tx, key: p.pid});
                     }

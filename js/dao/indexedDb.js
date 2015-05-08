@@ -342,13 +342,13 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
 
                 if (options.statsSeasons === "all") {
                     // All seasons
-                    key = IDBKeyRange.bound([p.pid], [p.pid, '']);
+                    key = FDBKeyRange.bound([p.pid], [p.pid, '']);
                 } else if (options.statsSeasons.length === 1) {
                     // Restrict to one season
-                    key = IDBKeyRange.bound([p.pid, options.statsSeasons[0]], [p.pid, options.statsSeasons[0], '']);
+                    key = FDBKeyRange.bound([p.pid, options.statsSeasons[0]], [p.pid, options.statsSeasons[0], '']);
                 } else if (options.statsSeasons.length > 1) {
                     // Restrict to range between seasons
-                    key = IDBKeyRange.bound([p.pid, Math.min.apply(null, options.statsSeasons)], [p.pid, Math.max.apply(null, options.statsSeasons), '']);
+                    key = FDBKeyRange.bound([p.pid, Math.min.apply(null, options.statsSeasons)], [p.pid, Math.max.apply(null, options.statsSeasons), '']);
                 }
 
                 return dao.playerStats.getAll({

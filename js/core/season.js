@@ -125,7 +125,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
             return [teams, dao.players.getAll({
                 ot: tx,
                 index: "tid",
-                key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), // Any non-retired player can win an award
+                key: FDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), // Any non-retired player can win an award
                 statsSeasons: [g.season]
             })];
         }).spread(function (teams, players) {

@@ -60,7 +60,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
             // Active players have tid >= 0
             return dao.players.getAll({
                 index: "tid",
-                key: IDBKeyRange.lowerBound(0),
+                key: FDBKeyRange.lowerBound(0),
                 statsSeasons: [g.season],
                 statsPlayoffs: g.PHASE.PLAYOFFS === g.phase
             // Can't drop this then to another level because of the short circuit return above

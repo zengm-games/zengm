@@ -38,7 +38,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
     function updateUpcomingFreeAgents(inputs) {
         return dao.players.getAll({
             index: "tid",
-            key: IDBKeyRange.lowerBound(0),
+            key: FDBKeyRange.lowerBound(0),
             statsSeasons: [g.season],
             filter: function (p) {
                 return p.contract.exp === inputs.season;

@@ -660,7 +660,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 promises.push(dao.players.iterate({
                     ot: tx,
                     index: "tid",
-                    key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                    key: FDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
                     callback: function (p) {
                         var changed;
 

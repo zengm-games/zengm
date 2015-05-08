@@ -820,7 +820,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                 return dao.playerStats.iterate({
                     ot: ot,
                     index: "pid, season, tid",
-                    key: IDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]),
+                    key: FDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]),
                     direction: "prev",
                     callback: function (psTemp, shortCircuit) {
                         // Skip playoff stats
@@ -1682,7 +1682,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                 return dao.playerStats.iterate({
                     ot: ot,
                     index: "pid, season, tid",
-                    key: IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]),
+                    key: FDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]),
                     direction: "prev",
                     callback: function (psTemp, shortCircuit) {
                         // Skip playoff stats
@@ -2010,7 +2010,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             return dao.playerStats.getAll({
                 ot: tx,
                 index: "pid, season, tid",
-                key: IDBKeyRange.bound([p.pid], [p.pid, ''])
+                key: FDBKeyRange.bound([p.pid], [p.pid, ''])
             });
         }).then(function (playerStats) {
             p = retire(tx, p, playerStats, false);

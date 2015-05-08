@@ -26,7 +26,7 @@ define(["dao", "globals", "ui", "core/team", "lib/bluebird", "lib/jquery", "lib/
                 }),
                 dao.players.getAll({
                     index: "tid",
-                    key: IDBKeyRange.lowerBound(0)
+                    key: FDBKeyRange.lowerBound(0)
                 })
             ]).spread(function (teams, players) {
                 var i, j, overallRankMetric, playerValuesByTid, weights;

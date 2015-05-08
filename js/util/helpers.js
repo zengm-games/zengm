@@ -858,9 +858,9 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
             };
         };
 
-        wrap(IDBObjectStore.prototype, "add", wrapperNaNChecker);
-        wrap(IDBObjectStore.prototype, "put", wrapperNaNChecker);
-        wrap(IDBCursor.prototype, "update", wrapperNaNChecker);
+        wrap(FDBObjectStore.prototype, "add", wrapperNaNChecker);
+        wrap(FDBObjectStore.prototype, "put", wrapperNaNChecker);
+        wrap(FDBCursor.prototype, "update", wrapperNaNChecker);
     }
 
     function gameScore(arg) {

@@ -43,7 +43,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "vi
         if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
             return dao.players.getAll({
                 index: "tid",
-                key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
+                key: FDBKeyRange.lowerBound(g.PLAYER.RETIRED),
                 statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
                 statsPlayoffs: inputs.playoffs === "playoffs"
             }).then(function (players) {

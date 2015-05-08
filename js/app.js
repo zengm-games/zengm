@@ -131,7 +131,7 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
     // IE10 and IE11 don't work because they lack support for compound indexes
     try {
         // Feature detection! http://stackoverflow.com/a/26779525/786644
-        IDBKeyRange.only([1]);
+        FDBKeyRange.only([1]);
     } catch (e) {
 //        errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
 //

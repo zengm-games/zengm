@@ -212,7 +212,7 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
 
             return dao.players.getAll({
                 index: "tid",
-                key: IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED),
+                key: FDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED),
                 statsSeasons: [g.season]
             }).then(function (players) {
                 var i, stats, userPlayers;

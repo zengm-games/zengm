@@ -72,7 +72,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 return dao.players.iterate({
                     ot: tx,
                     index: "tid",
-                    key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                    key: FDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
                     callback: function (p) {
                         // Update ratings
                         p = player.addRatingsRow(p, scoutingRank);
@@ -373,7 +373,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             return dao.players.iterate({
                 ot: tx,
                 index: "tid",
-                key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                key: FDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
                 callback: function (p) {
                     var update;
 
@@ -383,7 +383,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     return dao.playerStats.getAll({
                         ot: tx,
                         index: "pid, season, tid",
-                        key: IDBKeyRange.bound([p.pid], [p.pid, ''])
+                        key: FDBKeyRange.bound([p.pid], [p.pid, ''])
                     }).then(function (playerStats) {
                         var age, excessAge, excessPot, pot;
 
@@ -440,7 +440,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             return dao.releasedPlayers.iterate({
                 ot: tx,
                 index: "contract.exp",
-                key: IDBKeyRange.upperBound(g.season),
+                key: FDBKeyRange.upperBound(g.season),
                 callback: function (rp) {
                     dao.releasedPlayers.delete({
                         ot: tx,
@@ -543,7 +543,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             return dao.players.iterate({
                 ot: tx,
                 index: "tid",
-                key: IDBKeyRange.lowerBound(0),
+                key: FDBKeyRange.lowerBound(0),
                 callback: function (p) {
                     var tid;
 
@@ -593,7 +593,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 return dao.players.iterate({
                     ot: tx,
                     index: "tid",
-                    key: IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), // This only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
+                    key: FDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), // This only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
                     callback: function (p) {
                         return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
                     }
@@ -603,7 +603,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     return dao.players.iterate({
                         ot: tx,
                         index: "tid",
-                        key: IDBKeyRange.lowerBound(0),
+                        key: FDBKeyRange.lowerBound(0),
                         callback: function (p) {
                             var contract, factor;
 
@@ -690,7 +690,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 dao.players.iterate({
                     ot: tx,
                     index: "tid",
-                    key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                    key: FDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
                     callback: function (p) {
                         p.tid = g.PLAYER.UNDRAFTED;
                         return p;

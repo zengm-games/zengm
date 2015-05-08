@@ -201,7 +201,7 @@ define(["dao", "globals", "core/league", "core/player", "lib/underscore"], funct
         // All non-retired players
         dao.players.getAll({
             index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
+            key: FDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
         }).then(function (players) {
             var contract, i, p, total;
 
@@ -221,7 +221,7 @@ define(["dao", "globals", "core/league", "core/player", "lib/underscore"], funct
         // All non-retired players
         dao.players.getAll({
             index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
+            key: FDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
         }).then(function (players) {
             var contract, i, output, p;
 

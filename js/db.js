@@ -128,7 +128,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
             var request;
 
 //        console.log('Connecting to database "meta"');
-            request = indexedDB.open("meta", 7);
+            request = fakeIndexedDB.open("meta", 7);
             request.onerror = function (event) {
                 reject(new Error("Meta connection error: " + event.target.error.name + " - " + event.target.error.message));
             };
@@ -905,7 +905,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
             var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-            request = indexedDB.open("league" + lid, 15);
+            request = fakeIndexedDB.open("league" + lid, 15);
             request.onerror = function (event) {
                 reject(new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message));
             };
@@ -964,7 +964,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
                 // Delete any current meta database
                 console.log("Deleting any current meta database...");
                 g.dbm.close();
-                request = indexedDB.deleteDatabase("meta");
+                request = fakeIndexedDB.deleteDatabase("meta");
                 request.onsuccess = function () {
                     location.reload();
                 };

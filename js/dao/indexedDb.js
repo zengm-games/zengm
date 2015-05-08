@@ -54,7 +54,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
     function getObjectStore(db, ot, transactionObjectStores, objectStore, readwrite) {
         readwrite = readwrite !== undefined ? readwrite : false;
 
-        if (ot instanceof IDBTransaction) {
+        if (ot instanceof FDBTransaction) {
             if (objectStore !== null) {
                 return ot.objectStore(objectStore);
             }
@@ -63,7 +63,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
 
         // Return a transaction
         if (objectStore === null) {
-            if (ot instanceof IDBObjectStore) {
+            if (ot instanceof FDBObjectStore) {
                 return ot.transaction;
             }
 
@@ -74,7 +74,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
         }
 
         // ot is an objectStore already, and an objectStore was requested (not a transation)
-        if (ot instanceof IDBObjectStore) {
+        if (ot instanceof FDBObjectStore) {
             return ot;
         }
 

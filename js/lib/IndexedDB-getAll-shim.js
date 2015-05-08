@@ -3,23 +3,23 @@
 (function () {
     "use strict";
 
-    var Event, IDBIndex, IDBObjectStore, IDBRequest, getAll;
+    var Event, FDBIndex, FDBObjectStore, FDBRequest, getAll;
 
-    IDBObjectStore = window.IDBObjectStore || window.webkitIDBObjectStore || window.mozIDBObjectStore || window.msIDBObjectStore;
-    IDBIndex = window.IDBIndex || window.webkitIDBIndex || window.mozIDBIndex || window.msIDBIndex;
+    FDBObjectStore = window.FDBObjectStore || window.webkitFDBObjectStore || window.mozFDBObjectStore || window.msFDBObjectStore;
+    FDBIndex = window.FDBIndex || window.webkitFDBIndex || window.mozFDBIndex || window.msFDBIndex;
 
-    if (typeof IDBObjectStore === "undefined" || typeof IDBIndex === "undefined" || (IDBObjectStore.prototype.getAll !== undefined && IDBIndex.prototype.getAll !== undefined)) {
+    if (typeof FDBObjectStore === "undefined" || typeof FDBIndex === "undefined" || (FDBObjectStore.prototype.getAll !== undefined && FDBIndex.prototype.getAll !== undefined)) {
         return;
     }
 
-    if (IDBObjectStore.prototype.mozGetAll !== undefined && IDBIndex.prototype.mozGetAll !== undefined) {
-        IDBObjectStore.prototype.getAll = IDBObjectStore.prototype.mozGetAll;
-        IDBIndex.prototype.getAll = IDBIndex.prototype.mozGetAll;
+    if (FDBObjectStore.prototype.mozGetAll !== undefined && FDBIndex.prototype.mozGetAll !== undefined) {
+        FDBObjectStore.prototype.getAll = FDBObjectStore.prototype.mozGetAll;
+        FDBIndex.prototype.getAll = FDBIndex.prototype.mozGetAll;
         return;
     }
 
-    // https://github.com/axemclion/IndexedDBShim/blob/gh-pages/src/IDBRequest.js
-    IDBRequest = function () {
+    // https://github.com/axemclion/IndexedDBShim/blob/gh-pages/src/FDBRequest.js
+    FDBRequest = function () {
         this.onsuccess = null;
         this.readyState = "pending";
     };
@@ -40,10 +40,10 @@
 
         key = key !== undefined ? key : null;
 
-        request = new IDBRequest();
+        request = new FDBRequest();
         result = [];
 
-        // this is either an IDBObjectStore or an IDBIndex, depending on the context.
+        // this is either an FDBObjectStore or an FDBIndex, depending on the context.
         this.openCursor(key).onsuccess = function (event) {
             var cursor, e;
 
@@ -66,6 +66,6 @@
         return request;
     };
 
-    IDBObjectStore.prototype.getAll = getAll;
-    IDBIndex.prototype.getAll = getAll;
+    FDBObjectStore.prototype.getAll = getAll;
+    FDBIndex.prototype.getAll = getAll;
 }());

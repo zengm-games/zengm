@@ -1768,7 +1768,7 @@ function FDBTransaction(storeNames, mode) {
                 try {
                     event._eventPath = [this.db, this];
                     request.dispatchEvent(event);
-                    this._active = false;
+//                    this._active = false;
                 } catch (err) {
 //console.error(err);
                     this._abort('AbortError');

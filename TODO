@@ -30,6 +30,18 @@ in-memory cache
   what about other types of operations?
     iterate: maybe cache query and check for duplicate query? not sure. this is tricky
     others: maybe not needed for this application
+  NEW PLAN - apply only to players
+    writes to db (add, put, cursor.update) also write to cache (do clone before write)
+    ObjectStore.get - read from cache first, only hit db if cache miss
+    ObjectStore.getAll - read from db
+    ObjectStore.openCursor - read from db
+    Index.get - read from db
+    Index.getAll - read from db (maybe special case for getting all based on single tid)
+    Index.openCursor - read from db
+  then teams cache - similar
+  really, 2 paths forward:
+    1. generic caching layer on top of IndexedDB (or my promises-based library) - maybe using fakeIndexedDB
+    2. write more specific dao (like sdw) and write caching (or other) layer specific to that
 
 god mode
   options

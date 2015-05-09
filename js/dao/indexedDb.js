@@ -94,7 +94,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
             options = options !== undefined ? options : {};
             options.ot = options.ot !== undefined ? options.ot : null;
             options.index = options.index !== undefined ? options.index : null;
-            options.key = options.key !== undefined ? options.key : null;
+            options.key = options.key !== undefined ? options.key : undefined;
 
             return new Promise(function (resolve) {
                 var objectStoreOrIndex;
@@ -115,7 +115,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
             options = options !== undefined ? options : {};
             options.ot = options.ot !== undefined ? options.ot : null;
             options.index = options.index !== undefined ? options.index : null;
-            options.key = options.key !== undefined ? options.key : null;
+            options.key = options.key !== undefined ? options.key : undefined;
 
             return new Promise(function (resolve) {
                 var objectStoreOrIndex;
@@ -160,7 +160,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
             options = options !== undefined ? options : {};
             options.ot = options.ot !== undefined ? options.ot : null;
             options.index = options.index !== undefined ? options.index : null;
-            options.key = options.key !== undefined ? options.key : null;
+            options.key = options.key !== undefined ? options.key : undefined;
 
             return new Promise(function (resolve) {
                 var objectStoreOrIndex;
@@ -180,7 +180,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
         methods.delete = function (options) {
             options = options !== undefined ? options : {};
             options.ot = options.ot !== undefined ? options.ot : null;
-            options.key = options.key !== undefined ? options.key : null;
+            options.key = options.key !== undefined ? options.key : undefined;
 
             return new Promise(function (resolve) {
                 getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore, "readwrite").delete(options.key).onsuccess = function () {

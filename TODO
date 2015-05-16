@@ -4,6 +4,8 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+Exclude assets from AI trade offers http://www.reddit.com/r/BasketballGM/comments/336nzr/trade_ui_redesign/crawmjy?context=3
+
 Chrome delete data http://www.reddit.com/r/BasketballGM/comments/35eyq6/cant_store_anymore_data_on_chromebook/cr46zch?context=3
 
 no/fuzzier ratings mode http://www.reddit.com/r/BasketballGM/comments/35qftt/statsonly_modeless_accurate_stats/
@@ -240,6 +242,7 @@ shouldn't have literally every aging player turn into a great shooter
 old players are currently undervalued
 
 player development revamp http://www.reddit.com/r/BasketballGM/comments/2cz7r6/player_development_code_has_kinda_ridiculous/
+  too random, like players with pot=ovr are too likely to improve, makes low ovr high pot players less appealing http://www.reddit.com/r/BasketballGM/comments/36402p/how_does_potential_for_players_work_in_basketball/cravpqu?context=3
   something needs to be done. still too many 3 point shooting centers
   are ovr/pot combos reasonable, since ovr is weighted now?
   old stars should exist
@@ -348,7 +351,6 @@ trade UI
   email
   http://datatables.net/extensions/fixedcolumns/
   http://www.reddit.com/r/BasketballGM/comments/28tzek/trade_ui_redesign_concept_what_do_you_all_think/
-move retired players to separate object store - does it help performance?
 cordova
   in portrait, games in dashboard looks like shit
   hide export link
@@ -480,7 +482,6 @@ more detailed draft - slower picks, trades, etc.
 power rankings
   preseason too
   awards watch
-player editor, for customizing rosters
 popup next to player name with quick view of key stats/ratings
 contests: post roster file and goal
 
@@ -515,7 +516,6 @@ gameSim
   assists should be function of speed, since those players have the ball more
   situational awareness http://www.reddit.com/r/BasketballGM/comments/1yg6wi/end_of_game_simulation/
   mediocre players on bad teams should be less efficient (shouldn't put up such a high PER, which falls if they join a good team)
-do ratings make sense? http://www.reddit.com/r/BasketballGM/comments/1pd37p/rookie_players_with_lots_100_skill_ratings/
 contract negotiation
   don't have counter-offers be too drastic
   weirdness
@@ -873,6 +873,7 @@ AI teams should have to deal with fuzz too
   store a list of times and "update events". compare last updated time against that list, and then see the update events. pass as list in "update event" to realtime update
   check everywhere dbChange or lastDbChange is set and see if it should be more refined
     add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
+  or use something like broadcastchannel https://hacks.mozilla.org/2015/05/trainspotting-firefox-38/
 bbgmView
   can i do some check to abandon display if idLoading is mismatched with reality? like for clicking a slow link followed by a fast link, in rapid succession, the fast output should show and the slow should be short circuited.
     in practice, this doesn't seem to matter much

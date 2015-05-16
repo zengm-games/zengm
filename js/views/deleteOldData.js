@@ -42,24 +42,48 @@ define(["dao", "globals", "ui", "core/league", "util/bbgmView"], function (dao, 
         }
 
         if (req.params.hasOwnProperty("retiredPlayers")) {
+            toDelete = [];
+
             dao.players.iterate({
                 ot: tx,
                 index: "tid",
                 key: g.PLAYER.RETIRED,
                 callback: function (p) {
+                    toDelete.push(p.pid);
                     return dao.players.delete({ot: tx, key: p.pid});
                 }
+            }).then(function () {
+                dao.playerStats.iterate({
+                    ot: tx,
+                    callback: function (ps) {
+                        if (toDelete.indexOf(ps.pid) >= 0) {
+                            return dao.playerStats.delete({ot: tx, key: ps.psid});
+                        }
+                    }
+                });
             });
         } else if (req.params.hasOwnProperty("retiredPlayersUnnotable")) {
+            toDelete = [];
+
             dao.players.iterate({
                 ot: tx,
                 index: "tid",
                 key: g.PLAYER.RETIRED,
                 callback: function (p) {
                     if (p.awards.length === 0 && p.statsTids.indexOf(g.userTid) < 0) {
+                        toDelete.push(p.pid);
                         return dao.players.delete({ot: tx, key: p.pid});
                     }
                 }
+            }).then(function () {
+                dao.playerStats.iterate({
+                    ot: tx,
+                    callback: function (ps) {
+                        if (toDelete.indexOf(ps.pid) >= 0) {
+                            return dao.playerStats.delete({ot: tx, key: ps.psid});
+                        }
+                    }
+                });
             });
         }
 

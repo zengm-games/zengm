@@ -48,7 +48,7 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "u
                             }
                         }
                         if (!found) {
-                            return;
+                            continue;
                         }
 
                         if (t.seasons[j].playoffRoundsWon === 4) {

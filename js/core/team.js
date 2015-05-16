@@ -490,8 +490,11 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                     }
                 }
 
-// Sometimes get an error when switching to team finances page
-//if (tsa.revenues === undefined) { debugger; }
+                // For cases when the deleteOldData feature is used
+                if (tsa === undefined) {
+                    return;
+                }
+
                 // Revenue and expenses calculation
                 tsa.revenue = _.reduce(tsa.revenues, function (memo, revenue) { return memo + revenue.amount; }, 0);
                 tsa.expense = _.reduce(tsa.expenses, function (memo, expense) { return memo + expense.amount; }, 0);

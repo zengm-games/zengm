@@ -4,9 +4,7 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
-revamp position assignment algorithm
-  until a player is ~28 (whenever ratings decline starts), recalculate every year
-  center labeling is poor (only short guys can be centers, taller ones get FC)
+store pos in ratings since it changes over time
 
 Exclude assets from AI trade offers http://www.reddit.com/r/BasketballGM/comments/336nzr/trade_ui_redesign/crawmjy?context=3
 

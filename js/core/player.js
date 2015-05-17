@@ -123,8 +123,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             sk.push("R");
         }
 
-
-
         return sk;
     }
 
@@ -231,6 +229,90 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         }
 
         return p;
+    }
+
+    /**
+     * Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings.
+     *
+     * @memberOf core.player
+     * @param {Object.<string, number>} ratings Ratings object.
+     * @return {string} Position.
+     */
+    function pos(ratings) {
+        var c, pf, pg, position, sf, sg;
+
+        pg = false;
+        sg = false;
+        sf = false;
+        pf = false;
+        c = false;
+
+        // With no real skills, default is a SG, F, or PF
+        if (ratings.hgt < 35) {
+            position = 'SG';
+        } else if (ratings.drb > 30) {
+            position = 'GF';
+        } else {
+            position = 'F';
+        }
+
+        // No height requirements for guards
+        // PG is a fast ball handler, or a super ball handler
+        if ((ratings.spd >= 60 && (ratings.pss + ratings.drb) >= 90) ||
+                ((ratings.pss + ratings.drb) >= 150)) {
+            pg = true;
+        }
+
+        // SG is secondary ball handler and at least one of: slasher, shooter, or a decent defender
+        if ((ratings.drb + ratings.pss) >= 70 &&
+                ((ratings.spd >= 70 && ratings.dnk >= 70 && ratings.drb > 40) ||
+                (ratings.fg >= 70 && ratings.tp >= 70) ||
+                (ratings.hgt >= 30 && ratings.spd >= 80 && ratings.stl >= 70))) {
+            sg = true;
+        }
+
+        // SF is similar to SG but must be taller and has lower dribble/speed requirements
+        if (ratings.hgt >= 35 && ((ratings.spd >= 30 && ratings.dnk >= 60 && ratings.drb > 10) ||
+                (ratings.fg >= 55 && ratings.tp >= 55) ||
+                (ratings.hgt >= 40 && ratings.spd >= 55 && (ratings.stl >= 60 || ratings.blk >= 60)))) {
+            sf = true;
+        }
+
+        // PF must meet height/strength requirements.  If they are too tall then they are a Center only... unless they can shoot
+        if (ratings.hgt >= 50 && ((ratings.stre >= 50 && ratings.hgt <= 85) || ratings.tp >= 60 || ratings.tp >= 60)) {
+            pf = true;
+        }
+
+        // C must be extra tall or is strong/shotblocker but not quite as tall
+        if (ratings.hgt >= 80 || (ratings.hgt >= 65 && (ratings.stre >= 65 || ratings.blk >= 80))) {
+            c = true;
+        }
+
+        if (pg && !sg && !sf && !pf && !c) {
+            position = 'PG';
+        } else if (!pg && sg && !sf && !pf && !c) {
+            position = 'SG';
+        } else if (!pg && !sg && sf && !pf && !c) {
+            position = 'SF';
+        } else if (!pg && !sg && !sf && pf && !c) {
+            position = 'PF';
+        } else if (!pg && !sg && !sf && !pf && c) {
+            position = 'C';
+        }
+
+        // Multiple positions
+        // Jack of all trades is a GF
+        if ((pg || sg) && (sf || pf || c)) {
+            position = 'GF';
+        } else if (c && (pf || sf)) {
+            position = 'FC';
+        } else if (pf && sf) {
+            position = 'F';
+        } else if (pg && sg) {
+            position = 'G';
+        }
+
+        return position;
     }
 
     /**
@@ -381,6 +463,8 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             age = g.season - p.born.year + years;
             p.born.year = g.season - age;
         }
+
+        p.pos = pos(p.ratings[r]);
 
         return p;
     }
@@ -686,77 +770,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
     }
 
     /**
-     * Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings.
-     *
-     * @memberOf core.player
-     * @param {Object.<string, number>} ratings Ratings object.
-     * @return {string} Position.
-     */
-    function pos(ratings) {
-        var c, g, pf, pg, position, sf, sg;
-
-        g = false;
-        pg = false;
-        sg = false;
-        sf = false;
-        pf = false;
-        c = false;
-
-        // Default position
-        if (ratings.drb >= 50) {
-            position = 'GF';
-        } else {
-            position = 'F';
-        }
-
-        if (ratings.hgt <= 30 || ratings.spd >= 85) {
-            g = true;
-            if ((ratings.pss + ratings.drb) >= 100) {
-                pg = true;
-            }
-            if (ratings.hgt >= 30) {
-                sg = true;
-            }
-        }
-        if (ratings.hgt >= 50 && ratings.hgt <= 65 && ratings.spd >= 40) {
-            sf = true;
-        }
-        if (ratings.hgt >= 70) {
-            pf = true;
-        }
-        if ((ratings.hgt + ratings.stre) >= 130) {
-            c = true;
-        }
-
-        if (pg && !sg && !sf && !pf && !c) {
-            position = 'PG';
-        } else if (!pg && (g || sg) && !sf && !pf && !c) {
-            position = 'SG';
-        } else if (!pg && !sg && sf && !pf && !c) {
-            position = 'SF';
-        } else if (!pg && !sg && !sf && pf && !c) {
-            position = 'PF';
-        } else if (!pg && !sg && !sf && !pf && c) {
-            position = 'C';
-        }
-
-        // Multiple poss
-        if ((pf || sf) && g) {
-            position = 'GF';
-        } else if (c && (pf || sf)) {
-            // This means that anyone with c=true and height >=70 will NOT be labeled just a C. only pure Cs are short guys!
-            position = 'FC';
-        } else if (pg && sg) {
-            position = 'G';
-        }
-        if (position === 'F' && ratings.drb <= 20) {
-            position = 'PF';
-        }
-
-        return position;
-    }
-
-    /**
      * Add a new row of ratings to a player object.
      *
      * There should be one ratings row for each year a player is not retired, and a new row should be added for each non-retired player at the start of a season.
@@ -897,7 +910,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         p.pos = pos(p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
         p.weight = Math.round(random.randInt(-20, 20) + (p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight);  // Weight in pounds (from minWeight to maxWeight)
 
-        p.hgt = Math.round(random.randInt(-2, 2) + p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt);  // Height in inches (from minHgt to maxHgt)
+        p.hgt = Math.round(random.randInt(-1, 1) + p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt);  // Height in inches (from minHgt to maxHgt)
         rand = Math.random();
         if (rand < 0.5) {
             p.hgt += 1;

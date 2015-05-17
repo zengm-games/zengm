@@ -143,8 +143,8 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/b
                 var i;
 
                 userRoster = player.filter(userRoster, {
-                    attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch", "gamesUntilTradable"],
-                    ratings: ["ovr", "pot", "skills"],
+                    attrs: ["pid", "name", "age", "contract", "injury", "watch", "gamesUntilTradable"],
+                    ratings: ["ovr", "pot", "skills", "pos"],
                     stats: ["min", "pts", "trb", "ast", "per"],
                     season: g.season,
                     tid: g.userTid,
@@ -230,8 +230,8 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/b
                             }
                         }).then(function (players) {
                             offers[i].players = player.filter(players, {
-                                attrs: ["pid", "name", "pos", "age", "contract", "injury", "watch"],
-                                ratings: ["ovr", "pot", "skills"],
+                                attrs: ["pid", "name", "age", "contract", "injury", "watch"],
+                                ratings: ["ovr", "pot", "skills", "pos"],
                                 stats: ["min", "pts", "trb", "ast", "per"],
                                 season: g.season,
                                 tid: tid,
@@ -289,7 +289,7 @@ define(["dao", "globals", "ui", "core/player", "core/team", "core/trade", "lib/b
 
                 checkbox = '<input name="pids[]" type="checkbox" value="' + p.pid + '" title="' + p.untradableMsg + '"' + selected + disabled + '>';
 
-                return [checkbox, helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                return [checkbox, helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.ratings.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
             });
 
             return playersAndPicks;

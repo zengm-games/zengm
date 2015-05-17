@@ -70,7 +70,8 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "li
                 history.reverse(); // Show most recent season first
 
                 players = player.filter(players, {
-                    attrs: ["pid", "name", "pos", "injury", "tid", "hof", "watch"],
+                    attrs: ["pid", "name", "injury", "tid", "hof", "watch"],
+                    ratings: ["pos"],
                     stats: ["season", "abbrev", "gp", "min", "pts", "trb", "ast", "per", "ewa"],
                     tid: inputs.tid
                 });
@@ -84,6 +85,8 @@ define(["dao", "globals", "ui", "core/player", "lib/bluebird", "lib/jquery", "li
                             break;
                         }
                     }
+
+                    players[i].pos = players[i].ratings[players[i].ratings.length - 1].pos;
 
                     delete players[i].ratings;
                     delete players[i].stats;

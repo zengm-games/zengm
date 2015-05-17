@@ -26,7 +26,7 @@
       <tr data-bind="attr: {class: $index() === 4 ? 'separator' : '', 'data-pid': pid}">
         <td class="roster-handle" data-bind="visible: $parent.editable"></td>
         <td data-bind="playerNameLabels: [pid, name, injury, ratings.skills, watch]"></td>
-        <td data-bind="text: pos"></td>
+        <td data-bind="text: ratings.pos"></td>
         <td data-bind="text: age"></td>
         <td data-bind="text: stats.yearsWithTeam"></td>
         <td><span data-bind="text: ratings.ovr"></span><span data-bind="visible: ratings.dovr() !== 0, css: { 'text-success': ratings.dovr() > 0, 'text-danger': ratings.dovr() < 0 }"> (<span data-bind="text: ratings.dovr() > 0 ? '+' : ''"></span><span data-bind="text: ratings.dovr"></span>)</span></td>

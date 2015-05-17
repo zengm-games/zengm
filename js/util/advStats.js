@@ -68,8 +68,9 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 var EWA, PER, aPER, drbp, factor, i, mins, tid, tx, uPER, vop;
 
                 players = player.filter(players, {
-                    attrs: ["pid", "tid", "pos"],
+                    attrs: ["pid", "tid"],
                     stats: ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"],
+                    ratings: ["pos"],
                     season: g.season,
                     totals: true,
                     playoffs: g.PHASE.PLAYOFFS === g.phase
@@ -145,8 +146,8 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
 
                     for (i = 0; i < players.length; i++) {
                         if (players[i].active) {
-                            if (prls.hasOwnProperty(players[i].pos)) {
-                                prl = prls[players[i].pos];
+                            if (prls.hasOwnProperty(players[i].ratings.pos)) {
+                                prl = prls[players[i].ratings.pos];
                             } else {
                                 // This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
                                 prl = 10.75;

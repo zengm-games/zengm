@@ -54,8 +54,8 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
             }
 
             players = player.filter(players, {
-                attrs: ["pid", "name", "pos", "age", "contract", "freeAgentMood", "injury", "watch", "contractDesired"],
-                ratings: ["ovr", "pot", "skills"],
+                attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch", "contractDesired"],
+                ratings: ["ovr", "pot", "skills", "pos"],
                 stats: ["min", "pts", "trb", "ast", "per"],
                 season: g.season,
                 showNoStats: true,
@@ -77,7 +77,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
         ko.computed(function () {
             ui.datatable($("#upcoming-free-agents"), 4, _.map(vm.players(), function (p) {
                 // The display: none for mood allows sorting, somehow
-                return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.formatCurrency(p.contractDesired.amount, "M") + ' thru ' + p.contractDesired.exp];
+                return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.ratings.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.formatCurrency(p.contractDesired.amount, "M") + ' thru ' + p.contractDesired.exp];
             }));
         }).extend({throttle: 1});
 

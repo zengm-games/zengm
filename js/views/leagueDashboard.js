@@ -218,8 +218,8 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                 var i, stats, userPlayers;
 
                 players = player.filter(players, {
-                    attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch", "pos"],
-                    ratings: ["ovr", "pot", "dovr", "dpot", "skills"],
+                    attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch"],
+                    ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
                     stats: ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"],
                     season: g.season,
                     showNoStats: true,

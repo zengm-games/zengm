@@ -464,7 +464,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             p.born.year = g.season - age;
         }
 
-        p.pos = pos(p.ratings[r]);
+        p.ratings[r].pos = pos(p.ratings[r]);
 
         return p;
     }
@@ -907,7 +907,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         minWeight = 170;
         maxWeight = 290;
 
-        p.pos = pos(p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
+        p.ratings[0].pos = pos(p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
         p.weight = Math.round(random.randInt(-20, 20) + (p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight);  // Weight in pounds (from minWeight to maxWeight)
 
         p.hgt = Math.round(random.randInt(-1, 1) + p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt);  // Height in inches (from minHgt to maxHgt)
@@ -1183,7 +1183,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                             } else {
                                 fp.ratings[options.ratings[k]] = 0;
                             }
-                        } else if (options.fuzz && options.ratings[k] !== "fuzz" && options.ratings[k] !== "season" && options.ratings[k] !== "skills" && options.ratings[k] !== "hgt") {
+                        } else if (options.fuzz && options.ratings[k] !== "fuzz" && options.ratings[k] !== "season" && options.ratings[k] !== "skills" && options.ratings[k] !== "hgt" && options.ratings[k] !== "pos") {
                             fp.ratings[options.ratings[k]] = fuzzRating(fp.ratings[options.ratings[k]], pr.fuzz);
                         }
                     }
@@ -1226,7 +1226,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                             }
                         } else {
                             fp.ratings[kk][options.ratings[j]] = p.ratings[k][options.ratings[j]];
-                            if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills" && options.ratings[j] !== "hgt") {
+                            if (options.fuzz && options.ratings[j] !== "fuzz" && options.ratings[j] !== "season" && options.ratings[j] !== "skills" && options.ratings[j] !== "hgt" && options.ratings[j] !== "pos") {
                                 fp.ratings[kk][options.ratings[j]] = fuzzRating(p.ratings[k][options.ratings[j]], p.ratings[k].fuzz);
                             }
                         }
@@ -1497,7 +1497,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
      * @return {boolean} Hall of Fame worthy?
      */
     function madeHof(p, playerStats) {
-        var df, ewa, ewas, fudgeSeasons, i, mins, pers, prls, va;
+        var df, ewa, ewas, fudgeSeasons, i, mins, pers, pos, prls, va;
 
         mins = _.pluck(playerStats, "min");
         pers = _.pluck(playerStats, "per");
@@ -1517,8 +1517,9 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
         // Estimated wins added for each season http://insider.espn.go.com/nba/hollinger/statistics
         ewas = [];
+        pos = p.ratings[p.ratings.length - 1].pos;
         for (i = 0; i < mins.length; i++) {
-            va = mins[i] * (pers[i] - prls[p.pos]) / 67;
+            va = mins[i] * (pers[i] - prls[pos]) / 67;
             ewas.push(va / 30 * 0.8); // 0.8 is a fudge factor to approximate the difference between (in-game) EWA and (real) win shares
         }
 //console.log(ewas)
@@ -1826,7 +1827,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         pg = generate(p.tid, age, "", 0, 0, g.startingSeason - age, true, scoutingRank);
 
         // Optional things
-        simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "gamesUntilTradable", "hgt", "hof", "imgURL", "injury", "pos", "ptModifier", "retiredYear", "rosterOrder", "watch", "weight", "yearsFreeAgent"];
+        simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "gamesUntilTradable", "hgt", "hof", "imgURL", "injury", "ptModifier", "retiredYear", "rosterOrder", "watch", "weight", "yearsFreeAgent"];
         for (i = 0; i < simpleDefaults.length; i++) {
             if (!p.hasOwnProperty(simpleDefaults[i])) {
                 p[simpleDefaults[i]] = pg[simpleDefaults[i]];
@@ -1872,6 +1873,16 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             if (!p.ratings[0].hasOwnProperty("season")) {
                 p.ratings[0].season = g.startingSeason;
             }
+        }
+
+        // Handle old format position
+        if (p.hasOwnProperty("pos")) {
+            for (i = 0; i < p.ratings.length; i++) {
+                if (!p.ratings[i].hasOwnProperty("pos")) {
+                    p.ratings[i].pos = p.pos;
+                }
+            }
+            delete p.pos;
         }
 
         return p;

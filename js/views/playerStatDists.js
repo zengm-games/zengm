@@ -50,7 +50,6 @@ define(["dao", "globals", "ui", "core/player", "lib/boxPlot", "lib/jquery", "lib
                 var statsAll;
 
                 players = player.filter(players, {
-                    attrs: ["pid", "name", "pos", "age", "injury"],
                     ratings: ["skills"],
                     stats: ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"],
                     season: inputs.season

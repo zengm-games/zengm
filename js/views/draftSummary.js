@@ -53,8 +53,8 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
             var currentPr, i, p, pa, players;
 
             playersAll = player.filter(playersAll, {
-                attrs: ["tid", "abbrev", "draft", "pid", "name", "pos", "age"],
-                ratings: ["ovr", "pot", "skills"],
+                attrs: ["tid", "abbrev", "draft", "pid", "name", "age"],
+                ratings: ["ovr", "pot", "skills", "pos"],
                 stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
                 showNoStats: true,
                 showRookies: true,
@@ -67,10 +67,10 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
 
                 if (pa.draft.round === 1 || pa.draft.round === 2) {
                     // Attributes
-                    p = {pid: pa.pid, name: pa.name, pos: pa.pos, draft: pa.draft, currentAge: pa.age, currentAbbrev: pa.abbrev};
+                    p = {pid: pa.pid, name: pa.name, draft: pa.draft, currentAge: pa.age, currentAbbrev: pa.abbrev};
 
                     // Ratings
-                    currentPr = _.last(pa.ratings);
+                    currentPr = pa.ratings[pa.ratings.length - 1];
                     if (pa.tid !== g.PLAYER.RETIRED) {
                         p.currentOvr = currentPr.ovr;
                         p.currentPot = currentPr.pot;
@@ -80,6 +80,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
                         p.currentPot = "";
                         p.currentSkills = "";
                     }
+                    p.pos = currentPr.pos;
 
                     // Stats
                     p.careerStats = pa.careerStats;

@@ -184,8 +184,8 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/bluebird", "li
         ]).spread(function (teams, userRoster, userPicks) {
             var attrs, i, ratings, stats;
 
-            attrs = ["pid", "name", "pos", "age", "contract", "injury", "watch", "gamesUntilTradable"];
-            ratings = ["ovr", "pot", "skills"];
+            attrs = ["pid", "name", "age", "contract", "injury", "watch", "gamesUntilTradable"];
+            ratings = ["ovr", "pot", "skills", "pos"];
             stats = ["min", "pts", "trb", "ast", "per"];
 
             userRoster = player.filter(userRoster, {
@@ -393,7 +393,7 @@ define(["dao", "globals", "ui", "core/player", "core/trade", "lib/bluebird", "li
 
                 checkbox = '<input name="' + userOrOther + '-pids" type="checkbox" value="' + p.pid + '" title="' + p.untradableMsg + '"' + selected + disabled + '>';
 
-                return [checkbox, helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+                return [checkbox, helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.ratings.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
             });
 
             return playersAndPicks;

@@ -70,7 +70,6 @@ define(["dao", "globals", "ui", "core/finances", "core/league", "core/player", "
                     if (this.p.ratings().length > 0) {
                         return this.p.ratings()[this.p.ratings().length - 1][ratingKey]();
                     }
-
                     return 0;
                 },
                 write: function (value) {
@@ -93,6 +92,22 @@ define(["dao", "globals", "ui", "core/finances", "core/league", "core/player", "
                 age = parseInt(value, 10);
                 if (age !== age) { age = 25; } // NaN check
                 this.p.born.year(g.season - age);
+            },
+            owner: this
+        });
+
+        // Set position for latest season
+        this.pos = ko.computed({
+            read: function () {
+                // Critical: this will always call p.ratings() so it knows to update after player is loaded
+                if (this.p.ratings().length > 0) {
+                    return this.p.ratings()[this.p.ratings().length - 1].pos();
+                }
+                return 'F';
+            },
+            write: function (value) {
+console.log(value);
+                this.p.ratings()[this.p.ratings().length - 1].pos(value);
             },
             owner: this
         });
@@ -371,6 +386,7 @@ define(["dao", "globals", "ui", "core/finances", "core/league", "core/player", "
                 tx = dao.tx(["players", "playerStats"], "readwrite");
 
 
+console.log(p);
                 dao.players.put({ot: tx, value: p}).then(function (pidLocal) {
                     // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
                     // When adding a player, this is the only way to know the pid

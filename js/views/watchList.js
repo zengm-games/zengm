@@ -39,8 +39,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/league", "core/player",
                 var i;
 
                 players = player.filter(players, {
-                    attrs: ["pid", "name", "pos", "age", "injury", "tid", "abbrev", "watch", "contract", "freeAgentMood", "draft"],
-                    ratings: ["ovr", "pot", "skills"],
+                    attrs: ["pid", "name", "age", "injury", "tid", "abbrev", "watch", "contract", "freeAgentMood", "draft"],
+                    ratings: ["ovr", "pot", "skills", "pos"],
                     stats: ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"],
                     season: g.season,
                     totals: inputs.statType === "totals",
@@ -109,7 +109,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/league", "core/player",
                     contract = helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp;
                 }
 
-                rows.push([helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.pos, String(p.age), '<a href="' + helpers.leagueUrl(["roster", p.abbrev]) + '">' + p.abbrev + '</a>', String(p.ratings.ovr), String(p.ratings.pot), contract, String(p.stats.gp), helpers.round(p.stats.min, d), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.trb, d), helpers.round(p.stats.ast, d), helpers.round(p.stats.tov, d), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, d), helpers.round(p.stats.pts, d), helpers.round(p.stats.per, 1), helpers.round(p.stats.ewa, 1)]);
+                rows.push([helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.ratings.pos, String(p.age), '<a href="' + helpers.leagueUrl(["roster", p.abbrev]) + '">' + p.abbrev + '</a>', String(p.ratings.ovr), String(p.ratings.pot), contract, String(p.stats.gp), helpers.round(p.stats.min, d), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.trb, d), helpers.round(p.stats.ast, d), helpers.round(p.stats.tov, d), helpers.round(p.stats.stl, 1), helpers.round(p.stats.blk, d), helpers.round(p.stats.pts, d), helpers.round(p.stats.per, 1), helpers.round(p.stats.ewa, 1)]);
             }
 
             ui.datatable($("#watch-list"), 0, rows);

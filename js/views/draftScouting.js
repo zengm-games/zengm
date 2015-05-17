@@ -15,8 +15,8 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
             var i, p, pa, players;
 
             playersAll = player.filter(playersAll, {
-                attrs: ["pid", "name", "pos", "age", "watch", "valueFuzz"],
-                ratings: ["ovr", "pot", "skills", "fuzz"],
+                attrs: ["pid", "name", "age", "watch", "valueFuzz"],
+                ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
                 showNoStats: true,
                 showRookies: true,
                 fuzz: true
@@ -30,12 +30,13 @@ define(["dao", "globals", "ui", "core/draft", "core/finances", "core/player", "l
                 pa.name = pa.name.split(" ")[0].substr(0, 1) + ". " + pa.name.split(" ")[1];
 
                 // Attributes
-                p = {pid: pa.pid, name: pa.name, pos: pa.pos, age: pa.age, watch: pa.watch, valueFuzz: pa.valueFuzz};
+                p = {pid: pa.pid, name: pa.name, age: pa.age, watch: pa.watch, valueFuzz: pa.valueFuzz};
 
                 // Ratings - just take the only entry
                 p.ovr = pa.ratings[0].ovr;
                 p.pot = pa.ratings[0].pot;
                 p.skills = pa.ratings[0].skills;
+                p.pos = pa.ratings[0].pos;
 
                 players.push(p);
             }

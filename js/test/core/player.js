@@ -48,7 +48,6 @@ define(["globals", "core/player", "lib/underscore", "util/helpers"], function (g
 
                 // Like player from http://www.reddit.com/r/BasketballGM/comments/222k8b/so_a_10x_dpoy_apparently_doesnt_have_what_it/
                 p = player.generate(0, 19, "", 25, 55, 2012, false, 15.5);
-                p.pos = "C";
                 p.stats = [{
                     min: 1 * 2.6,
                     per: 18.7,

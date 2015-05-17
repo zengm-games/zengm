@@ -232,8 +232,8 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
 
                 vars.team = t;
 
-                attrs = ["pid", "tid", "draft", "name", "pos", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier", "watch", "gamesUntilTradable"];  // tid and draft are used for checking if a player can be released without paying his salary
-                ratings = ["ovr", "pot", "dovr", "dpot", "skills"];
+                attrs = ["pid", "tid", "draft", "name", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier", "watch", "gamesUntilTradable"];  // tid and draft are used for checking if a player can be released without paying his salary
+                ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
                 stats = ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"];
 
                 if (inputs.season === g.season) {

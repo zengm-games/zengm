@@ -5,6 +5,11 @@ CURRENT
 -------
 
 store pos in ratings since it changes over time
+  when retired, player page (and other career-level things) should display most common pos, or maybe composite that us union of all positions (like GF for someone who was both SG and SF)
+    could store in player[].pos, but only use for retired players? or compute dynamically?
+    draftSummary, hallOfFame, player, playerStats (careerTotals), teamHistory
+  update customization documentation
+  test draft class import
 
 Exclude assets from AI trade offers http://www.reddit.com/r/BasketballGM/comments/336nzr/trade_ui_redesign/crawmjy?context=3
 

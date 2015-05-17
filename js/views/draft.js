@@ -135,8 +135,8 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
 
             undrafted.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });
             undrafted = player.filter(undrafted, {
-                attrs: ["pid", "name", "pos", "age", "injury", "contract", "watch"],
-                ratings: ["ovr", "pot", "skills"],
+                attrs: ["pid", "name", "age", "injury", "contract", "watch"],
+                ratings: ["ovr", "pot", "skills", "pos"],
                 stats: ["per", "ewa"],
                 season: g.season,
                 showNoStats: true,
@@ -145,8 +145,8 @@ define(["dao", "globals", "ui", "core/draft", "core/player", "lib/bluebird", "li
             });
 
             players = player.filter(players, {
-                attrs: ["pid", "tid", "name", "pos", "age", "draft", "injury", "contract", "watch"],
-                ratings: ["ovr", "pot", "skills"],
+                attrs: ["pid", "tid", "name", "age", "draft", "injury", "contract", "watch"],
+                ratings: ["ovr", "pot", "skills", "pos"],
                 stats: ["per", "ewa"],
                 season: g.season,
                 showRookies: true,

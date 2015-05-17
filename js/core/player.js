@@ -873,7 +873,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
     }
 
     function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scoutingRank) {
-        var maxHgt, maxWeight, minHgt, minWeight, nationality, p;
+        var maxHgt, maxWeight, minHgt, minWeight, nationality, p, rand;
 
         p = {}; // Will be saved to database
         p.tid = tid;
@@ -891,12 +891,21 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
 
         minHgt = 71;  // 5'11"
         maxHgt = 85;  // 7'1"
-        minWeight = 150;
+        minWeight = 170;
         maxWeight = 290;
 
         p.pos = pos(p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
-        p.hgt = Math.round(random.randInt(-2, 2) + p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt);  // Height in inches (from minHgt to maxHgt)
         p.weight = Math.round(random.randInt(-20, 20) + (p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight);  // Weight in pounds (from minWeight to maxWeight)
+
+        p.hgt = Math.round(random.randInt(-2, 2) + p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt);  // Height in inches (from minHgt to maxHgt)
+        rand = Math.random();
+        if (rand < 0.5) {
+            p.hgt += 1;
+        } else if (rand < 0.75) {
+            p.hgt += 2;
+        } else if (rand < 0.77) {
+            p.hgt += 3;
+        }
 
         // Randomly choose nationality
         nationality = 'USA';

@@ -4,6 +4,10 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+revamp position assignment algorithm
+  until a player is ~28 (whenever ratings decline starts), recalculate every year
+  center labeling is poor (only short guys can be centers, taller ones get FC)
+
 Exclude assets from AI trade offers http://www.reddit.com/r/BasketballGM/comments/336nzr/trade_ui_redesign/crawmjy?context=3
 
 Chrome delete data http://www.reddit.com/r/BasketballGM/comments/35eyq6/cant_store_anymore_data_on_chromebook/cr46zch?context=3
@@ -119,12 +123,6 @@ BBGM Gold?
       remaining: beta, play, and account
 
 league settings http://www.reddit.com/r/BasketballGM/comments/2xlqnp/request_allow_editing_of_salary_cap_numbers_in/
-
-displayed rating doesn't fuzz height, because height can never change
-but the composite checking code fuzzes everything
-i forgot about this before
-a good solution would be to have fuzzrating take the whole ratings object and a key, so it can do the logic about what gets fuzzed and what doesn't
-bc this logic is already copy/pasted twice in player.filter (line 1137 and 1180)
 
 composite ratings / scouting report
   "Shooting", "PG Skills", "Paint Scoring", rebounding
@@ -255,7 +253,6 @@ options:
   compute "pot" for each rating, use that to generate displayed pot
   somehow do it organically, with different rates of growth in different categories
 current beta issues:
-  revisit position labels - too many PGs?
   different types of players should develop differently
     maybe make it multiplicative? should be much more likely to go from 50-100 than 0-100
     or cutoff-based, like if you're below 20 you're never going to improve there?
@@ -497,9 +494,6 @@ fix contracts, signing
   if WS distribution matches NBA, then look at $ vs WS. even better, build a multivariate model with age
   contracts should take ratings into more account, since stats on a good team are inflated and stats on a bad team are depressed
   player contract amounts http://www.reddit.com/r/BasketballGM/comments/1kj0p0/can_i_turn_off_firing/cbpxjyj?context=3
-revamp position assignment algorithm
-  until a player is ~28 (whenever ratings decline starts), recalculate every year
-  center labeling is poor (only short guys can be centers, taller ones get FC)
 gameSim
   mediocre three point shooters should shoot it less http://www.reddit.com/r/BasketballGM/comments/2bwvpj/psa_players_who_shouldnt_shoot_3s_continue_to/
   smart substitutions http://www.reddit.com/r/BasketballGM/comments/2b9w78/went_7012_with_this_roster_is_this_really_that/cj3zgui
@@ -682,7 +676,6 @@ more refined control of playing time
   http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbaegpq
   http://www.reddit.com/r/BasketballGM/comments/1qaml8/playing_time_explain_to_me_like_im_8/
   just set minutes directly? any minutes not included, leave up to coach's discretion
-fake feet/inches heights should be taller
 draft
   randomness in picks should factor in relative ratings http://www.reddit.com/r/BasketballGM/comments/1l1713/the_draft_still_needs_some_work_it_seems_my/cbutw7v?context=1
   somehow allow uploading of custom draft classes

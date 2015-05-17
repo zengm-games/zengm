@@ -897,6 +897,27 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
                     };
                 }());
             }
+            if (event.oldVersion <= 15) {
+                (function () {
+                    // Put pos in ratings rather than root of player objects, so users can see it change over time
+                    tx.objectStore("players").openCursor().onsuccess = function (event) {
+                        var cursor, i, p;
+
+                        cursor = event.target.result;
+
+                        if (cursor) {
+                            p = cursor.value;
+                            for (i = 0; i < p.ratings.length; i++) {
+                                p.ratings[i].pos = p.pos;
+                            }
+                            delete p.pos;
+
+                            cursor.update(p);
+                            cursor.continue();
+                        }
+                    };
+                }());
+            }
         });
     }
 
@@ -905,7 +926,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
             var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-            request = indexedDB.open("league" + lid, 15);
+            request = indexedDB.open("league" + lid, 16);
             request.onerror = function (event) {
                 reject(new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message));
             };

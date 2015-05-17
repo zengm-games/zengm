@@ -106,7 +106,6 @@ define(["dao", "globals", "ui", "core/finances", "core/league", "core/player", "
                 return 'F';
             },
             write: function (value) {
-console.log(value);
                 this.p.ratings()[this.p.ratings().length - 1].pos(value);
             },
             owner: this
@@ -385,8 +384,6 @@ console.log(value);
 
                 tx = dao.tx(["players", "playerStats"], "readwrite");
 
-
-console.log(p);
                 dao.players.put({ot: tx, value: p}).then(function (pidLocal) {
                     // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
                     // When adding a player, this is the only way to know the pid

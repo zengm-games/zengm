@@ -466,7 +466,12 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             p.born.year = g.season - age;
         }
 
-        p.ratings[r].pos = pos(p.ratings[r]);
+        if (p.pos) {
+            // Must be a custom league player, let's not rock the boat
+            p.ratings[r].pos = p.pos;
+        } else {
+            p.ratings[r].pos = pos(p.ratings[r]);
+        }
 
         return p;
     }
@@ -1884,7 +1889,6 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                     p.ratings[i].pos = p.pos;
                 }
             }
-            delete p.pos;
         }
 
         return p;

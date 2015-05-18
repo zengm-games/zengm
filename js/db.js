@@ -20,7 +20,8 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
                 saveToDb: false
             });
         } else {
-            throw new Error("Database abort: " + event.target.error.name + " - " + event.target.error.message);
+            console.log("Database abort!");
+            throw event.target.error;
         }
     }
 
@@ -130,7 +131,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
 //        console.log('Connecting to database "meta"');
             request = indexedDB.open("meta", 7);
             request.onerror = function (event) {
-                reject(new Error("Meta connection error: " + event.target.error.name + " - " + event.target.error.message));
+                reject(event.target.error);
             };
             request.onblocked = function () {
                 window.alert("Please close all other tabs with this site open!");
@@ -147,11 +148,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
                 g.dbm = request.result;
                 g.dbm.onerror = function (event) {
                     console.log(event);
-                    if (event.target.webkitErrorMessage) {
-                        throw new Error("Meta database error: " + event.target.webkitErrorMessage);
-                    } else {
-                        throw new Error("Meta database error: " + event.target.error.name + " - " + event.target.error.message);
-                    }
+                    throw event.target.error;
                 };
                 g.dbm.onabort = abortHandler;
                 resolve();
@@ -928,7 +925,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
 //        console.log('Connecting to database "league' + lid + '"');
             request = indexedDB.open("league" + lid, 16);
             request.onerror = function (event) {
-                reject(new Error("League connection error: " + event.target.error.name + " - " + event.target.error.message));
+                reject(event.target.error);
             };
             request.onblocked = function () {
                 window.alert("Please close all other tabs with this site open!");
@@ -945,11 +942,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
                 g.dbl = request.result;
                 g.dbl.onerror = function (event) {
                     console.log(event);
-                    if (event.target.webkitErrorMessage) {
-                        throw new Error("League database error: " + event.target.webkitErrorMessage);
-                    } else {
-                        throw new Error("League database error: " + event.target.error.name + " - " + event.target.error.message);
-                    }
+                    throw event.target.error;
                 };
                 g.dbl.onabort = abortHandler;
                 resolve();

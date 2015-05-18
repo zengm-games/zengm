@@ -1890,6 +1890,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                 }
             }
         }
+        // Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
 
         return p;
     }

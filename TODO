@@ -4,6 +4,19 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+view rewrite
+  browserify
+    ok if not everything is off npm, if it's something i edit
+    what about shimmed files that add to global scope? should be ok just to do require('aaa') on them, maybe?
+  react to handle updating DOM
+    rebind every time view changes? or some react-specific router?
+  pubsub to pages know when to update? say like "player 5 was updated" or "team 6 was updated", is that level of granularity possible? or just updateEvents like now?
+    how would i handle the situation of redirecting and updating at the same time? maybe that's too uncommon to worry about
+    https://facebook.github.io/react/tips/communicate-between-components.html "Subscribe to events in componentDidMount(), unsubscribe in componentWillUnmount()"
+  need a new grid component
+    or some hack like http://jsfiddle.net/NXCyC/130/
+  roster page - first try, reasonably complex, get rid of jQuery UI and that weird KO bug
+
 when retired, player page (and other career-level things) should display most common pos, or maybe composite that us union of all positions (like GF for someone who was both SG and SF)
   could store in player.pos, but only use for retired players? or compute dynamically?
   draftSummary, hallOfFame, player, playerStats (careerTotals), teamHistory, anything else?
@@ -16,7 +29,8 @@ no/fuzzier ratings mode http://www.reddit.com/r/BasketballGM/comments/35qftt/sta
 
 revisit initial players http://www.reddit.com/r/BasketballGM/comments/35jb3w/why_is_there_a_player_age_limit_on_newly_created/
 
-compact achievements UI http://www.reddit.com/r/BasketballGM/comments/341k8e/can_we_have_statistical_achievements_sorted_by/
+compact feats UI http://www.reddit.com/r/BasketballGM/comments/341k8e/can_we_have_statistical_achievements_sorted_by/
+  add subtype or something to feats
 
 store some data in memory
   goals
@@ -60,17 +74,6 @@ god mode
     disable salary cap
   edit player
     edit diedYear (or null if blank)
-
-view rewrite
-  browserify
-    ok if not everything is off npm, if it's something i edit
-    what about shimmed files that add to global scope? should be ok just to do require('aaa') on them, maybe?
-  react to handle updating DOM
-    rebind every time view changes? or some react-specific router?
-  pubsub to pages know when to update? say like "player 5 was updated" or "team 6 was updated", is that level of granularity possible? or just updateEvents like now?
-    how would i handle the situation of redirecting and updating at the same time? maybe that's too uncommon to worry about
-    https://facebook.github.io/react/tips/communicate-between-components.html "Subscribe to events in componentDidMount(), unsubscribe in componentWillUnmount()"
-  need a new grid component
 
 refactor draft code
 

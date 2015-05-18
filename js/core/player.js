@@ -301,8 +301,10 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         }
 
         // Multiple positions
-        // Jack of all trades is a GF
-        if ((pg || sg) && (sf || pf || c)) {
+        if (sg && c) {
+            // Bigs with mediocre guard skills shouldn't be labeled GF
+            position = 'F';
+        } else if ((pg || sg) && (sf || pf || c)) {
             position = 'GF';
         } else if (c && (pf || sf)) {
             position = 'FC';

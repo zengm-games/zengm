@@ -247,7 +247,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         pf = false;
         c = false;
 
-        // With no real skills, default is a SG, F, or PF
+        // With no real skills, default is a G, GF, or F
         if (ratings.hgt < 35) {
             position = 'SG';
         } else if (ratings.drb > 30) {
@@ -264,7 +264,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         }
 
         // SG is secondary ball handler and at least one of: slasher, shooter, or a decent defender
-        if ((ratings.drb + ratings.pss) >= 70 &&
+        if ((ratings.drb + ratings.pss) >= 100 &&
                 ((ratings.spd >= 70 && ratings.dnk >= 70 && ratings.drb > 40) ||
                 (ratings.fg >= 70 && ratings.tp >= 70) ||
                 (ratings.hgt >= 30 && ratings.spd >= 80 && ratings.stl >= 70))) {

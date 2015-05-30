@@ -279,7 +279,7 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         }
 
         // PF must meet height/strength requirements.  If they are too tall then they are a Center only... unless they can shoot
-        if (ratings.hgt >= 50 && ((ratings.stre >= 50 && ratings.hgt <= 85) || ratings.tp >= 60 || ratings.tp >= 60)) {
+        if (ratings.hgt >= 50 && ((ratings.stre >= 50 && ratings.hgt <= 85) || ratings.tp >= 60)) {
             pf = true;
         }
 
@@ -301,10 +301,9 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
         }
 
         // Multiple positions
-        if (sg && c) {
-            // Bigs with mediocre guard skills shouldn't be labeled GF
+        if ((pg || sg) && c) {
             position = 'F';
-        } else if ((pg || sg) && (sf || pf || c)) {
+        } else if ((pg || sg) && (sf || pf)) {
             position = 'GF';
         } else if (c && (pf || sf)) {
             position = 'FC';

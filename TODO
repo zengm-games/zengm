@@ -4,6 +4,11 @@ DB CHANGES SINCE 3.4.0
 CURRENT
 -------
 
+use positions for roster building and rotations
+  substitutions require 2 G (or 1 PG) and 2 F/C (or 1 C)
+  roster order requires 2 G and 2 F/C in starting lineup
+  free agents and trades matters....
+
 feats and transactions no included in export? http://www.reddit.com/r/BasketballGM/comments/37ir7c/when_you_export_a_league_u/
 
 Make AI smarter when constructing teams. Then, if that works, make synergy more impactful
@@ -18,6 +23,10 @@ make lineups more realistic
   AI coach needs to be smarter
   AI GM needs to be smarter
   more synergy bonuses/penalties
+
+player development growth curve projection
+
+balance http://www.reddit.com/r/BasketballGM/comments/3759dw/guide_to_winning_70_games_consistently/crls9b1?context=3
 
 view rewrite
   browserify

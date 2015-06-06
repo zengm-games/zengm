@@ -243,13 +243,13 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
     /**
      * Given a list of players sorted by ability, find the starters.
      *
-     * 
+     *
      * @param  {[type]} players [description]
      * @param {Array.<string>} p Array positions of players on roster, sorted by value already.
      * @return {Array.<number>} Indexes of the starters from the input array.
      */
     function findStarters(positions) {
-        var i, numC, numG, numFC, starters;
+        var i, numC, numFC, numG, starters;
 
         starters = []; // Will be less than 5 in length if that's all it takes to meet requirements
         numG = 0;

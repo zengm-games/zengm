@@ -6,9 +6,6 @@ CURRENT
 
 use positions for roster building and rotations
   substitutions require 2 G (or 1 PG) and 2 F/C (or 1 C)
-  roster order requires 2 G and 2 F/C in starting lineup
-    currently works ok, but if 3 G and 1 F in first 3 spots, will skip over a good C to pick a bad F. should add possibility to pick C
-    should also make testable
   free agents and trades matters....
 
 feats and transactions no included in export? http://www.reddit.com/r/BasketballGM/comments/37ir7c/when_you_export_a_league_u/

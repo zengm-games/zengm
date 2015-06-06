@@ -6,6 +6,59 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team"], func
     "use strict";
 
     describe("core/team", function () {
+        describe("#findStarters()", function () {
+            it("should handle easy roster sorts", function () {
+                var starters;
+
+                starters = team.findStarters(["PG", "SG", "SF", "PF", "C", "G", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 3, 4]);
+
+                starters = team.findStarters(["PG", "SG", "G", "PF", "C", "G", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 3, 4]);
+
+                starters = team.findStarters(["F", "SG", "SF", "PG", "C", "G", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 3, 4]);
+
+                starters = team.findStarters(["F", "SG", "SF", "PF", "G", "G", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 3, 4]);
+            });
+            it("should put two Gs in starting lineup", function () {
+                var starters;
+
+                starters = team.findStarters(["PG", "F", "SF", "PF", "C", "G", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 3, 5]);
+
+                starters = team.findStarters(["F", "PF", "G", "PF", "C", "G", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 3, 5]);
+
+                starters = team.findStarters(["F", "PF", "SF", "GF", "C", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 3, 8]);
+
+                starters = team.findStarters(["F", "PF", "SF", "C", "C", "F", "FC", "PF", "PG", "G"]);
+                starters.should.deep.equal([0, 1, 2, 8, 9]);
+            });
+            it("should put two Fs (or one F and one C) in starting lineup", function () {
+                var starters;
+
+                starters = team.findStarters(["PG", "SG", "G", "PF", "G", "G", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 3, 6]);
+
+                starters = team.findStarters(["PG", "SG", "SG", "PG", "G", "G", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 6, 7]);
+
+                starters = team.findStarters(["PG", "SG", "SG", "PG", "C", "G", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 4, 6]);
+            });
+            it("should never put two pure Cs in starting lineup", function () {
+                var starters;
+
+                starters = team.findStarters(["PG", "SG", "G", "C", "C", "G", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 3, 6]);
+
+                starters = team.findStarters(["PG", "SG", "G", "C", "FC", "G", "F", "FC", "PF", "PG"]);
+                starters.should.deep.equal([0, 1, 2, 3, 4]);
+            });
+        });
         describe("#filter()", function () {
             before(function () {
                 return db.connectMeta().then(function () {

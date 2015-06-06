@@ -121,6 +121,7 @@ screenshot
       autocomplete wording: "Draft players, manage teams, go for the championship. How good a Basketball GM are you? Find out at http://basketball-gm.com"
       also autocomplete hashtag
   add prompts to take screenshots at various points
+  things can get cut off right, like wide tables in player pages
 
 event tracking
   in addition to GA, have my own system that is more in depth

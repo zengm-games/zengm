@@ -259,10 +259,12 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
             index: "tid",
             key: tid
         }).then(function (players) {
-            var i;
+            var i, newPlayers, numG, numF, positions, starters;
 
             players = player.filter(players, {
                 attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
+                ratings: ["pos"],
+                season: g.season,
                 showNoStats: true,
                 showRookies: true
             });
@@ -272,6 +274,34 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
             } else {
                 players.sort(function (a, b) { return b.valueNoPot - a.valueNoPot; });
             }
+
+            // Shuffle array so that position conditions are met - 2 G and 2 F/C in starting lineup
+            positions = players.map(function (p) {
+                return p.ratings.pos;
+            });
+            starters = []; // Will be less than 5 in length if that's all it takes to meet requirements
+            numG = 0;
+            numF = 0;
+            for (i = 0; i < positions.length; i++) {
+                if (starters.length === 5 || (numG >= 2 && numF >= 2)) { break; }
+
+                if ((5 - starters.length > ((2 - numG) > 0 ? (2 - numG) : 0) + ((2 - numF) > 0 ? (2 - numF) : 0)) ||
+                        (numG < 2 && positions[i].indexOf('G') >= 0) ||
+                        (numF < 2 && positions[i].indexOf('F') >= 0)) {
+                    starters.push(i);
+                    numG += positions[i].indexOf('G') >= 0 ? 1 : 0;
+                    numF += positions[i].indexOf('F') >= 0 ? 1 : 0;
+                }
+            }
+            newPlayers = starters.map(function (i) {
+                return players[i];
+            });
+            for (i = 0; i < players.length; i++) {
+                if (starters.indexOf(i) < 0) {
+                    newPlayers.push(players[i]);
+                }
+            }
+            players = newPlayers;
 
             for (i = 0; i < players.length; i++) {
                 players[i].rosterOrder = i;

@@ -246,7 +246,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
      *
      * @param  {[type]} players [description]
      * @param {Array.<string>} p Array positions of players on roster, sorted by value already.
-     * @return {Array.<number>} Indexes of the starters from the input array.
+     * @return {Array.<number>} Indexes of the starters from the input array. If this is of length < 5, then satisfactory starters couldn't be found and any players should be used to fill in the starting lineup.
      */
     function findStarters(positions) {
         var i, numC, numFC, numG, starters;

@@ -236,7 +236,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      * @return {boolean} true if a substitution occurred, false otherwise.
      */
     GameSim.prototype.updatePlayersOnCourt = function () {
-        var b, i, ovrs, p, pp, substitutions, t;
+        var b, i, j, numC, numF, numG, numPG, ovrs, p, pos, pp, substitutions, t;
 
         substitutions = false;
 
@@ -260,11 +260,42 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 // Loop through bench players (in order of current roster position) to see if any should be subbed in)
                 for (b = 0; b < this.team[t].player.length; b++) {
                     if (this.playersOnCourt[t].indexOf(b) === -1 && ((this.team[t].player[p].stat.courtTime > 3 && this.team[t].player[b].stat.benchTime > 3 && ovrs[b] > ovrs[p]) || ((this.team[t].player[p].injured || this.team[t].player[p].stat.pf >= 6) && (!this.team[t].player[b].injured && this.team[t].player[b].stat.pf < 6)))) {
+                        // Check if position of substitute makes for a valid lineup
+                        var pos = [];
+                        for (j = 0; j < this.playersOnCourt[t].length; j++) {
+                            if (j !== pp) {
+                                pos.push(this.team[t].player[this.playersOnCourt[t][j]].pos);
+                            }
+                        }
+                        pos.push(this.team[t].player[b].pos);
+                        // Requre 2 Gs (or 1 PG) and 2 Fs (or 1 C)
+                        numG = 0;
+                        numPG = 0;
+                        numF = 0;
+                        numC = 0;
+                        for (j = 0; j < pos.length; j++) {
+                            if (pos[j].indexOf('G') >= 0) {
+                                numG += 1;
+                            }
+                            if (pos[j] === 'PG') {
+                                numPG += 1;
+                            }
+                            if (pos[j].indexOf('F') >= 0) {
+                                numF += 1;
+                            }
+                            if (pos[j] === 'C') {
+                                numC += 1;
+                            }
+                        }
+                        if ((numG < 2 && numPG === 0) || (numF < 2 && numC === 0)) {
+                            continue;
+                        }
+
                         substitutions = true;
 
                         // Substitute player
                         this.playersOnCourt[t][i] = b;
-                        //p = b;
+
                         this.team[t].player[b].stat.courtTime = random.uniform(-2, 2);
                         this.team[t].player[b].stat.benchTime = random.uniform(-2, 2);
                         this.team[t].player[p].stat.courtTime = random.uniform(-2, 2);

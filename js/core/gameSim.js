@@ -288,7 +288,10 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                             }
                         }
                         if ((numG < 2 && numPG === 0) || (numF < 2 && numC === 0)) {
-                            continue;
+                            if (this.fatigue(this.team[t].player[p].stat.energy) > 0.7) {
+                                // Exception for ridiculously tired players, so really unbalanced teams won't play starters whole game
+                                continue;
+                            }
                         }
 
                         substitutions = true;

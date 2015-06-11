@@ -125,7 +125,7 @@ storing data in IndexedDB. All the application code is in the `js` folder.
 Modules are defined with RequireJS. Routes are set in `js/app.js`. Most of the
 important stuff is in `js/core`.
 
-UI is ultimately driven by `js/utils/bbgmView.js`, a small UI layer I wrote on
+UI is ultimately driven by `js/util/bbgmView.js`, a small UI layer I wrote on
 top of Knockout which is used by all the views in the `js/views` folder. Each
 view also has a corresponding HTML file in the `templates` folder. Adding a new
 page is kind of a bitch. You need to explicitly include the template file in

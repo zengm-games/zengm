@@ -336,6 +336,10 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
                         for (i = 0; i < players.length; i++) {
                             if (players[i].tid >= g.PLAYER.FREE_AGENT) {
                                 players[i].tid = playerTids.pop();
+                                if (players[i].stats && players[i].stats.length > 0) {
+                                    players[i].stats[players[i].stats.length - 1].tid = players[i].tid;
+                                    players[i].statsTids.push(players[i].tid);
+                                }
                             }
                         }
                     }

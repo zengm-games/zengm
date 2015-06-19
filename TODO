@@ -7,10 +7,9 @@ CURRENT
 use positions for roster building and rotations
   free agents and trades matters....
   bump up penalties for unbalanced teams
-    MAYBE CURRENT CODE IS NOT THAT BAD
-      test more
-    PERIMFACTOR BEING MULTIPLICATIVE WON'T PUNISH BAD TEAMS ENOUGH
+    the tricky part is that finding a factor and using it to create variance leads to variance on the CPU-generated teams
     could play with turnover probability too
+    redo ovr formula
     rewrite gamesim?
     tricky: good teams have high skill players, who are going to do really well in any synergy metric. so it's hard to punish unbalanced teams through synergy without decreasing parity by a lot
       hacky approach: stay with something similar to current system, but with an extra penalty for very unbalanced teams (could be sigmoidal so it only affects really poorly balanced teams)
@@ -61,6 +60,8 @@ when retired, player page (and other career-level things) should display most co
   draftSummary, hallOfFame, player, playerStats (careerTotals), teamHistory, anything else?
 
 Exclude assets from AI trade offers http://www.reddit.com/r/BasketballGM/comments/336nzr/trade_ui_redesign/crawmjy?context=3
+
+delete old data bug http://www.reddit.com/r/BasketballGM/comments/39mi4p/bug_pers_roughly_double_after_deleting_unnotables/cs8difx?context=3
 
 Chrome delete data http://www.reddit.com/r/BasketballGM/comments/35eyq6/cant_store_anymore_data_on_chromebook/cr46zch?context=3
 

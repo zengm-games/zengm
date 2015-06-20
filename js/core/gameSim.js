@@ -193,11 +193,13 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
     };
 
     GameSim.prototype.simPossession = function() {
-        var outcome, substitutions;
+        var outcome, possessionTime, substitutions;
 
         // Clock
         this.t -= this.dt;
+        possessionTime = this.dt;
         if (this.t < 0) {
+            possessionTime += this.t;
             this.t = 0;
         }
 
@@ -215,7 +217,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             this.d = (this.o === 1) ? 0 : 1;
         }
 
-        this.updatePlayingTime();
+        this.updatePlayingTime(possessionTime);
 
         this.injuries();
 
@@ -417,23 +419,23 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
      *
      * @memberOf core.gameSim
      */
-    GameSim.prototype.updatePlayingTime = function () {
+    GameSim.prototype.updatePlayingTime = function (possessionTime) {
         var p, t;
 
         for (t = 0; t < 2; t++) {
             // Update minutes (overall, court, and bench)
             for (p = 0; p < this.team[t].player.length; p++) {
                 if (this.playersOnCourt[t].indexOf(p) >= 0) {
-                    this.recordStat(t, p, "min", this.dt);
-                    this.recordStat(t, p, "courtTime", this.dt);
+                    this.recordStat(t, p, "min", possessionTime);
+                    this.recordStat(t, p, "courtTime", possessionTime);
                     // This used to be 0.04. Increase more to lower PT
-                    this.recordStat(t, p, "energy", -this.dt * 0.06 * (1 - this.team[t].player[p].compositeRating.endurance));
+                    this.recordStat(t, p, "energy", -possessionTime * 0.06 * (1 - this.team[t].player[p].compositeRating.endurance));
                     if (this.team[t].player[p].stat.energy < 0) {
                         this.team[t].player[p].stat.energy = 0;
                     }
                 } else {
-                    this.recordStat(t, p, "benchTime", this.dt);
-                    this.recordStat(t, p, "energy", this.dt * 0.1);
+                    this.recordStat(t, p, "benchTime", possessionTime);
+                    this.recordStat(t, p, "energy", possessionTime * 0.1);
                     if (this.team[t].player[p].stat.energy > 1) {
                         this.team[t].player[p].stat.energy = 1;
                     }

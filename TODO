@@ -1,16 +1,27 @@
-DB CHANGES SINCE 3.4.0
-----------------------
-
 CURRENT
 -------
 
 use positions for roster building and rotations
   free agents and trades matters....
   bump up penalties for unbalanced teams
+    the tricky part is that finding a factor and using it to create variance leads to variance on the CPU-generated teams
+    could play with turnover probability too
+    rewrite gamesim, fixing all these problems? also, coaching less agressively when game is blowout, playing stars more in important games, ...
+    tricky: good teams have high skill players, who are going to do really well in any synergy metric. so it's hard to punish unbalanced teams through synergy without decreasing parity by a lot
+      hacky approach: stay with something similar to current system, but with an extra penalty for very unbalanced teams (could be sigmoidal so it only affects really poorly balanced teams)
+    probably will need to increase synergyFactor
+    might need to tweak some probabilities if this changes stats too much
+    redo ovr formula
 
 feats and transactions no included in export? http://www.reddit.com/r/BasketballGM/comments/37ir7c/when_you_export_a_league_u/
 
 Make AI smarter when constructing teams. Then, if that works, make synergy more impactful
+
+Too many 8 seeds winning over 1 seeds
+  http://www.reddit.com/r/BasketballGM/comments/39j6gy/this_happens_way_too_often/cs4lor3
+  http://www.reddit.com/r/BasketballGM/comments/391et4/1v8_seed_theory_100_years_of_simulation/
+  point differential stuff - BBGM teams seem better than NBA teams, but still lose in 8-1 (and have worse records)
+    some of this could be running up the score against bad teams
 
 http://www.reddit.com/r/BasketballGM/comments/371tap/in_mexico_they_sweep_50/ should at least send the 5-0 team through
 
@@ -46,6 +57,8 @@ when retired, player page (and other career-level things) should display most co
   draftSummary, hallOfFame, player, playerStats (careerTotals), teamHistory, anything else?
 
 Exclude assets from AI trade offers http://www.reddit.com/r/BasketballGM/comments/336nzr/trade_ui_redesign/crawmjy?context=3
+
+delete old data bug http://www.reddit.com/r/BasketballGM/comments/39mi4p/bug_pers_roughly_double_after_deleting_unnotables/cs8difx?context=3
 
 Chrome delete data http://www.reddit.com/r/BasketballGM/comments/35eyq6/cant_store_anymore_data_on_chromebook/cr46zch?context=3
 
@@ -610,6 +623,7 @@ in playoffs, replace Week/Month in Play menu with Round http://www.reddit.com/r/
 gamesim shot distribution - less people shooting 3s really poorly, especially tall players
 UI to easily switch between conference and division standings on small screens and dashboard http://www.reddit.com/r/BasketballGM/comments/2d4o9r/feature_requests_of_the_week_august_10_2014/cjqrwtf?context=3
 schedule page (and dashboard and maybe gamelog) should show opponent records
+add "play until end of quarter" in live gamesim
 
 LOW PRIORITY
 ------------

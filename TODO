@@ -9,12 +9,12 @@ use positions for roster building and rotations
   bump up penalties for unbalanced teams
     the tricky part is that finding a factor and using it to create variance leads to variance on the CPU-generated teams
     could play with turnover probability too
-    rewrite gamesim, fixing all these problems? also, coaching less agressively when game is blowout, playing stars more in important games, ...
+    redo ovr formula
+    rewrite gamesim?
     tricky: good teams have high skill players, who are going to do really well in any synergy metric. so it's hard to punish unbalanced teams through synergy without decreasing parity by a lot
       hacky approach: stay with something similar to current system, but with an extra penalty for very unbalanced teams (could be sigmoidal so it only affects really poorly balanced teams)
     probably will need to increase synergyFactor
     might need to tweak some probabilities if this changes stats too much
-    redo ovr formula
 
 feats and transactions no included in export? http://www.reddit.com/r/BasketballGM/comments/37ir7c/when_you_export_a_league_u/
 

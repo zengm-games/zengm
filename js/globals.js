@@ -170,10 +170,6 @@ define(["lib/knockout"], function (ko) {
         athleticism: {
             ratings: ['stre', 'spd', 'jmp', 'hgt'],
             weights: [0.25, 1, 0.75, 0.25]
-        },
-        speed: {
-            ratings: ['spd'],
-            weights: [1]
         }
     };
 

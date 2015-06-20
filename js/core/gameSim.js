@@ -366,8 +366,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 Dp: 0,
                 Po: 0,
                 Ps: 0,
-                R: 0,
-                Speed: 0
+                R: 0
             };
 
             for (i = 0; i < 5; i++) {
@@ -382,7 +381,6 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 skillsCount.Po += this.sigmoid(this.team[t].player[p].compositeRating.shootingLowPost, 15, 0.7);
                 skillsCount.Ps += this.sigmoid(this.team[t].player[p].compositeRating.passing, 15, 0.7);
                 skillsCount.R += this.sigmoid(this.team[t].player[p].compositeRating.rebounding, 15, 0.7);
-                skillsCount.Speed += this.sigmoid(this.team[t].player[p].compositeRating.speed, 10, 0.6);
             }
 
             // Offensive synergy
@@ -396,9 +394,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
 
             // Punish teams for not having multiple perimeter skills
             perimFactor = helpers.bound(Math.sqrt(1 + skillsCount.B + skillsCount.Ps) - 1, 0, 1.73) / 1.73; // Between 0 and 1, representing the perimeter skills
+//if (this.team[t].id >= 0 && this.t === undefined) { console.log(this.team[t].id, 'perimFactor', perimFactor, this.team[t].synergy.off); }
             this.team[t].synergy.off += perimFactor - 0.7;
-            this.team[t].synergy.off += 0.25 * (skillsCount.Speed - 1);
-if (this.team[t].id >= 0 && this.t === undefined) { console.log(this.team[t].id, 'offSynergy', this.team[t].synergy.off); }
 
             // Defensive synergy
             this.team[t].synergy.def = 0;
@@ -409,9 +406,8 @@ if (this.team[t].id >= 0 && this.t === undefined) { console.log(this.team[t].id,
 
             // Punish teams for being unathletic
             perimFactor = helpers.bound(Math.sqrt(1 + skillsCount.A) - 1, 0, 2.45) / 2.45; // Between 0 and 1, representing athleticism
+//if (this.team[t].id >= 0 && this.t === undefined) { console.log(this.team[t].id, 'perimFactor2', perimFactor, this.team[t].synergy.def); }
             this.team[t].synergy.def += perimFactor - 0.2;
-            this.team[t].synergy.def += 0.25 * (skillsCount.Speed - 1);
-if (this.team[t].id >= 0 && this.t === undefined) { console.log(this.team[t].id, 'defSynergy', this.team[t].synergy.def); console.log('speed', skillsCount.Speed)}
 
             // Rebounding synergy
             this.team[t].synergy.reb = 0;

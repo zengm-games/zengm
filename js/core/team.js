@@ -241,6 +241,48 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
     }
 
     /**
+     * Given a list of players sorted by ability, find the starters.
+     *
+     *
+     * @param  {[type]} players [description]
+     * @param {Array.<string>} p Array positions of players on roster, sorted by value already.
+     * @return {Array.<number>} Indexes of the starters from the input array. If this is of length < 5, then satisfactory starters couldn't be found and any players should be used to fill in the starting lineup.
+     */
+    function findStarters(positions) {
+        var i, numC, numFC, numG, starters;
+
+        starters = []; // Will be less than 5 in length if that's all it takes to meet requirements
+        numG = 0;
+        numFC = 0;
+        numC = 0;
+        for (i = 0; i < positions.length; i++) {
+            if (starters.length === 5 || (numG >= 2 && numFC >= 2)) { break; }
+
+            // Make sure we can get 2 G and 2 F/C
+            if ((5 - starters.length > ((2 - numG) > 0 ? (2 - numG) : 0) + ((2 - numFC) > 0 ? (2 - numFC) : 0)) ||
+                    (numG < 2 && positions[i].indexOf('G') >= 0) ||
+                    (numFC < 2 && (positions[i].indexOf('F') >= 0 || (positions[i] === 'C' && numC === 0)))) {
+                starters.push(i);
+                numG += positions[i].indexOf('G') >= 0 ? 1 : 0;
+                numFC += (positions[i].indexOf('F') >= 0 || positions[i] === 'C') ? 1 : 0;
+                numC += positions[i] === 'C' ? 1 : 0;
+            }
+        }
+
+        // Fill in after meeting requirements, but still not too many Cs!
+        for (i = 0; i < positions.length; i++) {
+            if (starters.length === 5) { break; }
+            if (starters.indexOf(i) >= 0) { continue; }
+            if (numC >= 1 && positions[i] === 'c') { continue; }
+
+            starters.push(i);
+            numC += positions[i] === 'C' ? 1 : 0;
+        }
+
+        return starters;
+    }
+
+    /**
      * Sort a team's roster based on player ratings and stats.
      *
      * @memberOf core.team
@@ -259,10 +301,12 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
             index: "tid",
             key: tid
         }).then(function (players) {
-            var i;
+            var i, newPlayers, positions, starters;
 
             players = player.filter(players, {
                 attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
+                ratings: ["pos"],
+                season: g.season,
                 showNoStats: true,
                 showRookies: true
             });
@@ -272,6 +316,21 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
             } else {
                 players.sort(function (a, b) { return b.valueNoPot - a.valueNoPot; });
             }
+
+            // Shuffle array so that position conditions are met - 2 G and 2 F/C in starting lineup, at most one pure C
+            positions = players.map(function (p) {
+                return p.ratings.pos;
+            });
+            starters = findStarters(positions);
+            newPlayers = starters.map(function (i) {
+                return players[i];
+            });
+            for (i = 0; i < players.length; i++) {
+                if (starters.indexOf(i) < 0) {
+                    newPlayers.push(players[i]);
+                }
+            }
+            players = newPlayers;
 
             for (i = 0; i < players.length; i++) {
                 players[i].rosterOrder = i;
@@ -1394,6 +1453,7 @@ console.log(dv);*/
         addSeasonRow: addSeasonRow,
         addStatsRow: addStatsRow,
         generate: generate,
+        findStarters: findStarters,
         rosterAutoSort: rosterAutoSort,
         filter: filter,
         valueChange: valueChange,

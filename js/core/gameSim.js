@@ -48,7 +48,6 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
         this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
         this.startersRecorded = false;  // Used to track whether the *real* starters have been recorded or not.
         this.updatePlayersOnCourt();
-        this.updateSynergy();
 
         this.subsEveryN = 6;  // How many possessions to wait before doing substitutions
 
@@ -383,7 +382,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 skillsCount.R += this.sigmoid(this.team[t].player[p].compositeRating.rebounding, 15, 0.7);
             }
 
-            // Offensive synergy
+            // Base offensive synergy
             this.team[t].synergy.off = 0;
             this.team[t].synergy.off += 5 * this.sigmoid(skillsCount["3"], 3, 2); // 5 / (1 + e^-(3 * (x - 2))) from 0 to 5
             this.team[t].synergy.off += 3 * this.sigmoid(skillsCount.B, 15, 0.75) + this.sigmoid(skillsCount.B, 5, 1.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
@@ -393,9 +392,8 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             this.team[t].synergy.off /= 17;
 
             // Punish teams for not having multiple perimeter skills
-            perimFactor = helpers.bound(Math.sqrt(1 + skillsCount.B + skillsCount.Ps) - 1, 0, 1.73) / 1.73; // Between 0 and 1, representing the perimeter skills
-//if (this.team[t].id >= 0 && this.t === undefined) { console.log(this.team[t].id, 'perimFactor', perimFactor, this.team[t].synergy.off); }
-            this.team[t].synergy.off += perimFactor - 0.7;
+            perimFactor = helpers.bound(Math.sqrt(1 + skillsCount.B + skillsCount.Ps + skillsCount["3"]) - 1, 0, 2) / 2; // Between 0 and 1, representing the perimeter skills
+            this.team[t].synergy.off *= 0.5 + 0.5 * perimFactor;
 
             // Defensive synergy
             this.team[t].synergy.def = 0;
@@ -403,11 +401,6 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             this.team[t].synergy.def += 2 * this.sigmoid(skillsCount.Di, 15, 0.75); // 2 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
             this.team[t].synergy.def += this.sigmoid(skillsCount.A, 5, 2) + this.sigmoid(skillsCount.A, 5, 3.25); // 1 / (1 + e^-(5 * (x - 2))) + 1 / (1 + e^-(5 * (x - 3.25))) from 0 to 5
             this.team[t].synergy.def /= 6;
-
-            // Punish teams for being unathletic
-            perimFactor = helpers.bound(Math.sqrt(1 + skillsCount.A) - 1, 0, 2.45) / 2.45; // Between 0 and 1, representing athleticism
-//if (this.team[t].id >= 0 && this.t === undefined) { console.log(this.team[t].id, 'perimFactor2', perimFactor, this.team[t].synergy.def); }
-            this.team[t].synergy.def += perimFactor - 0.2;
 
             // Rebounding synergy
             this.team[t].synergy.reb = 0;
@@ -626,30 +619,23 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
             r1 = Math.random() * this.team[this.o].player[p].compositeRating.shootingMidRange;
             r2 = Math.random() * (this.team[this.o].player[p].compositeRating.shootingAtRim + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def));  // Synergy makes easy shots either more likely or less likely
             r3 = Math.random() * (this.team[this.o].player[p].compositeRating.shootingLowPost + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def));  // Synergy makes easy shots either more likely or less likely
-
-            // Extra hacky scaling for unbalanced lineups
-//console.log(this.team[this.o].id, this.team[this.o].synergy.off, this.sigmoid(this.team[this.o].synergy.off, 20, 0.25))
-            r1 *= 1 + 0.2 * (1 - this.sigmoid(this.team[this.o].synergy.off, 15, 0.15));
-            r2 *= 0.6 + 0.4 * this.sigmoid(this.team[this.o].synergy.off, 15, 0.15);
-            r3 *= 0.4 + 0.6 * this.sigmoid(this.team[this.o].synergy.off, 15, 0.15);
-
             if (r1 > r2 && r1 > r3) {
                 // Two point jumper
                 type = "midRange";
                 probMissAndFoul = 0.07;
-                probMake = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.2 + 0.34;
+                probMake = this.team[this.o].player[p].compositeRating.shootingMidRange * 0.3 + 0.29;
                 probAndOne = 0.05;
             } else if (r2 > r3) {
                 // Dunk, fast break or half court
                 type = "atRim";
                 probMissAndFoul = 0.37;
-                probMake = this.team[this.o].player[p].compositeRating.shootingAtRim * 0.2 + 0.47;
+                probMake = this.team[this.o].player[p].compositeRating.shootingAtRim * 0.3 + 0.52;
                 probAndOne = 0.25;
             } else {
                 // Post up
                 type = "lowPost";
                 probMissAndFoul = 0.33;
-                probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.2 + 0.42;
+                probMake = this.team[this.o].player[p].compositeRating.shootingLowPost * 0.3 + 0.37;
                 probAndOne = 0.15;
             }
         }

@@ -199,7 +199,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             var i, j, k, round, scoutingRank, t, toMaybeAdd, tx;
 
             // Probably is fastest to use this transaction for everything done to create a new league
-            tx = dao.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games"], "readwrite");
+            tx = dao.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"], "readwrite");
 
             // Draft picks for the first 4 years, as those are the ones can be traded initially
             if (leagueFile.hasOwnProperty("draftPicks")) {
@@ -304,7 +304,7 @@ define(["dao", "db", "globals", "ui", "core/draft", "core/finances", "core/phase
             }
 
             // These object stores are blank by default
-            toMaybeAdd = ["releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games"];
+            toMaybeAdd = ["releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
             for (j = 0; j < toMaybeAdd.length; j++) {
                 if (leagueFile.hasOwnProperty(toMaybeAdd[j])) {
                     for (i = 0; i < leagueFile[toMaybeAdd[j]].length; i++) {

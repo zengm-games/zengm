@@ -116,9 +116,9 @@ define(["globals", "ui", "core/league", "util/bbgmView"], function (g, ui, leagu
                     checked: true
                 },
                 {
-                    objectStores: "trade,negotiations,gameAttributes,draftOrder,messages,events",
+                    objectStores: "trade,negotiations,gameAttributes,draftOrder,messages,events,playerFeats",
                     name: "Game State",
-                    desc: "Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters.",
+                    desc: "Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
                     checked: true
                 },
                 {

@@ -394,8 +394,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 }
 
                 // Log result of playoff series
-                if (series.away.won === 4 || series.home.won === 4) {
-                    if (series.away.won === 4) {
+                if (series.away.won >= 4 || series.home.won >= 4) {
+                    if (series.away.won >= 4) {
                         winnerTid = series.away.tid;
                         loserTid = series.home.tid;
                         loserWon = series.home.won;

@@ -263,7 +263,7 @@ define(["lib/underscore", "util/helpers", "util/random"], function (_, helpers, 
                 for (b = 0; b < this.team[t].player.length; b++) {
                     if (this.playersOnCourt[t].indexOf(b) === -1 && ((this.team[t].player[p].stat.courtTime > 3 && this.team[t].player[b].stat.benchTime > 3 && ovrs[b] > ovrs[p]) || ((this.team[t].player[p].injured || this.team[t].player[p].stat.pf >= 6) && (!this.team[t].player[b].injured && this.team[t].player[b].stat.pf < 6)))) {
                         // Check if position of substitute makes for a valid lineup
-                        var pos = [];
+                        pos = [];
                         for (j = 0; j < this.playersOnCourt[t].length; j++) {
                             if (j !== pp) {
                                 pos.push(this.team[t].player[this.playersOnCourt[t][j]].pos);

@@ -330,10 +330,6 @@ Eventually:
 PERFORMANCE CRAP
 ----------------
 
-normalize player ratings/stats so only latest year is in main player object store and the rest go in an archived place
-  alternative plan: anything that is written to after each game goes in own object store, index by (pid, season, playoffs). everything else goes in normal player objects.
-  alternative plan: everything needed for player.value is in its own object store (or split over multiple ones)
-  BENCHMARK THESE ALTERNATIVES!
 separate active and retired players into separate object stores
 
 CURRENT

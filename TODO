@@ -25,11 +25,6 @@ most improved player award
 
 long-term effects of injuries - maybe just decrease endurance and athleticism
 
-make lineups more realistic
-  AI coach needs to be smarter
-  AI GM needs to be smarter
-  more synergy bonuses/penalties
-
 player development growth curve projection
 
 balance http://www.reddit.com/r/BasketballGM/comments/3759dw/guide_to_winning_70_games_consistently/crls9b1?context=3
@@ -118,9 +113,6 @@ DEATH
       give extra draft picks as compensation?
         what would the nba do?
       reset owner mood, new owner message
-
-too many games in season
-  are there ever games scheduled when season starts?
 
 multi team UI - click from league to main dashboard and switch teams menu persists
 
@@ -688,7 +680,6 @@ trades
 more detailed player moods - http://www.reddit.com/r/BasketballGM/comments/1k4val/players_refusing_to_sign_bug/cbln1oo?context=3
   player personality, team chemistry
   http://www.reddit.com/r/BasketballGM/comments/1tkw3e/idea_player_traits/
-strategy shouldn't be set randomly at start of new league
 dashboard info should be on a widget accessible from any screen
 some UI indicating how players developed over the offseason
   integrated into roster, or separate page?
@@ -719,7 +710,6 @@ trades between AI teams
     generalize core.trade.makeItWork and other parts of core.trade
   transaction log is necessary to keep tabs on this stuff
   also propose trades to the user, somehow
-"coaches" should factor in synergy in gameSim substitutions
 IE support
   dropdowns disappear on refresh?
     unit tests fail too, seemingly for the same reason
@@ -846,7 +836,6 @@ update formulas
 
 FUTURE
 ------
-
 
 event log UI
   allow filtering type with checkboxes

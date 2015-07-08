@@ -1,6 +1,11 @@
 CURRENT
 -------
 
+gamesim rewrite
+  game situation awareness (blowouts, close games, etc)
+  balance
+  minutes directly, not by +/-
+
 use positions for roster building and rotations
   free agents and trades matters....
   bump up penalties for unbalanced teams
@@ -30,19 +35,6 @@ player development growth curve projection
 balance http://www.reddit.com/r/BasketballGM/comments/3759dw/guide_to_winning_70_games_consistently/crls9b1?context=3
 
 playoff and regular season playing time and injury differences http://www.reddit.com/r/BasketballGM/comments/38f7dj/playoff_variance_seems_a_little_high/crxh643
-
-view rewrite
-  browserify
-    ok if not everything is off npm, if it's something i edit
-    what about shimmed files that add to global scope? should be ok just to do require('aaa') on them, maybe?
-  react to handle updating DOM
-    rebind every time view changes? or some react-specific router?
-  pubsub to pages know when to update? say like "player 5 was updated" or "team 6 was updated", is that level of granularity possible? or just updateEvents like now?
-    how would i handle the situation of redirecting and updating at the same time? maybe that's too uncommon to worry about
-    https://facebook.github.io/react/tips/communicate-between-components.html "Subscribe to events in componentDidMount(), unsubscribe in componentWillUnmount()"
-  need a new grid component
-    or some hack like http://jsfiddle.net/NXCyC/130/
-  roster page - first try, reasonably complex, get rid of jQuery UI and that weird KO bug
 
 when retired, player page (and other career-level things) should display most common pos, or maybe composite that us union of all positions (like GF for someone who was both SG and SF)
   draftSummary, hallOfFame, player, playerStats (careerTotals), teamHistory, anything else?
@@ -419,8 +411,6 @@ show prospects before draft
       fuzz changing for prospects should factor in changes in scouting budget
     movement between draft classes
       allow promising to draft a player at certain position to influence decision
-customization
-  popRank/difficulty being set correctly for uploaded rosters, on new league screen and elsewhere?
 career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year
   column/table widths?

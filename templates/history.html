@@ -62,7 +62,9 @@
     <h4>Retired Players</h4>
     <p style="-moz-column-width: 12em; -moz-columns: 12em; -webkit-columns: 12em; columns: 12em;">
       <!-- ko foreach: retiredPlayers -->
-        <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (age: <span data-bind="text: age"></span><span data-bind="visible: hof">; <a data-bind="attrLeagueUrl: {href: ['hall_of_fame']}">Hall of Fame</a></span>)<br>
+        <span data-bind="css: {'bg-info': stats.tid() === $root.userTid()}">
+          <a data-bind="attrLeagueUrl: {href: ['player', pid]}, text: name"></a> (<span data-bind="if: stats.abbrev() !== 'FA'"><a data-bind="attrLeagueUrl: {href: ['roster', stats.abbrev, $root.season]}, text: stats.abbrev"></a>, </span>age: <span data-bind="text: age"></span><span data-bind="visible: hof">; <a data-bind="attrLeagueUrl: {href: ['hall_of_fame']}" style="font-weight: bold">HoF</a></span>)<br>
+        </span>
       <!-- /ko -->
     </p>
   </div>

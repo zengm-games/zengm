@@ -35,7 +35,8 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                 dao.awards.get({key: inputs.season}),
                 dao.players.getAll({
                     index: "retiredYear",
-                    key: inputs.season
+                    key: inputs.season,
+                    statsSeasons: [inputs.season]
                 }),
                 team.filter({
                     attrs: ["tid", "abbrev", "region", "name"],
@@ -64,7 +65,9 @@ define(["dao", "globals", "ui", "core/player", "core/team", "lib/bluebird", "lib
                 // Get list of retired players
                 retiredPlayers = player.filter(retiredPlayers, {
                     attrs: ["pid", "name", "age", "hof"],
-                    season: inputs.season
+                    season: inputs.season,
+                    stats: ["tid", "abbrev"],
+                    showNoStats: true
                 });
                 for (i = 0; i < retiredPlayers.length; i++) {
                     // Show age at retirement, not current age

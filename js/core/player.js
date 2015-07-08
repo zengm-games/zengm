@@ -1404,7 +1404,17 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                     } else if (stats[j] === "age") {
                         row.age = s.season - p.born.year;
                     } else if (stats[j] === "abbrev") {
-                        row.abbrev = helpers.getAbbrev(s.tid);
+                        if (s.tid === undefined) {
+                            row.abbrev = helpers.getAbbrev(g.PLAYER.FREE_AGENT);
+                        } else {
+                            row.abbrev = helpers.getAbbrev(s.tid);
+                        }
+                    } else if (stats[j] === "tid") {
+                        if (s.tid === undefined) {
+                            row.tid = g.PLAYER.FREE_AGENT;
+                        } else {
+                            row.tid = s.tid;
+                        }
                     } else if (stats[j] === "yearsWithTeam" && !_.isEmpty(s)) {
                         // Everyone but players acquired in the offseason should be here
                         row.yearsWithTeam = s.yearsWithTeam;

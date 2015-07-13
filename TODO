@@ -1,6 +1,9 @@
 CURRENT
 -------
 
+bug in newScheduleDefault
+  "Only tid, cid, and did are used, so this is okay for now. But if someone customizes cid and did, this will break. To fix that, make this function require DB access (and then fix the tests). Or even better, just accept "teams" as a param to this function, then the tests can use default values and the real one can use values from the DB."
+
 gamesim rewrite
   game situation awareness (blowouts, close games, etc)
   balance
@@ -602,6 +605,7 @@ add "play until end of quarter" in live gamesim
 LOW PRIORITY
 ------------
 
+awards races throughout the season
 attendance should change faster http://www.reddit.com/r/BasketballGM/comments/30i8ts/should_attendance_be_more_responsive_to_extremely/
 track longest W/L streaks
 option to stop sim when player is injured http://www.reddit.com/r/BasketballGM/comments/2s265y/suggestion_option_to_automatically_stop/

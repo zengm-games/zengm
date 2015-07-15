@@ -1,9 +1,6 @@
 CURRENT
 -------
 
-bug in newScheduleDefault
-  "Only tid, cid, and did are used, so this is okay for now. But if someone customizes cid and did, this will break. To fix that, make this function require DB access (and then fix the tests). Or even better, just accept "teams" as a param to this function, then the tests can use default values and the real one can use values from the DB."
-
 gamesim rewrite
   game situation awareness (blowouts, close games, etc)
   balance
@@ -45,6 +42,8 @@ when retired, player page (and other career-level things) should display most co
 Exclude assets from AI trade offers http://www.reddit.com/r/BasketballGM/comments/336nzr/trade_ui_redesign/crawmjy?context=3
 
 delete old data bug http://www.reddit.com/r/BasketballGM/comments/39mi4p/bug_pers_roughly_double_after_deleting_unnotables/cs8difx?context=3
+
+roster should more clearly show who has a non-guaranteed contract https://www.reddit.com/r/BasketballGM/comments/3d194k/non_guarantee_contracts/
 
 Chrome delete data http://www.reddit.com/r/BasketballGM/comments/35eyq6/cant_store_anymore_data_on_chromebook/cr46zch?context=3
 

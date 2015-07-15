@@ -355,10 +355,8 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
      * @memberOf core.season
      * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
      */
-    function newScheduleDefault() {
+    function newScheduleDefault(teams) {
         var cid, dids, game, games, good, i, ii, iters, j, jj, k, matchup, matchups, n, newMatchup, t, teams, tids, tidsByConf, tryNum;
-
-        teams = helpers.getTeamsDefault(); // Only tid, cid, and did are used, so this is okay for now. But if someone customizes cid and did, this will break. To fix that, make this function require DB access (and then fix the tests). Or even better, just accept "teams" as a param to this function, then the tests can use default values and the real one can use values from the DB.
 
         tids = [];  // tid_home, tid_away
 
@@ -524,11 +522,11 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
      * @memberOf core.season
      * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
      */
-    function newSchedule() {
+    function newSchedule(teams) {
         var days, i, j, jMax, tids, tidsInDays, used;
 
         if (g.numTeams === 30) {
-            tids = newScheduleDefault();
+            tids = newScheduleDefault(teams);
         } else {
             tids = newScheduleCrappy();
         }

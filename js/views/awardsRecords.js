@@ -75,32 +75,56 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
         {
             val: "Third Team All-Defensive",
             key: "third_def"
+        },
+        {
+            val: "All-League",
+            key: "all_league"
+        },
+        {
+            val: "All-Defensive",
+            key: "all_def"
         }
 
     ];
 
-    awardOptions = {}
+    awardOptions = {};
     optionsTmp.map(function(o) {
         awardOptions[o.key] = o.val;
-    })
+    });
 
     function getPlayerLink(p) {
         return '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>';
     }
 
     function getPlayerAwards(p, awardType) {
-        var aType, awards, years, last;
+        var aType, awards, years, last, filter;
         aType = awardOptions[awardType];
-        awards = p.awards.filter(function(a) {return a.type === aType});
-        years = awards.map(function(a) {return a.season});
+        if (awardType === 'all_league') {
+            filter = function(a) {
+                var o = awardOptions;
+                return a.type === o.first_team || a.type === o.second_team || a.type === o.third_team;
+            };
+        } else if (awardType === 'all_def') {
+            filter = function(a) {
+                var o = awardOptions;
+                return a.type === o.first_def || a.type === o.second_def || a.type === o.third_def;
+            };
+        } else {
+            filter = function(a) {return a.type === aType;};
+        }
+
+        awards = p.awards.filter(filter);
+        years = awards.map(function(a) {return a.season;});
         last = years[years.length-1] || years;
         return {
             player: getPlayerLink(p),
             count: awards.length,
             countText: awards.length.toString(),
             years: years.join(', '),
-            lastYear: last.toString()
-        }
+            lastYear: last.toString(),
+            retired: (p.retiredYear) ? "yes" : "no",
+            hof: (p.hof) ? "yes" : "no"
+        };
     }
 
     function updateAwardsRecords(inputs, updateEvents, vm) {
@@ -111,11 +135,11 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
                 var awardsRecords, i, j;
 
                 awardsRecords = [];
-                players = players.filter(function(p) {return p.awards.length > 0 });
+                players = players.filter(function(p) {return p.awards.length > 0; });
                 for(i=0; i<players.length; i++) {
-                    awardsRecords.push(getPlayerAwards(players[i], inputs.awardType))
+                    awardsRecords.push(getPlayerAwards(players[i], inputs.awardType));
                 }
-                awardsRecords = awardsRecords.filter(function(o) { return o.count > 0});
+                awardsRecords = awardsRecords.filter(function(o) { return o.count > 0;});
 
                 return {
                     awardsRecords: awardsRecords,
@@ -135,7 +159,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
 
         ko.computed(function () {
             ui.datatableSinglePage($("#awards-records"), 0, _.map(vm.awardsRecords(), function (p) {
-                return [p.player, p.countText, p.years, p.lastYear];
+                return [p.player, p.countText, p.years, p.lastYear, p.retired, p.hof];
             }));
 
         }).extend({throttle: 1});

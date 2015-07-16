@@ -161,6 +161,10 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                             key: "third_team"
                         },
                         {
+                            val: "All-League",
+                            key: "all_league"
+                        },
+                        {
                             val: "First Team All-Defensive",
                             key: "first_def"
                         },
@@ -171,6 +175,10 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                         {
                             val: "Third Team All-Defensive",
                             key: "third_def"
+                        },
+                        {
+                            val: "All-Defensive",
+                            key: "all_def"
                         }
 
                     ];

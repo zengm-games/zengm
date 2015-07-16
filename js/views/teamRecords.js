@@ -12,7 +12,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
     }
 
     function InitViewModel() {
-
+        this.seasonCount = ko.observable();
     }
 
     mapping = {
@@ -60,7 +60,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
             winp: totalWP.toString(),
             playoffAppearances: playoffAppearances.toString(),
             lastPlayoffAppearance: lastPlayoffAppearance.toString(),
-            championships: championships.toString(),
+            championships: championships,
             lastChampionship: lastChampionship.toString()
         };
     }
@@ -70,15 +70,17 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
             return Promise.all([
                 dao.teams.getAll()
             ]).spread(function (teams) {
-                var teamRecords, i, j;
+                var teamRecords, i, j, seasonCount;
 
                 teamRecords = [];
                 for(i=0; i<teams.length; i++) {
                     teamRecords.push(getTeamRecord(teams[i]));
                 }
+                seasonCount = _.pluck(teamRecords, 'championships').reduce(function(a,b){return a+b;});
 
                 return {
-                    teamRecords: teamRecords
+                    teamRecords: teamRecords,
+                    seasonCount: seasonCount
                 };
             });
 
@@ -92,9 +94,8 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
 
         ko.computed(function () {
 
-            var str = String
             ui.datatableSinglePage($("#team-records"), 0, _.map(vm.teamRecords(), function (t) {
-                var out = [t.team, t.won, t.lost, t.winp, t.playoffAppearances, t.lastPlayoffAppearance, t.championships, t.lastChampionship];
+                var out = [t.team, t.won, t.lost, t.winp, t.playoffAppearances, t.lastPlayoffAppearance, t.championships.toString(), t.lastChampionship];
                 return out;
             }));
 

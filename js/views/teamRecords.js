@@ -96,7 +96,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
             ui.datatableSinglePage($("#team-records"), 0, _.map(vm.teamRecords(), function (t) {
                 var out = [t.team, t.won, t.lost, t.winp, t.playoffAppearances, t.lastPlayoffAppearance, t.championships, t.lastChampionship];
                 return out;
-            }), {order: []});
+            }));
 
         }).extend({throttle: 1});
 

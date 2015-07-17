@@ -2,7 +2,7 @@
  * @name views.player
  * @namespace View a single message.
  */
-define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/bluebird", "util/bbgmView"], function (dao, g, ui, freeAgents, player, trade, faces, $, ko, komapping, Promise, bbgmView) {
+define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", "lib/faces", "lib/jquery", "lib/knockout", "lib/knockout.mapping", "lib/bluebird", "util/bbgmView", "util/helpers"], function (dao, g, ui, freeAgents, player, trade, faces, $, ko, komapping, Promise, bbgmView, helpers) {
     "use strict";
 
     function get(req) {
@@ -69,6 +69,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/player", "core/trade", 
 
                 // Add untradable property
                 p = trade.filterUntradable([p])[0];
+                events.map(helpers.correctLinkLid);
+                feats.map(helpers.correctLinkLid);
 
                 return {
                     player: p,

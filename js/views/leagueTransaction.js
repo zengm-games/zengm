@@ -42,17 +42,12 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
                         });
                     }
 
-                    var eventText = []
-                    events = events.map(function (event) {
-                        var textR = event.text.replace(/\/l\/\d+\//g, '/l/' + g.lid +'/');
-                        eventText.push({text: textR});
-                    });
+                    events.map(helpers.correctLinkLid);
 
                     return {
                         events: events,
                         season: inputs.season,
-                        eventType: inputs.eventType,
-                        eventText: eventText
+                        eventType: inputs.eventType
                     };
                 });
             }

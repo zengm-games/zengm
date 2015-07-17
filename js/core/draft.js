@@ -108,6 +108,106 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
         });
     }
 
+    function lotteryLogTxt(tid, type, number) {
+        var txt = 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season]) + '">' + g.teamNamesCache[tid] + '</a>';
+        if (type === 'chance') {
+            txt += " has a " + number + "% chance of getting the top overall pick of the "+ g.season +" draft.";
+        } else if ( type === 'movedup') {
+            txt += " moved up the lottery and will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
+        } else if ( type === 'moveddown') {
+            txt += " moved down the lottery and will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
+        } else if ( type === 'normal') {
+            txt += " will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
+        }
+        return txt;
+    }
+
+    function logAction(tid, txt) {
+        eventLog.add(null, {
+            type: "draft",
+            text: txt,
+            showNotification: tid === g.userTid,
+            pids: [],
+            tids: [tid]
+        });
+    }
+
+    function logLotteryChances(chances, teams, draftOrder) {
+        var i, chance, total, txt, origTm, tm;
+
+        for (i=0; i<chances.length; i++) {
+            origTm = teams[i].tid;
+            tm = draftOrder[origTm][1].tid;
+            txt = lotteryLogTxt(tm, 'chance', helpers.round(chances[i], 2));
+            logAction(tm, txt);
+        }
+    }
+
+    function logLotteryWinners(chances, teams, tm, origTm, pick) {
+        var idx, txt, i;
+        for (i=0; i< teams.length; i++) {
+            if (teams[i].tid === origTm) {
+                idx = i;
+                break;
+            }
+        }
+        if (chances[idx] < chances[pick-1]) {
+            txt = lotteryLogTxt(tm, 'movedup', pick);
+        } else if (chances[idx] > chances[pick-1]) {
+            txt = lotteryLogTxt(tm, 'moveddown', pick);
+        } else {
+            txt = lotteryLogTxt(tm, 'normal', pick);
+        }
+        logAction(tm, txt);
+    }
+
+    /**
+    * Distrute chances between tied teams.
+    *
+    * If isFinal, distribute the remaining combinations to tied teams randomly.
+    */
+    function updateChances(chances, teams, isFinal) {
+        isFinal = isFinal || false;
+
+        var wps, tc, total, i, j, k, x, newVal, val, remainder, rdist;
+        wps =  _.countBy(teams, 'winp');
+        wps = _.pairs(wps);
+        wps = _.sortBy(wps, function(x) {return Number(x[0]);});
+        tc = 0;
+
+        for (k=0; k < wps.length; k++) {
+            val = wps[k][1];
+            if (val > 1) {
+                // if adding val exceeds 14
+                if (tc + val >= chances.length) {
+                    val -= (tc+val-chances.length);
+                }
+                total = chances.slice(tc, tc+val).reduce(function(a,b) {return a+b;});
+                remainder = (isFinal) ? total % val : 0;
+                newVal = (total - remainder)/val;
+                random.randInt(tc, tc+val);
+                rdist = [];
+                while (rdist.length < remainder) {
+                    x = random.randInt(tc, tc+val-1);
+                    if(rdist.indexOf(x) < 0) {
+                        rdist.push(x);
+                    }
+                }
+                for(i=tc,j=tc+val; i<j; i++) {
+                    chances[i] = newVal;
+                    if (rdist.indexOf(i) >= 0) {
+                        chances[i] += 1;
+                    }
+                }
+
+            }
+            tc += val;
+            if (tc >= chances.length) {
+                break;
+            }
+        }
+    }
+
     /**
      * Sets draft order and save it to the draftOrder object store.
      *
@@ -126,7 +226,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
             seasonAttrs: ["winp", "playoffRoundsWon"],
             season: g.season
         }).then(function (teams) {
-            var chances, draw, firstThree, i, pick;
+            var chances, draw, firstThree, i, pick, chancePct, chanceTotal;
 
             // Sort teams by making playoffs (NOT playoff performance) and winp, for first round
             teams.sort(function (a, b) {
@@ -141,6 +241,15 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
 
             // Draft lottery
             chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
+
+            // console.log('chances', chances.slice());
+            updateChances(chances, teams, true);
+
+            // console.log('after chance', chances.slice(0));
+
+            chanceTotal = chances.reduce(function(a, b) {return a+b;});
+            chancePct = chances.map(function(c) {return (c/chanceTotal)* 100;});
+
             // cumsum
             for (i = 1; i < chances.length; i++) {
                 chances[i] = chances[i] + chances[i - 1];
@@ -179,6 +288,8 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                     };
                 }
 
+                logLotteryChances(chancePct, teams, draftPicksIndexed);
+
                 draftOrder = [];
                 // First round - lottery winners
                 for (i = 0; i < firstThree.length; i++) {
@@ -189,6 +300,9 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                         tid: tid,
                         originalTid: teams[firstThree[i]].tid
                     });
+
+                    logLotteryWinners(chancePct, teams, tid,
+                        teams[firstThree[i]].tid, i+1);
                 }
 
                 // First round - everyone else
@@ -202,6 +316,12 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                             tid: tid,
                             originalTid: teams[i].tid
                         });
+
+                        if(pick < 15) {
+                            logLotteryWinners(chancePct, teams, tid,
+                                teams[i].tid, pick);
+                        }
+
                         pick += 1;
                     }
                 }

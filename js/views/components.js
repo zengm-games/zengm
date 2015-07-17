@@ -182,6 +182,33 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                         }
 
                     ];
+                } else if (fields[i] === "eventType") {
+                    options = [
+                        {
+                            val: "All Types",
+                            key: "all"
+                        },
+                        {
+                            val: "Draft",
+                            key: "draft",
+                        },
+                        {
+                            val: "FA Signed",
+                            key: "freeAgent"
+                        },
+                        {
+                            val: "Resigned",
+                            key:  "reSigned"
+                        },
+                        {
+                            val: "Released",
+                            key: "released"
+                        },
+                        {
+                            val: "Trades",
+                            key: "trade"
+                        }
+                    ]
                 }
                 vm.fields().push({
                     id: fieldId,

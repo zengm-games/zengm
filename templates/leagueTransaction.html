@@ -1,0 +1,8 @@
+<div data-bind="dropdown: 'event-log'"></div>
+
+<h1>All Transactions <span data-bind="newWindow: []"></span></h1>
+
+<ul class="list-group" data-bind="foreach: events">
+  <li class="list-group-item"
+    data-bind="html: text"></li>
+</ul>

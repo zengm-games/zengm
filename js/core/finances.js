@@ -7,12 +7,16 @@ define(["dao", "globals", "lib/underscore"], function (dao, g, _) {
 
     /**
      * Assess the payroll and apply minimum and luxury taxes.
+     * Distribute half of the collected luxury taxes to teams under the salary cap.
      *
      * @memberOf core.finances
      * @return {Promise}
      */
     function assessPayrollMinLuxury(tx) {
         tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite", tx);
+        var collectedTax, amount, distribute;
+        collectedTax = 0;
+        distribute = 0;
 
         return require("core/team").getPayrolls(tx).then(function (payrolls) {
             // Update teams object store
@@ -31,11 +35,32 @@ define(["dao", "globals", "lib/underscore"], function (dao, g, _) {
                         t.seasons[s].expenses.minTax.amount = g.minPayroll - payrolls[t.tid];
                         t.seasons[s].cash -= t.seasons[s].expenses.minTax.amount;
                     } else if (payrolls[t.tid] > g.luxuryPayroll) {
-                        t.seasons[s].expenses.luxuryTax.amount = g.luxuryTax * (payrolls[t.tid] - g.luxuryPayroll);
+                        amount = g.luxuryTax * (payrolls[t.tid] - g.luxuryPayroll);
+                        collectedTax += amount;
+                        t.seasons[s].expenses.luxuryTax.amount = amount;
                         t.seasons[s].cash -= t.seasons[s].expenses.luxuryTax.amount;
                     }
 
                     return t;
+                }
+            }).then(function() {
+                var payteams;
+                payteams = payrolls.filter(function(x) { return x <= g.salaryCap; });
+                if (payteams.length > 0) {
+                    distribute = (collectedTax * 0.5)/payteams.length;
+                    return dao.teams.iterate({
+                        ot: tx,
+                        callback: function(t) {
+                            var s;
+                            s = t.seasons.length - 1;
+
+                            if (payrolls[t.tid] <= g.salaryCap) {
+                                t.seasons[s].revenues.luxuryTaxShare.amount = distribute;
+                                t.seasons[s].cash += distribute;
+                                return t;
+                            }
+                        }
+                    });
                 }
             });
         });

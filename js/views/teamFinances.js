@@ -302,11 +302,11 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
 
             $.barGraph(
                 $("#bar-graph-revenue"),
-                [barData.revenues.nationalTv, barData.revenues.localTv, barData.revenues.ticket, barData.revenues.sponsor, barData.revenues.merch],
+                [barData.revenues.nationalTv, barData.revenues.localTv, barData.revenues.ticket, barData.revenues.sponsor, barData.revenues.merch, barData.revenues.luxuryTaxShare],
                 undefined,
                 [
                     barSeasons,
-                    ["national TV revenue", "local TV revenue", "ticket revenue", "corporate sponsorship revenue", "merchandising revenue"]
+                    ["national TV revenue", "local TV revenue", "ticket revenue", "corporate sponsorship revenue", "merchandising revenue", "luxury tax share revenue"]
                 ],
                 function (val) {
                     return helpers.formatCurrency(val / 1000, "M", 1);

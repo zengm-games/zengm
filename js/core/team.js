@@ -71,6 +71,10 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                 localTv: {
                     amount: 0,
                     rank: 15.5
+                },
+                luxuryTaxShare: {
+                    amount: 0,
+                    rank: 15.5
                 }
             },
             expenses: {

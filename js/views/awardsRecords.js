@@ -160,7 +160,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
         ko.computed(function () {
             ui.datatableSinglePage($("#awards-records"), 0, _.map(vm.awardsRecords(), function (p) {
                 return [p.player, p.countText, p.years, p.lastYear, p.retired, p.hof];
-            }));
+            }), {paging: true, searching: true, pagingType: "bootstrap"});
 
         }).extend({throttle: 1});
 

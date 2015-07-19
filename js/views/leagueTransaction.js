@@ -86,7 +86,7 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
 
     function uiFirst(vm) {
         ko.computed(function () {
-            ui.title("All Transactions - " + vm.season());
+            ui.title("League Transactions - " + vm.season());
         }).extend({throttle: 1});
     }
 

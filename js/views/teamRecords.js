@@ -50,7 +50,8 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
             }
         }
 
-        totalWP = helpers.round(totalWon / (totalWon+totalLost), 4);
+
+        totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon+totalLost), 4) : 0;
 
         var str = String;
         return {

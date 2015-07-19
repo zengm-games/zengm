@@ -901,9 +901,6 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
                 result = (rev) ? a[sortT] - b[sortT] : b[sortT] - a[sortT];
 
                 if (result || i === sortBy.length - 1) {
-                    if (sortT !== 'winpp') {
-                        console.log(a.region, b.region, sortT, result);
-                    }
                     return result;
                 }
             }
@@ -919,7 +916,6 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         sorter = new MultiSort(sortBy);
         teams.sort(sorter.sortF);
 
-        console.log('series', teams[0].region, teams[1].region);
         series[0][order + cid * 4] = {home: teams[0], away: teams[1]};
         series[0][order + cid * 4].home.seed = teams[0].seed;
         series[0][order + cid * 4].away.seed = teams[1].seed;

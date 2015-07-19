@@ -665,7 +665,6 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 ts.sort(sorter.sortF);
 
                 matchup = {home: ts[0], away: ts[1]};
-                console.log(matchup);
 
                 matchup.home.won = 0;
                 matchup.away.won = 0;

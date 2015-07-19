@@ -805,7 +805,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                     teams.map(function(t) {t.drank = 0;});
                     teams[0].drank = 1;
                 }
-            }
+            };
 
             /**
              *
@@ -815,13 +815,11 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                 ft = _.pluck(_.filter(fts, function(x) {return x.cid === t.cid;}), 'winp');
                 ft = ft.sort(function(a, b) { return b - a;});
                 if (t.drank && t.winp < ft[3]) {
-                    console.log(ft);
                     t.winpp = (ft[2] + ft[3])/2.0;
-                    console.log('fakewinp', t.region, t.winpp, t.winp)
                 } else {
                     t.winpp = t.winp;
                 }
-            }
+            };
 
             if (Array.isArray(options.sortBy)) {
                 // Sort by multiple properties

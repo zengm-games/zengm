@@ -230,15 +230,30 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
         }).then(function (teams) {
             var chances, draw, firstThree, i, pick, chancePct, chanceTotal, randValues;
 
+            /**
+             * http://www.nba.com/2015/news/04/17/2015-draft-order-of-selection-tiebreak-official-release/index.html
+             *
+             * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
+             */
+            randValues = _.shuffle(_.range(30));
+            for (i=0; i<teams.length; i++) {
+                teams[i].randVal = randValues[i];
+            }
+
             // Sort teams by making playoffs (NOT playoff performance) and winp, for first round
             teams.sort(function (a, b) {
+                var r;
+                r = 0;
                 if ((a.playoffRoundsWon >= 0) && !(b.playoffRoundsWon >= 0)) {
-                    return 1;
+                    r = 1;
                 }
                 if (!(a.playoffRoundsWon >= 0) && (b.playoffRoundsWon >= 0)) {
-                    return -1;
+                    r = -1;
                 }
-                return a.winp - b.winp;
+
+                r = (r === 0) ? a.winp - b.winp : r;
+                r = (r === 0) ? a.randVal - b.randVal : r;
+                return r;
             });
 
             // Draft lottery
@@ -266,6 +281,8 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                     }
                 }
                 if (firstThree.indexOf(i) < 0) {
+                    // If one lottery winner, select after other tied teams;
+                    teams[i].randVal += 30;
                     firstThree.push(i);
                 }
             }
@@ -310,19 +327,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                 /**
                  * First round - everyone else
                  *
-                 * http://www.nba.com/2015/news/04/17/2015-draft-order-of-selection-tiebreak-official-release/index.html
-                 *
-                 * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
                  */
-                randValues = _.shuffle(_.range(30));
-                for (i=0; i<teams.length; i++) {
-                    teams[i].randVal = randValues[i];
-                }
-                teams.sort(function(a, b) {
-                    var r;
-                    r = a.winp - b.winp;
-                    return (r === 0) ? a.randVal - b.randVal : r;
-                })
                 pick = 4;
                 for (i = 0; i < teams.length; i++) {
                     if (firstThree.indexOf(i) < 0) {
@@ -350,7 +355,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                     var r;
                     r = a.winp - b.winp;
                     return (r === 0) ? b.randVal - a.randVal : r;
-                })
+                });
 
                 // Second round
                 for (i = 0; i < teams.length; i++) {

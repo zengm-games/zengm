@@ -103,7 +103,9 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
     }
 
     function newPhaseRegularSeason(tx) {
-        return season.setSchedule(tx, season.newSchedule()).then(function () {
+        return dao.teams.getAll({ot: tx}).then(function (teams) {
+            return season.setSchedule(tx, season.newSchedule(teams));
+        }).then(function () {
             // First message from owner
             if (g.showFirstOwnerMessage) {
                 return message.generate(tx, {wins: 0, playoffs: 0, money: 0});
@@ -735,7 +737,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                         return newPhasePreseason(phaseChangeTx);
                     }
                     if (phase === g.PHASE.REGULAR_SEASON) {
-                        phaseChangeTx = dao.tx(["gameAttributes", "messages", "schedule"], "readwrite");
+                        phaseChangeTx = dao.tx(["gameAttributes", "messages", "schedule", "teams"], "readwrite");
                         return newPhaseRegularSeason(phaseChangeTx);
                     }
                     if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {

@@ -882,6 +882,12 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         return (arg > 0 ? "+" : "") + round(arg, d);
     }
 
+    /**
+     * Constructor for a sorter object. Use the objects sortF member as the sort
+     * function for the object list.
+     *
+     * @param {Array of String fields} sortBy sorting fields in order of application
+     */
     function MultiSort(sortBy) {
 
         sortBy = sortBy;
@@ -907,6 +913,10 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         };
     }
 
+    /**
+     * Determine HCA advantage for this matchup. Team with better winp, cwinp,
+     * ocwinp and diff will get HCA regardless of seeding.
+     */
     function seriesHomeAway(series, teamsConf, seed1, seed2, order, cid) {
         var teams, sortBy, sorter;
         sortBy = ['winp', 'cwinp', 'ocwinp', 'diff'];

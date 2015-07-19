@@ -786,7 +786,11 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
             }
 
             /**
-             * Return true if team is rank 1 in division.
+             * Set the drank attribute of the team object.
+             * The ff. values are set for drank
+             * 1 = if team is division leader
+             * 1/(1 x tied_teams) = if there are teams in the division tied for the lead
+             * 0 = if team is not the division leader.
              */
             getDrank = function(t) {
                 var tmax, ft, count;
@@ -796,6 +800,9 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                 t.drank = Number(t.winp === tmax)/(count[tmax]);
             };
 
+            /**
+             * Break ties to determine the division winner.
+             */
             breakDivTie = function(teams) {
                 if (teams.length !== 0 ) {
                     var sortBy, s;
@@ -808,7 +815,9 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
             };
 
             /**
-             *
+             * Assure that the division leaders are in the top 4. Set a fake
+             * winpp attribute that is the average of the 3rd and 4th highest
+             * ranked team in the conference.
              */
             fakeWinp = function(t) {
                 var ft;
@@ -824,6 +833,12 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
             if (Array.isArray(options.sortBy)) {
                 // Sort by multiple properties
                 sortBy = options.sortBy.slice();
+
+                /**
+                 * If sorting by division rank (drank), the division leaders are
+                 * assured of a top 4 seeding. Sort using a fake winpp field
+                 * instead of winp.
+                 */
                 if (sortBy.indexOf('drank') > -1) {
                     if (sortBy.indexOf('winp') > -1) {
                         sortBy.splice(sortBy.indexOf('winp'), 1);

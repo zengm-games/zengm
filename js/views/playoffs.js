@@ -19,7 +19,7 @@ define(["dao", "globals", "ui", "core/team", "lib/knockout", "util/bbgmView", "u
                     attrs: ["tid", "cid", "abbrev", "name"],
                     seasonAttrs: ["winp"],
                     season: inputs.season,
-                    sortBy: ["winp", "-lost", "won"]
+                    sortBy: ["winp", "drank", "cwinp", "ocwinp", "diff"]
                 }).then(function (teams) {
                     var cid, i, series, teamsConf;
 

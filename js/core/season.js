@@ -98,7 +98,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
             attrs: ["tid", "abbrev", "region", "name", "cid"],
             seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
             season: g.season,
-            sortBy: "winp",
+            sortBy: ["winp", "drank", "cwinp", "ocwinp", "diff"],
             ot: tx
         }).then(function (teams) {
             var foundEast, foundWest, i, t;

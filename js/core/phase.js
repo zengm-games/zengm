@@ -173,7 +173,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             attrs: ["tid", "cid"],
             seasonAttrs: ["winp"],
             season: g.season,
-            sortBy: "winp"
+            sortBy: ["winp", "drank", "cwinp", "ocwinp", "diff"]
         }).then(function (teams) {
             var cid, i, series, teamsConf, tidPlayoffs;
 

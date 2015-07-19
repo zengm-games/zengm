@@ -505,7 +505,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
      * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
      */
     function filter(options) {
-        var filterAttrs, filterSeasonAttrs, filterStats, filterStatsPartial;
+        var filterAttrs, filterSeasonAttrs, filterStats, filterStatsPartial, _checkSort, _assureSort;
 
         if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
@@ -518,6 +518,48 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
         options.totals = options.totals !== undefined ? options.totals : false;
         options.playoffs = options.playoffs !== undefined ? options.playoffs : false;
         options.sortBy = options.sortBy !== undefined ? options.sortBy : "";
+
+
+        /**
+         * check if field is in sortBy
+         */
+        _checkSort = function(sortBy, field) {
+            var cond, rev;
+            rev = '-' + field;
+            cond = Array.isArray(sortBy) && (sortBy.indexOf(field) > -1 || sortBy.indexOf(rev) > -1);
+            cond = cond || (sortBy === field || sortBy === rev);
+            return cond;
+        };
+
+
+        /**
+         * Assure needed fields are available for sorting.
+         */
+        _assureSort = function(field, type, addFields) {
+            type = type || 'seasonAttrs';
+            addFields = addFields || [];
+            var cond;
+
+            _.each(addFields, function(f) {
+                if (_.isArray(f)) {
+                    options[f[1]].push(f[0]);
+                } else{
+                    options[type].push(f);
+                }
+            });
+
+            cond = _checkSort(options.sortBy, field);
+            if (cond) {
+                options[type].push(field);
+            }
+
+        };
+
+        _assureSort('winp', null, ['won', 'lost']);
+        _assureSort('dwinp', null, ['wonDiv', 'lostDiv', ['did', 'attrs']]);
+        _assureSort('cwinp', null, ['wonConf', 'lostConf']);
+        _assureSort('ocwinp', null, ['won', 'lost', 'wonConf', 'lostConf']);
+        _assureSort('diff', 'stats', ['pts', 'oppPts']);
 
         // Copys/filters the attributes listed in options.attrs from p to fp.
         filterAttrs = function (ft, t, options) {
@@ -535,6 +577,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                     ft[options.attrs[j]] = t[options.attrs[j]];
                 }
             }
+
         };
 
         // Copys/filters the seasonal attributes listed in options.seasonAttrs from p to fp.
@@ -563,6 +606,24 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                         ft.winp = 0;
                         if (tsa.won + tsa.lost > 0) {
                             ft.winp = tsa.won / (tsa.won + tsa.lost);
+                        }
+                    } else if(options.seasonAttrs[j] === 'dwinp') {
+                        ft.dwinp = 0;
+                        if (tsa.wonDiv + tsa.lostDiv > 0) {
+                            ft.dwinp = tsa.wonDiv /  (tsa.wonDiv + tsa.lostDiv);
+                        }
+                    } else if(options.seasonAttrs[j] === 'cwinp') {
+                        ft.cwinp = 0;
+                        if (tsa.wonConf + tsa.lostConf > 0) {
+                            ft.cwinp = tsa.wonConf / (tsa.wonConf + tsa.lostConf);
+                        }
+                    } else if(options.seasonAttrs[j] === 'ocwinp') {
+                        ft.ocwinp = 0;
+                        if (tsa.won + tsa.lost > 0) {
+                            var othWon, othLost;
+                            othWon = Math.max(tsa.won - tsa.wonConf, 0);
+                            othLost = Math.max(tsa.lost - tsa.lostConf, 0);
+                            ft.ocwinp = othWon / (othWon + othLost);
                         }
                     } else if (options.seasonAttrs[j] === "att") {
                         ft.att = 0;
@@ -706,7 +767,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
         };
 
         return dao.teams.getAll({ot: options.ot, key: options.tid}).then(function (t) {
-            var ft, fts, i, returnOneTeam, savePayroll, sortBy;
+            var ft, fts, i, returnOneTeam, savePayroll, sortBy, sortByDrank, getDrank;
 
             // t will be an array of g.numTeams teams (if options.tid is null) or an array of 1 team. If 1, then we want to return just that team object at the end, not an array of 1 team.
             returnOneTeam = false;
@@ -724,16 +785,51 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                 fts.push(ft);
             }
 
+            /**
+             * Return true if team is rank 1 in division.
+             */
+            getDrank = function(t) {
+                var tmax, ft;
+                ft = _.filter(fts, function(x) {return x.did === t.did;});
+                tmax = _.max(_.pluck(ft, 'winp'));
+                t.drank = t.winp === tmax;
+            };
+
+            sortByDrank = function(a, b, order) {
+                var result, tmax;
+                result = 0;
+
+                a.hasOwnProperty('drank') || getDrank(a);
+                b.hasOwnProperty('drank') || getDrank(b);
+
+                result = Number(a.drank) - Number(b.drank);
+                return result * order;
+            };
+
             if (Array.isArray(options.sortBy)) {
                 // Sort by multiple properties
                 sortBy = options.sortBy.slice();
                 fts.sort(function (a, b) {
-                    var result;
+                    var result, sortT, rev;
 
                     for (i = 0; i < sortBy.length; i++) {
-                        result = (sortBy[i].indexOf("-") === 1) ? a[sortBy[i]] - b[sortBy[i]] : b[sortBy[i]] - a[sortBy[i]];
+                        if (sortBy[i].indexOf("-") === 0) {
+                            rev = true;
+                            sortT = sortBy[i].slice(1);
+                        } else {
+                            rev = false;
+                            sortT = sortBy[i];
+                        }
 
+                        if (sortT === 'drank')  {
+                            result = (rev) ? sortByDrank(a, b, 1) : sortByDrank(a, b, -1);
+                        } else {
+                            result = (rev) ? a[sortT] - b[sortT] : b[sortT] - a[sortT];
+                        }
                         if (result || i === sortBy.length - 1) {
+                            if (sortT !== 'winp' && a.cid === b.cid) {
+                                console.log(a.region, b.region, sortT, result);
+                            }
                             return result;
                         }
                     }

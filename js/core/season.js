@@ -597,7 +597,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 }
             }
         }).then(function () {
-            var i, key, matchup, team1, team2, tidsWon;
+            var i, key, matchup, team1, team2, tidsWon, sorter, sortBy, ts;
 
             // Now playoffSeries, rnd, series, and tids are set
 
@@ -659,11 +659,13 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 }
 
                 // Set home/away in the next round
-                if (team1.winp > team2.winp) {
-                    matchup = {home: team1, away: team2};
-                } else {
-                    matchup = {home: team2, away: team1};
-                }
+                sortBy = ['winp', 'cwinp', 'ocwinp', 'diff'];
+                sorter = new helpers.MultiSort(sortBy);
+                ts = [team1, team2];
+                ts.sort(sorter.sortF);
+
+                matchup = {home: ts[0], away: ts[1]};
+                console.log(matchup);
 
                 matchup.home.won = 0;
                 matchup.away.won = 0;

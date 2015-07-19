@@ -767,7 +767,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
         };
 
         return dao.teams.getAll({ot: options.ot, key: options.tid}).then(function (t) {
-            var ft, fts, i, returnOneTeam, savePayroll, sortBy, sortByDrank, getDrank;
+            var ft, fts, i, returnOneTeam, savePayroll, sortBy, getDrank, fakeWinp, breakDivTie, sorter;
 
             // t will be an array of g.numTeams teams (if options.tid is null) or an array of 1 team. If 1, then we want to return just that team object at the end, not an array of 1 team.
             returnOneTeam = false;
@@ -789,51 +789,54 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
              * Return true if team is rank 1 in division.
              */
             getDrank = function(t) {
-                var tmax, ft;
+                var tmax, ft, count;
                 ft = _.filter(fts, function(x) {return x.did === t.did;});
                 tmax = _.max(_.pluck(ft, 'winp'));
-                t.drank = t.winp === tmax;
+                count = _.countBy(_.pluck(ft, 'winp'));
+                t.drank = Number(t.winp === tmax)/(count[tmax]);
             };
 
-            sortByDrank = function(a, b, order) {
-                var result, tmax;
-                result = 0;
+            breakDivTie = function(teams) {
+                if (teams.length !== 0 ) {
+                    var sortBy, s;
+                    sortBy = ['dwinp', 'cwinp', 'ocwinp', 'diff'];
+                    s = new helpers.MultiSort(sortBy);
+                    teams.sort(s.sortF);
+                    teams.map(function(t) {t.drank = 0;});
+                    teams[0].drank = 1;
+                }
+            }
 
-                a.hasOwnProperty('drank') || getDrank(a);
-                b.hasOwnProperty('drank') || getDrank(b);
-
-                result = Number(a.drank) - Number(b.drank);
-                return result * order;
-            };
+            /**
+             *
+             */
+            fakeWinp = function(t) {
+                var ft;
+                ft = _.pluck(_.filter(fts, function(x) {return x.cid === t.cid;}), 'winp');
+                ft = ft.sort(function(a, b) { return b - a;});
+                if (t.drank && t.winp < ft[3]) {
+                    console.log(ft);
+                    t.winpp = (ft[2] + ft[3])/2.0;
+                    console.log('fakewinp', t.region, t.winpp, t.winp)
+                } else {
+                    t.winpp = t.winp;
+                }
+            }
 
             if (Array.isArray(options.sortBy)) {
                 // Sort by multiple properties
                 sortBy = options.sortBy.slice();
-                fts.sort(function (a, b) {
-                    var result, sortT, rev;
-
-                    for (i = 0; i < sortBy.length; i++) {
-                        if (sortBy[i].indexOf("-") === 0) {
-                            rev = true;
-                            sortT = sortBy[i].slice(1);
-                        } else {
-                            rev = false;
-                            sortT = sortBy[i];
-                        }
-
-                        if (sortT === 'drank')  {
-                            result = (rev) ? sortByDrank(a, b, 1) : sortByDrank(a, b, -1);
-                        } else {
-                            result = (rev) ? a[sortT] - b[sortT] : b[sortT] - a[sortT];
-                        }
-                        if (result || i === sortBy.length - 1) {
-                            if (sortT !== 'winp' && a.cid === b.cid) {
-                                console.log(a.region, b.region, sortT, result);
-                            }
-                            return result;
-                        }
+                if (sortBy.indexOf('drank') > -1) {
+                    if (sortBy.indexOf('winp') > -1) {
+                        sortBy.splice(sortBy.indexOf('winp'), 1);
                     }
-                });
+
+                    fts.map(function(t) {getDrank(t); fakeWinp(t);});
+                    breakDivTie(fts.filter(function(t) {return t.drank > 0 && t.drank < 1;}));
+                    sortBy = ['winpp',].concat(sortBy);
+                }
+                sorter = new helpers.MultiSort(sortBy);
+                fts.sort(sorter.sortF);
             } else if (options.sortBy === "winp") {
                 // Sort by winning percentage, descending
                 fts.sort(function (a, b) { return b.winp - a.winp; });

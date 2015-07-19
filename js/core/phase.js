@@ -170,7 +170,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         // Set playoff matchups
         return team.filter({
             ot: tx,
-            attrs: ["tid", "cid"],
+            attrs: ["tid", "cid", "region"],
             seasonAttrs: ["winp"],
             season: g.season,
             sortBy: ["winp", "drank", "cwinp", "ocwinp", "diff"]
@@ -182,7 +182,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                 teams[i].won = 0;
             }
 
-            if (!localStorage.top16playoffs) {
+            if (!localStorage.top16playoffs || true) {
                 // Default: top 8 teams in each conference
                 tidPlayoffs = [];
                 series = [[], [], [], []];  // First round, second round, third round, fourth round
@@ -196,18 +196,11 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                             }
                         }
                     }
-                    series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
-                    series[0][cid * 4].home.seed = 1;
-                    series[0][cid * 4].away.seed = 8;
-                    series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
-                    series[0][1 + cid * 4].home.seed = 4;
-                    series[0][1 + cid * 4].away.seed = 5;
-                    series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
-                    series[0][2 + cid * 4].home.seed = 3;
-                    series[0][2 + cid * 4].away.seed = 6;
-                    series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
-                    series[0][3 + cid * 4].home.seed = 2;
-                    series[0][3 + cid * 4].away.seed = 7;
+
+                    helpers.seriesHomeAway(series, teamsConf, 1, 8, 0, cid);
+                    helpers.seriesHomeAway(series, teamsConf, 4, 5, 1, cid);
+                    helpers.seriesHomeAway(series, teamsConf, 3, 6, 2, cid);
+                    helpers.seriesHomeAway(series, teamsConf, 2, 7, 3, cid);
                 }
             } else {
                 // Alternative (localStorage.top16playoffs): top 16 teams overall

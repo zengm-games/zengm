@@ -51,14 +51,14 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
         }
 
 
-        totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon+totalLost), 4) : 0;
+        totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon+totalLost), 3) : "0.000";
 
         var str = String;
         return {
             team: getTeamLink(team),
             won: totalWon.toString(),
             lost: totalLost.toString(),
-            winp: totalWP.toString(),
+            winp: totalWP.toString().slice(1),
             playoffAppearances: playoffAppearances.toString(),
             lastPlayoffAppearance: lastPlayoffAppearance.toString(),
             championships: championships,

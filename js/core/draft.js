@@ -282,7 +282,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                 }
                 if (firstThree.indexOf(i) < 0) {
                     // If one lottery winner, select after other tied teams;
-                    teams[i].randVal += 30;
+                    teams[i].randVal -= 30;
                     firstThree.push(i);
                 }
             }

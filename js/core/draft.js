@@ -2,7 +2,7 @@
  * @name core.draft
  * @namespace The annual draft of new prospects.
  */
-define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "lib/bluebird", "util/eventLog", "util/helpers", "util/random"], function (dao, g, ui, finances, player, team, Promise, eventLog, helpers, random) {
+define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "lib/bluebird", "lib/underscore", "util/eventLog", "util/helpers", "util/random"], function (dao, g, ui, finances, player, team, Promise, _, eventLog, helpers, random) {
     "use strict";
 
     /**
@@ -228,7 +228,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
             seasonAttrs: ["winp", "playoffRoundsWon"],
             season: g.season
         }).then(function (teams) {
-            var chances, draw, firstThree, i, pick, chancePct, chanceTotal;
+            var chances, draw, firstThree, i, pick, chancePct, chanceTotal, randValues;
 
             // Sort teams by making playoffs (NOT playoff performance) and winp, for first round
             teams.sort(function (a, b) {
@@ -307,7 +307,22 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                         teams[firstThree[i]].tid, i+1);
                 }
 
-                // First round - everyone else
+                /**
+                 * First round - everyone else
+                 *
+                 * http://www.nba.com/2015/news/04/17/2015-draft-order-of-selection-tiebreak-official-release/index.html
+                 *
+                 * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
+                 */
+                randValues = _.shuffle(_.range(30));
+                for (i=0; i<teams.length; i++) {
+                    teams[i].randVal = randValues[i];
+                }
+                teams.sort(function(a, b) {
+                    var r;
+                    r = a.winp - b.winp;
+                    return (r === 0) ? a.randVal - b.randVal : r;
+                })
                 pick = 4;
                 for (i = 0; i < teams.length; i++) {
                     if (firstThree.indexOf(i) < 0) {
@@ -328,8 +343,14 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                     }
                 }
 
-                // Sort teams by winp only, for second round
-                teams.sort(function (a, b) { return a.winp - b.winp; });
+                /**
+                 * sort by winp with reverse randVal for tiebreakers.
+                 */
+                teams.sort(function(a, b) {
+                    var r;
+                    r = a.winp - b.winp;
+                    return (r === 0) ? b.randVal - a.randVal : r;
+                })
 
                 // Second round
                 for (i = 0; i < teams.length; i++) {

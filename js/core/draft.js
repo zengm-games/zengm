@@ -162,9 +162,10 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
     }
 
     /**
-    * Distrute chances between tied teams.
+    * Divide the combinations between teams with tied records.
     *
-    * If isFinal, distribute the remaining combinations to tied teams randomly.
+    * If isFinal is true, the remainder value is distributed randomly instead
+    * of being set as a decimal value on the result.
     */
     function updateChances(chances, teams, isFinal) {
         isFinal = isFinal || false;
@@ -178,14 +179,15 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
         for (k=0; k < wps.length; k++) {
             val = wps[k][1];
             if (val > 1) {
-                // if adding val exceeds 14
+                // Do not exceed 14, as the chances are only for lottery teams.
                 if (tc + val >= chances.length) {
                     val -= (tc+val-chances.length);
                 }
                 total = chances.slice(tc, tc+val).reduce(function(a,b) {return a+b;});
                 remainder = (isFinal) ? total % val : 0;
                 newVal = (total - remainder)/val;
-                random.randInt(tc, tc+val);
+
+                // Distribute remainder randomly.
                 rdist = [];
                 while (rdist.length < remainder) {
                     x = random.randInt(tc, tc+val-1);

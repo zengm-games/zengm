@@ -223,6 +223,39 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
     }
 
     /**
+     * Sort teams in place in correct order for lottery.
+     *
+     * Sort teams by making playoffs (NOT playoff performance) and winp, for first round
+     */
+    function lotterySort(teams) {
+        var i, randValues;
+        /**
+         * http://www.nba.com/2015/news/04/17/2015-draft-order-of-selection-tiebreak-official-release/index.html
+         *
+         * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
+         */
+        randValues = _.shuffle(_.range(30));
+        for (i = 0; i < teams.length; i++) {
+            teams[i].randVal = randValues[i];
+        }
+
+        teams.sort(function (a, b) {
+            var r;
+            r = 0;
+            if ((a.playoffRoundsWon >= 0) && !(b.playoffRoundsWon >= 0)) {
+                r = 1;
+            }
+            if (!(a.playoffRoundsWon >= 0) && (b.playoffRoundsWon >= 0)) {
+                r = -1;
+            }
+
+            r = (r === 0) ? a.winp - b.winp : r;
+            r = (r === 0) ? a.randVal - b.randVal : r;
+            return r;
+        });
+    }
+
+    /**
      * Sets draft order and save it to the draftOrder object store.
      *
      * This is currently based on an NBA-like lottery, where the first 3 picks can be any of the non-playoff teams (with weighted probabilities).
@@ -240,41 +273,12 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
             seasonAttrs: ["winp", "playoffRoundsWon"],
             season: g.season
         }).then(function (teams) {
-            var chancePct, chanceTotal, chances, draw, firstThree, i, pick, randValues;
-
-            /**
-             * http://www.nba.com/2015/news/04/17/2015-draft-order-of-selection-tiebreak-official-release/index.html
-             *
-             * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
-             */
-            randValues = _.shuffle(_.range(30));
-            for (i = 0; i < teams.length; i++) {
-                teams[i].randVal = randValues[i];
-            }
-
-            // Sort teams by making playoffs (NOT playoff performance) and winp, for first round
-            teams.sort(function (a, b) {
-                var r;
-                r = 0;
-                if ((a.playoffRoundsWon >= 0) && !(b.playoffRoundsWon >= 0)) {
-                    r = 1;
-                }
-                if (!(a.playoffRoundsWon >= 0) && (b.playoffRoundsWon >= 0)) {
-                    r = -1;
-                }
-
-                r = (r === 0) ? a.winp - b.winp : r;
-                r = (r === 0) ? a.randVal - b.randVal : r;
-                return r;
-            });
+            var chancePct, chanceTotal, chances, draw, firstThree, i, pick;
 
             // Draft lottery
+            lotterySort(teams);
             chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
-
-            // console.log('chances', chances.slice());
             updateChances(chances, teams, true);
-
-            // console.log('after chance', chances.slice(0));
 
             chanceTotal = chances.reduce(function (a, b) {
                 return a + b;
@@ -666,6 +670,8 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
         genOrderFantasy: genOrderFantasy,
         untilUserOrEnd: untilUserOrEnd,
         getRookieSalaries: getRookieSalaries,
-        selectPlayer: selectPlayer
+        selectPlayer: selectPlayer,
+        updateChances: updateChances,
+        lotterySort: lotterySort
     };
 });

@@ -2,7 +2,7 @@
  * @name test.core.draft
  * @namespace Tests for core.draft.
  */
-define(["dao", "db", "globals", "core/draft", "core/league", 'lib/bluebird', 'util/helpers'], function (dao, db, g, draft, league, Promise, helpers) {
+define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/bluebird', 'util/helpers'], function (dao, db, g, draft, league, team, Promise, helpers) {
     "use strict";
 
     describe("core/draft", function () {
@@ -152,6 +152,58 @@ define(["dao", "db", "globals", "core/draft", "core/league", 'lib/bluebird', 'ut
                         r1picks[j].should.equal(r2picks[j]);
                     }
                 }
+            });
+        });
+
+        describe("#updateChances()", function () {
+            it("should distribute combinations to teams with the same record", function () {
+                var tx = dao.tx(["draftOrder", "draftPicks", "teams"], "readwrite");
+                return team.filter({
+                    ot: tx,
+                    attrs: ["tid", "cid"],
+                    seasonAttrs: ["winp", "playoffRoundsWon"],
+                    season: g.season
+                })
+                .then(function(teams) {
+                    var chances, i, j, maxIdx, origChances, sameRec, tids, value;
+                    chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
+                    origChances = chances.slice(0);
+                    // index instead of tid
+                    sameRec = [
+                        [6, 7, 8],
+                        [10, 11, 12],
+                    ]
+                    draft.lotterySort(teams);
+                    draft.updateChances(chances, teams, false);
+                    for (i = 0; i < sameRec.length; i++) {
+                        tids = sameRec[i];
+                        value = 0;
+                        for (j = 0; j < tids.length; j++) {
+                            if (value === 0) {
+                                value = chances[tids[j]];
+                            } else {
+                                value.should.equal(chances[tids[j]]);
+                            }
+                        }
+                    }
+
+                    // test if isFinal is true
+                    draft.updateChances(chances, teams, true);
+                    console.log(chances);
+                    for (i = 0; i < sameRec.length; i++) {
+                        tids = sameRec[i];
+                        value = 0;
+                        maxIdx = 0;
+                        for (j = tids.length-1; j > 0; j--) {
+                            if (value <= chances[tids[j]]) {
+                                value = chances[tids[j]];
+                                maxIdx = j;
+                            }
+                        }
+                        maxIdx.should.be.equal(0);
+                    }
+
+                });
             });
         });
 

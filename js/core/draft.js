@@ -13,7 +13,10 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
      * @return {Promise} Resolves to an ordered array of pick objects.
      */
     function getOrder(tx) {
-        return dao.draftOrder.get({ot: tx, key: 0}).then(function (row) {
+        return dao.draftOrder.get({
+            ot: tx,
+            key: 0
+        }).then(function (row) {
             return row.draftOrder;
         });
     }
@@ -58,7 +61,10 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
         return Promise.try(function () {
             // If scoutingRank is not supplied, have to hit the DB to get it
             if (scoutingRank === null) {
-                return dao.teams.get({ot: ot, key: g.userTid}).then(function (t) {
+                return dao.teams.get({
+                    ot: ot,
+                    key: g.userTid
+                }).then(function (t) {
                     return finances.getRankLastThree(t, "expenses", "scouting");
                 });
             }
@@ -100,7 +106,10 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
 
                 // Update player values after ratings changes
                 promises.push(player.updateValues(ot, p, []).then(function (p) {
-                    return dao.players.put({ot: ot, value: p});
+                    return dao.players.put({
+                        ot: ot,
+                        value: p
+                    });
                 }));
             }
 
@@ -111,12 +120,12 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
     function lotteryLogTxt(tid, type, number) {
         var txt = 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season]) + '">' + g.teamNamesCache[tid] + '</a>';
         if (type === 'chance') {
-            txt += " has a " + number + "% chance of getting the top overall pick of the "+ g.season +" draft.";
-        } else if ( type === 'movedup') {
+            txt += " has a " + number + "% chance of getting the top overall pick of the " + g.season + " draft.";
+        } else if (type === 'movedup') {
             txt += " moved up the lottery and will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
-        } else if ( type === 'moveddown') {
+        } else if (type === 'moveddown') {
             txt += " moved down the lottery and will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
-        } else if ( type === 'normal') {
+        } else if (type === 'normal') {
             txt += " will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
         }
         return txt;
@@ -133,9 +142,9 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
     }
 
     function logLotteryChances(chances, teams, draftOrder) {
-        var i, chance, total, txt, origTm, tm;
+        var i, origTm, tm, txt;
 
-        for (i=0; i<chances.length; i++) {
+        for (i = 0; i < chances.length; i++) {
             origTm = teams[i].tid;
             tm = draftOrder[origTm][1].tid;
             txt = lotteryLogTxt(tm, 'chance', helpers.round(chances[i], 2));
@@ -144,16 +153,16 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
     }
 
     function logLotteryWinners(chances, teams, tm, origTm, pick) {
-        var idx, txt, i;
-        for (i=0; i< teams.length; i++) {
+        var i, idx, txt;
+        for (i = 0; i < teams.length; i++) {
             if (teams[i].tid === origTm) {
                 idx = i;
                 break;
             }
         }
-        if (chances[idx] < chances[pick-1]) {
+        if (chances[idx] < chances[pick - 1]) {
             txt = lotteryLogTxt(tm, 'movedup', pick);
-        } else if (chances[idx] > chances[pick-1]) {
+        } else if (chances[idx] > chances[pick - 1]) {
             txt = lotteryLogTxt(tm, 'moveddown', pick);
         } else {
             txt = lotteryLogTxt(tm, 'normal', pick);
@@ -162,46 +171,49 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
     }
 
     /**
-    * Divide the combinations between teams with tied records.
-    *
-    * If isFinal is true, the remainder value is distributed randomly instead
-    * of being set as a decimal value on the result.
-    */
+     * Divide the combinations between teams with tied records.
+     *
+     * If isFinal is true, the remainder value is distributed randomly instead
+     * of being set as a decimal value on the result.
+     */
     function updateChances(chances, teams, isFinal) {
+        var i, j, k, newVal, rdist, remainder, tc, total, val, wps, x;
         isFinal = isFinal || false;
 
-        var wps, tc, total, i, j, k, x, newVal, val, remainder, rdist;
-        wps =  _.countBy(teams, 'winp');
+        wps = _.countBy(teams, 'winp');
         wps = _.pairs(wps);
-        wps = _.sortBy(wps, function(x) {return Number(x[0]);});
+        wps = _.sortBy(wps, function (x) {
+            return Number(x[0]);
+        });
         tc = 0;
 
-        for (k=0; k < wps.length; k++) {
+        for (k = 0; k < wps.length; k++) {
             val = wps[k][1];
             if (val > 1) {
-                // Do not exceed 14, as the chances are only for lottery teams.
                 if (tc + val >= chances.length) {
-                    val -= (tc+val-chances.length);
+                    val -= (tc + val - chances.length);
+                    // Do not exceed 14, as the chances are only for lottery teams.
                 }
-                total = chances.slice(tc, tc+val).reduce(function(a,b) {return a+b;});
+                total = chances.slice(tc, tc + val).reduce(function (a, b) {
+                    return a + b;
+                });
                 remainder = (isFinal) ? total % val : 0;
-                newVal = (total - remainder)/val;
+                newVal = (total - remainder) / val;
 
                 // Distribute remainder randomly.
                 rdist = [];
                 while (rdist.length < remainder) {
-                    x = random.randInt(tc, tc+val-1);
-                    if(rdist.indexOf(x) < 0) {
+                    x = random.randInt(tc, tc + val - 1);
+                    if (rdist.indexOf(x) < 0) {
                         rdist.push(x);
                     }
                 }
-                for(i=tc,j=tc+val; i<j; i++) {
+                for (i = tc, j = tc + val; i < j; i++) {
                     chances[i] = newVal;
                     if (rdist.indexOf(i) >= 0) {
                         chances[i] += 1;
                     }
                 }
-
             }
             tc += val;
             if (tc >= chances.length) {
@@ -228,7 +240,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
             seasonAttrs: ["winp", "playoffRoundsWon"],
             season: g.season
         }).then(function (teams) {
-            var chances, draw, firstThree, i, pick, chancePct, chanceTotal, randValues;
+            var chancePct, chanceTotal, chances, draw, firstThree, i, pick, randValues;
 
             /**
              * http://www.nba.com/2015/news/04/17/2015-draft-order-of-selection-tiebreak-official-release/index.html
@@ -236,7 +248,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
              * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
              */
             randValues = _.shuffle(_.range(30));
-            for (i=0; i<teams.length; i++) {
+            for (i = 0; i < teams.length; i++) {
                 teams[i].randVal = randValues[i];
             }
 
@@ -264,8 +276,12 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
 
             // console.log('after chance', chances.slice(0));
 
-            chanceTotal = chances.reduce(function(a, b) {return a+b;});
-            chancePct = chances.map(function(c) {return (c/chanceTotal)* 100;});
+            chanceTotal = chances.reduce(function (a, b) {
+                return a + b;
+            });
+            chancePct = chances.map(function (c) {
+                return (c / chanceTotal) * 100;
+            });
 
             // cumsum
             for (i = 1; i < chances.length; i++) {
@@ -321,7 +337,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                     });
 
                     logLotteryWinners(chancePct, teams, tid,
-                        teams[firstThree[i]].tid, i+1);
+                        teams[firstThree[i]].tid, i + 1);
                 }
 
                 /**
@@ -339,7 +355,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                             originalTid: teams[i].tid
                         });
 
-                        if(pick < 15) {
+                        if (pick < 15) {
                             logLotteryWinners(chancePct, teams, tid,
                                 teams[i].tid, pick);
                         }
@@ -351,7 +367,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                 /**
                  * sort by winp with reverse randVal for tiebreakers.
                  */
-                teams.sort(function(a, b) {
+                teams.sort(function (a, b) {
                     var r;
                     r = a.winp - b.winp;
                     return (r === 0) ? b.randVal - a.randVal : r;
@@ -374,7 +390,9 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                         ot: tx,
                         key: draftPick.dpid
                     });
-                }, {concurrency: Infinity}).then(function () {
+                }, {
+                    concurrency: Infinity
+                }).then(function () {
                     return setOrder(tx, draftOrder);
                 });
             });
@@ -491,7 +509,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
             if (g.phase !== g.PHASE.FANTASY_DRAFT) {
                 rookieSalaries = getRookieSalaries();
                 i = pick.pick - 1 + g.numTeams * (pick.round - 1);
-                years = 4 - pick.round;  // 2 years for 2nd round, 3 years for 1st round;
+                years = 4 - pick.round; // 2 years for 2nd round, 3 years for 1st round;
                 p = player.setContract(p, {
                     amount: rookieSalaries[i],
                     exp: g.season + years
@@ -517,7 +535,10 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                 tids: [p.tid]
             });
 
-            dao.players.put({ot: tx, value: p});
+            dao.players.put({
+                ot: tx,
+                value: p
+            });
         });
 
         return tx.complete();
@@ -545,7 +566,9 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
         ]).spread(function (playersAll, draftOrder) {
             var afterDoneAuto, autoSelectPlayer, pick, pid, selection;
 
-            playersAll.sort(function (a, b) { return b.value - a.value; });
+            playersAll.sort(function (a, b) {
+                return b.value - a.value;
+            });
 
             // Called after either the draft is over or it's the user's pick
             afterDoneAuto = function (draftOrder, pids) {
@@ -618,11 +641,11 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                         return afterDoneAuto(draftOrder, pids);
                     }
 
-                    selection = Math.floor(Math.abs(random.gauss(0, 2)));  // 0=best prospect, 1=next best prospect, etc.
+                    selection = Math.floor(Math.abs(random.gauss(0, 2))); // 0=best prospect, 1=next best prospect, etc.
                     pid = playersAll[selection].pid;
                     return selectPlayer(pick, pid).then(function () {
                         pids.push(pid);
-                        playersAll.splice(selection, 1);  // Delete from the list of undrafted players
+                        playersAll.splice(selection, 1); // Delete from the list of undrafted players
 
                         return autoSelectPlayer();
                     });

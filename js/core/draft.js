@@ -177,7 +177,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
      * of being set as a decimal value on the result.
      */
     function updateChances(chances, teams, isFinal) {
-        var i, j, k, newVal, rdist, remainder, tc, total, val, wps, x;
+        var i, j, k, newVal, remainder, tc, total, val, wps, x;
         isFinal = isFinal || false;
 
         wps = _.countBy(teams, 'winp');
@@ -200,18 +200,11 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
                 remainder = (isFinal) ? total % val : 0;
                 newVal = (total - remainder) / val;
 
-                // Distribute remainder randomly.
-                rdist = [];
-                while (rdist.length < remainder) {
-                    x = random.randInt(tc, tc + val - 1);
-                    if (rdist.indexOf(x) < 0) {
-                        rdist.push(x);
-                    }
-                }
                 for (i = tc, j = tc + val; i < j; i++) {
                     chances[i] = newVal;
-                    if (rdist.indexOf(i) >= 0) {
+                    if (remainder > 0) {
                         chances[i] += 1;
+                        remainder--;
                     }
                 }
             }

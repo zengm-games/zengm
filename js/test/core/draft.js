@@ -189,12 +189,11 @@ define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/b
 
                     // test if isFinal is true
                     draft.updateChances(chances, teams, true);
-                    console.log(chances);
                     for (i = 0; i < sameRec.length; i++) {
                         tids = sameRec[i];
                         value = 0;
-                        maxIdx = 0;
-                        for (j = tids.length-1; j > 0; j--) {
+                        maxIdx = -1;
+                        for (j = tids.length-1; j >= 0; j--) {
                             if (value <= chances[tids[j]]) {
                                 value = chances[tids[j]];
                                 maxIdx = j;

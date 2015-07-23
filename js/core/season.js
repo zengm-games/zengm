@@ -356,7 +356,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
      * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
      */
     function newScheduleDefault(teams) {
-        var cid, dids, game, games, good, i, ii, iters, j, jj, k, matchup, matchups, n, newMatchup, t, teams, tids, tidsByConf, tryNum;
+        var cid, dids, game, games, good, i, ii, iters, j, jj, k, matchup, matchups, n, newMatchup, t, tids, tidsByConf, tryNum;
 
         tids = [];  // tid_home, tid_away
 
@@ -597,7 +597,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 }
             }
         }).then(function () {
-            var i, key, matchup, team1, team2, tidsWon, sorter, sortBy, ts;
+            var i, key, matchup, sortBy, sorter, team1, team2, tidsWon, ts;
 
             // Now playoffSeries, rnd, series, and tids are set
 

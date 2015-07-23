@@ -7,7 +7,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
 
     var mapping;
 
-    function get(req) {
+    function get() {
         return;
     }
 
@@ -24,12 +24,11 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
     };
 
     function getTeamLink(t) {
-        return '<a href="' + helpers.leagueUrl(["team_history", t.abbrev]) + '">' + t.region + ' ' + t.name + '</a>'
+        return '<a href="' + helpers.leagueUrl(["team_history", t.abbrev]) + '">' + t.region + ' ' + t.name + '</a>';
     }
 
     function getTeamRecord(team) {
-        var championships, i, j, playoffAppearances, totalLost, totalWon,
-            totalWP, lastChampionship, lastPlayoffAppearance;
+        var championships, i, lastChampionship, lastPlayoffAppearance, playoffAppearances, totalLost, totalWP, totalWon;
 
         totalWon = 0;
         totalLost = 0;
@@ -51,9 +50,8 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
         }
 
 
-        totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon+totalLost), 3) : "0.000";
+        totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon + totalLost), 3) : "0.000";
 
-        var str = String;
         return {
             team: getTeamLink(team),
             won: totalWon.toString(),
@@ -66,46 +64,49 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
         };
     }
 
-    function updateTeamRecords(inputs, updateEvents, vm) {
+    function updateTeamRecords(inputs, updateEvents) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
             return Promise.all([
                 dao.teams.getAll()
             ]).spread(function (teams) {
-                var teamRecords, i, j, seasonCount;
+                var i, seasonCount, teamRecords;
 
                 teamRecords = [];
-                for(i=0; i<teams.length; i++) {
+                for (i = 0; i < teams.length; i++) {
                     teamRecords.push(getTeamRecord(teams[i]));
                 }
-                seasonCount = _.pluck(teamRecords, 'championships').reduce(function(a,b){return a+b;});
+                seasonCount = _.pluck(teamRecords, 'championships').reduce(function (a, b) {
+                    return a + b;
+                });
 
                 return {
                     teamRecords: teamRecords,
                     seasonCount: seasonCount
                 };
             });
-
         }
     }
 
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title("Team Records");
-        }).extend({throttle: 1});
+        }).extend({
+            throttle: 1
+        });
 
         ko.computed(function () {
-
             ui.datatableSinglePage($("#team-records"), 0, _.map(vm.teamRecords(), function (t) {
                 var out = [t.team, t.won, t.lost, t.winp, t.playoffAppearances, t.lastPlayoffAppearance, t.championships.toString(), t.lastChampionship];
                 return out;
             }));
-
-        }).extend({throttle: 1});
+        }).extend({
+            throttle: 1
+        });
 
         ui.tableClickableRows($("#team-records"));
     }
 
-    function uiEvery(updateEvents, vm) {
+    function uiEvery() {
 
     }
 

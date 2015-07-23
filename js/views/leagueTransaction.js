@@ -21,14 +21,17 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
     function updateEventLog(inputs, updateEvents, vm) {
         var maxEid, newEvents;
 
-        if (updateEvents.length >= 0 || inputs.season !== vm.season() || inputs.eventType !== vm.eventType ) {
-            if (inputs.season !== vm.season() || inputs.eventType !== vm.eventType ) {
+        if (updateEvents.length >= 0 || inputs.season !== vm.season() || inputs.eventType !== vm.eventType) {
+            if (inputs.season !== vm.season() || inputs.eventType !== vm.eventType) {
                 vm.events([]);
             }
 
             if (vm.events().length === 0) {
                 // Show all events, newest at top
-                return dao.events.getAll({index: "season", key: inputs.season}).then(function (events) {
+                return dao.events.getAll({
+                    index: "season",
+                    key: inputs.season
+                }).then(function (events) {
                     events.reverse(); // Newest first
 
                     // Filter by type
@@ -87,7 +90,9 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title("League Transactions - " + vm.season());
-        }).extend({throttle: 1});
+        }).extend({
+            throttle: 1
+        });
     }
 
     function uiEvery(updateEvents, vm) {

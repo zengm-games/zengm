@@ -5,7 +5,7 @@
 define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/underscore", "util/bbgmView", "util/helpers", "util/viewHelpers", "views/components", "dao", "lib/bluebird"], function (g, ui, team, $, ko, _, bbgmView, helpers, viewHelpers, components, dao, Promise) {
     "use strict";
 
-    var mapping, optionsTmp, awardOptions;
+    var awardOptions, mapping, optionsTmp;
 
     function get(req) {
         return {
@@ -27,60 +27,46 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
         }
     };
 
-    optionsTmp = [
-        {
+    optionsTmp = [{
             val: "Won Championship",
             key: "champion"
-        },
-        {
+        }, {
             val: "Most Valuable Player",
             key: "mvp"
-        },
-        {
+        }, {
             val: "Finals MVP",
             key: "finals_mvp"
-        },
-        {
+        }, {
             val: "Defensive Player of the Year",
             key: "dpoy"
-        },
-        {
+        }, {
             val: "Sixth Man of the Year",
             key: "smoy"
-        },
-        {
+        }, {
             val: "Rookie of the Year",
             key: "roy"
-        },
-        {
+        }, {
             val: "First Team All-League",
             key: "first_team"
-        },
-        {
+        }, {
             val: "Second Team All-League",
             key: "second_team"
-        },
-        {
+        }, {
             val: "Third Team All-League",
             key: "third_team"
-        },
-        {
+        }, {
             val: "First Team All-Defensive",
             key: "first_def"
-        },
-        {
+        }, {
             val: "Second Team All-Defensive",
             key: "second_def"
-        },
-        {
+        }, {
             val: "Third Team All-Defensive",
             key: "third_def"
-        },
-        {
+        }, {
             val: "All-League",
             key: "all_league"
-        },
-        {
+        }, {
             val: "All-Defensive",
             key: "all_def"
         }
@@ -88,7 +74,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
     ];
 
     awardOptions = {};
-    optionsTmp.map(function(o) {
+    optionsTmp.map(function (o) {
         awardOptions[o.key] = o.val;
     });
 
@@ -97,25 +83,29 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
     }
 
     function getPlayerAwards(p, awardType) {
-        var aType, awards, years, last, filter;
+        var aType, awards, filter, last, years;
         aType = awardOptions[awardType];
         if (awardType === 'all_league') {
-            filter = function(a) {
+            filter = function (a) {
                 var o = awardOptions;
                 return a.type === o.first_team || a.type === o.second_team || a.type === o.third_team;
             };
         } else if (awardType === 'all_def') {
-            filter = function(a) {
+            filter = function (a) {
                 var o = awardOptions;
                 return a.type === o.first_def || a.type === o.second_def || a.type === o.third_def;
             };
         } else {
-            filter = function(a) {return a.type === aType;};
+            filter = function (a) {
+                return a.type === aType;
+            };
         }
 
         awards = p.awards.filter(filter);
-        years = awards.map(function(a) {return a.season;});
-        last = years[years.length-1] || years;
+        years = awards.map(function (a) {
+            return a.season;
+        });
+        last = years[years.length - 1] || years;
         return {
             player: getPlayerLink(p),
             count: awards.length,
@@ -128,18 +118,22 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
     }
 
     function updateAwardsRecords(inputs, updateEvents, vm) {
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.awardType !== vm.awardType ) {
+        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.awardType !== vm.awardType) {
             return Promise.all([
                 dao.players.getAll()
             ]).spread(function (players) {
-                var awardsRecords, i, j;
+                var awardsRecords, i;
 
                 awardsRecords = [];
-                players = players.filter(function(p) {return p.awards.length > 0; });
-                for(i=0; i<players.length; i++) {
+                players = players.filter(function (p) {
+                    return p.awards.length > 0;
+                });
+                for (i = 0; i < players.length; i++) {
                     awardsRecords.push(getPlayerAwards(players[i], inputs.awardType));
                 }
-                awardsRecords = awardsRecords.filter(function(o) { return o.count > 0;});
+                awardsRecords = awardsRecords.filter(function (o) {
+                    return o.count > 0;
+                });
 
                 return {
                     awardsRecords: awardsRecords,
@@ -148,21 +142,27 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
                     awardType: inputs.awardType
                 };
             });
-
         }
     }
 
     function uiFirst(vm) {
         ko.computed(function () {
             ui.title("Awards Records");
-        }).extend({throttle: 1});
+        }).extend({
+            throttle: 1
+        });
 
         ko.computed(function () {
             ui.datatableSinglePage($("#awards-records"), 0, _.map(vm.awardsRecords(), function (p) {
                 return [p.player, p.countText, p.years, p.lastYear, p.retired, p.hof];
-            }), {paging: true, searching: true, pagingType: "bootstrap"});
-
-        }).extend({throttle: 1});
+            }), {
+                paging: true,
+                searching: true,
+                pagingType: "bootstrap"
+            });
+        }).extend({
+            throttle: 1
+        });
 
         ui.tableClickableRows($("#awards-records"));
     }

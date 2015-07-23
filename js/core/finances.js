@@ -16,7 +16,6 @@ define(["dao", "globals", "lib/underscore"], function (dao, g, _) {
         tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite", tx);
         var collectedTax, amount, distribute;
         collectedTax = 0;
-        distribute = 0;
 
         return require("core/team").getPayrolls(tx).then(function (payrolls) {
             // Update teams object store
@@ -46,7 +45,7 @@ define(["dao", "globals", "lib/underscore"], function (dao, g, _) {
             }).then(function() {
                 var payteams;
                 payteams = payrolls.filter(function(x) { return x <= g.salaryCap; });
-                if (payteams.length > 0) {
+                if (payteams.length > 0 && collectedTax > 0) {
                     distribute = (collectedTax * 0.5)/payteams.length;
                     return dao.teams.iterate({
                         ot: tx,
@@ -55,7 +54,7 @@ define(["dao", "globals", "lib/underscore"], function (dao, g, _) {
                             s = t.seasons.length - 1;
 
                             if (payrolls[t.tid] <= g.salaryCap) {
-                                t.seasons[s].revenues.luxuryTaxShare.amount = distribute;
+                                t.seasons[s].revenues.luxuryTaxShare = { amount: distribute, rank: 15.5 };
                                 t.seasons[s].cash += distribute;
                                 return t;
                             }

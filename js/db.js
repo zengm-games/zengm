@@ -915,27 +915,6 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
                     };
                 }());
             }
-            if (event.oldVersion <= 16) {
-                (function () {
-                    tx.objectStore("teams").openCursor().onsuccess = function (event) {
-                        var cursor, i, t, update;
-
-                        cursor = event.target.result;
-                        update = false;
-
-                        if (cursor) {
-                            t = cursor.value;
-
-                            for (i = 0; i < t.seasons.length; i++) {
-                                t.seasons[i].revenues.luxuryTaxShare = {amount: 0, rank: 15.5};
-                            }
-
-                            cursor.update(t);
-                            cursor.continue();
-                        }
-                    };
-                }());
-            }
         });
     }
 
@@ -944,7 +923,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
             var request;
 
 //        console.log('Connecting to database "league' + lid + '"');
-            request = indexedDB.open("league" + lid, 17);
+            request = indexedDB.open("league" + lid, 16);
             request.onerror = function (event) {
                 reject(event.target.error);
             };

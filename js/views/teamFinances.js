@@ -174,6 +174,9 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
                         }
                     }
 
+                    // account for added field
+                    barData.revenues.luxuryTaxShare = barData.revenues.luxuryTaxShare || helpers.nullPad([0], showInt);
+
                     // Process some values
                     barData.att = _.map(barData.att, function (num, i) {
                         if (t.seasons[i] !== undefined) {

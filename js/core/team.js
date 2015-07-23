@@ -505,7 +505,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
      * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
      */
     function filter(options) {
-        var filterAttrs, filterSeasonAttrs, filterStats, filterStatsPartial, _checkSort, _assureSort;
+        var filterAttrs, filterSeasonAttrs, filterStats, filterStatsPartial, checkSort, assureSort;
 
         if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
@@ -523,7 +523,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
         /**
          * check if field is in sortBy
          */
-        _checkSort = function(sortBy, field) {
+        checkSort = function(sortBy, field) {
             var cond, rev;
             rev = '-' + field;
             cond = Array.isArray(sortBy) && (sortBy.indexOf(field) > -1 || sortBy.indexOf(rev) > -1);
@@ -535,31 +535,33 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
         /**
          * Assure needed fields are available for sorting.
          */
-        _assureSort = function(field, type, addFields) {
+        assureSort = function(field, type, addFields) {
             type = type || 'seasonAttrs';
             addFields = addFields || [];
             var cond;
 
             _.each(addFields, function(f) {
                 if (_.isArray(f)) {
+                    options[f[1]] = options[f[1]] || [];
                     options[f[1]].push(f[0]);
                 } else{
                     options[type].push(f);
                 }
             });
 
-            cond = _checkSort(options.sortBy, field);
+            cond = checkSort(options.sortBy, field);
             if (cond) {
                 options[type].push(field);
             }
 
         };
 
-        _assureSort('winp', null, ['won', 'lost']);
-        _assureSort('dwinp', null, ['wonDiv', 'lostDiv', ['did', 'attrs']]);
-        _assureSort('cwinp', null, ['wonConf', 'lostConf']);
-        _assureSort('ocwinp', null, ['won', 'lost', 'wonConf', 'lostConf']);
-        _assureSort('diff', 'stats', ['pts', 'oppPts']);
+        assureSort('winp', null, ['won', 'lost']);
+        assureSort('drank',  null, [["dwinp","sortBy"]])
+        assureSort('dwinp', null, ['wonDiv', 'lostDiv', ['did', 'attrs']]);
+        assureSort('cwinp', null, ['wonConf', 'lostConf']);
+        assureSort('ocwinp', null, ['won', 'lost', 'wonConf', 'lostConf']);
+        assureSort('diff', 'stats', ['pts', 'oppPts']);
 
         // Copys/filters the attributes listed in options.attrs from p to fp.
         filterAttrs = function (ft, t, options) {
@@ -767,7 +769,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
         };
 
         return dao.teams.getAll({ot: options.ot, key: options.tid}).then(function (t) {
-            var ft, fts, i, returnOneTeam, savePayroll, sortBy, getDrank, fakeWinp, breakDivTie, sorter;
+            var ft, fts, i, returnOneTeam, savePayroll, sortBy, getDrank, fakeWinp, sorter;
 
             // t will be an array of g.numTeams teams (if options.tid is null) or an array of 1 team. If 1, then we want to return just that team object at the end, not an array of 1 team.
             returnOneTeam = false;
@@ -787,30 +789,18 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
 
             /**
              * Set the drank attribute of the team object.
-             * The ff. values are set for drank
              * 1 = if team is division leader
-             * 1/(1 x tied_teams) = if there are teams in the division tied for the lead
-             * 0 = if team is not the division leader.
              */
-            getDrank = function(t) {
-                var tmax, ft, count;
-                ft = _.filter(fts, function(x) {return x.did === t.did;});
-                tmax = _.max(_.pluck(ft, 'winp'));
-                count = _.countBy(_.pluck(ft, 'winp'));
-                t.drank = Number(t.winp === tmax)/(count[tmax]);
-            };
-
-            /**
-             * Break ties to determine the division winner.
-             */
-            breakDivTie = function(teams) {
-                if (teams.length !== 0 ) {
-                    var sortBy, s;
-                    sortBy = ['dwinp', 'cwinp', 'ocwinp', 'diff'];
-                    s = new helpers.MultiSort(sortBy);
-                    teams.sort(s.sortF);
-                    teams.map(function(t) {t.drank = 0;});
-                    teams[0].drank = 1;
+            getDrank = function(did, fts) {
+                var ft, s, sf;
+                ft = fts.filter(function(x) {return x.did === did;});
+                s = ['winp', 'dwinp', 'cwinp', 'ocwinp', 'diff']
+                sf = new helpers.MultiSort(s);
+                ft = ft.sort(sf.sortF);
+                for (var i = 0; i < fts.length; i++) {
+                    if (ft[0].tid === fts[i].tid) {
+                        fts[i].drank = 1;
+                    }
                 }
             };
 
@@ -819,7 +809,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
              * winpp attribute that is the average of the 3rd and 4th highest
              * ranked team in the conference.
              */
-            fakeWinp = function(t) {
+            fakeWinp = function(t, fts) {
                 var ft;
                 ft = _.pluck(_.filter(fts, function(x) {return x.cid === t.cid;}), 'winp');
                 ft = ft.sort(function(a, b) { return b - a;});
@@ -840,13 +830,15 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                  * instead of winp.
                  */
                 if (sortBy.indexOf('drank') > -1) {
+                    _.each(_.range(0, 6), function(did) { getDrank(did, fts); });
+                    fts.map(function(t) {
+                        t.drank = t.drank || 0;
+                        fakeWinp(t, fts);
+                        // set winpp value and init drank for non leaders.
+                    });
                     if (sortBy.indexOf('winp') > -1) {
-                        sortBy.splice(sortBy.indexOf('winp'), 1);
+                        sortBy.splice(sortBy.indexOf('winp'), 1, 'winpp');
                     }
-
-                    fts.map(function(t) {getDrank(t); fakeWinp(t);});
-                    breakDivTie(fts.filter(function(t) {return t.drank > 0 && t.drank < 1;}));
-                    sortBy = ['winpp',].concat(sortBy);
                 }
                 sorter = new helpers.MultiSort(sortBy);
                 fts.sort(sorter.sortF);

@@ -177,7 +177,7 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
      * of being set as a decimal value on the result.
      */
     function updateChances(chances, teams, isFinal) {
-        var i, j, k, newVal, remainder, tc, total, val, wps, x;
+        var i, j, k, newVal, remainder, tc, total, val, wps;
         isFinal = isFinal || false;
 
         wps = _.countBy(teams, 'winp');

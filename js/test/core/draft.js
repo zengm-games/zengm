@@ -2,7 +2,7 @@
  * @name test.core.draft
  * @namespace Tests for core.draft.
  */
-define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/bluebird', 'util/helpers'], function (dao, db, g, draft, league, team, Promise, helpers) {
+define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/bluebird', 'lib/jquery', 'lib/underscore'], function (dao, db, g, draft, league, team, Promise, $, _) {
     "use strict";
 
     describe("core/draft", function () {
@@ -77,10 +77,10 @@ define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/b
         describe("#genOrder()", function () {
             var draftResults, i;
             it("should schedule 60 draft picks", function (done) {
-                var file, fs, tx;
+                var tx;
 
                 return Promise.try(function () {
-                        return $.getJSON("../../data/sample_tiebreakers.json")
+                        return $.getJSON("../../data/sample_tiebreakers.json");
                     })
                     .then(function (teams) {
                         tx = dao.tx(["draftOrder", "draftPicks", "teams", "players"], "readwrite");
@@ -106,7 +106,7 @@ define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/b
                     });
             });
             it("should give the 3 teams with the lowest win percentage picks not lower than 6", function () {
-                var tids = [16, 28, 21] // teams with lowest winp
+                var tids = [16, 28, 21]; // teams with lowest winp
                 for (i = 0; i < tids.length; i++) {
                     draftResults.indexOf(tids[i]).should.be.within(0, i + 3);
                     draftResults.lastIndexOf(tids[i]).should.be.equal(30 + i);
@@ -114,7 +114,7 @@ define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/b
             });
 
             it("should give lottery team with better record than playoff teams a pick based on actual record for round 2", function () {
-                var pofteams = [23, 10, 18, 24, 14]
+                var pofteams = [23, 10, 18, 24, 14];
                     // good record lottery team
                 draftResults.indexOf(17).should.be.within(0, 13);
                 draftResults.lastIndexOf(17).should.be.equal(48);
@@ -132,7 +132,7 @@ define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/b
                     [3, 15, 25],
                     [10, 18],
                     [13, 26]
-                ]
+                ];
                 for (i = 0; i < sameRec.length; i++) {
                     tids = sameRec[i];
                     r1picks = [];
@@ -159,50 +159,48 @@ define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/b
             it("should distribute combinations to teams with the same record", function () {
                 var tx = dao.tx(["draftOrder", "draftPicks", "teams"], "readwrite");
                 return team.filter({
-                    ot: tx,
-                    attrs: ["tid", "cid"],
-                    seasonAttrs: ["winp", "playoffRoundsWon"],
-                    season: g.season
-                })
-                .then(function(teams) {
-                    var chances, i, j, maxIdx, origChances, sameRec, tids, value;
-                    chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
-                    origChances = chances.slice(0);
-                    // index instead of tid
-                    sameRec = [
-                        [6, 7, 8],
-                        [10, 11, 12],
-                    ]
-                    draft.lotterySort(teams);
-                    draft.updateChances(chances, teams, false);
-                    for (i = 0; i < sameRec.length; i++) {
-                        tids = sameRec[i];
-                        value = 0;
-                        for (j = 0; j < tids.length; j++) {
-                            if (value === 0) {
-                                value = chances[tids[j]];
-                            } else {
-                                value.should.equal(chances[tids[j]]);
+                        ot: tx,
+                        attrs: ["tid", "cid"],
+                        seasonAttrs: ["winp", "playoffRoundsWon"],
+                        season: g.season
+                    })
+                    .then(function (teams) {
+                        var chances, i, j, maxIdx, sameRec, tids, value;
+                        chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
+                        // index instead of tid
+                        sameRec = [
+                            [6, 7, 8],
+                            [10, 11, 12]
+                        ];
+                        draft.lotterySort(teams);
+                        draft.updateChances(chances, teams, false);
+                        for (i = 0; i < sameRec.length; i++) {
+                            tids = sameRec[i];
+                            value = 0;
+                            for (j = 0; j < tids.length; j++) {
+                                if (value === 0) {
+                                    value = chances[tids[j]];
+                                } else {
+                                    value.should.equal(chances[tids[j]]);
+                                }
                             }
                         }
-                    }
 
-                    // test if isFinal is true
-                    draft.updateChances(chances, teams, true);
-                    for (i = 0; i < sameRec.length; i++) {
-                        tids = sameRec[i];
-                        value = 0;
-                        maxIdx = -1;
-                        for (j = tids.length-1; j >= 0; j--) {
-                            if (value <= chances[tids[j]]) {
-                                value = chances[tids[j]];
-                                maxIdx = j;
+                        // test if isFinal is true
+                        draft.updateChances(chances, teams, true);
+                        for (i = 0; i < sameRec.length; i++) {
+                            tids = sameRec[i];
+                            value = 0;
+                            maxIdx = -1;
+                            for (j = tids.length - 1; j >= 0; j--) {
+                                if (value <= chances[tids[j]]) {
+                                    value = chances[tids[j]];
+                                    maxIdx = j;
+                                }
                             }
+                            maxIdx.should.be.equal(0);
                         }
-                        maxIdx.should.be.equal(0);
-                    }
-
-                });
+                    });
             });
         });
 

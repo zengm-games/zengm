@@ -115,8 +115,8 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
             })
                 .then(function() {
                     return Promise.try(function () {
-                            return $.getJSON("../../data/sample_tiebreakers.json")
-                        })
+                            return $.getJSON("../../data/sample_tiebreakers.json");
+                        });
                 })
                 .then(function (teams) {
                     tx = dao.tx(["teams", "playoffSeries"], "readwrite");
@@ -129,7 +129,7 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
                     });
                 }).then(function() {
                     done();
-                })
+                });
         });
         after(function () {
             return league.remove(g.lid);
@@ -148,7 +148,7 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
                     .then(function(series) {
                         pseries = series;
                         done();
-                    })
+                    });
             });
             it("should rank teams with the same records properly.", function() {
                 var r1 = pseries.series[0];
@@ -170,7 +170,7 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
             });
             after(function(done) {
                 var i, r1;
-                var r1 = pseries.series[0];
+                r1 = pseries.series[0];
 
                 for (i = 0; i < r1.length; i++) {
                     if (i === 3) {
@@ -182,7 +182,7 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
                 dao.playoffSeries.put({value: pseries})
                     .then(function() {
                         done();
-                    })
+                    });
             });
         });
         describe("#newSchedulePlayoffsDay", function() {
@@ -199,8 +199,8 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
                     .then(function(series) {
                         pseries = series;
                         done();
-                    })
-            })
+                    });
+            });
 
             it("should create matchups for next round with proper HCA", function() {
                 var r2 = pseries.series[1];

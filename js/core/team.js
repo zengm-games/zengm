@@ -823,8 +823,8 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                     return x.did === did;
                 });
                 s = ['winp', 'dwinp', 'cwinp', 'ocwinp', 'diff'];
-                sf = new helpers.MultiSort(s);
-                ft = ft.sort(sf.sortF);
+                sf = helpers.multiSort(s);
+                ft = ft.sort(sf);
                 for (i = 0; i < fts.length; i++) {
                     if (ft[0].tid === fts[i].tid) {
                         fts[i].drank = 1;
@@ -874,8 +874,8 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                         sortBy.splice(sortBy.indexOf('winp'), 1, 'winpp');
                     }
                 }
-                sorter = new helpers.MultiSort(sortBy);
-                fts.sort(sorter.sortF);
+                sorter = helpers.multiSort(sortBy);
+                fts.sort(sorter);
             } else if (options.sortBy === "winp") {
                 // Sort by winning percentage, descending
                 fts.sort(function (a, b) {

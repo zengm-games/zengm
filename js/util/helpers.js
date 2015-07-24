@@ -1126,15 +1126,13 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
     }
 
     /**
-     * Constructor for a sorter object. Use the objects sortF member as the sort
-     * function for the object list.
-     *
-     * @param {Array of String fields} sortBy sorting fields in order of application
+     * Return an anonymous function for sorting according to the order of sortBy
+     * @param  {Array of Strings} sortBy list of fields
      */
-    function MultiSort(sortBy) {
+    function multiSort(sortBy) {
         sortBy = sortBy;
 
-        this.sortF = function (a, b) {
+        return function (a, b) {
             var i, result, rev, sortT;
 
             for (i = 0; i < sortBy.length; i++) {
@@ -1165,8 +1163,8 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         teams = [teamsConf[seed1 - 1], teamsConf[seed2 - 1]];
         teams[0].seed = seed1;
         teams[1].seed = seed2;
-        sorter = new MultiSort(sortBy);
-        teams.sort(sorter.sortF);
+        sorter = multiSort(sortBy);
+        teams.sort(sorter);
 
         series[0][order + cid * 4] = {
             home: teams[0],
@@ -1210,6 +1208,6 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         updateMultiTeam: updateMultiTeam,
         plusMinus: plusMinus,
         seriesHomeAway: seriesHomeAway,
-        MultiSort: MultiSort
+        multiSort: multiSort
     };
 });

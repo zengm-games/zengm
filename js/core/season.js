@@ -660,9 +660,9 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
 
                 // Set home/away in the next round
                 sortBy = ['winp', 'cwinp', 'ocwinp', 'diff'];
-                sorter = new helpers.MultiSort(sortBy);
+                sorter = helpers.multiSort(sortBy);
                 ts = [team1, team2];
-                ts.sort(sorter.sortF);
+                ts.sort(sorter);
 
                 matchup = {home: ts[0], away: ts[1]};
 

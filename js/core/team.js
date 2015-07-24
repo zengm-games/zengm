@@ -569,14 +569,16 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
             }
         };
 
-        assureSort('winp', null, ['won', 'lost']);
-        assureSort('drank', null, [
-            ["dwinp", "sortBy"]
-        ]);
-        assureSort('dwinp', null, ['wonDiv', 'lostDiv', ['did', 'attrs']]);
-        assureSort('cwinp', null, ['wonConf', 'lostConf']);
-        assureSort('ocwinp', null, ['won', 'lost', 'wonConf', 'lostConf']);
-        assureSort('diff', 'stats', ['pts', 'oppPts']);
+        if (options.sortBy.length > 0) {
+            assureSort('winp', null, ['won', 'lost']);
+            assureSort('drank', null, [
+                ["dwinp", "sortBy"]
+            ]);
+            assureSort('dwinp', null, ['wonDiv', 'lostDiv', ['did', 'attrs']]);
+            assureSort('cwinp', null, ['wonConf', 'lostConf']);
+            assureSort('ocwinp', null, ['won', 'lost', 'wonConf', 'lostConf']);
+            assureSort('diff', 'stats', ['pts', 'oppPts']);
+        }
 
         // Copys/filters the attributes listed in options.attrs from p to fp.
         filterAttrs = function (ft, t, options) {

@@ -107,7 +107,7 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
         });
     });
 
-    describe('playoffs tiebreakers', function() {
+    describe('core/season playoffs tiebreakers', function() {
         var tx;
         before(function(done) {
             return db.connectMeta().then(function () {
@@ -134,7 +134,7 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
         after(function () {
             return league.remove(g.lid);
         });
-        describe("create playoff matchups", function() {
+        describe("#createPlayoffMatchups", function() {
             var pseries;
             before(function(done) {
                 tx = dao.tx(["teams", "playoffSeries", "players", "playerStats", "events"], "readwrite");

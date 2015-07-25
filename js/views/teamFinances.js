@@ -174,7 +174,7 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
                         }
                     }
 
-                    // account for added field
+                    // Account for added field, which might not be in database
                     barData.revenues.luxuryTaxShare = barData.revenues.luxuryTaxShare || helpers.nullPad([0], showInt);
 
                     // Process some values

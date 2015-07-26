@@ -49,7 +49,6 @@ from the first section. This section is just for added clarity.)
 - Let me reiterate one more time: **you can't in any way deploy the software for
   public use or compete with http://basketball-gm.com/**.
 
-
 # Disclaimer
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR

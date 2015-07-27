@@ -48,7 +48,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/knockou
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
                 seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
                 season: inputs.season,
-                sortBy: ["winp", "drank", "cwinp", "ocwinp", "diff"]
+                sortBy: helpers.getPlayoffSorting()
             }).then(function (teams) {
                 var confRanks, confTeams, confs, divTeams, i, j, k, l;
 

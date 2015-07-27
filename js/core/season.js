@@ -704,7 +704,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
             attrs: ["tid", "cid", "region"],
             seasonAttrs: ["winp"],
             season: g.season,
-            sortBy: ["winp", "drank", "cwinp", "ocwinp", "diff"]
+            sortBy: helpers.getPlayoffSorting()
         }).then(function (teams) {
             var cid, i, series, teamsConf, tidPlayoffs;
 

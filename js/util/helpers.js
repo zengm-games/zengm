@@ -258,6 +258,21 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
     }
 
     /**
+     * Returns default playoff sorting. Adds 'drank' when global option
+     * divLeaderTop4 is true.
+     * @return {Array.<String>} Field names for sorting playoffs/standings.
+     */
+    function getPlayoffSorting() {
+        var sortBy;
+        if (g.divLeaderTop4) {
+            sortBy = ["winp", "drank", "cwinp", "ocwinp", "diff"]
+        } else {
+            sortBy = ["winp", "cwinp", "ocwinp", "diff"]
+        }
+        return sortBy;
+    }
+
+    /**
      * Clones an object.
      *
      * Taken from http://stackoverflow.com/a/3284324/786644
@@ -974,6 +989,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         getTeams: getTeams,
         addPopRank: addPopRank,
         getTeamsDefault: getTeamsDefault,
+        getPlayoffSorting: getPlayoffSorting,
         deepCopy: deepCopy,
         error: error,
         errorNotify: errorNotify,

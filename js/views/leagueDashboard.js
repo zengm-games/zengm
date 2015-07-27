@@ -323,7 +323,7 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                 attrs: ["tid", "cid", "abbrev", "region"],
                 seasonAttrs: ["won", "lost", "winp"],
                 season: g.season,
-                sortBy: ["winp", "drank", "cwinp", "ocwinp", "diff"]
+                sortBy: helpers.getPlayoffSorting()
             }).then(function (teams) {
                 var cid, confTeams, i, k, l;
 

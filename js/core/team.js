@@ -557,17 +557,17 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
 
             cond = checkSort(options.sortBy, field);
             if (cond) {
-                if (opt[type].indexOf(field) > -1) {
+                if (opt[type].indexOf(field) < 0) {
                     opt[type].push(field); // add when not present
                 }
                 _.each(addFields, function (f) {
                     if (_.isArray(f)) {
                         opt[f[1]] = opt[f[1]] || [];
-                        if (opt[f[1]].indexOf(f[0]) > -1) {
+                        if (opt[f[1]].indexOf(f[0]) < 0) {
                             opt[f[1]].push(f[0]);
                         }
                     } else {
-                        if (opt[type].indexOf(f) > -1) {
+                        if (opt[type].indexOf(f) < 0) {
                             opt[type].push(f);
                         }
                     }

@@ -713,7 +713,7 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                 teams[i].won = 0;
             }
 
-            if (!localStorage.top16playoffs || true) {
+            if (!localStorage.top16playoffs) {
                 // Default: top 8 teams in each conference
                 tidPlayoffs = [];
                 series = [[], [], [], []];  // First round, second round, third round, fourth round
@@ -744,30 +744,14 @@ define(["dao", "globals", "core/player", "core/team", "lib/bluebird", "lib/under
                         tidPlayoffs.push(teams[i].tid);
                     }
                 }
-                series[0][0] = {home: teamsConf[0], away: teamsConf[15]};
-                series[0][0].home.seed = 1;
-                series[0][0].away.seed = 16;
-                series[0][1] = {home: teamsConf[7], away: teamsConf[8]};
-                series[0][1].home.seed = 8;
-                series[0][1].away.seed = 9;
-                series[0][2] = {home: teamsConf[3], away: teamsConf[12]};
-                series[0][2].home.seed = 4;
-                series[0][2].away.seed = 13;
-                series[0][3] = {home: teamsConf[4], away: teamsConf[11]};
-                series[0][3].home.seed = 5;
-                series[0][3].away.seed = 12;
-                series[0][4] = {home: teamsConf[1], away: teamsConf[14]};
-                series[0][4].home.seed = 2;
-                series[0][4].away.seed = 15;
-                series[0][5] = {home: teamsConf[6], away: teamsConf[9]};
-                series[0][5].home.seed = 7;
-                series[0][5].away.seed = 10;
-                series[0][6] = {home: teamsConf[2], away: teamsConf[13]};
-                series[0][6].home.seed = 3;
-                series[0][6].away.seed = 14;
-                series[0][7] = {home: teamsConf[5], away: teamsConf[10]};
-                series[0][7].home.seed = 6;
-                series[0][7].away.seed = 11;
+                helpers.seriesHomeAway(series, teamsConf, 1, 16, 0, 0);
+                helpers.seriesHomeAway(series, teamsConf, 8, 9, 1, 0);
+                helpers.seriesHomeAway(series, teamsConf, 4, 13, 2, 0);
+                helpers.seriesHomeAway(series, teamsConf, 5, 12, 3, 0);
+                helpers.seriesHomeAway(series, teamsConf, 2, 15, 4, 0);
+                helpers.seriesHomeAway(series, teamsConf, 7, 10, 5, 0);
+                helpers.seriesHomeAway(series, teamsConf, 3, 14, 6, 0);
+                helpers.seriesHomeAway(series, teamsConf, 6, 11, 7, 0);
             }
 
             tidPlayoffs.forEach(function (tid) {

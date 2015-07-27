@@ -109,7 +109,7 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
 
     describe('core/season playoffs tiebreakers', function() {
         var tx;
-        before(function(done) {
+        before(function() {
             return db.connectMeta().then(function () {
                 return league.create("Test", 15, undefined, 2015, false);
             })
@@ -127,18 +127,16 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
                             return t;
                         }
                     });
-                }).then(function() {
-                    done();
-                });
+                })
         });
         after(function () {
             return league.remove(g.lid);
         });
         describe("#createPlayoffMatchups", function() {
             var pseries;
-            before(function(done) {
+            before(function() {
                 tx = dao.tx(["teams", "playoffSeries", "players", "playerStats", "events"], "readwrite");
-                season.createPlayoffMatchups(tx)
+                return season.createPlayoffMatchups(tx)
                     .then(function() {
                         return dao.playoffSeries.get({
                                 ot: tx,
@@ -147,7 +145,6 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
                     })
                     .then(function(series) {
                         pseries = series;
-                        done();
                     });
             });
             it("should rank teams with the same records properly.", function() {
@@ -197,9 +194,9 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
         });
         describe("#newSchedulePlayoffsDay", function() {
             var pseries;
-            before(function(done) {
+            before(function() {
                 tx = dao.tx(["teams", "playoffSeries", "players", "playerStats", "events", "schedule"], "readwrite");
-                season.newSchedulePlayoffsDay(tx)
+                return season.newSchedulePlayoffsDay(tx)
                     .then(function() {
                         return dao.playoffSeries.get({
                             ot: tx,
@@ -208,7 +205,6 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
                     })
                     .then(function(series) {
                         pseries = series;
-                        done();
                     });
             });
 

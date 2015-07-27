@@ -265,9 +265,9 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
     function getPlayoffSorting() {
         var sortBy;
         if (g.divLeaderTop4) {
-            sortBy = ["winp", "drank", "cwinp", "ocwinp", "diff"]
+            sortBy = ["winp", "drank", "cwinp", "ocwinp", "diff"];
         } else {
-            sortBy = ["winp", "cwinp", "ocwinp", "diff"]
+            sortBy = ["winp", "cwinp", "ocwinp", "diff"];
         }
         return sortBy;
     }

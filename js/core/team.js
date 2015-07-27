@@ -557,13 +557,19 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
 
             cond = checkSort(options.sortBy, field);
             if (cond) {
-                opt[type].indexOf(field) > -1 || opt[type].push(field); // add when not present
+                if (opt[type].indexOf(field) > -1) {
+                    opt[type].push(field); // add when not present
+                }
                 _.each(addFields, function (f) {
                     if (_.isArray(f)) {
                         opt[f[1]] = opt[f[1]] || [];
-                        opt[f[1]].indexOf(f[0]) > -1 || opt[f[1]].push(f[0]);
+                        if (opt[f[1]].indexOf(f[0]) > -1) {
+                            opt[f[1]].push(f[0]);
+                        }
                     } else {
-                        opt[type].indexOf(f) > -1 || opt[type].push(f);
+                        if (opt[type].indexOf(f) > -1) {
+                            opt[type].push(f);
+                        }
                     }
                 });
             }
@@ -573,7 +579,7 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
             assureSort('winp', null, ['won', 'lost']);
             assureSort('drank', null, [
                 ["dwinp", "sortBy"],
-                ["tid",  "attrs"]
+                ["tid", "attrs"]
             ]);
             assureSort('dwinp', null, ['wonDiv', 'lostDiv', ['did', 'attrs']]);
             assureSort('cwinp', null, ['wonConf', 'lostConf']);

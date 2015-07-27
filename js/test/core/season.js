@@ -153,20 +153,30 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
             it("should rank teams with the same records properly.", function() {
                 var r1 = pseries.series[0];
 
-                // 13 and 26 tied for first, 13 is 1 seed, 26 is 2 seed.
-                r1[0].home.tid.should.equal(13);
-                r1[3].home.tid.should.equal(26);
+                // 13 and 26 tied for first, 26 is 1 seed, 13 is 2 seed,
+                r1[0].home.tid.should.equal(26);
+                r1[3].home.tid.should.equal(13);
 
                 // 10 is 7, 18 is 6
                 r1[7].away.tid.should.equal(10);
                 r1[6].away.tid.should.equal(18);
             });
-            it("should give HCA advantage to teams with better records", function() {
-                var r1 = pseries.series[0];
+            it("should rank div leader in top 4 if option divLeaderTop4 is true", function() {
+                g.divLeaderTop4 = true;
+                return require('core/team').filter({
+                    attrs: ['tid'],
+                    sortBy: helpers.getPlayoffSorting(),
+                    season: g.season
+                }).then(function(teams) {
+                    // 13 is ranked higher than 26 when drank is considered
+                    teams[1].tid.should.equal(13);
+                    teams[2].tid.should.equal(26);
 
-                // 5 is div winner, 29 has better record
-                r1[1].away.tid.should.equal(5);
-                r1[1].home.tid.should.equal(29);
+                    // 5 is div winner, should be ranked higher than 29 which
+                    // has a better record.
+                    teams[5].tid.should.equal(5);
+                    teams[7].tid.should.equal(29);
+                });
             });
             after(function(done) {
                 var i, r1;

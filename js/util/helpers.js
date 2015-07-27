@@ -219,247 +219,38 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
     function getTeamsDefault() {
         var teams;
 
-        teams = [{
-            tid: 0,
-            cid: 0,
-            did: 2,
-            region: "Atlanta",
-            name: "Gold Club",
-            abbrev: "ATL",
-            pop: 4.3
-        }, {
-            tid: 1,
-            cid: 0,
-            did: 2,
-            region: "Baltimore",
-            name: "Crabs",
-            abbrev: "BAL",
-            pop: 2.2
-        }, {
-            tid: 2,
-            cid: 0,
-            did: 0,
-            region: "Boston",
-            name: "Massacre",
-            abbrev: "BOS",
-            pop: 4.4
-        }, {
-            tid: 3,
-            cid: 0,
-            did: 1,
-            region: "Chicago",
-            name: "Whirlwinds",
-            abbrev: "CHI",
-            pop: 8.8
-        }, {
-            tid: 4,
-            cid: 0,
-            did: 1,
-            region: "Cincinnati",
-            name: "Riots",
-            abbrev: "CIN",
-            pop: 1.6
-        }, {
-            tid: 5,
-            cid: 0,
-            did: 1,
-            region: "Cleveland",
-            name: "Curses",
-            abbrev: "CLE",
-            pop: 1.9
-        }, {
-            tid: 6,
-            cid: 1,
-            did: 3,
-            region: "Dallas",
-            name: "Snipers",
-            abbrev: "DAL",
-            pop: 4.7
-        }, {
-            tid: 7,
-            cid: 1,
-            did: 4,
-            region: "Denver",
-            name: "High",
-            abbrev: "DEN",
-            pop: 2.2
-        }, {
-            tid: 8,
-            cid: 0,
-            did: 1,
-            region: "Detroit",
-            name: "Muscle",
-            abbrev: "DET",
-            pop: 4.0
-        }, {
-            tid: 9,
-            cid: 1,
-            did: 3,
-            region: "Houston",
-            name: "Apollos",
-            abbrev: "HOU",
-            pop: 4.3
-        }, {
-            tid: 10,
-            cid: 1,
-            did: 5,
-            region: "Las Vegas",
-            name: "Blue Chips",
-            abbrev: "LV",
-            pop: 1.7
-        }, {
-            tid: 11,
-            cid: 1,
-            did: 5,
-            region: "Los Angeles",
-            name: "Earthquakes",
-            abbrev: "LA",
-            pop: 12.3
-        }, {
-            tid: 12,
-            cid: 1,
-            did: 3,
-            region: "Mexico City",
-            name: "Aztecs",
-            abbrev: "MXC",
-            pop: 19.4
-        }, {
-            tid: 13,
-            cid: 0,
-            did: 2,
-            region: "Miami",
-            name: "Cyclones",
-            abbrev: "MIA",
-            pop: 5.4
-        }, {
-            tid: 14,
-            cid: 1,
-            did: 4,
-            region: "Minneapolis",
-            name: "Blizzards",
-            abbrev: "MIN",
-            pop: 2.6
-        }, {
-            tid: 15,
-            cid: 0,
-            did: 0,
-            region: "Montreal",
-            name: "Mounties",
-            abbrev: "MON",
-            pop: 4.0
-        }, {
-            tid: 16,
-            cid: 0,
-            did: 0,
-            region: "New York",
-            name: "Bankers",
-            abbrev: "NYC",
-            pop: 18.7
-        }, {
-            tid: 17,
-            cid: 0,
-            did: 0,
-            region: "Philadelphia",
-            name: "Cheesesteaks",
-            abbrev: "PHI",
-            pop: 5.4
-        }, {
-            tid: 18,
-            cid: 1,
-            did: 3,
-            region: "Phoenix",
-            name: "Vultures",
-            abbrev: "PHO",
-            pop: 3.4
-        }, {
-            tid: 19,
-            cid: 0,
-            did: 1,
-            region: "Pittsburgh",
-            name: "Rivers",
-            abbrev: "PIT",
-            pop: 1.8
-        }, {
-            tid: 20,
-            cid: 1,
-            did: 4,
-            region: "Portland",
-            name: "Roses",
-            abbrev: "POR",
-            pop: 1.8
-        }, {
-            tid: 21,
-            cid: 1,
-            did: 5,
-            region: "Sacramento",
-            name: "Gold Rush",
-            abbrev: "SAC",
-            pop: 1.6
-        }, {
-            tid: 22,
-            cid: 1,
-            did: 5,
-            region: "San Diego",
-            name: "Pandas",
-            abbrev: "SD",
-            pop: 2.9
-        }, {
-            tid: 23,
-            cid: 1,
-            did: 5,
-            region: "San Francisco",
-            name: "Venture Capitalists",
-            abbrev: "SF",
-            pop: 3.4
-        }, {
-            tid: 24,
-            cid: 1,
-            did: 4,
-            region: "Seattle",
-            name: "Symphony",
-            abbrev: "SEA",
-            pop: 3.0
-        }, {
-            tid: 25,
-            cid: 1,
-            did: 3,
-            region: "St. Louis",
-            name: "Spirits",
-            abbrev: "STL",
-            pop: 2.2
-        }, {
-            tid: 26,
-            cid: 0,
-            did: 2,
-            region: "Tampa",
-            name: "Turtles",
-            abbrev: "TPA",
-            pop: 2.2
-        }, {
-            tid: 27,
-            cid: 0,
-            did: 0,
-            region: "Toronto",
-            name: "Beavers",
-            abbrev: "TOR",
-            pop: 6.3
-        }, {
-            tid: 28,
-            cid: 1,
-            did: 4,
-            region: "Vancouver",
-            name: "Whalers",
-            abbrev: "VAN",
-            pop: 2.3
-        }, {
-            tid: 29,
-            cid: 0,
-            did: 2,
-            region: "Washington",
-            name: "Monuments",
-            abbrev: "WAS",
-            pop: 4.2
-        }];
+        teams = [
+            {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Gold Club", abbrev: "ATL", pop: 4.3},
+            {tid: 1, cid: 0, did: 2, region: "Baltimore", name: "Crabs", abbrev: "BAL", pop: 2.2},
+            {tid: 2, cid: 0, did: 0, region: "Boston", name: "Massacre", abbrev: "BOS", pop: 4.4},
+            {tid: 3, cid: 0, did: 1, region: "Chicago", name: "Whirlwinds", abbrev: "CHI", pop: 8.8},
+            {tid: 4, cid: 0, did: 1, region: "Cincinnati", name: "Riots", abbrev: "CIN", pop: 1.6},
+            {tid: 5, cid: 0, did: 1, region: "Cleveland", name: "Curses", abbrev: "CLE", pop: 1.9},
+            {tid: 6, cid: 1, did: 3, region: "Dallas", name: "Snipers", abbrev: "DAL", pop: 4.7},
+            {tid: 7, cid: 1, did: 4, region: "Denver", name: "High", abbrev: "DEN", pop: 2.2},
+            {tid: 8, cid: 0, did: 1, region: "Detroit", name: "Muscle", abbrev: "DET", pop: 4.0},
+            {tid: 9, cid: 1, did: 3, region: "Houston", name: "Apollos", abbrev: "HOU", pop: 4.3},
+            {tid: 10, cid: 1, did: 5, region: "Las Vegas", name: "Blue Chips", abbrev: "LV", pop: 1.7},
+            {tid: 11, cid: 1, did: 5, region: "Los Angeles", name: "Earthquakes", abbrev: "LA", pop: 12.3},
+            {tid: 12, cid: 1, did: 3, region: "Mexico City", name: "Aztecs", abbrev: "MXC", pop: 19.4},
+            {tid: 13, cid: 0, did: 2, region: "Miami", name: "Cyclones", abbrev: "MIA", pop: 5.4},
+            {tid: 14, cid: 1, did: 4, region: "Minneapolis", name: "Blizzards", abbrev: "MIN", pop: 2.6},
+            {tid: 15, cid: 0, did: 0, region: "Montreal", name: "Mounties", abbrev: "MON", pop: 4.0},
+            {tid: 16, cid: 0, did: 0, region: "New York", name: "Bankers", abbrev: "NYC", pop: 18.7},
+            {tid: 17, cid: 0, did: 0, region: "Philadelphia", name: "Cheesesteaks", abbrev: "PHI", pop: 5.4},
+            {tid: 18, cid: 1, did: 3, region: "Phoenix", name: "Vultures", abbrev: "PHO", pop: 3.4},
+            {tid: 19, cid: 0, did: 1, region: "Pittsburgh", name: "Rivers", abbrev: "PIT", pop: 1.8},
+            {tid: 20, cid: 1, did: 4, region: "Portland", name: "Roses", abbrev: "POR", pop: 1.8},
+            {tid: 21, cid: 1, did: 5, region: "Sacramento", name: "Gold Rush", abbrev: "SAC", pop: 1.6},
+            {tid: 22, cid: 1, did: 5, region: "San Diego", name: "Pandas", abbrev: "SD", pop: 2.9},
+            {tid: 23, cid: 1, did: 5, region: "San Francisco", name: "Venture Capitalists", abbrev: "SF", pop: 3.4},
+            {tid: 24, cid: 1, did: 4, region: "Seattle", name: "Symphony", abbrev: "SEA", pop: 3.0},
+            {tid: 25, cid: 1, did: 3, region: "St. Louis", name: "Spirits", abbrev: "STL", pop: 2.2},
+            {tid: 26, cid: 0, did: 2, region: "Tampa", name: "Turtles", abbrev: "TPA", pop: 2.2},
+            {tid: 27, cid: 0, did: 0, region: "Toronto", name: "Beavers", abbrev: "TOR", pop: 6.3},
+            {tid: 28, cid: 1, did: 4, region: "Vancouver", name: "Whalers", abbrev: "VAN", pop: 2.3},
+            {tid: 29, cid: 0, did: 2, region: "Washington", name: "Monuments", abbrev: "WAS", pop: 4.2}
+        ];
 
         teams = addPopRank(teams);
 
@@ -1056,39 +847,39 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
                     }
 
                     // Hard crash
-                    /*                    gSend = JSON.parse(JSON.stringify(g)); // deepCopy fails for some reason
-                                        delete gSend.teamAbbrevsCache;
-                                        delete gSend.teamRegionsCache;
-                                        delete gSend.teamNamesCache;
+/*                  gSend = JSON.parse(JSON.stringify(g)); // deepCopy fails for some reason
+                    delete gSend.teamAbbrevsCache;
+                    delete gSend.teamRegionsCache;
+                    delete gSend.teamNamesCache;
 
-                                        output = "<h1>Critical Error</h1><p>You ran into the infamous NaN bug. But there's good news! You can help fix it! Please email the following information to <a href=\"mailto:commissioner@basketball-gm.com\">commissioner@basketball-gm.com</a> along with any information about what you think might have caused this glitch. If you want to be extra helpful, <a href=\"" + leagueUrl(["export_league"]) + "\">export your league</a> and send that too (if it's huge, upload to Google Drive or Dropbox or whatever). Thanks!</p>";
+                    output = "<h1>Critical Error</h1><p>You ran into the infamous NaN bug. But there's good news! You can help fix it! Please email the following information to <a href=\"mailto:commissioner@basketball-gm.com\">commissioner@basketball-gm.com</a> along with any information about what you think might have caused this glitch. If you want to be extra helpful, <a href=\"" + leagueUrl(["export_league"]) + "\">export your league</a> and send that too (if it's huge, upload to Google Drive or Dropbox or whatever). Thanks!</p>";
 
-                                        output += '<textarea class="form-control" style="height: 300px">';
-                                        output += JSON.stringify({
-                                            stack: err.stack,
-                                            input: obj,
-                                            "this": this,
-                                            gSend: gSend
-                                        }, function (key, value) {
-                                            if (value != value) {
-                                                return "NaN RIGHT HERE";
-                                            }
+                    output += '<textarea class="form-control" style="height: 300px">';
+                    output += JSON.stringify({
+                        stack: err.stack,
+                        input: obj,
+                        "this": this,
+                        gSend: gSend
+                    }, function (key, value) {
+                        if (value != value) {
+                            return "NaN RIGHT HERE";
+                        }
 
-                                            return value;
-                                        }, 2);
-                                        output += "</textarea>";
+                        return value;
+                    }, 2);
+                    output += "</textarea>";
 
-                                        // Find somewhere to show output
-                                        contentNode = document.getElementById("league_content");
-                                        if (!contentNode) {
-                                            contentNode = document.getElementById("content");
-                                        }
-                                        if (!contentNode) {
-                                            contentNode = document.body;
-                                        }
-                                        contentNode.innerHTML = output;
+                    // Find somewhere to show output
+                    contentNode = document.getElementById("league_content");
+                    if (!contentNode) {
+                        contentNode = document.getElementById("content");
+                    }
+                    if (!contentNode) {
+                        contentNode = document.body;
+                    }
+                    contentNode.innerHTML = output;
 
-                                        throw err;*/
+                    throw err;*/
 
                     // Try to recover gracefully
                     checkObject(obj, false, true); // This will update obj

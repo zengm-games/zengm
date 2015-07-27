@@ -550,29 +550,30 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
          * Assure needed fields are available for sorting.
          */
         assureSort = function (field, type, addFields) {
-            var cond;
+            var cond, opt;
+            opt = options;
             type = type || 'seasonAttrs';
             addFields = addFields || [];
 
-            _.each(addFields, function (f) {
-                if (_.isArray(f)) {
-                    options[f[1]] = options[f[1]] || [];
-                    options[f[1]].push(f[0]);
-                } else {
-                    options[type].push(f);
-                }
-            });
-
             cond = checkSort(options.sortBy, field);
             if (cond) {
-                options[type].push(field);
+                opt[type].indexOf(field) > -1 || opt[type].push(field); // add when not present
+                _.each(addFields, function (f) {
+                    if (_.isArray(f)) {
+                        opt[f[1]] = opt[f[1]] || [];
+                        opt[f[1]].indexOf(f[0]) > -1 || opt[f[1]].push(f[0]);
+                    } else {
+                        opt[type].indexOf(f) > -1 || opt[type].push(f);
+                    }
+                });
             }
         };
 
         if (options.sortBy.length > 0) {
             assureSort('winp', null, ['won', 'lost']);
             assureSort('drank', null, [
-                ["dwinp", "sortBy"]
+                ["dwinp", "sortBy"],
+                ["tid",  "attrs"]
             ]);
             assureSort('dwinp', null, ['wonDiv', 'lostDiv', ['did', 'attrs']]);
             assureSort('cwinp', null, ['wonConf', 'lostConf']);

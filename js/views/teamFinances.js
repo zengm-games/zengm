@@ -229,7 +229,7 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
 
         $("#help-hype").popover({
             title: "Hype",
-            content: "\"Hype\" refers to fans' interest in your team. If your team is winning or improving, then hype increases; if your team is losing or stagnating, then hype decreases. Hype influences attendance, various revenue sources such as mercahndising, and the attitude players have towards your organization."
+            content: "\"Hype\" refers to fans' interest in your team. If your team is winning or improving, then hype increases; if your team is losing or stagnating, then hype decreases. Hype influences attendance, various revenue sources such as merchandising, and the attitude players have towards your organization."
         });
 
         $("#help-revenue-settings").popover({

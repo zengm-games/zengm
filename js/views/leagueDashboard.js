@@ -74,7 +74,7 @@ define(["dao", "globals", "ui", "core/player", "core/season", "core/team", "lib/
                 seasonAttrs: ["won", "lost", "winp", "att", "revenue", "profit"],
                 stats: stats,
                 season: g.season,
-                sortBy: ["winp", "drank", "cwinp", "ocwinp", "diff"]
+                sortBy: helpers.getPlayoffSorting()
             }).then(function (teams) {
                 var cid, i, j;
 

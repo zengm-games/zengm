@@ -845,17 +845,35 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
              * ranked team in the conference.
              */
             fakeWinp = function (t, fts) {
-                var ft;
-                ft = _.pluck(_.filter(fts, function (x) {
+                var breakTie, ft;
+
+                breakTie = function(a, b) {
+                    var ftmp = [a, b];
+                    ftmp = ftmp.sort(helpers.multiSort('cwinp', 'ocwinp', 'diff'));
+                    for (i = 0; i < fts.length; i++) {
+                        if (ftmp[0].tid === fts[i].tid) {
+                            fts[i].winpp = fts[i].winp + 0.0000000001;
+                        }
+
+                        if (ftmp[1].tid === fts[i].tid) {
+                            fts[i].winpp = fts[i].winp - 0.0000000001;
+                        }
+                    }
+                };
+
+                ft = _.filter(fts, function (x) {
                     return x.cid === t.cid;
-                }), 'winp');
-                ft = ft.sort(function (a, b) {
-                    return b - a;
                 });
-                if (t.drank && t.winp < ft[3]) {
-                    t.winpp = (ft[2] + ft[3]) / 2.0;
+                ft = ft.sort(function (a, b) {
+                    return b.winp - a.winp;
+                });
+                if (t.drank && t.winp < ft[3].winp) {
+                    t.winpp = (ft[2].winp + ft[3].winp) / 2.0;
+                    if (ft[2].winp === ft[3].winp) {
+                        breakTie(ft[2], ft[3]);
+                    }
                 } else {
-                    t.winpp = t.winp;
+                    t.winpp = t.winpp || t.winp;
                 }
             };
 

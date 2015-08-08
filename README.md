@@ -84,8 +84,8 @@ If you want to contribute code to Basketball GM, you must sign a contributor
 license agreement. There are separate forms for individuals and entities (such
 as corporations):
 
-* [Individual CLA]](CLA-individual.md) (this is probably what you want)
-* [Entity CLA]](CLA-entity.md)
+* [Individual CLA](CLA-individual.md) (this is probably what you want)
+* [Entity CLA](CLA-entity.md)
 
 Make a copy of the form, fill in your information at the bottom, and send an
 email to commissioner@basketball-gm.com with the subject line, "Contributor

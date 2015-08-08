@@ -89,7 +89,7 @@ as corporations):
 
 Make a copy of the form, fill in your information at the bottom, and send an
 email to commissioner@basketball-gm.com with the subject line, "Contributor
-License Agreement by YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
+License Agreement from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 ### Tooling
 

@@ -2,8 +2,10 @@
  * @name test.core.draft
  * @namespace Tests for core.draft.
  */
-define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/bluebird', 'lib/jquery', 'lib/underscore'], function (dao, db, g, draft, league, team, Promise, $, _) {
+define(["dao", "db", "globals", "core/draft", "core/league", "core/team", "lib/require.text!test/fixtures/sample_tiebreakers.json", 'lib/bluebird', 'lib/jquery', 'lib/underscore'], function (dao, db, g, draft, league, team, sampleTiebreakers, Promise, $, _) {
     "use strict";
+
+    sampleTiebreakers = JSON.parse(sampleTiebreakers);
 
     describe("core/draft", function () {
         var testDraftUntilUserOrEnd, testDraftUser, userPick1, userPick2;
@@ -76,36 +78,32 @@ define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/b
 
         describe("#genOrder()", function () {
             var draftResults, i;
-            it("should schedule 60 draft picks", function (done) {
+            it("should schedule 60 draft picks", function () {
+console.log("1");
                 var tx;
 
-                return Promise.try(function () {
-                        return $.getJSON("../../data/sample_tiebreakers.json");
-                    })
-                    .then(function (teams) {
-                        tx = dao.tx(["draftOrder", "draftPicks", "teams", "players"], "readwrite");
-                        return dao.teams.iterate({
-                            ot: tx,
-                            callback: function (t) {
-                                t = teams.teams[t.tid]; // load static data
-                                return t;
-                            }
-                        });
-                    })
-                    .then(function () {
-                        return draft.genOrder(tx);
-                    })
-                    .then(function () {
-                        return draft.getOrder(tx);
-                    }).then(function (draftOrder) {
-                        draftOrder.length.should.equal(60);
-                        draftResults = _.pluck(draftOrder, "originalTid");
-                        userPick1 = draftResults.indexOf(g.userTid) + 1;
-                        userPick2 = draftResults.lastIndexOf(g.userTid) + 1;
-                        done();
-                    });
+                tx = dao.tx(["draftOrder", "draftPicks", "teams", "players"], "readwrite");
+                return dao.teams.iterate({
+                    ot: tx,
+                    callback: function (t) {
+                        return sampleTiebreakers.teams[t.tid]; // load static data
+                    }
+                }).then(function () {
+console.log("3");
+                    return draft.genOrder(tx);
+                }).then(function () {
+console.log("4");
+                    return draft.getOrder(tx);
+                }).then(function (draftOrder) {
+console.log("HERE");
+                    draftOrder.length.should.equal(60);
+                    draftResults = _.pluck(draftOrder, "originalTid");
+                    userPick1 = draftResults.indexOf(g.userTid) + 1;
+                    userPick2 = draftResults.lastIndexOf(g.userTid) + 1;
+                });
             });
             it("should give the 3 teams with the lowest win percentage picks not lower than 6", function () {
+console.log(draftResults);
                 var tids = [16, 28, 21]; // teams with lowest winp
                 for (i = 0; i < tids.length; i++) {
                     draftResults.indexOf(tids[i]).should.be.within(0, i + 3);
@@ -115,7 +113,8 @@ define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/b
 
             it("should give lottery team with better record than playoff teams a pick based on actual record for round 2", function () {
                 var pofteams = [23, 10, 18, 24, 14];
-                    // good record lottery team
+
+                // good record lottery team
                 draftResults.indexOf(17).should.be.within(0, 13);
                 draftResults.lastIndexOf(17).should.be.equal(48);
 
@@ -159,48 +158,47 @@ define(["dao", "db", "globals", "core/draft", "core/league", "core/team", 'lib/b
             it("should distribute combinations to teams with the same record", function () {
                 var tx = dao.tx(["draftOrder", "draftPicks", "teams"], "readwrite");
                 return team.filter({
-                        ot: tx,
-                        attrs: ["tid", "cid"],
-                        seasonAttrs: ["winp", "playoffRoundsWon"],
-                        season: g.season
-                    })
-                    .then(function (teams) {
-                        var chances, i, j, maxIdx, sameRec, tids, value;
-                        chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
-                        // index instead of tid
-                        sameRec = [
-                            [6, 7, 8],
-                            [10, 11, 12]
-                        ];
-                        draft.lotterySort(teams);
-                        draft.updateChances(chances, teams, false);
-                        for (i = 0; i < sameRec.length; i++) {
-                            tids = sameRec[i];
-                            value = 0;
-                            for (j = 0; j < tids.length; j++) {
-                                if (value === 0) {
-                                    value = chances[tids[j]];
-                                } else {
-                                    value.should.equal(chances[tids[j]]);
-                                }
+                    ot: tx,
+                    attrs: ["tid", "cid"],
+                    seasonAttrs: ["winp", "playoffRoundsWon"],
+                    season: g.season
+                }).then(function (teams) {
+                    var chances, i, j, maxIdx, sameRec, tids, value;
+                    chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
+                    // index instead of tid
+                    sameRec = [
+                        [6, 7, 8],
+                        [10, 11, 12]
+                    ];
+                    draft.lotterySort(teams);
+                    draft.updateChances(chances, teams, false);
+                    for (i = 0; i < sameRec.length; i++) {
+                        tids = sameRec[i];
+                        value = 0;
+                        for (j = 0; j < tids.length; j++) {
+                            if (value === 0) {
+                                value = chances[tids[j]];
+                            } else {
+                                value.should.equal(chances[tids[j]]);
                             }
                         }
+                    }
 
-                        // test if isFinal is true
-                        draft.updateChances(chances, teams, true);
-                        for (i = 0; i < sameRec.length; i++) {
-                            tids = sameRec[i];
-                            value = 0;
-                            maxIdx = -1;
-                            for (j = tids.length - 1; j >= 0; j--) {
-                                if (value <= chances[tids[j]]) {
-                                    value = chances[tids[j]];
-                                    maxIdx = j;
-                                }
+                    // test if isFinal is true
+                    draft.updateChances(chances, teams, true);
+                    for (i = 0; i < sameRec.length; i++) {
+                        tids = sameRec[i];
+                        value = 0;
+                        maxIdx = -1;
+                        for (j = tids.length - 1; j >= 0; j--) {
+                            if (value <= chances[tids[j]]) {
+                                value = chances[tids[j]];
+                                maxIdx = j;
                             }
-                            maxIdx.should.be.equal(0);
                         }
-                    });
+                        maxIdx.should.be.equal(0);
+                    }
+                });
             });
         });
 

@@ -120,11 +120,11 @@ define(["dao", "globals", "ui", "core/finances", "core/player", "core/team", "li
     function lotteryLogTxt(tid, type, number) {
         var txt = 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season]) + '">' + g.teamNamesCache[tid] + '</a>';
         if (type === 'chance') {
-            txt += " has a " + number + "% chance of getting the top overall pick of the " + g.season + " draft.";
+            txt += " have a " + number + "% chance of getting the top overall pick of the " + g.season + " draft.";
         } else if (type === 'movedup') {
-            txt += " moved up the lottery and will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
+            txt += " moved up in the lottery and will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
         } else if (type === 'moveddown') {
-            txt += " moved down the lottery and will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
+            txt += " moved down in the lottery and will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
         } else if (type === 'normal') {
             txt += " will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
         }

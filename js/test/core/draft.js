@@ -79,7 +79,6 @@ define(["dao", "db", "globals", "core/draft", "core/league", "core/team", "lib/r
         describe("#genOrder()", function () {
             var draftResults, i;
             it("should schedule 60 draft picks", function () {
-console.log("1");
                 var tx;
 
                 tx = dao.tx(["draftOrder", "draftPicks", "teams", "players"], "readwrite");
@@ -89,13 +88,10 @@ console.log("1");
                         return sampleTiebreakers.teams[t.tid]; // load static data
                     }
                 }).then(function () {
-console.log("3");
                     return draft.genOrder(tx);
                 }).then(function () {
-console.log("4");
                     return draft.getOrder(tx);
                 }).then(function (draftOrder) {
-console.log("HERE");
                     draftOrder.length.should.equal(60);
                     draftResults = _.pluck(draftOrder, "originalTid");
                     userPick1 = draftResults.indexOf(g.userTid) + 1;
@@ -103,7 +99,6 @@ console.log("HERE");
                 });
             });
             it("should give the 3 teams with the lowest win percentage picks not lower than 6", function () {
-console.log(draftResults);
                 var tids = [16, 28, 21]; // teams with lowest winp
                 for (i = 0; i < tids.length; i++) {
                     draftResults.indexOf(tids[i]).should.be.within(0, i + 3);

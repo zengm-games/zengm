@@ -86,6 +86,7 @@ define(["globals", "ui", "lib/bluebird", "lib/jquery", "lib/knockout", "lib/knoc
                         return ui.realtimeUpdate([], vars.redirectUrl, cb);
                     }
 
+                    // This might not do the update all at once, so in cases where you have things like if (x) { y } in the UI, changing x might casue y to get read before y is set. So be careful to set things earlier. See js/views/roster.js filterUntradable stuff.
                     komapping.fromJS(vars, args.mapping, vm);
                 }
 

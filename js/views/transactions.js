@@ -12,15 +12,12 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
             out = helpers.validateAbbrev(req.params.abbrev);
             tid = out[0];
             abbrev = out[1];
-            g.vm.topMenu.template("teamTransaction");
         } else if (req.params.abbrev && req.params.abbrev === "all") {
             tid = -1;
             abbrev = "all";
-            g.vm.topMenu.template("leagueTransaction");
         } else {
             tid = g.userTid;
             abbrev = g.teamAbbrevsCache[tid];
-            g.vm.topMenu.template("teamTransaction");
         }
 
         if (req.params.season && req.params.season !== "all") {
@@ -54,8 +51,8 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
                 vm.events([]);
             }
 
-            filter = {}
-            if(inputs.season !== "all") {
+            filter = {};
+            if (inputs.season !== "all") {
                 filter.index = "season";
                 filter.key = inputs.season;
             }
@@ -67,11 +64,14 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
 
                     // Filter by team
                     if (inputs.abbrev !== "all") {
+                        g.vm.topMenu.template("teamTransaction");
                         events = events.filter(function (event) {
                             if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
                                 return true;
                             }
                         });
+                    } else {
+                        g.vm.topMenu.template("leagueTransaction");
                     }
 
                     if (inputs.eventType === "all") {
@@ -90,8 +90,7 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
                         abbrev: inputs.abbrev,
                         events: events,
                         season: inputs.season,
-                        eventType: inputs.eventType,
-                        notAll: inputs.abbrev !== "all",
+                        eventType: inputs.eventType
                     };
                 });
             }

@@ -315,6 +315,8 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
                         fuzz: true
                     });
                     players.sort(function (a, b) { return b.stats.gp * b.stats.min - a.stats.gp * a.stats.min; });
+                    players = trade.filterUntradable(players);
+
 
                     for (i = 0; i < players.length; i++) {
                         players[i].age = players[i].age - (g.season - inputs.season);

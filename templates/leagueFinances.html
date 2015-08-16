@@ -1,4 +1,21 @@
 <div data-bind="dropdown: 'league-finances'"></div>
+<div class="btn-group pull-right">
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Jump To <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><a data-bind="attrLeagueUrl: {href: ['standings', season]}">Standings</a></li>
+    <li><a data-bind="attrLeagueUrl: {href: ['playoffs', season]}">Playoffs</a></li>
+    <li><a data-bind="attrLeagueUrl: {href: ['history', season]}">Season Summary</a></li>
+    <li><a data-bind="attrLeagueUrl: {href: ['league_finances', season]}">Finances</a></li>
+    <li><a data-bind="attrLeagueUrl: {href: ['transactions', 'all', season]}">Transactions</a></li>
+    <li><a data-bind="attrLeagueUrl: {href: ['draft_summary', season]}">Draft</a></li>
+    <li><a data-bind="attrLeagueUrl: {href: ['leaders', season]}">Leaders</a></li>
+    <li><a data-bind="attrLeagueUrl: {href: ['team_stats', season]}">Team Stats</a></li>
+    <li><a data-bind="attrLeagueUrl: {href: ['player_stats', 'all', season]}">Player Stats</a></li>
+    <li><a data-bind="attrLeagueUrl: {href: ['player_ratings', 'all', season]}">Player Ratings</a></li>
+  </ul>
+</div>
 
 <h1>League Finances <span data-bind="newWindow: []"></span></h1>
 

@@ -304,14 +304,10 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
             this.get("/l/:lid/team_records", views.teamRecords.get);
             this.get("/l/:lid/awards_records", views.awardsRecords.get);
             this.get("/l/:lid/awards_records/:awardType", views.awardsRecords.get);
-            this.get("/l/:lid/team_transactions", views.teamTransaction.get);
-            this.get("/l/:lid/team_transactions/:abbrev", views.teamTransaction.get);
-            this.get("/l/:lid/team_transactions/:abbrev/:season", views.teamTransaction.get);
-            this.get("/l/:lid/team_transactions/:abbrev/:season/:eventType", views.teamTransaction.get);
-            this.get("/l/:lid/transactions", views.teamTransaction.get);
-            this.get("/l/:lid/transactions/:abbrev", views.teamTransaction.get);
-            this.get("/l/:lid/transactions/:abbrev/:season", views.teamTransaction.get);
-            this.get("/l/:lid/transactions/:abbrev/:season/:eventType", views.teamTransaction.get);
+            this.get("/l/:lid/transactions", views.transactions.get);
+            this.get("/l/:lid/transactions/:abbrev", views.transactions.get);
+            this.get("/l/:lid/transactions/:abbrev/:season", views.transactions.get);
+            this.get("/l/:lid/transactions/:abbrev/:season/:eventType", views.transactions.get);
         });
 
         app.start();

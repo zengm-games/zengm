@@ -6,35 +6,74 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
     "use strict";
 
     function get(req) {
+        var abbrev, out, season, tid;
+
+        if (req.params.abbrev && req.params.abbrev !== "all") {
+            out = helpers.validateAbbrev(req.params.abbrev);
+            tid = out[0];
+            abbrev = out[1];
+            g.vm.topMenu.template("teamTransaction");
+        } else if (req.params.abbrev && req.params.abbrev === "all") {
+            tid = -1;
+            abbrev = "all";
+            g.vm.topMenu.template("leagueTransaction");
+        } else {
+            tid = g.userTid;
+            abbrev = g.teamAbbrevsCache[tid];
+            g.vm.topMenu.template("teamTransaction");
+        }
+
+        if (req.params.season && req.params.season !== "all") {
+            season = helpers.validateSeason(req.params.season);
+        } else if (req.params.season && req.params.season === "all") {
+            season = "all";
+        } else {
+            season = g.season;
+        }
+
         return {
-            eventType: req.params.eventType || "all",
-            season: helpers.validateSeason(req.params.season)
+            tid: tid,
+            abbrev: abbrev,
+            season: season,
+            eventType: req.params.eventType || 'all'
         };
     }
 
     function InitViewModel() {
+        this.abbrev = ko.observable();
         this.season = ko.observable();
         this.eventType = ko.observable();
         this.events = ko.observableArray([]);
     }
 
     function updateEventLog(inputs, updateEvents, vm) {
-        var maxEid, newEvents;
+        var filter, maxEid, newEvents;
 
-        if (updateEvents.length >= 0 || inputs.season !== vm.season() || inputs.eventType !== vm.eventType) {
-            if (inputs.season !== vm.season() || inputs.eventType !== vm.eventType) {
+        if (updateEvents.length >= 0 || inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev() || inputs.eventType !== vm.eventType) {
+            if (inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev() || inputs.eventType !== vm.eventType) {
                 vm.events([]);
             }
 
+            filter = {}
+            if(inputs.season !== "all") {
+                filter.index = "season";
+                filter.key = inputs.season;
+            }
             if (vm.events().length === 0) {
                 // Show all events, newest at top
-                return dao.events.getAll({
-                    index: "season",
-                    key: inputs.season
-                }).then(function (events) {
+                return dao.events.getAll(filter)
+                .then(function (events) {
                     events.reverse(); // Newest first
 
-                    // Filter by type
+                    // Filter by team
+                    if (inputs.abbrev !== "all") {
+                        events = events.filter(function (event) {
+                            if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
+                                return true;
+                            }
+                        });
+                    }
+
                     if (inputs.eventType === "all") {
                         events = events.filter(function (event) {
                             return event.type === 'reSigned' || event.type === 'released' || event.type === 'trade' || event.type === 'freeAgent' || event.type === 'draft';
@@ -48,9 +87,11 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
                     events.map(helpers.correctLinkLid);
 
                     return {
+                        abbrev: inputs.abbrev,
                         events: events,
                         season: inputs.season,
-                        eventType: inputs.eventType
+                        eventType: inputs.eventType,
+                        notAll: inputs.abbrev !== "all",
                     };
                 });
             }
@@ -89,18 +130,18 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
 
     function uiFirst(vm) {
         ko.computed(function () {
-            ui.title("League Transactions - " + vm.season());
+            ui.title("Transactions - " + vm.season());
         }).extend({
             throttle: 1
         });
     }
 
     function uiEvery(updateEvents, vm) {
-        components.dropdown("event-log-dropdown", ["seasons", "eventType"], [vm.season(), vm.eventType()], updateEvents);
+        components.dropdown("event-log-dropdown", ["teamsAndAll", "seasonsAndAll", "eventType"], [vm.abbrev(), vm.season(), vm.eventType()], updateEvents);
     }
 
     return bbgmView.init({
-        id: "leagueTransaction",
+        id: "transactions",
         get: get,
         InitViewModel: InitViewModel,
         runBefore: [updateEventLog],

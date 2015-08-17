@@ -1,10 +1,28 @@
 CURRENT
 -------
 
+feats table should show both playoffs and regular season by default
+
+https://www.reddit.com/r/BasketballGM/comments/3gjqgd/lets_brainstorm_a_bit_about_this_30_seasons/
+
+roster order bug https://www.reddit.com/r/BasketballGM/comments/3gch1i/why_is_my_coach_insane/
+
+fantasy draft summary https://www.reddit.com/r/BasketballGM/comments/3g4p5a/issues_with_fantasy_draft_records/ (link is in player transactions)
+
+crime https://www.reddit.com/r/BasketballGM/comments/3g1ngn/its_2015/ctudznu
+
+track buzzer beaters in statistical feats
+
+potential over 100 https://www.reddit.com/r/BasketballGM/comments/3ft6q8/player_with_potential_over_100/
+
+separate advanced stats table in player page, so there is room for everything in screenshots
+
 gamesim rewrite
   game situation awareness (blowouts, close games, etc)
   balance
   minutes directly, not by +/-
+
+owner message bug: https://www.reddit.com/r/BasketballGM/comments/3fl46t/broken_owner/ctqfr1y
 
 use positions for roster building and rotations
   free agents and trades matters....
@@ -289,6 +307,7 @@ Too many good free agents available at the minimum: http://www.reddit.com/r/Bask
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
+loyalty: players should be reluctant to leave teams they've been on for a while.
 http://www.reddit.com/r/BasketballGM/comments/2v26p1/how_are_you_exploiting_the_trade_ai/
 http://www.reddit.com/r/BasketballGM/comments/255sta/i_think_we_need_longer_dynasty_achievements/che050a?context=3
 IMPORTANT http://www.reddit.com/r/BasketballGM/comments/20i6v3/still_too_easy_to_trade_for_drafted_players/
@@ -304,6 +323,7 @@ ovr changes should impact player.value, somehow
     teams do overvalue their own players in trades, generally
   http://www.reddit.com/r/BasketballGM/comments/2iuc4l/kind_of_a_glitch_that_i_noticed_during_my_last/
 second round draft picks are undervalued. also, giving away a pick should never make a trade worse, but sometimes it does now. http://www.reddit.com/r/BasketballGM/comments/2bg3zx/simple_feature_mark_players_as_offlimits_when_we/cj5ap89
+  similarly, trading block for nothing can net you second round picks
 trade for tons of cheap second round picks, then use that to trade for good asset: www.reddit.com/r/BasketballGM/comments/27wjnp/33_pennies_for_a_dollar/
 release and resign pick exploit http://www.reddit.com/r/BasketballGM/comments/1zn61h/finances/cfvzr35\
 some limit on trades so people can't make 1000 slightly beneficial trades: http://www.reddit.com/r/BasketballGM/comments/1zzwbs/suggestions_on_trades/cg0e0dg

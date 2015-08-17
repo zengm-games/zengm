@@ -25,7 +25,7 @@ do with the code. Nothing else is allowed.)
 
 (This is *not* an exhaustive list! These 4 things are *not* the only things you
 are not allowed to do with the code. You are only allowed to do the 4 things
-from the first section. This section is just for added clarity.)
+from the first section.)
 
 - **Host a version of the software that others can access.**
   <http://basketball-gm.com/> is the only publicly available version of the

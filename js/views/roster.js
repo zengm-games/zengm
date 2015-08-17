@@ -316,6 +316,9 @@ define(["dao", "globals", "ui", "core/league", "core/player", "core/season", "co
                     });
                     players.sort(function (a, b) { return b.stats.gp * b.stats.min - a.stats.gp * a.stats.min; });
 
+                    // This is not immediately needed, because players from past seasons don't have the "Trade For" button displayed. However, if an old season is loaded first and then a new season is switched to, Knockout will try to display the Trade For button before all the player objects are updated to include it. I think it might be the komapping.fromJS part from bbgmView not applying everything at exactly the same time.
+                    players = trade.filterUntradable(players);
+
                     for (i = 0; i < players.length; i++) {
                         players[i].age = players[i].age - (g.season - inputs.season);
                         players[i].canRelease = false;

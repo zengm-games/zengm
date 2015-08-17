@@ -159,6 +159,16 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
 
                     t.seasons.reverse(); // Most recent season first
 
+                    // Add in luxuryTaxShare if it's missing
+                    for (i = 0; i < t.seasons.length; i++) {
+                        if (!t.seasons[i].revenues.hasOwnProperty("luxuryTaxShare")) {
+                            t.seasons[i].revenues.luxuryTaxShare = {
+                                amount: 0,
+                                rank: 15
+                            };
+                        }
+                    }
+
                     keys = ["won", "hype", "pop", "att", "cash", "revenues", "expenses"];
                     barData = {};
                     for (i = 0; i < keys.length; i++) {
@@ -173,9 +183,6 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
                             });
                         }
                     }
-
-                    // Account for added field, which might not be in database
-                    barData.revenues.luxuryTaxShare = barData.revenues.luxuryTaxShare || helpers.nullPad([0], showInt);
 
                     // Process some values
                     barData.att = _.map(barData.att, function (num, i) {
@@ -229,7 +236,7 @@ define(["dao", "globals", "ui", "core/finances", "core/team", "lib/jquery", "lib
 
         $("#help-hype").popover({
             title: "Hype",
-            content: "\"Hype\" refers to fans' interest in your team. If your team is winning or improving, then hype increases; if your team is losing or stagnating, then hype decreases. Hype influences attendance, various revenue sources such as mercahndising, and the attitude players have towards your organization."
+            content: "\"Hype\" refers to fans' interest in your team. If your team is winning or improving, then hype increases; if your team is losing or stagnating, then hype decreases. Hype influences attendance, various revenue sources such as merchandising, and the attitude players have towards your organization."
         });
 
         $("#help-revenue-settings").popover({

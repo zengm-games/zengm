@@ -1,4 +1,13 @@
 <div data-bind="dropdown: 'watch-list'"></div>
+<div class="btn-group pull-right">
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Other Reports <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><a data-bind="attrLeagueUrl: {href: ['player_stats', 'watch']}">Player Stats</a></li>
+    <li><a data-bind="attrLeagueUrl: {href: ['player_ratings', 'watch']}">Player Ratings</a></li>
+  </ul>
+</div>
 
 <h1>Watch List <span data-bind="newWindow: []"></span></h1>
 

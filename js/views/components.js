@@ -57,6 +57,19 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                         options[j + 1].key = g.teamAbbrevsCache[j];
                         options[j + 1].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
                     }
+                } else if (fields[i] === "teamsAndAllWatch") {
+                    options = [{
+                        key: "all",
+                        val: "All Teams"
+                    }, {
+                        key: "watch",
+                        val: "Watch List"
+                    }];
+                    for (j = 0; j < g.numTeams; j++) {
+                        options[j + 2] = {};
+                        options[j + 2].key = g.teamAbbrevsCache[j];
+                        options[j + 2].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
+                    }
                 } else if (fields[i] === "seasons" || fields[i] === "seasonsAndCareer" || fields[i] === "seasonsAndAll") {
                     options = helpers.getSeasons();
                     for (j = 0; j < options.length; j++) {

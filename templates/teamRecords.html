@@ -1,3 +1,5 @@
+<div data-bind="dropdown: 'team-records'"></div>
+
 <h1>Team Records <span data-bind="newWindow: []"></span></h1>
 
 <p>More:
@@ -9,9 +11,21 @@
 <div class="table-responsive">
   <table class="table table-striped table-bordered table-condensed" id="team-records">
     <thead>
-      <tr><th>Team</th><th>W</th><th>L</th><th>W/L%</th>
-        <th>Playoff Appearances</th><th>Last Playoff Appearance</th>
-        <th>Championships</th><th>Last Championship</th>
+      <tr><th data-bind="text: displayName"></th><th>W</th><th>L</th><th>W/L%</th>
+        <th title="Playoff Appearances">Playoffs</th>
+        <th>Last Playoffs</th>
+        <th title="Finals Appearances">Finals</th>
+        <th title="Championships Won">Championships</th>
+        <th>Last Title</th>
+        <th title="Most Valuable Player Award">MVPs</th>
+        <th title="Defensive Player of the Year">DPOYs</th>
+        <th title="Sixth Man of the Year">SMOYs</th>
+        <th title="Rookie of the Year">ROYs</th>
+        <th title="Best Season Record (0.5 if tied)">BR</th>
+        <th title="Best Conference Record">BRC</th>
+        <th title="All Rookie Team">ARTs</th>
+        <th title="All League Team">ALT</th>
+        <th title="All Defensive Team">ADTs</th>
       </tr>
     </thead>
   </table>

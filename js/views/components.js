@@ -191,6 +191,17 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                         val: "Trades",
                         key: "trade"
                     }];
+                } else if (fields[i] === "teamRecordType") {
+                    options = [{
+                        val: "By Team",
+                        key: "team"
+                    }, {
+                        val: "By Conference",
+                        key: "conf"
+                    }, {
+                        val: "By Division",
+                        key: "div"
+                    }];
                 }
                 vm.fields().push({
                     id: fieldId,

@@ -86,28 +86,30 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "vi
                 }
 
                 // Only keep players with more than 5 mpg
-                players = players.filter(function (p) {
-                    var min;
+                if (inputs.abbrev !== "watch") {
+                    players = players.filter(function (p) {
+                        var min;
 
-                    // Minutes played
-                    if (inputs.statType === "totals") {
-                        if (inputs.season) {
-                            min = p.stats.min;
+                        // Minutes played
+                        if (inputs.statType === "totals") {
+                            if (inputs.season) {
+                                min = p.stats.min;
+                            } else {
+                                min = p.careerStats.min;
+                            }
                         } else {
-                            min = p.careerStats.min;
+                            if (inputs.season) {
+                                min = p.stats.gp * p.stats.min;
+                            } else {
+                                min = p.careerStats.gp * p.careerStats.min;
+                            }
                         }
-                    } else {
-                        if (inputs.season) {
-                            min = p.stats.gp * p.stats.min;
-                        } else {
-                            min = p.careerStats.gp * p.careerStats.min;
-                        }
-                    }
 
-                    if (min > gp * 5) {
-                        return true;
-                    }
-                });
+                        if (min > gp * 5) {
+                            return true;
+                        }
+                    });
+                }
 
                 return {
                     players: players,

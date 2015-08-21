@@ -83,7 +83,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
     }
 
     function getPlayerAwards(p, awardType) {
-        var aType, awards, filter, last, years;
+        var aType, awards, filter, formatYear, getTeam, last, years;
         aType = awardOptions[awardType];
         if (awardType === 'all_league') {
             filter = function (a) {
@@ -101,16 +101,43 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
             };
         }
 
+        getTeam = function(season) {
+            var stats, tid;
+            stats = _.filter(p.stats, function(s) {
+                return s.season === season;
+            });
+            tid = _.last(stats);
+            if (tid) {
+                tid = tid.tid;
+                return g.teamAbbrevsCache[tid];
+            } else {
+                return '-';
+            }
+        }
+
+        formatYear = function(year) {
+            var keys = _.keys(year),
+                sout;
+            sout = _.map(keys, function(k) {
+                var s,
+                    years = _.pluck(year[k], 'season').join(', ');
+                s = k + ' <small>(' + years + ')</small>';
+                return s;
+            });
+            return sout.join(', ');
+        }
+
         awards = p.awards.filter(filter);
         years = awards.map(function (a) {
-            return a.season;
+            return {team: getTeam(a.season), season: a.season};
         });
-        last = years[years.length - 1] || years;
+        last = _.max(_.pluck(years, 'season'));
+        years = formatYear(_.groupBy(years, 'team'));
         return {
             player: getPlayerLink(p),
             count: awards.length,
             countText: awards.length.toString(),
-            years: years.join(', '),
+            years: years,
             lastYear: last.toString(),
             retired: (p.retiredYear) ? "yes" : "no",
             hof: (p.hof) ? "yes" : "no"
@@ -120,7 +147,9 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
     function updateAwardsRecords(inputs, updateEvents, vm) {
         if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.awardType !== vm.awardType) {
             return Promise.all([
-                dao.players.getAll()
+                dao.players.getAll({
+                    statsSeasons: "all"
+                })
             ]).spread(function (players) {
                 var awardsRecords, i;
 

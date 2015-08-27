@@ -579,7 +579,8 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
             assureSort('winp', null, ['won', 'lost']);
             assureSort('drank', null, [
                 ["dwinp", "sortBy"],
-                ["tid", "attrs"]
+                ["tid", "attrs"],
+                ["cid", "attrs"]
             ]);
             assureSort('dwinp', null, ['wonDiv', 'lostDiv', ['did', 'attrs']]);
             assureSort('cwinp', null, ['wonConf', 'lostConf']);
@@ -841,39 +842,36 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
 
             /**
              * Assure that the division leaders are in the top 4. Set a fake
-             * winpp attribute that is the average of the 3rd and 4th highest
-             * ranked team in the conference.
+             * winpp attribute. Winpp is 1 if team is in top 4 of conference,
+             * 0 otherwise.
+             *
+             * @param  {Array.Objects} fts  array of team objects
+             * @param  {Number} conf conference id
              */
-            fakeWinp = function (t, fts) {
-                var breakTie, ft;
-
-                breakTie = function(a, b) {
-                    var ftmp = [a, b];
-                    ftmp = ftmp.sort(helpers.multiSort('cwinp', 'ocwinp', 'diff'));
-                    for (i = 0; i < fts.length; i++) {
-                        if (ftmp[0].tid === fts[i].tid) {
-                            fts[i].winpp = fts[i].winp + 0.0000000001;
-                        }
-
-                        if (ftmp[1].tid === fts[i].tid) {
-                            fts[i].winpp = fts[i].winp - 0.0000000001;
-                        }
-                    }
-                };
-
-                ft = _.filter(fts, function (x) {
-                    return x.cid === t.cid;
+            fakeWinp = function(fts, conf) {
+                var below4, divLead, ft, i, s;
+                ft = _.filter(fts, function(x) {
+                    return x.cid === conf;
                 });
-                ft = ft.sort(function (a, b) {
-                    return b.winp - a.winp;
-                });
-                if (t.drank && t.winp < ft[3].winp) {
-                    t.winpp = (ft[2].winp + ft[3].winp) / 2.0;
-                    if (ft[2].winp === ft[3].winp) {
-                        breakTie(ft[2], ft[3]);
+                divLead = _.where(ft, {drank: 1});
+                below4 = _.difference(ft, divLead);
+                s = ['winp', 'cwinp', 'ocwinp', 'diff'];
+                below4.sort(helpers.multiSort(s));
+                divLead.push(below4.splice(0, 1)[0]);
+                divLead.sort(helpers.multiSort(s));
+
+                console.log(divLead, below4, ft, fts);
+                divLead = _.pluck(divLead, 'tid');
+                below4 = _.pluck(below4, 'tid');
+
+                for (i = 0; i < fts.length; i++) {
+                    if (divLead.indexOf(fts[i].tid) >= 0) {
+                        fts[i].winpp = 1;
                     }
-                } else {
-                    t.winpp = t.winpp || t.winp;
+
+                    if (below4.indexOf(fts[i].tid) >= 0) {
+                        fts[i].winpp = 0;
+                    }
                 }
             };
 
@@ -883,21 +881,21 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
 
                 /**
                  * If sorting by division rank (drank), the division leaders are
-                 * assured of a top 4 seeding. Sort using a fake winpp field
-                 * instead of winp.
+                 * assured of a top 4 seeding. Add additional sort criteria winpp.
                  */
                 if (sortBy.indexOf('drank') > -1) {
                     _.each(_.range(0, 6), function (did) {
                         getDrank(did, fts);
                     });
-                    fts.map(function (t) {
-                        t.drank = t.drank || 0;
-                        fakeWinp(t, fts);
-                        // set winpp value and init drank for non leaders.
+
+                    _.each(_.range(2), function(conf) {
+                        fakeWinp(fts, conf);
                     });
+
                     if (sortBy.indexOf('winp') > -1) {
-                        sortBy.splice(sortBy.indexOf('winp'), 1, 'winpp');
+                        sortBy.splice(sortBy.indexOf('winp'), 0, 'winpp');
                     }
+                    sortBy.splice(sortBy.indexOf('drank'), 1);
                 }
                 sorter = helpers.multiSort(sortBy);
                 fts.sort(sorter);

@@ -166,13 +166,13 @@ define(["globals", "core/season", "util/helpers", "test/helpers", "dao", "lib/jq
                     season: g.season
                 }).then(function(teams) {
                     // 13 is ranked higher than 26 when drank is considered
-                    teams[1].tid.should.equal(13);
-                    teams[2].tid.should.equal(26);
+                    teams[2].tid.should.equal(13);
+                    teams[1].tid.should.equal(26);
 
                     // 5 is div winner, should be ranked higher than 29 which
                     // has a better record.
-                    teams[5].tid.should.equal(5);
-                    teams[7].tid.should.equal(29);
+                    teams[6].tid.should.equal(5);
+                    teams[8].tid.should.equal(29);
                 });
             });
             after(function(done) {

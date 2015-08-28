@@ -860,7 +860,6 @@ define(["dao", "globals", "core/player", "lib/bluebird", "lib/underscore", "util
                 divLead.push(below4.splice(0, 1)[0]);
                 divLead.sort(helpers.multiSort(s));
 
-                console.log(divLead, below4, ft, fts);
                 divLead = _.pluck(divLead, 'tid');
                 below4 = _.pluck(below4, 'tid');
 

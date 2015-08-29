@@ -626,6 +626,9 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
                     contract: p.contract
                 }
             });
+        } else {
+            // Clear player salary log if just drafted, because this won't be paid.
+            p.salaries = [];
         }
 
         eventLog.add(null, {

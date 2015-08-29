@@ -6,6 +6,7 @@ define(function () {
     var Notifier, container;
 
     container = document.createElement("div");
+    container.id = "notification-container";
     container.classList.add("notification-container");
     document.body.appendChild(container);
 

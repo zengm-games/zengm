@@ -77,6 +77,7 @@ define(["dao", "db", "globals", "core/league", "core/player", "core/team"], func
                     });
                 });
             });
+
             after(function () {
                 return league.remove(g.lid);
             });

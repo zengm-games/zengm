@@ -174,160 +174,22 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         account.checkAchievement.septuawinarian();
 
         // Set playoff matchups
-        return team.filter({
-            ot: tx,
-            attrs: ["tid", "cid"],
-            seasonAttrs: ["winp"],
-            season: g.season,
-            sortBy: "winp"
-        }).then(function (teams) {
-            var cid, i, series, teamsConf, tidPlayoffs;
+        return season.createPlayoffMatchups(tx)
+            .then(function () {
+                return Promise.all([
+                    finances.assessPayrollMinLuxury(tx),
+                    season.newSchedulePlayoffsDay(tx)
+                ]);
+            }).then(function () {
+                var url;
 
-            // Add entry for wins for each team; delete winp, which was only needed for sorting
-            for (i = 0; i < teams.length; i++) {
-                teams[i].won = 0;
-            }
-
-            if (!localStorage.top16playoffs) {
-                // Default: top 8 teams in each conference
-                tidPlayoffs = [];
-                series = [[], [], [], []];  // First round, second round, third round, fourth round
-                for (cid = 0; cid < 2; cid++) {
-                    teamsConf = [];
-                    for (i = 0; i < teams.length; i++) {
-                        if (teams[i].cid === cid) {
-                            if (teamsConf.length < 8) {
-                                teamsConf.push(teams[i]);
-                                tidPlayoffs.push(teams[i].tid);
-                            }
-                        }
-                    }
-                    series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
-                    series[0][cid * 4].home.seed = 1;
-                    series[0][cid * 4].away.seed = 8;
-                    series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
-                    series[0][1 + cid * 4].home.seed = 4;
-                    series[0][1 + cid * 4].away.seed = 5;
-                    series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
-                    series[0][2 + cid * 4].home.seed = 3;
-                    series[0][2 + cid * 4].away.seed = 6;
-                    series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
-                    series[0][3 + cid * 4].home.seed = 2;
-                    series[0][3 + cid * 4].away.seed = 7;
+                // Don't redirect if we're viewing a live game now
+                if (location.pathname.indexOf("/live_game") === -1) {
+                    url = helpers.leagueUrl(["playoffs"]);
                 }
-            } else {
-                // Alternative (localStorage.top16playoffs): top 16 teams overall
-                tidPlayoffs = [];
-                series = [[], [], [], []];  // First round, second round, third round, fourth round
-                teamsConf = [];
-                for (i = 0; i < teams.length; i++) {
-                    if (teamsConf.length < 16) {
-                        teamsConf.push(teams[i]);
-                        tidPlayoffs.push(teams[i].tid);
-                    }
-                }
-                series[0][0] = {home: teamsConf[0], away: teamsConf[15]};
-                series[0][0].home.seed = 1;
-                series[0][0].away.seed = 16;
-                series[0][1] = {home: teamsConf[7], away: teamsConf[8]};
-                series[0][1].home.seed = 8;
-                series[0][1].away.seed = 9;
-                series[0][2] = {home: teamsConf[3], away: teamsConf[12]};
-                series[0][2].home.seed = 4;
-                series[0][2].away.seed = 13;
-                series[0][3] = {home: teamsConf[4], away: teamsConf[11]};
-                series[0][3].home.seed = 5;
-                series[0][3].away.seed = 12;
-                series[0][4] = {home: teamsConf[1], away: teamsConf[14]};
-                series[0][4].home.seed = 2;
-                series[0][4].away.seed = 15;
-                series[0][5] = {home: teamsConf[6], away: teamsConf[9]};
-                series[0][5].home.seed = 7;
-                series[0][5].away.seed = 10;
-                series[0][6] = {home: teamsConf[2], away: teamsConf[13]};
-                series[0][6].home.seed = 3;
-                series[0][6].away.seed = 14;
-                series[0][7] = {home: teamsConf[5], away: teamsConf[10]};
-                series[0][7].home.seed = 6;
-                series[0][7].away.seed = 11;
-            }
 
-            tidPlayoffs.forEach(function (tid) {
-                eventLog.add(null, {
-                    type: "playoffs",
-                    text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season]) + '">' + g.teamNamesCache[tid] + '</a> made the <a href="' + helpers.leagueUrl(["playoffs", g.season]) + '">playoffs</a>.',
-                    showNotification: tid === g.userTid,
-                    tids: [tid]
-                });
+                return [url, ["teamFinances"]];
             });
-
-            return Promise.all([
-                dao.playoffSeries.put({
-                    ot: tx,
-                    value: {
-                        season: g.season,
-                        currentRound: 0,
-                        series: series
-                    }
-                }),
-
-                // Add row to team stats and team season attributes
-                dao.teams.iterate({
-                    ot: tx,
-                    callback: function (t) {
-                        var teamSeason;
-
-                        teamSeason = t.seasons[t.seasons.length - 1];
-
-                        if (tidPlayoffs.indexOf(t.tid) >= 0) {
-                            t = team.addStatsRow(t, true);
-
-                            teamSeason.playoffRoundsWon = 0;
-
-                            // More hype for making the playoffs
-                            teamSeason.hype += 0.05;
-                            if (teamSeason.hype > 1) {
-                                teamSeason.hype = 1;
-                            }
-                        } else {
-                            // Less hype for missing the playoffs
-                            teamSeason.hype -= 0.05;
-                            if (teamSeason.hype < 0) {
-                                teamSeason.hype = 0;
-                            }
-                        }
-
-                        return t;
-                    }
-                }),
-
-                // Add row to player stats
-                Promise.map(tidPlayoffs, function (tid) {
-                    return dao.players.iterate({
-                        ot: tx,
-                        index: "tid",
-                        key: tid,
-                        callback: function (p) {
-                            return player.addStatsRow(tx, p, true);
-                        }
-                    });
-                }, {concurrency: Infinity})
-            ]);
-        }).then(function () {
-            return Promise.all([
-                finances.assessPayrollMinLuxury(tx),
-                season.newSchedulePlayoffsDay(tx)
-            ]);
-        }).then(function () {
-            var url;
-
-            // Don't redirect if we're viewing a live game now
-            if (location.pathname.indexOf("/live_game") === -1) {
-                url = helpers.leagueUrl(["playoffs"]);
-            }
-
-            return [url, ["teamFinances"]];
-        });
     }
 
     function newPhaseBeforeDraft(tx) {

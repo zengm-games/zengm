@@ -115,7 +115,10 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         seasons = [];
         for (season = g.startingSeason; season <= g.season; season++) {
             if (season !== ignoredSeason) {
-                seasons.push({season: season, selected: selectedSeason === season});
+                seasons.push({
+                    season: season,
+                    selected: selectedSeason === season
+                });
             }
         }
         return seasons;
@@ -178,7 +181,9 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
 
         // Add popRank
         teamsSorted = teams.slice(); // Deep copy
-        teamsSorted.sort(function (a, b) { return b.pop - a.pop; });
+        teamsSorted.sort(function (a, b) {
+            return b.pop - a.pop;
+        });
         for (i = 0; i < teams.length; i++) {
             for (j = 0; j < teamsSorted.length; j++) {
                 if (teams[i].tid === teamsSorted[j].tid) {
@@ -253,6 +258,21 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
     }
 
     /**
+     * Returns default playoff sorting. Adds 'drank' when global option
+     * divLeaderTop4 is true.
+     * @return {Array.<String>} Field names for sorting playoffs/standings.
+     */
+    function getPlayoffSorting() {
+        var sortBy;
+        if (g.divLeaderTop4) {
+            sortBy = ["winp", "drank", "cwinp", "ocwinp", "diff"];
+        } else {
+            sortBy = ["winp", "cwinp", "ocwinp", "diff"];
+        }
+        return sortBy;
+    }
+
+    /**
      * Clones an object.
      *
      * Taken from http://stackoverflow.com/a/3284324/786644
@@ -263,8 +283,12 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
     function deepCopy(obj) {
         var key, retVal;
 
-        if (typeof obj !== "object" || obj === null) { return obj; }
-        if (obj.constructor === RegExp) { return obj; }
+        if (typeof obj !== "object" || obj === null) {
+            return obj;
+        }
+        if (obj.constructor === RegExp) {
+            return obj;
+        }
 
         retVal = new obj.constructor();
         for (key in obj) {
@@ -296,7 +320,9 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
 
         contentEl = document.getElementById("content");
         ko.cleanNode(contentEl);
-        ko.applyBindings({error: req.params.error}, contentEl);
+        ko.applyBindings({
+            error: req.params.error
+        }, contentEl);
         ui.title("Error");
         req.raw.cb();
     }
@@ -323,7 +349,9 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
 
             contentEl = document.getElementById("league_content");
             ko.cleanNode(contentEl);
-            ko.applyBindings({error: req.params.error}, contentEl);
+            ko.applyBindings({
+                error: req.params.error
+            }, contentEl);
             ui.title("Error");
             req.raw.cb();
         });
@@ -344,7 +372,14 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
 
         forceGlobal = forceGlobal !== undefined ? forceGlobal : false;
 
-        req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : function () {}}};
+        req = {
+            params: {
+                error: errorText
+            },
+            raw: {
+                cb: cb !== undefined ? cb : function () {}
+            }
+        };
 
         lid = location.pathname.split("/")[2]; // lid derived from URL
         if (/^\d+$/.test(lid) && typeof indexedDB !== "undefined" && !forceGlobal) { // Show global error of no IndexedDB
@@ -731,8 +766,20 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         game.tid = game.tid !== undefined ? game.tid : g.userTid;
 
         // team0 and team1 are different than they are above! Here it refers to user and opponent, not home and away
-        team0 = {tid: game.tid, abbrev: g.teamAbbrevsCache[game.tid], region: g.teamRegionsCache[game.tid], name: g.teamNamesCache[game.tid], pts: game.pts};
-        team1 = {tid: game.oppTid, abbrev: g.teamAbbrevsCache[game.oppTid], region: g.teamRegionsCache[game.oppTid], name: g.teamNamesCache[game.oppTid], pts: game.oppPts};
+        team0 = {
+            tid: game.tid,
+            abbrev: g.teamAbbrevsCache[game.tid],
+            region: g.teamRegionsCache[game.tid],
+            name: g.teamNamesCache[game.tid],
+            pts: game.pts
+        };
+        team1 = {
+            tid: game.oppTid,
+            abbrev: g.teamAbbrevsCache[game.oppTid],
+            region: g.teamRegionsCache[game.oppTid],
+            name: g.teamNamesCache[game.oppTid],
+            pts: game.oppPts
+        };
 
         output = {
             gid: game.gid,
@@ -815,7 +862,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
                     }
 
                     // Hard crash
-/*                    gSend = JSON.parse(JSON.stringify(g)); // deepCopy fails for some reason
+/*                  gSend = JSON.parse(JSON.stringify(g)); // deepCopy fails for some reason
                     delete gSend.teamAbbrevsCache;
                     delete gSend.teamRegionsCache;
                     delete gSend.teamNamesCache;
@@ -878,8 +925,59 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
     }
 
     function plusMinus(arg, d) {
-        if (arg !== arg) { return ""; }
+        if (arg !== arg) {
+            return "";
+        }
         return (arg > 0 ? "+" : "") + round(arg, d);
+    }
+
+    /**
+     * Return an anonymous function for sorting according to the order of sortBy
+     * @param  {Array of Strings} sortBy list of fields
+     */
+    function multiSort(sortBy) {
+        sortBy = sortBy;
+
+        return function (a, b) {
+            var i, result, rev, sortT;
+
+            for (i = 0; i < sortBy.length; i++) {
+                if (sortBy[i].indexOf("-") === 0) {
+                    rev = true;
+                    sortT = sortBy[i].slice(1);
+                } else {
+                    rev = false;
+                    sortT = sortBy[i];
+                }
+
+                result = (rev) ? a[sortT] - b[sortT] : b[sortT] - a[sortT];
+
+                if (result || i === sortBy.length - 1) {
+                    return result;
+                }
+            }
+        };
+    }
+
+    /**
+     * Determine HCA advantage for this matchup. Team with better winp, cwinp,
+     * ocwinp and diff will get HCA regardless of seeding.
+     */
+    function seriesHomeAway(series, teamsConf, seed1, seed2, order, cid) {
+        var sortBy, sorter, teams;
+        sortBy = ['winp', 'cwinp', 'ocwinp', 'diff'];
+        teams = [teamsConf[seed1 - 1], teamsConf[seed2 - 1]];
+        teams[0].seed = seed1;
+        teams[1].seed = seed2;
+        sorter = multiSort(sortBy);
+        teams.sort(sorter);
+
+        series[0][order + cid * 4] = {
+            home: teams[0],
+            away: teams[1]
+        };
+        series[0][order + cid * 4].home.seed = teams[0].seed;
+        series[0][order + cid * 4].away.seed = teams[1].seed;
     }
 
     return {
@@ -891,6 +989,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         getTeams: getTeams,
         addPopRank: addPopRank,
         getTeamsDefault: getTeamsDefault,
+        getPlayoffSorting: getPlayoffSorting,
         deepCopy: deepCopy,
         error: error,
         errorNotify: errorNotify,
@@ -914,6 +1013,8 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         checkNaNs: checkNaNs,
         gameScore: gameScore,
         updateMultiTeam: updateMultiTeam,
-        plusMinus: plusMinus
+        plusMinus: plusMinus,
+        seriesHomeAway: seriesHomeAway,
+        multiSort: multiSort
     };
 });

@@ -2,11 +2,13 @@
  * @name test.util.helpers
  * @namespace Tests for util.helpers.
  */
-define(["globals", "util/helpers"], function (g, helpers) {
+define(["globals", "util/helpers", "lib/underscore"], function (g, helpers, _) {
     "use strict";
 
     describe("util/helpers", function () {
         before(function (done) {
+            g.teamAbbrevsCache = _.pluck(helpers.getTeamsDefault(), "abbrev");
+            g.numTeams = 30;
             g.userTid = 4;
             g.startingSeason = 2007;
             g.season = 2009;

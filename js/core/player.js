@@ -2042,7 +2042,18 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             "died in a car crash",
             "was stabbed to death by a jealous ex-girlfriend",
             "committed suicide",
-            "died from a rapidly progressing case of ebola"
+            "died from a rapidly progressing case of ebola",
+            "was killed in a bar fight",
+            "died after falling out of his 13th floor hotel room",
+            "was shredded to bits by the team plane's propeller",
+            "was hit by a stray meteor",
+            "accidentally shot himself in the head while cleaning his gun",
+            "was beheaded by ISIS",
+            "spontaneously combusted",
+            "had a stroke after reading about the owner's plans to trade him",
+            "laughed himself to death while watching Modern Family",
+            "died of exertion while trying to set the record for largerst number of sex partners in one day",
+            "rode his Segway off a cliff"
         ]);
 
         // Pick random team

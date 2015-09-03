@@ -1,6 +1,8 @@
 CURRENT
 -------
 
+make default view league transactions, and have link only under league
+
 gamesim rewrite
   game situation awareness (blowouts, close games, etc)
   balance

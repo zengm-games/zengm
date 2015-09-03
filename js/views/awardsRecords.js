@@ -110,10 +110,10 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
             if (tid) {
                 tid = tid.tid;
                 return g.teamAbbrevsCache[tid];
-            } else {
-                return '-';
             }
-        }
+
+            return '-';
+        };
 
         formatYear = function(year) {
             var keys = _.keys(year),
@@ -125,7 +125,7 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
                 return s;
             });
             return sout.join(', ');
-        }
+        };
 
         awards = p.awards.filter(filter);
         years = awards.map(function (a) {

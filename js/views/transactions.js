@@ -64,14 +64,11 @@ define(["dao", "globals", "ui", "lib/bluebird", "lib/knockout", "util/bbgmView",
 
                     // Filter by team
                     if (inputs.abbrev !== "all") {
-                        g.vm.topMenu.template("teamTransaction");
                         events = events.filter(function (event) {
                             if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
                                 return true;
                             }
                         });
-                    } else {
-                        g.vm.topMenu.template("leagueTransaction");
                     }
 
                     if (inputs.eventType === "all") {

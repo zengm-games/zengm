@@ -12,6 +12,8 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
 
         if (g.teamAbbrevsCache.indexOf(req.params.abbrev) >= 0) {
             abbrev = req.params.abbrev;
+        } else if (req.params.abbrev && req.params.abbrev === 'watch') {
+            abbrev = "watch";
         } else {
             abbrev = "all";
         }
@@ -44,6 +46,12 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
 
                 tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
                 if (tid < 0) { tid = null; } // Show all teams
+
+                if (!tid && inputs.abbrev === "watch") {
+                    players = players.filter(function(p) {
+                        return p.watch && typeof p.watch !== "function";
+                    });
+                }
 
                 players = player.filter(players, {
                     attrs: ["pid", "name", "abbrev", "age", "injury", "watch"],
@@ -98,7 +106,7 @@ define(["dao", "globals", "ui", "core/player", "lib/jquery", "lib/knockout", "li
     }
 
     function uiEvery(updateEvents, vm) {
-        components.dropdown("player-ratings-dropdown", ["teamsAndAll", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
+        components.dropdown("player-ratings-dropdown", ["teamsAndAllWatch", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
     }
 
     return bbgmView.init({

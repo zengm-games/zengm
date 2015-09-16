@@ -156,6 +156,7 @@
                 <li><a data-bind="attrLeagueUrl: {href: ['league_finances']}">Finances</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['history_all']}">History</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['power_rankings']}">Power Rankings</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['transactions', 'all']}">Transactions</a></li>
               </ul>
             </li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
@@ -166,6 +167,7 @@
                 <li><a data-bind="attrLeagueUrl: {href: ['schedule']}">Schedule</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['team_finances']}">Finances</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['team_history']}">History</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['transactions']}">Transactions</a></li>
               </ul>
             </li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
@@ -246,10 +248,10 @@
 
       <footer>
         <p>
-          <a href="http://basketball-gm.com/about/" target="_blank">About</a> · 
-          <a href="http://basketball-gm.com/advertise/" target="_blank">Advertise</a> · 
-          <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> · 
-          <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> · 
+          <a href="http://basketball-gm.com/about/" target="_blank">About</a> ·
+          <a href="http://basketball-gm.com/advertise/" target="_blank">Advertise</a> ·
+          <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> ·
+          <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> ·
           <a href="http://basketball-gm.com/share/" target="_blank">Share</a><br>
           <p class="rev">v3.4 · <!--rev-->2015.08.31.1382</p>
         </p>
@@ -300,7 +302,7 @@
 
     <div id="multi-team-menu" data-bind="multiTeamMenu: [userTid, userTids]" style="display: none"></div>
 
-    <iframe style="display: none;" src="/manifest_hack"></iframe> 
+    <iframe style="display: none;" src="/manifest_hack"></iframe>
 
     <script>
       // Tools > Reset DB

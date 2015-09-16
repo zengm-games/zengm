@@ -882,6 +882,11 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         return (arg > 0 ? "+" : "") + round(arg, d);
     }
 
+    // Used to fix links in the event log, which will be wrong if a league is exported and then imported
+    function correctLinkLid(event) {
+        event.text = event.text.replace(/\/l\/\d+\//g, '/l/' + g.lid + '/');
+    }
+
     return {
         validateAbbrev: validateAbbrev,
         getAbbrev: getAbbrev,
@@ -914,6 +919,7 @@ define(["dao", "globals", "lib/knockout", "util/eventLog"], function (dao, g, ko
         checkNaNs: checkNaNs,
         gameScore: gameScore,
         updateMultiTeam: updateMultiTeam,
-        plusMinus: plusMinus
+        plusMinus: plusMinus,
+        correctLinkLid: correctLinkLid
     };
 });

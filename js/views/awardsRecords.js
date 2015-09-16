@@ -28,50 +28,48 @@ define(["globals", "ui", "core/team", "lib/jquery", "lib/knockout", "lib/undersc
     };
 
     optionsTmp = [{
-            val: "Won Championship",
-            key: "champion"
-        }, {
-            val: "Most Valuable Player",
-            key: "mvp"
-        }, {
-            val: "Finals MVP",
-            key: "finals_mvp"
-        }, {
-            val: "Defensive Player of the Year",
-            key: "dpoy"
-        }, {
-            val: "Sixth Man of the Year",
-            key: "smoy"
-        }, {
-            val: "Rookie of the Year",
-            key: "roy"
-        }, {
-            val: "First Team All-League",
-            key: "first_team"
-        }, {
-            val: "Second Team All-League",
-            key: "second_team"
-        }, {
-            val: "Third Team All-League",
-            key: "third_team"
-        }, {
-            val: "First Team All-Defensive",
-            key: "first_def"
-        }, {
-            val: "Second Team All-Defensive",
-            key: "second_def"
-        }, {
-            val: "Third Team All-Defensive",
-            key: "third_def"
-        }, {
-            val: "All-League",
-            key: "all_league"
-        }, {
-            val: "All-Defensive",
-            key: "all_def"
-        }
-
-    ];
+        val: "Won Championship",
+        key: "champion"
+    }, {
+        val: "Most Valuable Player",
+        key: "mvp"
+    }, {
+        val: "Finals MVP",
+        key: "finals_mvp"
+    }, {
+        val: "Defensive Player of the Year",
+        key: "dpoy"
+    }, {
+        val: "Sixth Man of the Year",
+        key: "smoy"
+    }, {
+        val: "Rookie of the Year",
+        key: "roy"
+    }, {
+        val: "First Team All-League",
+        key: "first_team"
+    }, {
+        val: "Second Team All-League",
+        key: "second_team"
+    }, {
+        val: "Third Team All-League",
+        key: "third_team"
+    }, {
+        val: "First Team All-Defensive",
+        key: "first_def"
+    }, {
+        val: "Second Team All-Defensive",
+        key: "second_def"
+    }, {
+        val: "Third Team All-Defensive",
+        key: "third_def"
+    }, {
+        val: "All-League",
+        key: "all_league"
+    }, {
+        val: "All-Defensive",
+        key: "all_def"
+    }];
 
     awardOptions = {};
     optionsTmp.map(function (o) {

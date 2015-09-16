@@ -97,6 +97,9 @@ define(["lib/jquery", "util/eventLog"], function ($, eventLog) {
     }, {
         date: "2015-05-06",
         msg: 'Two new stats are tracked: blocks against and +/-'
+    }, {
+        date: "2015-09-16",
+        msg: 'New pages: Transactions (available in the League menu), and Team Records and Awards Records (available under League > History).'
     }];
 
     function check() {

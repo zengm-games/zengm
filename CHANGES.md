@@ -14,6 +14,7 @@ number or not.
 - Multi Team Mode
 - Players can die
 - +/- and blocks against are recorded
+- New historical screens: Transactions, Awards Records, and Team Records
 
 ## Techincal details
 

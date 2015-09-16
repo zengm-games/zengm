@@ -46,9 +46,9 @@ define(["dao", "globals", "lib/bbgm-notifications"], function (dao, g, bbgmNotif
 
         // Hacky way to make sure there is room for the multi team mode menu
         notificationContainer = document.getElementById("notification-container");
-        if (g.userTids.length > 1 && !notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
+        if (g.userTids !== undefined && g.userTids.length > 1 && !notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
             notificationContainer.classList.add("notification-container-extra-margin-bottom");
-        } else if (g.userTids.length === 1 && notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
+        } else if (g.userTids !== undefined && g.userTids.length === 1 && notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
             notificationContainer.classList.remove("notification-container-extra-margin-bottom");
         }
     }

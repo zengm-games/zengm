@@ -57,6 +57,19 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                         options[j + 1].key = g.teamAbbrevsCache[j];
                         options[j + 1].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
                     }
+                } else if (fields[i] === "teamsAndAllWatch") {
+                    options = [{
+                        key: "all",
+                        val: "All Teams"
+                    }, {
+                        key: "watch",
+                        val: "Watch List"
+                    }];
+                    for (j = 0; j < g.numTeams; j++) {
+                        options[j + 2] = {};
+                        options[j + 2].key = g.teamAbbrevsCache[j];
+                        options[j + 2].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
+                    }
                 } else if (fields[i] === "seasons" || fields[i] === "seasonsAndCareer" || fields[i] === "seasonsAndAll") {
                     options = helpers.getSeasons();
                     for (j = 0; j < options.length; j++) {
@@ -86,42 +99,107 @@ define(["globals", "ui", "lib/jquery", "lib/knockout", "util/helpers"], function
                         });
                     }
                 } else if (fields[i] === "playoffs") {
-                    options = [
-                        {
-                            val: "Regular Season",
-                            key: "regular_season"
-                        },
-                        {
-                            val: "Playoffs",
-                            key: "playoffs"
-                        }
-                    ];
+                    options = [{
+                        val: "Regular Season",
+                        key: "regular_season"
+                    }, {
+                        val: "Playoffs",
+                        key: "playoffs"
+                    }];
                 } else if (fields[i] === "shows") {
-                    options = [
-                        {
-                            val: "Past 10 Seasons",
-                            key: "10"
-                        },
-                        {
-                            val: "All Seasons",
-                            key: "all"
-                        }
-                    ];
+                    options = [{
+                        val: "Past 10 Seasons",
+                        key: "10"
+                    }, {
+                        val: "All Seasons",
+                        key: "all"
+                    }];
                 } else if (fields[i] === "statTypes") {
-                    options = [
-                        {
-                            val: "Per Game",
-                            key: "per_game"
-                        },
-                        {
-                            val: "Per 36 Mins",
-                            key: "per_36"
-                        },
-                        {
-                            val: "Totals",
-                            key: "totals"
-                        }
-                    ];
+                    options = [{
+                        val: "Per Game",
+                        key: "per_game"
+                    }, {
+                        val: "Per 36 Mins",
+                        key: "per_36"
+                    }, {
+                        val: "Totals",
+                        key: "totals"
+                    }];
+                } else if (fields[i] === "awardType") {
+                    options = [{
+                        val: "Won Championship",
+                        key: "champion"
+                    }, {
+                        val: "Most Valuable Player",
+                        key: "mvp"
+                    }, {
+                        val: "Finals MVP",
+                        key: "finals_mvp"
+                    }, {
+                        val: "Defensive Player of the Year",
+                        key: "dpoy"
+                    }, {
+                        val: "Sixth Man of the Year",
+                        key: "smoy"
+                    }, {
+                        val: "Rookie of the Year",
+                        key: "roy"
+                    }, {
+                        val: "First Team All-League",
+                        key: "first_team"
+                    }, {
+                        val: "Second Team All-League",
+                        key: "second_team"
+                    }, {
+                        val: "Third Team All-League",
+                        key: "third_team"
+                    }, {
+                        val: "All-League",
+                        key: "all_league"
+                    }, {
+                        val: "First Team All-Defensive",
+                        key: "first_def"
+                    }, {
+                        val: "Second Team All-Defensive",
+                        key: "second_def"
+                    }, {
+                        val: "Third Team All-Defensive",
+                        key: "third_def"
+                    }, {
+                        val: "All-Defensive",
+                        key: "all_def"
+                    }];
+                } else if (fields[i] === "eventType") {
+                    options = [{
+                        val: "All Types",
+                        key: "all"
+                    }, {
+                        val: "Draft",
+                        key: "draft"
+                    }, {
+                        val: "FA Signed",
+                        key: "freeAgent"
+                    }, {
+                        val: "Resigned",
+                        key: "reSigned"
+                    }, {
+                        val: "Released",
+                        key: "released"
+                    }, {
+                        val: "Trades",
+                        key: "trade"
+                    }];
+                } else if (fields[i] === "teamRecordType") {
+                    options = [{
+                        val: "By Team",
+                        key: "team"
+                    }, {
+                        val: "By Conference",
+                        key: "conf"
+                    }, {
+                        val: "By Division",
+                        key: "div"
+                    }];
                 }
                 vm.fields().push({
                     id: fieldId,

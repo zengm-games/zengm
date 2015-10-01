@@ -6,7 +6,7 @@ define(["dao", "globals", "lib/bbgm-notifications"], function (dao, g, bbgmNotif
     "use strict";
 
     function add(ot, options) {
-        var title;
+        var notificationContainer, title;
 
         options.saveToDb = options.saveToDb !== undefined ? options.saveToDb : true;
         options.showNotification = options.showNotification !== undefined ? options.showNotification : true;
@@ -42,6 +42,14 @@ define(["dao", "globals", "lib/bbgm-notifications"], function (dao, g, bbgmNotif
                     require("core/league").setGameAttributes(null, {stopGames: true});
                 }
             }
+        }
+
+        // Hacky way to make sure there is room for the multi team mode menu
+        notificationContainer = document.getElementById("notification-container");
+        if (g.userTids !== undefined && g.userTids.length > 1 && !notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
+            notificationContainer.classList.add("notification-container-extra-margin-bottom");
+        } else if (g.userTids !== undefined && g.userTids.length === 1 && notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
+            notificationContainer.classList.remove("notification-container-extra-margin-bottom");
         }
     }
 

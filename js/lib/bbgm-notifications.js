@@ -6,13 +6,14 @@ define(function () {
     var Notifier, container;
 
     container = document.createElement("div");
+    container.id = "notification-container";
     container.classList.add("notification-container");
     document.body.appendChild(container);
 
     Notifier = {};
 
     Notifier.notify = function (message, title, persistent, timeOut) {
-        var closeLink, i, notificationElement, notificationTimeout, remaining, removeOnFadeOut, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
+        var closeLink, i, notificationElement, notificationTimeout, numToDelete, removeOnFadeOut, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
 
         persistent = persistent !== undefined ? persistent : false;
         timeoutRemaining = timeOut || 5000;
@@ -80,16 +81,20 @@ define(function () {
         }*/
 
         // Limit displayed notifications to 5 - all the persistent ones, plus the newest ones
-        remaining = 5;
-        for (i = 0; i <= container.childNodes.length - 1; i++) {
-            if (container.childNodes[i].classList.contains("notification-persistent")) {
-                remaining -= 1;
-            } else {
-                container.childNodes[i].classList.add("notification-delete");
-            }
+        numToDelete = container.childNodes.length - 4; // 4 instead of 5 because the check happens before the new notification is shown
+        if (numToDelete > 0) {
+            for (i = 0; i <= container.childNodes.length; i++) {
+                if (container.childNodes[i].classList.contains("notification-delete")) {
+                    // Already being deleted
+                    numToDelete -= 1;
+                } else if (container.childNodes[i] && !container.childNodes[i].classList.contains("notification-persistent")) {
+                    container.childNodes[i].classList.add("notification-delete");
+                    numToDelete -= 1;
+                }
 
-            if (i > container.childNodes.length - remaining) {
-                break;
+                if (numToDelete <= 0) {
+                    break;
+                }
             }
         }
 

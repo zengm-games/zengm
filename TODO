@@ -1,6 +1,8 @@
 CURRENT
 -------
 
+team dropdown in dashboard
+
 feats table should show both playoffs and regular season by default
 
 https://www.reddit.com/r/BasketballGM/comments/3gjqgd/lets_brainstorm_a_bit_about_this_30_seasons/
@@ -16,6 +18,11 @@ track buzzer beaters in statistical feats
 potential over 100 https://www.reddit.com/r/BasketballGM/comments/3ft6q8/player_with_potential_over_100/
 
 separate advanced stats table in player page, so there is room for everything in screenshots
+
+different jump to menus for season and team specific pages?
+  or unify
+  add gamelog, roster, team finances
+    get rid of "More:" links
 
 gamesim rewrite
   game situation awareness (blowouts, close games, etc)

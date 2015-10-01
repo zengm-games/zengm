@@ -4,6 +4,9 @@
   right: 6px;
   z-index: 9999;
 }
+.notification-container-extra-margin-bottom {
+  bottom: 60px;  
+}
 
 .notification {
   padding: 6px 12px;

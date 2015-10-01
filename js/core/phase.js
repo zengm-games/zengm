@@ -106,6 +106,8 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
         return dao.teams.getAll({ot: tx}).then(function (teams) {
             return season.setSchedule(tx, season.newSchedule(teams));
         }).then(function () {
+            var nagged;
+
             // First message from owner
             if (g.showFirstOwnerMessage) {
                 return message.generate(tx, {wins: 0, playoffs: 0, money: 0});
@@ -115,9 +117,13 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
             if (localStorage.nagged === "true") {
                 // This used to store a boolean, switch to number
                 localStorage.nagged = "1";
+            } else if (localStorage.nagged === undefined) {
+                localStorage.nagged = "0";
             }
 
-            if (g.season === g.startingSeason + 3 && g.lid > 3 && !localStorage.nagged) {
+            nagged = parseInt(localStorage.nagged, 10);
+
+            if (g.season === g.startingSeason + 3 && g.lid > 3 && nagged === 0) {
                 localStorage.nagged = "1";
                 return dao.messages.add({
                     ot: tx,
@@ -129,7 +135,7 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 });
             }
-            if ((localStorage.nagged === "1" && Math.random() < 0.25) || (localStorage.nagged === "2" && Math.random < 0.025)) {
+            if ((nagged === 1 && Math.random() < 0.25) || (nagged >= 2 && Math.random < 0.025)) {
                 localStorage.nagged = "2";
                 return dao.messages.add({
                     ot: tx,
@@ -141,18 +147,18 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 });
             }
-            if ((localStorage.nagged === "2" && Math.random() < 0.25) || (localStorage.nagged === "3" && Math.random < 0.025)) {
-                //if (g.enableLogging) { _gaq.push(["_trackEvent", "Ad Display", "DraftKings"]); }
+            if ((nagged === 2 && Math.random() < 0.25) || (nagged >= 3 && Math.random < 0.025)) {
+                if (g.enableLogging) { _gaq.push(["_trackEvent", "Ad Display", "basketball-gm.co.nf"]); }
                 localStorage.nagged = "3";
-                /*return dao.messages.add({
+                return dao.messages.add({
                     ot: tx,
                     value: {
                         read: false,
                         from: "The Commissioner",
                         year: g.season,
-                        text: '<p>DraftKings is a great new way to play fantasy sports and win money. They are running a special promotion for Basketball GM players: they\'ll waive the entry fee for a $30k fantasy NBA pool and match your first deposit for free! All you have to do is draft the best 8 player team. Your Basketball GM experience may prove to be useful!</p><p><a href="https://www.draftkings.com/gateway?s=640365236"><img src="/img/dk-logo.png"></a></p><p>And better yet, by signing up through <a href="https://www.draftkings.com/gateway?s=640365236">this link</a>, you will be supporting Basketball GM. So even if you\'re not totally sure if you want to try DraftKings, give it a shot as a personal favor to me. In return, I will continue to improve this free game that you\'ve spent hours playing - there is some cool stuff in the works, stay tuned!</p>'
+                        text: '<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="http://basketball-gm.co.nf/">you can find a user-made list of them here</a>.</p>'
                     }
-                });*/
+                });
             }
         }).then(function () {
             return [undefined, ["playerMovement"]];

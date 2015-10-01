@@ -50,7 +50,7 @@
             data-apikey="c10b95290070cb8888a7a79cc5408555"></script>
     <script type="text/javascript">
       if (Bugsnag) {
-        Bugsnag.appVersion = "2015.08.12.1222";
+        Bugsnag.appVersion = "2015.09.16.1180";
         if (location.host.indexOf("localhost") === 0) {
           Bugsnag.releaseStage = "development";
         } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
@@ -156,6 +156,7 @@
                 <li><a data-bind="attrLeagueUrl: {href: ['league_finances']}">Finances</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['history_all']}">History</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['power_rankings']}">Power Rankings</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['transactions', 'all']}">Transactions</a></li>
               </ul>
             </li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
@@ -166,6 +167,7 @@
                 <li><a data-bind="attrLeagueUrl: {href: ['schedule']}">Schedule</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['team_finances']}">Finances</a></li>
                 <li><a data-bind="attrLeagueUrl: {href: ['team_history']}">History</a></li>
+                <li><a data-bind="attrLeagueUrl: {href: ['transactions']}">Transactions</a></li>
               </ul>
             </li>
             <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
@@ -246,12 +248,12 @@
 
       <footer>
         <p>
-          <a href="http://basketball-gm.com/about/" target="_blank">About</a> · 
-          <a href="http://basketball-gm.com/advertise/" target="_blank">Advertise</a> · 
-          <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> · 
-          <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> · 
+          <a href="http://basketball-gm.com/about/" target="_blank">About</a> ·
+          <a href="http://basketball-gm.com/advertise/" target="_blank">Advertise</a> ·
+          <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> ·
+          <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> ·
           <a href="http://basketball-gm.com/share/" target="_blank">Share</a><br>
-          <p class="rev">v3.4 · <!--rev-->2015.08.12.1222</p>
+          <p class="rev">v3.4 · <!--rev-->2015.09.16.1180</p>
         </p>
       </footer>
     </div>
@@ -300,7 +302,7 @@
 
     <div id="multi-team-menu" data-bind="multiTeamMenu: [userTid, userTids]" style="display: none"></div>
 
-    <iframe style="display: none;" src="/manifest_hack"></iframe> 
+    <iframe style="display: none;" src="/manifest_hack"></iframe>
 
     <script>
       // Tools > Reset DB

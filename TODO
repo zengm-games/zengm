@@ -1,6 +1,10 @@
 player stats cache
 ------------------
 
+current version is faster in old leagues, but SLOWER in new leagues!
+- maybe reassess: "cache" is just small IndexedDB databases?
+  - but if that would work, why doesn't delete data restore performance?
+
 in 100 season league, what are main causes of slow game sim?
 
 new index on playerStats

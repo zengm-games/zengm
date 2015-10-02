@@ -590,7 +590,9 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
         // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
         cbNoGames = function () {
             ui.updateStatus("Idle");
-            return league.setGameAttributesComplete({gamesInProgress: false}).then(function () {
+            return dao.flushCache().then(function () {
+                return league.setGameAttributesComplete({gamesInProgress: false})
+            }).then(function () {
                 return ui.updatePlayMenu(null);
             }).then(function () {
                 // Check to see if the season is over

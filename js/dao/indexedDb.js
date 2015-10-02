@@ -40,7 +40,7 @@ define(["globals", "lib/bluebird", "util/helpers"], function (g, Promise, helper
             }
         }
 
-        tx.complete().then(function () {
+        return tx.complete().then(function () {
             console.log('Flush done!');
         });
     }

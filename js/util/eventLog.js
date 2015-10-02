@@ -2,7 +2,7 @@
  * @name util.eventLog
  * @namespace Event log.
  */
-define(["dao", "globals", "lib/bbgm-notifications"], function (dao, g, bbgmNotifications) {
+define(["globals", "lib/bbgm-notifications"], function (g, bbgmNotifications) {
     "use strict";
 
     function add(ot, options) {
@@ -13,7 +13,7 @@ define(["dao", "globals", "lib/bbgm-notifications"], function (dao, g, bbgmNotif
         options.persistent = options.persistent !== undefined ? options.persistent : false;
 
         if (options.saveToDb && g.lid) { // Only save to league event log if within a league
-            dao.events.add({
+            require("dao").events.add({
                 ot: ot,
                 value: {
                     season: g.season,

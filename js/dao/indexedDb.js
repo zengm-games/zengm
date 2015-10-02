@@ -1,4 +1,4 @@
-define(["globals", "lib/bluebird"], function (g, Promise) {
+define(["globals", "lib/bluebird", "util/helpers"], function (g, Promise, helpers) {
     "use strict";
 
     var addToCache, dao;
@@ -10,6 +10,40 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
         playerStats: {},
         teams: {}
     };
+
+    dao.flushCache = function () {
+        var i, j, k, tx;
+
+        tx = dao.tx(["players", "playerStats", "teams"], "readwrite");
+
+        for (i in dao.cache.players) {
+            if (dao.cache.players.hasOwnProperty(i)) {
+                dao.players.put({ot: tx, value: dao.cache.players[i]});
+            }
+        }
+
+        for (i in dao.cache.playerStats) {
+            if (dao.cache.playerStats.hasOwnProperty(i)) {
+                for (j in dao.cache.playerStats[i]) {
+                    if (dao.cache.playerStats[i].hasOwnProperty(j)) {
+                        for (k = 0; k < dao.cache.playerStats[i][j].length; k++) {
+                            dao.playerStats.put({ot: tx, value: dao.cache.playerStats[i][j][k]});
+                        }
+                    }
+                }
+            }
+        }
+
+        for (i in dao.cache.teams) {
+            if (dao.cache.teams.hasOwnProperty(i)) {
+                dao.teams.put({ot: tx, value: dao.cache.teams[i]});
+            }
+        }
+
+        tx.complete().then(function () {
+            console.log('Flush done!');
+        });
+    }
 
     addToCache = {
         players: function (p) {
@@ -390,7 +424,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
                 var key;
 
                 if (dao.cache.players[p.pid]) {
-                    p = dao.cache.players[p.pid];
+                    p = helpers.deepCopy(dao.cache.players[p.pid]);
                 }
 
                 if (options.statsSeasons === "all") {
@@ -470,7 +504,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
             var playerStats = dao.cache.playerStats[ps.pid][ps.tid];
             for (i = 0; i < playerStats.length; i++) {
                 if (ps.psid === playerStats[i].psid) {
-                    return playerStats[i];
+                    return helpers.deepCopy(playerStats[i]);
                 }
             }
 
@@ -494,7 +528,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
     dao.teams.getOriginal = dao.teams.get;
     dao.teams.get = function (options) {
         if (dao.cache.teams[options.key]) {
-            return Promise.resolve(dao.cache.teams[options.key]);
+            return Promise.resolve(helpers.deepCopy(dao.cache.teams[options.key]));
         }
 
         return dao.teams.getOriginal(options);
@@ -506,7 +540,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
             var i, teams;
 
             if (dao.cache.teams[t.tid]) {
-                return dao.cache.teams[t.tid]
+                return helpers.deepCopy(dao.cache.teams[t.tid]);
             }
 
             return t;

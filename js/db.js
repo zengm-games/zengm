@@ -192,6 +192,7 @@ define(["dao", "globals", "lib/bluebird", "lib/davis", "lib/underscore", "util/e
         playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
         playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
         playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false}); // Would be unique if indexed on playoffs too, but that is a boolean and introduces complications... maybe worth fixing though? No, player could get traded back to same team in one season
+        playerStatsStore.createIndex("season", "season", {unique: false});
 //        gameStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used because currently the season index is used. If multiple indexes are eventually supported, then use this too.
         gameStore.createIndex("season", "season", {unique: false});
         releasedPlayerStore.createIndex("tid", "tid", {unique: false});

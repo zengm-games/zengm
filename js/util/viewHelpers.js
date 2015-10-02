@@ -77,6 +77,9 @@ define(["dao", "db", "globals", "ui", "core/league", "lib/bluebird", "lib/jquery
                             document.body.appendChild(css);
                         }
 
+                        // Update cache
+                        return dao.updateCache();
+                    }).then(function () {
                         // Update play menu
                         ui.updateStatus();
                         ui.updatePhase();

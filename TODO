@@ -1,3 +1,20 @@
+player stats cache
+------------------
+
+in 100 season league, what are main causes of slow game sim?
+
+new index on playerStats
+
+Store stats in nested object, similar to components of index
+  use this directly for this season's stats, like dao.playerStatsCache. always assume it's there. when using the normal dao functions, check for more current value for this season's stats
+
+Override get, can lazy load. Put updates cache and db. Function to flush all dirty records, call at end of season or playoffs or gamesim
+  getAll could somehow intelligently avoid reading from DB for this season
+
+Multi window need to reload cache
+
+Keep this season players in memory. Only hit db for retired players
+
 CURRENT
 -------
 

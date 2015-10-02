@@ -5,6 +5,34 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
 
     dao = {};
 
+    dao.cache = {
+        playerStats: {}
+    };
+
+    dao.updateCache = function () {
+        dao.cache.playerStats = {};
+        return dao.playerStats.getAll({
+            index: "season",
+            key: g.season
+        }).map(function (ps) {
+            if (dao.cache.playerStats.hasOwnProperty(ps.pid)) {
+                if (dao.cache.playerStats[ps.pid].hasOwnProperty(ps.tid)) {
+                    dao.cache.playerStats[ps.pid][ps.tid].push(ps);
+
+                    // Sort descending, so first is always the current one
+                    dao.cache.playerStats[ps.pid][ps.tid].sort(function (a, b) {
+                        return b.psid - a.psid;
+                    });
+                } else {
+                    dao.cache.playerStats[ps.pid][ps.tid] = [ps];
+                }
+            } else {
+                dao.cache.playerStats[ps.pid] = {};
+                dao.cache.playerStats[ps.pid][ps.tid] = [ps];
+            }
+        });
+    }
+
     /**
      * Create an IndexedDB transaction whose oncomplete event can be accessed as a promise.
      *
@@ -281,7 +309,6 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
     dao.messages = generateBasicDao("dbl", "messages");
     dao.negotiations = generateBasicDao("dbl", "negotiations");
     dao.playerFeats = generateBasicDao("dbl", "playerFeats");
-    dao.playerStats = generateBasicDao("dbl", "playerStats");
     dao.playoffSeries = generateBasicDao("dbl", "playoffSeries");
     dao.releasedPlayers = generateBasicDao("dbl", "releasedPlayers");
     dao.schedule = generateBasicDao("dbl", "schedule");
@@ -394,6 +421,29 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
         if (options.value.stats !== undefined) { throw new Error("stats property on player object"); }
 
         return dao.players.putOriginal(options);
+    };
+
+    // Override some stuff for cache
+    dao.playerStats = generateBasicDao("dbl", "playerStats");
+
+    dao.playerStats.getAllOriginal = dao.playerStats.getAll;
+    dao.playerStats.getAll = function (options) {
+        return dao.playerStats.getAllOriginal(options).map(function (ps) {
+            var i, playerStats;
+
+            if (ps.season !== g.season || !dao.cache.playerStats.hasOwnProperty(ps.pid)) {
+                return ps;
+            }
+
+            var playerStats = dao.cache.playerStats[ps.pid][ps.tid];
+            for (i = 0; i < playerStats.length; i++) {
+                if (ps.psid === playerStats[i].psid) {
+                    return playerStats[i];
+                }
+            }
+
+            throw new Error('Should never happen');
+        });
     };
 
     return dao;

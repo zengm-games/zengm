@@ -213,7 +213,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
     function writePlayerStats(tx, results) {
         return Promise.map(results.team, function (t) {
             return Promise.map(t.player, function (p) {
-                var promises;
+                var i, injuredThisGame, keys, promises, ps;
 
                 // Only need to write stats if player got minutes
                 if (p.stat.min === 0) {
@@ -224,62 +224,44 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
                 promises.push(player.checkStatisticalFeat(tx, p.id, t.id, p, results));
 
-                promises.push(dao.playerStats.iterate({
-                    ot: tx,
-                    index: "pid, season, tid",
-                    key: [p.id, g.season, t.id],
-                    direction: "prev", // In case there are multiple entries for the same player, like he was traded away and then brought back
-                    callback: function (ps, shortCircuit) {
-                        var i, injuredThisGame, keys;
+                ps = dao.cache.playerStats[p.id][t.id][0];
 
-                        // Since index is not on playoffs, manually check
-                        if (ps.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
-                            return;
-                        }
+                // Update stats
+                keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'pm', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts'];
+                for (i = 0; i < keys.length; i++) {
+                    ps[keys[i]] += p.stat[keys[i]];
+                }
+                ps.gp += 1; // Already checked for non-zero minutes played above
+                ps.trb += p.stat.orb + p.stat.drb;
 
-                        // Found it!
-                        shortCircuit();
+                injuredThisGame = p.injured && p.injury.type === "Healthy";
 
-                        // Update stats
-                        keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'pm', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts'];
-                        for (i = 0; i < keys.length; i++) {
-                            ps[keys[i]] += p.stat[keys[i]];
-                        }
-                        ps.gp += 1; // Already checked for non-zero minutes played above
-                        ps.trb += p.stat.orb + p.stat.drb;
-
-                        injuredThisGame = p.injured && p.injury.type === "Healthy";
-
-                        // Only update player object (values and injuries) every 10 regular season games or on injury
-                        if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
-                            dao.players.get({ot: tx, key: p.id}).then(function (p_) {
-                                // Injury crap - assign injury type if player does not already have an injury in the database
-                                if (injuredThisGame) {
-                                    p_.injury = player.injury(t.healthRank);
-                                    p.injury = p_.injury; // So it gets written to box score
-                                    eventLog.add(tx, {
-                                        type: "injured",
-                                        text: '<a href="' + helpers.leagueUrl(["player", p_.pid]) + '">' + p_.name + '</a> was injured! (' + p_.injury.type + ', out for ' + p_.injury.gamesRemaining + ' games)',
-                                        showNotification: p_.tid === g.userTid,
-                                        pids: [p_.pid],
-                                        tids: [p_.tid]
-                                    });
-                                }
-
-                                // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
-                                if (g.phase !== g.PHASE.PLAYOFFS) {
-                                    return player.updateValues(tx, p_, [ps]);
-                                }
-
-                                return p_;
-                            }).then(function (p_) {
-                                dao.players.put({ot: tx, value: p_});
+                // Only update player object (values and injuries) every 10 regular season games or on injury
+                if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
+                    promises.push(dao.players.get({ot: tx, key: p.id}).then(function (p_) {
+                        // Injury crap - assign injury type if player does not already have an injury in the database
+                        if (injuredThisGame) {
+                            p_.injury = player.injury(t.healthRank);
+                            p.injury = p_.injury; // So it gets written to box score
+                            eventLog.add(tx, {
+                                type: "injured",
+                                text: '<a href="' + helpers.leagueUrl(["player", p_.pid]) + '">' + p_.name + '</a> was injured! (' + p_.injury.type + ', out for ' + p_.injury.gamesRemaining + ' games)',
+                                showNotification: p_.tid === g.userTid,
+                                pids: [p_.pid],
+                                tids: [p_.tid]
                             });
                         }
 
-                        return ps;
-                    }
-                }));
+                        // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
+                        if (g.phase !== g.PHASE.PLAYOFFS) {
+                            return player.updateValues(tx, p_, [ps]);
+                        }
+
+                        return p_;
+                    }).then(function (p_) {
+                        dao.players.put({ot: tx, value: p_});
+                    }));
+                }
 
                 return Promise.all(promises);
             }, {concurrency: Infinity});

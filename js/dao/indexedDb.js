@@ -1,25 +1,21 @@
 define(["globals", "lib/bluebird"], function (g, Promise) {
     "use strict";
 
-    var dao;
+    var addToCache, dao;
 
     dao = {};
 
     dao.cache = {
         players: {},
-        playerStats: {}
+        playerStats: {},
+        teams: {}
     };
 
-    dao.updateCache = function () {
-        dao.cache = {
-            players: {},
-            playerStats: {}
-        };
-
-        return dao.playerStats.getAllOriginal({
-            index: "season",
-            key: g.season
-        }).map(function (ps) {
+    addToCache = {
+        players: function (p) {
+            dao.cache.players[p.pid] = p;
+        },
+        playerStats: function (ps) {
             if (dao.cache.playerStats.hasOwnProperty(ps.pid)) {
                 if (dao.cache.playerStats[ps.pid].hasOwnProperty(ps.tid)) {
                     dao.cache.playerStats[ps.pid][ps.tid].push(ps);
@@ -35,13 +31,28 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
                 dao.cache.playerStats[ps.pid] = {};
                 dao.cache.playerStats[ps.pid][ps.tid] = [ps];
             }
-        }).then(function () {
+        }
+    };
+
+    dao.updateCache = function () {
+        dao.cache = {
+            players: {},
+            playerStats: {},
+            teams: {}
+        };
+
+        return dao.playerStats.getAllOriginal({
+            index: "season",
+            key: g.season
+        }).each(addToCache.playerStats).then(function () {
             return dao.players.getAllOriginal({
                 index: "tid",
-                key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+                key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
             });
-        }).map(function (p) {
-            dao.cache.players[p.pid] = p;
+        }).each(addToCache.players).then(function () {
+            return dao.teams.getAllOriginal();
+        }).each(function (t) {
+            dao.cache.teams[t.tid] = t;
         });
     }
 
@@ -324,7 +335,6 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
     dao.playoffSeries = generateBasicDao("dbl", "playoffSeries");
     dao.releasedPlayers = generateBasicDao("dbl", "releasedPlayers");
     dao.schedule = generateBasicDao("dbl", "schedule");
-    dao.teams = generateBasicDao("dbl", "teams");
     dao.trade = generateBasicDao("dbl", "trade");
 
     dao.players = generateBasicDao("dbl", "players");
@@ -436,7 +446,13 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
         options = options !== undefined ? options : {};
         if (options.value.stats !== undefined) { throw new Error("stats property on player object"); }
 
-        return dao.players.putOriginal(options);
+        return dao.players.putOriginal(options).then(function (pid) {
+            var p = options.value;
+            p.pid = pid;
+            addToCache.players(p);
+
+            return pid;
+        });
     };
 
     // Override some stuff for cache
@@ -458,9 +474,44 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
                 }
             }
 
-            throw new Error('Should never happen');
+            console.log('Cache miss!', ps.pid, ps.tid)
         });
     };
+
+    dao.playerStats.addOriginal = dao.playerStats.add;
+    dao.playerStats.add = function (options) {
+        return dao.playerStats.addOriginal(options).then(function (psid) {
+            var ps = options.value;
+            ps.psid = psid;
+            addToCache.playerStats(ps);
+
+            return psid;
+        });
+    }
+
+    dao.teams = generateBasicDao("dbl", "teams");
+
+    dao.teams.getOriginal = dao.teams.get;
+    dao.teams.get = function (options) {
+        if (dao.cache.teams[options.key]) {
+            return Promise.resolve(dao.cache.teams[options.key]);
+        }
+
+        return dao.teams.getOriginal(options);
+    }
+
+    dao.teams.getAllOriginal = dao.teams.getAll;
+    dao.teams.getAll = function (options) {
+        return dao.teams.getAllOriginal(options).map(function (t) {
+            var i, teams;
+
+            if (dao.cache.teams[t.tid]) {
+                return dao.cache.teams[t.tid]
+            }
+
+            return t;
+        });
+    }
 
     return dao;
 });

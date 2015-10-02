@@ -7,14 +7,13 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
     function writeTeamStats(tx, results) {
         return Promise.reduce([0, 1], function (cache, t1) {
-            var t2;
+            var t, t2;
 
             t2 = t1 === 1 ? 0 : 1;
 
-            return Promise.all([
-                team.getPayroll(tx, results.team[t1].id).get(0),
-                dao.teams.get({ot: tx, key: results.team[t1].id})
-            ]).spread(function (payroll, t) {
+            t = dao.cache.teams[results.team[t1].id];
+
+            return team.getPayroll(tx, results.team[t1].id).get(0).then(function (payroll) {
                 var att, coachingPaid, count, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketPrice, ticketRevenue, winp, winpOld, won;
 
                 teamSeason = t.seasons[t.seasons.length - 1];
@@ -200,12 +199,10 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                     }
                 }
 
-                return dao.teams.put({ot: tx, value: t}).then(function () {
-                    return {
-                        att: att,
-                        ticketPrice: ticketPrice
-                    };
-                });
+                return {
+                    att: att,
+                    ticketPrice: ticketPrice
+                };
             });
         }, 0);
     }
@@ -469,11 +466,11 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
      * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players and teams; if null is passed, then a new transaction will be used.
      * @param {Promise} Resolves to an array of team objects, ordered by tid.
      */
-    function loadTeams(ot) {
-        var loadTeam, promises, tid;
+    function loadTeams() {
+        var loadTeam, teams, tid;
 
         loadTeam = function (tid) {
-            var pid, players;
+            var i, j, k, numPlayers, p, pid, players, pos, rating, t, team, teamSeason;
 
             players = [];
             for (pid in dao.cache.players) {
@@ -484,97 +481,95 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 }
             }
 
-            return dao.teams.get({ot: ot, key: tid}).then(function (team) {
-                var i, j, k, numPlayers, p, pos, rating, t, teamSeason;
+            team = dao.cache.teams[tid];
 
-                players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
+            players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
 
-                t = {id: tid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
+            t = {id: tid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
 
-                for (j = 0; j < team.seasons.length; j++) {
-                    if (team.seasons[j].season === g.season) {
-                        teamSeason = team.seasons[j];
+            for (j = 0; j < team.seasons.length; j++) {
+                if (team.seasons[j].season === g.season) {
+                    teamSeason = team.seasons[j];
+                    break;
+                }
+            }
+            t.won = teamSeason.won;
+            t.lost = teamSeason.lost;
+            t.cid = team.cid;
+            t.did = team.did;
+            t.healthRank = teamSeason.expenses.health.rank;
+
+            for (i = 0; i < players.length; i++) {
+                pos = players[i].ratings[players[i].ratings.length - 1].pos;
+                p = {id: players[i].pid, name: players[i].name, pos: pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
+
+                // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
+                if (t.id !== g.userTid) {
+                    p.ptModifier = 1;
+                }
+
+                for (j = 0; j < players[i].ratings.length; j++) {
+                    if (players[i].ratings[j].season === g.season) {
+                        rating = players[i].ratings[j];
                         break;
                     }
                 }
-                t.won = teamSeason.won;
-                t.lost = teamSeason.lost;
-                t.cid = team.cid;
-                t.did = team.did;
-                t.healthRank = teamSeason.expenses.health.rank;
 
-                for (i = 0; i < players.length; i++) {
-                    pos = players[i].ratings[players[i].ratings.length - 1].pos;
-                    p = {id: players[i].pid, name: players[i].name, pos: pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
-
-                    // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
-                    if (t.id !== g.userTid) {
-                        p.ptModifier = 1;
-                    }
-
-                    for (j = 0; j < players[i].ratings.length; j++) {
-                        if (players[i].ratings[j].season === g.season) {
-                            rating = players[i].ratings[j];
-                            break;
-                        }
-                    }
-
-                    if (rating === undefined) {
-                        throw new Error("Player with no ratings for this season: " + players[i].name + "(ID: " + players[i].pid + ")");
-                    }
-
-                    p.skills = rating.skills;
-
-                    p.ovr = rating.ovr;
-
-                    // These use the same formulas as the skill definitions in player.skills!
-                    for (k in g.compositeWeights) {
-                        if (g.compositeWeights.hasOwnProperty(k)) {
-                            p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
-                        }
-                    }
-                    p.compositeRating.usage = Math.pow(p.compositeRating.usage, 1.9);
-
-                    p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, pm: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
-
-                    t.player.push(p);
+                if (rating === undefined) {
+                    throw new Error("Player with no ratings for this season: " + players[i].name + "(ID: " + players[i].pid + ")");
                 }
 
-                // Number of players to factor into pace and defense rating calculation
-                numPlayers = t.player.length;
-                if (numPlayers > 7) {
-                    numPlayers = 7;
-                }
+                p.skills = rating.skills;
 
-                // Would be better if these were scaled by average min played and endurancence
-                t.pace = 0;
-                for (i = 0; i < numPlayers; i++) {
-                    t.pace += t.player[i].compositeRating.pace;
-                }
-                t.pace /= numPlayers;
-                t.pace = t.pace * 15 + 100;  // Scale between 100 and 115
+                p.ovr = rating.ovr;
 
-                // Initialize team composite rating object
-                t.compositeRating = {};
-                for (rating in p.compositeRating) {
-                    if (p.compositeRating.hasOwnProperty(rating)) {
-                        t.compositeRating[rating] = 0;
+                // These use the same formulas as the skill definitions in player.skills!
+                for (k in g.compositeWeights) {
+                    if (g.compositeWeights.hasOwnProperty(k)) {
+                        p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
                     }
                 }
+                p.compositeRating.usage = Math.pow(p.compositeRating.usage, 1.9);
 
-                t.stat = {min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, ptsQtrs: [0]};
+                p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, pm: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
 
-                return t;
-            });
+                t.player.push(p);
+            }
+
+            // Number of players to factor into pace and defense rating calculation
+            numPlayers = t.player.length;
+            if (numPlayers > 7) {
+                numPlayers = 7;
+            }
+
+            // Would be better if these were scaled by average min played and endurancence
+            t.pace = 0;
+            for (i = 0; i < numPlayers; i++) {
+                t.pace += t.player[i].compositeRating.pace;
+            }
+            t.pace /= numPlayers;
+            t.pace = t.pace * 15 + 100;  // Scale between 100 and 115
+
+            // Initialize team composite rating object
+            t.compositeRating = {};
+            for (rating in p.compositeRating) {
+                if (p.compositeRating.hasOwnProperty(rating)) {
+                    t.compositeRating[rating] = 0;
+                }
+            }
+
+            t.stat = {min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, ptsQtrs: [0]};
+
+            return t;
         };
 
-        promises = [];
+        teams = [];
 
         for (tid = 0; tid < g.numTeams; tid++) {
-            promises.push(loadTeam(tid));
+            teams.push(loadTeam(tid));
         }
 
-        return Promise.all(promises);
+        return teams;
     }
 
     /**
@@ -759,6 +754,8 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
             // Get the schedule for today
             return season.getSchedule({ot: tx, oneDay: true}).then(function (schedule) {
+                var teams, tx2;
+
                 // Stop if no games
                 // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
                 if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
@@ -766,27 +763,25 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 }
 
                 // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
-                return loadTeams(tx).then(function (teams) {
-                    var tx2;
+                teams = loadTeams();
 
-                    // Play games
-                    // Will loop through schedule and simulate all games
-                    if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
-                        // Sometimes the playoff schedule isn't made the day before, so make it now
-                        // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
+                // Play games
+                // Will loop through schedule and simulate all games
+                if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
+                    // Sometimes the playoff schedule isn't made the day before, so make it now
+                    // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
 
-                        // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                        tx2 = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
-                        season.newSchedulePlayoffsDay(tx2);
-                        return tx2.complete().then(function () {
-                            return season.getSchedule({oneDay: true}).then(function (schedule) {
+                    // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
+                    tx2 = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
+                    season.newSchedulePlayoffsDay(tx2);
+                    return tx2.complete().then(function () {
+                        return season.getSchedule({oneDay: true}).then(function (schedule) {
 // Can't merge easily with next call because of schedule overwriting
-                                return cbSimGames(schedule, teams);
-                            });
+                            return cbSimGames(schedule, teams);
                         });
-                    }
-                    return cbSimGames(schedule, teams);
-                });
+                    });
+                }
+                return cbSimGames(schedule, teams);
             });
         };
 

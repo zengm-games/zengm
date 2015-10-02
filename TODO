@@ -21,10 +21,13 @@ players cache
   getAll is messy if it has to deal with both stats and caching
 
 teams cache
+  getAll could somehow intelligently avoid reading from DB for this season
 
 Multi window need to reload cache
 
 Keep this season players in memory. Only hit db for retired players
+
+break teams into teams and teamSeasons
 
 CURRENT
 -------

@@ -6,12 +6,17 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
     dao = {};
 
     dao.cache = {
+        players: {},
         playerStats: {}
     };
 
     dao.updateCache = function () {
-        dao.cache.playerStats = {};
-        return dao.playerStats.getAll({
+        dao.cache = {
+            players: {},
+            playerStats: {}
+        };
+
+        return dao.playerStats.getAllOriginal({
             index: "season",
             key: g.season
         }).map(function (ps) {
@@ -30,6 +35,13 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
                 dao.cache.playerStats[ps.pid] = {};
                 dao.cache.playerStats[ps.pid][ps.tid] = [ps];
             }
+        }).then(function () {
+            return dao.players.getAllOriginal({
+                index: "tid",
+                key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
+            });
+        }).map(function (p) {
+            dao.cache.players[p.pid] = p;
         });
     }
 
@@ -367,6 +379,10 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
             return Promise.map(players, function (p) {
                 var key;
 
+                if (dao.cache.players[p.pid]) {
+                    p = dao.cache.players[p.pid];
+                }
+
                 if (options.statsSeasons === "all") {
                     // All seasons
                     key = IDBKeyRange.bound([p.pid], [p.pid, '']);
@@ -431,7 +447,7 @@ define(["globals", "lib/bluebird"], function (g, Promise) {
         return dao.playerStats.getAllOriginal(options).map(function (ps) {
             var i, playerStats;
 
-            if (ps.season !== g.season || !dao.cache.playerStats.hasOwnProperty(ps.pid)) {
+            if (ps.season !== g.season) {
                 return ps;
             }
 

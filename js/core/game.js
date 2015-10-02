@@ -213,7 +213,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
     function writePlayerStats(tx, results) {
         return Promise.map(results.team, function (t) {
             return Promise.map(t.player, function (p) {
-                var i, injuredThisGame, keys, promises, ps;
+                var i, injuredThisGame, keys, p_, promises, ps;
 
                 // Only need to write stats if player got minutes
                 if (p.stat.min === 0) {
@@ -238,29 +238,25 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
 
                 // Only update player object (values and injuries) every 10 regular season games or on injury
                 if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
-                    promises.push(dao.players.get({ot: tx, key: p.id}).then(function (p_) {
-                        // Injury crap - assign injury type if player does not already have an injury in the database
-                        if (injuredThisGame) {
-                            p_.injury = player.injury(t.healthRank);
-                            p.injury = p_.injury; // So it gets written to box score
-                            eventLog.add(tx, {
-                                type: "injured",
-                                text: '<a href="' + helpers.leagueUrl(["player", p_.pid]) + '">' + p_.name + '</a> was injured! (' + p_.injury.type + ', out for ' + p_.injury.gamesRemaining + ' games)',
-                                showNotification: p_.tid === g.userTid,
-                                pids: [p_.pid],
-                                tids: [p_.tid]
-                            });
-                        }
+                    p_ = dao.cache.players[p.id];
 
-                        // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
-                        if (g.phase !== g.PHASE.PLAYOFFS) {
-                            return player.updateValues(tx, p_, [ps]);
-                        }
+                    // Injury crap - assign injury type if player does not already have an injury in the database
+                    if (injuredThisGame) {
+                        p_.injury = player.injury(t.healthRank);
+                        p.injury = p_.injury; // So it gets written to box score
+                        eventLog.add(tx, {
+                            type: "injured",
+                            text: '<a href="' + helpers.leagueUrl(["player", p_.pid]) + '">' + p_.name + '</a> was injured! (' + p_.injury.type + ', out for ' + p_.injury.gamesRemaining + ' games)',
+                            showNotification: p_.tid === g.userTid,
+                            pids: [p_.pid],
+                            tids: [p_.tid]
+                        });
+                    }
 
-                        return p_;
-                    }).then(function (p_) {
-                        dao.players.put({ot: tx, value: p_});
-                    }));
+                    // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
+                    if (g.phase !== g.PHASE.PLAYOFFS) {
+                        promises.push(player.updateValues(tx, p_, [ps]));
+                    }
                 }
 
                 return Promise.all(promises);
@@ -477,10 +473,18 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
         var loadTeam, promises, tid;
 
         loadTeam = function (tid) {
-            return Promise.all([
-                dao.players.getAll({ot: ot, index: "tid", key: tid}),
-                dao.teams.get({ot: ot, key: tid})
-            ]).spread(function (players, team) {
+            var pid, players;
+
+            players = [];
+            for (pid in dao.cache.players) {
+                if (dao.cache.players.hasOwnProperty(pid)) {
+                    if (dao.cache.players[pid].tid === tid) {
+                        players.push(dao.cache.players[pid]);
+                    }
+                }
+            }
+
+            return dao.teams.get({ot: ot, key: tid}).then(function (team) {
                 var i, j, k, numPlayers, p, pos, rating, t, teamSeason;
 
                 players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
@@ -622,7 +626,7 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                     return result.gid;
                 });
             }, {concurrency: Infinity}).then(function (gidsFinished) {
-                var j, promises;
+                var j, p, pid, promises;
 
                 promises = [];
 
@@ -640,22 +644,16 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                 promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
 
                 // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-                promises.push(dao.players.iterate({
-                    ot: tx,
-                    index: "tid",
-                    key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-                    callback: function (p) {
-                        var changed;
+                for (pid in dao.cache.players) {
+                    if (dao.cache.players.hasOwnProperty(pid)) {
+                        p = dao.cache.players[pid];
 
-                        changed = false;
                         if (p.injury.gamesRemaining > 0) {
                             p.injury.gamesRemaining -= 1;
-                            changed = true;
                         }
                         // Is it already over?
                         if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
                             p.injury = {type: "Healthy", gamesRemaining: 0};
-                            changed = true;
 
                             eventLog.add(tx, {
                                 type: "healed",
@@ -669,17 +667,11 @@ define(["dao", "globals", "ui", "core/freeAgents", "core/finances", "core/gameSi
                         // Also check for gamesUntilTradable
                         if (!p.hasOwnProperty("gamesUntilTradable")) {
                             p.gamesUntilTradable = 0; // Initialize for old leagues
-                            changed = true;
                         } else if (p.gamesUntilTradable > 0) {
                             p.gamesUntilTradable -= 1;
-                            changed = true;
-                        }
-
-                        if (changed) {
-                            return p;
                         }
                     }
-                }));
+                }
 
                 return Promise.all(promises);
             }).then(function () {

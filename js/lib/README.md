@@ -7,7 +7,8 @@ isn't used.
 I commented out the RequireJS stuff in jquery.dataTables.js because it is even
 more annoying to use that way than to just shim it. I also hacked
 jquery.dataTables.js to do some custom stuff when it's wrapped in a
-.table-responsive div (search for BBGM).
+.table-responsive div (search for BBGM). I also applied this commit to fix
+errors: https://github.com/DataTables/DataTablesSrc/commit/485b259e5c
 
 jquery.dataTables.bootstrap.js (and DT_bootstrap.css) has been tweaked to play
 nice with Davis.js and Bootstrap 3.

@@ -2,6 +2,7 @@ player stats cache
 ------------------
 
 current version is faster in old leagues, but SLOWER in new leagues!
+- WHY????? because of helpers.deepCopy in indexedDb.js
 - maybe reassess: "cache" is just small IndexedDB databases?
   - but if that would work, why doesn't delete data restore performance?
 

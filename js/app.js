@@ -2,7 +2,6 @@
 
 // Make sure I never accidentally use native promises, because that could fuck with error handling
 (function () {
-    console.log("HERE");
     window.Promise = function () { throw new Error("USE BLUEBIRD!"); };
     window.Promise.all = function () { throw new Error("USE BLUEBIRD!"); };
     window.Promise.map = function () { throw new Error("USE BLUEBIRD!"); };

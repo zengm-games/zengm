@@ -20,7 +20,7 @@
     "lint": "node_modules/.bin/eslint js"
   },
   "dependencies": {
-    "bluebird": "^2.10.2",
+    "bluebird": "^2.9.24",
     "jquery": "^2.1.4",
     "knockout": "^3.2.0",
     "knockout.mapping": "^2.4.3",

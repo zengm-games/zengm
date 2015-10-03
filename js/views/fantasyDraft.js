@@ -2,40 +2,44 @@
  * @name views.fantasyDraft
  * @namespace Fantasy draft confirmation.
  */
-define(["globals", "ui", "core/phase", "util/bbgmView", "util/helpers"], function (g, ui, phase, bbgmView, helpers) {
-    "use strict";
+'use strict';
 
-    function get() {
-        if (g.phase === g.PHASE.DRAFT) {
-            return {
-                errorMessage: "You can't start a fantasy draft while a regular draft is already in progress."
-            };
-        }
-        if (g.phase === g.PHASE.FANTASY_DRAFT) {
-            return {
-                redirectUrl: helpers.leagueUrl(["draft"])
-            };
-        }
+var g = require('../globals');
+var ui = require('../ui');
+var phase = require('../core/phase');
+var bbgmView = require('../util/bbgmView');
+var helpers = require('../util/helpers');
+
+function get() {
+    if (g.phase === g.PHASE.DRAFT) {
+        return {
+            errorMessage: "You can't start a fantasy draft while a regular draft is already in progress."
+        };
     }
-
-    function post(req) {
-        var position;
-
-        position = req.params.position === "Random" ? "random" : parseInt(req.params.position, 10);
-
-        document.getElementById("start-fantasy-draft").disabled = true;
-
-        phase.newPhase(g.PHASE.FANTASY_DRAFT, position);
+    if (g.phase === g.PHASE.FANTASY_DRAFT) {
+        return {
+            redirectUrl: helpers.leagueUrl(["draft"])
+        };
     }
+}
 
-    function uiFirst() {
-        ui.title("Fantasy Draft");
-    }
+function post(req) {
+    var position;
 
-    return bbgmView.init({
-        id: "fantasyDraft",
-        get: get,
-        post: post,
-        uiFirst: uiFirst
-    });
+    position = req.params.position === "Random" ? "random" : parseInt(req.params.position, 10);
+
+    document.getElementById("start-fantasy-draft").disabled = true;
+
+    phase.newPhase(g.PHASE.FANTASY_DRAFT, position);
+}
+
+function uiFirst() {
+    ui.title("Fantasy Draft");
+}
+
+module.exports = bbgmView.init({
+    id: "fantasyDraft",
+    get: get,
+    post: post,
+    uiFirst: uiFirst
 });

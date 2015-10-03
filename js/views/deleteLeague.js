@@ -2,66 +2,72 @@
  * @name views.deleteLeague
  * @namespace Delete league form.
  */
-define(["dao", "db", "ui", "core/league", "lib/bluebird", "util/bbgmView", "util/viewHelpers"], function (dao, db, ui, league, Promise, bbgmView, viewHelpers) {
-    "use strict";
+'use strict';
 
-    function get(req) {
-        return {
-            lid: parseInt(req.params.lid, 10)
-        };
-    }
+var dao = require('../dao');
+var db = require('../db');
+var ui = require('../ui');
+var league = require('../core/league');
+var Promise = require('bluebird');
+var bbgmView = require('../util/bbgmView');
+var viewHelpers = require('../util/viewHelpers');
 
-    function post(req) {
-        league.remove(parseInt(req.params.lid, 10)).then(function () {
-            ui.realtimeUpdate([], "/");
-        });
-    }
+function get(req) {
+    return {
+        lid: parseInt(req.params.lid, 10)
+    };
+}
 
-    function updateDeleteLeague(inputs) {
-        return db.connectLeague(inputs.lid).then(function () {
-            var tx;
+function post(req) {
+    league.remove(parseInt(req.params.lid, 10)).then(function () {
+        ui.realtimeUpdate([], "/");
+    });
+}
 
-            tx = dao.tx(["games", "players", "teams"]);
+function updateDeleteLeague(inputs) {
+    return db.connectLeague(inputs.lid).then(function () {
+        var tx;
 
-            return Promise.all([
-                dao.games.count({ot: tx}),
-                dao.players.count({ot: tx}),
-                dao.teams.get({ot: tx, key: 0}),
-                dao.leagues.get({key: inputs.lid})
-            ]).spread(function (numGames, numPlayers, t, l) {
-                var numSeasons;
+        tx = dao.tx(["games", "players", "teams"]);
 
-                numSeasons = t.seasons.length;
+        return Promise.all([
+            dao.games.count({ot: tx}),
+            dao.players.count({ot: tx}),
+            dao.teams.get({ot: tx, key: 0}),
+            dao.leagues.get({key: inputs.lid})
+        ]).spread(function (numGames, numPlayers, t, l) {
+            var numSeasons;
 
-                return {
-                    lid: inputs.lid,
-                    name: l.name,
-                    numGames: numGames,
-                    numPlayers: numPlayers,
-                    numSeasons: numSeasons
-                };
-            });
-        }).catch(function () {
+            numSeasons = t.seasons.length;
+
             return {
                 lid: inputs.lid,
-                name: null,
-                numGames: null,
-                numPlayers: null,
-                numSeasons: null
+                name: l.name,
+                numGames: numGames,
+                numPlayers: numPlayers,
+                numSeasons: numSeasons
             };
         });
-    }
-
-    function uiFirst() {
-        ui.title("Delete League");
-    }
-
-    return bbgmView.init({
-        id: "deleteLeague",
-        beforeReq: viewHelpers.beforeNonLeague,
-        get: get,
-        post: post,
-        runBefore: [updateDeleteLeague],
-        uiFirst: uiFirst
+    }).catch(function () {
+        return {
+            lid: inputs.lid,
+            name: null,
+            numGames: null,
+            numPlayers: null,
+            numSeasons: null
+        };
     });
+}
+
+function uiFirst() {
+    ui.title("Delete League");
+}
+
+module.exports = bbgmView.init({
+    id: "deleteLeague",
+    beforeReq: viewHelpers.beforeNonLeague,
+    get: get,
+    post: post,
+    runBefore: [updateDeleteLeague],
+    uiFirst: uiFirst
 });

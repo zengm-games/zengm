@@ -3,7 +3,7 @@
  * Copyright (C) 2011 Oliver Nightingale
  * MIT Licensed
  */
-;
+
 /**
  * Convinience method for instantiating a new Davis app and configuring it to use the passed
  * routes and subscriptions.
@@ -13,7 +13,7 @@
  * @namespace
  * @returns {Davis.App}
  */
-Davis = function (config) {
+var Davis = function (config) {
   var app = new Davis.App
   config && config.call(app)
   Davis.$(function () { app.start() })
@@ -23,11 +23,7 @@ Davis = function (config) {
 /**
  * Stores the DOM library that Davis will use.  Can be overriden to use libraries other than jQuery.
  */
-if (window.jQuery) {
-  Davis.$ = jQuery
-} else {
-  Davis.$ = null
-};
+Davis.$ = require('jquery');
 
 /**
  * Checks whether Davis is supported in the current browser
@@ -1844,4 +1840,6 @@ Davis.App = (function () {
   };
 
   return App;
-})()
+}());
+
+module.exports = Davis;

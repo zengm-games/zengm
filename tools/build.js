@@ -1,4 +1,4 @@
-var requirejs = require("requirejs");
+var browserify = require('browserify');
 var fs = require("fs");
 var CleanCSS = require('clean-css');
 var moment = require("moment");
@@ -13,16 +13,13 @@ function removeOldFiles() {
 function minifyJs(cb) {
     console.log("Minifying JS...");
 
-    requirejs.optimize({
-        baseUrl: "js",
-        optimize: "uglify2",
-        preserveLicenseComments: false,
-        generateSourceMaps: true,
-        name: "app",
-        include: "lib/require",
-        mainConfigFile: "js/app.js",
-        out: "gen/app.js"
-    }, cb);
+    var b = browserify('js/app.js', {
+        debug: false
+    });
+    b.transform('browserify-shim');
+    b.transform('brfs');
+
+    b.bundle().pipe(fs.createWriteStream('gen/app.js'));
 }
 
 function minifyCss() {
@@ -84,13 +81,13 @@ function copyCordova() {
 
 removeOldFiles();
 
-minifyJs(function () {
-    minifyCss();
-    setTimestamps();
+minifyJs()
+minifyCss();
+setTimestamps();
 
-    if (process.argv.length > 2 && process.argv[2] === "cordova") {
-        copyCordova();
-    }
+if (process.argv.length > 2 && process.argv[2] === "cordova") {
+    throw new Error('Needs to be modified to run after minifyJs');
+    copyCordova();
+}
 
-    console.log("DONE!");
-});
+console.log("DONE!");

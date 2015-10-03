@@ -16,6 +16,9 @@
  *
  * @plugin
  */
+
+var Davis = require('./davis');
+
 Davis.googleAnalytics = function () {
 
   /**

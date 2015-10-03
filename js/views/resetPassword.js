@@ -2,109 +2,113 @@
  * @name views.loginOrRegister
  * @namespace Login and register forms.
  */
-define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], function (g, ui, $, bbgmView, viewHelpers) {
-    "use strict";
+'use strict';
 
-    function get(req) {
-        return {
-            token: req.params.token
-        };
-    }
+var g = require('../globals');
+var ui = require('../ui');
+var $ = require('jquery');
+var bbgmView = require('../util/bbgmView');
+var viewHelpers = require('../util/viewHelpers');
 
-    function updateToken(inputs) {
-        return {
-            token: inputs.token,
-            showForm: null
-        };
-    }
+function get(req) {
+    return {
+        token: req.params.token
+    };
+}
 
-    function uiFirst(vm) {
-        var ajaxErrorMsg, token;
+function updateToken(inputs) {
+    return {
+        token: inputs.token,
+        showForm: null
+    };
+}
 
-        token = vm.token();
+function uiFirst(vm) {
+    var ajaxErrorMsg, token;
 
-        ui.title("Reset Password");
+    token = vm.token();
 
-        ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
+    ui.title("Reset Password");
 
-        // First, see if this is a valid token
-        $.ajax({
-            type: "POST",
-            url: "//account.basketball-gm." + g.tld + "/reset_password.php",
-            data: {action: "check_token", token: token, sport: g.sport},
-            dataType: "json",
-            xhrFields: {
-                withCredentials: true
-            },
-            success: function (data) {
-                var $resetpw;
-                if (data.success) {
-                    vm.showForm(true);
+    ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
-                    $resetpw = $("#resetpw");
-                    $resetpw.on("submit", function (event) {
-                        event.preventDefault();
+    // First, see if this is a valid token
+    $.ajax({
+        type: "POST",
+        url: "//account.basketball-gm." + g.tld + "/reset_password.php",
+        data: {action: "check_token", token: token, sport: g.sport},
+        dataType: "json",
+        xhrFields: {
+            withCredentials: true
+        },
+        success: function (data) {
+            var $resetpw;
+            if (data.success) {
+                vm.showForm(true);
 
-                        // Reset error display
-                        document.getElementById("resetpw-error").innerHTML = "";
-                        document.getElementById("resetpw-password").parentNode.classList.remove("has-error");
-                        document.getElementById("resetpw-password2").parentNode.classList.remove("has-error");
-                        document.getElementById("resetpw-password-error").innerHTML = "";
-                        document.getElementById("resetpw-password2-error").innerHTML = "";
+                $resetpw = $("#resetpw");
+                $resetpw.on("submit", function (event) {
+                    event.preventDefault();
 
-                        $.ajax({
-                            type: "POST",
-                            url: "//account.basketball-gm." + g.tld + "/reset_password.php",
-                            data: $resetpw.serialize() + "&sport=" + g.sport,
-                            dataType: "json",
-                            xhrFields: {
-                                withCredentials: true
-                            },
-                            success: function (data) {
-                                var error;
+                    // Reset error display
+                    document.getElementById("resetpw-error").innerHTML = "";
+                    document.getElementById("resetpw-password").parentNode.classList.remove("has-error");
+                    document.getElementById("resetpw-password2").parentNode.classList.remove("has-error");
+                    document.getElementById("resetpw-password-error").innerHTML = "";
+                    document.getElementById("resetpw-password2-error").innerHTML = "";
 
-                                if (data.success) {
-                                    g.vm.topMenu.username(data.username);
+                    $.ajax({
+                        type: "POST",
+                        url: "//account.basketball-gm." + g.tld + "/reset_password.php",
+                        data: $resetpw.serialize() + "&sport=" + g.sport,
+                        dataType: "json",
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        success: function (data) {
+                            var error;
 
-                                    ui.realtimeUpdate([], "/account");
-                                } else {
-                                    for (error in data.errors) {
-                                        if (data.errors.hasOwnProperty(error)) {
-                                            if (error === "password") {
-                                                document.getElementById("resetpw-password").parentNode.classList.add("has-error");
-                                                document.getElementById("resetpw-password-error").innerHTML = data.errors[error];
-                                            } else if (error === "password2") {
-                                                document.getElementById("resetpw-password2").parentNode.classList.add("has-error");
-                                                document.getElementById("resetpw-password2-error").innerHTML = data.errors[error];
-                                            } else if (error === "passwords") {
-                                                document.getElementById("resetpw-password").parentNode.classList.add("has-error");
-                                                document.getElementById("resetpw-password2").parentNode.classList.add("has-error");
-                                                document.getElementById("resetpw-password2-error").innerHTML = data.errors[error];
-                                            }
+                            if (data.success) {
+                                g.vm.topMenu.username(data.username);
+
+                                ui.realtimeUpdate([], "/account");
+                            } else {
+                                for (error in data.errors) {
+                                    if (data.errors.hasOwnProperty(error)) {
+                                        if (error === "password") {
+                                            document.getElementById("resetpw-password").parentNode.classList.add("has-error");
+                                            document.getElementById("resetpw-password-error").innerHTML = data.errors[error];
+                                        } else if (error === "password2") {
+                                            document.getElementById("resetpw-password2").parentNode.classList.add("has-error");
+                                            document.getElementById("resetpw-password2-error").innerHTML = data.errors[error];
+                                        } else if (error === "passwords") {
+                                            document.getElementById("resetpw-password").parentNode.classList.add("has-error");
+                                            document.getElementById("resetpw-password2").parentNode.classList.add("has-error");
+                                            document.getElementById("resetpw-password2-error").innerHTML = data.errors[error];
                                         }
                                     }
                                 }
-                            },
-                            error: function () {
-                                document.getElementById("resetpw-error").innerHTML = ajaxErrorMsg;
                             }
-                        });
+                        },
+                        error: function () {
+                            document.getElementById("resetpw-error").innerHTML = ajaxErrorMsg;
+                        }
                     });
-                } else {
-                    vm.showForm(false);
-                }
-            },
-            error: function () {
-                document.getElementById("show-form-error").innerHTML = ajaxErrorMsg;
+                });
+            } else {
+                vm.showForm(false);
             }
-        });
-    }
-
-    return bbgmView.init({
-        id: "resetPassword",
-        get: get,
-        beforeReq: viewHelpers.beforeNonLeague,
-        runBefore: [updateToken],
-        uiFirst: uiFirst
+        },
+        error: function () {
+            document.getElementById("show-form-error").innerHTML = ajaxErrorMsg;
+        }
     });
+}
+
+module.exports = bbgmView.init({
+    id: "resetPassword",
+    get: get,
+    beforeReq: viewHelpers.beforeNonLeague,
+    runBefore: [updateToken],
+    uiFirst: uiFirst
 });

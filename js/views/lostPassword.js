@@ -2,50 +2,54 @@
  * @name views.lostPassword
  * @namespace Lost password handling.
  */
-define(["globals", "ui", "lib/jquery", "util/bbgmView", "util/viewHelpers"], function (g, ui, $, bbgmView, viewHelpers) {
-    "use strict";
+'use strict';
 
-    function uiFirst() {
-        var $lostpw, ajaxErrorMsg;
+var g = require('../globals');
+var ui = require('../ui');
+var $ = require('jquery');
+var bbgmView = require('../util/bbgmView');
+var viewHelpers = require('../util/viewHelpers');
 
-        ui.title("Lost Password");
+function uiFirst() {
+    var $lostpw, ajaxErrorMsg;
 
-        ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
+    ui.title("Lost Password");
 
-        $lostpw = $("#lostpw");
+    ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
-        $lostpw.on("submit", function (event) {
-            event.preventDefault();
+    $lostpw = $("#lostpw");
 
-            // Reset error display
-            document.getElementById("lostpw-error").innerHTML = "";
-            document.getElementById("lostpw-success").innerHTML = "";
+    $lostpw.on("submit", function (event) {
+        event.preventDefault();
 
-            $.ajax({
-                type: "POST",
-                url: "//account.basketball-gm." + g.tld + "/lost_password.php",
-                data: $lostpw.serialize() + "&sport=" + g.sport,
-                dataType: "json",
-                xhrFields: {
-                    withCredentials: true
-                },
-                success: function (data) {
-                    if (data.success) {
-                        document.getElementById("lostpw-success").innerHTML = "Check your email for further instructions.";
-                    } else {
-                        document.getElementById("lostpw-error").innerHTML = "Account not found.";
-                    }
-                },
-                error: function () {
-                    document.getElementById("lostpw-error").innerHTML = ajaxErrorMsg;
+        // Reset error display
+        document.getElementById("lostpw-error").innerHTML = "";
+        document.getElementById("lostpw-success").innerHTML = "";
+
+        $.ajax({
+            type: "POST",
+            url: "//account.basketball-gm." + g.tld + "/lost_password.php",
+            data: $lostpw.serialize() + "&sport=" + g.sport,
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+                if (data.success) {
+                    document.getElementById("lostpw-success").innerHTML = "Check your email for further instructions.";
+                } else {
+                    document.getElementById("lostpw-error").innerHTML = "Account not found.";
                 }
-            });
+            },
+            error: function () {
+                document.getElementById("lostpw-error").innerHTML = ajaxErrorMsg;
+            }
         });
-    }
-
-    return bbgmView.init({
-        id: "lostPassword",
-        beforeReq: viewHelpers.beforeNonLeague,
-        uiFirst: uiFirst
     });
+}
+
+module.exports = bbgmView.init({
+    id: "lostPassword",
+    beforeReq: viewHelpers.beforeNonLeague,
+    uiFirst: uiFirst
 });

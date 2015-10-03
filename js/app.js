@@ -1,83 +1,20 @@
+"use strict";
+
 // Make sure I never accidentally use native promises, because that could fuck with error handling
-(function () {
+/*(function () {
     "use strict";
     window.Promise = function () { throw new Error("USE BLUEBIRD!"); };
     window.Promise.all = function () { throw new Error("USE BLUEBIRD!"); };
     window.Promise.map = function () { throw new Error("USE BLUEBIRD!"); };
     window.Promise.try = function () { throw new Error("USE BLUEBIRD!"); };
-}());
+}());*/
 
-require.config({
+/*require.config({
     paths: {
         "stripe-checkout": "https://checkout.stripe.com/checkout",
         "stripe": "https://js.stripe.com/v2/?1" // https://coderwall.com/p/y4vk_q/requirejs-and-external-scripts
     },
     shim: {
-        "lib/bootstrap-affix": {
-            deps: ["lib/jquery"]
-        },
-        "lib/bootstrap-alert": {
-            deps: ["lib/jquery"]
-        },
-        "lib/bootstrap-collapse": {
-            deps: ["lib/bootstrap-transition", "lib/jquery"]
-        },
-        "lib/bootstrap-dropdown": {
-            deps: ["lib/jquery"]
-        },
-        "lib/bootstrap-modal": {
-            deps: ["lib/bootstrap-transition", "lib/jquery"]
-        },
-        "lib/bootstrap-popover": {
-            deps: ["lib/bootstrap-tooltip", "lib/jquery"]
-        },
-        "lib/bootstrap-tooltip": {
-            deps: ["lib/jquery"]
-        },
-        "lib/bootstrap-transition": {
-            deps: ["lib/jquery"]
-        },
-        "lib/boxPlot": {
-            exports: "boxPlot"
-        },
-        "lib/davis": {
-            deps: ["lib/jquery"],
-            exports: "Davis"
-        },
-        "lib/davis.google_analytics": {
-            deps: ["lib/davis"]
-        },
-        "lib/faces": {
-            exports: "faces"
-        },
-        "lib/html2canvas": {
-            exports: "html2canvas"
-        },
-        "lib/IndexedDB-getAll-shim": {},
-        "lib/jquery": {
-            exports: "$"
-        },
-        "lib/jquery.barGraph": {
-            deps: ["lib/bootstrap-tooltip", "lib/jquery"]
-        },
-        "lib/jquery.dataTables": {
-            deps: ["lib/jquery"]
-        },
-        "lib/jquery.dataTables.bbgmSorting": {
-            deps: ["lib/jquery", "lib/jquery.dataTables"]
-        },
-        "lib/jquery.dataTables.bootstrap": {
-            deps: ["lib/jquery", "lib/jquery.dataTables"]
-        },
-        "lib/jquery-ui": {
-            deps: ["lib/jquery"]
-        },
-        "lib/jquery-ui.touch-punch": {
-            deps: ["lib/jquery-ui"]
-        },
-        "lib/underscore": {
-            exports: "_"
-        },
         "stripe-checkout": {
             exports: "StripeCheckout"
         },
@@ -85,11 +22,34 @@ require.config({
             exports: 'Stripe'
         }
     }
-});
+});*/
 
-require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util/helpers", "lib/bluebird", "lib/bootstrap-affix", "lib/bootstrap-alert", "lib/bootstrap-collapse", "lib/bootstrap-dropdown", "lib/bootstrap-modal", "lib/bootstrap-popover", "lib/davis.google_analytics", "lib/IndexedDB-getAll-shim", "lib/jquery.barGraph", "lib/jquery.dataTables", "lib/jquery.dataTables.bbgmSorting", "lib/jquery.dataTables.bootstrap", "lib/jquery-ui", "lib/jquery-ui.touch-punch", "util/templateHelpers", "api"], function (db, views, ui, changes, Davis, account, helpers) {
-    "use strict";
+var db = require('./db');
+var views = require('./views');
+var ui = require('./ui');
+var changes = require('./data/changes');
+var Davis = require('./lib/davis');
+var account = require('./util/account');
+var helpers = require('./util/helpers');
+require('bluebird');
+require('lib/bootstrap-affix');
+require('lib/bootstrap-alert');
+require('lib/bootstrap-collapse');
+require('lib/bootstrap-dropdown');
+require('lib/bootstrap-modal');
+require('lib/bootstrap-popover');
+require('./lib/davis.google_analytics');
+require('lib/IndexedDB-getAll-shim');
+require('lib/jquery.barGraph');
+require('lib/jquery.dataTables');
+require('lib/jquery.dataTables.bbgmSorting');
+require('lib/jquery.dataTables.bootstrap');
+require('lib/jquery-ui');
+require('lib/jquery-ui.touch-punch');
+require('./util/templateHelpers');
+require('./api');
 
+(function () {
     var errorMsg;
 
     // If we're in debug mode, make debug functions available
@@ -133,9 +93,9 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
         // Feature detection! http://stackoverflow.com/a/26779525/786644
         IDBKeyRange.only([1]);
     } catch (e) {
-//        errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
-//
-//        return helpers.error(errorMsg);
+    //        errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
+    //
+    //        return helpers.error(errorMsg);
         return window.location.replace("/export_3.3");
     }
 
@@ -315,4 +275,4 @@ require(["db", "views", "ui", "data/changes", "lib/davis", "util/account", "util
 
         account.check();
     });
-});
+}());

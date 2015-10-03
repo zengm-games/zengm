@@ -2,70 +2,75 @@
  * @name views.message
  * @namespace View a single message.
  */
-define(["dao", "globals", "ui", "core/league", "lib/knockout", "util/bbgmView"], function (dao, g, ui, league, ko, bbgmView) {
-    "use strict";
+'use strict';
 
-    function get(req) {
-        return {
-            mid: req.params.mid ? parseInt(req.params.mid, 10) : null
-        };
-    }
+var dao = require('../dao');
+var g = require('../globals');
+var ui = require('../ui');
+var league = require('../core/league');
+var ko = require('knockout');
+var bbgmView = require('../util/bbgmView');
 
-    function updateMessage(inputs, updateEvents, vm) {
-        var message, readThisPageview, tx;
+function get(req) {
+    return {
+        mid: req.params.mid ? parseInt(req.params.mid, 10) : null
+    };
+}
 
-        if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.message.mid() !== inputs.mid) {
-            tx = dao.tx("messages", "readwrite");
+function updateMessage(inputs, updateEvents, vm) {
+    var message, readThisPageview, tx;
 
-            readThisPageview = false;
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.message.mid() !== inputs.mid) {
+        tx = dao.tx("messages", "readwrite");
 
-            // If mid is null, this will open the *unread* message with the highest mid
-            dao.messages.iterate({
-                ot: tx,
-                key: inputs.mid,
-                direction: "prev",
-                callback: function (messageLocal, shortCircuit) {
-                    message = messageLocal;
+        readThisPageview = false;
 
-                    if (!message.read) {
-                        shortCircuit(); // Keep looking until we find an unread one!
+        // If mid is null, this will open the *unread* message with the highest mid
+        dao.messages.iterate({
+            ot: tx,
+            key: inputs.mid,
+            direction: "prev",
+            callback: function (messageLocal, shortCircuit) {
+                message = messageLocal;
 
-                        message.read = true;
-                        readThisPageview = true;
+                if (!message.read) {
+                    shortCircuit(); // Keep looking until we find an unread one!
 
-                        return message;
-                    }
+                    message.read = true;
+                    readThisPageview = true;
+
+                    return message;
                 }
-            });
+            }
+        });
 
-            return tx.complete().then(function () {
-                league.updateLastDbChange();
+        return tx.complete().then(function () {
+            league.updateLastDbChange();
 
-                if (readThisPageview) {
-                    if (g.gameOver) {
-                        ui.updateStatus("You're fired!");
-                    }
-
-                    return ui.updatePlayMenu(null);
+            if (readThisPageview) {
+                if (g.gameOver) {
+                    ui.updateStatus("You're fired!");
                 }
-            }).then(function () {
-                return {
-                    message: message
-                };
-            });
-        }
-    }
 
-    function uiFirst(vm) {
-        ko.computed(function () {
-            ui.title("Message From " + vm.message.from());
-        }).extend({throttle: 1});
+                return ui.updatePlayMenu(null);
+            }
+        }).then(function () {
+            return {
+                message: message
+            };
+        });
     }
+}
 
-    return bbgmView.init({
-        id: "message",
-        get: get,
-        runBefore: [updateMessage],
-        uiFirst: uiFirst
-    });
+function uiFirst(vm) {
+    ko.computed(function () {
+        ui.title("Message From " + vm.message.from());
+    }).extend({throttle: 1});
+}
+
+module.exports = bbgmView.init({
+    id: "message",
+    get: get,
+    runBefore: [updateMessage],
+    uiFirst: uiFirst
 });

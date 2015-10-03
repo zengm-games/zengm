@@ -2,8 +2,8 @@
  * @name dao
  * @namespace Wrapper around IndexedDB for easy access to data.
  */
-define(["dao/indexedDb"], function (adapter) {
-    "use strict";
+'use strict';
 
-    return adapter;
-});
+var adapter = require('./dao/indexedDb');
+
+module.exports = adapter;

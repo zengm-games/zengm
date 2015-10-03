@@ -50,7 +50,7 @@
             data-apikey="c10b95290070cb8888a7a79cc5408555"></script>
     <script type="text/javascript">
       if (Bugsnag) {
-        Bugsnag.appVersion = "2015.09.16.1180";
+        Bugsnag.appVersion = "2015.10.03.957";
         if (location.host.indexOf("localhost") === 0) {
           Bugsnag.releaseStage = "development";
         } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
@@ -253,7 +253,7 @@
           <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> ·
           <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> ·
           <a href="http://basketball-gm.com/share/" target="_blank">Share</a><br>
-          <p class="rev">v3.4 · <!--rev-->2015.09.16.1180</p>
+          <p class="rev">v3.4 · <!--rev-->2015.10.03.957</p>
         </p>
       </footer>
     </div>
@@ -338,14 +338,7 @@
       var body = document.getElementsByTagName('body').item(0);
       var script = document.createElement('script');
       script.type = 'text/javascript';
-      if (localStorage.debug === "debug") {
-        if (window.console) { console.log("If you want better performance, click Tools > Disable Debug Mode."); }
-        script.src = bbgmPrefix + "js/lib/require.js";
-        script.dataset.main = bbgmPrefix + "js/app.js";
-      } else {
-        if (window.console) { console.log("If you want to see accurate error messages, click Tools > Enable Debug Mode."); }
-        script.src = bbgmPrefix + "gen/app.js";
-      }
+      script.src = bbgmPrefix + "gen/app.js";
       body.appendChild(script);
     </script>
   </body>

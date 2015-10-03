@@ -2,23 +2,26 @@
  * @name views.changes
  * @namespace Changes.
  */
-define(["ui", "data/changes", "util/bbgmView", "util/viewHelpers"], function (ui, changes, bbgmView, viewHelpers) {
-    "use strict";
+'use strict';
 
-    function updateChanges() {
-        return {
-            changes: changes.all.slice(0).reverse()
-        };
-    }
+var ui = require('../ui');
+var changes = require('../data/changes');
+var bbgmView = require('../util/bbgmView');
+var viewHelpers = require('../util/viewHelpers');
 
-    function uiFirst() {
-        ui.title("Changes");
-    }
+function updateChanges() {
+    return {
+        changes: changes.all.slice(0).reverse()
+    };
+}
 
-    return bbgmView.init({
-        id: "changes",
-        beforeReq: viewHelpers.beforeNonLeague,
-        runBefore: [updateChanges],
-        uiFirst: uiFirst
-    });
+function uiFirst() {
+    ui.title("Changes");
+}
+
+module.exports = bbgmView.init({
+    id: "changes",
+    beforeReq: viewHelpers.beforeNonLeague,
+    runBefore: [updateChanges],
+    uiFirst: uiFirst
 });

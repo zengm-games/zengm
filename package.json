@@ -19,21 +19,135 @@
     "test": "node_modules/karma/bin/karma start",
     "lint": "node_modules/.bin/eslint js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "bluebird": "^2.10.2",
+    "jquery": "^2.1.4",
+    "knockout": "^3.2.0",
+    "knockout.mapping": "^2.4.3",
+    "underscore": "^1.8.3"
+  },
   "devDependencies": {
-    "eslint": "~0.14.1",
+    "brfs": "^1.4.1",
+    "browserify": "^11.2.0",
+    "browserify-shim": "^3.8.10",
     "clean-css": "~2.2.23",
-    "requirejs": "~2.1.15",
-    "replace": "~0.3.0",
-    "moment": "~2.8.4",
+    "eslint": "~0.14.1",
+    "express": "~4.10.7",
     "fs-extra": "~0.14.0",
     "karma": "~0.12.31",
     "karma-chrome-launcher": "~0.1.7",
     "karma-firefox-launcher": "~0.1.4",
-    "mocha": "~2.1.0",
     "karma-mocha": "~0.1.10",
     "karma-requirejs": "~0.2.2",
-    "express": "~4.10.7"
+    "mocha": "~2.1.0",
+    "moment": "~2.8.4",
+    "replace": "~0.3.0",
+    "requirejs": "~2.1.15"
+  },
+  "browser": {
+    "lib/bootstrap-affix": "./js/lib/bootstrap-affix.js",
+    "lib/bootstrap-alert": "./js/lib/bootstrap-alert.js",
+    "lib/bootstrap-collapse": "./js/lib/bootstrap-collapse.js",
+    "lib/bootstrap-dropdown": "./js/lib/bootstrap-dropdown.js",
+    "lib/bootstrap-modal": "./js/lib/bootstrap-modal.js",
+    "lib/bootstrap-popover": "./js/lib/bootstrap-popover.js",
+    "lib/bootstrap-tooltip": "./js/lib/bootstrap-tooltip.js",
+    "lib/bootstrap-transition": "./js/lib/bootstrap-transition.js",
+    "lib/html2canvas": "./js/lib/html2canvas.js",
+    "lib/IndexedDB-getAll-shim": "./js/lib/IndexedDB-getAll-shim.js",
+    "lib/jquery.barGraph": "./js/lib/jquery.barGraph.js",
+    "lib/jquery.dataTables": "./js/lib/jquery.dataTables.js",
+    "lib/jquery.dataTables.bbgmSorting": "./js/lib/jquery.dataTables.bbgmSorting.js",
+    "lib/jquery.dataTables.bootstrap": "./js/lib/jquery.dataTables.bootstrap.js",
+    "lib/jquery-ui": "./js/lib/jquery-ui.js",
+    "lib/jquery-ui.touch-punch": "./js/lib/jquery-ui.touch-punch.js"
+  },
+  "browserify-shim": {
+    "lib/bootstrap-affix": {
+      "depends": [
+        "jquery:$"
+      ]
+    },
+    "lib/bootstrap-alert": {
+      "depends": [
+        "jquery:$"
+      ]
+    },
+    "lib/bootstrap-collapse": {
+      "depends": [
+        "lib/bootstrap-transition",
+        "jquery:$"
+      ]
+    },
+    "lib/bootstrap-dropdown": {
+      "depends": [
+        "jquery:$"
+      ]
+    },
+    "lib/bootstrap-modal": {
+      "depends": [
+        "lib/bootstrap-transition",
+        "jquery:$"
+      ]
+    },
+    "lib/bootstrap-popover": {
+      "depends": [
+        "lib/bootstrap-tooltip",
+        "jquery:$"
+      ]
+    },
+    "lib/bootstrap-tooltip": {
+      "depends": [
+        "jquery:$"
+      ]
+    },
+    "lib/bootstrap-transition": {
+      "depends": [
+        "jquery:$"
+      ]
+    },
+    "lib/html2canvas": {
+      "exports": "html2canvas"
+    },
+    "lib/IndexedDB-getAll-shim": {},
+    "lib/jquery.barGraph": {
+      "depends": [
+        "lib/bootstrap-tooltip",
+        "jquery:$"
+      ]
+    },
+    "lib/jquery.dataTables": {
+      "depends": [
+        "jquery:$"
+      ]
+    },
+    "lib/jquery.dataTables.bbgmSorting": {
+      "depends": [
+        "jquery:$",
+        "lib/jquery.dataTables"
+      ]
+    },
+    "lib/jquery.dataTables.bootstrap": {
+      "depends": [
+        "jquery:$",
+        "lib/jquery.dataTables"
+      ]
+    },
+    "lib/jquery-ui": {
+      "depends": [
+        "jquery:$"
+      ]
+    },
+    "lib/jquery-ui.touch-punch": {
+      "depends": [
+        "lib/jquery-ui"
+      ]
+    }
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
   },
   "private": true
 }

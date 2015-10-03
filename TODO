@@ -1,3 +1,13 @@
+fix html2canvas
+
+fix tools menu items
+
+fix unit tests
+
+stripe stuff
+
+get rid of debug mode instructions for js errors, but keep for css dev
+
 CURRENT
 -------
 

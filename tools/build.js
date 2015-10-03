@@ -14,10 +14,8 @@ function minifyJs(cb) {
     console.log("Minifying JS...");
 
     var b = browserify('js/app.js', {
-        debug: false
+        debug: true
     });
-    b.transform('browserify-shim');
-    b.transform('brfs');
 
     b.bundle().pipe(fs.createWriteStream('gen/app.js'));
 }

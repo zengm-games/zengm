@@ -65,45 +65,45 @@
   "browserify-shim": {
     "lib/bootstrap-affix": {
       "depends": [
-        "jquery:$"
+        "jquery:jQuery"
       ]
     },
     "lib/bootstrap-alert": {
       "depends": [
-        "jquery:$"
+        "jquery:jQuery"
       ]
     },
     "lib/bootstrap-collapse": {
       "depends": [
         "lib/bootstrap-transition",
-        "jquery:$"
+        "jquery:jQuery"
       ]
     },
     "lib/bootstrap-dropdown": {
       "depends": [
-        "jquery:$"
+        "jquery:jQuery"
       ]
     },
     "lib/bootstrap-modal": {
       "depends": [
         "lib/bootstrap-transition",
-        "jquery:$"
+        "jquery:jQuery"
       ]
     },
     "lib/bootstrap-popover": {
       "depends": [
         "lib/bootstrap-tooltip",
-        "jquery:$"
+        "jquery:jQuery"
       ]
     },
     "lib/bootstrap-tooltip": {
       "depends": [
-        "jquery:$"
+        "jquery:jQuery"
       ]
     },
     "lib/bootstrap-transition": {
       "depends": [
-        "jquery:$"
+        "jquery:jQuery"
       ]
     },
     "lib/html2canvas": {
@@ -113,17 +113,17 @@
     "lib/jquery.barGraph": {
       "depends": [
         "lib/bootstrap-tooltip",
-        "jquery:$"
+        "jquery:jQuery"
       ]
     },
     "lib/jquery.dataTables": {
       "depends": [
-        "jquery:$"
+        "jquery:jQuery"
       ]
     },
     "lib/jquery.dataTables.bbgmSorting": {
       "depends": [
-        "jquery:$",
+        "jquery:jQuery",
         "lib/jquery.dataTables"
       ]
     },
@@ -135,7 +135,7 @@
     },
     "lib/jquery-ui": {
       "depends": [
-        "jquery:$"
+        "jquery:jQuery"
       ]
     },
     "lib/jquery-ui.touch-punch": {
@@ -146,7 +146,8 @@
   },
   "browserify": {
     "transform": [
-      "browserify-shim"
+      "browserify-shim",
+      "brfs"
     ]
   },
   "private": true

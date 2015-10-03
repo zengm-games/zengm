@@ -1,13 +1,13 @@
 "use strict";
 
 // Make sure I never accidentally use native promises, because that could fuck with error handling
-/*(function () {
-    "use strict";
+(function () {
+    console.log("HERE");
     window.Promise = function () { throw new Error("USE BLUEBIRD!"); };
     window.Promise.all = function () { throw new Error("USE BLUEBIRD!"); };
     window.Promise.map = function () { throw new Error("USE BLUEBIRD!"); };
     window.Promise.try = function () { throw new Error("USE BLUEBIRD!"); };
-}());*/
+}());
 
 /*require.config({
     paths: {
@@ -54,9 +54,7 @@ require('./api');
 
     // If we're in debug mode, make debug functions available
     if (localStorage.debug === "debug") {
-        require(["core/debug"], function (debug) {
-            window.debug = debug;
-        });
+        window.debug = require('./core/debug');
     }
 
     ui.init();

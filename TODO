@@ -1,20 +1,22 @@
-fix html2canvas, test screenshots
-
 fix tools menu items
 
 fix unit tests
+
+fix html2canvas, test screenshots
+
+lint
 
 stripe stuff
 
 get rid of debug mode instructions for js errors, but keep for css dev
 
-get rid of bluebird, chrome has nicer error messages now i think
-
 compile should move index and appcache to gen folder. put them in www or something for dev, with placeholders
 
 get rid of everything in lib folder. either install from npm or create npm packages
 
-better build process, watch files in dev
+css build process?
+
+update README
 
 CURRENT
 -------

@@ -14,7 +14,9 @@
   },
   "scripts": {
     "start": "node tools/server.js",
-    "build": "node tools/build.js",
+    "watch-js": "watchify js/app.js -o gen/app.js",
+    "build-js": "browserify js/app.js -o gen/app.js",
+    "build": "npm run build-js && node tools/build.js",
     "build-cordova": "node tools/build.js cordova",
     "test": "node_modules/karma/bin/karma start",
     "lint": "node_modules/.bin/eslint js"
@@ -42,7 +44,8 @@
     "mocha": "~2.1.0",
     "moment": "~2.8.4",
     "replace": "~0.3.0",
-    "requirejs": "~2.1.15"
+    "requirejs": "~2.1.15",
+    "watchify": "^3.4.0"
   },
   "browser": {
     "lib/bootstrap-affix": "./js/lib/bootstrap-affix.js",

@@ -5,21 +5,6 @@ var moment = require("moment");
 var replace = require("replace");
 var fse = require('fs-extra');
 
-function removeOldFiles() {
-    fse.removeSync("gen");
-    fs.mkdirSync("gen");
-}
-
-function minifyJs(cb) {
-    console.log("Minifying JS...");
-
-    var b = browserify('js/app.js', {
-        debug: false
-    });
-
-    b.bundle().pipe(fs.createWriteStream('gen/app.js'));
-}
-
 function minifyCss() {
     console.log("Minifying CSS...");
 
@@ -77,9 +62,6 @@ function copyCordova() {
 
 
 
-removeOldFiles();
-
-minifyJs()
 minifyCss();
 setTimestamps();
 

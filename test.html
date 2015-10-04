@@ -3,12 +3,22 @@
   <meta charset="utf-8">
   <title>Mocha Tests</title>
 
-  <link rel="stylesheet" href="/css/mocha.css" />
-
-  <script src="/js/lib/mocha.js"></script>
-  <script data-main="/js/test/app.js" src="/js/lib/require.js"></script>
+  <link rel="stylesheet" href="/node_modules/mocha/mocha.css" />
 </head>
 <body>
   <div id="mocha"></div>
 </body>
+<script src="/node_modules/mocha/mocha.js"></script>
+<script>
+// Not sure why this is needed when it's already in js/test/app.js...
+mocha.setup({
+    ui: 'bdd',
+    timeout: 20000
+});
+</script>
+<script src="/gen/app-test.js"></script>
+<script>
+mocha.checkLeaks();
+mocha.run();
+</script>
 </html>

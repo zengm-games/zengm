@@ -32,6 +32,7 @@ RewriteCond %{REQUEST_URI} !^/img
 RewriteCond %{REQUEST_URI} !^/js
 RewriteCond %{REQUEST_URI} !^/manifest_hack
 RewriteCond %{REQUEST_URI} !^/manifest.webapp
+RewriteCond %{REQUEST_URI} !^/node_modules
 RewriteCond %{REQUEST_URI} !^/templates
 RewriteCond %{REQUEST_URI} !^/test
 RewriteRule ^.*$ index.html

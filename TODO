@@ -1,7 +1,6 @@
 fix unit tests
   unskip
   run faster, using watchify somehow maybe
-  get running at /test (separate build process, source maps) for easier debugging
 
 fix html2canvas, test screenshots
 
@@ -12,6 +11,7 @@ stripe stuff
 get rid of debug mode instructions for js errors, but keep for css dev
 
 compile should move index and appcache to gen folder. put them in www or something for dev, with placeholders
+  not sure if this is a good idea...
 
 get rid of everything in lib folder. either install from npm or create npm packages
 

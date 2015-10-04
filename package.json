@@ -18,6 +18,7 @@
     "build-js": "browserify js/app.js -o gen/app.js",
     "build": "npm run build-js && node tools/build.js",
     "build-cordova": "node tools/build.js cordova",
+    "watch-test": "watchify js/test/app.js -o gen/app-test.js",
     "test": "node_modules/karma/bin/karma start",
     "lint": "node_modules/.bin/eslint js"
   },
@@ -45,7 +46,6 @@
     "mocha": "^2.3.3",
     "moment": "~2.8.4",
     "replace": "~0.3.0",
-    "requirejs": "~2.1.15",
     "watchify": "^3.4.0"
   },
   "browser": {

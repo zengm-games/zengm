@@ -6,7 +6,7 @@ module.exports = function (config) {
 
         files: [
             'js/test/app.js',
-            'js/test/util/helpers.js',
+            'js/test/util/*.js',
             {pattern: 'js/*.js', included: false},
             {pattern: 'js/core/*.js', included: false},
             {pattern: 'js/dao/*.js', included: false},

@@ -7,15 +7,7 @@ module.exports = function (config) {
         files: [
             'js/test/app.js',
             'js/test/util/helpers.js',
-            {pattern: 'js/api.js', included: false},
-            {pattern: 'js/app.js', included: false},
-            {pattern: 'js/dao.js', included: false},
-            {pattern: 'js/db.js', included: false},
-            {pattern: 'js/export_3.3.js', included: false},
-            {pattern: 'js/globals.js', included: false},
-            {pattern: 'js/templates.js', included: false},
-            {pattern: 'js/ui.js', included: false},
-            {pattern: 'js/views.js', included: false},
+            {pattern: 'js/*.js', included: false},
             {pattern: 'js/dao/*.js', included: false},
             {pattern: 'js/data/*.js', included: false},
             {pattern: 'js/lib/bbgm-notifications.js', included: false},
@@ -38,7 +30,7 @@ module.exports = function (config) {
 
         colors: true,
 
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_DEBUG,
 
         autoWatch: false,
 

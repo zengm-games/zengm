@@ -23,33 +23,33 @@
     "lint": "node_modules/.bin/eslint js"
   },
   "dependencies": {
-    "bluebird": "^2.9.24",
-    "facesjs": "^1.0.0",
-    "jquery": "^2.1.4",
-    "jquery-ui": "^1.10.5",
-    "jquery-ui-touch-punch": "^0.2.3",
-    "knockout": "^3.2.0",
+    "bluebird": "2.9.24",
+    "facesjs": "~1.0.0",
+    "jquery": "~2.1.4",
+    "jquery-ui": "~1.10.5",
+    "jquery-ui-touch-punch": "~0.2.3",
+    "knockout": "~3.2.0",
     "knockout.mapping": "^2.4.3",
-    "underscore": "^1.8.3"
+    "underscore": "~1.8.3"
   },
   "devDependencies": {
-    "brfs": "^1.4.1",
-    "browserify": "^11.2.0",
-    "browserify-shim": "^3.8.10",
+    "brfs": "~1.4.1",
+    "browserify": "~11.2.0",
+    "browserify-shim": "~3.8.10",
     "clean-css": "~2.2.23",
     "eslint": "~0.14.1",
     "express": "~4.10.7",
     "fs-extra": "~0.14.0",
     "karma": "~0.12.31",
-    "karma-browserify": "^4.4.0",
+    "karma-browserify": "~4.4.0",
     "karma-chrome-launcher": "~0.1.7",
     "karma-firefox-launcher": "~0.1.4",
-    "karma-mocha": "^0.2.0",
-    "karma-mocha-reporter": "^1.1.1",
-    "mocha": "^2.3.3",
+    "karma-mocha": "~0.2.0",
+    "karma-mocha-reporter": "~1.1.1",
+    "mocha": "~2.3.3",
     "moment": "~2.8.4",
     "replace": "~0.3.0",
-    "watchify": "^3.4.0"
+    "watchify": "~3.4.0"
   },
   "browser": {
     "lib/bootstrap-affix": "./js/lib/bootstrap-affix.js",

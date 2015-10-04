@@ -6,8 +6,8 @@
 
 var assert = require('assert');
 var g = require('../../globals');
-var $ = require('../lib/jquery');
-var ko = require('../knockout');
+var $ = require('jquery');
+var ko = require('knockout');
 var components = require('../../views/components');
 
 function testSeasons() {

@@ -9,7 +9,7 @@ var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
 var league = require('../../core/league');
-var $ = require('../lib/jquery');
+var $ = require('jquery');
 var gameLog = require('../../views/gameLog');
 
 function confirmNotBuilt() {

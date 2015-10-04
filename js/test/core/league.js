@@ -1,7 +1,3 @@
-/**
- * @name test.core.league
- * @namespace Tests for core.league.
- */
 'use strict';
 
 var assert = require('assert');

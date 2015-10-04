@@ -1,7 +1,3 @@
-/**
- * @name test.core.player
- * @namespace Tests for core.player.
- */
 /*eslint no-unused-expressions: 0*/
 'use strict';
 

@@ -1,7 +1,3 @@
-/**
- * @name test.core.season
- * @namespace Tests for core.season.
- */
 'use strict';
 
 var assert = require('assert');

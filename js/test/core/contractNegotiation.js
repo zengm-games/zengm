@@ -1,7 +1,3 @@
-/**
- * @name test.core.contractNegotiation
- * @namespace Tests for core.contractNegotiation.
- */
 'use strict';
 
 var assert = require('assert');

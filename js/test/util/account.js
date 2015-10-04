@@ -1,7 +1,3 @@
-/**
- * @name test.util.account
- * @namespace Tests for util.account.
- */
 /*eslint comma-spacing: 0, key-spacing: 0, no-unused-expressions: 0*/
 'use strict';
 

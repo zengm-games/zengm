@@ -1,7 +1,3 @@
-/**
- * @name test.core.team
- * @namespace Tests for core.team.
- */
 'use strict';
 
 var assert = require('assert');

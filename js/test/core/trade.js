@@ -1,7 +1,3 @@
-/**
- * @name test.core.trade
- * @namespace Tests for core.trade.
- */
 'use strict';
 
 var assert = require('assert');

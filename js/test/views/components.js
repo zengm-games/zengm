@@ -1,7 +1,3 @@
-/**
- * @name test.views.components
- * @namespace Tests for views.components.
- */
 'use strict';
 
 var assert = require('assert');

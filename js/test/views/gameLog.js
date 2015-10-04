@@ -1,7 +1,3 @@
-/**
- * @name test.views.gameLog
- * @namespace Tests for views.gameLog.
- */
 'use strict';
 
 var assert = require('assert');

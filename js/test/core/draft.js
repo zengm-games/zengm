@@ -1,7 +1,3 @@
-/**
- * @name test.core.draft
- * @namespace Tests for core.draft.
- */
 'use strict';
 
 var assert = require('assert');
@@ -12,7 +8,6 @@ var draft = require('../../core/draft');
 var league = require('../../core/league');
 var team = require('../../core/team');
 var sampleTiebreakers = require('../fixtures/sampleTiebreakers.js');
-var Promise = require('bluebird');
 var $ = require('jquery');
 var _ = require('underscore');
 

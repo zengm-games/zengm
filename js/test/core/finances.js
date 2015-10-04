@@ -1,7 +1,3 @@
-/**
- * @name test.core.finances
- * @namespace Tests for core.finances.
- */
 'use strict';
 
 var assert = require('assert');

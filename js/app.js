@@ -43,7 +43,7 @@ require('lib/jquery.barGraph');
 require('lib/jquery.dataTables');
 require('lib/jquery.dataTables.bbgmSorting');
 require('lib/jquery.dataTables.bootstrap');
-require('lib/jquery-ui');
+require('jquery-ui/sortable');
 require('lib/jquery-ui.touch-punch');
 require('./util/templateHelpers');
 require('./api');

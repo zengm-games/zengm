@@ -25,6 +25,7 @@
   "dependencies": {
     "bluebird": "^2.9.24",
     "jquery": "^2.1.4",
+    "jquery-ui": "^1.10.5",
     "knockout": "^3.2.0",
     "knockout.mapping": "^2.4.3",
     "underscore": "^1.8.3"
@@ -63,7 +64,6 @@
     "lib/jquery.dataTables": "./js/lib/jquery.dataTables.js",
     "lib/jquery.dataTables.bbgmSorting": "./js/lib/jquery.dataTables.bbgmSorting.js",
     "lib/jquery.dataTables.bootstrap": "./js/lib/jquery.dataTables.bootstrap.js",
-    "lib/jquery-ui": "./js/lib/jquery-ui.js",
     "lib/jquery-ui.touch-punch": "./js/lib/jquery-ui.touch-punch.js"
   },
   "browserify-shim": {
@@ -137,14 +137,9 @@
         "lib/jquery.dataTables"
       ]
     },
-    "lib/jquery-ui": {
-      "depends": [
-        "jquery:jQuery"
-      ]
-    },
     "lib/jquery-ui.touch-punch": {
       "depends": [
-        "lib/jquery-ui"
+        "jquery-ui/sortable"
       ]
     }
   },

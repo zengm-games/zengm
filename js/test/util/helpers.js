@@ -9,10 +9,13 @@ describe("util/helpers", function () {
         g.userTid = 4;
         g.startingSeason = 2007;
         g.season = 2009;
+        g.teamAbbrevsCache = ["ATL", "BAL", "BOS", "CHI", "CIN", "CLE", "DAL", "DEN", "DET", "HOU", "LV", "LA", "MXC", "MIA", "MIN", "MON", "NYC", "PHI", "PHO", "PIT", "POR", "SAC", "SD", "SF", "SEA", "STL", "TPA", "TOR", "VAN", "WAS"];
+        g.teamRegionsCache = ["Atlanta", "Baltimore", "Boston", "Chicago", "Cincinnati", "Cleveland", "Dallas", "Denver", "Detroit", "Houston", "Las Vegas", "Los Angeles", "Mexico City", "Miami", "Minneapolis", "Montreal", "New York", "Philadelphia", "Phoenix", "Pittsburgh", "Portland", "Sacramento", "San Diego", "San Francisco", "Seattle", "St. Louis", "Tampa", "Toronto", "Vancouver", "Washington"];
+        g.teamNamesCache = ["Gold Club", "Crabs", "Massacre", "Whirlwinds", "Riots", "Curses", "Snipers", "High", "Muscle", "Apollos", "Blue Chips", "Earthquakes", "Aztecs", "Cyclones", "Blizzards", "Mounties", "Bankers", "Cheesesteaks", "Vultures", "Rivers", "Roses", "Gold Rush", "Pandas", "Venture Capitalists", "Symphony", "Spirits", "Turtles", "Beavers", "Whalers", "Monuments"];
     });
 
     // Relies on g.*Cache being populated
-    describe.skip("#validateAbbrev()", function () {
+    describe("#validateAbbrev()", function () {
         it("should return team ID and abbrev when given valid abbrev", function () {
             var out;
 
@@ -33,7 +36,7 @@ describe("util/helpers", function () {
     });
 
     // Relies on g.*Cache being populated
-    describe.skip("#validateTid()", function () {
+    describe("#validateTid()", function () {
         it("should return team ID and abbrev when given valid team ID", function () {
             var out;
 
@@ -60,7 +63,7 @@ describe("util/helpers", function () {
     });
 
     // Relies on g.*Cache being populated
-    describe.skip("#getAbbrev()", function () {
+    describe("#getAbbrev()", function () {
         it("should return abbrev when given valid team ID", function () {
             assert.equal(helpers.getAbbrev(6), "DAL");
             assert.equal(helpers.getAbbrev("6"), "DAL");

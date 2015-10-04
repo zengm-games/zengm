@@ -1,6 +1,7 @@
 fix unit tests
   unskip
   run faster, using watchify somehow maybe
+  get running at /test (separate build process, source maps) for easier debugging
 
 fix html2canvas, test screenshots
 

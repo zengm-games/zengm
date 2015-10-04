@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 // Make sure I never accidentally use native promises, because that could fuck with error handling
 (function () {

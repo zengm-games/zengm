@@ -194,12 +194,12 @@
                 <li><a data-bind="attrLeagueUrl: {href: ['player_feats']}">Statistical Feats</a></li>
               </ul>
             </li>
-            <li class="dropdown">
+            <li class="dropdown" id="tools-menu">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Tools <b class="caret"></b></span><span class="visible-sm">X <b class="caret"></b></span></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header visible-sm">Tools</li>
                 <li><a href="/account">Achievements</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { require('core/league').initAutoPlay(); }())">Auto Play Seasons</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-auto-play-seasons">Auto Play Seasons</a></li>
                 <li data-bind="visible: lid() !== undefined && godMode" style="display: none"><a data-bind="attrLeagueUrl: {href: ['customize_player']}" class="god-mode">Create A Player</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['edit_team_info']}">Edit Team Info</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['event_log']}">Event Log</a></li>
@@ -213,13 +213,13 @@
                 <li><a href="" id="screenshot" data-no-davis="true"><span class="glyphicon glyphicon-camera"></span> Screenshot</a></li>
                 <li data-bind="visible: lid() !== undefined" style="display: none" role="presentation" class="divider"></li>
                 <li role="presentation" class="dropdown-header">Use at your own risk!</li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); require('core/phase').newPhase(g.PHASE.PLAYOFFS); }())">Skip To Playoffs</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); require('core/phase').newPhase(g.PHASE.BEFORE_DRAFT); }())">Skip To Before Draft</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); require('core/phase').newPhase(g.PHASE.AFTER_DRAFT); }())">Skip To After Draft</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { g = require('globals'); require('core/phase').newPhase(g.PHASE.PRESEASON); }())">Skip To Preseason</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" onclick="(function () { require('core/draft').untilUserOrEnd(); }())">Force Resume Draft</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-skip-to-playoffs">Skip To Playoffs</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-skip-to-before-draft">Skip To Before Draft</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-skip-to-after-draft">Skip To After Draft</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-skip-to-preseason">Skip To Preseason</a></li>
+                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-force-resume-draft">Force Resume Draft</a></li>
                 <li><a href="" onclick="toggleDebugMode()" id="toggle-debug-mode">Toggle Debug Mode</a></li>
-                <li><a href="" onclick="resetDb()">Reset DB</a></li>
+                <li><a href="" id="tools-menu-reset-db">Reset DB</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -305,16 +305,6 @@
     <iframe style="display: none;" src="/manifest_hack"></iframe>
 
     <script>
-      // Tools > Reset DB
-      function resetDb() {
-        var db;
-
-        if (window.confirm("Are you sure you want to reset the database? This will delete all your current saved games.")) {
-          db = require("db");
-          db.reset();
-        }
-      }
-
       // Tools > Toggle Debug Mode
       if (localStorage.debug === "debug") {
         document.getElementById("toggle-debug-mode").innerHTML = "Disable Debug Mode";

@@ -1,6 +1,5 @@
-fix tools menu items
-
 fix unit tests
+  https://github.com/Nikku/karma-browserify
 
 fix html2canvas, test screenshots
 
@@ -17,6 +16,8 @@ get rid of everything in lib folder. either install from npm or create npm packa
 css build process?
 
 update README
+
+export shit to window, otherwise old require() command line scripts won't work
 
 CURRENT
 -------

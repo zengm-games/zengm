@@ -1,7 +1,3 @@
-/**
- * @name ui
- * @namespace Anything that directly updates the UI.
- */
 'use strict';
 
 var dao = require('./dao');
@@ -56,7 +52,7 @@ function realtimeUpdate(updateEvents, url, cb, raw) {
 
 // Things to do on initial page load
 function init() {
-    var $playMenuDropdown, api, playMenu, playMenuOptions, screenshotEl, topMenuCollapse;
+    var $playMenuDropdown, api, playMenu, playMenuOptions, screenshotEl, toolsMenu, topMenuCollapse;
 
     ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
     ko.applyBindings(g.vm.multiTeam, document.getElementById("multi-team-menu"));
@@ -115,6 +111,46 @@ function init() {
     });
     playMenu.on("click", "#play-menu-stop-auto", function () {
         api.play("stopAutoPlay");
+        return false;
+    });
+
+    // Handle clicks from Tools menu
+    toolsMenu = $("#tools-menu");
+    toolsMenu.on("click", "#tools-menu-auto-play-seasons", function () {
+        require('./core/league').initAutoPlay();
+        $("#tools-menu .dropdown-toggle").dropdown("toggle");
+        return false;
+    });
+    toolsMenu.on("click", "#tools-menu-skip-to-playoffs", function () {
+        require('./core/phase').newPhase(g.PHASE.PLAYOFFS);
+        $("#tools-menu .dropdown-toggle").dropdown("toggle");
+        return false;
+    });
+    toolsMenu.on("click", "#tools-menu-skip-to-before-draft", function () {
+        require('./core/phase').newPhase(g.PHASE.BEFORE_DRAFT);
+        $("#tools-menu .dropdown-toggle").dropdown("toggle");
+        return false;
+    });
+    toolsMenu.on("click", "#tools-menu-skip-to-after-draft", function () {
+        require('./core/phase').newPhase(g.PHASE.AFTER_DRAFT);
+        $("#tools-menu .dropdown-toggle").dropdown("toggle");
+        return false;
+    });
+    toolsMenu.on("click", "#tools-menu-skip-to-preseason", function () {
+        require('./core/phase').newPhase(g.PHASE.PRESEASON);
+        $("#tools-menu .dropdown-toggle").dropdown("toggle");
+        return false;
+    });
+    toolsMenu.on("click", "#tools-menu-force-resume-draft", function () {
+        require('./core/draft').untilUserOrEnd();
+        $("#tools-menu .dropdown-toggle").dropdown("toggle");
+        return false;
+    });
+    toolsMenu.on("click", "#tools-menu-reset-db", function () {
+        if (window.confirm("Are you sure you want to reset the database? This will delete all your current saved games.")) {
+            require('./db').reset();
+        }
+        $("#tools-menu .dropdown-toggle").dropdown("toggle");
         return false;
     });
 

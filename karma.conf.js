@@ -7,7 +7,7 @@ module.exports = function (config) {
         files: [
             'js/test/app.js',
             'js/test/core/contractNegotiation.js',
-//            'js/test/core/draft.js',
+            'js/test/core/draft.js',
             'js/test/core/finances.js',
             'js/test/core/league.js',
             'js/test/core/player.js',

@@ -122,7 +122,7 @@ describe("core/draft", function () {
             // bad record playoff team
             for (i = 0; i < pofteams.length; i++) {
                 assert(draftResults.indexOf(pofteams[i]) > draftResults.indexOf(17));
-                assert(draftResults.lastIndexOf(pofteams[i] < draftResults.lastIndexOf(17));
+                assert(draftResults.lastIndexOf(pofteams[i]) < draftResults.lastIndexOf(17));
             }
         });
 
@@ -204,7 +204,7 @@ describe("core/draft", function () {
     });
 
     describe("#selectPlayer() and #untilUserOrEnd()", function () {
-        it("should draft  players before the user's team first round pick", function () {
+        it("should draft players before the user's team first round pick", function () {
             return testDraftUntilUserOrEnd(userPick1 - 1, userPick1 - 1);
         });
         it("should then allow the user to draft in the first round", function () {

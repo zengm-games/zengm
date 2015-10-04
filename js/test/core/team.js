@@ -289,7 +289,7 @@ describe("core/team", function () {
                 });
             }).then(function () {
                 return team.checkRosterSizes().then(function (userTeamSizeError) {
-                    should.equal(userTeamSizeError, null);
+                    assert.equal(userTeamSizeError, null);
                 });
             }).then(function () {
                 // Confirm players added up to limit
@@ -306,7 +306,7 @@ describe("core/team", function () {
                 });
             }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
                 // Confirm no error message and roster size pruned to limit
-                should.equal(userTeamSizeError, null);
+                assert.equal(userTeamSizeError, null);
                 return dao.players.count({index: "tid", key: 8}).then(function (numPlayers) {
                     assert.equal(numPlayers, 15);
                 });

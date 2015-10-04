@@ -6,28 +6,17 @@ module.exports = function (config) {
 
         files: [
             'js/test/app.js',
-            'js/test/core/contractNegotiation.js',
-            'js/test/core/draft.js',
-            'js/test/core/finances.js',
-            'js/test/core/league.js',
-            'js/test/core/player.js',
-            'js/test/core/season.js',
-//            'js/test/core/team.js',
-            'js/test/core/trade.js',
-            'js/test/util/*.js',
-            'js/test/views/*.js',
+            'js/test/*/*.js',
             {pattern: 'js/*.js', included: false},
             {pattern: 'js/core/*.js', included: false},
             {pattern: 'js/dao/*.js', included: false},
             {pattern: 'js/data/*.js', included: false},
             {pattern: 'js/lib/*.js', included: false},
             {pattern: 'js/util/*.js', included: false},
-            {pattern: 'js/**/*.json', included: false},
             {pattern: 'templates/*.html', included: false}
         ],
 
-        exclude: [
-        ],
+        exclude: [],
 
         preprocessors: {
             'js/**/*.js': ['browserify']
@@ -43,7 +32,7 @@ module.exports = function (config) {
 
         autoWatch: false,
 
-        browsers: ['Chrome'],// 'Firefox'],
+        browsers: ['Chrome', 'Firefox'],
 
         singleRun: true,
 

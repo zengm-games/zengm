@@ -8,13 +8,13 @@ module.exports = function (config) {
             'js/test/app.js',
             'js/test/util/helpers.js',
             {pattern: 'js/*.js', included: false},
+            {pattern: 'js/core/*.js', included: false},
             {pattern: 'js/dao/*.js', included: false},
             {pattern: 'js/data/*.js', included: false},
-            {pattern: 'js/lib/bbgm-notifications.js', included: false},
+            {pattern: 'js/lib/*.js', included: false},
             {pattern: 'js/util/*.js', included: false},
-//            {pattern: 'js/**/*.js', included: false},
-//            {pattern: 'js/**/*.json', included: false},
-//            {pattern: 'templates/*.html', included: false}
+            {pattern: 'js/**/*.json', included: false},
+            {pattern: 'templates/*.html', included: false}
         ],
 
         exclude: [

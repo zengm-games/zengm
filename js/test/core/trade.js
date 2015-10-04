@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var assert = require('assert');
 var db = require('../../db');
 var g = require('../../globals');
 var league = require('../../core/league');
@@ -27,9 +28,9 @@ describe("core/trade", function () {
 
     testCreateTrade = function (otherTidTest, userPidsTest, otherPidsTest) {
         return trade.get().then(function (teams) {
-            teams[1].tid.should.equal(otherTidTest);
-            JSON.stringify(teams[0].pids).should.equal(JSON.stringify(userPidsTest));
-            JSON.stringify(teams[1].pids).should.equal(JSON.stringify(otherPidsTest));
+            assert.equal(teams[1].tid, otherTidTest);
+            assert.equal(JSON.stringify(teams[0].pids), JSON.stringify(userPidsTest));
+            assert.equal(JSON.stringify(teams[1].pids), JSON.stringify(otherPidsTest));
         });
     };
 
@@ -54,8 +55,8 @@ describe("core/trade", function () {
                 userPidsTest = [48, 50];
                 otherPidsTest = [87, 97];
                 return trade.updatePlayers([{tid: g.userTid, pids: userPidsTest, dpids: []}, {tid: 3, pids: otherPidsTest, dpids: []}]).then(function (teams) {
-                    JSON.stringify(teams[0].pids).should.equal(JSON.stringify(userPidsTest));
-                    JSON.stringify(teams[1].pids).should.equal(JSON.stringify(otherPidsTest));
+                    assert.equal(JSON.stringify(teams[0].pids), JSON.stringify(userPidsTest));
+                    assert.equal(JSON.stringify(teams[1].pids), JSON.stringify(otherPidsTest));
                 });
             });
         });
@@ -63,8 +64,8 @@ describe("core/trade", function () {
             return trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: 3, pids: [], dpids: []}]).then(function () {
                 return trade.updatePlayers([{tid: g.userTid, pids: [1, 16, 20, 48, 50, 90], dpids: []}, {tid: 3, pids: [12, 63, 70, 87, 97, 524], dpids: []}]);
             }).then(function (teams) {
-                JSON.stringify(teams[0].pids).should.equal(JSON.stringify([48, 50]));
-                JSON.stringify(teams[1].pids).should.equal(JSON.stringify([87, 97]));
+                assert.equal(JSON.stringify(teams[0].pids), JSON.stringify([48, 50]));
+                assert.equal(JSON.stringify(teams[1].pids), JSON.stringify([87, 97]));
             });
         });
         it("should delete the other team's players, but not the user's players, from the trade when a new team is selected", function () {
@@ -74,13 +75,13 @@ describe("core/trade", function () {
                 userPidsTest = [48, 50];
                 otherPidsTest = [87, 97];
                 return trade.updatePlayers([{tid: g.userTid, pids: userPidsTest, dpids: []}, {tid: 3, pids: otherPidsTest, dpids: []}]).then(function (teams) {
-                    JSON.stringify(teams[0].pids).should.equal(JSON.stringify(userPidsTest));
-                    JSON.stringify(teams[1].pids).should.equal(JSON.stringify(otherPidsTest));
+                    assert.equal(JSON.stringify(teams[0].pids), JSON.stringify(userPidsTest));
+                    assert.equal(JSON.stringify(teams[1].pids), JSON.stringify(otherPidsTest));
                     return trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: 4, pids: [], dpids: []}]);
                 }).then(function () {
                     trade.get(function (teams) {
-                        JSON.stringify(teams[0].pids).should.equal(JSON.stringify(userPidsTest));
-                        JSON.stringify(teams[1].pids).should.equal(JSON.stringify([]));
+                        assert.equal(JSON.stringify(teams[0].pids), JSON.stringify(userPidsTest));
+                        assert.equal(JSON.stringify(teams[1].pids), JSON.stringify([]));
                     });
                 });
             });

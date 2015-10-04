@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var assert = require('assert');
 var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
@@ -28,18 +29,18 @@ describe("core/finances", function () {
                     var i;
 
                     for (i = 0; i < g.numTeams; i++) {
-                        teams[i].seasons[0].payrollEndOfSeason.should.be.above(0);
+                        assert(teams[i].seasons[0].payrollEndOfSeason > 0);
 
                         if (teams[i].seasons[0].payrollEndOfSeason > g.luxuryPayroll) {
-                            teams[i].seasons[0].expenses.luxuryTax.amount.should.equal(g.luxuryTax * (teams[i].seasons[0].payrollEndOfSeason - g.luxuryPayroll));
+                            assert.equal(teams[i].seasons[0].expenses.luxuryTax.amount, g.luxuryTax * (teams[i].seasons[0].payrollEndOfSeason - g.luxuryPayroll));
                         } else {
-                            teams[i].seasons[0].expenses.luxuryTax.amount.should.equal(0);
+                            assert.equal(teams[i].seasons[0].expenses.luxuryTax.amount, 0);
                         }
 
                         if (teams[i].seasons[0].payrollEndOfSeason < g.minPayroll) {
-                            teams[i].seasons[0].expenses.minTax.amount.should.equal(g.minPayroll - teams[i].seasons[0].payrollEndOfSeason);
+                            assert.equal(teams[i].seasons[0].expenses.minTax.amount, g.minPayroll - teams[i].seasons[0].payrollEndOfSeason);
                         } else {
-                            teams[i].seasons[0].expenses.minTax.amount.should.equal(0);
+                            assert.equal(teams[i].seasons[0].expenses.minTax.amount, 0);
                         }
                     }
                 });

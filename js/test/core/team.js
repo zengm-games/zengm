@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var assert = require('assert');
 var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
@@ -17,52 +18,52 @@ describe("core/team", function () {
             var starters;
 
             starters = team.findStarters(["PG", "SG", "SF", "PF", "C", "G", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 3, 4]);
+            assert.deepEqual(starters, [0, 1, 2, 3, 4]);
 
             starters = team.findStarters(["PG", "SG", "G", "PF", "C", "G", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 3, 4]);
+            assert.deepEqual(starters, [0, 1, 2, 3, 4]);
 
             starters = team.findStarters(["F", "SG", "SF", "PG", "C", "G", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 3, 4]);
+            assert.deepEqual(starters, [0, 1, 2, 3, 4]);
 
             starters = team.findStarters(["F", "SG", "SF", "PF", "G", "G", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 3, 4]);
+            assert.deepEqual(starters, [0, 1, 2, 3, 4]);
         });
         it("should put two Gs in starting lineup", function () {
             var starters;
 
             starters = team.findStarters(["PG", "F", "SF", "PF", "C", "G", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 3, 5]);
+            assert.deepEqual(starters, [0, 1, 2, 3, 5]);
 
             starters = team.findStarters(["F", "PF", "G", "PF", "C", "G", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 3, 5]);
+            assert.deepEqual(starters, [0, 1, 2, 3, 5]);
 
             starters = team.findStarters(["F", "PF", "SF", "GF", "C", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 3, 8]);
+            assert.deepEqual(starters, [0, 1, 2, 3, 8]);
 
             starters = team.findStarters(["F", "PF", "SF", "C", "C", "F", "FC", "PF", "PG", "G"]);
-            starters.should.deep.equal([0, 1, 2, 8, 9]);
+            assert.deepEqual(starters, [0, 1, 2, 8, 9]);
         });
         it("should put two Fs (or one F and one C) in starting lineup", function () {
             var starters;
 
             starters = team.findStarters(["PG", "SG", "G", "PF", "G", "G", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 3, 6]);
+            assert.deepEqual(starters, [0, 1, 2, 3, 6]);
 
             starters = team.findStarters(["PG", "SG", "SG", "PG", "G", "G", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 6, 7]);
+            assert.deepEqual(starters, [0, 1, 2, 6, 7]);
 
             starters = team.findStarters(["PG", "SG", "SG", "PG", "C", "G", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 4, 6]);
+            assert.deepEqual(starters, [0, 1, 2, 4, 6]);
         });
         it("should never put two pure Cs in starting lineup", function () {
             var starters;
 
             starters = team.findStarters(["PG", "SG", "G", "C", "C", "G", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 3, 6]);
+            assert.deepEqual(starters, [0, 1, 2, 3, 6]);
 
             starters = team.findStarters(["PG", "SG", "G", "C", "FC", "G", "F", "FC", "PF", "PG"]);
-            starters.should.deep.equal([0, 1, 2, 3, 4]);
+            assert.deepEqual(starters, [0, 1, 2, 3, 4]);
         });
     });
     describe("#filter()", function () {
@@ -95,16 +96,16 @@ describe("core/team", function () {
                 tid: 4,
                 season: g.season
             }).then(function (t) {
-                t.tid.should.equal(4);
-                t.abbrev.should.equal("CIN");
-                t.season.should.equal(g.season);
-                t.won.should.equal(0);
-                t.payroll.should.be.gt(0);
-                t.gp.should.equal(10);
-                t.fg.should.equal(5);
-                t.fgp.should.equal(50);
-                Object.keys(t).should.have.length(8);
-                t.hasOwnProperty("stats").should.equal(false);
+                assert.equal(t.tid, 4);
+                assert.equal(t.abbrev, "CIN");
+                assert.equal(t.season, g.season);
+                assert.equal(t.won, 0);
+                assert(t.payroll > 0);
+                assert.equal(t.gp, 10);
+                assert.equal(t.fg, 5);
+                assert.equal(t.fgp, 50);
+                assert.equal(Object.keys(t).length, 8);
+                assert.equal(t.hasOwnProperty("stats"), false);
             });
         });
         it("should return an array if no team ID is specified", function () {
@@ -114,16 +115,16 @@ describe("core/team", function () {
                 stats: ["gp", "fg", "fgp"],
                 season: g.season
             }).then(function (teams) {
-                teams.should.have.length(g.numTeams);
-                teams[4].tid.should.equal(4);
-                teams[4].abbrev.should.equal("CIN");
-                teams[4].season.should.equal(g.season);
-                teams[4].won.should.equal(0);
-                teams[4].gp.should.equal(10);
-                teams[4].fg.should.equal(5);
-                teams[4].fgp.should.equal(50);
-                Object.keys(teams[4]).should.have.length(7);
-                teams[4].hasOwnProperty("stats").should.equal(false);
+                assert.equal(teams.length, g.numTeams);
+                assert.equal(teams[4].tid, 4);
+                assert.equal(teams[4].abbrev, "CIN");
+                assert.equal(teams[4].season, g.season);
+                assert.equal(teams[4].won, 0);
+                assert.equal(teams[4].gp, 10);
+                assert.equal(teams[4].fg, 5);
+                assert.equal(teams[4].fgp, 50);
+                assert.equal(Object.keys(teams[4]).length, 7);
+                assert.equal(teams[4].hasOwnProperty("stats"), false);
             });
         });
         it("should return requested info if tid/season match, even when no attrs requested", function () {
@@ -133,12 +134,12 @@ describe("core/team", function () {
                 tid: 4,
                 season: g.season
             }).then(function (t) {
-                t.season.should.equal(g.season);
-                t.won.should.equal(0);
-                t.gp.should.equal(10);
-                t.fg.should.equal(5);
-                t.fgp.should.equal(50);
-                Object.keys(t).should.have.length(5);
+                assert.equal(t.season, g.season);
+                assert.equal(t.won, 0);
+                assert.equal(t.gp, 10);
+                assert.equal(t.fg, 5);
+                assert.equal(t.fgp, 50);
+                assert.equal(Object.keys(t).length, 5);
             });
         });
         it("should return requested info if tid/season match, even when no seasonAttrs requested", function () {
@@ -148,12 +149,12 @@ describe("core/team", function () {
                 tid: 4,
                 season: g.season
             }).then(function (t) {
-                t.tid.should.equal(4);
-                t.abbrev.should.equal("CIN");
-                t.gp.should.equal(10);
-                t.fg.should.equal(5);
-                t.fgp.should.equal(50);
-                Object.keys(t).should.have.length(5);
+                assert.equal(t.tid, 4);
+                assert.equal(t.abbrev, "CIN");
+                assert.equal(t.gp, 10);
+                assert.equal(t.fg, 5);
+                assert.equal(t.fgp, 50);
+                assert.equal(Object.keys(t).length, 5);
             });
         });
         it("should return requested info if tid/season match, even when no stats requested", function () {
@@ -163,11 +164,11 @@ describe("core/team", function () {
                 tid: 4,
                 season: g.season
             }).then(function (t) {
-                t.tid.should.equal(4);
-                t.abbrev.should.equal("CIN");
-                t.season.should.equal(g.season);
-                t.won.should.equal(0);
-                Object.keys(t).should.have.length(4);
+                assert.equal(t.tid, 4);
+                assert.equal(t.abbrev, "CIN");
+                assert.equal(t.season, g.season);
+                assert.equal(t.won, 0);
+                assert.equal(Object.keys(t).length, 4);
             });
         });
         it("should return season totals is options.totals is true", function () {
@@ -177,10 +178,10 @@ describe("core/team", function () {
                 season: g.season,
                 totals: true
             }).then(function (t) {
-                t.gp.should.equal(10);
-                t.fg.should.equal(50);
-                t.fga.should.equal(100);
-                t.fgp.should.equal(50);
+                assert.equal(t.gp, 10);
+                assert.equal(t.fg, 50);
+                assert.equal(t.fga, 100);
+                assert.equal(t.fgp, 50);
             });
         });
         it("should return playoff stats if options.playoffs is true", function () {
@@ -190,10 +191,10 @@ describe("core/team", function () {
                 season: g.season,
                 playoffs: true
             }).then(function (t) {
-                t.gp.should.equal(4);
-                t.fg.should.equal(3);
-                t.fga.should.equal(30);
-                t.fgp.should.equal(10);
+                assert.equal(t.gp, 4);
+                assert.equal(t.fg, 3);
+                assert.equal(t.fga, 30);
+                assert.equal(t.fgp, 10);
             });
         });
         it("should use supplied IndexedDB transaction", function () {
@@ -205,11 +206,11 @@ describe("core/team", function () {
                 season: g.season,
                 ot: tx
             }).then(function (t) {
-                t.tid.should.equal(4);
-                t.abbrev.should.equal("CIN");
-                t.season.should.equal(g.season);
-                t.won.should.equal(0);
-                Object.keys(t).should.have.length(4);
+                assert.equal(t.tid, 4);
+                assert.equal(t.abbrev, "CIN");
+                assert.equal(t.season, g.season);
+                assert.equal(t.won, 0);
+                assert.equal(Object.keys(t).length, 4);
 
                 // If another transaction was used inside team.filter besides tx, this will cause an error because the transaction will no longer be active
                 return dao.players.get({ot: tx, key: 0});
@@ -221,10 +222,10 @@ describe("core/team", function () {
                 tid: 4,
                 playoffs: true
             }).then(function (t) {
-                t.stats[0].gp.should.equal(4);
-                t.stats[0].fg.should.equal(3);
-                t.stats[0].fga.should.equal(30);
-                t.stats[0].fgp.should.equal(10);
+                assert.equal(t.stats[0].gp, 4);
+                assert.equal(t.stats[0].fg, 3);
+                assert.equal(t.stats[0].fga, 30);
+                assert.equal(t.stats[0].fgp, 10);
             });
         });
     });
@@ -288,7 +289,7 @@ describe("core/team", function () {
             return removeTen(5).then(function () {
                 // Confirm roster size under limit
                 return dao.players.count({index: "tid", key: 5}).then(function (numPlayers) {
-                    numPlayers.should.equal(4);
+                    assert.equal(numPlayers, 4);
                 });
             }).then(function () {
                 return team.checkRosterSizes().then(function (userTeamSizeError) {
@@ -297,7 +298,7 @@ describe("core/team", function () {
             }).then(function () {
                 // Confirm players added up to limit
                 return dao.players.count({index: "tid", key: 5}).then(function (numPlayers) {
-                    numPlayers.should.equal(g.minRosterSize);
+                    assert.equal(numPlayers, g.minRosterSize);
                 });
             });
         });
@@ -305,13 +306,13 @@ describe("core/team", function () {
             return addTen(8).then(function () {
                 // Confirm roster size over limit
                 return dao.players.count({index: "tid", key: 8}).then(function (numPlayers) {
-                    numPlayers.should.equal(24);
+                    assert.equal(numPlayers, 24);
                 });
             }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
                 // Confirm no error message and roster size pruned to limit
                 should.equal(userTeamSizeError, null);
                 return dao.players.count({index: "tid", key: 8}).then(function (numPlayers) {
-                    numPlayers.should.equal(15);
+                    assert.equal(numPlayers, 15);
                 });
             });
         });
@@ -319,15 +320,15 @@ describe("core/team", function () {
             return removeTen(g.userTid).then(function () {
                 // Confirm roster size under limit
                 return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
-                    numPlayers.should.equal(4);
+                    assert.equal(numPlayers, 4);
                 });
             }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
                 // Confirm roster size errora nd no auto-signing of players
-                userTeamSizeError.should.be.a("string");
-                userTeamSizeError.should.contain("less");
-                userTeamSizeError.should.contain("minimum");
+                assert.equal(typeof userTeamSizeError, "string");
+                assert(userTeamSizeError.indexOf("less") >= 0);
+                assert(userTeamSizeError.indexOf("minimum") >= 0);
                 return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
-                    numPlayers.should.equal(4);
+                    assert.equal(numPlayers, 4);
                 });
             });
         });
@@ -337,15 +338,15 @@ describe("core/team", function () {
             }).then(function () {
                 // Confirm roster size over limit
                 return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
-                    numPlayers.should.equal(24);
+                    assert.equal(numPlayers, 24);
                 });
             }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
                 // Confirm roster size error and no auto-release of players
-                userTeamSizeError.should.be.a("string");
-                userTeamSizeError.should.contain("more");
-                userTeamSizeError.should.contain("maximum");
+                assert.equal(typeof userTeamSizeError, "string");
+                assert(userTeamSizeError.indexOf("more") >= 0);
+                assert(userTeamSizeError.indexOf("maximum") >= 0);
                 return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
-                    numPlayers.should.equal(24);
+                    assert.equal(numPlayers, 24);
                 });
             });
         });

@@ -5,6 +5,7 @@
 /*eslint comma-spacing: 0, key-spacing: 0, no-unused-expressions: 0*/
 'use strict';
 
+var assert = require('assert');
 var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
@@ -32,7 +33,7 @@ describe("util/account", function () {
             dao.playoffSeries.put({ot: tx, value: ps});
             return tx.complete().then(function () {
                 return account.checkAchievement.fo_fo_fo(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             });
         });
@@ -46,7 +47,7 @@ describe("util/account", function () {
             dao.playoffSeries.put({ot: tx, value: ps});
             return tx.complete().then(function () {
                 return account.checkAchievement.fo_fo_fo(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -60,7 +61,7 @@ describe("util/account", function () {
             dao.playoffSeries.put({ot: tx, value: ps});
             return tx.complete().then(function () {
                 return account.checkAchievement.fo_fo_fo(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -71,7 +72,7 @@ describe("util/account", function () {
             return account.checkAchievement.septuawinarian(false).then(function (awarded) {
                 var tx;
 
-                awarded.should.be.false;
+                assert.equal(awarded, false);
 
                 tx = dao.tx("teams", "readwrite");
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
@@ -82,7 +83,7 @@ describe("util/account", function () {
                 return tx.complete();
             }).then(function () {
                 return account.checkAchievement.septuawinarian(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             });
         });
@@ -105,7 +106,7 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement["98_degrees"](false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             });
         });
@@ -123,7 +124,7 @@ describe("util/account", function () {
                 return account.checkAchievement["98_degrees"](false).then(function (awarded) {
                     var tx;
 
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
 
                     tx = dao.tx("teams", "readwrite");
                     dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
@@ -136,7 +137,7 @@ describe("util/account", function () {
                 });
             }).then(function () {
                 return account.checkAchievement["98_degrees"](false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -156,7 +157,7 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement["98_degrees"](false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -165,14 +166,14 @@ describe("util/account", function () {
     describe("#checkAchievement.dynasty*()", function () {
         it("should gracefully handle case where not enough seasons are present", function () {
             return account.checkAchievement.dynasty(false).then(function (awarded) {
-                awarded.should.be.false;
+                assert.equal(awarded, false);
 
                 return account.checkAchievement.dynasty_2(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -191,15 +192,15 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty_2(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             }).then(function () {
                 var tx;
@@ -217,15 +218,15 @@ describe("util/account", function () {
                 return tx.complete();
             }).then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty_2(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -242,15 +243,15 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty_2(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -271,15 +272,15 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty_2(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             });
         });
@@ -296,15 +297,15 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty_2(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty_3(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             });
         });
@@ -324,11 +325,11 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             }).then(function () {
                 return account.checkAchievement.moneyball_2(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             });
         });
@@ -343,11 +344,11 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             }).then(function () {
                 return account.checkAchievement.moneyball_2(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -363,11 +364,11 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             }).then(function () {
                 return account.checkAchievement.moneyball_2(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -382,11 +383,11 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             }).then(function () {
                 return account.checkAchievement.moneyball_2(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -403,7 +404,7 @@ describe("util/account", function () {
             dao.awards.put({ot: tx, value: awards});
             return tx.complete().then(function () {
                 return account.checkAchievement.hardware_store(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             });
         });
@@ -417,7 +418,7 @@ describe("util/account", function () {
             dao.awards.put({ot: tx, value: awards});
             return tx.complete().then(function () {
                 return account.checkAchievement.hardware_store(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -431,7 +432,7 @@ describe("util/account", function () {
             dao.awards.put({ot: tx, value: awards});
             return tx.complete().then(function () {
                 return account.checkAchievement.hardware_store(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -450,7 +451,7 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.small_market(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             });
         });
@@ -466,7 +467,7 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.small_market(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -482,7 +483,7 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.small_market(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -493,7 +494,7 @@ describe("util/account", function () {
             return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
                 var awards, tx;
 
-                awarded.should.be.false;
+                assert.equal(awarded, false);
 
                 tx = dao.tx(["awards", "players"], "readwrite");
 
@@ -515,7 +516,7 @@ describe("util/account", function () {
                 return tx.complete();
             }).then(function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
-                    awarded.should.be.true;
+                    assert.equal(awarded, true);
                 });
             });
         });
@@ -530,7 +531,7 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -546,7 +547,7 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -562,7 +563,7 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -578,7 +579,7 @@ describe("util/account", function () {
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });
@@ -599,7 +600,7 @@ describe("util/account", function () {
 
             return tx.complete().then(function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
-                    awarded.should.be.false;
+                    assert.equal(awarded, false);
                 });
             });
         });

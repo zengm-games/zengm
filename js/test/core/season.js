@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var assert = require('assert');
 var g = require('../../globals');
 var season = require('../../core/season');
 var helpers = require('../../util/helpers');
@@ -14,7 +15,7 @@ var defaultTeams = helpers.getTeamsDefault();
 describe("core/season", function () {
     describe("#newSchedule()", function () {
         it("should schedule 1230 games (82 each for 30 teams)", function () {
-            season.newSchedule(defaultTeams).length.should.equal(1230);
+            assert.equal(season.newSchedule(defaultTeams).length, 1230);
         });
         it("should schedule 41 home games and 41 away games for each team", function () {
             var away, home, i, tids;
@@ -30,8 +31,8 @@ describe("core/season", function () {
             }
 
             for (i = 0; i < g.numTeams; i++) {
-                home[i].should.equal(41);
-                away[i].should.equal(41);
+                assert.equal(home[i], 41);
+                assert.equal(away[i], 41);
             }
         });
         it("should schedule each team one home game against every team in the other conference", function () {
@@ -53,8 +54,8 @@ describe("core/season", function () {
             }
 
             for (i = 0; i < g.numTeams; i++) {
-                testHelpers.numInArrayEqualTo(home[i], 0).should.equal(15);
-                testHelpers.numInArrayEqualTo(home[i], 1).should.equal(15);
+                assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 15);
+                assert.equal(testHelpers.numInArrayEqualTo(home[i], 1), 15);
             }
         });
         it("should schedule each team two home games against every team in the same division", function () {
@@ -76,8 +77,8 @@ describe("core/season", function () {
             }
 
             for (i = 0; i < g.numTeams; i++) {
-                testHelpers.numInArrayEqualTo(home[i], 0).should.equal(26);
-                testHelpers.numInArrayEqualTo(home[i], 2).should.equal(4);
+                assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 26);
+                assert.equal(testHelpers.numInArrayEqualTo(home[i], 2), 4);
             }
         });
         it("should schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)", function () {
@@ -99,9 +100,9 @@ describe("core/season", function () {
             }
 
             for (i = 0; i < g.numTeams; i++) {
-                testHelpers.numInArrayEqualTo(home[i], 0).should.equal(20);
-                testHelpers.numInArrayEqualTo(home[i], 1).should.equal(2);
-                testHelpers.numInArrayEqualTo(home[i], 2).should.equal(8);
+                assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 20);
+                assert.equal(testHelpers.numInArrayEqualTo(home[i], 1), 2);
+                assert.equal(testHelpers.numInArrayEqualTo(home[i], 2), 8);
             }
         });
     });

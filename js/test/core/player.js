@@ -5,6 +5,7 @@
 /*eslint no-unused-expressions: 0*/
 'use strict';
 
+var assert = require('assert');
 var g = require('../../globals');
 var player = require('../../core/player');
 var _ = require('../underscore');
@@ -33,16 +34,16 @@ describe("core/player", function () {
             var p;
 
             p = player.generate(-2, 19, "", 25, 55, 2012, false, 15.5);
-            p.stats.length.should.equal(0);
+            assert.equal(p.stats.length, 0);
 
             p = player.generate(-1, 19, "", 25, 55, 2012, false, 15.5);
-            p.stats.length.should.equal(0);
+            assert.equal(p.stats.length, 0);
 
             p = player.generate(0, 19, "", 25, 55, 2012, false, 15.5);
-            p.stats.length.should.equal(1);
+            assert.equal(p.stats.length, 1);
 
             p = player.generate(15, 19, "", 25, 55, 2012, false, 15.5);
-            p.stats.length.should.equal(1);
+            assert.equal(p.stats.length, 1);
         });
     });
 
@@ -118,7 +119,7 @@ describe("core/player", function () {
                 ewa: 4.1
             }];
 
-            player.madeHof(p).should.be.false;
+            assert.equal(player.madeHof(p), false);
         });
     });
 
@@ -166,21 +167,21 @@ describe("core/player", function () {
                 season: 2012
             });
 
-            pf.tid.should.equal(4);
-            pf.awards.should.have.length(0);
-            pf.ratings.season.should.equal(2012);
-            pf.ratings.ovr.should.be.a("number");
-            Object.keys(pf.ratings).should.have.length(2);
-            pf.stats.season.should.equal(2012);
-            pf.stats.abbrev.should.equal("CIN");
-            pf.stats.fg.should.be.a("number");
-            pf.stats.fgp.should.be.a("number");
-            pf.stats.per.should.be.a("number");
-            Object.keys(pf.stats).should.have.length(5);
+            assert.equal(pf.tid, 4);
+            assert.equal(pf.awards.length, 0);
+            assert.equal(pf.ratings.season, 2012);
+            assert.equal(typeof pf.ratings.ovr, "number");
+            assert.equal(Object.keys(pf.ratings).length, 2);
+            assert.equal(pf.stats.season, 2012);
+            assert.equal(pf.stats.abbrev, "CIN");
+            assert.equal(typeof pf.stats.fg, "number");
+            assert.equal(typeof pf.stats.fgp, "number");
+            assert.equal(typeof pf.stats.per, "number");
+            assert.equal(Object.keys(pf.stats).length, 5);
 
-            pf.hasOwnProperty("statsPlayoffs").should.equal(false);
-            pf.hasOwnProperty("careerStats").should.equal(false);
-            pf.hasOwnProperty("careerStatsPlayoffs").should.equal(false);
+            assert(!pf.hasOwnProperty("statsPlayoffs"));
+            assert(!pf.hasOwnProperty("careerStats"));
+            assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
         });
         it("should return requested info if tid/season match for an array of player objects", function () {
             var i, pf;
@@ -194,21 +195,21 @@ describe("core/player", function () {
             });
 
             for (i = 0; i < 2; i++) {
-                pf[i].tid.should.equal(4);
-                pf[i].awards.should.have.length(0);
-                pf[i].ratings.season.should.equal(2012);
-                pf[i].ratings.ovr.should.be.a("number");
-                Object.keys(pf[i].ratings).should.have.length(2);
-                pf[i].stats.season.should.equal(2012);
-                pf[i].stats.abbrev.should.equal("CIN");
-                pf[i].stats.fg.should.be.a("number");
-                pf[i].stats.fgp.should.be.a("number");
-                pf[i].stats.per.should.be.a("number");
-                Object.keys(pf[i].stats).should.have.length(5);
+                assert.equal(pf[i].tid, 4);
+                assert.equal(pf[i].awards.length, 0);
+                assert.equal(pf[i].ratings.season, 2012);
+                assert.equal(typeof pf[i].ratings.ovr, "number");
+                assert.equal(Object.keys(pf[i].ratings).length, 2);
+                assert.equal(pf[i].stats.season, 2012);
+                assert.equal(pf[i].stats.abbrev, "CIN");
+                assert.equal(typeof pf[i].stats.fg, "number");
+                assert.equal(typeof pf[i].stats.fgp, "number");
+                assert.equal(typeof pf[i].stats.per, "number");
+                assert.equal(Object.keys(pf[i].stats).length, 5);
 
-                pf[i].hasOwnProperty("statsPlayoffs").should.equal(false);
-                pf[i].hasOwnProperty("careerStats").should.equal(false);
-                pf[i].hasOwnProperty("careerStatsPlayoffs").should.equal(false);
+                assert(!pf[i].hasOwnProperty("statsPlayoffs"));
+                assert(!pf[i].hasOwnProperty("careerStats"));
+                assert(!pf[i].hasOwnProperty("careerStatsPlayoffs"));
             }
         });
         it("should return requested info if tid/season match, even when no attrs requested", function () {
@@ -221,19 +222,19 @@ describe("core/player", function () {
                 season: 2012
             });
 
-            pf.ratings.season.should.equal(2012);
-            pf.ratings.ovr.should.be.a("number");
-            Object.keys(pf.ratings).should.have.length(2);
-            pf.stats.season.should.equal(2012);
-            pf.stats.abbrev.should.equal("CIN");
-            pf.stats.fg.should.be.a("number");
-            pf.stats.fgp.should.be.a("number");
-            pf.stats.per.should.be.a("number");
-            Object.keys(pf.stats).should.have.length(5);
+            assert.equal(pf.ratings.season, 2012);
+            assert.equal(typeof pf.ratings.ovr, "number");
+            assert.equal(Object.keys(pf.ratings).length, 2);
+            assert.equal(pf.stats.season, 2012);
+            assert.equal(pf.stats.abbrev, "CIN");
+            assert.equal(typeof pf.stats.fg, "number");
+            assert.equal(typeof pf.stats.fgp, "number");
+            assert.equal(typeof pf.stats.per, "number");
+            assert.equal(Object.keys(pf.stats).length, 5);
 
-            pf.hasOwnProperty("statsPlayoffs").should.equal(false);
-            pf.hasOwnProperty("careerStats").should.equal(false);
-            pf.hasOwnProperty("careerStatsPlayoffs").should.equal(false);
+            assert(!pf.hasOwnProperty("statsPlayoffs"));
+            assert(!pf.hasOwnProperty("careerStats"));
+            assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
         });
         it("should return requested info if tid/season match, even when no ratings requested", function () {
             var pf;
@@ -245,19 +246,19 @@ describe("core/player", function () {
                 season: 2012
             });
 
-            pf.tid.should.equal(4);
-            pf.awards.should.have.length(0);
-            pf.hasOwnProperty("ratings").should.equal(false);
-            pf.stats.season.should.equal(2012);
-            pf.stats.abbrev.should.equal("CIN");
-            pf.stats.fg.should.be.a("number");
-            pf.stats.fgp.should.be.a("number");
-            pf.stats.per.should.be.a("number");
-            Object.keys(pf.stats).should.have.length(5);
+            assert.equal(pf.tid, 4);
+            assert.equal(pf.awards.length, 0);
+            assert(!pf.hasOwnProperty("ratings"));
+            assert.equal(pf.stats.season, 2012);
+            assert.equal(pf.stats.abbrev, "CIN");
+            assert.equal(typeof pf.stats.fg, "number");
+            assert.equal(typeof pf.stats.fgp, "number");
+            assert.equal(typeof pf.stats.per, "number");
+            assert.equal(Object.keys(pf.stats).length, 5);
 
-            pf.hasOwnProperty("statsPlayoffs").should.equal(false);
-            pf.hasOwnProperty("careerStats").should.equal(false);
-            pf.hasOwnProperty("careerStatsPlayoffs").should.equal(false);
+            assert(!pf.hasOwnProperty("statsPlayoffs"));
+            assert(!pf.hasOwnProperty("careerStats"));
+            assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
         });
         it("should return requested info if tid/season match, even when no stats requested", function () {
             var pf;
@@ -269,16 +270,16 @@ describe("core/player", function () {
                 season: 2012
             });
 
-            pf.tid.should.equal(4);
-            pf.awards.should.have.length(0);
-            pf.ratings.season.should.equal(2012);
-            pf.ratings.ovr.should.be.a("number");
-            Object.keys(pf.ratings).should.have.length(2);
-            pf.hasOwnProperty("stats").should.equal(false);
+            assert.equal(pf.tid, 4);
+            assert.equal(pf.awards.length, 0);
+            assert.equal(pf.ratings.season, 2012);
+            assert.equal(typeof pf.ratings.ovr, "number");
+            assert.equal(Object.keys(pf.ratings).length, 2);
+            assert(!pf.hasOwnProperty("stats"));
 
-            pf.hasOwnProperty("statsPlayoffs").should.equal(false);
-            pf.hasOwnProperty("careerStats").should.equal(false);
-            pf.hasOwnProperty("careerStatsPlayoffs").should.equal(false);
+            assert(!pf.hasOwnProperty("statsPlayoffs"));
+            assert(!pf.hasOwnProperty("careerStats"));
+            assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
         });
         it("should return undefined if tid does not match any on record", function () {
             var pf;
@@ -291,7 +292,7 @@ describe("core/player", function () {
                 season: 2012
             });
 
-            (typeof pf).should.equal("undefined");
+            assert.equal((typeof pf), "undefined");
         });
         it("should return undefined if season does not match any on record", function () {
             var pf;
@@ -304,7 +305,7 @@ describe("core/player", function () {
                 season: 2014
             });
 
-            (typeof pf).should.equal("undefined");
+            assert.equal((typeof pf), "undefined");
         });
         it("should return season totals is options.totals is true, and per-game averages otherwise", function () {
             var pf;
@@ -315,16 +316,16 @@ describe("core/player", function () {
                 season: 2012,
                 totals: true
             });
-            pf.stats.gp.should.equal(5);
-            pf.stats.fg.should.equal(20);
+            assert.equal(pf.stats.gp, 5);
+            assert.equal(pf.stats.fg, 20);
 
             pf = player.filter(p, {
                 stats: ["gp", "fg"],
                 tid: 4,
                 season: 2012
             });
-            pf.stats.gp.should.equal(5);
-            pf.stats.fg.should.equal(4);
+            assert.equal(pf.stats.gp, 5);
+            assert.equal(pf.stats.fg, 4);
         });
         it("should return stats and statsPlayoffs if options.playoffs is true", function () {
             var pf;
@@ -335,10 +336,10 @@ describe("core/player", function () {
                 season: 2012,
                 playoffs: true
             });
-            pf.stats.gp.should.equal(5);
-            pf.stats.fg.should.equal(4);
-            pf.statsPlayoffs.gp.should.equal(3);
-            pf.statsPlayoffs.fg.should.equal(10);
+            assert.equal(pf.stats.gp, 5);
+            assert.equal(pf.stats.fg, 4);
+            assert.equal(pf.statsPlayoffs.gp, 3);
+            assert.equal(pf.statsPlayoffs.fg, 10);
         });
         it("should not return undefined with options.showNoStats even if tid does not match any on record", function () {
             var pf;
@@ -349,7 +350,7 @@ describe("core/player", function () {
                 season: 2012,
                 showNoStats: true
             });
-            (typeof pf).should.equal("object");
+            assert.equal((typeof pf), "object");
         });
         it("should return undefined with options.showNoStats if season does not match any on record", function () {
             var pf;
@@ -360,7 +361,7 @@ describe("core/player", function () {
                 season: 2015,
                 showNoStats: true
             });
-            (typeof pf).should.equal("undefined");
+            assert.equal((typeof pf), "undefined");
         });
         it("should not return undefined with options.showRookies if the player was drafted this season", function () {
             var pf;
@@ -372,7 +373,7 @@ describe("core/player", function () {
                 season: 2011,
                 showRookies: true
             });
-            (typeof pf).should.equal("object");
+            assert.equal((typeof pf), "object");
 
             g.season = 2015;
             pf = player.filter(p, {
@@ -381,7 +382,7 @@ describe("core/player", function () {
                 season: 2011,
                 showRookies: true
             });
-            (typeof pf).should.equal("undefined");
+            assert.equal((typeof pf), "undefined");
 
             g.season = 2012;
         });
@@ -394,7 +395,7 @@ describe("core/player", function () {
                 season: 2012,
                 fuzz: false
             });
-            pf.ratings.ovr.should.equal(p.ratings[1].ovr);
+            assert.equal(pf.ratings.ovr, p.ratings[1].ovr);
 
             pf = player.filter(p, {
                 ratings: ["ovr"],
@@ -403,7 +404,7 @@ describe("core/player", function () {
                 fuzz: true
             });
             // This will break if ovr + fuzz is over 100 (should check bounds), but that never happens in practice
-            pf.ratings.ovr.should.equal(Math.round(p.ratings[1].ovr + p.ratings[1].fuzz));
+            assert.equal(pf.ratings.ovr, Math.round(p.ratings[1].ovr + p.ratings[1].fuzz));
         });
         it("should return stats from previous season if options.oldStats is true and current season has no stats record", function () {
             var pf;
@@ -416,8 +417,8 @@ describe("core/player", function () {
                 season: 2013,
                 oldStats: true
             });
-            pf.stats.gp.should.equal(8);
-            pf.stats.fg.should.equal(7);
+            assert.equal(pf.stats.gp, 8);
+            assert.equal(pf.stats.fg, 7);
 
             g.season = 2014;
 
@@ -427,8 +428,8 @@ describe("core/player", function () {
                 season: 2014,
                 oldStats: true
             });
-            pf.stats.gp.should.equal(8);
-            pf.stats.fg.should.equal(7);
+            assert.equal(pf.stats.gp, 8);
+            assert.equal(pf.stats.fg, 7);
 
             pf = player.filter(p, {
                 stats: ["gp", "fg"],
@@ -436,7 +437,7 @@ describe("core/player", function () {
                 season: 2014,
                 oldStats: false
             });
-            (typeof pf).should.equal("undefined");
+            assert.equal((typeof pf), "undefined");
 
             g.season = 2012;
         });
@@ -451,7 +452,7 @@ describe("core/player", function () {
                 season: 2012,
                 numGamesRemaining: 82
             });
-            pf.cashOwed.should.equal(p.contract.amount * 2 / 1000);
+            assert.equal(pf.cashOwed, p.contract.amount * 2 / 1000);
 
             pf = player.filter(p, {
                 attrs: ["cashOwed"],
@@ -459,7 +460,7 @@ describe("core/player", function () {
                 season: 2012,
                 numGamesRemaining: 41
             });
-            pf.cashOwed.should.equal(p.contract.amount * 1.5 / 1000);
+            assert.equal(pf.cashOwed, p.contract.amount * 1.5 / 1000);
 
             pf = player.filter(p, {
                 attrs: ["cashOwed"],
@@ -467,7 +468,7 @@ describe("core/player", function () {
                 season: 2012,
                 numGamesRemaining: 0
             });
-            pf.cashOwed.should.equal(p.contract.amount / 1000);
+            assert.equal(pf.cashOwed, p.contract.amount / 1000);
         });
         it("should return stats and ratings from all seasons and teams if no season or team is specified", function () {
             var pf;
@@ -479,24 +480,24 @@ describe("core/player", function () {
                 totals: true
             });
 
-            pf.tid.should.equal(4);
-            pf.awards.should.have.length(0);
-            pf.ratings[0].season.should.equal(2011);
-            pf.ratings[0].ovr.should.be.a("number");
-            pf.ratings[1].season.should.equal(2012);
-            pf.ratings[1].ovr.should.be.a("number");
-            pf.ratings[2].season.should.equal(2013);
-            pf.ratings[2].ovr.should.be.a("number");
-            pf.stats[0].season.should.equal(2012);
-            pf.stats[0].abbrev.should.equal("CIN");
-            pf.stats[0].fg.should.equal(20);
-            pf.stats[1].season.should.equal(2013);
-            pf.stats[1].abbrev.should.equal("ATL");
-            pf.stats[1].fg.should.equal(56);
-            pf.careerStats.fg.should.equal(76);
+            assert.equal(pf.tid, 4);
+            assert.equal(pf.awards.length, 0);
+            assert.equal(pf.ratings[0].season, 2011);
+            assert.equal(typeof pf.ratings[0].ovr, "number");
+            assert.equal(pf.ratings[1].season, 2012);
+            assert.equal(typeof pf.ratings[1].ovr, "number");
+            assert.equal(pf.ratings[2].season, 2013);
+            assert.equal(typeof pf.ratings[2].ovr, "number");
+            assert.equal(pf.stats[0].season, 2012);
+            assert.equal(pf.stats[0].abbrev, "CIN");
+            assert.equal(pf.stats[0].fg, 20);
+            assert.equal(pf.stats[1].season, 2013);
+            assert.equal(pf.stats[1].abbrev, "ATL");
+            assert.equal(pf.stats[1].fg, 56);
+            assert.equal(pf.careerStats.fg, 76);
 
-            pf.hasOwnProperty("statsPlayoffs").should.equal(false);
-            pf.hasOwnProperty("careerStatsPlayoffs").should.equal(false);
+            assert(!pf.hasOwnProperty("statsPlayoffs"));
+            assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
         });
         it("should return stats and ratings from all seasons with a specific team if no season is specified but a team is", function () {
             var pf;
@@ -509,19 +510,19 @@ describe("core/player", function () {
                 totals: true
             });
 
-            pf.tid.should.equal(4);
-            pf.awards.should.have.length(0);
-            pf.ratings[0].season.should.equal(2012);
-            pf.ratings[0].ovr.should.be.a("number");
-            pf.ratings.should.have.length(1);
-            pf.stats[0].season.should.equal(2012);
-            pf.stats[0].abbrev.should.equal("CIN");
-            pf.stats[0].fg.should.equal(20);
-            pf.stats.should.have.length(1);
-            pf.careerStats.fg.should.equal(20);
+            assert.equal(pf.tid, 4);
+            assert.equal(pf.awards.length, 0);
+            assert.equal(pf.ratings[0].season, 2012);
+            assert.equal(typeof pf.ratings[0].ovr, "number");
+            assert.equal(pf.ratings.length, 1);
+            assert.equal(pf.stats[0].season, 2012);
+            assert.equal(pf.stats[0].abbrev, "CIN");
+            assert.equal(pf.stats[0].fg, 20);
+            assert.equal(pf.stats.length, 1);
+            assert.equal(pf.careerStats.fg, 20);
 
-            pf.hasOwnProperty("statsPlayoffs").should.equal(false);
-            pf.hasOwnProperty("careerStatsPlayoffs").should.equal(false);
+            assert(!pf.hasOwnProperty("statsPlayoffs"));
+            assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
         });
     });
 });

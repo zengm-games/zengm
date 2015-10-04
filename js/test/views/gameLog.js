@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var assert = require('assert');
 var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
@@ -12,15 +13,15 @@ var $ = require('../lib/jquery');
 var gameLog = require('../../views/gameLog');
 
 function confirmNotBuilt() {
-    should.not.exist(document.getElementById("game-log-dropdown"));
-    should.not.exist(document.getElementById("box-score"));
-    should.not.exist(document.getElementById("game-log-list"));
+    assert(!document.getElementById("game-log-dropdown"));
+    assert(!document.getElementById("box-score"));
+    assert(!document.getElementById("game-log-list"));
 }
 
 function confirmBuilt() {
-    should.exist(document.getElementById("game-log-dropdown"));
-    should.exist(document.getElementById("box-score"));
-    should.exist(document.getElementById("game-log-list"));
+    assert(document.getElementById("game-log-dropdown"));
+    assert(document.getElementById("box-score"));
+    assert(document.getElementById("game-log-list"));
 }
 
 function addFakeGame(tx, gid) {
@@ -96,9 +97,9 @@ describe("views/gameLog", function () {
                 document.getElementById("box-score").innerHTML = "fuck";
                 document.getElementById("game-log-list").innerHTML = "cunt";
                 gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], function () {
-                    document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
-                    document.getElementById("box-score").innerHTML.should.equal("fuck");
-                    document.getElementById("game-log-list").innerHTML.should.equal("cunt");
+                    assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
+                    assert.equal(document.getElementById("box-score").innerHTML, "fuck");
+                    assert.equal(document.getElementById("game-log-list").innerHTML, "cunt");
                     done();
                 });
             });
@@ -113,9 +114,9 @@ describe("views/gameLog", function () {
                 document.getElementById("box-score").innerHTML = "fuck";
                 document.getElementById("game-log-list").innerHTML = "cunt";
                 gameLog.update({abbrev: "CHI", season: g.season, gid: 5}, [], function () {
-                    document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
-                    document.getElementById("box-score").innerHTML.should.not.equal("fuck");
-                    document.getElementById("game-log-list").innerHTML.should.equal("cunt");
+                    assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
+                    assert.notEqual(document.getElementById("box-score").innerHTML, "fuck");
+                    assert.equal(document.getElementById("game-log-list").innerHTML, "cunt");
                     done();
                 });
             });
@@ -127,11 +128,11 @@ describe("views/gameLog", function () {
 
                 document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                 document.getElementById("box-score").innerHTML = "fuck";
-                document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(11);
+                assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 11);
                 gameLog.update({abbrev: "BOS", season: g.season, gid: 3}, [], function () {
-                    document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
-                    document.getElementById("box-score").innerHTML.should.equal("fuck");
-                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(1);
+                    assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
+                    assert.equal(document.getElementById("box-score").innerHTML, "fuck");
+                    assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 1);
                     done();
                 });
             });
@@ -143,11 +144,11 @@ describe("views/gameLog", function () {
 
                 document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                 document.getElementById("box-score").innerHTML = "fuck";
-                document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(11);
+                assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 11);
                 gameLog.update({abbrev: "ATL", season: g.season + 1, gid: 3}, [], function () {
-                    document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
-                    document.getElementById("box-score").innerHTML.should.equal("fuck");
-                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(1);
+                    assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
+                    assert.equal(document.getElementById("box-score").innerHTML, "fuck");
+                    assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 1);
                     done();
                 });
             });
@@ -160,11 +161,11 @@ describe("views/gameLog", function () {
                 document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                 document.getElementById("box-score").innerHTML = "fuck";
 
-                document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(11);
+                assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 11);
                 gameLog.update({abbrev: "BOS", season: g.season + 1, gid: 3}, [], function () {
-                    document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
-                    document.getElementById("box-score").innerHTML.should.not.equal("fuck");
-                    document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(1);
+                    assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
+                    assert.notEqual(document.getElementById("box-score").innerHTML, "fuck");
+                    assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 1);
                     done();
                 });
             });
@@ -178,7 +179,7 @@ describe("views/gameLog", function () {
 
                 document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                 document.getElementById("box-score").innerHTML = "fuck";
-                document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(11);
+                assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 11);
 
                 // Remove  a row, to make sure that the old games will not be subsequently updated
                 child = document.getElementById("game-log-list").querySelector("tbody tr");
@@ -191,9 +192,9 @@ describe("views/gameLog", function () {
                 }
                 tx.complete().then(function () {
                         gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, ["gameSim"], function () {
-                        document.getElementById("game-log-dropdown-seasons").dataset.dummy.should.equal("shit");
-                        document.getElementById("box-score").innerHTML.should.equal("fuck");
-                        document.getElementById("game-log-list").querySelectorAll("tbody tr").should.have.length(20);
+                        assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
+                        assert.equal(document.getElementById("box-score").innerHTML, "fuck");
+                        assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 20);
                         done();
                     });
                 };

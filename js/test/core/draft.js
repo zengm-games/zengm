@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var assert = require('assert');
 var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
@@ -31,12 +32,12 @@ describe("core/draft", function () {
 
     testDraftUntilUserOrEnd = function (numNow, numTotal) {
         return draft.untilUserOrEnd().then(function (pids) {
-            pids.length.should.equal(numNow);
+            assert.equal(pids.length, numNow);
             return dao.players.getAll({
                 index: "tid",
                 key: g.PLAYER.UNDRAFTED
             }).then(function (players) {
-                players.length.should.equal(140 - numTotal);
+                assert.equal(players.length, 140 - numTotal);
             });
         });
     };
@@ -46,13 +47,13 @@ describe("core/draft", function () {
             var pick;
 
             pick = draftOrder.shift();
-            pick.round.should.equal(round);
+            assert.equal(pick.round, round);
             if (round === 1) {
-                pick.pick.should.equal(userPick1);
+                assert.equal(pick.pick, userPick1);
             } else {
-                pick.pick.should.equal(userPick2 - 30);
+                assert.equal(pick.pick, userPick2 - 30);
             }
-            pick.tid.should.equal(g.userTid);
+            assert.equal(pick.tid, g.userTid);
 
             return dao.players.get({
                 index: "tid",
@@ -62,7 +63,7 @@ describe("core/draft", function () {
                     return dao.players.get({
                         key: p.pid
                     }).then(function (p2) {
-                        p2.tid.should.equal(g.userTid);
+                        assert.equal(p2.tid, g.userTid);
                         return draft.setOrder(null, draftOrder);
                     });
                 });
@@ -80,7 +81,7 @@ describe("core/draft", function () {
                     index: "draft.year",
                     key: g.season
                 }).then(function (numPlayers) {
-                    numPlayers.should.equal(140); // 70 from original league, 70 from this
+                    assert.equal(numPlayers, 140); // 70 from original league, 70 from this
                 });
             });
         });
@@ -102,7 +103,7 @@ describe("core/draft", function () {
             }).then(function () {
                 return draft.getOrder(tx);
             }).then(function (draftOrder) {
-                draftOrder.length.should.equal(60);
+                assert.equal(draftOrder.length, 60);
                 draftResults = _.pluck(draftOrder, "originalTid");
                 userPick1 = draftResults.indexOf(g.userTid) + 1;
                 userPick2 = draftResults.lastIndexOf(g.userTid) + 1;
@@ -111,8 +112,9 @@ describe("core/draft", function () {
         it("should give the 3 teams with the lowest win percentage picks not lower than 6", function () {
             var tids = [16, 28, 21]; // teams with lowest winp
             for (i = 0; i < tids.length; i++) {
-                draftResults.indexOf(tids[i]).should.be.within(0, i + 3);
-                draftResults.lastIndexOf(tids[i]).should.be.equal(30 + i);
+                assert(draftResults.indexOf(tids[i]) >= 0);
+                assert(draftResults.indexOf(tids[i]) <= i + 3);
+                assert.equal(draftResults.lastIndexOf(tids[i]), 30 + i);
             }
         });
 
@@ -120,13 +122,14 @@ describe("core/draft", function () {
             var pofteams = [23, 10, 18, 24, 14];
 
             // good record lottery team
-            draftResults.indexOf(17).should.be.within(0, 13);
-            draftResults.lastIndexOf(17).should.be.equal(48);
+            assert(draftResults.indexOf(17) >= 0);
+            assert(draftResults.indexOf(17) <= 13);
+            assert.equal(draftResults.lastIndexOf(17), 48);
 
             // bad record playoff team
             for (i = 0; i < pofteams.length; i++) {
-                draftResults.indexOf(pofteams[i]).should.be.above(draftResults.indexOf(17));
-                draftResults.lastIndexOf(pofteams[i]).should.be.below(draftResults.lastIndexOf(17));
+                assert(draftResults.indexOf(pofteams[i]) > draftResults.indexOf(17));
+                assert(draftResults.lastIndexOf(pofteams[i] < draftResults.lastIndexOf(17));
             }
         });
 
@@ -151,9 +154,9 @@ describe("core/draft", function () {
                         r2picks.push(draftResults[j]);
                     }
                 }
-                r1picks.length.should.equal(r2picks.length);
+                assert.equal(r1picks.length, r2picks.length);
                 for (j = 0; j < r1picks.length; j++) {
-                    r1picks[j].should.equal(r2picks[j]);
+                    assert.equal(r1picks[j], r2picks[j]);
                 }
             }
         });
@@ -184,7 +187,7 @@ describe("core/draft", function () {
                         if (value === 0) {
                             value = chances[tids[j]];
                         } else {
-                            value.should.equal(chances[tids[j]]);
+                            assert.equal(value, chances[tids[j]]);
                         }
                     }
                 }
@@ -201,7 +204,7 @@ describe("core/draft", function () {
                             maxIdx = j;
                         }
                     }
-                    maxIdx.should.be.equal(0);
+                    assert.equal(maxIdx, 0);
                 }
             });
         });

@@ -11,12 +11,10 @@ var g = require('../../globals');
 var draft = require('../../core/draft');
 var league = require('../../core/league');
 var team = require('../../core/team');
-var sampleTiebreakers = require('../lib/require.text!test/fixtures/sample_tiebreakers.json');
-var Promise = require('../bluebird');
-var $ = require('../lib/jquery');
-var _ = require('../underscore');
-
-sampleTiebreakers = JSON.parse(sampleTiebreakers);
+var sampleTiebreakers = require('../fixtures/sampleTiebreakers.js');
+var Promise = require('bluebird');
+var $ = require('jquery');
+var _ = require('underscore');
 
 describe("core/draft", function () {
     var testDraftUntilUserOrEnd, testDraftUser, userPick1, userPick2;

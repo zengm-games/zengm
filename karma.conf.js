@@ -6,6 +6,14 @@ module.exports = function (config) {
 
         files: [
             'js/test/app.js',
+            'js/test/core/contractNegotiation.js',
+//            'js/test/core/draft.js',
+            'js/test/core/finances.js',
+            'js/test/core/league.js',
+            'js/test/core/player.js',
+            'js/test/core/season.js',
+//            'js/test/core/team.js',
+            'js/test/core/trade.js',
             'js/test/util/*.js',
             'js/test/views/*.js',
             {pattern: 'js/*.js', included: false},

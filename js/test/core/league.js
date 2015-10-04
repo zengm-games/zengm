@@ -9,7 +9,7 @@ var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
 var league = require('../../core/league');
-var _ = require('../underscore');
+var _ = require('underscore');
 var testHelpers = require('../helpers');
 
 describe("core/league", function () {

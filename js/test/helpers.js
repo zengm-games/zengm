@@ -1,9 +1,4 @@
-/**
- * @name test.helpers
- * @namespace Various utility functions that are only used in tests.
- */
 'use strict';
-
 
    /**
  * Finds the number of times an element appears in an array.

@@ -6,6 +6,20 @@ module.exports = function (config) {
 
         files: [
             'js/test/app.js',
+            'js/test/util/helpers.js',
+            {pattern: 'js/api.js', included: false},
+            {pattern: 'js/app.js', included: false},
+            {pattern: 'js/dao.js', included: false},
+            {pattern: 'js/db.js', included: false},
+            {pattern: 'js/export_3.3.js', included: false},
+            {pattern: 'js/globals.js', included: false},
+            {pattern: 'js/templates.js', included: false},
+            {pattern: 'js/ui.js', included: false},
+            {pattern: 'js/views.js', included: false},
+            {pattern: 'js/dao/*.js', included: false},
+            {pattern: 'js/data/*.js', included: false},
+            {pattern: 'js/lib/bbgm-notifications.js', included: false},
+            {pattern: 'js/util/*.js', included: false},
 //            {pattern: 'js/**/*.js', included: false},
 //            {pattern: 'js/**/*.json', included: false},
 //            {pattern: 'templates/*.html', included: false}
@@ -18,7 +32,7 @@ module.exports = function (config) {
             'js/**/*.js': ['browserify']
         },
 
-        reporters: ['progress'],
+        reporters: ['mocha'],
 
         port: 9876,
 
@@ -33,7 +47,7 @@ module.exports = function (config) {
         singleRun: true,
 
         browserify: {
-          transform: ['browserify-shim', 'brfs']
+            transform: ['browserify-shim', 'brfs']
         }
     });
 };

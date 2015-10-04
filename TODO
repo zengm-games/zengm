@@ -1,5 +1,6 @@
 fix unit tests
-  https://github.com/Nikku/karma-browserify
+  add tests
+  unskip
 
 fix html2canvas, test screenshots
 
@@ -18,6 +19,8 @@ css build process?
 update README
 
 export shit to window, otherwise old require() command line scripts won't work
+
+confirm IE redirect still works
 
 CURRENT
 -------

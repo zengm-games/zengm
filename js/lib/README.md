@@ -1,9 +1,6 @@
 These are various third-party libraries used in Basketball GM. They are all
 standard, except for the following exceptions:
 
-jQuery UI is a custom download including only "sortable" support as the rest
-isn't used.
-
 I commented out the RequireJS stuff in jquery.dataTables.js because it is even
 more annoying to use that way than to just shim it. I also hacked
 jquery.dataTables.js to do some custom stuff when it's wrapped in a

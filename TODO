@@ -1,7 +1,3 @@
-fix unit tests
-  unskip
-  run faster, using watchify somehow maybe
-
 fix html2canvas, test screenshots
 
 lint

@@ -30,6 +30,7 @@ app.get("/gen/*", showStatic);
 app.get("/ico/*", showStatic);
 app.get("/img/*", showStatic);
 app.get("/js/*", showStatic);
+app.get("/node_modules/*", showStatic);
 app.get("/templates/*", showStatic);
 
 app.get("/*", showIndex);

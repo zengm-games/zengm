@@ -61,7 +61,6 @@
     "lib/bootstrap-popover": "./js/lib/bootstrap-popover.js",
     "lib/bootstrap-tooltip": "./js/lib/bootstrap-tooltip.js",
     "lib/bootstrap-transition": "./js/lib/bootstrap-transition.js",
-    "lib/html2canvas": "./js/lib/html2canvas.js",
     "lib/jquery.barGraph": "./js/lib/jquery.barGraph.js",
     "lib/jquery.dataTables": "./js/lib/jquery.dataTables.js",
     "lib/jquery.dataTables.bbgmSorting": "./js/lib/jquery.dataTables.bbgmSorting.js",
@@ -110,9 +109,6 @@
       "depends": [
         "jquery:jQuery"
       ]
-    },
-    "lib/html2canvas": {
-      "exports": "html2canvas"
     },
     "lib/jquery.barGraph": {
       "depends": [

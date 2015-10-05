@@ -34,4 +34,4 @@ being set to transparent.
 Manually modified for CommonJS:
 davis.js
 davis.google_analytics.js
-faces.js
+html2canvas.js

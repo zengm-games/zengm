@@ -1,5 +1,3 @@
-fix html2canvas, test screenshots
-
 add node_modules to non-apache servers, test
 
 stripe stuff

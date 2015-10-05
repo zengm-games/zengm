@@ -5,8 +5,6 @@
   Released under MIT License
 */
 
-(function(window, document, undefined){
-
 "use strict";
 
 var _html2canvas = {},
@@ -2656,7 +2654,7 @@ _html2canvas.Util.Support = function (options, doc) {
     svgRendering: options.svgRendering && supportSVGRendering()
   };
 };
-window.html2canvas = function(elements, opts) {
+var html2canvas = function(elements, opts) {
   elements = (elements.length) ? elements : [elements];
   var queue,
   canvas,
@@ -2733,8 +2731,8 @@ window.html2canvas = function(elements, opts) {
   };
 };
 
-window.html2canvas.log = _html2canvas.Util.log; // for renderers
-window.html2canvas.Renderer = {
+html2canvas.log = _html2canvas.Util.log; // for renderers
+html2canvas.Renderer = {
   Canvas: undefined // We are assuming this will be used
 };
 _html2canvas.Renderer.Canvas = function(options) {
@@ -2866,4 +2864,5 @@ _html2canvas.Renderer.Canvas = function(options) {
     return canvas;
   };
 };
-})(window,document);
+
+module.exports = html2canvas;

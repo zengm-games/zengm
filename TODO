@@ -2,8 +2,6 @@ fix html2canvas, test screenshots
 
 add node_modules to non-apache servers, test
 
-lint
-
 stripe stuff
 
 get rid of debug mode instructions for js errors, but keep for css dev

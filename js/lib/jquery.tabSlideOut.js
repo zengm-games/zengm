@@ -1,8 +1,9 @@
-// Based on tabSlideOUt v1.3 by William Paoli http://wpaoli.building58.com but with cleaned up (and less general) code.
+// Based on tabSlideOut v1.3 by William Paoli http://wpaoli.building58.com but with cleaned up (and less general) code.
+
+'use strict';
+
 /*global jQuery */
 (function ($) {
-    "use strict";
-
     $.fn.tabSlideOut = function (callerSettings) {
         var containerHeight, obj, settings, slideIn, slideOut, tabHeight;
 

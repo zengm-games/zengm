@@ -47,10 +47,11 @@
  *
  *     $.barGraph($("my-plot"), [[1, 5, 2], [5, 3, 1]]);
  */
+
+'use strict';
+
 /*global jQuery */
 (function ($) {
-    "use strict";
-
     // Default scale for bar chart. This finds the max and min values in the data, adds 10% in each direction so you don't end up with tiny slivers, and then expands the upper/lower lims to 0 if 0 wasn't already in the range.
     function defaultYlim(data, stacked) {
         var i, j, max, min, x;

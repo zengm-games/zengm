@@ -1,7 +1,8 @@
 /*global jQuery */
-(function ($) {
-    "use strict";
 
+'use strict';
+
+(function ($) {
     /**
      * Based on http://www.datatables.net/examples/plug-ins/sorting_plugin.html
      *

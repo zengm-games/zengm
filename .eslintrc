@@ -159,6 +159,7 @@
     "globals": {
         "_gaq": true,
         "console": true,
+        "history": true,
         "IDBCursor": true,
         "IDBKeyRange": true,
         "IDBObjectStore": true,

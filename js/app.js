@@ -38,7 +38,7 @@ require('lib/bootstrap-dropdown');
 require('lib/bootstrap-modal');
 require('lib/bootstrap-popover');
 require('./lib/davis.google_analytics');
-require('lib/IndexedDB-getAll-shim');
+require('indexeddb-getall-shim');
 require('lib/jquery.barGraph');
 require('lib/jquery.dataTables');
 require('lib/jquery.dataTables.bbgmSorting');

@@ -1,6 +1,6 @@
 'use strict';
 
-require('lib/IndexedDB-getAll-shim');
+require('indexeddb-getall-shim');
 require('../util/templateHelpers');
 
 mocha.setup({

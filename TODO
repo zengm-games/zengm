@@ -19,7 +19,7 @@ update README
 
 export shit to window, otherwise old require() command line scripts won't work
 
-confirm IE redirect still works
+confirm IE redirect still works (export_3.3)
 
 CI, dep version checking, etc
 

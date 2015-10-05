@@ -25,6 +25,7 @@
   "dependencies": {
     "bluebird": "2.9.27",
     "facesjs": "~1.0.0",
+    "indexeddb-getall-shim": "^1.1.2",
     "jquery": "~2.1.4",
     "jquery-ui": "~1.10.5",
     "jquery-ui-touch-punch": "~0.2.3",
@@ -61,7 +62,6 @@
     "lib/bootstrap-tooltip": "./js/lib/bootstrap-tooltip.js",
     "lib/bootstrap-transition": "./js/lib/bootstrap-transition.js",
     "lib/html2canvas": "./js/lib/html2canvas.js",
-    "lib/IndexedDB-getAll-shim": "./js/lib/IndexedDB-getAll-shim.js",
     "lib/jquery.barGraph": "./js/lib/jquery.barGraph.js",
     "lib/jquery.dataTables": "./js/lib/jquery.dataTables.js",
     "lib/jquery.dataTables.bbgmSorting": "./js/lib/jquery.dataTables.bbgmSorting.js",
@@ -114,7 +114,6 @@
     "lib/html2canvas": {
       "exports": "html2canvas"
     },
-    "lib/IndexedDB-getAll-shim": {},
     "lib/jquery.barGraph": {
       "depends": [
         "lib/bootstrap-tooltip",

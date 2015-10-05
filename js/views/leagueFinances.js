@@ -1,7 +1,3 @@
-/**
- * @name views.schedule
- * @namespace Show current schedule for user's team.
- */
 'use strict';
 
 var g = require('../globals');
@@ -12,7 +8,6 @@ var ko = require('knockout');
 var _ = require('underscore');
 var bbgmView = require('../util/bbgmView');
 var helpers = require('../util/helpers');
-var viewHelpers = require('../util/viewHelpers');
 var components = require('./components');
 
 var mapping;

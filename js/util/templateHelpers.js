@@ -5,7 +5,6 @@
 'use strict';
 
 var g = require('../globals');
-var faces = require('facesjs');
 var ko = require('knockout');
 var helpers = require('./helpers');
 

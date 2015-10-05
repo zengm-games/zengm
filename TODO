@@ -1,5 +1,7 @@
 fix html2canvas, test screenshots
 
+add node_modules to non-apache servers, test
+
 lint
 
 stripe stuff
@@ -25,6 +27,10 @@ after deploy, confirm mobile roster ordering works still
 
 why bluebird newer versions fail? starts with 2.9.28
   probably https://github.com/petkaantonov/bluebird/commit/4ed7945c224c63b3c82e40b7f3d7b93b85f0b3b4
+
+babel
+  var -> let/const
+  reset "one-var" to 2 in .eslintrc
 
 CURRENT
 -------

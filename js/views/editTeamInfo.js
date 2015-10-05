@@ -1,11 +1,6 @@
-/**
- * @name views.editTeamInfo
- * @namespace Edit Team Info.
- */
 'use strict';
 
 var dao = require('../dao');
-var db = require('../db');
 var g = require('../globals');
 var ui = require('../ui');
 var league = require('../core/league');

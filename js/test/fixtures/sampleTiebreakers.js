@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
     meta: {
         phaseText: "2015 playoffs",

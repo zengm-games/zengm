@@ -1,7 +1,3 @@
-/**
- * @name util.eventLog
- * @namespace Event log.
- */
 'use strict';
 
 var dao = require('../dao');

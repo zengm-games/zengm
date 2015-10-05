@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var _ = require('underscore');
 var helpers = require('../util/helpers');
 var random = require('../util/random');
 

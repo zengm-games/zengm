@@ -8,7 +8,6 @@ var dao = require('../dao');
 var g = require('../globals');
 var player = require('../core/player');
 var team = require('../core/team');
-var Promise = require('bluebird');
 var _ = require('underscore');
 
 /**

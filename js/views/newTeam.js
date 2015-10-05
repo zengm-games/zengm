@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var db = require('../db');
 var g = require('../globals');
 var ui = require('../ui');
 var league = require('../core/league');

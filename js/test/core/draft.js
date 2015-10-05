@@ -8,7 +8,6 @@ var draft = require('../../core/draft');
 var league = require('../../core/league');
 var team = require('../../core/team');
 var sampleTiebreakers = require('../fixtures/sampleTiebreakers.js');
-var $ = require('jquery');
 var _ = require('underscore');
 
 describe("core/draft", function () {

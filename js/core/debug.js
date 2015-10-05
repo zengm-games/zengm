@@ -1,12 +1,9 @@
-/**
- * @name core.debug
- * @namespace Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
- */
+// Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
+
 'use strict';
 
 var dao = require('../dao');
 var g = require('../globals');
-var league = require('./league');
 var player = require('./player');
 var _ = require('underscore');
 

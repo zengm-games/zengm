@@ -1,13 +1,8 @@
-/**
- * @name views.eventLog
- * @namespace Event log.
- */
 'use strict';
 
 var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
-var Promise = require('bluebird');
 var ko = require('knockout');
 var bbgmView = require('../util/bbgmView');
 var helpers = require('../util/helpers');

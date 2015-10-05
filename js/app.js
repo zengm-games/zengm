@@ -1,13 +1,5 @@
 'use strict';
 
-// Make sure I never accidentally use native promises, because that could fuck with error handling
-(function () {
-    window.Promise = function () { throw new Error("USE BLUEBIRD!"); };
-    window.Promise.all = function () { throw new Error("USE BLUEBIRD!"); };
-    window.Promise.map = function () { throw new Error("USE BLUEBIRD!"); };
-    window.Promise.try = function () { throw new Error("USE BLUEBIRD!"); };
-}());
-
 /*require.config({
     paths: {
         "stripe-checkout": "https://checkout.stripe.com/checkout",
@@ -30,7 +22,15 @@ var changes = require('./data/changes');
 var Davis = require('./lib/davis');
 var account = require('./util/account');
 var helpers = require('./util/helpers');
-require('bluebird');
+
+// Make sure I never accidentally use native promises, because that could fuck with error handling
+(function () {
+    window.Promise = function () { throw new Error("USE BLUEBIRD!"); };
+    window.Promise.all = function () { throw new Error("USE BLUEBIRD!"); };
+    window.Promise.map = function () { throw new Error("USE BLUEBIRD!"); };
+    window.Promise.try = function () { throw new Error("USE BLUEBIRD!"); };
+}());
+
 require('lib/bootstrap-affix');
 require('lib/bootstrap-alert');
 require('lib/bootstrap-collapse');

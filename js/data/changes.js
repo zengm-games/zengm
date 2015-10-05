@@ -1,10 +1,5 @@
-/**
- * @name data.changes
- * @namespace Changes in gameplay to show the user.
- */
 'use strict';
 
-var $ = require('jquery');
 var eventLog = require('../util/eventLog');
 
 var all;

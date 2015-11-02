@@ -29,6 +29,8 @@ babel
 CURRENT
 -------
 
+playoff order in preview doesn't match actual playoffs (1-8 shouldn't play 2-7 in second round)
+
 team dropdown in dashboard
 
 feats table should show both playoffs and regular season by default

@@ -147,16 +147,17 @@ define(["dao", "globals", "ui", "core/contractNegotiation", "core/draft", "core/
                     }
                 });
             }
-            if ((nagged === 2 && Math.random() < 0.25) || (nagged >= 3 && Math.random < 0.025)) {
-                if (g.enableLogging) { _gaq.push(["_trackEvent", "Ad Display", "basketball-gm.co.nf"]); }
-                localStorage.nagged = "3";
+            // Skipping 3, obsolete
+            if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random < 0.05)) {
+                if (g.enableLogging) { _gaq.push(["_trackEvent", "Ad Display", "Sports Mogul"]); }
+                localStorage.nagged = "4";
                 return dao.messages.add({
                     ot: tx,
                     value: {
                         read: false,
                         from: "The Commissioner",
                         year: g.season,
-                        text: '<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="http://basketball-gm.co.nf/">you can find a user-made list of them here</a>.</p>'
+                        text: '<p>Did you know that Basketball GM was inspired by an incredible game called <a href="http://sportsmogul.com/games/baseball2k16.html">Baseball Mogul</a>? Without Baseball Mogul, Basketball GM probably wouldn\'t even exist. So if you\'re a baseball fan, do yourself a favor and check it out. The UI is similar to Basketball GM, so you\'ll be able to pick it up quickly and start winning championships in no time!</p><p>The creators of Baseball Mogul also made a great football sim called <a href="http://sportsmogul.com/games/football16.html">Football Mogul</a> that you should try too.</p>'
                     }
                 });
             }

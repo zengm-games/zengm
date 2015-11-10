@@ -723,10 +723,16 @@ define(["dao", "globals", "core/finances", "data/injuries", "data/names", "lib/b
             ratings[key] = rawRatings[i];
         }
 
-        // Ugly hack: Tall people can't dribble/pass very well
+        // Hack (kind of ugly): Most tall people can't dribble/pass very well
         if (ratings.hgt > 40) {
-            ratings.drb = limitRating(ratings.drb - (ratings.hgt - 50));
-            ratings.pss = limitRating(ratings.pss - (ratings.hgt - 50));
+            if (Math.random() < 0.99) {
+                ratings.drb = limitRating(ratings.drb - (ratings.hgt - 50));
+            } else {
+                ratings.drb = limitRating(ratings.drb - 5);
+            }
+            if (Math.random() < 0.95) {
+                ratings.pss = limitRating(ratings.pss - (ratings.hgt - 50));
+            }
         } else {
             ratings.drb = limitRating(ratings.drb + 10);
             ratings.pss = limitRating(ratings.pss + 10);

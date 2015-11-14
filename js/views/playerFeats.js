@@ -111,7 +111,10 @@ define(["dao", "globals", "ui", "lib/jquery", "lib/knockout", "views/components"
                     if (data[data.length - 1]) {
                         row.classList.add("info");
                     }
-                }
+                },
+                columnDefs: [{
+                    orderSequence: ["desc", "asc"], "targets": "_all"
+                }]
             });
         }).extend({throttle: 1});
 

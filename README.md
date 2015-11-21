@@ -62,9 +62,8 @@ However during development, you probably would rather do
 which will constantly look for changes in your JS files and recompile. Then for
 CSS files, if you go to Tools > Debug Mode (inside the game), it will use the
 raw uncompiled CSS files so you don't need to keep compiling them after each
-change. Debug Mode also creates a global variable `window.debug` which contains
-some functions that you might find interesting - these are all defined in
-`js/core/debug.js`.
+change. Debug Mode also creates a global variable `window.bbgm` which gives you
+access to many of the internal functions of Basketball GM.
 
 ### Step 3 - Running
 

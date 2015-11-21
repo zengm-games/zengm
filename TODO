@@ -5,13 +5,13 @@ get rid of everything in lib folder. either install from npm or create npm packa
 
 css build process?
 
-export shit to window, otherwise old require() command line scripts won't work
-
 confirm IE redirect still works (to export_3.3)
 
 CI, dep version checking, etc
 
 after deploy, confirm mobile roster ordering works still
+
+go through old saved posts on reddit, update to new syntax
 
 why bluebird newer versions fail? starts with 2.9.28
   probably https://github.com/petkaantonov/bluebird/commit/4ed7945c224c63b3c82e40b7f3d7b93b85f0b3b4

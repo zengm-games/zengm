@@ -58,22 +58,10 @@ enabled.
 
 
 
-## Development Quick Start
-
-**Basketball GM is NOT open source, but it is also not completely closed. Please
-see LICENSE.md for details.**
-
-In production, JavaScript and CSS files are minified. See below for more info.
-But you don't really have to worry about that. You can bypass minification by
-going to Tools > Enable Debug Mode within the game. Then, edit any file in the
-`css`, `js`, or `templates` folders and reload the game to see your changes.
+## Development Info
 
 If you want to contribute but get stuck somewhere, please contact me! I'm happy
 to help.
-
-
-
-## Important Development Info
 
 ### License and Contributor License Agreement
 
@@ -100,13 +88,18 @@ All of the tooling used in development can be installed by simply installing
 
 from within this folder.
 
-Basketball GM uses the RequireJS optimizer for JS minification and clean-css for
+Basketball GM uses the Browserify for JS minification and clean-css for
 CSS minification. To minify everything, run
 
     npm run build
 
-But as mentioned above, if you enable Debug Mode, you don't need to do this
-during development.
+However during development, you probably would rather do
+
+    npm run watch-js
+
+which will constantly look for changes in your JS files and recompile. Then for
+CSS files, if you go to Tools > Debug Mode (inside the game), it will use the
+raw uncompiled CSS files.
 
 ESLint is used to enforce some coding standards. It's mostly pretty standard
 Crockfordian stuff. To run ESLint on the entire codebase, run
@@ -114,17 +107,18 @@ Crockfordian stuff. To run ESLint on the entire codebase, run
     npm run lint
 
 Integration and unit tests are bunched together in the `js/test` folder.
-Coverage is not great. They can be run manually within a web browser by going to
-<http://localhost:8080/test> or from the command line in Karma with
+Coverage is not great. They can be run from the command line in Karma with
 
     npm test
+
+or manually within a web browser by running `npm run build-test` (or
+`npm run watch-test`) and going to <http://localhost:8080/test>.
 
 ### Code Overview
 
 Basketball GM is a single-page app that runs almost entirely client-side by
 storing data in IndexedDB. All the application code is in the `js` folder.
-Modules are defined with RequireJS. Routes are set in `js/app.js`. Most of the
-important stuff is in `js/core`.
+Routes are set in `js/app.js`. Most of the important stuff is in `js/core`.
 
 UI is ultimately driven by `js/util/bbgmView.js`, a small UI layer I wrote on
 top of Knockout which is used by all the views in the `js/views` folder. Each
@@ -194,3 +188,5 @@ The game runs equally well within a web browser and within Cordova (Android
 is absolute vs relative paths, governed by window.inCordova in index.html). To
 collect the files needed for Cordova, run `npm run build-cordova` and look in
 the cordova folder.
+
+Warning: This hasn't been tested in a while and is probably broken by now.

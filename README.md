@@ -14,51 +14,11 @@ Copyright (C) Jeremy Scheff. All rights reserved.
 **Basketball GM is NOT open source, but it is also not completely closed. Please
 see LICENSE.md for details.**
 
-
-
-## Installing and Running
+## Development Info
 
 If you just want to play the game, go to <http://basketball-gm.com/>.
 Instructions below are for developers who want to run a copy locally so they can
-test changes to the code.
-
-To run the game locally, you need some way of running a web server to display
-the content. There are currently three ways to do it. It doesn't matter which
-you use as long as you can get it to run on your computer.
-
-#### 1. Mongoose - Easiest on Windows
-
-Run the included `mongoose-tiny-4.1.exe` and point your browser to
-<http://localhost:8080/>.
-
-That's it.
-
-If that doesn't work, try right clicking on the Mongoose icon in your
-notification area and poke around in there. You can also see if there is a newer
-version of Mongoose available <http://cesanta.com/downloads.html>.
-
-#### 2. Express - Also quite easy
-
-Install Node, NPM, and Express. The easiest way to do that is to install Node
-and NPM from <http://nodejs.org/> and then run `npm install` from this folder
-to install Express (and some other things you might want later, see below). Then
-run
-
-    npm start
-
-and point your browser to <http://localhost:3000/>. If that URL doesn't work,
-try <http://0.0.0.0:3000/>.
-
-#### 3. Apache
-
-If you can't get one of the above methods to work, the mod_rewrite rules in
-`.htaccess` can be used to make Apache run Basketball GM. Everything should work
-if you just have a domain/subdomain point at this folder with mod_rewrite
-enabled.
-
-
-
-## Development Info
+make changes to the code.
 
 If you want to contribute but get stuck somewhere, please contact me! I'm happy
 to help.
@@ -79,7 +39,7 @@ Make a copy of the form, fill in your information at the bottom, and send an
 email to commissioner@basketball-gm.com with the subject line, "Contributor
 License Agreement from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
-### Tooling
+### Step 1 - Installing
 
 All of the tooling used in development can be installed by simply installing
 [npm](https://www.npmjs.com/) and running
@@ -87,6 +47,8 @@ All of the tooling used in development can be installed by simply installing
     npm install
 
 from within this folder.
+
+### Step 2 - Building
 
 Basketball GM uses the Browserify for JS minification and clean-css for
 CSS minification. To minify everything, run
@@ -99,7 +61,43 @@ However during development, you probably would rather do
 
 which will constantly look for changes in your JS files and recompile. Then for
 CSS files, if you go to Tools > Debug Mode (inside the game), it will use the
-raw uncompiled CSS files.
+raw uncompiled CSS files so you don't need to keep compiling them after each
+change. Debug Mode also creates a global variable `window.debug` which contains
+some functions that you might find interesting - these are all defined in
+`js/core/debug.js`.
+
+### Step 3 - Running
+
+To run the game locally, you need some way of running a web server to display
+the content. There are currently three ways to do it. It doesn't matter which
+you use as long as you can get it to run on your computer.
+
+#### 1. Mongoose - Easiest on Windows
+
+Run the included `mongoose-tiny-4.1.exe` and point your browser to
+<http://localhost:8080/>.
+
+That's it.
+
+If that doesn't work, try right clicking on the Mongoose icon in your
+notification area and poke around in there. You can also see if there is a newer
+version of Mongoose available <http://cesanta.com/downloads.html>.
+
+#### 2. Express - Also quite easy
+
+Run
+
+    npm start
+
+and point your browser to <http://localhost:3000/>.
+
+#### 3. Apache
+
+The mod_rewrite rules in `.htaccess` can be used to make Apache run Basketball
+GM. Everything should work if you just have a domain/subdomain point at this
+folder with mod_rewrite enabled. That's how it's done on basketball-gm.com.
+
+### Step 4 - Testing
 
 ESLint is used to enforce some coding standards. It's mostly pretty standard
 Crockfordian stuff. To run ESLint on the entire codebase, run

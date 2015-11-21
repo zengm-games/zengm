@@ -7,7 +7,7 @@ The game is implemented entirely in client-side JavaScript, backed by IndexedDB.
 Copyright (C) Jeremy Scheff. All rights reserved.
 
 * Email: commissioner@basketball-gm.com
-* Website: <http://basketball-gm.com/>
+* Website: <https://basketball-gm.com/>
 * Development: <https://github.com/dumbmatter/basketball-gm>
 * Discussion: <http://www.reddit.com/r/BasketballGM/>
 

@@ -1,15 +1,8 @@
-compile should move index and appcache to gen folder. put them in www or something for dev, with placeholders
-  not sure if this is a good idea...
-
 get rid of everything in lib folder. either install from npm or create npm packages
 
 css build process?
 
-confirm IE redirect still works (to export_3.3)
-
 CI, dep version checking, etc
-
-after deploy, confirm mobile roster ordering works still
 
 go through old saved posts on reddit, update to new syntax
 

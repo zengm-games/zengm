@@ -1,3 +1,5 @@
+npm shrinkwrap
+
 stripe stuff
 
 compile should move index and appcache to gen folder. put them in www or something for dev, with placeholders

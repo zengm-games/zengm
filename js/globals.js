@@ -1,7 +1,3 @@
-/**
- * @name globals
- * @namespace Defines the constant portions of g.
- */
 'use strict';
 
 var ko = require('knockout');

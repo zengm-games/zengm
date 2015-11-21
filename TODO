@@ -13,7 +13,7 @@ update README
 
 export shit to window, otherwise old require() command line scripts won't work
 
-confirm IE redirect still works (export_3.3)
+confirm IE redirect still works (to export_3.3)
 
 CI, dep version checking, etc
 
@@ -28,6 +28,8 @@ babel
 
 CURRENT
 -------
+
+https://www.reddit.com/r/BasketballGM/comments/3se2v7/two_small_bugs/
 
 playoff order in preview doesn't match actual playoffs (1-8 shouldn't play 2-7 in second round)
 

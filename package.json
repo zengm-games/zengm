@@ -14,13 +14,14 @@
   },
   "scripts": {
     "start": "node tools/server.js",
-    "watch-js": "watchify js/app.js -o gen/app.js",
-    "build-js": "browserify js/app.js -o gen/app.js",
     "build": "npm run build-js && node tools/build.js",
-    "build-cordova": "node tools/build.js cordova",
-    "watch-test": "watchify js/test/app.js -o gen/app-test.js",
     "test": "node_modules/karma/bin/karma start",
-    "lint": "node_modules/.bin/eslint js"
+    "lint": "node_modules/.bin/eslint js",
+    "build-js": "browserify js/app.js -o gen/app.js",
+    "watch-js": "watchify js/app.js -o gen/app.js",
+    "build-cordova": "echo 'probably broken since browserify switch'",
+    "build-test": "watchify js/test/app.js -o gen/app-test.js",
+    "watch-test": "watchify js/test/app.js -o gen/app-test.js"
   },
   "dependencies": {
     "bluebird": "2.9.27",

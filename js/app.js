@@ -39,6 +39,19 @@ require('./api');
     // If we're in debug mode, make debug functions available
     if (localStorage.debug === "debug") {
         window.debug = require('./core/debug');
+        window.dao = require('./dao');
+        window.g = require('./globals');
+        window.contractNegotiation = require('./core/contractNegotiation');
+        window.draft = require('./core/draft');
+        window.finances = require('./core/finances');
+        window.freeAgents = require('./core/freeAgents');
+        window.game = require('./core/game');
+        window.gameSim = require('./core/gameSim');
+        window.phase = require('./core/phase');
+        window.player = require('./core/player');
+        window.season = require('./core/season');
+        window.team = require('./core/team');
+        window.trade = require('./core/trade');
     }
 
     ui.init();

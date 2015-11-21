@@ -101,15 +101,15 @@ function stripeResponseHandler(vm, status, response) {
 function uiFirst(vm) {
     ui.title("Update Card");
 
-    require(["stripe"], function (Stripe) {
-        Stripe.setPublishableKey(g.stripePublishableKey);
+    $.getScript('https://js.stripe.com/v2/', function () {
+        window.Stripe.setPublishableKey(g.stripePublishableKey);
 
         $('#payment-form').submit(function () {
             var $form = $(this);
 
             $form.find('button').prop('disabled', true);
 
-            Stripe.card.createToken($form, stripeResponseHandler.bind(null, vm));
+            window.Stripe.card.createToken($form, stripeResponseHandler.bind(null, vm));
 
             return false;
         });

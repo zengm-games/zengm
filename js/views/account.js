@@ -66,12 +66,12 @@ function handleStripeButton() {
 
     if (!buttonEl) { return; }
 
-    require(["stripe-checkout"], function (StripeCheckout) {
+    $.getScript('https://checkout.stripe.com/checkout.js', function () {
         var email, handler;
 
         email = g.vm.topMenu.email();
 
-        handler = StripeCheckout.configure({
+        handler = window.StripeCheckout.configure({
             key: g.stripePublishableKey,
             image: '/ico/icon128.png',
             token: function (token) {

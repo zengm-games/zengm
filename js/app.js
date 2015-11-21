@@ -1,20 +1,5 @@
 'use strict';
 
-/*require.config({
-    paths: {
-        "stripe-checkout": "https://checkout.stripe.com/checkout",
-        "stripe": "https://js.stripe.com/v2/?1" // https://coderwall.com/p/y4vk_q/requirejs-and-external-scripts
-    },
-    shim: {
-        "stripe-checkout": {
-            exports: "StripeCheckout"
-        },
-        'stripe': {
-            exports: 'Stripe'
-        }
-    }
-});*/
-
 var db = require('./db');
 var views = require('./views');
 var ui = require('./ui');

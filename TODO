@@ -4,6 +4,8 @@ css build process?
 
 CI, dep version checking, etc
 
+deploy script, so version number updates don't keep getting committed for index.html
+
 go through old saved posts on reddit, update to new syntax
 
 why bluebird newer versions fail? starts with 2.9.28

@@ -166,9 +166,10 @@ function newPhaseRegularSeason(tx) {
                 }
             });
         }
-        if ((nagged === 2 && Math.random() < 0.25) || (nagged >= 3 && Math.random < 0.025)) {
-            if (g.enableLogging) { _gaq.push(["_trackEvent", "Ad Display", "basketball-gm.co.nf"]); }
-            localStorage.nagged = "3";
+        // Skipping 3, obsolete
+        if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random < 0.05)) {
+            if (g.enableLogging) { _gaq.push(["_trackEvent", "Ad Display", "Sports Mogul"]); }
+            localStorage.nagged = "4";
             return dao.messages.add({
                 ot: tx,
                 value: {

@@ -17,8 +17,8 @@
     "build": "npm run build-js && node tools/build.js",
     "test": "node_modules/karma/bin/karma start",
     "lint": "node_modules/.bin/eslint js",
-    "build-js": "browserify js/app.js | uglifyjs > gen/app.js",
-    "watch-js": "watchify js/app.js -o gen/app.js",
+    "build-js": "browserify -d -p [minifyify --map app.js.map --output gen/app.js.map] js/app.js -o gen/app.js",
+    "watch-js": "watchify -d js/app.js -o gen/app.js",
     "build-cordova": "echo 'probably broken since browserify switch'",
     "build-test": "browserify js/test/app.js -o gen/app-test.js",
     "watch-test": "watchify js/test/app.js -o gen/app-test.js"
@@ -48,10 +48,10 @@
     "karma-firefox-launcher": "~0.1.4",
     "karma-mocha": "~0.2.0",
     "karma-mocha-reporter": "~1.1.1",
+    "minifyify": "^7.1.0",
     "mocha": "~2.3.3",
     "moment": "~2.10.6",
     "replace": "~0.3.0",
-    "uglify-js": "^2.6.1",
     "watchify": "~3.4.0"
   },
   "browser": {

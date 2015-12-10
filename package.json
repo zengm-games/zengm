@@ -17,10 +17,10 @@
     "build": "npm run build-js && node tools/build.js",
     "test": "node_modules/karma/bin/karma start",
     "lint": "node_modules/.bin/eslint js",
-    "build-js": "browserify js/app.js -o gen/app.js",
+    "build-js": "browserify js/app.js | uglifyjs > gen/app.js",
     "watch-js": "watchify js/app.js -o gen/app.js",
     "build-cordova": "echo 'probably broken since browserify switch'",
-    "build-test": "watchify js/test/app.js -o gen/app-test.js",
+    "build-test": "browserify js/test/app.js -o gen/app-test.js",
     "watch-test": "watchify js/test/app.js -o gen/app-test.js"
   },
   "dependencies": {
@@ -51,6 +51,7 @@
     "mocha": "~2.3.3",
     "moment": "~2.10.6",
     "replace": "~0.3.0",
+    "uglify-js": "^2.6.1",
     "watchify": "~3.4.0"
   },
   "browser": {

@@ -1,7 +1,3 @@
-/**
- * @name views.playoffs
- * @namespace Show current or archived playoffs, or projected matchups for an in-progress season.
- */
 'use strict';
 
 var dao = require('../dao');
@@ -42,15 +38,15 @@ function updatePlayoffs(inputs, updateEvents, vm) {
                     series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
                     series[0][cid * 4].home.seed = 1;
                     series[0][cid * 4].away.seed = 8;
-                    series[0][1 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
-                    series[0][1 + cid * 4].home.seed = 2;
-                    series[0][1 + cid * 4].away.seed = 7;
+                    series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
+                    series[0][3 + cid * 4].home.seed = 2;
+                    series[0][3 + cid * 4].away.seed = 7;
                     series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
                     series[0][2 + cid * 4].home.seed = 3;
                     series[0][2 + cid * 4].away.seed = 6;
-                    series[0][3 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
-                    series[0][3 + cid * 4].home.seed = 4;
-                    series[0][3 + cid * 4].away.seed = 5;
+                    series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
+                    series[0][1 + cid * 4].home.seed = 4;
+                    series[0][1 + cid * 4].away.seed = 5;
                 }
 
                 return {

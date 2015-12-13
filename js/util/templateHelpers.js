@@ -296,8 +296,9 @@ ko.bindingHandlers.multiTeamMenu = {
             }
         }
 
+        // Menu is triggered by jQuery code in ui.js
         return ko.bindingHandlers.html.update(element, function () {
-            return '<label for="multi-team-select">Currently controlling:</label><br><select class="form-control" id="multi-team-select" onchange="require(\'util/helpers\').updateMultiTeam(parseInt(this.options[this.selectedIndex].value, 10))">' + options + '</select>';
+            return '<label for="multi-team-select">Currently controlling:</label><br><select class="form-control" id="multi-team-select">' + options + '</select>';
         });
     }
 };

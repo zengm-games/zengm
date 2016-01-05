@@ -1903,6 +1903,11 @@ function augmentPartialPlayer(p, scoutingRank) {
         if (!p.ratings[0].hasOwnProperty("season")) {
             p.ratings[0].season = g.startingSeason;
         }
+
+        // Fix improperly-set season in ratings
+        if (p.ratings.length === 1 && p.ratings[0].season < g.startingSeason && p.tid !== g.PLAYER.RETIRED) {
+            p.ratings[0].season = g.startingSeason;
+        }
     }
 
     // Handle old format position

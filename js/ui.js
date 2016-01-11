@@ -656,7 +656,7 @@ function highlightPlayButton() {
     });
 
     // If the user finds the play button first, don't show the popover
-    playButtonLink.on("click", function() {
+    playButtonLink.on("click", function () {
         playButtonLink.popover("hide");
     });
 

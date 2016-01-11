@@ -4,6 +4,10 @@
  */
 'use strict';
 
+var ui = require('./ui');
+var bbgmView = require('./util/bbgmView');
+var viewHelpers = require('./util/viewHelpers');
+
 function staticPage(name, title) {
     return bbgmView.init({
         id: name,

@@ -39,7 +39,7 @@
     "browserify": "~11.2.0",
     "browserify-shim": "~3.8.10",
     "clean-css": "~2.2.23",
-    "eslint": "~1.10.1",
+    "eslint": "^1.10.3",
     "express": "~4.13.3",
     "fs-extra": "~0.26.2",
     "karma": "~0.13.15",

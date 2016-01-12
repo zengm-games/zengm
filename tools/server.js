@@ -18,7 +18,6 @@ function showIndex(req, res) {
 }
 
 app.get("/export_3.3", showStaticWithHtml);
-app.get("/manifest_hack", showStaticWithHtml);
 app.get("/test*", showStaticWithHtml);
 app.get("/test_case*", showStaticWithHtml);
 
@@ -30,7 +29,7 @@ app.get("/gen/*", showStatic);
 app.get("/ico/*", showStatic);
 app.get("/img/*", showStatic);
 app.get("/js/*", showStatic);
-app.get("/node_modules/*", showStatic);
+app.get("/service-worker.js*", showStatic);
 app.get("/templates/*", showStatic);
 
 app.get("/*", showIndex);

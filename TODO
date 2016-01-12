@@ -3,6 +3,8 @@ service worker to repalce appcache
     cache assets: https://jakearchibald.com/2014/offline-cookbook/#on-network-response
     fetch: https://jakearchibald.com/2014/offline-cookbook/#cache-falling-back-to-network
     removing old stuff: https://jakearchibald.com/2014/offline-cookbook/#on-activate
+  how do i tell it to default to index.html except for things in htaccess?
+  behavior seems bizarre. feels like there are multiple caches and service workers running, and different ones are responding to different requests. no idea how to consistently get the answer i want
 
 get rid of everything in lib folder. either install from npm or create npm packages
 

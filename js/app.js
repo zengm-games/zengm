@@ -269,5 +269,14 @@ require('./api');
         app.start();
 
         account.check();
+
+console.log('updating? 5')
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }).catch(function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        }
     });
 }());

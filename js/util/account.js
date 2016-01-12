@@ -121,6 +121,10 @@ function addAchievements(achievements, silent) {
         return tx.complete();
     };
 
+    if (window.location.hostname === 'localhost') {
+        return addToIndexedDB(achievements);
+    }
+
     return Promise.resolve($.ajax({
         type: "POST",
         url: "//account.basketball-gm." + g.tld + "/add_achievements.php",
@@ -145,6 +149,10 @@ function addAchievements(achievements, silent) {
 }
 
 function check() {
+    if (window.location.hostname === 'localhost') {
+        return Promise.resolve();
+    }
+
     return Promise.resolve($.ajax({
         type: "GET",
         url: "//account.basketball-gm." + g.tld + "/user_info.php",
@@ -199,6 +207,10 @@ function getAchievements() {
                     achievements[i].count += 1;
                 }
             }
+        }
+
+        if (window.location.hostname === 'localhost') {
+            return achievements;
         }
 
         // Handle any achievements stored in the cloud

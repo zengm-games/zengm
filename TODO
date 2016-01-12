@@ -1,3 +1,9 @@
+service worker to repalce appcache
+  https://jakearchibald.com/2014/offline-cookbook/
+    cache assets: https://jakearchibald.com/2014/offline-cookbook/#on-network-response
+    fetch: https://jakearchibald.com/2014/offline-cookbook/#cache-falling-back-to-network
+    removing old stuff: https://jakearchibald.com/2014/offline-cookbook/#on-activate
+
 get rid of everything in lib folder. either install from npm or create npm packages
 
 css build process?

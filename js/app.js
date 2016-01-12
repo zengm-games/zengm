@@ -9,12 +9,10 @@ var account = require('./util/account');
 var helpers = require('./util/helpers');
 
 // Make sure I never accidentally use native promises, because that could fuck with error handling
-(function () {
-    window.Promise = function () { throw new Error("USE BLUEBIRD!"); };
-    window.Promise.all = function () { throw new Error("USE BLUEBIRD!"); };
-    window.Promise.map = function () { throw new Error("USE BLUEBIRD!"); };
-    window.Promise.try = function () { throw new Error("USE BLUEBIRD!"); };
-}());
+window.Promise = function () { throw new Error("USE BLUEBIRD!"); };
+window.Promise.all = function () { throw new Error("USE BLUEBIRD!"); };
+window.Promise.map = function () { throw new Error("USE BLUEBIRD!"); };
+window.Promise.try = function () { throw new Error("USE BLUEBIRD!"); };
 
 require('lib/bootstrap-affix');
 require('lib/bootstrap-alert');

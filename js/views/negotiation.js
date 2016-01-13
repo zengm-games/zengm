@@ -8,6 +8,7 @@ var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var contractNegotiation = require('../core/contractNegotiation');
+var freeAgents = require('../core/freeAgents');
 var player = require('../core/player');
 var team = require('../core/team');
 var ko = require('knockout');
@@ -25,6 +26,46 @@ function redirectNegotiationOrRoster(cancelled) {
             ui.realtimeUpdate([], helpers.leagueUrl(["roster"]));
         }
     });
+}
+
+function generateContractOptions(contract, value, valueNoPot) {
+    var contractOptions, exp, factor, found, i;
+
+    exp = g.season;
+    if (g.phase > g.PHASE.AFTER_TRADE_DEADLINE) {
+        exp += 1;
+    }
+
+    contractOptions = [];
+    found = null;
+    for (i = 0; i < 5; i++) {
+        contractOptions[i] = {
+            exp: exp + i,
+            years: 1 + i,
+            amount: 0,
+            smallestAmount: false
+        };
+
+        if (contractOptions[i].exp === contract.exp) {
+            contractOptions[i].amount = contract.amount;
+            contractOptions[i].smallestAmount = true;
+            found = i;
+        }
+    }
+    if (found === null) {
+        contractOptions[0].amount = contract.amount;
+        contractOptions[0].smallestAmount = true;
+        found = 0;
+    }
+
+    // From the desired contract, ask for more money for less or more years
+    for (i = 0; i < 5; i++) {
+        factor = 1 + Math.abs(found - i) * 0.15;
+        contractOptions[i].amount = contractOptions[found].amount * factor;
+    }
+
+console.log(contractOptions);
+    return contractOptions;
 }
 
 function get(req) {
@@ -112,8 +153,9 @@ function updateNegotiation(inputs) {
         return dao.players.get({
             key: negotiation.pid
         }).then(function (p) {
+console.log(p);
             p = player.filter(p, {
-                attrs: ["pid", "name", "freeAgentMood"],
+                attrs: ["pid", "name", "contract", "freeAgentMood"],
                 ratings: ["ovr", "pot"],
                 season: g.season,
                 showNoStats: true,
@@ -129,6 +171,8 @@ function updateNegotiation(inputs) {
                 };
             }
 
+            p.contract.amount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
+
             // See views.freeAgents for moods as well
             if (p.freeAgentMood[g.userTid] < 0.25) {
                 p.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';
@@ -141,11 +185,14 @@ function updateNegotiation(inputs) {
             }
             delete p.freeAgentMood;
 
+            // Generate contract options
+            p.contractOptions = generateContractOptions(p.contract, p.value, p.valueNoPot);
+console.log(p);
+
             return team.getPayroll(null, g.userTid).get(0).then(function (payroll) {
                 return {
                     salaryCap: g.salaryCap / 1000,
                     payroll: payroll / 1000,
-                    team: {region: g.teamRegionsCache[g.userTid], name: g.teamNamesCache[g.userTid]},
                     player: p,
                     negotiation: {
                         team: {

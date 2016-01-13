@@ -16,22 +16,29 @@
 <h3>Player Proposal</h3>
 <p><span data-bind="text: negotiation.player.years"></span> years (through <span data-bind="text: negotiation.player.expiration"></span>)</p>
 <p>$<span data-bind="round: [negotiation.player.amount, 3]"></span>M per year</p>
-<form data-bind="attrLeagueUrl: {action: ['negotiation', player.pid]}" class="form-horizontal" method="POST">
-  <input type="hidden" name="accept" value="1">
-  <button type="submit" class="btn btn-success" id="accept">Accept Player Proposal</button>
-</form>
-
-<p></p>
-
-<form data-bind="attrLeagueUrl: {action: ['negotiation', player.pid]}" class="form-horizontal" method="POST">
-  <input type="hidden" name="cancel" value="1">
-  <button type="submit" class="btn btn-danger">Can't reach a deal? End negotiation</button>
-</form>
 
 <h3>Contract Options</h3>
 
-<div class="list-group col-sm-6 col-md-4" data-bind="foreach: player.contractOptions">
-  <a href="#" class="list-group-item" data-bind="css: {'list-group-item-success': smallestAmount()}">
-    $<span data-bind="round: [amount, 3]"></span>M per year, through <span data-bind="text: exp"></span> (<span data-bind="text: years() + (years() === 1 ? ' season' : ' seasons')"></span>)
-  </a>
+<div class="row">
+  <div class="col-sm-8 col-md-6">
+    <div class="list-group" data-bind="foreach: player.contractOptions">
+      <div class="list-group-item" data-bind="css: {'list-group-item-success': smallestAmount()}" style="height: 54px">
+        <div class="pull-left" style="padding-top: 8px">
+          $<span data-bind="round: [amount, 3]"></span>M per year, through <span data-bind="text: exp"></span> (<span data-bind="text: years() + (years() === 1 ? ' season' : ' seasons')"></span>)
+        </div>
+
+        <form class="pull-right" data-bind="attrLeagueUrl: {action: ['negotiation', $root.player.pid]}" method="POST">
+          <input type="hidden" name="accept" value="1">
+          <input type="hidden" name="amount" data-bind="attr: {value: amount}">
+          <input type="hidden" name="exp" data-bind="attr: {value: exp}">
+          <button type="submit" class="btn btn-success" id="accept">Sign Contract</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
+
+<form data-bind="attrLeagueUrl: {action: ['negotiation', player.pid]}" method="POST">
+  <input type="hidden" name="cancel" value="1">
+  <button type="submit" class="btn btn-danger">Can't reach a deal? End negotiation</button>
+</form>

@@ -87,8 +87,8 @@ function post(req) {
         contractNegotiation.cancel(pid).then(function () {
             redirectNegotiationOrRoster(true);
         });
-    } else if (req.params.hasOwnProperty("accept")) {
-        contractNegotiation.accept(pid).then(function (error) {
+    } else if (req.params.hasOwnProperty("accept") && req.params.hasOwnProperty("amount") && req.params.hasOwnProperty("exp")) {
+        contractNegotiation.accept(pid, parseInt(req.params.amount * 1000, 10), parseInt(req.params.exp, 10)).then(function (error) {
             if (error !== undefined && error) {
                 helpers.errorNotify(error);
             }
@@ -114,19 +114,6 @@ function post(req) {
                 ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
             }
         });
-    } else {
-        // Make an offer to the player;
-        teamAmountNew = parseInt(req.params.teamAmount * 1000, 10);
-        teamYearsNew = parseInt(req.params.teamYears, 10);
-
-        // Any NaN?
-        if (teamAmountNew !== teamAmountNew || teamYearsNew !== teamYearsNew) {
-            ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
-        } else {
-            contractNegotiation.offer(pid, teamAmountNew, teamYearsNew).then(function () {
-                ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
-            });
-        }
     }
 }
 

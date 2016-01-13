@@ -154,37 +154,4 @@ describe("core/contractNegotiation", function () {
             });
         });
     });
-    describe("#offer()", function () {
-        it("should never counter with an offer below what has already been proposed", function () {
-            var tx;
-
-            tx = dao.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
-            contractNegotiation.create(tx, 9, false);
-            return tx.complete().then(function () {
-                return dao.negotiations.get({key: 9}).then(function (negotiation) {
-                    var originalYears;
-
-                    originalYears = negotiation.player.years;
-
-                    // offer a max contract for however many years the player wants
-                    return contractNegotiation.offer(9, 20000, originalYears).then(function () {
-                        return dao.negotiations.get({key: 9}).then(function (negotiation) {
-                            // player should be happy to accept the $20,000,000 for the years they specified
-                            assert.equal(negotiation.player.amount, 20000);
-                            assert.equal(negotiation.player.years, originalYears);
-                        });
-                    }).then(function () {
-                        // Try to skimp the player by offering slightly less
-                        return contractNegotiation.offer(9, 19999, originalYears, function () {
-                            return dao.negotiations.get({key: 9}).then(function (negotiation) {
-                                // Player should not fall for the bait and switch
-                                assert.equal(negotiation.player.amount, 20000);
-                                assert.equal(negotiation.player.years, originalYears);
-                            });
-                        });
-                    });
-                });
-            });
-        });
-    });
 });

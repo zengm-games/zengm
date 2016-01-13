@@ -119,115 +119,6 @@ function validYears(years) {
 }
 
 /**
- * Make an offer to a player.
- *
- * @memberOf core.contractNegotiation
- * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
- * @param {number} teamAmount Teams's offer amount in thousands of dollars per year (between 500 and 20000).
- * @param {number} teamYears Team's offer length in years (between 1 and 5).
- * @return {Promise}
- */
-function offer(pid, teamAmount, teamYears) {
-    var tx;
-
-    teamAmount = validAmount(teamAmount);
-    teamYears = validYears(teamYears);
-
-    tx = dao.tx(["negotiations", "players"], "readwrite");
-
-    dao.players.get({ot: tx, key: pid}).then(function (p) {
-        var mood;
-
-        mood = p.freeAgentMood[g.userTid];
-        p.freeAgentMood[g.userTid] += random.uniform(0, 0.15);
-        if (p.freeAgentMood[g.userTid] > 1) {
-            p.freeAgentMood[g.userTid] = 1;
-        }
-
-        dao.players.put({ot: tx, value: p});
-
-        dao.negotiations.get({ot: tx, key: pid}).then(function (negotiation) {
-            var diffPlayerOrig, diffTeamOrig;
-
-            // Player responds based on their mood
-            if (negotiation.orig.amount >= 18000) {
-                // Expensive guys don't negotiate
-                negotiation.player.amount *= 1 + 0.05 * mood;
-            } else {
-                if (teamYears === negotiation.player.years) {
-                    // Team and player agree on years, so just update amount
-                    if (teamAmount >= negotiation.player.amount) {
-                        negotiation.player.amount = teamAmount;
-                    } else if (teamAmount > 0.7 * negotiation.player.amount) {
-                        negotiation.player.amount = (0.5 * (1 + mood)) * negotiation.orig.amount + (0.5 * (1 - mood)) * teamAmount;
-                    } else {
-                        negotiation.player.amount *= 1.05;
-                    }
-                } else if ((teamYears > negotiation.player.years && negotiation.orig.years > negotiation.player.years) || (teamYears < negotiation.player.years && negotiation.orig.years < negotiation.player.years)) {
-                    // Team moves years closer to original value
-
-                    // Update years
-                    diffPlayerOrig = negotiation.player.years - negotiation.orig.years;
-                    diffTeamOrig = teamYears - negotiation.orig.years;
-                    if (diffPlayerOrig > 0 && diffTeamOrig > 0) {
-                        // Team moved towards player's original years without overshooting
-                        negotiation.player.years = teamYears;
-                    } else {
-                        // Team overshot original years
-                        negotiation.player.years = negotiation.orig.years;
-                    }
-
-                    // Update amount
-                    if (teamAmount > negotiation.player.amount) {
-                        negotiation.player.amount = teamAmount;
-                    } else if (teamAmount > 0.85 * negotiation.player.amount) {
-                        negotiation.player.amount = (0.5 * (1 + mood)) * negotiation.orig.amount + (0.5 * (1 - mood)) * teamAmount;
-                    } else {
-                        negotiation.player.amount *= 1.05;
-                    }
-                } else {
-                    // Team move years further from original value
-                    if (teamAmount > 1.1 * negotiation.player.amount) {
-                        negotiation.player.amount = teamAmount;
-                        if (teamYears > negotiation.player.years) {
-                            negotiation.player.years += 1;
-                        } else {
-                            negotiation.player.years -= 1;
-                        }
-                    } else if (teamAmount > 0.9 * negotiation.player.amount) {
-                        negotiation.player.amount *= 1.15;
-                        if (teamYears > negotiation.player.years) {
-                            negotiation.player.years += 1;
-                        } else {
-                            negotiation.player.years -= 1;
-                        }
-                    } else {
-                        negotiation.player.amount *= 1.15;
-                    }
-                }
-
-                // General punishment from angry players
-                if (mood > 0.25) {
-                    negotiation.player.amount *= 1 + 0.1 * mood;
-                }
-            }
-
-            negotiation.player.amount = validAmount(negotiation.player.amount);
-            negotiation.player.years = validYears(negotiation.player.years);
-
-            negotiation.team.amount = teamAmount;
-            negotiation.team.years = teamYears;
-
-            dao.negotiations.put({ot: tx, value: negotiation});
-        });
-    });
-
-    return tx.complete().then(function () {
-        require('../core/league').updateLastDbChange();
-    });
-}
-
-/**
  * Cancel contract negotiations with a player.
  *
  * @memberOf core.contractNegotiation
@@ -285,7 +176,7 @@ function cancelAll(tx) {
  * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
  * @return {Promise.<string=>} If an error occurs, resolves to a string error message.
  */
-function accept(pid) {
+function accept(pid, amount, exp) {
     return Promise.all([
         dao.negotiations.get({key: pid}),
         team.getPayroll(null, g.userTid).get(0)
@@ -322,8 +213,8 @@ function accept(pid) {
                 }
 
                 p = player.setContract(p, {
-                    amount: negotiation.player.amount,
-                    exp: g.season + negotiation.player.years
+                    amount: amount,
+                    exp: exp
                 }, true);
 
                 if (negotiation.resigning) {
@@ -360,6 +251,5 @@ module.exports = {
     accept: accept,
     cancel: cancel,
     cancelAll: cancelAll,
-    create: create,
-    offer: offer
+    create: create
 };

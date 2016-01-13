@@ -1,16 +1,9 @@
 FA revamp
-  Still use current contract fields for FAs to show the ($, yrs) of the lowest $ contract possible
-  (maybe) deterministically produce array of possible contracts from that, player age, player value, and player value without potential
-  player types
-    star - anyone good enough to demand a 5 year max deal asks for only that
-    young with some potential - lowest offer is 2 yrs, 5 yrs is prohibitively expensive
-    veteran - lowest deal is 5 yrs, will accept higher offer for less years unless it's too far above the max
-    crap - min contract any year, default to asking for 1 year if they're all the same
   delete most negotiation code
-  remove restriction for one negotiation at a time
-  get rid of negotiations object store
-  generateContract should set length correctly (currently it's variable)
-  filter out entries from generateContractOptions if the player wont' sign
+    remove restriction for one negotiation at a time
+      make sure re-signing is handled okay still
+      get rid of negotiations object store
+  filter out entries from generateContractOptions if the player won't sign, or if there is a max contract desired at a longer length
 
 service worker to repalce appcache
   https://jakearchibald.com/2014/offline-cookbook/

@@ -1,3 +1,12 @@
+FA revamp
+  Still use current contract fields for FAs to show the ($, yrs) of the lowest $ contract possible
+  (maybe) deterministically produce array of possible contracts from that, player age, player value, and player value without potential
+  player types
+    star - anyone good enough to demand a 5 year max deal asks for only that
+    young with some potential - lowest offer is 2 yrs, 5 yrs is prohibitively expensive
+    veteran - lowest deal is 5 yrs, will accept higher offer for less years unless it's too far above the max
+    crap - min contract any year, default to asking for 1 year if they're all the same
+
 service worker to repalce appcache
   https://jakearchibald.com/2014/offline-cookbook/
     cache assets: https://jakearchibald.com/2014/offline-cookbook/#on-network-response

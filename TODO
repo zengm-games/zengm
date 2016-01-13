@@ -3,7 +3,6 @@ FA revamp
     remove restriction for one negotiation at a time
       make sure re-signing is handled okay still
       get rid of negotiations object store
-  filter out entries from generateContractOptions if the player won't sign, or if there is a max contract desired at a longer length
 
 service worker to repalce appcache
   https://jakearchibald.com/2014/offline-cookbook/

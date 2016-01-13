@@ -64,8 +64,9 @@ function generateContractOptions(contract, value, valueNoPot) {
         contractOptions[i].amount = contractOptions[found].amount * factor;
     }
 
-console.log(contractOptions);
-    return contractOptions;
+    return contractOptions.filter(function (contractOption) {
+        return contractOption.amount < 20;
+    });
 }
 
 function get(req) {
@@ -140,7 +141,6 @@ function updateNegotiation(inputs) {
         return dao.players.get({
             key: negotiation.pid
         }).then(function (p) {
-console.log(p);
             p = player.filter(p, {
                 attrs: ["pid", "name", "contract", "freeAgentMood"],
                 ratings: ["ovr", "pot"],
@@ -174,25 +174,13 @@ console.log(p);
 
             // Generate contract options
             p.contractOptions = generateContractOptions(p.contract, p.value, p.valueNoPot);
-console.log(p);
 
             return team.getPayroll(null, g.userTid).get(0).then(function (payroll) {
                 return {
                     salaryCap: g.salaryCap / 1000,
                     payroll: payroll / 1000,
                     player: p,
-                    negotiation: {
-                        team: {
-                            amount: negotiation.team.amount / 1000,
-                            years: negotiation.team.years
-                        },
-                        player: {
-                            amount: negotiation.player.amount / 1000,
-                            expiration: negotiation.player.expiration,
-                            years: negotiation.player.years
-                        },
-                        resigning: negotiation.resigning
-                    }
+                    resigning: negotiation.resigning
                 };
             });
         });

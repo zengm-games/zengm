@@ -65,7 +65,7 @@ function generateContractOptions(contract, value, valueNoPot) {
     }
 
     return contractOptions.filter(function (contractOption) {
-        return contractOption.amount < 20;
+        return contractOption.amount <= 20;
     });
 }
 

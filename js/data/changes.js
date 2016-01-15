@@ -97,6 +97,9 @@ all = [{
 }, {
     date: "2015-09-16",
     msg: 'New pages: Transactions (available in the League menu), and Team Records and Awards Records (available under League > History).'
+}, {
+    date: "2016-01-14",
+    msg: 'Contract negotiation has been revamped and streamlined.'
 }];
 
 function check() {

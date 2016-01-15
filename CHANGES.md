@@ -15,6 +15,7 @@ number or not.
 - Players can die
 - +/- and blocks against are recorded
 - New historical screens: Transactions, Awards Records, and Team Records
+- Streamlined contract negotiations
 
 ## Techincal details
 

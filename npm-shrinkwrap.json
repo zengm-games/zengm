@@ -5919,11 +5919,6 @@
         }
       }
     },
-    "moment": {
-      "version": "2.10.6",
-      "from": "moment@*",
-      "resolved": "https://registry.npmjs.org/moment/-/moment-2.10.6.tgz"
-    },
     "replace": {
       "version": "0.3.0",
       "from": "replace@>=0.3.0 <0.4.0",

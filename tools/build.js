@@ -1,7 +1,6 @@
 var browserify = require('browserify');
 var fs = require("fs");
 var CleanCSS = require('clean-css');
-var moment = require("moment");
 var replace = require("replace");
 var fse = require('fs-extra');
 
@@ -18,9 +17,9 @@ function minifyCss() {
 function setTimestamps() {
     console.log("Setting timestamps...");
 
-    var d = moment();
-    var mins = d.minutes() + 60 * d.hours();
-    var rev = d.format("YYYY.MM.DD") + "." + mins;
+    var d = new Date();
+    var date = d.toISOString().split('T')[0].replace(/-/g, '.')
+    var rev =  date + '.' + (d.getMinutes() + 60 * d.getHours());
 
     replace({
         regex: "LAST UPDATED:.*",

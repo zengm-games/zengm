@@ -50,7 +50,6 @@
     "karma-mocha-reporter": "~1.1.1",
     "minifyify": "^7.1.0",
     "mocha": "~2.3.3",
-    "moment": "~2.10.6",
     "replace": "~0.3.0",
     "watchify": "~3.7.0"
   },

@@ -21,6 +21,7 @@ number or not.
 
 - Wrapped all IndexedDB calls in a Promises-based abstraction layer
 - Phase changes (e.g. regular season to playoffs) happen in a single transaction and are cancellable, so inconsistend DB states should be harder to reach
+- Switched from RequireJS to Browserify
 
 # 3.4.0 (2014-12-05)
 

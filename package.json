@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "brfs": "~1.4.1",
-    "browserify": "~11.2.0",
+    "browserify": "~13.0.0",
     "browserify-shim": "~3.8.10",
     "clean-css": "~2.2.23",
     "eslint": "^1.10.3",
@@ -52,7 +52,7 @@
     "mocha": "~2.3.3",
     "moment": "~2.10.6",
     "replace": "~0.3.0",
-    "watchify": "~3.4.0"
+    "watchify": "~3.7.0"
   },
   "browser": {
     "lib/bootstrap-affix": "./js/lib/bootstrap-affix.js",

@@ -1,7 +1,3 @@
-/**
- * @name core.contractNegotiation
- * @namespace All aspects of contract negotiation.
- */
 'use strict';
 
 var dao = require('../dao');

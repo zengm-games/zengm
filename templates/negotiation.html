@@ -11,7 +11,7 @@
 <h2><a data-bind="attrLeagueUrl: {href: ['player', player.pid]}, text: player.name"></a> <span data-bind="newWindow: ['player', player.pid]"></span></h2>
 <p>
   Mood: <span data-bind="html: player.mood"></span><br>
-  Overall: <span data-bind="text: player.ratings.ovr"></span>; Potential: <span data-bind="text: player.ratings.pot"></span>
+  <span data-bind="html: player.age"></span> years old; Overall: <span data-bind="text: player.ratings.ovr"></span>; Potential: <span data-bind="text: player.ratings.pot"></span>
 </p>
 
 <h3>Contract Options</h3>

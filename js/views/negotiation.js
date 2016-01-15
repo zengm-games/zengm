@@ -143,7 +143,7 @@ function updateNegotiation(inputs) {
             key: negotiation.pid
         }).then(function (p) {
             p = player.filter(p, {
-                attrs: ["pid", "name", "contract", "freeAgentMood"],
+                attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
                 ratings: ["ovr", "pot"],
                 season: g.season,
                 showNoStats: true,

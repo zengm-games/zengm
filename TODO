@@ -1,14 +1,11 @@
-FA revamp
-  delete most negotiation code
-    remove restriction for one negotiation at a time
-      make sure re-signing is handled okay still
-      get rid of negotiations object store
+delete most negotiation code
+  remove restriction for one negotiation at a time
+    make sure re-signing is handled okay still
+    make sure multi team mode is handled okay still
+    get rid of negotiations object store
 
 service worker to repalce appcache
-  https://jakearchibald.com/2014/offline-cookbook/
-    cache assets: https://jakearchibald.com/2014/offline-cookbook/#on-network-response
-    fetch: https://jakearchibald.com/2014/offline-cookbook/#cache-falling-back-to-network
-    removing old stuff: https://jakearchibald.com/2014/offline-cookbook/#on-activate
+  harder than it would appear, see branch
 
 get rid of everything in lib folder. either install from npm or create npm packages
 
@@ -29,6 +26,8 @@ babel
 
 CURRENT
 -------
+
+"resign all" button https://www.reddit.com/r/BasketballGM/comments/40q8rc/help_beta_test_new_contract_negotiation_feature/cywki5q
 
 https://www.reddit.com/r/BasketballGM/comments/3se2v7/two_small_bugs/
 

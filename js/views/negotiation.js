@@ -1,7 +1,3 @@
-/**
- * @name views.negotiation
- * @namespace Contract negotiation.
- */
 'use strict';
 
 var dao = require('../dao');
@@ -28,8 +24,13 @@ function redirectNegotiationOrRoster(cancelled) {
     });
 }
 
-function generateContractOptions(contract, value, valueNoPot) {
-    var contractOptions, exp, factor, found, i;
+function generateContractOptions(contract, ovr) {
+    var contractOptions, exp, factor, found, growthFactor, i;
+
+    growthFactor = 0.15;
+
+    // Modulate contract amounts based on last digit of ovr (add some deterministic noise)
+    growthFactor += (ovr % 10) * 0.01 - 0.05;
 
     exp = g.season;
     if (g.phase > g.PHASE.AFTER_TRADE_DEADLINE) {
@@ -60,12 +61,12 @@ function generateContractOptions(contract, value, valueNoPot) {
 
     // From the desired contract, ask for more money for less or more years
     for (i = 0; i < 5; i++) {
-        factor = 1 + Math.abs(found - i) * 0.15;
+        factor = 1 + Math.abs(found - i) * growthFactor;
         contractOptions[i].amount = contractOptions[found].amount * factor;
     }
 
     return contractOptions.filter(function (contractOption) {
-        return contractOption.amount <= 20;
+        return contractOption.amount * 1000 <= g.maxContract;
     });
 }
 
@@ -80,7 +81,7 @@ function get(req) {
 }
 
 function post(req) {
-    var pid, teamAmountNew, teamYearsNew;
+    var pid;
 
     pid = parseInt(req.params.pid, 10);
 
@@ -173,7 +174,7 @@ function updateNegotiation(inputs) {
             delete p.freeAgentMood;
 
             // Generate contract options
-            p.contractOptions = generateContractOptions(p.contract, p.value, p.valueNoPot);
+            p.contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
 
             return team.getPayroll(null, g.userTid).get(0).then(function (payroll) {
                 return {

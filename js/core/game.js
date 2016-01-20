@@ -371,6 +371,25 @@ function writeGameStats(tx, results, att) {
         });
     }
 
+    if (results.clutchPlays.length > 0) {
+        for (i = 0; i < results.clutchPlays.length; i++) {
+            if (results.clutchPlays[i].hasOwnProperty("tempText")) {
+                results.clutchPlays[i].text = results.clutchPlays[i].tempText;
+                if (results.clutchPlays[i].tids[0] === results.team[tw].id) {
+                    results.clutchPlays[i].text += ' in ' + (results.team[tw].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a')
+                        + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid]) + '">' 
+                        + results.team[tw].stat.pts + "-" + results.team[tl].stat.pts + '</a> win over the ' + g.teamNamesCache[results.team[tl].id] + '.';
+                } else {
+                    results.clutchPlays[i].text += ' in ' + (results.team[tl].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a')
+                        + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid]) + '">' 
+                        + results.team[tl].stat.pts + "-" + results.team[tw].stat.pts + '</a> loss to the ' + g.teamNamesCache[results.team[tw].id] + '.';
+                }
+                delete results.clutchPlays[i].tempText;
+            }
+            eventLog.add(tx, results.clutchPlays[i]);
+        }
+    }
+
     return dao.games.put({ot: tx, value: gameStats});
 }
 

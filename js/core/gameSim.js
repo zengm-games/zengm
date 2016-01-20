@@ -61,6 +61,10 @@ function GameSim(gid, team1, team2, doPlayByPlay) {
     this.synergyFactor = 0.1;  // How important is synergy?
 
     this.homeCourtAdvantage();
+
+    this.lastScoringPlay = [];
+    this.clutchPlays = [];
+    
 }
 
 /**
@@ -127,8 +131,11 @@ GameSim.prototype.run = function () {
 
     // Play overtime periods if necessary
     while (this.team[0].stat.pts === this.team[1].stat.pts) {
+        this.checkGameTyingShot();
         this.simOvertime();
     }
+
+    this.checkGameWinner();
 
     // Delete stuff that isn't needed before returning
     for (t = 0; t < 2; t++) {
@@ -142,9 +149,10 @@ GameSim.prototype.run = function () {
     }
 
     out = {
-        gid: this.id,
-        overtimes: this.overtimes,
-        team: this.team
+            gid: this.id,
+            overtimes: this.overtimes,
+            team: this.team,
+            clutchPlays: this.clutchPlays
     };
 
     if (this.playByPlay !== undefined) {
@@ -177,12 +185,14 @@ GameSim.prototype.simRegulation = function () {
         this.team[0].stat.ptsQtrs.push(0);
         this.team[1].stat.ptsQtrs.push(0);
         this.t = 12;
+        this.lastScoringPlay = [];
         this.recordPlay("quarter");
     }
 };
 
 GameSim.prototype.simOvertime = function() {
     this.t = 5;
+    this.lastScoringPlay = [];
     this.overtimes += 1;
     this.team[0].stat.ptsQtrs.push(0);
     this.team[1].stat.ptsQtrs.push(0);
@@ -778,6 +788,7 @@ GameSim.prototype.doFg = function (shooter, passer, type, andOne) {
         this.recordStat(this.o, p, "tp");
         this.recordPlay("tp" + (andOne ? "AndOne" : ""), this.o, [this.team[this.o].player[p].name]);
     }
+    this.recordLastScore(this.o, p, type, this.t);
 
     if (passer >= 0) {
         p = this.playersOnCourt[this.o][passer];
@@ -799,6 +810,176 @@ GameSim.prototype.doFg = function (shooter, passer, type, andOne) {
  */
 GameSim.prototype.probAst = function () {
     return 0.6 * (2 + this.team[this.o].compositeRating.passing) / (2 + this.team[this.d].compositeRating.defense);
+};
+
+GameSim.prototype.checkGameTyingShot = function() {
+    var eventText, i, otherTeam, play, player, prevPlay, shotType, team;
+    if (this.lastScoringPlay.length === 0) { return; }
+
+    // can assume that the last scoring play tied the game
+    i = this.lastScoringPlay.length - 1;
+    play = this.lastScoringPlay[i];
+
+    switch (play.type) {
+        case "atRim":
+        case "lowPost":
+        case "midRange":
+            shotType = "a basket";
+            break;
+        case "threePointer":
+            shotType = "a three-pointer";
+            break;
+        case "ft":
+            shotType = "a free throw";
+            if (i > 0) {
+                prevPlay = this.lastScoringPlay[i - 1];
+                if (prevPlay.team === play.team) {
+                    switch (prevPlay.type) {
+                        case "atRim":
+                        case "lowPost":
+                        case "midRange":
+                            shotType = "a three-point play";
+                            break;
+                        case "threePointer":
+                            shotType = "a four-point play";
+                            break;
+                        case "ft":
+                            if (i > 1 && this.lastScoringPlay[i - 2].team === play.team && this.lastScoringPlay[i - 2].type === "ft") {
+                                shotType = "three free throws";
+                            } else {
+                                shotType = "two free throws";
+                            }
+                            break;
+                    }
+                }
+            }
+            break;
+    }
+
+    team = this.team[play.team];
+    otherTeam = this.team[play.team === 0 ? 1 : 0];
+    player = this.team[play.team].player[play.player];
+    
+    eventText = '<a href="' + helpers.leagueUrl(["player", player.id]) + '">' + player.name + '</a>' + ' made ' + shotType;
+    if (play.time > 0) {
+        eventText += ' with ' + play.time + ' seconds remaining';
+    } else {
+        eventText += (play.type === "ft" ? ' with no time on the clock' : ' at the buzzer');
+    }
+    eventText += ' to force ' + helpers.overtimeAdjective(this.team[0].stat.ptsQtrs.length - 3) + ' overtime';
+
+    this.clutchPlays.push({
+        type: "playerFeat",
+        tempText: eventText,
+        showNotification: team.id === g.userTid,
+        pids: [player.id],
+        tids: [team.id]
+    });
+};
+
+
+GameSim.prototype.checkGameWinner = function() {
+    var eventText, i, loser, margin, play, player, prevPlay, pts, team, shotType, winner;
+
+    if (this.lastScoringPlay.length === 0) { return; }
+
+    winner = (this.team[0].stat.pts > this.team[1].stat.pts ? 0 : 1);
+    loser = (winner === 0 ? 1 : 0);
+    margin = this.team[winner].stat.pts - this.team[loser].stat.pts;
+
+    // work backwards from last scoring plays, check if any resulted in a tie-break or lead change
+    for (i = this.lastScoringPlay.length - 1; i >= 0; i--) {
+        play = this.lastScoringPlay[i];
+        switch (play.type) {
+            case "atRim":
+            case "lowPost":
+            case "midRange":
+                shotType = "basket";
+                pts = 2;
+                break;
+            case "threePointer":
+                shotType = "three-pointer";
+                pts = 3;
+                break;
+            case "ft":
+                // Special handling for free throws
+                shotType = "free throw";
+                if (i > 0) {
+                    prevPlay = this.lastScoringPlay[i - 1];
+                    if (prevPlay.team === play.team) {
+                        switch (prevPlay.type) {
+                            // cases where the basket ties the game, and the and-one wins it
+                            case "atRim":
+                            case "lowPost":
+                            case "midRange":
+                                shotType = "three-point play";
+                                break;
+                            case "threePointer":
+                                shotType = "four-point play";
+                                break;
+                            // case where more than one free throw is needed to take the lead
+                            case "ft":
+                                shotType += "s";
+                                break;
+                        }
+                    }
+                }
+                pts = 1;
+                break;
+        }
+
+        margin -= (play.team === winner ? pts : -pts);
+        if (margin <= 0) {
+            team = this.team[play.team];
+            player = this.team[play.team].player[play.player];
+
+            eventText = '<a href="' + helpers.leagueUrl(["player", player.id]) + '">' + player.name + '</a>' + ' made the game-winning ' + shotType;
+            if (play.time > 0) {
+                eventText += ' with ' + play.time + ' seconds remaining';
+            } else {
+                eventText += (play.type === "ft" ? ' with no time on the clock' : ' at the buzzer');
+            }
+            eventText += ' in ' + (this.team[winner].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a')
+                + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[team.id], g.season, this.id]) + '">' 
+                + this.team[winner].stat.pts + '-' + this.team[loser].stat.pts + '</a>'
+                + ' win over the ' + g.teamNamesCache[this.team[loser].id] + '.';
+
+            this.clutchPlays.push({
+                type: "playerFeat",
+                text: eventText,
+                showNotification: team.id === g.userTid,
+                pids: [player.id],
+                tids: [team.id]
+            });
+            return;
+        }
+    }
+};
+
+GameSim.prototype.recordLastScore = function(teamnum, playernum, type, time) {
+    var currPlay, lastPlay;
+
+    // only record plays in the fourth quarter or overtime...
+    if (this.team[0].stat.ptsQtrs.length < 4) { return; }
+    // ...in the last 24 seconds...
+    if (time > 0.4) { return; }
+    // ...when the lead is 3 or less
+    if (Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > 4) { return; }
+
+    currPlay = {
+            "team": teamnum,
+            "player": playernum,
+            "type": type,
+            "time": Math.floor(time * 600) / 10   // up to 0.1 of a second
+    };
+
+    if (this.lastScoringPlay.length === 0) {
+        this.lastScoringPlay.push(currPlay);
+    } else {
+        lastPlay = this.lastScoringPlay[0];
+        if (lastPlay.time !== currPlay.time) { this.lastScoringPlay = []; }
+        this.lastScoringPlay.push(currPlay);
+    }
 };
 
 /**

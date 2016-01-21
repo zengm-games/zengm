@@ -866,7 +866,7 @@ GameSim.prototype.checkGameTyingShot = function() {
     } else {
         eventText += (play.type === "ft" ? ' with no time on the clock' : ' at the buzzer');
     }
-    eventText += ' to force ' + helpers.overtimeAdjective(this.team[0].stat.ptsQtrs.length - 3) + ' overtime';
+    eventText += ' to force ' + helpers.overtimeCounter(this.team[0].stat.ptsQtrs.length - 3) + ' overtime';
 
     this.clutchPlays.push({
         type: "playerFeat",

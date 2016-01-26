@@ -18,7 +18,8 @@ function showSurvata() {
             brand: "Basketball GM",
             explainer: "Please take this short survey to support Basketball GM!",
             disallowClose: true,
-            allowSkip: false
+            allowSkip: false,
+            contentName: new Date().toISOString()
         });
 
         s.on("load", function (data) {

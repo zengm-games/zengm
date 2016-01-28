@@ -6,6 +6,7 @@
 
 var helpers = require('../util/helpers');
 var random = require('../util/random');
+var g = require('../globals');
 
 /**
  * Initialize the two teams that are playing this game.
@@ -64,7 +65,6 @@ function GameSim(gid, team1, team2, doPlayByPlay) {
 
     this.lastScoringPlay = [];
     this.clutchPlays = [];
-    
 }
 
 /**
@@ -813,7 +813,7 @@ GameSim.prototype.probAst = function () {
 };
 
 GameSim.prototype.checkGameTyingShot = function() {
-    var eventText, i, otherTeam, play, player, prevPlay, shotType, team;
+    var eventText, i, play, player, prevPlay, shotType, team;
     if (this.lastScoringPlay.length === 0) { return; }
 
     // can assume that the last scoring play tied the game
@@ -857,9 +857,8 @@ GameSim.prototype.checkGameTyingShot = function() {
     }
 
     team = this.team[play.team];
-    otherTeam = this.team[play.team === 0 ? 1 : 0];
     player = this.team[play.team].player[play.player];
-    
+
     eventText = '<a href="' + helpers.leagueUrl(["player", player.id]) + '">' + player.name + '</a>' + ' made ' + shotType;
     if (play.time > 0) {
         eventText += ' with ' + play.time + ' seconds remaining';
@@ -967,10 +966,10 @@ GameSim.prototype.recordLastScore = function(teamnum, playernum, type, time) {
     if (Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > 4) { return; }
 
     currPlay = {
-            "team": teamnum,
-            "player": playernum,
-            "type": type,
-            "time": Math.floor(time * 600) / 10   // up to 0.1 of a second
+        team: teamnum,
+        player: playernum,
+        type: type,
+        time: Math.floor(time * 600) / 10   // up to 0.1 of a second
     };
 
     if (this.lastScoringPlay.length === 0) {

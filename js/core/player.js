@@ -2025,7 +2025,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
                 featText += ", ";
             }
         }
-        featText += '</a> in a ' + results.team[i].stat.pts + "-" + results.team[j].stat.pts + (won ? ' win over the ' : ' loss to the ') + g.teamNamesCache[results.team[j].id] + '.';
+        featText += '</a> in ' + (results.team[i].stat.pts.toString().charAt(0) === '8' ? 'an ' : 'a ') + results.team[i].stat.pts + "-" + results.team[j].stat.pts + (won ? ' win over the ' : ' loss to the ') + g.teamNamesCache[results.team[j].id] + '.';
 
         logFeat(featText);
 

@@ -316,7 +316,7 @@ function pos(ratings) {
         position = 'F';
     } else if ((pg || sg) && (sf || pf)) {
         position = 'GF';
-    } else if (c && (pf || sf)) {
+    } else if (c && pf) {
         position = 'FC';
     } else if (pf && sf) {
         position = 'F';

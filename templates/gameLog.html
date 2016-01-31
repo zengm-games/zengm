@@ -12,7 +12,7 @@
 
         <table>
           <tr><td>
-            <a class="btn btn-default disabled" style="margin-right: 30px" data-bind="css: {disabled: boxScore.prevGid() === null}, attrLeagueUrl: {href: ['game_log', abbrev, season, boxScore.prevGid]}">Prev</a>
+            <a id="game-log-prev" class="btn btn-default disabled" style="margin-right: 30px" data-bind="css: {disabled: boxScore.prevGid() === null}, attrLeagueUrl: {href: ['game_log', abbrev, season, boxScore.prevGid]}">Prev</a>
           </td><td align="center">
             <div class="game-log-score">
               <table class="table table-bordered table-condensed">
@@ -49,7 +49,7 @@
               </table>
             </div>
           </td><td>
-            <a class="btn btn-default disabled" style="margin-left: 30px" data-bind="css: {disabled: boxScore.nextGid() === null}, attrLeagueUrl: {href: ['game_log', abbrev, season, boxScore.nextGid]}">Next</a>
+            <a id="game-log-next" class="btn btn-default disabled" style="margin-left: 30px" data-bind="css: {disabled: boxScore.nextGid() === null}, attrLeagueUrl: {href: ['game_log', abbrev, season, boxScore.nextGid]}">Next</a>
           </td></tr>
         </table>
       </center>

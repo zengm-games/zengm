@@ -244,6 +244,7 @@ function updateGamesList(inputs, updateEvents, vm) {
     }
 }
 
+var listenersAdded = false;
 function uiFirst(vm) {
     ko.computed(function () {
         ui.title("Game Log - " + vm.season());
@@ -254,6 +255,17 @@ function uiFirst(vm) {
         vm.boxScore.gid();
         updatePrevNextLinks(vm);
     }).extend({throttle: 1});
+
+    if (!listenersAdded) {
+        listenersAdded = true;
+        document.addEventListener("keydown", function (e) {
+            if (e.keyCode === 37) {
+                document.getElementById('game-log-prev').click();
+            } else if (e.keyCode === 39) {
+                document.getElementById('game-log-next').click();
+            }
+        });
+    }
 }
 
 function uiEvery(updateEvents, vm) {

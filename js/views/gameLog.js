@@ -256,13 +256,19 @@ function uiFirst(vm) {
         updatePrevNextLinks(vm);
     }).extend({throttle: 1});
 
+    // Would be better if I had an "unmount" function...
     if (!listenersAdded) {
         listenersAdded = true;
         document.addEventListener("keydown", function (e) {
+            var el;
             if (e.keyCode === 37) {
-                document.getElementById('game-log-prev').click();
+                el = document.getElementById('game-log-prev');
             } else if (e.keyCode === 39) {
-                document.getElementById('game-log-next').click();
+                el = document.getElementById('game-log-next');
+            }
+
+            if (el) {
+                el.click();
             }
         });
     }

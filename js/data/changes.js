@@ -100,6 +100,9 @@ all = [{
 }, {
     date: "2016-01-14",
     msg: 'Contract negotiation has been revamped and streamlined.'
+}, {
+    date: "2016-01-31",
+    msg: 'Serious injuries will now sometimes result in <a href="https://basketball-gm.com/blog/2016/01/injuries-can-have-long-term-effects/">decreased athleticism ratings</a>.'
 }];
 
 function check() {

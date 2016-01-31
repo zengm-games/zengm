@@ -270,6 +270,8 @@ function writePlayerStats(tx, results) {
                     // Only update player object (values and injuries) every 10 regular season games or on injury
                     if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
                         dao.players.get({ot: tx, key: p.id}).then(function (p_) {
+                            var biggestRatingsLoss, r;
+
                             // Injury crap - assign injury type if player does not already have an injury in the database
                             if (injuredThisGame) {
                                 p_.injury = player.injury(t.healthRank);
@@ -281,11 +283,34 @@ function writePlayerStats(tx, results) {
                                     pids: [p_.pid],
                                     tids: [p_.tid]
                                 });
+
+                                // Some chance of a loss of athleticism from serious injuries
+                                // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
+                                // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
+                                if (p_.injury.gamesRemaining > 25 && Math.random() < p_.injury.gamesRemaining / 150) {
+                                    biggestRatingsLoss = Math.round(p_.injury.gamesRemaining / 10);
+                                    if (biggestRatingsLoss > 10) {
+                                        biggestRatingsLoss = 10;
+                                    }
+
+                                    // Small chance of horrible things
+                                    if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
+                                        biggestRatingsLoss = 30;
+                                    }
+
+                                    r = p_.ratings.length - 1;
+                                    p_.ratings[r].spd = helpers.bound(p_.ratings[r].spd - random.randInt(0, biggestRatingsLoss), 0, 100);
+                                    p_.ratings[r].jmp = helpers.bound(p_.ratings[r].jmp - random.randInt(0, biggestRatingsLoss), 0, 100);
+                                    p_.ratings[r].endu = helpers.bound(p_.ratings[r].endu - random.randInt(0, biggestRatingsLoss), 0, 100);
+                                }
                             }
 
-                            // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
+                            // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
                             if (g.phase !== g.PHASE.PLAYOFFS) {
                                 return player.updateValues(tx, p_, [ps]);
+                            }
+                            if (biggestRatingsLoss) {
+                                return player.updateValues(tx, p_, []);
                             }
 
                             return p_;

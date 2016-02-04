@@ -1,3 +1,13 @@
+god mode
+  options
+    disable injuries
+    disable ratings display
+    disable salary cap
+  edit player
+    edit diedYear (or null if blank)
+
+injuries on player page https://www.reddit.com/r/BasketballGM/comments/43jj76/injuries_can_have_longterm_effects/czinyzk
+
 more detailed negotiation screen https://www.reddit.com/r/BasketballGM/comments/416o5g/well_this_is_new/cz11w9v?context=3
 
 delete most negotiation code
@@ -143,14 +153,6 @@ in-memory cache
   really, 2 paths forward:
     1. generic caching layer on top of IndexedDB (or my promises-based library) - maybe using fakeIndexedDB
     2. write more specific dao (like sdw) and write caching (or other) layer specific to that
-
-god mode
-  options
-    disable injuries
-    disable ratings display
-    disable salary cap
-  edit player
-    edit diedYear (or null if blank)
 
 refactor draft code
 

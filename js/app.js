@@ -1,5 +1,8 @@
 'use strict';
 
+var Promise = require('bluebird');
+Promise.config({warnings: false});
+
 var db = require('./db');
 var views = require('./views');
 var ui = require('./ui');

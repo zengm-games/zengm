@@ -69,7 +69,10 @@ function uiFirst(vm) {
             minContract: parseInt(vm.minContract() * 1000, 10),
             maxContract: parseInt(vm.maxContract() * 1000, 10)
         };
-console.log('save god mode options', gameAttributes);
+        league.setGameAttributesComplete(gameAttributes).then(function () {
+            league.updateLastDbChange();
+            ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
+        });
     });
 
     $("#help-luxury-tax").popover({

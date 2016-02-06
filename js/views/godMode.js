@@ -75,6 +75,16 @@ function uiFirst(vm) {
         });
     });
 
+    $("#help-injuries").popover({
+        title: "Injuries",
+        content: "This won't heal current injuries, but it will prevent any new ones from occurring."
+    });
+
+    $("#help-num-games").popover({
+        title: "# Games Per Season",
+        content: "This will only apply to seasons that have not started yet."
+    });
+
     $("#help-luxury-tax").popover({
         title: "Luxury Tax",
         content: "Take the difference between a team's payroll and the luxury tax threshold. Multiply that by this number. The result is the penalty they have to pay."

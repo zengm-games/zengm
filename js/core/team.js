@@ -953,7 +953,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
                             estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
 
                             // Set fudge factor with more confidence if it's the current season
-                            if (seasons === 0 && gp >= 41) {
+                            if (seasons === 0 && gp >= g.numGames / 2) {
                                 fudgeFactor = (1 - gp / g.numGames) * 5;
                             } else {
                                 fudgeFactor = 5;
@@ -1330,7 +1330,7 @@ function updateStrategies(tx) {
                 // Average age, weighted by minutes played
                 age = numerator / denominator;
 
-                score = 0.8 * dWon + (won - 41) + 5 * (26 - age) + youngStar * 20;
+                score = 0.8 * dWon + (won - g.numGames / 2) + 5 * (26 - age) + youngStar * 20;
 
                 updated = false;
                 if (score > 20 && t.strategy === "rebuilding") {

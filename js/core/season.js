@@ -34,7 +34,7 @@ function updateOwnerMood(tx) {
         var deltas, ownerMood;
 
         deltas = {};
-        deltas.wins = 0.25 * (t.won - 41) / 41;
+        deltas.wins = 0.25 * (t.won - g.numGames / 2) / (g.numGames / 2);
         if (t.playoffRoundsWon < 0) {
             deltas.playoffs = -0.2;
         } else if (t.playoffRoundsWon < 4) {

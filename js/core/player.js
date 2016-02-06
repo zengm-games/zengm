@@ -1926,6 +1926,12 @@ function augmentPartialPlayer(p, scoutingRank) {
 
 function checkStatisticalFeat(tx, pid, tid, p, results) {
     var doubles, feat, featText, featTextArr, i, j, k, key, logFeat, saveFeat, statArr, won;
+    var factor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
+    var TEN = factor * 10;
+    var FIVE = factor * 5;
+    var TWENTY = factor * 20;
+    var TWENTY_FIVE = factor * 25;
+    var FIFTY = factor * 50;
 
     saveFeat = false;
 
@@ -1940,17 +1946,17 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
     };
 
     doubles = ["pts", "ast", "stl", "blk"].reduce(function (count, stat) {
-        if (p.stat[stat] >= 10) {
+        if (p.stat[stat] >= TEN) {
             return count + 1;
         }
         return count;
     }, 0);
-    if (p.stat.orb + p.stat.drb >= 10) {
+    if (p.stat.orb + p.stat.drb >= TEN) {
         doubles += 1;
     }
 
     statArr = {};
-    if (p.stat.pts >= 5 && p.stat.ast >= 5 && p.stat.stl >= 5 && p.stat.blk >= 5 && (p.stat.orb + p.stat.drb) >= 5) {
+    if (p.stat.pts >= FIVE && p.stat.ast >= FIVE && p.stat.stl >= FIVE && p.stat.blk >= FIVE && (p.stat.orb + p.stat.drb) >= FIVE) {
         statArr.points = p.stat.pts;
         statArr.rebounds = p.stat.orb + p.stat.drb;
         statArr.assists = p.stat.ast;
@@ -1959,34 +1965,34 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
         saveFeat = true;
     }
     if (doubles >= 3) {
-        if (p.stat.pts >= 10) { statArr.points = p.stat.pts; }
-        if (p.stat.orb + p.stat.drb >= 10) { statArr.rebounds = p.stat.orb + p.stat.drb; }
-        if (p.stat.ast >= 10) { statArr.assists = p.stat.ast; }
-        if (p.stat.stl >= 10) { statArr.steals = p.stat.stl; }
-        if (p.stat.blk >= 10) { statArr.blocks = p.stat.blk; }
+        if (p.stat.pts >= TEN) { statArr.points = p.stat.pts; }
+        if (p.stat.orb + p.stat.drb >= TEN) { statArr.rebounds = p.stat.orb + p.stat.drb; }
+        if (p.stat.ast >= TEN) { statArr.assists = p.stat.ast; }
+        if (p.stat.stl >= TEN) { statArr.steals = p.stat.stl; }
+        if (p.stat.blk >= TEN) { statArr.blocks = p.stat.blk; }
         saveFeat = true;
     }
-    if (p.stat.pts >= 50) {
+    if (p.stat.pts >= FIFTY) {
         statArr.points = p.stat.pts;
         saveFeat = true;
     }
-    if (p.stat.orb + p.stat.drb >= 25) {
+    if (p.stat.orb + p.stat.drb >= TWENTY_FIVE) {
         statArr.rebounds = p.stat.orb + p.stat.drb;
         saveFeat = true;
     }
-    if (p.stat.ast >= 20) {
+    if (p.stat.ast >= TWENTY) {
         statArr.assists = p.stat.ast;
         saveFeat = true;
     }
-    if (p.stat.stl >= 10) {
+    if (p.stat.stl >= TEN) {
         statArr.steals = p.stat.stl;
         saveFeat = true;
     }
-    if (p.stat.blk >= 10) {
+    if (p.stat.blk >= TEN) {
         statArr.blocks = p.stat.blk;
         saveFeat = true;
     }
-    if (p.stat.tp >= 10) {
+    if (p.stat.tp >= TEN) {
         statArr["three pointers"] = p.stat.tp;
         saveFeat = true;
     }

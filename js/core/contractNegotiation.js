@@ -181,7 +181,7 @@ function accept(pid, amount, exp) {
 
         // If this contract brings team over the salary cap, it's not a minimum;
         // contract, and it's not re-signing a current player, ERROR!
-        if (!negotiation.resigning && (payroll + amount > g.salaryCap && amount !== g.minContract)) {
+        if (!negotiation.resigning && (payroll + amount > g.salaryCap && amount > g.minContract)) {
             return "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.";
         }
 

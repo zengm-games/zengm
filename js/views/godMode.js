@@ -8,6 +8,7 @@ var g = require('../globals');
 var ui = require('../ui');
 var league = require('../core/league');
 var bbgmView = require('../util/bbgmView');
+var eventLog = require('../util/eventLog');
 var helpers = require('../util/helpers');
 var $ = require('jquery');
 
@@ -71,6 +72,13 @@ function uiFirst(vm) {
         };
         league.setGameAttributesComplete(gameAttributes).then(function () {
             league.updateLastDbChange();
+
+            eventLog.add(null, {
+                type: "success",
+                text: 'God Mode options successfully updated.',
+                saveToDb: false
+            });
+
             ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
         });
     });

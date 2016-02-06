@@ -1438,7 +1438,7 @@ function checkRosterSizes() {
         // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
         minFreeAgents = [];
         for (i = 0; i < players.length; i++) {
-            if (players[i].contract.amount === 500) {
+            if (players[i].contract.amount === g.minContract) {
                 minFreeAgents.push(players[i]);
             }
         }

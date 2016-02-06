@@ -460,7 +460,7 @@ function genOrderFantasy(tx, position) {
  * @return {Array.<number>} Array of salaries, in thousands of dollars/year.
  */
 function getRookieSalaries() {
-    var rookieSalaries;
+    var i, rookieSalaries;
 
     // Default for 60 picks
     rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];
@@ -472,6 +472,13 @@ function getRookieSalaries() {
     while (g.numTeams * 2 < rookieSalaries.length) {
         // Remove smallest salaries
         rookieSalaries.pop();
+    }
+
+    if (g.minContract !== 500) {
+        for (i = 0; i < rookieSalaries.length; i++) {
+            rookieSalaries[i] *= g.minContract / 500;
+            rookieSalaries[i] = Math.round(rookieSalaries[i] / 10) * 10;
+        }
     }
 
     return rookieSalaries;

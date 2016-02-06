@@ -145,7 +145,7 @@ function skills(ratings) {
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
 function genContract(p, randomizeExp, randomizeAmount, noLimit) {
-    var amount, expiration, maxAmount, minAmount, potentialDifference, ratings, years;
+    var amount, expiration, potentialDifference, ratings, years;
 
     ratings = _.last(p.ratings);
 
@@ -153,14 +153,10 @@ function genContract(p, randomizeExp, randomizeAmount, noLimit) {
     randomizeAmount = randomizeAmount !== undefined ? randomizeAmount : true;
     noLimit = noLimit !== undefined ? noLimit : false;
 
-    // Limits on yearly contract amount, in $1000's
-    minAmount = 500;
-    maxAmount = 20000;
-
     // Scale proportional to (ovr*2 + pot)*0.5 120-210
     //amount = ((3 * p.value) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
-    //amount = amount * (maxAmount - minAmount) + minAmount;
-    amount = ((p.value - 1) / 100 - 0.45) * 3.3 * (maxAmount - minAmount) + minAmount;
+    //amount = amount * (g.maxContract - g.minContract) + g.minContract;
+    amount = ((p.value - 1) / 100 - 0.45) * 3.3 * (g.maxContract - g.minContract) + g.minContract;
     if (randomizeAmount) {
         amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
     }
@@ -194,10 +190,10 @@ function genContract(p, randomizeExp, randomizeAmount, noLimit) {
     expiration = g.season + years - 1;
 
     if (!noLimit) {
-        if (amount < minAmount * 1.1) {
-            amount = minAmount;
-        } else if (amount > maxAmount) {
-            amount = maxAmount;
+        if (amount < g.minContract * 1.1) {
+            amount = g.minContract;
+        } else if (amount > g.maxContract) {
+            amount = g.maxContract;
         }
     } else {
         // Well, at least keep it positive

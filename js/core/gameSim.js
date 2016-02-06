@@ -500,6 +500,10 @@ GameSim.prototype.updatePlayingTime = function (possessionTime) {
 GameSim.prototype.injuries = function () {
     var newInjury, p, t;
 
+    if (g.disableInjuries) {
+        return;
+    }
+
     newInjury = false;
 
     for (t = 0; t < 2; t++) {

@@ -70,7 +70,7 @@ function calculatePER() {
             statsPlayoffs: g.PHASE.PLAYOFFS === g.phase
         // Can't drop this then to another level because of the short circuit return above
         }).then(function (players) {
-            var EWA, PER, aPER, drbp, factor, i, mins, tid, tx, uPER, vop;
+            var EWA, PER, aPER, drbp, factor, i, minFactor, mins, tid, tx, uPER, vop;
 
             players = player.filter(players, {
                 attrs: ["pid", "tid"],
@@ -127,7 +127,8 @@ function calculatePER() {
                 }
             }
 
-            league.aPER = league.aPER / (league.gp * 5 * 48);
+            minFactor = g.quarterLength / 12;
+            league.aPER = league.aPER / (league.gp * 5 * 48 * minFactor);
 
             PER = _.map(aPER, function (num) { return num * (15 / league.aPER); });
 

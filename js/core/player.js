@@ -1926,12 +1926,12 @@ function augmentPartialPlayer(p, scoutingRank) {
 
 function checkStatisticalFeat(tx, pid, tid, p, results) {
     var doubles, feat, featText, featTextArr, i, j, k, key, logFeat, saveFeat, statArr, won;
-    var factor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
-    var TEN = factor * 10;
-    var FIVE = factor * 5;
-    var TWENTY = factor * 20;
-    var TWENTY_FIVE = factor * 25;
-    var FIFTY = factor * 50;
+    var minFactor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
+    var TEN = minFactor * 10;
+    var FIVE = minFactor * 5;
+    var TWENTY = minFactor * 20;
+    var TWENTY_FIVE = minFactor * 25;
+    var FIFTY = minFactor * 50;
 
     saveFeat = false;
 

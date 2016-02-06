@@ -1,10 +1,7 @@
-god mode
-  options
-    disable injuries
-    disable ratings display
-    disable salary cap
-  edit player
-    edit diedYear (or null if blank)
+god mode options
+  make UI save to DB
+  make new options functional
+  make sure old leagues work
 
 injuries on player page https://www.reddit.com/r/BasketballGM/comments/43jj76/injuries_can_have_longterm_effects/czinyzk
 
@@ -764,6 +761,11 @@ trades
       "I need to cut my payroll and start making more money."
       "I could really use a good rebounder."
   sign and trade (only during resigning phase)
+god mode
+  options
+    disable ratings display
+  edit player
+    edit diedYear (or null if blank)
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?

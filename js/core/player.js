@@ -35,7 +35,6 @@ function limitRating(rating) {
     return Math.floor(rating);
 }
 
-
 /**
  * Calculates the overall rating by averaging together all the other ratings.
  *

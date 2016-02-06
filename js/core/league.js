@@ -19,6 +19,36 @@ var _ = require('underscore');
 var helpers = require('../util/helpers');
 var random = require('../util/random');
 
+var defaultGameAttributes = {
+    phase: 0,
+    nextPhase: null, // Used only for fantasy draft
+    daysLeft: 0, // Used only for free agency
+    gamesInProgress: false,
+    phaseChangeInProgress: false,
+    stopGames: false,
+    lastDbChange: 0,
+    ownerMood: {
+        wins: 0,
+        playoffs: 0,
+        money: 0
+    },
+    gameOver: false,
+    showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
+    autoPlaySeasons: 0,
+    godMode: false,
+    godModeInPast: false,
+    salaryCap: 60000, // [thousands of dollars]
+    minPayroll: 40000, // [thousands of dollars]
+    luxuryPayroll: 65000, // [thousands of dollars]
+    luxuryTax: 1.5,
+    minContract: 500, // [thousands of dollars]
+    maxContract: 20000, // [thousands of dollars]
+    minRosterSize: 10,
+    numGames: 82, // per season
+    quarterLength: 12, // [minutes]
+    disableInjuries: false
+};
+
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
 function merge(x, y) {
     var i, prop;
@@ -155,35 +185,18 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
         var gameAttributes, i;
 
         // Default values
-        gameAttributes = {
+        gameAttributes = _.extend(helpers.deepCopy(defaultGameAttributes), {
             userTid: tid,
             userTids: [tid],
             season: startingSeason,
             startingSeason: startingSeason,
-            phase: 0,
-            nextPhase: null, // Used only for fantasy draft
-            daysLeft: 0, // Used only for free agency
-            gamesInProgress: false,
-            phaseChangeInProgress: false,
-            stopGames: false,
-            lastDbChange: 0,
             leagueName: name,
-            ownerMood: {
-                wins: 0,
-                playoffs: 0,
-                money: 0
-            },
-            gameOver: false,
             teamAbbrevsCache: _.pluck(teams, "abbrev"),
             teamRegionsCache: _.pluck(teams, "region"),
             teamNamesCache: _.pluck(teams, "name"),
-            showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
             gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
-            numTeams: teams.length, // Will be 30 if the user doesn't supply custom rosters
-            autoPlaySeasons: 0,
-            godMode: false,
-            godModeInPast: false
-        };
+            numTeams: teams.length // Will be 30 if the user doesn't supply custom rosters
+        });
 
         // gameAttributes from input
         skipNewPhase = false;
@@ -672,6 +685,11 @@ function loadGameAttribute(ot, key) {
         if (key === "userTid" || key === "userTids") {
             g.vm.multiTeam[key](gameAttribute.value);
         }
+
+        // Set defaults to avoid IndexedDB upgrade
+        if (g[key] === undefined && defaultGameAttributes.hasOwnProperty(key)) {
+            g[key] = defaultGameAttributes[key];
+        }
     });
 }
 
@@ -690,9 +708,14 @@ function loadGameAttributes(ot) {
         }
 
         // Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w
-        if (g.userTids === undefined) {
-            g.userTids = [g.userTid];
-        }
+        if (g.userTids === undefined) { g.userTids = [g.userTid]; }
+
+        // Set defaults to avoid IndexedDB upgrade
+        Object.keys(defaultGameAttributes).forEach(function (key) {
+            if (g[key] === undefined) {
+                g[key] = defaultGameAttributes[key];
+            }
+        });
 
         // UI stuff - see also loadGameAttribute
         g.vm.topMenu.godMode(g.godMode);

@@ -56,7 +56,7 @@ function GameSim(gid, team1, team2, doPlayByPlay) {
 
     this.overtimes = 0;  // Number of overtime periods that have taken place
 
-    this.t = 12; // Game clock, in minutes
+    this.t = g.quarterLength; // Game clock, in minutes
 
     // Parameters
     this.synergyFactor = 0.1;  // How important is synergy?
@@ -184,7 +184,7 @@ GameSim.prototype.simRegulation = function () {
         }
         this.team[0].stat.ptsQtrs.push(0);
         this.team[1].stat.ptsQtrs.push(0);
-        this.t = 12;
+        this.t = g.quarterLength;
         this.lastScoringPlay = [];
         this.recordPlay("quarter");
     }

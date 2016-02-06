@@ -549,23 +549,19 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                     return g.lid;
                 }
 
-                // Make schedule, start season
-                return phase.newPhase(g.PHASE.REGULAR_SEASON).then(function () {
-                    var lid, tx;
+                ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
+                ui.updateStatus("Idle");
 
-                    ui.updateStatus("Idle");
+                var lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
-                    lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
+                helpers.bbgmPing("league");
 
-                    helpers.bbgmPing("league");
-
-                    // Auto sort rosters
-                    tx = dao.tx("players", "readwrite");
-                    return Promise.map(teams, function (t) {
-                        return team.rosterAutoSort(tx, t.tid);
-                    }, {concurrency: Infinity}).then(function () {
-                        return lid;
-                    });
+                // Auto sort rosters
+                var tx = dao.tx("players", "readwrite");
+                return Promise.map(teams, function (t) {
+                    return team.rosterAutoSort(tx, t.tid);
+                }, {concurrency: Infinity}).then(function () {
+                    return lid;
                 });
             });
         });

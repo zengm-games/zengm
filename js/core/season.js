@@ -476,30 +476,37 @@ function newScheduleDefault(teams) {
 /**
  * Creates a new regular season schedule for an arbitrary number of teams.
  *
- * newScheduleDefault is much nicer and more balanced, but only works for 30 teams.
+ * newScheduleDefault is much nicer and more balanced, but only works for 30 teams and 82 games.
  *
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
 function newScheduleCrappy() {
-    var i, j, numGames, numRemaining, numWithRemaining, tids;
-
-    numGames = 82;
+    var i, j, numRemaining, numWithRemaining, tids, tries;
 
     // Number of games left to reschedule for each team
     numRemaining = [];
     for (i = 0; i < g.numTeams; i++) {
-        numRemaining[i] = numGames;
+        numRemaining[i] = g.numGames;
     }
     numWithRemaining = g.numTeams; // Number of teams with numRemaining > 0
 
     tids = [];
-    while (tids.length < numGames * g.numTeams) {
+
+    while (tids.length < g.numGames * g.numTeams / 2) {
         i = -1; // Home tid
         j = -1; // Away tid
+
+        tries = 0;
         while (i === j || numRemaining[i] === 0 || numRemaining[j] === 0) {
             i = random.randInt(0, g.numTeams - 1);
             j = random.randInt(0, g.numTeams - 1);
+            tries += 1;
+            if (tries > 10000) {
+                console.log(tids, tids.length);
+                console.log(numRemaining.length);
+                throw new Error('Failed to generate schedule with ' + g.numTeams + ' teams and ' + g.numGames + ' games.');
+            }
         }
 
         tids.push([i, j]);
@@ -515,7 +522,7 @@ function newScheduleCrappy() {
             numWithRemaining -= 1;
         }
         if (numWithRemaining === 1) {
-            // If this happens, we didn't find 82 for each team and one team will play a few less games
+            // If this happens, we didn't find g.numGames for each team and one team will play a few less games
             break;
         }
     }
@@ -534,7 +541,7 @@ function newScheduleCrappy() {
 function newSchedule(teams) {
     var days, i, j, jMax, tids, tidsInDays, used;
 
-    if (g.numTeams === 30) {
+    if (g.numTeams === 30 && g.numGames === 82) {
         tids = newScheduleDefault(teams);
     } else {
         tids = newScheduleCrappy();

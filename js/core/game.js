@@ -66,11 +66,11 @@ function writeTeamStats(tx, results) {
             localTvRevenue = 0;
             if (g.phase !== g.PHASE.PLAYOFFS) {
                 // All in [thousands of dollars]
-                salaryPaid = payroll / 82;
-                scoutingPaid = t.budget.scouting.amount / 82;
-                coachingPaid = t.budget.coaching.amount / 82;
-                healthPaid = t.budget.health.amount / 82;
-                facilitiesPaid = t.budget.facilities.amount / 82;
+                salaryPaid = payroll / g.numGames;
+                scoutingPaid = t.budget.scouting.amount / g.numGames;
+                coachingPaid = t.budget.coaching.amount / g.numGames;
+                healthPaid = t.budget.health.amount / g.numGames;
+                facilitiesPaid = t.budget.facilities.amount / g.numGames;
                 merchRevenue = 3 * att / 1000;
                 if (merchRevenue > 250) {
                     merchRevenue = 250;

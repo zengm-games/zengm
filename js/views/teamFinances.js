@@ -310,7 +310,7 @@ function uiFirst(vm) {
         barData = vm.barData();
         barSeasons = vm.barSeasons();
 
-        $.barGraph($("#bar-graph-won"), barData.won, [0, 82], barSeasons);
+        $.barGraph($("#bar-graph-won"), barData.won, [0, g.numGames], barSeasons);
         $.barGraph($("#bar-graph-hype"), barData.hype, [0, 1], barSeasons, function (val) {
             return helpers.round(val, 2);
         });

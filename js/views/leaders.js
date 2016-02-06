@@ -66,8 +66,8 @@ function updateLeaders(inputs, updateEvents, vm) {
                         gps[i] = teams[i].seasons[j].gp;
 
                         // Don't count playoff games
-                        if (gps[i] > 82) {
-                            gps[i] = 82;
+                        if (gps[i] > g.numGames) {
+                            gps[i] = g.numGames;
                         }
 
                         break;
@@ -113,7 +113,7 @@ function updateLeaders(inputs, updateEvents, vm) {
                         }
 
                         // Compare against value normalized for team games played
-                        if (playerValue >= Math.ceil(categories[i].minValue[k] * gps[players[j].stats.tid] / 82)) {
+                        if (playerValue >= Math.ceil(categories[i].minValue[k] * gps[players[j].stats.tid] / g.numGames)) {
                             pass = true;
                             break;  // If one is true, don't need to check the others
                         }

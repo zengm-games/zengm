@@ -1020,10 +1020,12 @@ function injury(healthRank) {
  *
  * @memberOf core.player
  * @param {Object} exp Contract expiration year.
- * @return {number} numGamesRemaining Number of games remaining in the current season (0 to 82).
+ * @return {number} numGamesRemaining Number of games remaining in the current season (0 to g.numGames).
  */
 function contractSeasonsRemaining(exp, numGamesRemaining) {
-    return (exp - g.season) + numGamesRemaining / 82;
+    var frac = numGamesRemaining / g.numGames;
+    if (frac > 1) { frac = 1; } // This only happens if the user changed g.numGames mid season
+    return (exp - g.season) + frac;
 }
 
 /**

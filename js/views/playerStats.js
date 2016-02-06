@@ -87,10 +87,10 @@ function updatePlayers(inputs, updateEvents, vm) {
                     gp = players[i].stats.gp;
                 }
             }
-            // Special case for career totals - use 82 games, unless this is the first season
+            // Special case for career totals - use g.numGames games, unless this is the first season
             if (!inputs.season) {
                 if (g.season > g.startingSeason) {
-                    gp = 82;
+                    gp = g.numGames;
                 }
             }
 

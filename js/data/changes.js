@@ -103,6 +103,9 @@ all = [{
 }, {
     date: "2016-01-31",
     msg: 'Serious injuries will now sometimes result in <a href="https://basketball-gm.com/blog/2016/01/injuries-can-have-long-term-effects/">decreased athleticism ratings</a>.'
+}, {
+    date: "2016-02-06",
+    msg: 'Lots of new options in God Mode - change the salary cap, the length of games, the number of games in a season, disable injuries, etc.'
 }];
 
 function check() {

@@ -17,6 +17,7 @@ number or not.
 - New historical screens: Transactions, Awards Records, and Team Records
 - Streamlined contract negotiations
 - Serious injuries can result in decreased athleticism ratings
+- A bunch of options in God Mode, like changing the salary cap, disabling injuries, etc.
 
 ## Techincal details
 

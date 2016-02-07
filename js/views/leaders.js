@@ -56,7 +56,7 @@ function updateLeaders(inputs, updateEvents, vm) {
                 statsSeasons: [inputs.season]
             })
         ]).spread(function (teams, players) {
-            var categories, gps, i, j, k, leader, minFactor, pass, playerValue, stats, userAbbrev;
+            var categories, factor, gps, i, j, k, leader, pass, playerValue, stats, userAbbrev;
 
             // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
             gps = [];
@@ -85,7 +85,7 @@ function updateLeaders(inputs, updateEvents, vm) {
             userAbbrev = helpers.getAbbrev(g.userTid);
 
             // minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
-            minFactor = Math.sqrt(g.quarterLength / 12);
+            factor = (g.numGames / 82) * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
             categories = [];
             categories.push({name: "Points", stat: "Pts", title: "Points Per Game", data: [], minStats: ["gp", "pts"], minValue: [70, 1400]});
             categories.push({name: "Rebounds", stat: "Reb", title: "Rebounds Per Game", data: [], minStats: ["gp", "trb"], minValue: [70, 800]});
@@ -95,9 +95,9 @@ function updateLeaders(inputs, updateEvents, vm) {
             categories.push({name: "Free Throw Percentage", stat: "FT%", title: "Free Throw Percentage", data: [], minStats: ["ft"], minValue: [125]});
             categories.push({name: "Blocks", stat: "Blk", title: "Blocks Per Game", data: [], minStats: ["gp", "blk"], minValue: [70, 100]});
             categories.push({name: "Steals", stat: "Stl", title: "Steals Per Game", data: [], minStats: ["gp", "stl"], minValue: [70, 125]});
-            categories.push({name: "Minutes", stat: "Min", title: "Minutes Per Game", data: [], minStats: ["gp", "min"], minValue: [70, minFactor * 2000]});
-            categories.push({name: "Player Efficiency Rating", stat: "PER", title: "Player Efficiency Rating", data: [], minStats: ["min"], minValue: [minFactor * 2000]});
-            categories.push({name: "Estimated Wins Added", stat: "EWA", title: "Estimated Wins Added", data: [], minStats: ["min"], minValue: [minFactor * 2000]});
+            categories.push({name: "Minutes", stat: "Min", title: "Minutes Per Game", data: [], minStats: ["gp", "min"], minValue: [70, 2000]});
+            categories.push({name: "Player Efficiency Rating", stat: "PER", title: "Player Efficiency Rating", data: [], minStats: ["min"], minValue: [2000]});
+            categories.push({name: "Estimated Wins Added", stat: "EWA", title: "Estimated Wins Added", data: [], minStats: ["min"], minValue: [2000]});
             stats = ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa"];
 
             for (i = 0; i < categories.length; i++) {
@@ -114,7 +114,7 @@ function updateLeaders(inputs, updateEvents, vm) {
                         }
 
                         // Compare against value normalized for team games played
-                        if (playerValue >= Math.ceil(categories[i].minValue[k] * gps[players[j].stats.tid] / g.numGames)) {
+                        if (playerValue >= Math.ceil(categories[i].minValue[k] * factor * gps[players[j].stats.tid] / g.numGames)) {
                             pass = true;
                             break;  // If one is true, don't need to check the others
                         }

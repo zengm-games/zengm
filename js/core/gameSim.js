@@ -191,7 +191,7 @@ GameSim.prototype.simRegulation = function () {
 };
 
 GameSim.prototype.simOvertime = function() {
-    this.t = 5;
+    this.t = Math.ceil(0.4 * g.quarterLength); // 5 minutes by default, but scales
     this.lastScoringPlay = [];
     this.overtimes += 1;
     this.team[0].stat.ptsQtrs.push(0);

@@ -474,9 +474,17 @@ function getRookieSalaries() {
         rookieSalaries.pop();
     }
 
-    if (g.minContract !== 500) {
+    if (g.minContract !== 500 || g.maxContract !== 20000) {
         for (i = 0; i < rookieSalaries.length; i++) {
-            rookieSalaries[i] *= g.minContract / 500;
+            // Subtract min
+            rookieSalaries[i] -= 500;
+
+            // Scale so max will be 1/4 the max contract
+            rookieSalaries[i] *= (0.25 * g.maxContract - g.minContract) / (4500);
+
+            // Add min back
+            rookieSalaries[i] += g.minContract;
+
             rookieSalaries[i] = Math.round(rookieSalaries[i] / 10) * 10;
         }
     }

@@ -543,6 +543,167 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3);
             }
 
+            // Donald Trump Easter Egg
+            if (Math.random() < 0.01) {
+                dao.players.put({ot: tx, value: {
+                    tid: -2,
+                    statsTids: [],
+                    rosterOrder: 666,
+                    ratings: [
+                        {
+                            hgt: 30,
+                            stre: 100,
+                            spd: 90,
+                            jmp: 90,
+                            endu: 90,
+                            ins: 90,
+                            dnk: 90,
+                            ft: 90,
+                            fg: 90,
+                            tp: 90,
+                            blk: 100,
+                            stl: 100,
+                            drb: 90,
+                            pss: 0,
+                            reb: 90,
+                            season: startingSeason,
+                            ovr: 75,
+                            pot: 75,
+                            fuzz: 0,
+                            skills: ["Dp"],
+                            pos: "G"
+                        }
+                    ],
+                    weight: 198,
+                    hgt: 75,
+                    born: {
+                        year: 1946,
+                        loc: "Queens, NY"
+                    },
+                    name: "Donald Trump",
+                    college: "",
+                    imgURL: "//play.basketball-gm.com/img/trump.jpg",
+                    awards: [],
+                    freeAgentMood: [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    yearsFreeAgent: 0,
+                    retiredYear: null,
+                    draft: {
+                        round: 0,
+                        pick: 0,
+                        tid: -1,
+                        originalTid: -1,
+                        year: startingSeason,
+                        teamName: null,
+                        teamRegion: null,
+                        pot: 75,
+                        ovr: 75,
+                        skills: ["Dp"]
+                    },
+                    face: {
+                        head: {
+                            id: 0
+                        },
+                        eyebrows: [
+                            {
+                                id: 0,
+                                lr: "l",
+                                cx: 135,
+                                cy: 250
+                            },
+                            {
+                                id: 0,
+                                lr: "r",
+                                cx: 265,
+                                cy: 250
+                            }
+                        ],
+                        eyes: [
+                            {
+                                id: 3,
+                                lr: "l",
+                                cx: 135,
+                                cy: 280,
+                                angle: -2.53978886641562
+                            },
+                            {
+                                id: 3,
+                                lr: "r",
+                                cx: 265,
+                                cy: 280,
+                                angle: -2.53978886641562
+                            }
+                        ],
+                        nose: {
+                            id: 1,
+                            lr: "l",
+                            cx: 200,
+                            cy: 330,
+                            size: 0.46898400504142046,
+                            flip: true
+                        },
+                        mouth: {
+                            id: 3,
+                            cx: 200,
+                            cy: 400
+                        },
+                        hair: {
+                            id: 0
+                        },
+                        fatness: 0.07551302784122527,
+                        color: "#a67358"
+                    },
+                    injury: {
+                        type: "Healthy",
+                        gamesRemaining: 0
+                    },
+                    ptModifier: 1,
+                    hof: false,
+                    watch: false,
+                    gamesUntilTradable: 0,
+                    value: 85.32267878968268,
+                    valueNoPot: 79,
+                    valueFuzz: 86.69999999999999,
+                    valueNoPotFuzz: 81,
+                    valueWithContract: 85.32267878968268,
+                    salaries: [],
+                    contract: {
+                        amount: 500,
+                        exp: startingSeason + 1
+                    }
+                }});
+            }
+
             return tx.complete().then(function () {
                 if (skipNewPhase) {
                     // Game already in progress, just start it

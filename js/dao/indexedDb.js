@@ -23,11 +23,7 @@ dao.tx = function (storeNames, mode, tx0) {
     // Default value, because some people reported errors when this was undefined
     mode = mode !== undefined ? mode : "readonly";
 
-    if (storeNames === "achievements" || storeNames === "leagues") {
-        tx = g.dbm.transaction(storeNames, mode);
-    } else {
-        tx = g.dbl.transaction(storeNames, mode);
-    }
+    tx = g.dbl.transaction(storeNames, mode);
 
     tx.complete = function () {
         return new Promise(function (resolve) {
@@ -53,7 +49,7 @@ dao.tx = function (storeNames, mode, tx0) {
  * @param {string=} readwrite If set to "readwrite", return a readwrite transaction or object store. Otherwise, read only (default).
  * @return {(IDBObjectStore|IDBTransaction)} The requested object store or transaction.
  */
-function getObjectStore(db, ot, transactionObjectStores, objectStore, readwrite) {
+function getObjectStore(ot, transactionObjectStores, objectStore, readwrite) {
     readwrite = readwrite !== undefined ? readwrite : false;
 
     if (ot instanceof IDBTransaction) {
@@ -70,9 +66,9 @@ function getObjectStore(db, ot, transactionObjectStores, objectStore, readwrite)
         }
 
         if (readwrite === "readwrite") {
-            return db.transaction(transactionObjectStores, "readwrite");
+            return g.dbl.transaction(transactionObjectStores, "readwrite");
         }
-        return db.transaction(transactionObjectStores);
+        return g.dbl.transaction(transactionObjectStores);
     }
 
     // ot is an objectStore already, and an objectStore was requested (not a transation)
@@ -82,12 +78,12 @@ function getObjectStore(db, ot, transactionObjectStores, objectStore, readwrite)
 
 
     if (readwrite === "readwrite") {
-        return db.transaction(transactionObjectStores, "readwrite").objectStore(objectStore);
+        return g.dbl.transaction(transactionObjectStores, "readwrite").objectStore(objectStore);
     }
-    return db.transaction(transactionObjectStores).objectStore(objectStore);
+    return g.dbl.transaction(transactionObjectStores).objectStore(objectStore);
 }
 
-function generateBasicDao(dbmOrDbl, objectStore) {
+function generateBasicDao(objectStore) {
     var methods;
 
     methods = {};
@@ -101,7 +97,7 @@ function generateBasicDao(dbmOrDbl, objectStore) {
         return new Promise(function (resolve) {
             var objectStoreOrIndex;
 
-            objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
+            objectStoreOrIndex = getObjectStore(options.ot, objectStore, objectStore);
 
             if (options.index !== null) {
                 objectStoreOrIndex = objectStoreOrIndex.index(options.index);
@@ -122,7 +118,7 @@ function generateBasicDao(dbmOrDbl, objectStore) {
         return new Promise(function (resolve) {
             var objectStoreOrIndex;
 
-            objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
+            objectStoreOrIndex = getObjectStore(options.ot, objectStore, objectStore);
 
             if (options.index !== null) {
                 objectStoreOrIndex = objectStoreOrIndex.index(options.index);
@@ -140,7 +136,7 @@ function generateBasicDao(dbmOrDbl, objectStore) {
         if (options.value === undefined) { throw new Error("Must supply value property on input to \"add\" method."); }
 
         return new Promise(function (resolve) {
-            getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore, "readwrite").add(options.value).onsuccess = function (event) {
+            getObjectStore(options.ot, objectStore, objectStore, "readwrite").add(options.value).onsuccess = function (event) {
                 resolve(event.target.result);
             };
         });
@@ -152,7 +148,7 @@ function generateBasicDao(dbmOrDbl, objectStore) {
         if (options.value === undefined) { throw new Error("Must supply value property on input to \"put\" method."); }
 
         return new Promise(function (resolve) {
-            getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore, "readwrite").put(options.value).onsuccess = function (event) {
+            getObjectStore(options.ot, objectStore, objectStore, "readwrite").put(options.value).onsuccess = function (event) {
                 resolve(event.target.result);
             };
         });
@@ -167,7 +163,7 @@ function generateBasicDao(dbmOrDbl, objectStore) {
         return new Promise(function (resolve) {
             var objectStoreOrIndex;
 
-            objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
+            objectStoreOrIndex = getObjectStore(options.ot, objectStore, objectStore);
 
             if (options.index !== null) {
                 objectStoreOrIndex = objectStoreOrIndex.index(options.index);
@@ -185,7 +181,7 @@ function generateBasicDao(dbmOrDbl, objectStore) {
         options.key = options.key !== undefined ? options.key : null;
 
         return new Promise(function (resolve) {
-            getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore, "readwrite").delete(options.key).onsuccess = function () {
+            getObjectStore(options.ot, objectStore, objectStore, "readwrite").delete(options.key).onsuccess = function () {
                 resolve();
             };
         });
@@ -197,7 +193,7 @@ function generateBasicDao(dbmOrDbl, objectStore) {
         options.ot = options.ot !== undefined ? options.ot : null;
 
         return new Promise(function (resolve) {
-            getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore, "readwrite").clear().onsuccess = function () {
+            getObjectStore(options.ot, objectStore, objectStore, "readwrite").clear().onsuccess = function () {
                 resolve();
             };
         });
@@ -226,7 +222,7 @@ function generateBasicDao(dbmOrDbl, objectStore) {
             var objectStoreOrIndex;
 
             // Default to readonly transaction. If you want readwrite, manually pass a transaction.
-            objectStoreOrIndex = getObjectStore(g[dbmOrDbl], options.ot, objectStore, objectStore);
+            objectStoreOrIndex = getObjectStore(options.ot, objectStore, objectStore);
 
             if (options.index !== null) {
                 objectStoreOrIndex = objectStoreOrIndex.index(options.index);
@@ -272,23 +268,23 @@ function generateBasicDao(dbmOrDbl, objectStore) {
     return methods;
 }
 
-dao.awards = generateBasicDao("dbl", "awards");
-dao.draftOrder = generateBasicDao("dbl", "draftOrder");
-dao.draftPicks = generateBasicDao("dbl", "draftPicks");
-dao.events = generateBasicDao("dbl", "events");
-dao.gameAttributes = generateBasicDao("dbl", "gameAttributes");
-dao.games = generateBasicDao("dbl", "games");
-dao.messages = generateBasicDao("dbl", "messages");
-dao.negotiations = generateBasicDao("dbl", "negotiations");
-dao.playerFeats = generateBasicDao("dbl", "playerFeats");
-dao.playerStats = generateBasicDao("dbl", "playerStats");
-dao.playoffSeries = generateBasicDao("dbl", "playoffSeries");
-dao.releasedPlayers = generateBasicDao("dbl", "releasedPlayers");
-dao.schedule = generateBasicDao("dbl", "schedule");
-dao.teams = generateBasicDao("dbl", "teams");
-dao.trade = generateBasicDao("dbl", "trade");
+dao.awards = generateBasicDao("awards");
+dao.draftOrder = generateBasicDao("draftOrder");
+dao.draftPicks = generateBasicDao("draftPicks");
+dao.events = generateBasicDao("events");
+dao.gameAttributes = generateBasicDao("gameAttributes");
+dao.games = generateBasicDao("games");
+dao.messages = generateBasicDao("messages");
+dao.negotiations = generateBasicDao("negotiations");
+dao.playerFeats = generateBasicDao("playerFeats");
+dao.playerStats = generateBasicDao("playerStats");
+dao.playoffSeries = generateBasicDao("playoffSeries");
+dao.releasedPlayers = generateBasicDao("releasedPlayers");
+dao.schedule = generateBasicDao("schedule");
+dao.teams = generateBasicDao("teams");
+dao.trade = generateBasicDao("trade");
 
-dao.players = generateBasicDao("dbl", "players");
+dao.players = generateBasicDao("players");
 
 dao.players.getAllOriginal = dao.players.getAll;
 

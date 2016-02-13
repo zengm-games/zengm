@@ -78,7 +78,7 @@ function post(req) {
             }
         }
 
-        return dao.teams.put({ot: tx, value: t});
+        return tx.teams.put(t);
     }).then(function () {
         return finances.updateRanks(tx, ["budget"]);
     }).then(function () {

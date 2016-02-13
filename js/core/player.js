@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var finances = require('./finances');
 var injuries = require('../data/injuries');
@@ -525,7 +524,8 @@ function bonus(p, amount) {
  * @return {Promise} Array of base moods, one for each team.
  */
 function genBaseMoods(ot) {
-    return dao.teams.getAll({ot: ot}).then(function (teams) {
+    var dbOrTx = ot === null ? ot : g.dbl;
+    return dbOrTx.teams.getAll().then(function (teams) {
         var baseMoods, i, s;
 
         baseMoods = [];
@@ -574,6 +574,7 @@ function genBaseMoods(ot) {
  */
 function addToFreeAgents(ot, p, phase, baseMoods) {
     var pr;
+    var dbOrTx = ot === null ? ot : g.dbl;
 
     phase = phase !== null ? phase : g.phase;
 
@@ -604,7 +605,7 @@ function addToFreeAgents(ot, p, phase, baseMoods) {
     p.ptModifier = 1; // Reset
 
     // The put doesn't always work in Chrome. No idea why.
-    return dao.players.put({ot: ot, value: p}).then(function () {
+    return dbOrTx.players.put(p).then(function () {
         return; // No output
     });
 }
@@ -624,13 +625,10 @@ function release(tx, p, justDrafted) {
     // Keep track of player salary even when he's off the team, but make an exception for players who were just drafted
     // Was the player just drafted?
     if (!justDrafted) {
-        dao.releasedPlayers.add({
-            ot: tx,
-            value: {
-                pid: p.pid,
-                tid: p.tid,
-                contract: p.contract
-            }
+        tx.releasedPlayers.add({
+            pid: p.pid,
+            tid: p.tid,
+            contract: p.contract
         });
     } else {
         // Clear player salary log if just drafted, because this won't be paid.
@@ -826,6 +824,7 @@ function addRatingsRow(p, scoutingRank) {
  */
 function addStatsRow(ot, p, playoffs) {
     var ps, statsRow, stopOnSeason;
+    var dbOrTx = ot === null ? ot : g.dbl;
 
     playoffs = playoffs !== undefined ? playoffs : false;
 
@@ -845,12 +844,8 @@ function addStatsRow(ot, p, playoffs) {
             // can stop storing stats when it's totally safe.
             stopOnSeason = 0;
 
-            return dao.playerStats.iterate({
-                ot: ot,
-                index: "pid, season, tid",
-                key: IDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]),
-                direction: "prev",
-                callback: function (psTemp, shortCircuit) {
+            return dbOrTx.playerStats.index('pid, season, tid')
+                .iterate(IDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]), 'prev', function (psTemp, shortCircuit) {
                     // Skip playoff stats
                     if (psTemp.playoffs) {
                         return;
@@ -868,8 +863,7 @@ function addStatsRow(ot, p, playoffs) {
                         // Store stats
                         ps.push(psTemp);
                     }
-                }
-            });
+                });
         }
     }).then(function () {
         var i;
@@ -894,7 +888,7 @@ function addStatsRow(ot, p, playoffs) {
             }
         }
 
-        dao.playerStats.add({ot: ot, value: statsRow});
+        dbOrTx.playerStats.add(statsRow);
     });
 
     return p;
@@ -1709,6 +1703,7 @@ function value(p, ps, options) {
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
 function updateValues(ot, p, ps) {
+    var dbOrTx = ot === null ? ot : g.dbl;
     return Promise.try(function () {
         var season;
 
@@ -1729,12 +1724,8 @@ function updateValues(ot, p, ps) {
 
             // Start at season and look backwards until we hit
             // This will not work totally right if a player played for multiple teams in a season. It should be ordered by psid, instead it's ordered by tid because of the index used
-            return dao.playerStats.iterate({
-                ot: ot,
-                index: "pid, season, tid",
-                key: IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]),
-                direction: "prev",
-                callback: function (psTemp, shortCircuit) {
+            return dbOrTx.playerStats.index('pid, season, tid')
+                .iterate(IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]), 'prev', function (psTemp, shortCircuit) {
                     // Skip playoff stats
                     if (psTemp.playoffs) {
                         return;
@@ -1747,8 +1738,7 @@ function updateValues(ot, p, ps) {
                     if (ps.length === 1 && ps[0].min < 2000) {
                         shortCircuit();
                     }
-                }
-            });
+                });
         }
     }).then(function () {
         p.value = value(p, ps);
@@ -2047,7 +2037,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
             overtimes: results.overtimes
         };
 
-        dao.playerFeats.add({ot: tx, value: feat});
+        tx.playerFeats.add(feat);
     }
 }
 
@@ -2078,42 +2068,32 @@ function killOne() {
     // Pick random team
     tid = random.randInt(0, g.numTeams - 1);
 
-    tx = dao.tx(["events", "playerStats", "players"], "readwrite");
+    return g.dbl.tx(["events", "playerStats", "players"], "readwrite", function (tx) {
+        return tx.players.index('tid').getAll(tid).then(function (players) {
+            // Pick a random player on that team
+            p = random.choice(players);
 
-    return dao.players.getAll({
-        ot: tx,
-        index: "tid",
-        key: tid
-    }).then(function (players) {
-        // Pick a random player on that team
-        p = random.choice(players);
+            // Get player stats, used for HOF calculation
+            return tx.playerStats.getAll({
+                index: "pid, season, tid",
+                key: IDBKeyRange.bound([p.pid], [p.pid, ''])
+            });
+        }).then(function (playerStats) {
+            p = retire(tx, p, playerStats, false);
 
-        // Get player stats, used for HOF calculation
-        return dao.playerStats.getAll({
-            ot: tx,
-            index: "pid, season, tid",
-            key: IDBKeyRange.bound([p.pid], [p.pid, ''])
+            p.diedYear = g.season;
+
+            return tx.players.put(p);
+        }).then(function () {
+            eventLog.add(tx, {
+                type: "tragedy",
+                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ' + reason + '.',
+                showNotification: tid === g.userTid,
+                pids: [p.pid],
+                tids: [tid],
+                persistent: true
+            });
         });
-    }).then(function (playerStats) {
-        p = retire(tx, p, playerStats, false);
-
-        p.diedYear = g.season;
-
-        return dao.players.put({
-            ot: tx,
-            value: p
-        });
-    }).then(function () {
-        eventLog.add(tx, {
-            type: "tragedy",
-            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ' + reason + '.',
-            showNotification: tid === g.userTid,
-            pids: [p.pid],
-            tids: [tid],
-            persistent: true
-        });
-
-        return tx.complete();
     });
 }
 

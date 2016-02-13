@@ -217,7 +217,7 @@ function writeTeamStats(tx, results) {
                 }
             }
 
-            return dao.teams.put({ot: tx, value: t}).then(function () {
+            return tx.teams.put(t).then(function () {
                 return {
                     att: att,
                     ticketPrice: ticketPrice

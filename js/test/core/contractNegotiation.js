@@ -104,7 +104,7 @@ describe("core/contractNegotiation", function () {
 
             return dao.players.get({ot: tx, key: 7}).then(function (p) {
                 p.tid = g.userTid;
-                return dao.players.put({ot: tx, value: p});
+                return tx.players.put(p);
             }).then(function () {
                 return contractNegotiation.create(tx, 8, false).then(function (error) {
                     assert.equal(error, "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.");
@@ -125,7 +125,7 @@ describe("core/contractNegotiation", function () {
             }).then(function () {
                 return dao.players.get({ot: tx, key: 7}).then(function (p) {
                     p.tid = g.PLAYER.FREE_AGENT;
-                    return dao.players.put({ot: tx, value: p});
+                    return tx.players.put(p);
                 });
             });
         });

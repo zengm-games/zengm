@@ -97,7 +97,7 @@ function awards(tx) {
                     }
                 }
 
-                return dao.players.put({ot: tx, value: p});
+                return tx.players.put(p);
             });
         }, {concurrency: Infinity});
     };
@@ -703,7 +703,7 @@ function newSchedulePlayoffsDay(tx) {
                         t.seasons[s].hype = 1;
                     }
 
-                    return dao.teams.put({ot: tx, value: t});
+                    return tx.teams.put(t);
                 });
             }, {concurrency: Infinity});
         }).then(function () {

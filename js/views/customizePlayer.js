@@ -396,7 +396,7 @@ function uiFirst(vm) {
 
             tx = dao.tx(["players", "playerStats"], "readwrite");
 
-            dao.players.put({ot: tx, value: p}).then(function (pidLocal) {
+            tx.players.put(p).then(function (pidLocal) {
                 // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
                 // When adding a player, this is the only way to know the pid
                 pid = pidLocal;
@@ -409,7 +409,7 @@ function uiFirst(vm) {
                     p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
 
                     // Add back to database
-                    dao.players.put({ot: tx, value: p});
+                    tx.players.put(p);
                 }
             });
 

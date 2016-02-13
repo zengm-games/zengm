@@ -200,7 +200,7 @@ function customDraftClassHandler(e) {
                     delete p.stats;
 
                     player.updateValues(tx, p, []).then(function (p) {
-                        dao.players.put({ot: tx, value: p});
+                        tx.players.put(p);
                     });
                 });
 

@@ -111,7 +111,7 @@ function autoSign(tx) {
                             players.splice(i, 1); // Remove from list of free agents
 
                             // If we found one, stop looking for this team
-                            return dao.players.put({ot: tx, value: p}).then(function () {
+                            return tx.players.put(p).then(function () {
                                 return team.rosterAutoSort(tx, tid);
                             });
                         }

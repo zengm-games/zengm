@@ -74,7 +74,7 @@ describe("util/account", function () {
                 dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                     t.seasons[0].won = 70;
 
-                    dao.teams.put({ot: tx, value: t});
+                    tx.teams.put(t);
                 });
                 return tx.complete();
             }).then(function () {
@@ -98,7 +98,7 @@ describe("util/account", function () {
                 t.seasons[0].won = 82;
                 t.seasons[0].lost = 0;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement["98_degrees"](false).then(function (awarded) {
@@ -114,7 +114,7 @@ describe("util/account", function () {
                 t.seasons[0].won = 82;
                 t.seasons[0].lost = 1;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement["98_degrees"](false).then(function (awarded) {
@@ -127,7 +127,7 @@ describe("util/account", function () {
                         t.seasons[0].won = 81;
                         t.seasons[0].lost = 0;
 
-                        dao.teams.put({ot: tx, value: t});
+                        tx.teams.put(t);
                     });
                     return tx.complete();
                 });
@@ -149,7 +149,7 @@ describe("util/account", function () {
                 t.seasons[0].won = 82;
                 t.seasons[0].lost = 0;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement["98_degrees"](false).then(function (awarded) {
@@ -184,7 +184,7 @@ describe("util/account", function () {
                 extraSeasons = [{playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}];
                 t.seasons = t.seasons.concat(extraSeasons);
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
@@ -209,7 +209,7 @@ describe("util/account", function () {
                     extraSeasons = [{playoffRoundsWon: 3}];
                     t.seasons = t.seasons.concat(extraSeasons);
 
-                    dao.teams.put({ot: tx, value: t});
+                    tx.teams.put(t);
                 });
                 return tx.complete();
             }).then(function () {
@@ -235,7 +235,7 @@ describe("util/account", function () {
                 t.seasons[0].playoffRoundsWon = 4;
                 t.seasons[7].playoffRoundsWon = 4;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
@@ -264,7 +264,7 @@ describe("util/account", function () {
                 extraSeasons = [{playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}];
                 t.seasons = t.seasons.concat(extraSeasons);
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
@@ -289,7 +289,7 @@ describe("util/account", function () {
                 t.seasons[9].playoffRoundsWon = 0;
                 t.seasons[0].playoffRoundsWon = 4;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
@@ -317,7 +317,7 @@ describe("util/account", function () {
                 t.seasons[0].playoffRoundsWon = 4;
                 t.seasons[0].expenses.salary.amount = 30000;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
@@ -336,7 +336,7 @@ describe("util/account", function () {
             dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                 t.seasons[0].playoffRoundsWon = 3;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
@@ -356,7 +356,7 @@ describe("util/account", function () {
                 t.seasons[0].playoffRoundsWon = 4;
                 t.seasons[0].expenses.salary.amount = 40000;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
@@ -375,7 +375,7 @@ describe("util/account", function () {
             dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
                 t.seasons[0].expenses.salary.amount = 40001;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
@@ -443,7 +443,7 @@ describe("util/account", function () {
                 t.seasons[0].playoffRoundsWon = 4;
                 t.seasons[0].pop = 1.5;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.small_market(false).then(function (awarded) {
@@ -459,7 +459,7 @@ describe("util/account", function () {
                 t.seasons[0].playoffRoundsWon = 4;
                 t.seasons[0].pop = 3;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.small_market(false).then(function (awarded) {
@@ -475,7 +475,7 @@ describe("util/account", function () {
                 t.seasons[0].playoffRoundsWon = 3;
                 t.seasons[0].pop = 1.5;
 
-                dao.teams.put({ot: tx, value: t});
+                tx.teams.put(t);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.small_market(false).then(function (awarded) {
@@ -501,7 +501,7 @@ describe("util/account", function () {
                     p.draft.pick = 20;
                     p.draft.year = g.season - 1;
 
-                    dao.players.put({ot: tx, value: p});
+                    tx.players.put(p);
                 });
 
                 // ROY is pid 1 on tid 7
@@ -523,7 +523,7 @@ describe("util/account", function () {
             dao.players.get({ot: tx, key: 1}).then(function (p) {
                 p.tid = 15;
 
-                dao.players.put({ot: tx, value: p});
+                tx.players.put(p);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
@@ -539,7 +539,7 @@ describe("util/account", function () {
                 p.tid = g.userTid;
                 p.draft.tid = 15;
 
-                dao.players.put({ot: tx, value: p});
+                tx.players.put(p);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
@@ -555,7 +555,7 @@ describe("util/account", function () {
                 p.draft.tid = g.userTid;
                 p.draft.pick = 7;
 
-                dao.players.put({ot: tx, value: p});
+                tx.players.put(p);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
@@ -571,7 +571,7 @@ describe("util/account", function () {
                 p.draft.pick = 15;
                 p.draft.year = g.season - 2;
 
-                dao.players.put({ot: tx, value: p});
+                tx.players.put(p);
             });
             return tx.complete().then(function () {
                 return account.checkAchievement.sleeper_pick(false).then(function (awarded) {
@@ -591,7 +591,7 @@ describe("util/account", function () {
             dao.players.get({ot: tx, key: 1}).then(function (p) {
                 p.draft.year = g.season - 1;
 
-                dao.players.put({ot: tx, value: p});
+                tx.players.put(p);
             });
 
             return tx.complete().then(function () {

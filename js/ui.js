@@ -250,7 +250,7 @@ function init() {
                 watchEl.title = "Remove from Watch List";
             }
 
-            return dao.players.put({ot: tx, value: p});
+            return tx.players.put(p);
         });
         tx.complete().then(function () {
             require('./core/league').updateLastDbChange();
@@ -606,7 +606,7 @@ function updateStatus(statusText) {
     if (statusText === undefined) {
         g.vm.topMenu.statusText(oldStatus);
     } else if (statusText !== oldStatus) {
-        require('./core/league').setGameAttributes(null, {statusText: statusText}).then(function () {
+        require('./core/league').setGameAttributesComplete({statusText: statusText}).then(function () {
             g.vm.topMenu.statusText(statusText);
 //                console.log("Set status: " + statusText);
         });
@@ -629,7 +629,7 @@ function updatePhase(phaseText) {
     if (phaseText === undefined) {
         g.vm.topMenu.phaseText(oldPhaseText);
     } else if (phaseText !== oldPhaseText) {
-        require('./core/league').setGameAttributes(null, {phaseText: phaseText}).then(function () {
+        require('./core/league').setGameAttributesComplete({phaseText: phaseText}).then(function () {
             g.vm.topMenu.phaseText(phaseText);
 //                console.log("Set phase: " + phaseText);
         });

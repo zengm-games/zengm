@@ -38,7 +38,7 @@ function add(ot, options) {
 
             // Persistent notifications are very rare and should stop game sim when displayed
             if (options.persistent && g.autoPlaySeasons <= 0) {
-                require('../core/league').setGameAttributes(null, {stopGames: true});
+                require('../core/league').setGameAttributesComplete({stopGames: true});
             }
         }
     }

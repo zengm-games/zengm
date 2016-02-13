@@ -419,7 +419,7 @@ function propose(forceTrade) {
                                 if (g.phase <= g.PHASE.PLAYOFFS) {
                                     p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
                                 }
-                                dao.players.put({ot: tx, value: p});
+                                tx.players.put(p);
                             });
                         });
 
@@ -482,7 +482,9 @@ function propose(forceTrade) {
                         return clear().then(function () { // This includes dbChange
                             // Auto-sort CPU team roster
                             if (g.userTids.indexOf(tids[1]) < 0) {
-                                return team.rosterAutoSort(null, tids[1]);
+                                return g.dbl.tx("players", "readwrite", function (tx) {
+                                    return team.rosterAutoSort(tx, tids[1]);
+                                });
                             }
                         }).then(function () {
                             return [true, 'Trade accepted! "Nice doing business with you!"'];

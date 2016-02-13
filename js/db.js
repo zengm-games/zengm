@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var Backboard = require('backboard/dist').default;
+var Backboard = require('backboard/dist');
 var dao = require('./dao');
 var g = require('./globals');
 var Promise = require('bluebird');

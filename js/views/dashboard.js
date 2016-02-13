@@ -4,13 +4,13 @@
  */
 'use strict';
 
-var dao = require('../dao');
+var g = require('../globals');
 var ui = require('../ui');
 var bbgmView = require('../util/bbgmView');
 var viewHelpers = require('../util/viewHelpers');
 
 function updateDashboard() {
-    return dao.leagues.getAll().then(function (leagues) {
+    return g.dbm.leagues.getAll().then(function (leagues) {
         var i, otherUrl;
 
         for (i = 0; i < leagues.length; i++) {

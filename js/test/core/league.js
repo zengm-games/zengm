@@ -18,7 +18,7 @@ describe("core/league", function () {
 
     describe("#create()", function () {
         it("should add entry in meta leagues object store", function () {
-            return dao.leagues.get({key: g.lid}).then(function (l) {
+            return g.dbm.leagues.get(g.lid).then(function (l) {
                 assert.equal(l.name, "Test");
                 assert.equal(l.tid, 0);
                 assert.equal(l.phaseText, g.startingSeason + " preseason");

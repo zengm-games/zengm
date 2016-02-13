@@ -11,6 +11,8 @@ var Davis = require('./lib/davis');
 var _ = require('underscore');
 var eventLog = require('./util/eventLog');
 var helpers = require('./util/helpers');
+var Backboard = require('backboard/dist').default;
+Backboard.setPromiseConstructor(Promise);
 
 var migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="https://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
 
@@ -21,15 +23,19 @@ function abortHandler(event) {
     }
 
     if (event.target.error.name === "QuotaExceededError") {
-        eventLog.add(null, {
-            type: "error",
-            text: 'Your browser isn\'t letting Basketball GM store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Improve Performance within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://basketball-gm.com/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>',
-            saveToDb: false
-        });
+        quotaexceededHandler();
     } else {
         console.log("Database abort!");
         throw event.target.error;
     }
+}
+
+function quotaexceededHandler() {
+    eventLog.add(null, {
+        type: "error",
+        text: 'Your browser isn\'t letting Basketball GM store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Improve Performance within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://basketball-gm.com/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>',
+        saveToDb: false
+    });
 }
 
 /**
@@ -37,14 +43,11 @@ function abortHandler(event) {
  *
  * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
  */
-function createMeta(event) {
-    var dbm;
+function createMeta(upgradeDB) {
     console.log("Creating meta database");
 
-    dbm = event.target.result;
-
-    dbm.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
-    dbm.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
+    upgradeDB.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
+    upgradeDB.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
 }
 
 /**
@@ -52,114 +55,34 @@ function createMeta(event) {
  *
  * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
  */
-function migrateMeta(event) {
-    var dbm, tx;
-
+function migrateMeta(upgradeDB) {
     document.getElementById("content").innerHTML = migrateMessage;
 
-    console.log("Upgrading meta database from version " + event.oldVersion + " to version " + event.newVersion);
+    console.log("Upgrading meta database from version " + upgradeDB.oldVersion + " to version " + upgradeDB.version);
 
-    dbm = event.target.result;
-    tx = event.currentTarget.transaction;
-    tx.onabort = abortHandler;
-
-    if (event.oldVersion <= 1) {
-        dbm.deleteObjectStore("teams");
-    }
-
-    if (event.oldVersion <= 5) {
+    if (upgradeDB.oldVersion <= 6) {
         (function () {
-            var teams;
-
-            // Old team names
-            teams = [
-                {region: "Atlanta", name: "Herons"},
-                {region: "Boston", name: "Clovers"},
-                {region: "Brooklyn", name: "Nests"},
-                {region: "Charlotte", name: "Bay Cats"},
-                {region: "Chicago", name: "Bullies"},
-                {region: "Cleveland", name: "Cobras"},
-                {region: "Dallas", name: "Mares"},
-                {region: "Denver", name: "Ninjas"},
-                {region: "Detroit", name: "Pumps"},
-                {region: "Golden State", name: "War Machine"},
-                {region: "Houston", name: "Rock Throwers"},
-                {region: "Indiana", name: "Passers"},
-                {region: "Los Angeles", name: "Cutters"},
-                {region: "Los Angeles", name: "Lagoons"},
-                {region: "Memphis", name: "Growls"},
-                {region: "Miami", name: "Heatwave"},
-                {region: "Milwaukee", name: "Buccaneers"},
-                {region: "Minnesota", name: "Trees"},
-                {region: "New Orleans", name: "Peloteros"},
-                {region: "New York", name: "Knights"},
-                {region: "Oklahoma City", name: "Tornados"},
-                {region: "Orlando", name: "Mystery"},
-                {region: "Philadelphia", name: "Steaks"},
-                {region: "Phoenix", name: "Stars"},
-                {region: "Portland", name: "Trailer Park"},
-                {region: "Sacramento", name: "Killers"},
-                {region: "San Antonio", name: "Spurts"},
-                {region: "Toronto", name: "Ravens"},
-                {region: "Utah", name: "Jugglers"},
-                {region: "Washington", name: "Witches"}
-            ];
-
-            tx.objectStore("leagues").openCursor().onsuccess = function (event) {
-                var cursor, l;
-
-                cursor = event.target.result;
-                if (cursor) {
-                    l = cursor.value;
-                    if (l.teamName === undefined) {
-                        l.teamName = teams[l.tid].name;
-                    }
-                    if (l.teamRegion === undefined) {
-                        l.teamRegion = teams[l.tid].region;
-                    }
-                    cursor.update(l);
-                    cursor.continue();
-                }
-            };
-        }());
-    }
-
-    if (event.oldVersion <= 6) {
-        (function () {
-            dbm.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
+            upgradeDB.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
         }());
     }
 }
 
 function connectMeta() {
-    return new Promise(function (resolve, reject) {
-        var request;
+    return Backboard.open('meta', 7, function (upgradeDB) {
+        upgradeDB.on('quotaexceeded', quotaexceededHandler);
 
-//        console.log('Connecting to database "meta"');
-        request = indexedDB.open("meta", 7);
-        request.onerror = function (event) {
-            reject(event.target.error);
-        };
-        request.onblocked = function () {
-            window.alert("Please close all other tabs with this site open!");
-        };
-        request.onupgradeneeded = function (event) {
-            if (event.oldVersion === 0) {
-                createMeta(event);
-            } else {
-                migrateMeta(event);
-            }
-        };
-        request.onabort = abortHandler;
-        request.onsuccess = function () {
-            g.dbm = request.result;
-            g.dbm.onerror = function (event) {
-                console.log(event);
-                throw event.target.error;
-            };
-            g.dbm.onabort = abortHandler;
-            resolve();
-        };
+        if (upgradeDB.oldVersion === 0) {
+            createMeta(upgradeDB);
+        } else {
+            migrateMeta(upgradeDB);
+        }
+    }).then(function (dbm) {
+        dbm.on('quotaexceeded', quotaexceededHandler);
+        dbm.on('versionchange', function () { dbm.close(); });
+/*request.onblocked = function () {
+window.alert("Please close all other tabs with this site open!");
+};*/
+        g.dbm = dbm;
     });
 }
 
@@ -971,7 +894,7 @@ function reset() {
 
     // Delete any current league databases
     console.log("Deleting any current league databases...");
-    dao.leagues.getAll().then(function (leagues) {
+    g.dbm.leagues.getAll().then(function (leagues) {
         if (leagues.length === 0) {
             console.log('No leagues found.');
             Davis.location.assign(new Davis.Request("/"));
@@ -980,15 +903,12 @@ function reset() {
         Promise.map(leagues, function (l) {
             return require('./core/league').remove(l.lid);
         }, {concurrency: Infinity}).then(function () {
-            var request;
-
             // Delete any current meta database
             console.log("Deleting any current meta database...");
             g.dbm.close();
-            request = indexedDB.deleteDatabase("meta");
-            request.onsuccess = function () {
-                location.reload();
-            };
+            return Backboard.delete("meta");
+        }).then(function () {
+            location.reload();
         });
     });
 }

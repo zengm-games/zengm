@@ -6,6 +6,7 @@
 
 var dao = require('../dao');
 var db = require('../db');
+var g = require('../globals');
 var ui = require('../ui');
 var league = require('../core/league');
 var Promise = require('bluebird');
@@ -34,7 +35,7 @@ function updateDeleteLeague(inputs) {
             dao.games.count({ot: tx}),
             dao.players.count({ot: tx}),
             dao.teams.get({ot: tx, key: 0}),
-            dao.leagues.get({key: inputs.lid})
+            g.dbm.leagues.get(inputs.lid)
         ]).spread(function (numGames, numPlayers, t, l) {
             var numSeasons;
 

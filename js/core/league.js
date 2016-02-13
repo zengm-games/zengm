@@ -168,14 +168,12 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
     }
 
     // Record in meta db
-    return dao.leagues.add({
-        value: {
-            name: name,
-            tid: tid,
-            phaseText: phaseText,
-            teamName: teams[tid].name,
-            teamRegion: teams[tid].region
-        }
+    return g.dbm.leagues.add({
+        name: name,
+        tid: tid,
+        phaseText: phaseText,
+        teamName: teams[tid].name,
+        teamRegion: teams[tid].region
     }).then(function (lid) {
         g.lid = lid;
 
@@ -744,7 +742,7 @@ function remove(lid) {
             g.dbl.close();
         }
 
-        dao.leagues.delete({key: lid});
+        g.dbm.leagues.delete(lid);
         request = indexedDB.deleteDatabase("league" + lid);
         request.onsuccess = function () {
             resolve();
@@ -813,10 +811,10 @@ function exportLeague(stores) {
 }
 
 function updateMetaNameRegion(name, region) {
-    return dao.leagues.get({key: g.lid}).then(function (l) {
+    return g.dbm.leagues.get(g.lid).then(function (l) {
         l.teamName = name;
         l.teamRegion = region;
-        return dao.leagues.put({value: l});
+        return g.dbm.leagues.put(l);
     });
 }
 

@@ -272,8 +272,6 @@ function generateBasicDao(dbmOrDbl, objectStore) {
     return methods;
 }
 
-dao.achievements = generateBasicDao("dbm", "achievements");
-dao.leagues = generateBasicDao("dbm", "leagues");
 dao.awards = generateBasicDao("dbl", "awards");
 dao.draftOrder = generateBasicDao("dbl", "draftOrder");
 dao.draftPicks = generateBasicDao("dbl", "draftPicks");

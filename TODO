@@ -1,3 +1,9 @@
+backboard
+  rm -rf node_modules/backboard/ && npm install backboard
+  confirm quotaerrors handled
+  convert dbl
+    convert within dao first
+
 god mode option for playoff rounds https://www.reddit.com/r/BasketballGM/comments/44hdzs/new_options_in_god_mode/czrxv2w?context=3
 
 substitutions fucked up in long games https://www.reddit.com/r/BasketballGM/comments/44nv0s/100000_minute_quarters/

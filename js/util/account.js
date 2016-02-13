@@ -107,18 +107,14 @@ function addAchievements(achievements, silent) {
     addToIndexedDB = function (achievements) {
         var i, tx;
 
-        tx = dao.tx("achievements", "readwrite");
-        for (i = 0; i < achievements.length; i++) {
-            dao.achievements.add({
-                ot: tx,
-                value: {
+        return g.dbm.tx("achievements", "readwrite", function (tx) {
+            for (i = 0; i < achievements.length; i++) {
+                tx.achievements.add({
                     slug: achievements[i]
-                }
-            });
-            notify(achievements[i]);
-        }
-
-        return tx.complete();
+                });
+                notify(achievements[i]);
+            }
+        });
     };
 
     return Promise.resolve($.ajax({
@@ -164,16 +160,17 @@ function check() {
 
         // If user is logged in, upload any locally saved achievements
         if (data.username !== "") {
-            tx = dao.tx("achievements", "readwrite");
-            return dao.achievements.getAll({ot: tx}).then(function (achievements) {
-                achievements = _.pluck(achievements, "slug");
+            return g.dbm.tx("achievements", "readwrite", function (tx) {
+                return tx.achievements.getAll().then(function (achievements) {
+                    achievements = _.pluck(achievements, "slug");
 
-                // If any exist, delete and upload
-                if (achievements.length > 0) {
-                    dao.achievements.clear({ot: tx});
-                    // If this fails to save remotely, will be added to IDB again
-                    return addAchievements(achievements, true);
-                }
+                    // If any exist, delete and upload
+                    if (achievements.length > 0) {
+                        tx.achievements.clear();
+                        // If this fails to save remotely, will be added to IDB again
+                        return addAchievements(achievements, true);
+                    }
+                });
             });
         }
     }).catch(function () {});
@@ -184,7 +181,7 @@ function getAchievements() {
 
     achievements = allAchievements.slice();
 
-    return dao.achievements.getAll().then(function (achievementsLocal) {
+    return g.dbm.achievements.getAll().then(function (achievementsLocal) {
         var i, j;
 
         // Initialize counts

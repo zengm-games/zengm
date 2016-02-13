@@ -105,7 +105,7 @@ function post(req) {
 
     Promise.all([
         csvPromise,
-        dao.leagues.get({key: g.lid})
+        g.dbm.leagues.get(g.lid)
     ]).spread(function (output, l) {
         var a, blob, fileName, url;
 

@@ -635,9 +635,9 @@ function updatePhase(phaseText) {
         });
 
         // Update phase in meta database. No need to have this block updating the UI or anything.
-        dao.leagues.get({key: g.lid}).then(function (l) {
+        g.dbm.leagues.get(g.lid).then(function (l) {
             l.phaseText = phaseText;
-            dao.leagues.put({value: l});
+            g.dbm.leagues.put(l);
         });
     }
 }

@@ -5,6 +5,7 @@
 'use strict';
 
 var dao = require('../dao');
+var g = require('../globals');
 var ui = require('../ui');
 var league = require('../core/league');
 var Promise = require('bluebird');
@@ -95,12 +96,9 @@ function updateNewLeague() {
     newLid = null;
 
     // Find most recent league and add one to the LID
-    return dao.leagues.iterate({
-        direction: "prev",
-        callback: function (l, shortCircuit) {
-            newLid = l.lid + 1;
-            shortCircuit();
-        }
+    return g.dbm.leagues.iterate("prev", function (l, shortCircuit) {
+        newLid = l.lid + 1;
+        shortCircuit();
     }).then(function () {
         var teams;
 

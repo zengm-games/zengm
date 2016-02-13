@@ -59,7 +59,7 @@ function beforeLeague(req) {
         helpers.resetG();
 
         // Make sure this league exists before proceeding
-        return dao.leagues.get({key: g.lid}).then(function (l) {
+        return g.dbm.leagues.get(g.lid).then(function (l) {
             if (l === undefined) {
                 helpers.error('League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!', reqCb, true);
             } else {

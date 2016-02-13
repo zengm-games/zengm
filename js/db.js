@@ -4,6 +4,7 @@
  */
 'use strict';
 
+var Backboard = require('backboard/dist').default;
 var dao = require('./dao');
 var g = require('./globals');
 var Promise = require('bluebird');
@@ -11,10 +12,18 @@ var Davis = require('./lib/davis');
 var _ = require('underscore');
 var eventLog = require('./util/eventLog');
 var helpers = require('./util/helpers');
-var Backboard = require('backboard/dist').default;
-Backboard.setPromiseConstructor(Promise);
 
 var migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="https://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
+
+Backboard.setPromiseConstructor(Promise);
+
+function quotaexceededHandler() {
+    eventLog.add(null, {
+        type: "error",
+        text: 'Your browser isn\'t letting Basketball GM store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Improve Performance within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://basketball-gm.com/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>',
+        saveToDb: false
+    });
+}
 
 function abortHandler(event) {
     if (!event.target.error) {
@@ -28,14 +37,6 @@ function abortHandler(event) {
         console.log("Database abort!");
         throw event.target.error;
     }
-}
-
-function quotaexceededHandler() {
-    eventLog.add(null, {
-        type: "error",
-        text: 'Your browser isn\'t letting Basketball GM store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Improve Performance within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://basketball-gm.com/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>',
-        saveToDb: false
-    });
 }
 
 /**

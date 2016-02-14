@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var contractNegotiation = require('./contractNegotiation');
@@ -69,43 +68,35 @@ function newPhasePreseason(tx) {
         coachingRanks = [];
 
         // Add row to team stats and season attributes
-        return dao.teams.iterate({
-            ot: tx,
-            callback: function (t) {
-                // Save the coaching rank for later
-                coachingRanks[t.tid] = _.last(t.seasons).expenses.coaching.rank;
+        return tx.teams.iterate(function (t) {
+            // Save the coaching rank for later
+            coachingRanks[t.tid] = _.last(t.seasons).expenses.coaching.rank;
 
-                // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
-                // This is done BEFORE a new season row is added.
-                if (t.tid === g.userTid) {
-                    scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
-                }
-
-                t = team.addSeasonRow(t);
-                t = team.addStatsRow(t);
-
-                return t;
+            // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
+            // This is done BEFORE a new season row is added.
+            if (t.tid === g.userTid) {
+                scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
             }
+
+            t = team.addSeasonRow(t);
+            t = team.addStatsRow(t);
+
+            return t;
         }).then(function () {
             // Loop through all non-retired players
-            return dao.players.iterate({
-                ot: tx,
-                index: "tid",
-                key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-                callback: function (p) {
-                    // Update ratings
-                    p = player.addRatingsRow(p, scoutingRank);
-                    p = player.develop(p, 1, false, coachingRanks[p.tid]);
+            return tx.players.index('tid').iterate(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
+                // Update ratings
+                p = player.addRatingsRow(p, scoutingRank);
+                p = player.develop(p, 1, false, coachingRanks[p.tid]);
 
-                    // Update player values after ratings changes
-                    return player.updateValues(tx, p, []).then(function (p) {
-                        // Add row to player stats if they are on a team
-                        if (p.tid >= 0) {
-                            p = player.addStatsRow(tx, p, false);
-                        }
-                        return p;
-                    });
-                }
+                // Update player values after ratings changes
+                return player.updateValues(tx, p, []).then(function (p) {
+                    // Add row to player stats if they are on a team
+                    if (p.tid >= 0) {
+                        p = player.addStatsRow(tx, p, false);
+                    }
+                    return p;
+                });
             });
         }).then(function () {
             if (g.autoPlaySeasons > 0) {
@@ -122,7 +113,7 @@ function newPhasePreseason(tx) {
 }
 
 function newPhaseRegularSeason(tx) {
-    return dao.teams.getAll({ot: tx}).then(function (teams) {
+    return tx.teams.getAll().then(function (teams) {
         return season.setSchedule(tx, season.newSchedule(teams));
     }).then(function () {
         var nagged;
@@ -144,40 +135,30 @@ function newPhaseRegularSeason(tx) {
 
         if (g.season === g.startingSeason + 3 && g.lid > 3 && nagged === 0) {
             localStorage.nagged = "1";
-            return dao.messages.add({
-                ot: tx,
-                value: {
-                    read: false,
-                    from: "The Commissioner",
-                    year: g.season,
-                    text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>'
-                }
+            return tx.messages.add({
+                read: false,
+                from: "The Commissioner",
+                year: g.season,
+                text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>'
             });
         }
         if ((nagged === 1 && Math.random() < 0.25) || (nagged >= 2 && Math.random < 0.025)) {
             localStorage.nagged = "2";
-            return dao.messages.add({
-                ot: tx,
-                value: {
-                    read: false,
-                    from: "The Commissioner",
-                    year: g.season,
-                    text: '<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a></p><p><a href="https://www.facebook.com/basketball.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/BasketballGM/">Discuss Basketball GM on Reddit</a></p><p>The more people that play Basketball GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@basketball-gm.com">email me</a>.</p>'
-                }
+            return tx.messages.add({
+                read: false,
+                from: "The Commissioner",
+                year: g.season,
+                text: '<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a></p><p><a href="https://www.facebook.com/basketball.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/BasketballGM/">Discuss Basketball GM on Reddit</a></p><p>The more people that play Basketball GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@basketball-gm.com">email me</a>.</p>'
             });
         }
         // Skipping 3, obsolete
         if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random < 0.05)) {
-            if (g.enableLogging) { _gaq.push(["_trackEvent", "Ad Display", "Sports Mogul"]); }
             localStorage.nagged = "4";
-            return dao.messages.add({
-                ot: tx,
-                value: {
-                    read: false,
-                    from: "The Commissioner",
-                    year: g.season,
-                    text: '<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="http://basketball-gm.co.nf/">you can find a user-made list of them here</a>.</p>'
-                }
+            return tx.messages.add({
+                read: false,
+                from: "The Commissioner",
+                year: g.season,
+                text: '<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="http://basketball-gm.co.nf/">you can find a user-made list of them here</a>.</p>'
             });
         }
     }).then(function () {
@@ -282,54 +263,43 @@ function newPhasePlayoffs(tx) {
         });
 
         return Promise.all([
-            dao.playoffSeries.put({
-                ot: tx,
-                value: {
+            tx.playoffSeries.put({
                     season: g.season,
                     currentRound: 0,
                     series: series
-                }
             }),
 
             // Add row to team stats and team season attributes
-            dao.teams.iterate({
-                ot: tx,
-                callback: function (t) {
-                    var teamSeason;
+            tx.teams.iterate(function (t) {
+                var teamSeason;
 
-                    teamSeason = t.seasons[t.seasons.length - 1];
+                teamSeason = t.seasons[t.seasons.length - 1];
 
-                    if (tidPlayoffs.indexOf(t.tid) >= 0) {
-                        t = team.addStatsRow(t, true);
+                if (tidPlayoffs.indexOf(t.tid) >= 0) {
+                    t = team.addStatsRow(t, true);
 
-                        teamSeason.playoffRoundsWon = 0;
+                    teamSeason.playoffRoundsWon = 0;
 
-                        // More hype for making the playoffs
-                        teamSeason.hype += 0.05;
-                        if (teamSeason.hype > 1) {
-                            teamSeason.hype = 1;
-                        }
-                    } else {
-                        // Less hype for missing the playoffs
-                        teamSeason.hype -= 0.05;
-                        if (teamSeason.hype < 0) {
-                            teamSeason.hype = 0;
-                        }
+                    // More hype for making the playoffs
+                    teamSeason.hype += 0.05;
+                    if (teamSeason.hype > 1) {
+                        teamSeason.hype = 1;
                     }
-
-                    return t;
+                } else {
+                    // Less hype for missing the playoffs
+                    teamSeason.hype -= 0.05;
+                    if (teamSeason.hype < 0) {
+                        teamSeason.hype = 0;
+                    }
                 }
+
+                return t;
             }),
 
             // Add row to player stats
             Promise.map(tidPlayoffs, function (tid) {
-                return dao.players.iterate({
-                    ot: tx,
-                    index: "tid",
-                    key: tid,
-                    callback: function (p) {
-                        return player.addStatsRow(tx, p, true);
-                    }
+                return tx.players.index('tid').iterate(tid, function (p) {
+                    return player.addStatsRow(tx, p, true);
                 });
             }, {concurrency: Infinity})
         ]);
@@ -380,14 +350,9 @@ function newPhaseBeforeDraft(tx) {
                 break;
             }
         }
-        return dao.players.iterate({
-            ot: tx,
-            index: "tid",
-            key: tid,
-            callback: function (p) {
-                p.awards.push({season: g.season, type: "Won Championship"});
-                return p;
-            }
+        return tx.players.index('tid').iterate(tid, function (p) {
+            p.awards.push({season: g.season, type: "Won Championship"});
+            return p;
         });
     }).then(function () {
         var maxAge, minPot;
@@ -398,84 +363,71 @@ function newPhaseBeforeDraft(tx) {
         maxAge = 34;
         minPot = 40;
 
-        return dao.players.iterate({
-            ot: tx,
-            index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-            callback: function (p) {
-                var update;
+        return tx.players.index('tid').iterate(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
+            var update;
 
-                update = false;
+            update = false;
 
-                // Get player stats, used for HOF calculation
-                return dao.playerStats.getAll({
-                    ot: tx,
-                    index: "pid, season, tid",
-                    key: IDBKeyRange.bound([p.pid], [p.pid, ''])
-                }).then(function (playerStats) {
-                    var age, excessAge, excessPot, pot;
+            // Get player stats, used for HOF calculation
+            return dao.playerStats.getAll({
+                ot: tx,
+                index: "pid, season, tid",
+                key: IDBKeyRange.bound([p.pid], [p.pid, ''])
+            }).then(function (playerStats) {
+                var age, excessAge, excessPot, pot;
 
-                    age = g.season - p.born.year;
-                    pot = p.ratings[p.ratings.length - 1].pot;
+                age = g.season - p.born.year;
+                pot = p.ratings[p.ratings.length - 1].pot;
 
-                    if (age > maxAge || pot < minPot) {
-                        excessAge = 0;
-                        if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
-                            if (age > 34) {
-                                excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
-                            }
-                            excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
-                            if (excessAge + excessPot + random.gauss(0, 1) > 0) {
-                                p = player.retire(tx, p, playerStats);
-                                update = true;
-                            }
+                if (age > maxAge || pot < minPot) {
+                    excessAge = 0;
+                    if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
+                        if (age > 34) {
+                            excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
                         }
-                    }
-
-                    // Update "free agent years" counter and retire players who have been free agents for more than one years
-                    if (p.tid === g.PLAYER.FREE_AGENT) {
-                        if (p.yearsFreeAgent >= 1) {
+                        excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
+                        if (excessAge + excessPot + random.gauss(0, 1) > 0) {
                             p = player.retire(tx, p, playerStats);
-                        } else {
-                            p.yearsFreeAgent += 1;
+                            update = true;
                         }
-                        p.contract.exp += 1;
-                        update = true;
-                    } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
-                        p.yearsFreeAgent = 0;
-                        update = true;
                     }
+                }
 
-                    // Heal injures
-                    if (p.injury.type !== "Healthy") {
-                        // This doesn't use g.numGames because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
-                        if (p.injury.gamesRemaining <= 82) {
-                            p.injury = {type: "Healthy", gamesRemaining: 0};
-                        } else {
-                            p.injury.gamesRemaining -= 82;
-                        }
-                        update = true;
+                // Update "free agent years" counter and retire players who have been free agents for more than one years
+                if (p.tid === g.PLAYER.FREE_AGENT) {
+                    if (p.yearsFreeAgent >= 1) {
+                        p = player.retire(tx, p, playerStats);
+                    } else {
+                        p.yearsFreeAgent += 1;
                     }
+                    p.contract.exp += 1;
+                    update = true;
+                } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
+                    p.yearsFreeAgent = 0;
+                    update = true;
+                }
 
-                    // Update player in DB, if necessary
-                    if (update) {
-                        return p;
+                // Heal injures
+                if (p.injury.type !== "Healthy") {
+                    // This doesn't use g.numGames because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
+                    if (p.injury.gamesRemaining <= 82) {
+                        p.injury = {type: "Healthy", gamesRemaining: 0};
+                    } else {
+                        p.injury.gamesRemaining -= 82;
                     }
-                });
-            }
+                    update = true;
+                }
+
+                // Update player in DB, if necessary
+                if (update) {
+                    return p;
+                }
+            });
         });
     }).then(function () {
         // Remove released players' salaries from payrolls if their contract expired this year
-        return dao.releasedPlayers.iterate({
-            ot: tx,
-            index: "contract.exp",
-            key: IDBKeyRange.upperBound(g.season),
-            callback: function (rp) {
-                dao.releasedPlayers.delete({
-                    ot: tx,
-                    key: rp.rid
-                });
-            }
+        return tx.releasedPlayers.index('contract.exp').iterate(IDBKeyRange.upperBound(g.season), function (rp) {
+            tx.releasedPlayers.delete(rp.rid);
         });
     }).then(function () {
         return team.updateStrategies(tx);
@@ -503,37 +455,27 @@ function newPhaseDraft(tx) {
     account.checkAchievement.sleeper_pick();
 
     // Kill off old retired players (done here since not much else happens in this phase change, so making it a little slower is fine)
-    return dao.players.iterate({
-        ot: tx,
-        index: "tid",
-        key: g.PLAYER.RETIRED,
-        callback: function (p) {
-            var probDeath;
-            if (p.hasOwnProperty("diedYear") && p.diedYear) {
-                return;
-            }
+    return tx.players.index('tid').iterate(g.PLAYER.RETIRED, function (p) {
+        var probDeath;
+        if (p.hasOwnProperty("diedYear") && p.diedYear) {
+            return;
+        }
 
-            // Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
-            probDeath = 0.0001165111 * Math.exp(0.0761889274 * (g.season - p.born.year));
+        // Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
+        probDeath = 0.0001165111 * Math.exp(0.0761889274 * (g.season - p.born.year));
 
-            if (Math.random() < probDeath) {
-                p.diedYear = g.season;
-                return p;
-            }
+        if (Math.random() < probDeath) {
+            p.diedYear = g.season;
+            return p;
         }
     }).then(function () {
         return draft.genOrder(tx);
     }).then(function () {
         // This is a hack to handle weird cases where players have draft.year set to the current season, which fucks up the draft UI
-        return dao.players.iterate({
-            ot: tx,
-            index: "draft.year",
-            key: g.season,
-            callback: function (p) {
-                if (p.tid >= 0) {
-                    p.draft.year -= 1;
-                    return p;
-                }
+        return tx.players.index('draft.year').iterate(g.season, function (p) {
+            if (p.tid >= 0) {
+                p.draft.year -= 1;
+                return p;
             }
         });
     }).then(function () {
@@ -549,14 +491,11 @@ function newPhaseAfterDraft(tx) {
     // Add a new set of draft picks
     for (tid = 0; tid < g.numTeams; tid++) {
         for (round = 1; round <= 2; round++) {
-            promises.push(dao.draftPicks.add({
-                ot: tx,
-                value: {
-                    tid: tid,
-                    originalTid: tid,
-                    round: round,
-                    season: g.season + 4
-                }
+            promises.push(tx.draftPicks.add({
+                tid: tid,
+                originalTid: tid,
+                round: round,
+                season: g.season + 4
             }));
         }
     }
@@ -569,31 +508,26 @@ function newPhaseAfterDraft(tx) {
 function newPhaseResignPlayers(tx) {
     return player.genBaseMoods(tx).then(function (baseMoods) {
         // Re-sign players on user's team
-        return dao.players.iterate({
-            ot: tx,
-            index: "tid",
-            key: IDBKeyRange.lowerBound(0),
-            callback: function (p) {
-                var tid;
+        return tx.players.index('tid').iterate(IDBKeyRange.lowerBound(0), function (p) {
+            var tid;
 
-                if (p.contract.exp <= g.season && g.userTids.indexOf(p.tid) >= 0 && g.autoPlaySeasons === 0) {
-                    tid = p.tid;
+            if (p.contract.exp <= g.season && g.userTids.indexOf(p.tid) >= 0 && g.autoPlaySeasons === 0) {
+                tid = p.tid;
 
-                    // Add to free agents first, to generate a contract demand
-                    return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods).then(function () {
-                        // Open negotiations with player
-                        return contractNegotiation.create(tx, p.pid, true, tid).then(function (error) {
-                            if (error !== undefined && error) {
-                                eventLog.add(null, {
-                                    type: "refuseToSign",
-                                    text: error,
-                                    pids: [p.pid],
-                                    tids: [tid]
-                                });
-                            }
-                        });
+                // Add to free agents first, to generate a contract demand
+                return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods).then(function () {
+                    // Open negotiations with player
+                    return contractNegotiation.create(tx, p.pid, true, tid).then(function (error) {
+                        if (error !== undefined && error) {
+                            eventLog.add(null, {
+                                type: "refuseToSign",
+                                text: error,
+                                pids: [p.pid],
+                                tids: [tid]
+                            });
+                        }
                     });
-                }
+                });
             }
         });
     }).then(function () {
@@ -619,75 +553,56 @@ function newPhaseFreeAgency(tx) {
     }).then(function () {
         return player.genBaseMoods(tx).then(function (baseMoods) {
             // Reset contract demands of current free agents and undrafted players
-            return dao.players.iterate({
-                ot: tx,
-                index: "tid",
-                key: IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), // This only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
-                callback: function (p) {
-                    return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
-                }
+            // KeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
+            return tx.players.index('tid').iterate(IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), function (p) {
+                return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
             }).then(function () {
                 // AI teams re-sign players or they become free agents
                 // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
-                return dao.players.iterate({
-                    ot: tx,
-                    index: "tid",
-                    key: IDBKeyRange.lowerBound(0),
-                    callback: function (p) {
-                        var contract, factor;
+                return tx.players.index('tid').iterate(IDBKeyRange.lowerBound(0), function (p) {
+                    var contract, factor;
 
-                        if (p.contract.exp <= g.season && (g.userTids.indexOf(p.tid) < 0 || g.autoPlaySeasons > 0)) {
-                            // Automatically negotiate with teams
-                            if (strategies[p.tid] === "rebuilding") {
-                                factor = 0.4;
-                            } else {
-                                factor = 0;
-                            }
-
-                            if (Math.random() < p.value / 100 - factor) { // Should eventually be smarter than a coin flip
-                                // See also core.team
-                                contract = player.genContract(p);
-                                contract.exp += 1; // Otherwise contracts could expire this season
-                                p = player.setContract(p, contract, true);
-                                p.gamesUntilTradable = 15;
-
-                                eventLog.add(null, {
-                                    type: "reSigned",
-                                    text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
-                                    showNotification: false,
-                                    pids: [p.pid],
-                                    tids: [p.tid]
-                                });
-
-                                return p; // Other endpoints include calls to addToFreeAgents, which handles updating the database
-                            }
-
-                            return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
+                    if (p.contract.exp <= g.season && (g.userTids.indexOf(p.tid) < 0 || g.autoPlaySeasons > 0)) {
+                        // Automatically negotiate with teams
+                        if (strategies[p.tid] === "rebuilding") {
+                            factor = 0.4;
+                        } else {
+                            factor = 0;
                         }
+
+                        if (Math.random() < p.value / 100 - factor) { // Should eventually be smarter than a coin flip
+                            // See also core.team
+                            contract = player.genContract(p);
+                            contract.exp += 1; // Otherwise contracts could expire this season
+                            p = player.setContract(p, contract, true);
+                            p.gamesUntilTradable = 15;
+
+                            eventLog.add(null, {
+                                type: "reSigned",
+                                text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                                showNotification: false,
+                                pids: [p.pid],
+                                tids: [p.tid]
+                            });
+
+                            return p; // Other endpoints include calls to addToFreeAgents, which handles updating the database
+                        }
+
+                        return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
                     }
                 });
             });
         }).then(function () {
             // Bump up future draft classes (nested so tid updates don't cause race conditions)
-            return dao.players.iterate({
-                ot: tx,
-                index: "tid",
-                key: g.PLAYER.UNDRAFTED_2,
-                callback: function (p) {
-                    p.tid = g.PLAYER.UNDRAFTED;
+            return tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_2, function (p) {
+                p.tid = g.PLAYER.UNDRAFTED;
+                p.ratings[0].fuzz /= 2;
+                return p;
+            }).then(function () {
+                return tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_3, function (p) {
+                    p.tid = g.PLAYER.UNDRAFTED_2;
                     p.ratings[0].fuzz /= 2;
                     return p;
-                }
-            }).then(function () {
-                return dao.players.iterate({
-                    ot: tx,
-                    index: "tid",
-                    key: g.PLAYER.UNDRAFTED_3,
-                    callback: function (p) {
-                        p.tid = g.PLAYER.UNDRAFTED_2;
-                        p.ratings[0].fuzz /= 2;
-                        return p;
-                    }
                 });
             });
         }).then(function () {
@@ -706,28 +621,18 @@ function newPhaseFantasyDraft(tx, position) {
         return require('../core/league').setGameAttributes(tx, {nextPhase: g.phase});
     }).then(function () {
         // Protect draft prospects from being included in this
-        return dao.players.iterate({
-            ot: tx,
-            index: "tid",
-            key: g.PLAYER.UNDRAFTED,
-            callback: function (p) {
-                p.tid = g.PLAYER.UNDRAFTED_FANTASY_TEMP;
-                return p;
-            }
+        return tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, function (p) {
+            p.tid = g.PLAYER.UNDRAFTED_FANTASY_TEMP;
+            return p;
         }).then(function () {
             // Make all players draftable
-            dao.players.iterate({
-                ot: tx,
-                index: "tid",
-                key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-                callback: function (p) {
-                    p.tid = g.PLAYER.UNDRAFTED;
-                    return p;
-                }
+            tx.players.index('tid').iterate(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
+                p.tid = g.PLAYER.UNDRAFTED;
+                return p;
             });
         });
     }).then(function () {
-        return dao.releasedPlayers.clear({ot: tx});
+        return tx.releasedPlayers.clear();
     }).then(function () {
         return [helpers.leagueUrl(["draft"]), ["playerMovement"]];
     });
@@ -751,7 +656,7 @@ function newPhase(phase, extra) {
         return;
     }
 
-    return lock.phaseChangeInProgress().then(function (phaseChangeInProgress) {
+    return lock.phaseChangeInProgress(null).then(function (phaseChangeInProgress) {
         if (!phaseChangeInProgress) {
             return require('../core/league').setGameAttributesComplete({phaseChangeInProgress: true}).then(function () {
                 ui.updatePlayMenu(null);
@@ -760,57 +665,69 @@ function newPhase(phase, extra) {
                 require('../core/league').updateLastDbChange();
 
                 if (phase === g.PHASE.PRESEASON) {
-                    phaseChangeTx = dao.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
-                    return newPhasePreseason(phaseChangeTx);
+                    return g.dbl.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams"], "readwrite", function (tx) {
+                        phaseChangeTx = tx;
+                        return newPhasePreseason(tx);
+                    });
                 }
                 if (phase === g.PHASE.REGULAR_SEASON) {
-                    phaseChangeTx = dao.tx(["gameAttributes", "messages", "schedule", "teams"], "readwrite");
-                    return newPhaseRegularSeason(phaseChangeTx);
+                    return g.dbl.tx(["gameAttributes", "messages", "schedule", "teams"], "readwrite", function (tx) {
+                        phaseChangeTx = tx;
+                        return newPhaseRegularSeason(tx);
+                    });
                 }
                 if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
                     return newPhaseAfterTradeDeadline();
                 }
                 if (phase === g.PHASE.PLAYOFFS) {
-                    phaseChangeTx = dao.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
-                    return newPhasePlayoffs(phaseChangeTx);
+                    return g.dbl.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite", function (tx) {
+                        phaseChangeTx = tx;
+                        return newPhasePlayoffs(tx);
+                    });
                 }
                 if (phase === g.PHASE.BEFORE_DRAFT) {
-                    phaseChangeTx = dao.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite");
-                    return newPhaseBeforeDraft(phaseChangeTx);
+                    return g.dbl.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite", function (tx) {
+                        phaseChangeTx = tx;
+                        return newPhaseBeforeDraft(tx);
+                    });
                 }
                 if (phase === g.PHASE.DRAFT) {
-                    phaseChangeTx = dao.tx(["draftPicks", "draftOrder", "gameAttributes", "players", "teams"], "readwrite");
-                    return newPhaseDraft(phaseChangeTx);
+                    return g.dbl.tx(["draftPicks", "draftOrder", "gameAttributes", "players", "teams"], "readwrite", function (tx) {
+                        phaseChangeTx = tx;
+                        return newPhaseDraft(tx);
+                    });
                 }
                 if (phase === g.PHASE.AFTER_DRAFT) {
-                    phaseChangeTx = dao.tx(["draftPicks", "gameAttributes"], "readwrite");
-                    return newPhaseAfterDraft(phaseChangeTx);
+                    return g.dbl.tx(["draftPicks", "gameAttributes"], "readwrite", function (tx) {
+                        phaseChangeTx = tx;
+                        return newPhaseAfterDraft(tx);
+                    });
                 }
                 if (phase === g.PHASE.RESIGN_PLAYERS) {
-                    phaseChangeTx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
-                    return newPhaseResignPlayers(phaseChangeTx);
+                    return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite", function (tx) {
+                        phaseChangeTx = tx;
+                        return newPhaseResignPlayers(tx);
+                    });
                 }
                 if (phase === g.PHASE.FREE_AGENCY) {
-                    phaseChangeTx = dao.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite");
-                    return newPhaseFreeAgency(phaseChangeTx);
+                    return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite", function (tx) {
+                        phaseChangeTx = tx;
+                        return newPhaseFreeAgency(tx);
+                    });
                 }
                 if (phase === g.PHASE.FANTASY_DRAFT) {
-                    phaseChangeTx = dao.tx(["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"], "readwrite");
-                    return newPhaseFantasyDraft(phaseChangeTx, extra);
+                    return g.dbl.tx(["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"], "readwrite", function (tx) {
+                        phaseChangeTx = tx;
+                        return newPhaseFantasyDraft(tx, extra);
+                    });
                 }
             }).catch(function (err) {
-                // If there was any error in the phase change, abort transaction
-                if (phaseChangeTx && phaseChangeTx.abort) {
-                    phaseChangeTx.abort();
-                }
-
+                console.log('Phase change error');
                 require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false}).then(function () {
                     throw err;
                 });
             }).spread(function (url, updateEvents) {
-                return phaseChangeTx.complete().then(function () {
-                    return finalize(phase, url, updateEvents);
-                });
+                return finalize(phase, url, updateEvents);
             });
         }
 
@@ -820,17 +737,11 @@ function newPhase(phase, extra) {
 
 function abort() {
     try {
-        // Stop error from bubbling up, since this function is only called on purpose
-        phaseChangeTx.onerror = function (e) {
-            e.stopPropagation();
-            e.preventDefault();
-        };
-
         phaseChangeTx.abort();
     } catch (err) {
         // Could be here because tx already ended, phase change is happening in another tab, or something weird.
         console.log("This is probably not actually an error:");
-        console.log(err.stack);
+        console.log(err);
         helpers.errorNotify("If \"Abort\" doesn't work, check if you have another tab open.");
     } finally {
         // If another window has a phase change in progress, this won't do anything until that finishes

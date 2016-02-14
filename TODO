@@ -9,8 +9,7 @@ backboard
     filter: get rid of
     statsPlayoffs, statsTid, statsSeasons - try to put in another function
   remove all instances of dao
-  will the "inherit tx" thing work? will wait for commit before resolving, so no. maybe revert backboard feature and write helper for here
-    currently only used in team.js
+  empty inbox at start of game?
 
 god mode option for playoff rounds https://www.reddit.com/r/BasketballGM/comments/44hdzs/new_options_in_god_mode/czrxv2w?context=3
 

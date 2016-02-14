@@ -21,7 +21,7 @@ describe("core/finances", function () {
         it("should store payroll and appropriately assess luxury and minimum payroll taxes for each team", function () {
             var tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite", tx);
             return finances.assessPayrollMinLuxury(tx).then(function () {
-                return dao.teams.getAll({ot: tx}).then(function (teams) {
+                return tx.teams.getAll().then(function (teams) {
                     var i;
 
                     for (i = 0; i < g.numTeams; i++) {

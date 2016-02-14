@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var Promise = require('bluebird');
 var helpers = require('./helpers');
@@ -244,14 +243,11 @@ function generate(tx, deltas) {
         }
     }
 
-    return dao.messages.add({
-        ot: tx,
-        value: {
-            read: false,
-            from: "The Owner",
-            year: g.season,
-            text: m
-        }
+    return tx.messages.add({
+        read: false,
+        from: "The Owner",
+        year: g.season,
+        text: m
     }).then(function () {
         if (ownerMoodSum > -1) {
             return;

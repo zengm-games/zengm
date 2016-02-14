@@ -9,7 +9,7 @@ var helpers = require('../util/helpers');
  * Calls the callback function with either true or false depending on whether there is a game simulation currently in progress.
  *
  * @memberOf util.lock
- * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
 function gamesInProgress(ot) {
@@ -24,7 +24,7 @@ function gamesInProgress(ot) {
  * Calls the callback function with either true or false depending on whether there is an ongoing negoation.
  *
  * @memberOf util.lock
- * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on negotiations; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction|null} ot An IndexedDB transaction on negotiations; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
 function negotiationInProgress(ot) {
@@ -41,7 +41,7 @@ function negotiationInProgress(ot) {
  * Is a phase change in progress?
  *
  * @memberOf util.lock
- * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
 function phaseChangeInProgress(ot) {
@@ -56,7 +56,7 @@ function phaseChangeInProgress(ot) {
  * Calls the callback function with either true or false. If games are in progress or any contract negotiation is in progress, false.
  *
  * @memberOf util.lock
- * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
 function canStartGames(ot) {
@@ -89,7 +89,7 @@ function canStartGames(ot) {
  * Calls the callback function with either true or false. If games are in progress or a free agent (not re-signing!) is being negotiated with, false.
  *
  * @memberOf util.lock
- * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
 function canStartNegotiation(ot) {
@@ -123,7 +123,7 @@ function canStartNegotiation(ot) {
  * Calls the callback function with either true or false.
  *
  * @memberOf util.lock
- * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on messages; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction|null} ot An IndexedDB transaction on messages; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
 function unreadMessage(ot) {

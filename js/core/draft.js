@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var finances = require('./finances');
@@ -24,10 +23,7 @@ var random = require('../util/random');
  * @return {Promise} Resolves to an ordered array of pick objects.
  */
 function getOrder(tx) {
-    return dao.draftOrder.get({
-        ot: tx,
-        key: 0
-    }).then(function (row) {
+    return tx.draftOrder.get(0).then(function (row) {
         return row.draftOrder;
     });
 }
@@ -41,12 +37,9 @@ function getOrder(tx) {
  * @return {Promise}
  */
 function setOrder(tx, draftOrder) {
-    return dao.draftOrder.put({
-        ot: tx,
-        value: {
-            rid: 0,
-            draftOrder: draftOrder
-        }
+    return tx.draftOrder.put({
+        rid: 0,
+        draftOrder: draftOrder
     });
 }
 
@@ -56,13 +49,13 @@ function setOrder(tx, draftOrder) {
  * This is called after draft classes are moved up a year, to create the new UNDRAFTED_3 class. It's also called 3 times when a new league starts, to create all 3 draft classes.
  *
  * @memberOf core.draft
- * @param {IDBTransaction|null} ot An IndexedDB transaction on players (and teams if scoutingRank is not set), readwrite; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction} tx An IndexedDB transaction on players (and teams if scoutingRank is not set), readwrite.
  * @param {number} tid Team ID number for the generated draft class. Should be g.PLAYER.UNDRAFTED, g.PLAYER.UNDRAFTED_2, or g.PLAYER.UNDRAFTED_3.
  * @param {?number=} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
  * @return {Promise}
  */
-function genPlayers(ot, tid, scoutingRank, numPlayers) {
+function genPlayers(tx, tid, scoutingRank, numPlayers) {
     scoutingRank = scoutingRank !== undefined ? scoutingRank : null;
 
     if (numPlayers === null || numPlayers === undefined) {
@@ -72,10 +65,7 @@ function genPlayers(ot, tid, scoutingRank, numPlayers) {
     return Promise.try(function () {
         // If scoutingRank is not supplied, have to hit the DB to get it
         if (scoutingRank === null) {
-            return dao.teams.get({
-                ot: ot,
-                key: g.userTid
-            }).then(function (t) {
+            return tx.teams.get(g.userTid).then(function (t) {
                 return finances.getRankLastThree(t, "expenses", "scouting");
             });
         }
@@ -116,11 +106,8 @@ function genPlayers(ot, tid, scoutingRank, numPlayers) {
             p = player.develop(p, agingYears, true);
 
             // Update player values after ratings changes
-            promises.push(player.updateValues(ot, p, []).then(function (p) {
-                return dao.players.put({
-                    ot: ot,
-                    value: p
-                });
+            promises.push(player.updateValues(tx, p, []).then(function (p) {
+                return tx.players.put(p);
             }));
         }
 
@@ -265,12 +252,10 @@ function lotterySort(teams) {
  * This is currently based on an NBA-like lottery, where the first 3 picks can be any of the non-playoff teams (with weighted probabilities).
  *
  * @memberOf core.draft
- * @param {IDBTransaction|null} ot An IndexedDB transaction on draftOrder, draftPicks, and teams, readwrite; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction} ot An IndexedDB transaction on draftOrder, draftPicks, and teams, readwrite.
  * @return {Promise}
  */
 function genOrder(tx) {
-    tx = dao.tx(["draftOrder", "draftPicks", "teams"], "readwrite", tx);
-
     return team.filter({
         ot: tx,
         attrs: ["tid", "cid"],
@@ -311,11 +296,7 @@ function genOrder(tx) {
             }
         }
 
-        return dao.draftPicks.getAll({
-            ot: tx,
-            index: "season",
-            key: g.season
-        }).then(function (draftPicks) {
+        return tx.draftPicks.index('season').getAll(g.season).then(function (draftPicks) {
             var draftOrder, draftPicksIndexed, i, tid;
 
             // Reorganize this to an array indexed on originalTid and round
@@ -394,10 +375,7 @@ function genOrder(tx) {
 
             // Delete from draftPicks object store so that they are completely untradeable
             return Promise.map(draftPicks, function (draftPick) {
-                return dao.draftPicks.delete({
-                    ot: tx,
-                    key: draftPick.dpid
-                });
+                return tx.draftPicks.delete(draftPick.dpid);
             }, {
                 concurrency: Infinity
             }).then(function () {
@@ -503,68 +481,58 @@ function getRookieSalaries() {
  * @return {Promise}
  */
 function selectPlayer(pick, pid) {
-    var tx;
+    g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
+        return tx.players.get(pid).then(function (p) {
+            var draftName, i, rookieSalaries, years;
 
-    tx = dao.tx(["players", "playerStats"], "readwrite");
+            // Draft player
+            p.tid = pick.tid;
+            if (g.phase !== g.PHASE.FANTASY_DRAFT) {
+                p.draft = {
+                    round: pick.round,
+                    pick: pick.pick,
+                    tid: pick.tid,
+                    year: g.season,
+                    originalTid: pick.originalTid,
+                    pot: p.ratings[0].pot,
+                    ovr: p.ratings[0].ovr,
+                    skills: p.ratings[0].skills
+                };
+            }
 
-    dao.players.get({
-        ot: tx,
-        key: pid
-    }).then(function (p) {
-        var draftName, i, rookieSalaries, years;
+            // Contract
+            if (g.phase !== g.PHASE.FANTASY_DRAFT) {
+                rookieSalaries = getRookieSalaries();
+                i = pick.pick - 1 + g.numTeams * (pick.round - 1);
+                years = 4 - pick.round; // 2 years for 2nd round, 3 years for 1st round;
+                p = player.setContract(p, {
+                    amount: rookieSalaries[i],
+                    exp: g.season + years
+                }, true);
+            }
 
-        // Draft player
-        p.tid = pick.tid;
-        if (g.phase !== g.PHASE.FANTASY_DRAFT) {
-            p.draft = {
-                round: pick.round,
-                pick: pick.pick,
-                tid: pick.tid,
-                year: g.season,
-                originalTid: pick.originalTid,
-                pot: p.ratings[0].pot,
-                ovr: p.ratings[0].ovr,
-                skills: p.ratings[0].skills
-            };
-        }
-
-        // Contract
-        if (g.phase !== g.PHASE.FANTASY_DRAFT) {
-            rookieSalaries = getRookieSalaries();
-            i = pick.pick - 1 + g.numTeams * (pick.round - 1);
-            years = 4 - pick.round; // 2 years for 2nd round, 3 years for 1st round;
-            p = player.setContract(p, {
-                amount: rookieSalaries[i],
-                exp: g.season + years
-            }, true);
-        }
-
-        // Add stats row if necessary (fantasy draft in ongoing season)
-        if (g.phase === g.PHASE.FANTASY_DRAFT && g.nextPhase <= g.PHASE.PLAYOFFS) {
-            p = player.addStatsRow(tx, p, g.nextPhase === g.PHASE.PLAYOFFS);
-        }
+            // Add stats row if necessary (fantasy draft in ongoing season)
+            if (g.phase === g.PHASE.FANTASY_DRAFT && g.nextPhase <= g.PHASE.PLAYOFFS) {
+                p = player.addStatsRow(tx, p, g.nextPhase === g.PHASE.PLAYOFFS);
+            }
 
 
-        if (g.phase === g.PHASE.FANTASY_DRAFT) {
-            draftName = g.season + ' fantasy draft';
-        } else {
-            draftName = g.season + ' draft';
-        }
-        eventLog.add(null, {
-            type: "draft",
-            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season]) + '">' + g.teamNamesCache[pick.tid] + '</a> selected <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> with the ' + helpers.ordinal(pick.pick + (pick.round - 1) * 30) + ' pick in the <a href="' + helpers.leagueUrl(["draft_summary", g.season]) + '">' + draftName + '</a>.',
-            showNotification: false,
-            pids: [p.pid],
-            tids: [p.tid]
-        });
+            if (g.phase === g.PHASE.FANTASY_DRAFT) {
+                draftName = g.season + ' fantasy draft';
+            } else {
+                draftName = g.season + ' draft';
+            }
+            eventLog.add(null, {
+                type: "draft",
+                text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season]) + '">' + g.teamNamesCache[pick.tid] + '</a> selected <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> with the ' + helpers.ordinal(pick.pick + (pick.round - 1) * 30) + ' pick in the <a href="' + helpers.leagueUrl(["draft_summary", g.season]) + '">' + draftName + '</a>.',
+                showNotification: false,
+                pids: [p.pid],
+                tids: [p.tid]
+            });
 
-        dao.players.put({
-            ot: tx,
-            value: p
+            return tx.players.put(p);
         });
     });
-
-    return tx.complete();
 }
 
 /**
@@ -581,10 +549,7 @@ function untilUserOrEnd() {
     pids = [];
 
     return Promise.all([
-        dao.players.getAll({
-            index: "tid",
-            key: g.PLAYER.UNDRAFTED
-        }),
+        g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED),
         getOrder()
     ]).spread(function (playersAll, draftOrder) {
         var afterDoneAuto, autoSelectPlayer, pick, pid, selection;
@@ -596,7 +561,7 @@ function untilUserOrEnd() {
         // Called after either the draft is over or it's the user's pick
         afterDoneAuto = function (draftOrder, pids) {
             return setOrder(null, draftOrder).then(function () {
-                var phase, tx;
+                var phase;
 
                 // Is draft over?;
                 if (draftOrder.length === 0) {
@@ -604,39 +569,29 @@ function untilUserOrEnd() {
 
                     // Fantasy draft special case!
                     if (g.phase === g.PHASE.FANTASY_DRAFT) {
-                        tx = dao.tx(["players", "teams"], "readwrite");
-
-                        // Undrafted players become free agents
-                        return player.genBaseMoods(tx).then(function (baseMoods) {
-                            return dao.players.iterate({
-                                ot: tx,
-                                index: "tid",
-                                key: g.PLAYER.UNDRAFTED,
-                                callback: function (p) {
+                        return g.dbl.tx(["players", "teams"], "readwrite", function (tx) {
+                            // Undrafted players become free agents
+                            return player.genBaseMoods(tx).then(function (baseMoods) {
+                                return tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, function (p) {
                                     return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
-                                }
-                            });
-                        }).then(function () {
-                            // Swap back in normal draft class
-                            return dao.players.iterate({
-                                ot: tx,
-                                index: "tid",
-                                key: g.PLAYER.UNDRAFTED_FANTASY_TEMP,
-                                callback: function (p) {
+                                });
+                            }).then(function () {
+                                // Swap back in normal draft class
+                                return tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_FANTASY_TEMP, function (p) {
                                     p.tid = g.PLAYER.UNDRAFTED;
 
                                     return p;
-                                }
-                            });
-                        }).then(function () {
-                            return require('../core/league').setGameAttributesComplete({
-                                phase: g.nextPhase,
-                                nextPhase: null
+                                });
                             }).then(function () {
-                                ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
-                                return ui.updatePlayMenu(null).then(function () {
-                                    require('../core/league').updateLastDbChange();
-                                    return pids;
+                                return require('../core/league').setGameAttributesComplete({
+                                    phase: g.nextPhase,
+                                    nextPhase: null
+                                }).then(function () {
+                                    ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
+                                    return ui.updatePlayMenu(null).then(function () {
+                                        require('../core/league').updateLastDbChange();
+                                        return pids;
+                                    });
                                 });
                             });
                         });

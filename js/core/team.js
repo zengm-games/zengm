@@ -432,7 +432,7 @@ function getContracts(tx, tid) {
  * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from tx.contracts.getAll.
  */
 function getPayroll(tx, tid) {
-    return g.dbl.tx(["players", "releasedPlayers"], tx, function (tx) {
+    return helpers.maybeReuseTx(["players", "releasedPlayers"], "readonly", tx, function (tx) {
         return getContracts(tx, tid).then(function (contracts) {
             var i, payroll;
 
@@ -456,7 +456,7 @@ function getPayroll(tx, tid) {
 function getPayrolls(tx) {
     var promises, tid;
 
-    return g.dbl.tx(["players", "releasedPlayers"], tx, function (tx) {
+    return helpers.maybeReuseTx(["players", "releasedPlayers"], "readonly", tx, function (tx) {
         promises = [];
         for (tid = 0; tid < g.numTeams; tid++) {
             promises.push(getPayroll(tx, tid).get(0));
@@ -688,7 +688,7 @@ function filter(options) {
     };
 
 
-    return g.dbl.tx(["players", "releasedPlayers", "teams"], options.ot, function (tx) {
+    return helpers.maybeReuseTx(["players", "releasedPlayers", "teams"], "readonly", options.ot, function (tx) {
         return tx.teams.getAll(options.tid).then(function (t) {
             var ft, fts, i, returnOneTeam, savePayroll, sortBy;
 

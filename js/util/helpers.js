@@ -905,6 +905,14 @@ function overtimeCounter(n) {
     }
 }
 
+function maybeReuseTx(storeNames, mode, tx, cb) {
+    if (tx !== undefined && tx !== null) {
+        return cb(tx);
+    }
+
+    return g.dbl.tx(storeNames, mode, cb);
+}
+
 module.exports = {
     validateAbbrev: validateAbbrev,
     getAbbrev: getAbbrev,
@@ -939,6 +947,7 @@ module.exports = {
     updateMultiTeam: updateMultiTeam,
     plusMinus: plusMinus,
     correctLinkLid: correctLinkLid,
-    overtimeCounter: overtimeCounter
+    overtimeCounter: overtimeCounter,
+    maybeReuseTx: maybeReuseTx
 };
 

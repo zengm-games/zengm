@@ -360,21 +360,15 @@ function rosterAutoSort(tx, tid) {
 * This includes contracts for players who have been released but are still owed money.
 *
 * @memberOf core.team
-* @param {IDBTransaction|null} tx An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
+* @param {IDBTransaction} tx An IndexedDB transaction on players and releasedPlayers.
 * @param {number} tid Team ID.
 * @returns {Promise.Array} Array of objects containing contract information.
 */
 function getContracts(tx, tid) {
     var contracts;
 
-    tx = dao.tx(["players", "releasedPlayers"], "readonly", tx);
-
     // First, get players currently on the roster
-    return dao.players.getAll({
-        ot: tx,
-        index: "tid",
-        key: tid
-    }).then(function (players) {
+    return tx.players.index('tid').getAll(tid).then(function (players) {
         var i;
 
         contracts = [];
@@ -392,21 +386,14 @@ function getContracts(tx, tid) {
         }
 
         // Then, get any released players still owed money
-        return dao.releasedPlayers.getAll({
-            ot: tx,
-            index: "tid",
-            key: tid
-        });
+        return tx.releasedPlayers.index('tid').getAll(tid);
     }).then(function (releasedPlayers) {
         if (releasedPlayers.length === 0) {
             return contracts;
         }
 
         return Promise.each(releasedPlayers, function (releasedPlayer) {
-            return dao.players.get({
-                ot: tx,
-                key: releasedPlayer.pid
-            }).then(function (p) {
+            return tx.players.get(releasedPlayer.pid).then(function (p) {
                 if (p !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
                     contracts.push({
                         pid: releasedPlayer.pid,
@@ -442,20 +429,20 @@ function getContracts(tx, tid) {
  * @memberOf core.team
  * @param {IDBTransaction|null} tx An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
  * @param {number} tid Team ID.
- * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from dao.contracts.getAll.
+ * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from tx.contracts.getAll.
  */
 function getPayroll(tx, tid) {
-    tx = dao.tx(["players", "releasedPlayers"], "readonly", tx);
+    return g.dbl.tx(["players", "releasedPlayers"], tx, function (tx) {
+        return getContracts(tx, tid).then(function (contracts) {
+            var i, payroll;
 
-    return getContracts(tx, tid).then(function (contracts) {
-        var i, payroll;
+            payroll = 0;
+            for (i = 0; i < contracts.length; i++) {
+                payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
+            }
 
-        payroll = 0;
-        for (i = 0; i < contracts.length; i++) {
-            payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
-        }
-
-        return [payroll, contracts];
+            return [payroll, contracts];
+        });
     });
 }
 
@@ -469,14 +456,14 @@ function getPayroll(tx, tid) {
 function getPayrolls(tx) {
     var promises, tid;
 
-    tx = dao.tx(["players", "releasedPlayers"], "readonly", tx);
+    return g.dbl.tx(["players", "releasedPlayers"], tx, function (tx) {
+        promises = [];
+        for (tid = 0; tid < g.numTeams; tid++) {
+            promises.push(getPayroll(tx, tid).get(0));
+        }
 
-    promises = [];
-    for (tid = 0; tid < g.numTeams; tid++) {
-        promises.push(getPayroll(tx, tid).get(0));
-    }
-
-    return Promise.all(promises);
+        return Promise.all(promises);
+    });
 }
 
 /**
@@ -700,60 +687,63 @@ function filter(options) {
         }
     };
 
-    return dao.teams.getAll({ot: options.ot, key: options.tid}).then(function (t) {
-        var ft, fts, i, returnOneTeam, savePayroll, sortBy;
 
-        // t will be an array of g.numTeams teams (if options.tid is null) or an array of 1 team. If 1, then we want to return just that team object at the end, not an array of 1 team.
-        returnOneTeam = false;
-        if (t.length === 1) {
-            returnOneTeam = true;
-        }
+    return g.dbl.tx(["players", "releasedPlayers", "teams"], options.ot, function (tx) {
+        return tx.teams.getAll(options.tid).then(function (t) {
+            var ft, fts, i, returnOneTeam, savePayroll, sortBy;
 
-        fts = [];
+            // t will be an array of g.numTeams teams (if options.tid is null) or an array of 1 team. If 1, then we want to return just that team object at the end, not an array of 1 team.
+            returnOneTeam = false;
+            if (t.length === 1) {
+                returnOneTeam = true;
+            }
 
-        for (i = 0; i < t.length; i++) {
-            ft = {};
-            filterAttrs(ft, t[i], options);
-            filterSeasonAttrs(ft, t[i], options);
-            filterStats(ft, t[i], options);
-            fts.push(ft);
-        }
+            fts = [];
 
-        if (Array.isArray(options.sortBy)) {
-            // Sort by multiple properties
-            sortBy = options.sortBy.slice();
-            fts.sort(function (a, b) {
-                var result;
+            for (i = 0; i < t.length; i++) {
+                ft = {};
+                filterAttrs(ft, t[i], options);
+                filterSeasonAttrs(ft, t[i], options);
+                filterStats(ft, t[i], options);
+                fts.push(ft);
+            }
 
-                for (i = 0; i < sortBy.length; i++) {
-                    result = (sortBy[i].indexOf("-") === 1) ? a[sortBy[i]] - b[sortBy[i]] : b[sortBy[i]] - a[sortBy[i]];
+            if (Array.isArray(options.sortBy)) {
+                // Sort by multiple properties
+                sortBy = options.sortBy.slice();
+                fts.sort(function (a, b) {
+                    var result;
 
-                    if (result || i === sortBy.length - 1) {
-                        return result;
+                    for (i = 0; i < sortBy.length; i++) {
+                        result = (sortBy[i].indexOf("-") === 1) ? a[sortBy[i]] - b[sortBy[i]] : b[sortBy[i]] - a[sortBy[i]];
+
+                        if (result || i === sortBy.length - 1) {
+                            return result;
+                        }
                     }
-                }
-            });
-        } else if (options.sortBy === "winp") {
-            // Sort by winning percentage, descending
-            fts.sort(function (a, b) { return b.winp - a.winp; });
-        }
+                });
+            } else if (options.sortBy === "winp") {
+                // Sort by winning percentage, descending
+                fts.sort(function (a, b) { return b.winp - a.winp; });
+            }
 
-        // If payroll for the current season was requested, find the current payroll for each team. Otherwise, don't.
-        if (options.seasonAttrs.indexOf("payroll") < 0 || options.season !== g.season) {
-            return returnOneTeam ? fts[0] : fts;
-        }
+            // If payroll for the current season was requested, find the current payroll for each team. Otherwise, don't.
+            if (options.seasonAttrs.indexOf("payroll") < 0 || options.season !== g.season) {
+                return returnOneTeam ? fts[0] : fts;
+            }
 
-        savePayroll = function (i) {
-            return getPayroll(options.ot, t[i].tid).get(0).then(function (payroll) {
-                fts[i].payroll = payroll / 1000;
-                if (i === fts.length - 1) {
-                    return returnOneTeam ? fts[0] : fts;
-                }
+            savePayroll = function (i) {
+                return getPayroll(options.ot, t[i].tid).get(0).then(function (payroll) {
+                    fts[i].payroll = payroll / 1000;
+                    if (i === fts.length - 1) {
+                        return returnOneTeam ? fts[0] : fts;
+                    }
 
-                return savePayroll(i + 1);
-            });
-        };
-        return savePayroll(0);
+                    return savePayroll(i + 1);
+                });
+            };
+            return savePayroll(0);
+        });
     });
 }
 
@@ -772,7 +762,6 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
     remove = [];
 
     return g.dbl.tx(["draftPicks", "players", "releasedPlayers", "teams"], function (tx) {
-
         // Get players
         getPlayers = function () {
             var fudgeFactor, i;
@@ -785,11 +774,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
             }
 
             // Get roster and players to remove
-            dao.players.getAll({
-                ot: tx,
-                index: "tid",
-                key: tid
-            }).then(function (players) {
+            tx.players.index('tid').getAll(tid).then(function (players) {
                 var i, p;
 
                 for (i = 0; i < players.length; i++) {
@@ -819,10 +804,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
 
             // Get players to add
             for (i = 0; i < pidsAdd.length; i++) {
-                dao.players.get({
-                    ot: tx,
-                    key: pidsAdd[i]
-                }).then(function (p) {
+                tx.players.get( pidsAdd[i]).then(function (p) {
                     add.push({
                         value: p.valueWithContract,
                         skills: _.last(p.ratings).skills,
@@ -839,7 +821,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
             // For each draft pick, estimate its value based on the recent performance of the team
             if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
                 // Estimate the order of the picks by team
-                dao.teams.getAll({ot: tx}).then(function (teams) {
+                tx.teams.getAll().then(function (teams) {
                     var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, withEstValues, wps;
 
                     // This part needs to be run every time so that gpAvg is available
@@ -894,7 +876,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
                         var i;
 
                         for (i = 0; i < dpidsAdd.length; i++) {
-                            dao.draftPicks.get({ot: tx, key: dpidsAdd[i]}).then(function (dp) {
+                            tx.draftPicks.get(dpidsAdd[i]).then(function (dp) {
                                 var estPick, seasons, value;
 
                                 estPick = estPicks[dp.originalTid];
@@ -930,7 +912,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
                         }
 
                         for (i = 0; i < dpidsRemove.length; i++) {
-                            dao.draftPicks.get({ot: tx, key: dpidsRemove[i]}).then(function (dp) {
+                            tx.draftPicks.get(dpidsRemove[i]).then(function (dp) {
                                 var estPick, fudgeFactor, seasons, value;
 
                                 estPick = estPicks[dp.originalTid];
@@ -1280,6 +1262,8 @@ function updateStrategies(tx) {
             dWon = 0;
         }
 
+console.log('team.js dao fix this!');
+return;
         // Young stars
         return dao.players.getAll({
             ot: tx,
@@ -1348,7 +1332,7 @@ function checkRosterSizes() {
         var checkRosterSize, minFreeAgents, userTeamSizeError;
 
         checkRosterSize = function (tid) {
-            return dao.players.getAll({ot: tx, index: "tid", key: tid}).then(function (players) {
+            return tx.players.index('tid').getAll(tid).then(function (players) {
                 var i, numPlayersOnRoster, p, promises;
 
                 numPlayersOnRoster = players.length;
@@ -1414,7 +1398,7 @@ function checkRosterSizes() {
 
         userTeamSizeError = null;
 
-        return dao.players.getAll({ot: tx, index: "tid", key: g.PLAYER.FREE_AGENT}).then(function (players) {
+        return tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(function (players) {
             var i, promises;
 
             // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.

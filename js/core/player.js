@@ -524,7 +524,7 @@ function bonus(p, amount) {
  * @return {Promise} Array of base moods, one for each team.
  */
 function genBaseMoods(ot) {
-    var dbOrTx = ot === null ? ot : g.dbl;
+    var dbOrTx = ot !== null ? ot : g.dbl;
     return dbOrTx.teams.getAll().then(function (teams) {
         var baseMoods, i, s;
 

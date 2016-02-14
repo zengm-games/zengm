@@ -47,7 +47,7 @@ mapping = {
 function updateTeamHistory(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
         return Promise.all([
-            dao.teams.get({key: inputs.tid}),
+            g.dbl.teams.get(inputs.tid),
             dao.players.getAll({
                 index: "statsTids",
                 key: inputs.tid,

@@ -67,7 +67,7 @@ describe("core/team", function () {
             return db.connectMeta().then(function () {
                 return league.create("Test", 0, undefined, 2013, false);
             }).then(function () {
-                return dao.teams.get({key: 4}).then(function (t) {
+                return g.dbl.teams.get(4).then(function (t) {
                     t.stats[0].gp = 10;
                     t.stats[0].fg = 50;
                     t.stats[0].fga = 100;

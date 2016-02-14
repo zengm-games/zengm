@@ -1,7 +1,3 @@
-/**
- * @name views.customizePlayer
- * @namespace Create a new custom player or customize an existing one.
- */
 'use strict';
 
 var dao = require('../dao');
@@ -255,7 +251,7 @@ function updateCustomizePlayer(inputs, updateEvents) {
 
             if (inputs.pid === null) {
                 // Generate new player as basis
-                return dao.teams.get({key: g.userTid}).then(function (t) {
+                return g.dbl.teams.get(g.userTid).then(function (t) {
                     var p, scoutingRank;
 
                     scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
@@ -282,7 +278,7 @@ function updateCustomizePlayer(inputs, updateEvents) {
             }
 
             // Load a player to edit
-            return dao.players.get({key: inputs.pid}).then(function (p) {
+            return g.dbl.players.get(inputs.pid).then(function (p) {
                 if (p.imgURL.length > 0) {
                     vars.appearanceOption = "Image URL";
                 } else {

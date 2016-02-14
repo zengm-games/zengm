@@ -802,7 +802,7 @@ function updateMetaNameRegion(name, region) {
  * @return {Promise}
  */
 function loadGameAttribute(ot, key) {
-    var dbOrTx = ot === null ? ot : g.dbl;
+    var dbOrTx = ot !== null ? ot : g.dbl;
     return dbOrTx.gameAttributes.get(key).then(function (gameAttribute) {
         if (gameAttribute === undefined) {
             throw new Error("Unknown game attribute: " + key);
@@ -832,7 +832,7 @@ function loadGameAttribute(ot, key) {
  * @return {Promise}
  */
 function loadGameAttributes(ot) {
-    var dbOrTx = ot === null ? ot : g.dbl;
+    var dbOrTx = ot !== null ? ot : g.dbl;
 
     return dbOrTx.gameAttributes.getAll().then(function (gameAttributes) {
         var i;

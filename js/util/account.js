@@ -1,7 +1,3 @@
-/**
- * @name util.account
- * @namespace Functions for accessing account crap.
- */
 /*eslint camelcase: 0*/
 'use strict';
 
@@ -323,7 +319,7 @@ function checkDynasty(titles, years, slug, saveAchievement) {
         return Promise.resolve(false);
     }
 
-    return dao.teams.get({key: g.userTid}).then(function (t) {
+    return g.dbl.teams.get(g.userTid).then(function (t) {
         var i, titlesFound;
 
         titlesFound = 0;
@@ -457,7 +453,7 @@ checkAchievement.sleeper_pick = function (saveAchievement) {
 
     return dao.awards.get({key: g.season}).then(function (awards) {
         if (awards.roy.tid === g.userTid) {
-            return dao.players.get({key: awards.roy.pid}).then(function (p) {
+            return g.dbl.players.get(awards.roy.pid).then(function (p) {
                 if (p.tid === g.userTid && p.draft.tid === g.userTid && p.draft.year === g.season - 1 && (p.draft.round > 1 || p.draft.pick >= 15)) {
                     if (saveAchievement) {
                         addAchievements(["sleeper_pick"]);

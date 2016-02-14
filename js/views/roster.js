@@ -1,7 +1,3 @@
-/**get
- * @name views.roster
- * @namespace Current or historical rosters for every team. Current roster for user's team is editable.
- */
 'use strict';
 
 var dao = require('../dao');
@@ -194,7 +190,7 @@ function InitViewModel() {
         // Update ptModifier in database
         pid = p.pid();
         ptModifier = parseFloat(p.ptModifier());
-        dao.players.get({key: pid}).then(function (p) {
+        g.dbl.players.get(pid).then(function (p) {
             if (p.ptModifier !== ptModifier) {
                 p.ptModifier = ptModifier;
 

@@ -1,7 +1,3 @@
-/**
- * @name core.trade
- * @namespace Trades between the user's team and other teams.
- */
 'use strict';
 
 var dao = require('../dao');
@@ -44,7 +40,7 @@ function create(teams) {
         // Make sure tid is set
         return Promise.try(function () {
             if (teams[1].tid === undefined || teams[1].tid === null) {
-                return dao.players.get({key: teams[1].pids[0]}).then(function (p) {
+                return g.dbl.players.get(teams[1].pids[0]).then(function (p) {
                     teams[1].tid = p.tid;
                 });
             }

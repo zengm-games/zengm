@@ -574,7 +574,7 @@ function genBaseMoods(ot) {
  */
 function addToFreeAgents(ot, p, phase, baseMoods) {
     var pr;
-    var dbOrTx = ot === null ? ot : g.dbl;
+    var dbOrTx = ot !== null ? ot : g.dbl;
 
     phase = phase !== null ? phase : g.phase;
 
@@ -824,7 +824,7 @@ function addRatingsRow(p, scoutingRank) {
  */
 function addStatsRow(ot, p, playoffs) {
     var ps, statsRow, stopOnSeason;
-    var dbOrTx = ot === null ? ot : g.dbl;
+    var dbOrTx = ot !== null ? ot : g.dbl;
 
     playoffs = playoffs !== undefined ? playoffs : false;
 
@@ -1703,7 +1703,7 @@ function value(p, ps, options) {
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
 function updateValues(ot, p, ps) {
-    var dbOrTx = ot === null ? ot : g.dbl;
+    var dbOrTx = ot !== null ? ot : g.dbl;
     return Promise.try(function () {
         var season;
 

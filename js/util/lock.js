@@ -1,11 +1,7 @@
-/**
- * @name util.lock
- * @namespace These functions all deal with locking game state when there is some blocking action in progress. Like don't allow game simulations when a trade is being negotiated. For figuring out the current state, trust only the database.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
+var helpers = require('../util/helpers');
 
 /**
  * Is game simulation in progress?
@@ -32,7 +28,8 @@ function gamesInProgress(ot) {
  * @return {Promise.boolean}
  */
 function negotiationInProgress(ot) {
-    return dao.negotiations.getAll({ot: ot}).then(function (negotiations) {
+    var dbOrTx = ot !== null ? ot : g.dbl;
+    return dbOrTx.negotiations.getAll().then(function (negotiations) {
         if (negotiations.length > 0) {
             return true;
         }
@@ -44,7 +41,7 @@ function negotiationInProgress(ot) {
  * Is a phase change in progress?
  *
  * @memberOf util.lock
- * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes and negotiations; if null is passed, then a new transaction will be used.
+ * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
 function phaseChangeInProgress(ot) {
@@ -63,22 +60,24 @@ function phaseChangeInProgress(ot) {
  * @return {Promise.boolean}
  */
 function canStartGames(ot) {
-    return gamesInProgress(ot).then(function (gamesInProgressBool) {
-        if (gamesInProgressBool) {
-            return false;
-        }
-
-        return negotiationInProgress(ot).then(function (negotiationInProgressBool) {
-            if (negotiationInProgressBool) {
+    return helpers.maybeReuseTx(["gameAttributes", "negotiations"], "readonly", ot, function (tx) {
+        return gamesInProgress(tx).then(function (gamesInProgressBool) {
+            if (gamesInProgressBool) {
                 return false;
             }
 
-            return phaseChangeInProgress(ot).then(function (phaseChangeInProgressBool) {
-                if (phaseChangeInProgressBool) {
+            return negotiationInProgress(tx).then(function (negotiationInProgressBool) {
+                if (negotiationInProgressBool) {
                     return false;
                 }
 
-                return true;
+                return phaseChangeInProgress(tx).then(function (phaseChangeInProgressBool) {
+                    if (phaseChangeInProgressBool) {
+                        return false;
+                    }
+
+                    return true;
+                });
             });
         });
     });
@@ -94,24 +93,26 @@ function canStartGames(ot) {
  * @return {Promise.boolean}
  */
 function canStartNegotiation(ot) {
-    return gamesInProgress(ot).then(function (gamesInProgressBool) {
-        if (gamesInProgressBool) {
-            return false;
-        }
-
-        // Allow multiple parallel negotiations only for re-signing players
-        return dao.negotiations.getAll({ot: ot}).then(function (negotiations) {
-            var i;
-
-            for (i = 0; i < negotiations.length; i++) {
-                if (!negotiations[i].resigning) {
-                    return false;
-                }
+    return helpers.maybeReuseTx(["gameAttributes", "negotiations"], "readonly", ot, function (tx) {
+        return gamesInProgress(tx).then(function (gamesInProgressBool) {
+            if (gamesInProgressBool) {
+                return false;
             }
 
-            return true;
+            // Allow multiple parallel negotiations only for re-signing players
+            return tx.negotiations.getAll().then(function (negotiations) {
+                var i;
 
-            // Don't also check phase change because negotiations are auto-started in phase change
+                for (i = 0; i < negotiations.length; i++) {
+                    if (!negotiations[i].resigning) {
+                        return false;
+                    }
+                }
+
+                return true;
+
+                // Don't also check phase change because negotiations are auto-started in phase change
+            });
         });
     });
 }
@@ -126,7 +127,8 @@ function canStartNegotiation(ot) {
  * @return {Promise.boolean}
  */
 function unreadMessage(ot) {
-    return dao.messages.getAll({ot: ot}).then(function (messages) {
+    var dbOrTx = ot !== null ? ot : g.dbl;
+    return dbOrTx.messages.getAll().then(function (messages) {
         var i;
 
         for (i = 0; i < messages.length; i++) {

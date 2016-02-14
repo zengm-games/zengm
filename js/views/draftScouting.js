@@ -1,7 +1,3 @@
-/**
- * @name views.draftScouting
- * @namespace Scouting prospects in future drafts.
- */
 'use strict';
 
 var dao = require('../dao');
@@ -137,7 +133,7 @@ function customDraftClassHandler(e) {
         });
 
         // Get scouting rank, which is used in a couple places below
-        dao.teams.get({key: g.userTid}).then(function (t) {
+        g.dbl.teams.get(g.userTid).then(function (t) {
             var scoutingRank, tx;
 
             scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");

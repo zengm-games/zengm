@@ -165,7 +165,7 @@ function updateTeamFinances(inputs, updateEvents, vm) {
             vars.contractTotals = contractTotals;
             vars.salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
-            return dao.teams.get({key: inputs.tid}).then(function (t) {
+            return g.dbl.teams.get(inputs.tid).then(function (t) {
                 var barData, barSeasons, i, keys, tempData;
 
                 t.seasons.reverse(); // Most recent season first

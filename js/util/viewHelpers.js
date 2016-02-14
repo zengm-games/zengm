@@ -1,10 +1,5 @@
-/**
- * @name util.viewHelpers
- * @namespace Helper functions called only by views which pull important info (updateEvents and cb) from Davis request objects.
- */
 'use strict';
 
-var dao = require('../dao');
 var db = require('../db');
 var g = require('../globals');
 var ui = require('../ui');
@@ -29,7 +24,7 @@ function beforeLeague(req) {
         }
 
         // league.loadGameAttribute cannot be used to check for a new lastDbChange because we need to have the old g.lastDbChange available right up to the last moment possible, for cases where league.loadGameAttribute might be blocked during a slow page refresh, as happens when viewing player rating and stat distributions. Otherwise, an extra refresh would occur with a stale lastDbChange.
-        dao.gameAttributes.get({key: "lastDbChange"}).then(function (lastDbChange) {
+        g.dbl.gameAttributes.get("lastDbChange").then(function (lastDbChange) {
             if (g.lastDbChange !== lastDbChange.value) {
                 league.loadGameAttributes(null).then(function () {
                     //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason

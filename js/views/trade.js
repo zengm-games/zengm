@@ -1,7 +1,3 @@
-/**
- * @name views.trade
- * @namespace Trade.
- */
 'use strict';
 
 var dao = require('../dao');
@@ -238,7 +234,7 @@ function updateTrade(inputs) {
                 index: "tid",
                 key: otherTid
             }),
-            dao.teams.get({key: otherTid})
+            g.dbl.teams.get(otherTid)
         ]).spread(function (otherRoster, otherPicks, t) {
             var i;
 

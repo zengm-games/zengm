@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var freeAgents = require('../core/freeAgents');
@@ -54,14 +53,11 @@ mapping = {
 function updateFreeAgents() {
     return Promise.all([
         team.getPayroll(null, g.userTid).get(0),
-        dao.players.getAll({
-            index: "tid",
-            key: g.userTid
-        }),
-        dao.players.getAll({
-            index: "tid",
-            key: g.PLAYER.FREE_AGENT,
-            statsSeasons: [g.season, g.season - 1]
+        g.dbl.players.index('tid').getAll(g.userTid),
+        g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(function (players) {
+            return player.withStats(null, players, {
+                statsSeasons: [g.season, g.season - 1]
+            });
         })
     ]).spread(function (payroll, userPlayers, players) {
         var capSpace, i;

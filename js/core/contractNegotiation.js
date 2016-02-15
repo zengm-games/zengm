@@ -1,6 +1,5 @@
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var freeAgents = require('./freeAgents');
@@ -16,7 +15,7 @@ var random = require('../util/random');
  * Start a new contract negotiation with a player.
  *
  * @memberOf core.contractNegotiation
- * @param {IDBTransaction|null} tx An IndexedDB transaction on gameAttributes, messages, negotiations, and players, readwrite; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction} tx An IndexedDB transaction on gameAttributes, messages, negotiations, and players, readwrite.
  * @param {number} pid An integer that must correspond with the player ID of a free agent.
  * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
  * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.userTid.
@@ -35,16 +34,12 @@ function create(tx, pid, resigning, tid) {
             return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.";
         }
 
-        return dao.players.count({
-            ot: tx,
-            index: "tid",
-            key: g.userTid
-        }).then(function (numPlayersOnRoster) {
+        return tx.players.index('tid').count(g.userTid).then(function (numPlayersOnRoster) {
             if (numPlayersOnRoster >= 15 && !resigning) {
                 return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
             }
 
-            return dao.players.get({ot: tx, key: pid}).then(function (p) {
+            return tx.players.get(pid).then(function (p) {
                 var negotiation, playerAmount, playerYears;
 
                 if (p.tid !== g.PLAYER.FREE_AGENT) {
@@ -72,7 +67,7 @@ function create(tx, pid, resigning, tid) {
                     resigning: resigning
                 };
 
-                return dao.negotiations.add({ot: tx, value: negotiation}).then(function () {
+                return tx.negotiations.add(negotiation).then(function () {
                     require('../core/league').updateLastDbChange();
                     ui.updateStatus("Contract negotiation");
                     return ui.updatePlayMenu(tx);
@@ -122,26 +117,21 @@ function validYears(years) {
  * @return {Promise}
  */
 function cancel(pid) {
-    var tx;
-
-    tx = dao.tx(["gameAttributes", "messages", "negotiations"], "readwrite");
-
-    // Delete negotiation
-    dao.negotiations.delete({ot: tx, key: pid}).then(function () {
-        // If no negotiations are in progress, update status
-        return lock.negotiationInProgress(tx);
-    }).then(function (negotiationInProgress) {
-        if (!negotiationInProgress) {
-            if (g.phase === g.PHASE.FREE_AGENCY) {
-                ui.updateStatus(g.daysLeft + " days left");
-            } else {
-                ui.updateStatus("Idle");
+    return g.dbl.tx(["gameAttributes", "messages", "negotiations"], "readwrite", function (tx) {
+        return tx.negotiations.delete(pid).then(function () {
+            // If no negotiations are in progress, update status
+            return lock.negotiationInProgress(tx);
+        }).then(function (negotiationInProgress) {
+            if (!negotiationInProgress) {
+                if (g.phase === g.PHASE.FREE_AGENCY) {
+                    ui.updateStatus(g.daysLeft + " days left");
+                } else {
+                    ui.updateStatus("Idle");
+                }
+                ui.updatePlayMenu(tx);
             }
-            ui.updatePlayMenu(tx);
-        }
-    });
-
-    return tx.complete().then(function () {
+        });
+    }).then(function () {
         require('../core/league').updateLastDbChange();
     });
 }
@@ -156,7 +146,7 @@ function cancel(pid) {
  * @return {Promise}
  */
 function cancelAll(tx) {
-    return dao.negotiations.clear({ot: tx}).then(function () {
+    return tx.negotiations.clear().then(function () {
         require('../core/league').updateLastDbChange();
         ui.updateStatus("Idle");
         return ui.updatePlayMenu(tx);
@@ -174,7 +164,7 @@ function cancelAll(tx) {
  */
 function accept(pid, amount, exp) {
     return Promise.all([
-        dao.negotiations.get({key: pid}),
+        g.dbl.negotiations.get(pid),
         team.getPayroll(null, g.userTid).get(0)
     ]).spread(function (negotiation, payroll) {
         var tx;
@@ -195,11 +185,8 @@ function accept(pid, amount, exp) {
             negotiation.player.years -= 1;
         }
 
-        tx = dao.tx(["players", "playerStats"], "readwrite");
-        dao.players.iterate({
-            ot: tx,
-            key: pid,
-            callback: function (p) {
+        return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
+            return tx.players.iterate(pid, function (p) {
                 p.tid = g.userTid;
                 p.gamesUntilTradable = 15;
 
@@ -232,10 +219,8 @@ function accept(pid, amount, exp) {
                 }
 
                 return p;
-            }
-        });
-
-        return tx.complete().then(function () {
+            });
+        }).then(function () {
             return cancel(pid);
         }).then(function () {
             require('../core/league').updateLastDbChange();

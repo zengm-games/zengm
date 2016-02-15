@@ -2,7 +2,6 @@
 
 var g = require('../globals');
 var bbgmNotifications = require('../lib/bbgm-notifications');
-var helpers = require('../util/helpers');
 
 function add(ot, options) {
     var dbOrTx, notificationContainer, title;

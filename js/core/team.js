@@ -1262,15 +1262,12 @@ function updateStrategies(tx) {
             dWon = 0;
         }
 
-console.log('team.js dao fix this!');
-return;
         // Young stars
-        return dao.players.getAll({
-            ot: tx,
-            index: "tid",
-            key: t.tid,
-            statsSeasons: [g.season],
-            statsTid: t.tid
+        return tx.players.index('tid').getAll(t.tid).then(function (players) {
+            return player.withStats(tx, players, {
+                statsSeasons: [g.season],
+                statsTid: t.tid
+            });
         }).then(function (players) {
             var age, denominator, i, numerator, score, updated, youngStar;
 

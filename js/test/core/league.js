@@ -1,7 +1,6 @@
 'use strict';
 
 var assert = require('assert');
-var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
 var league = require('../../core/league');
@@ -43,7 +42,7 @@ describe("core/league", function () {
             assert.equal(g.dbl.objectStoreNames.contains("trade"), true);
         });
         it("should initialize gameAttributes object store", function () {
-            return dao.gameAttributes.getAll().then(function (gameAttributes) {
+            return g.dbl.gameAttributes.getAll().then(function (gameAttributes) {
                 var count, gTest, key;
 
                 gTest = gameAttributes.reduce(function (obj, row) { obj[row.key] = row.value; return obj; }, {});
@@ -72,14 +71,14 @@ describe("core/league", function () {
             });
         });
         it("should initialize draftOrder object store", function () {
-            return dao.draftOrder.getAll().then(function (draftOrder) {
+            return g.dbl.draftOrder.getAll().then(function (draftOrder) {
                 assert.equal(draftOrder.length, 1);
                 assert.equal(draftOrder[0].rid, 1);
                 assert.equal(draftOrder[0].draftOrder.length, 0);
             });
         });
         it("should initialize teams object store", function () {
-            return dao.teams.getAll().then(function (teams) {
+            return g.dbl.teams.getAll().then(function (teams) {
                 var cids, dids, i;
 
                 cids = _.pluck(teams, "cid");
@@ -102,14 +101,14 @@ describe("core/league", function () {
             });
         });
         it("should initialize trade object store", function () {
-            return dao.trade.getAll().then(function (tr) {
+            return g.dbl.trade.getAll().then(function (tr) {
                 assert.equal(tr.length, 1);
                 assert.equal(tr[0].rid, 0);
                 assert.equal(tr[0].teams.length, 2);
             });
         });
         it("should initialize players object store", function () {
-            return dao.players.getAll().then(function (players) {
+            return g.dbl.players.getAll().then(function (players) {
                 assert.equal(players.length, 33 * 14 + 70 * 3);
             });
         });

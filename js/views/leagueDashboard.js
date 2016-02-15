@@ -211,62 +211,61 @@ function updatePlayers(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
         vars = {};
 
-return;
-        return dao.players.getAll({
-            index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED),
-            statsSeasons: [g.season]
-        }).then(function (players) {
-            var i, stats, userPlayers;
+        return g.dbl.tx(["players", "playerStats"], function (tx) {
+            return tx.players.index('tid').getAll(IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED)).then(function (players) {
+                return player.withStats(tx, players, {statsSeasons: [g.season]});
+            }).then(function (players) {
+                var i, stats, userPlayers;
 
-            players = player.filter(players, {
-                attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch"],
-                ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
-                stats: ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"],
-                season: g.season,
-                showNoStats: true,
-                showRookies: true,
-                fuzz: true
-            });
+                players = player.filter(players, {
+                    attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch"],
+                    ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
+                    stats: ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"],
+                    season: g.season,
+                    showNoStats: true,
+                    showRookies: true,
+                    fuzz: true
+                });
 
-            // League leaders
-            vars.leagueLeaders = {};
-            stats = ["pts", "trb", "ast"]; // Categories for leaders
-            for (i = 0; i < stats.length; i++) {
-                players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
-                vars.leagueLeaders[stats[i]] = {
-                    pid: players[0].pid,
-                    name: players[0].name,
-                    abbrev: players[0].abbrev,
-                    stat: players[0].stats[stats[i]]
-                };
-            }
-
-            // Team leaders
-            userPlayers = _.filter(players, function (p) { return p.tid === g.userTid; });
-            vars.teamLeaders = {};
-            for (i = 0; i < stats.length; i++) {
-                if (userPlayers.length > 0) {
-                    userPlayers.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
-                    vars.teamLeaders[stats[i]] = {
-                        pid: userPlayers[0].pid,
-                        name: userPlayers[0].name,
-                        stat: userPlayers[0].stats[stats[i]]
-                    };
-                } else {
-                    vars.teamLeaders[stats[i]] = {
-                        pid: 0,
-                        name: "",
-                        stat: 0
+                // League leaders
+                vars.leagueLeaders = {};
+                stats = ["pts", "trb", "ast"]; // Categories for leaders
+                for (i = 0; i < stats.length; i++) {
+                    players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
+                    vars.leagueLeaders[stats[i]] = {
+                        pid: players[0].pid,
+                        name: players[0].name,
+                        abbrev: players[0].abbrev,
+                        stat: players[0].stats[stats[i]]
                     };
                 }
-            }
 
-            // Roster
-            // Find starting 5
-            vars.starters = userPlayers.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; }).slice(0, 5);
+                // Team leaders
+                userPlayers = _.filter(players, function (p) { return p.tid === g.userTid; });
+                vars.teamLeaders = {};
+                for (i = 0; i < stats.length; i++) {
+                    if (userPlayers.length > 0) {
+                        userPlayers.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
+                        vars.teamLeaders[stats[i]] = {
+                            pid: userPlayers[0].pid,
+                            name: userPlayers[0].name,
+                            stat: userPlayers[0].stats[stats[i]]
+                        };
+                    } else {
+                        vars.teamLeaders[stats[i]] = {
+                            pid: 0,
+                            name: "",
+                            stat: 0
+                        };
+                    }
+                }
 
-            return vars;
+                // Roster
+                // Find starting 5
+                vars.starters = userPlayers.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; }).slice(0, 5);
+
+                return vars;
+            });
         });
     }
 }

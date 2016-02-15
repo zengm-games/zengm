@@ -2097,6 +2097,65 @@ function killOne() {
     });
 }
 
+function withStats(tx, players, options) {
+    options.statsPlayoffs = options.statsPlayoffs !== undefined ? options.statsPlayoffs : false;
+    options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
+    options.filter = options.filter !== undefined ? options.filter : null;
+
+    return helpers.maybeReuseTx(["players", "playerStats"], "readonly", tx, function (tx) {
+        if (options.filter !== null) {
+            players = players.filter(options.filter);
+        }
+
+        if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
+            // No stats needed! Yay!
+            return players;
+        }
+
+        // Get stats
+        return Promise.map(players, function (p) {
+            var key;
+
+            if (options.statsSeasons === "all") {
+                // All seasons
+                key = IDBKeyRange.bound([p.pid], [p.pid, '']);
+            } else if (options.statsSeasons.length === 1) {
+                // Restrict to one season
+                key = IDBKeyRange.bound([p.pid, options.statsSeasons[0]], [p.pid, options.statsSeasons[0], '']);
+            } else if (options.statsSeasons.length > 1) {
+                // Restrict to range between seasons
+                key = IDBKeyRange.bound([p.pid, Math.min.apply(null, options.statsSeasons)], [p.pid, Math.max.apply(null, options.statsSeasons), '']);
+            }
+
+            return tx.playerStats.index('pid, season, tid').getAll(key).then(function (playerStats) {
+                // Due to indexes not necessarily handling all cases, still need to filter
+                p.stats = playerStats.filter(function (ps) {
+                    // statsSeasons is defined, but this season isn't in it
+                    if (options.statsSeasons !== "all" && options.statsSeasons.indexOf(ps.season) < 0) {
+                        return false;
+                    }
+
+                    // If options.statsPlayoffs is false, don't include playoffs. Otherwise, include both
+                    if (!options.statsPlayoffs && options.statsPlayoffs !== ps.playoffs) {
+                        return false;
+                    }
+
+                    if (options.statsTid !== null && options.statsTid !== ps.tid) {
+                        return false;
+                    }
+
+                    return true;
+                }).sort(function (a, b) {
+                    // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
+                    return a.psid - b.psid;
+                });
+            }).then(function () {
+                return p;
+            });
+        }, {concurrency: Infinity});
+    });
+}
+
 module.exports = {
     addRatingsRow: addRatingsRow,
     addStatsRow: addStatsRow,
@@ -2121,6 +2180,7 @@ module.exports = {
     moodColorText: moodColorText,
     augmentPartialPlayer: augmentPartialPlayer,
     checkStatisticalFeat: checkStatisticalFeat,
-    killOne: killOne
+    killOne: killOne,
+    withStats: withStats
 };
 

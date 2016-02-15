@@ -101,10 +101,11 @@ describe("util/account", function () {
         it("should not award achievement without 82-0 regular season", function () {
             return g.dbl.tx("teams", "readwrite", function (tx) {
                 return tx.teams.get(g.userTid).then(function (t) {
-                t.seasons[0].won = 82;
-                t.seasons[0].lost = 1;
+                    t.seasons[0].won = 82;
+                    t.seasons[0].lost = 1;
 
-                tx.teams.put(t);
+                    return tx.teams.put(t);
+                });
             }).then(function () {
                 return account.checkAchievement["98_degrees"](false).then(function (awarded) {
                     var tx;

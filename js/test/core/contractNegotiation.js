@@ -17,7 +17,9 @@ describe("core/contractNegotiation", function () {
     });
     afterEach(function () {
         // Set to a trade with team 1 and no players;
-        return contractNegotiation.cancelAll();
+        return g.dbl.tx(['gameAttributes', 'messages', 'negotiations'], 'readwrite', function (tx) {
+            return contractNegotiation.cancelAll(tx);
+        });
     });
 
     describe("#create()", function () {
@@ -123,13 +125,13 @@ describe("core/contractNegotiation", function () {
     describe("#accept()", function () {
         it("should not allow signing non-minimum contracts that cause team to exceed the salary cap", function () {
             return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", function (tx) {
-                contractNegotiation.create(tx, 8, false).then(function (error) {
+                return contractNegotiation.create(tx, 8, false).then(function (error) {
                     assert.equal((typeof error), "undefined");
 
                     // Force a minimum contract
-                    tx.negotiations.get(8).then(function (negotiation) {
+                    return tx.negotiations.get(8).then(function (negotiation) {
                         negotiation.player.amount = 60000;
-                        tx.negotiations.put(negotiation);
+                        return tx.negotiations.put(negotiation);
                     });
                 });
             }).then(function () {

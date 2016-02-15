@@ -3,6 +3,14 @@
 var Promise = require('bluebird');
 Promise.config({warnings: false});
 
+require('source-map-support').install();
+
+// Make sure I never accidentally use native promises, because that could fuck with error handling
+window.Promise = function () { throw new Error("USE BLUEBIRD!"); };
+window.Promise.all = function () { throw new Error("USE BLUEBIRD!"); };
+window.Promise.map = function () { throw new Error("USE BLUEBIRD!"); };
+window.Promise.try = function () { throw new Error("USE BLUEBIRD!"); };
+
 require('indexeddb-getall-shim');
 require('../util/templateHelpers');
 

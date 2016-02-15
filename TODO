@@ -1,9 +1,7 @@
 backboard
   rm -rf node_modules/backboard/ && npm install backboard
-  confirm quotaerrors handled
   uncomment bugsnag, or don't load in dev mode
   source-map-support a good idea for production?
-  remove all instances of dao
   replace IDBKeyRange and other IDB vars
   confirm account stuff works
 

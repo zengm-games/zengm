@@ -1,10 +1,5 @@
-/**
- * @name views.playerStats
- * @namespace Player stats table.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var $ = require('jquery');
@@ -53,7 +48,7 @@ mapping = {
 
 function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.playoffs !== vm.playoffs()) {
-        return dao.playerFeats.getAll().then(function (feats) {
+        return g.dbl.playerFeats.getAll().then(function (feats) {
             if (inputs.abbrev !== "all") {
                 feats = feats.filter(function (feat) {
                     return g.teamAbbrevsCache[feat.tid] === inputs.abbrev;

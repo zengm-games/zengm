@@ -11,10 +11,9 @@ backboard
     see leagueDashboard for example
   remove all instances of dao
   replace IDBKeyRange and other IDB vars
+  confirm account stuff works
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard
-
-always expose bbgm, not just in debug mode
 
 god mode option for playoff rounds https://www.reddit.com/r/BasketballGM/comments/44hdzs/new_options_in_god_mode/czrxv2w?context=3
 

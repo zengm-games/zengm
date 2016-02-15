@@ -39,25 +39,21 @@ require('./api');
 (function () {
     var errorMsg;
 
-    // If we're in debug mode, make debug functions available
-    if (localStorage.debug === "debug") {
-        window.bbgm = {
-            debug: require('./core/debug'),
-            dao: require('./dao'),
-            g: require('./globals'),
-            contractNegotiation: require('./core/contractNegotiation'),
-            draft: require('./core/draft'),
-            finances: require('./core/finances'),
-            freeAgents: require('./core/freeAgents'),
-            game: require('./core/game'),
-            gameSim: require('./core/gameSim'),
-            phase: require('./core/phase'),
-            player: require('./core/player'),
-            season: require('./core/season'),
-            team: require('./core/team'),
-            trade: require('./core/trade')
-        };
-    }
+    window.bbgm = {
+        debug: require('./core/debug'),
+        g: require('./globals'),
+        contractNegotiation: require('./core/contractNegotiation'),
+        draft: require('./core/draft'),
+        finances: require('./core/finances'),
+        freeAgents: require('./core/freeAgents'),
+        game: require('./core/game'),
+        gameSim: require('./core/gameSim'),
+        phase: require('./core/phase'),
+        player: require('./core/player'),
+        season: require('./core/season'),
+        team: require('./core/team'),
+        trade: require('./core/trade')
+    };
 
     ui.init();
 

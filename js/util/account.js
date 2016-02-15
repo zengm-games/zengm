@@ -1,7 +1,6 @@
 /*eslint camelcase: 0*/
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var team = require('../core/team');
 var Promise = require('bluebird');
@@ -231,7 +230,7 @@ checkAchievement.fo_fo_fo = function (saveAchievement) {
         return Promise.resolve(false);
     }
 
-    return dao.playoffSeries.get({key: g.season}).then(function (playoffSeries) {
+    return g.dbl.playoffSeries.get(g.season).then(function (playoffSeries) {
         var found, i, round, series;
 
         series = playoffSeries.series;
@@ -409,7 +408,7 @@ checkAchievement.hardware_store = function (saveAchievement) {
         return Promise.resolve(false);
     }
 
-    return dao.awards.get({key: g.season}).then(function (awards) {
+    return g.dbl.awards.get(g.season).then(function (awards) {
         if (awards.mvp.tid === g.userTid && awards.dpoy.tid === g.userTid && awards.smoy.tid === g.userTid && awards.roy.tid === g.userTid && awards.finalsMvp.tid === g.userTid) {
             if (saveAchievement) {
                 addAchievements(["hardware_store"]);
@@ -451,7 +450,7 @@ checkAchievement.sleeper_pick = function (saveAchievement) {
         return Promise.resolve(false);
     }
 
-    return dao.awards.get({key: g.season}).then(function (awards) {
+    return g.dbl.awards.get(g.season).then(function (awards) {
         if (awards.roy.tid === g.userTid) {
             return g.dbl.players.get(awards.roy.pid).then(function (p) {
                 if (p.tid === g.userTid && p.draft.tid === g.userTid && p.draft.year === g.season - 1 && (p.draft.round > 1 || p.draft.pick >= 15)) {

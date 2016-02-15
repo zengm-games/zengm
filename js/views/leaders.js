@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
@@ -51,9 +50,9 @@ function updateLeaders(inputs, updateEvents, vm) {
     // Respond to watchList in case players are listed twice in different categories
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
         return Promise.all([
-            dao.teams.getAll(),
-            dao.players.getAll({
-                statsSeasons: [inputs.season]
+            g.dbl.teams.getAll(),
+            g.dbl.players.getAll().then(function (players) {
+                return player.withStats(null, players, {statsSeasons: [inputs.season]});
             })
         ]).spread(function (teams, players) {
             var categories, factor, gps, i, j, k, leader, pass, playerValue, stats, userAbbrev;

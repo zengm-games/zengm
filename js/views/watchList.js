@@ -36,13 +36,12 @@ mapping = {
 function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("clearWatchList") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
         return g.dbl.players.getAll().then(function (players) {
+            players = players.filter(function (p) {
+                return p.watch && typeof p.watch !== "function"; // In Firefox, objects have a "watch" function
+            });
             return player.withStats(null, players, {
                 statsSeasons: [g.season, g.season - 1], // For oldStats
                 statsPlayoffs: inputs.playoffs === "playoffs"
-            }).then(function (players) {
-                return players.filter(function (p) {
-                    return p.watch && typeof p.watch !== "function"; // In Firefox, objects have a "watch" function
-                });
             });
         }).then(function (players) {
             var i;

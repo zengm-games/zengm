@@ -1,6 +1,5 @@
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var ko = require('knockout');
@@ -47,22 +46,22 @@ function InitViewModel() {
 }
 
 function updateEventLog(inputs, updateEvents, vm) {
-    var filter, maxEid, newEvents;
+    var eventsPromise, maxEid, newEvents;
 
     if (updateEvents.length >= 0 || inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev() || inputs.eventType !== vm.eventType) {
         if (inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev() || inputs.eventType !== vm.eventType) {
             vm.events([]);
         }
 
-        filter = {};
-        if (inputs.season !== "all") {
-            filter.index = "season";
-            filter.key = inputs.season;
-        }
         if (vm.events().length === 0) {
+            if (inputs.season === "all") {
+                eventsPromise = g.dbl.events.getAll();
+            } else {
+                eventsPromise = g.dbl.events.index('season').getAll(inputs.season);
+            }
+
             // Show all events, newest at top
-            return dao.events.getAll(filter)
-            .then(function (events) {
+            return eventsPromise.then(function (events) {
                 events.reverse(); // Newest first
 
                 // Filter by team
@@ -99,23 +98,18 @@ function updateEventLog(inputs, updateEvents, vm) {
             // Update by adding any new events to the top of the list
             maxEid = ko.unwrap(vm.events()[0].eid); // unwrap shouldn't be necessary
             newEvents = [];
-            return dao.events.iterate({
-                index: "season",
-                key: inputs.season,
-                direction: "prev",
-                callback: function (event, shortCircuit) {
-                    var i;
+            return g.dbl.events.index('season').iterate(inputs.season, "prev", function (event, shortCircuit) {
+                var i;
 
-                    if (event.eid > maxEid) {
-                        if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
-                            newEvents.push(event);
-                        }
-                    } else {
-                        shortCircuit();
-                        // Oldest first (cursor is in "prev" direction and we're adding to the front of vm.events)
-                        for (i = newEvents.length - 1; i >= 0; i--) {
-                            vm.events.unshift(newEvents[i]);
-                        }
+                if (event.eid > maxEid) {
+                    if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
+                        newEvents.push(event);
+                    }
+                } else {
+                    shortCircuit();
+                    // Oldest first (cursor is in "prev" direction and we're adding to the front of vm.events)
+                    for (i = newEvents.length - 1; i >= 0; i--) {
+                        vm.events.unshift(newEvents[i]);
                     }
                 }
             }).then(function () {

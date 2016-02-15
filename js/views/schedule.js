@@ -1,7 +1,3 @@
-/**
- * @name views.schedule
- * @namespace Show current schedule for user's team.
- */
 'use strict';
 
 var g = require('../globals');

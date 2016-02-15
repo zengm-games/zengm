@@ -126,11 +126,10 @@ function awards(tx) {
         // Sort teams by tid so it can be easily used in awards formulas
         teams.sort(function (a, b) { return a.tid - b.tid; });
 
-        return [teams, dao.players.getAll({
-            ot: tx,
-            index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), // Any non-retired player can win an award
-            statsSeasons: [g.season]
+        return [teams, tx.players.index('tid').getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
+            return player.withStats(tx, players, {
+                statsSeasons: [g.season]
+            });
         })];
     }).spread(function (teams, players) {
         var champTid, i, p, rookies, type;
@@ -235,13 +234,12 @@ function awards(tx) {
             }
         }
         // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
-        return [champTid, dao.players.getAll({
-            ot: tx,
-            index: "tid",
-            key: champTid,
-            statsSeasons: [g.season],
-            statsTid: champTid,
-            statsPlayoffs: true
+        return [champTid, tx.players.index('tid').getAll(champTid).then(function (players) {
+            return player.withStats(tx, players, {
+                statsSeasons: [g.season],
+                statsTid: champTid,
+                statsPlayoffs: true
+            });
         })];
     }).spread(function (champTid, players) {
         var p;

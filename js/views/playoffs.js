@@ -1,6 +1,5 @@
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var team = require('../core/team');
@@ -58,7 +57,7 @@ function updatePlayoffs(inputs, updateEvents, vm) {
         }
 
         // Display the current or archived playoffs
-        return dao.playoffSeries.get({key: inputs.season}).then(function (playoffSeries) {
+        return g.dbl.playoffSeries.get(inputs.season).then(function (playoffSeries) {
             var series;
 
             series = playoffSeries.series;

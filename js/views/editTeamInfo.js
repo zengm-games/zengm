@@ -1,6 +1,5 @@
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var league = require('../core/league');
@@ -15,9 +14,8 @@ function post(req) {
     button = document.getElementById("edit-team-info");
     button.disabled = true;
 
-    dao.teams.iterate({
-        ot: dao.tx("teams", "readwrite"),
-        callback: function (t) {
+    g.dbl.tx('teams', 'readwrite', function (tx) {
+        return tx.teams.iterate(function (t) {
             t.abbrev = req.params.abbrev[t.tid];
             t.region = req.params.region[t.tid];
             t.name = req.params.name[t.tid];
@@ -29,7 +27,7 @@ function post(req) {
             }
 
             return t;
-        }
+        });
     }).then(function () {
         // Update meta cache of user's team
         return league.updateMetaNameRegion(userName, userRegion);
@@ -125,9 +123,8 @@ function uiFirst() {
                 }
             }
 
-            dao.teams.iterate({
-                ot: dao.tx("teams", "readwrite"),
-                callback: function (t) {
+            g.dbl.tx('teams', 'readwrite', function (tx) {
+                return tx.teams.iterate(function (t) {
                     t.cid = newTeams[t.tid].cid;
                     t.did = newTeams[t.tid].did;
                     t.region = newTeams[t.tid].region;
@@ -144,7 +141,7 @@ function uiFirst() {
                     }
 
                     return t;
-                }
+                });
             }).then(function () {
                 // Update meta cache of user's team
                 return league.updateMetaNameRegion(userName, userRegion);

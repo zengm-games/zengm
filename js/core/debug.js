@@ -2,7 +2,6 @@
 
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var player = require('./player');
 var _ = require('underscore');

@@ -1,10 +1,5 @@
-/**
- * @name views.hallOfFame
- * @namespace Hall of fame table.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');

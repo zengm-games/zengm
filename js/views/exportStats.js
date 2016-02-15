@@ -1,10 +1,5 @@
-/**
- * @name views.exportRosters
- * @namespace Export rosters.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
@@ -24,8 +19,10 @@ function genFileName(leagueName, season, grouping) {
 // playerAveragesCSV(2015) - just 2015 stats
 // playerAveragesCSV("all") - all stats
 function playerAveragesCSV(season) {
-    return dao.players.getAll({
-        statsSeasons: season === "all" ? "all" : [season]
+    return g.dbl.players.getAll().then(function (players) {
+        return player.withStats(null, players, {
+            statsSeasons: season === "all" ? "all" : [season]
+        });
     }).then(function (players) {
         var output, seasons;
 
@@ -55,9 +52,9 @@ function playerGamesCSV(season) {
     var gamesPromise;
 
     if (season === "all") {
-        gamesPromise = dao.games.getAll();
+        gamesPromise = g.dbl.games.getAll();
     } else {
-        gamesPromise = dao.games.getAll({index: "season", key: season});
+        gamesPromise = g.dbl.games.index('season').getAll(season);
     }
     return gamesPromise.then(function (games) {
         var i, j, output, seasons, t, t2, teams;

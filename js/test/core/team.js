@@ -1,7 +1,6 @@
 'use strict';
 
 var assert = require('assert');
-var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
 var league = require('../../core/league');
@@ -76,7 +75,7 @@ describe("core/team", function () {
                     t.stats[1].fg = 12;
                     t.stats[1].fga = 120;
 
-                    return dao.teams.put({value: t});
+                    return g.dbl.teams.put(t);
                 });
             });
         });
@@ -194,22 +193,23 @@ describe("core/team", function () {
             });
         });
         it("should use supplied IndexedDB transaction", function () {
-            var tx = dao.tx(["players", "releasedPlayers", "teams"]);
-            return team.filter({
-                attrs: ["tid", "abbrev"],
-                seasonAttrs: ["season", "won"],
-                tid: 4,
-                season: g.season,
-                ot: tx
-            }).then(function (t) {
-                assert.equal(t.tid, 4);
-                assert.equal(t.abbrev, "CIN");
-                assert.equal(t.season, g.season);
-                assert.equal(t.won, 0);
-                assert.equal(Object.keys(t).length, 4);
+            return g.dbl.tx(["players", "releasedPlayers", "teams"], function (tx) {
+                return team.filter({
+                    attrs: ["tid", "abbrev"],
+                    seasonAttrs: ["season", "won"],
+                    tid: 4,
+                    season: g.season,
+                    ot: tx
+                }).then(function (t) {
+                    assert.equal(t.tid, 4);
+                    assert.equal(t.abbrev, "CIN");
+                    assert.equal(t.season, g.season);
+                    assert.equal(t.won, 0);
+                    assert.equal(Object.keys(t).length, 4);
 
-                // If another transaction was used inside team.filter besides tx, this will cause an error because the transaction will no longer be active
-                return dao.players.get({ot: tx, key: 0});
+                    // If another transaction was used inside team.filter besides tx, this will cause an error because the transaction will no longer be active
+                    return tx.players.get(0);
+                });
             });
         });
         it("should return stats in an array if no season is specified", function () {
@@ -237,54 +237,38 @@ describe("core/team", function () {
         });
 
         function addTen(tid) {
-            var i, tx;
+            return g.dbl.tx("players", "readwrite", function (tx) {
+                var  i = 0;
 
-            tx = dao.tx("players", "readwrite");
-            i = 0;
-
-            dao.players.iterate({
-                ot: tx,
-                index: "tid",
-                key: g.PLAYER.FREE_AGENT,
-                callback: function (p, shortCircuit) {
+                return tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, function (p, shortCircuit) {
                     if (i >= 10) {
                         return shortCircuit();
                     }
                     i += 1;
                     p.tid = tid;
                     return p;
-                }
+                });
             });
-
-            return tx.complete();
         }
 
         function removeTen(tid) {
-            var i, tx;
+            return g.dbl.tx(["players", "releasedPlayers", "teams"], "readwrite", function (tx) {
+                var i = 0;
 
-            tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite");
-            i = 0;
-
-            dao.players.iterate({
-                ot: tx,
-                index: "tid",
-                key: tid,
-                callback: function (p, shortCircuit) {
+                return tx.players.index('tid').iterate(tid, function (p, shortCircuit) {
                     if (i >= 10) {
                         return shortCircuit();
                     }
                     i += 1;
                     return player.release(tx, p, false);
-                }
+                });
             });
-
-            return tx.complete();
         }
 
         it("should add players to AI team under roster limit without returning error message", function () {
             return removeTen(5).then(function () {
                 // Confirm roster size under limit
-                return dao.players.count({index: "tid", key: 5}).then(function (numPlayers) {
+                return g.dbl.players.index('tid').count(5).then(function (numPlayers) {
                     assert.equal(numPlayers, 4);
                 });
             }).then(function () {
@@ -293,7 +277,7 @@ describe("core/team", function () {
                 });
             }).then(function () {
                 // Confirm players added up to limit
-                return dao.players.count({index: "tid", key: 5}).then(function (numPlayers) {
+                return g.dbl.players.index('tid').count(5).then(function (numPlayers) {
                     assert.equal(numPlayers, g.minRosterSize);
                 });
             });
@@ -301,13 +285,13 @@ describe("core/team", function () {
         it("should remove players to AI team over roster limit without returning error message", function () {
             return addTen(8).then(function () {
                 // Confirm roster size over limit
-                return dao.players.count({index: "tid", key: 8}).then(function (numPlayers) {
+                return g.dbl.players.index('tid').count(8).then(function (numPlayers) {
                     assert.equal(numPlayers, 24);
                 });
             }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
                 // Confirm no error message and roster size pruned to limit
                 assert.equal(userTeamSizeError, null);
-                return dao.players.count({index: "tid", key: 8}).then(function (numPlayers) {
+                return g.dbl.players.index('tid').count(8).then(function (numPlayers) {
                     assert.equal(numPlayers, 15);
                 });
             });
@@ -315,7 +299,7 @@ describe("core/team", function () {
         it("should return error message when user team is under roster limit", function () {
             return removeTen(g.userTid).then(function () {
                 // Confirm roster size under limit
-                return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
+                return g.dbl.players.index('tid').count(g.userTid).then(function (numPlayers) {
                     assert.equal(numPlayers, 4);
                 });
             }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
@@ -323,7 +307,7 @@ describe("core/team", function () {
                 assert.equal(typeof userTeamSizeError, "string");
                 assert(userTeamSizeError.indexOf("less") >= 0);
                 assert(userTeamSizeError.indexOf("minimum") >= 0);
-                return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
+                return g.dbl.players.index('tid').count(g.userTid).then(function (numPlayers) {
                     assert.equal(numPlayers, 4);
                 });
             });
@@ -333,7 +317,7 @@ describe("core/team", function () {
                 return addTen(g.userTid);
             }).then(function () {
                 // Confirm roster size over limit
-                return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
+                return g.dbl.players.index('tid').count(g.userTid).then(function (numPlayers) {
                     assert.equal(numPlayers, 24);
                 });
             }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
@@ -341,7 +325,7 @@ describe("core/team", function () {
                 assert.equal(typeof userTeamSizeError, "string");
                 assert(userTeamSizeError.indexOf("more") >= 0);
                 assert(userTeamSizeError.indexOf("maximum") >= 0);
-                return dao.players.count({index: "tid", key: g.userTid}).then(function (numPlayers) {
+                return g.dbl.players.index('tid').count(g.userTid).then(function (numPlayers) {
                     assert.equal(numPlayers, 24);
                 });
             });

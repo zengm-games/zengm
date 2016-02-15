@@ -1,7 +1,6 @@
 'use strict';
 
 var assert = require('assert');
-var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
 var league = require('../../core/league');
@@ -49,7 +48,7 @@ function addFakeGame(tx, gid) {
             });
         }
     }
-    dao.games.add({ot: tx, value: game});
+    tx.games.add(game);
 }
 
 describe("views/gameLog", function () {
@@ -58,13 +57,12 @@ describe("views/gameLog", function () {
         return db.connectMeta().then(function () {
             return league.create("Test", 0, undefined, 2013, false);
         }).then(function () {
-            var i, tx;
-
-            tx = dao.tx("games", "readwrite");
-            for (i = 0; i < 10; i++) {
-                addFakeGame(tx, i);
-            }
-            return tx.complete().then();
+            return g.dbl.tx("games", "readwrite", function (tx) {
+                var i;
+                for (i = 0; i < 10; i++) {
+                    addFakeGame(tx, i);
+                }
+            });
         });
     });
     after(function () {
@@ -182,11 +180,12 @@ describe("views/gameLog", function () {
                 child.parentNode.removeChild(child);
 
                 // Add fake games
-                tx = dao.tx("games", "readwrite");
-                for (i = 10; i < 20; i++) {
-                    addFakeGame(tx, i);
-                }
-                tx.complete().then(function () {
+                return g.dbl.tx("games", "readwrite", function (tx) {
+                    var i;
+                    for (i = 10; i < 20; i++) {
+                        addFakeGame(tx, i);
+                    }
+                }).then(function () {
                         gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, ["gameSim"], function () {
                         assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
                         assert.equal(document.getElementById("box-score").innerHTML, "fuck");

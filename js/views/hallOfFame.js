@@ -31,13 +31,11 @@ mapping = {
 
 function updatePlayers(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.BEFORE_DRAFT)) {
-        return dao.players.getAll({
-            index: "tid",
-            key: g.PLAYER.RETIRED,
-            statsSeasons: "all",
-            filter: function (p) {
+        return g.dbl.players.index('tid').getAll(g.PLAYER.RETIRED).then(function (players) {
+            players = players.filter(function (p) {
                 return p.hof;
-            }
+            });
+            return player.withStats(null, players, {statsSeasons: "all"});
         }).then(function (players) {
             var i, j;
 

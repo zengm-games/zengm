@@ -154,7 +154,9 @@ function regressRatingsPer() {
         return xT.mult(x).inverse().mult(xT).mult(this);
     };
 
-    dao.players.getAll({statsSeasons: "all"}).then(function (players) {
+    g.dbl.players.getAll().then(function (players) {
+        return player.withStats(null, players, {statsSeasons: "all"});
+    }).then(function (players) {
         var c, i, j, k, p, pers, ratingLabels, ratings, x, y;
 
         pers = [];
@@ -200,10 +202,7 @@ function regressRatingsPer() {
 // Useful to run this while playing with the contract formula in core.player.genContract
 function leagueAverageContract() {
     // All non-retired players
-    dao.players.getAll({
-        index: "tid",
-        key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
-    }).then(function (players) {
+    g.dbl.players.index('tid').getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
         var contract, i, p, total;
 
         total = 0;
@@ -220,10 +219,7 @@ function leagueAverageContract() {
 
 function exportPlayerInfo() {
     // All non-retired players
-    dao.players.getAll({
-        index: "tid",
-        key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)
-    }).then(function (players) {
+    g.dbl.players.index('tid').getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
         var contract, i, output, p;
 
         output = "<pre>value,contract.amount\n";

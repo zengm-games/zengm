@@ -1,6 +1,5 @@
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var finances = require('../core/finances');
@@ -388,31 +387,27 @@ function uiFirst(vm) {
 
         // Recalculate player values, since ratings may have changed
         player.updateValues(null, p, []).then(function (p) {
-            var tx;
+            return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
+                tx.players.put(p).then(function (pidLocal) {
+                    // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
+                    // When adding a player, this is the only way to know the pid
+                    pid = pidLocal;
 
-            tx = dao.tx(["players", "playerStats"], "readwrite");
+                    // Add regular season or playoffs stat row, if necessary
+                    if (p.tid >= 0 && p.tid !== vm.originalTid() && g.phase <= g.PHASE.PLAYOFFS) {
+                        p.pid = pid;
 
-            tx.players.put(p).then(function (pidLocal) {
-                // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
-                // When adding a player, this is the only way to know the pid
-                pid = pidLocal;
+                        // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
+                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
 
-                // Add regular season or playoffs stat row, if necessary
-                if (p.tid >= 0 && p.tid !== vm.originalTid() && g.phase <= g.PHASE.PLAYOFFS) {
-                    p.pid = pid;
-
-                    // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-                    p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-
-                    // Add back to database
-                    tx.players.put(p);
-                }
+                        // Add back to database
+                        tx.players.put(p);
+                    }
+                });
             });
-
-            tx.complete().then(function () {
-                league.updateLastDbChange();
-                ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
-            });
+        }).then(function () {
+            league.updateLastDbChange();
+            ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
         });
     });
 }

@@ -1,10 +1,5 @@
-/**
- * @name views.playerRatings
- * @namespace Player ratings table.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
@@ -49,8 +44,10 @@ mapping = {
 
 function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("playerMovement") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) || inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev()) {
-        return dao.players.getAll({
-            statsSeasons: [inputs.season]
+        return g.dbl.players.getAll().then(function (players) {
+            return player.withStats(null, players, {
+                statsSeasons: [inputs.season]
+            });
         }).then(function (players) {
             var i, tid;
 
@@ -58,7 +55,7 @@ function updatePlayers(inputs, updateEvents, vm) {
             if (tid < 0) { tid = null; } // Show all teams
 
             if (!tid && inputs.abbrev === "watch") {
-                players = players.filter(function(p) {
+                players = players.filter(function (p) {
                     return p.watch && typeof p.watch !== "function";
                 });
             }

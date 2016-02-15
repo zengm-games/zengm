@@ -1,10 +1,5 @@
-/**
- * @name views.deleteLeague
- * @namespace Delete league form.
- */
 'use strict';
 
-var dao = require('../dao');
 var db = require('../db');
 var g = require('../globals');
 var ui = require('../ui');
@@ -27,27 +22,25 @@ function post(req) {
 
 function updateDeleteLeague(inputs) {
     return db.connectLeague(inputs.lid).then(function () {
-        var tx;
+        return g.dbl.tx(["games", "players", "teams"], function (tx) {
+            return Promise.all([
+                tx.games.count(),
+                tx.players.count(),
+                tx.teams.get(0),
+                g.dbm.leagues.get(inputs.lid)
+            ]).spread(function (numGames, numPlayers, t, l) {
+                var numSeasons;
 
-        tx = dao.tx(["games", "players", "teams"]);
+                numSeasons = t.seasons.length;
 
-        return Promise.all([
-            dao.games.count({ot: tx}),
-            dao.players.count({ot: tx}),
-            dao.teams.get({ot: tx, key: 0}),
-            g.dbm.leagues.get(inputs.lid)
-        ]).spread(function (numGames, numPlayers, t, l) {
-            var numSeasons;
-
-            numSeasons = t.seasons.length;
-
-            return {
-                lid: inputs.lid,
-                name: l.name,
-                numGames: numGames,
-                numPlayers: numPlayers,
-                numSeasons: numSeasons
-            };
+                return {
+                    lid: inputs.lid,
+                    name: l.name,
+                    numGames: numGames,
+                    numPlayers: numPlayers,
+                    numSeasons: numSeasons
+                };
+            });
         });
     }).catch(function () {
         return {

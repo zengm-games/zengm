@@ -1,10 +1,5 @@
-/**
- * @name views.negotiationList
- * @namespace List of re-signing negotiations in progress.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var freeAgents = require('../core/freeAgents');
@@ -37,12 +32,12 @@ mapping = {
 function updateNegotiationList() {
     // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
     return Promise.all([
-        dao.negotiations.getAll(),
-        dao.players.getAll({
-            index: "tid",
-            key: g.PLAYER.FREE_AGENT,
-            statsSeasons: [g.season],
-            statsTid: g.userTid
+        g.dbl.negotiations.getAll(),
+        g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(function (players) {
+            return player.withStats(null, players, {
+                statsSeasons: [g.season],
+                statsTid: g.userTid
+            });
         })
     ]).spread(function (negotiations, players) {
         var i, j, negotiationPids;

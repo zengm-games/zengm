@@ -355,6 +355,7 @@ function newPhaseBeforeDraft(tx) {
             return p;
         });
     }).then(function () {
+console.log('C');
         var maxAge, minPot;
 
         // Do annual tasks for each player, like checking for retirement
@@ -369,7 +370,7 @@ function newPhaseBeforeDraft(tx) {
             update = false;
 
             // Get player stats, used for HOF calculation
-            return tx.playerStats.index("pid, season, tid").getAll(IDBKeyRange.bound([p.pid], [p.pid, '']), function (playerStats) {
+            return tx.playerStats.index("pid, season, tid").getAll(IDBKeyRange.bound([p.pid], [p.pid, ''])).then(function (playerStats) {
                 var age, excessAge, excessPot, pot;
 
                 age = g.season - p.born.year;

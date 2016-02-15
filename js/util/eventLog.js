@@ -1,26 +1,24 @@
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var bbgmNotifications = require('../lib/bbgm-notifications');
+var helpers = require('../util/helpers');
 
 function add(ot, options) {
-    var notificationContainer, title;
+    var dbOrTx, notificationContainer, title;
 
     options.saveToDb = options.saveToDb !== undefined ? options.saveToDb : true;
     options.showNotification = options.showNotification !== undefined ? options.showNotification : true;
     options.persistent = options.persistent !== undefined ? options.persistent : false;
 
     if (options.saveToDb && g.lid) { // Only save to league event log if within a league
-        dao.events.add({
-            ot: ot,
-            value: {
-                season: g.season,
-                type: options.type,
-                text: options.text,
-                pids: options.pids,
-                tids: options.tids
-            }
+        dbOrTx = ot !== null ? ot : g.dbl;
+        dbOrTx.events.add({
+            season: g.season,
+            type: options.type,
+            text: options.text,
+            pids: options.pids,
+            tids: options.tids
         });
     }
 

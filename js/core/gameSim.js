@@ -1,7 +1,3 @@
-/**
- * @name core.gameSim
- * @namespace Individual game simulation.
- */
 'use strict';
 
 var helpers = require('../util/helpers');

@@ -27,7 +27,7 @@ function post(req) {
     newUserTid = parseInt(req.params.tid, 10);
 
     ui.updateStatus("Idle");
-    ui.updatePlayMenu();
+    ui.updatePlayMenu(null);
 
     league.setGameAttributesComplete({
         gameOver: false,

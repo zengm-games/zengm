@@ -1,10 +1,5 @@
-/**
- * @name core.game
- * @namespace Everything about games except the actual simulation. So, loading the schedule, loading the teams, saving the results, and handling multi-day simulations and what happens when there are no games left to play.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var freeAgents = require('./freeAgents');
@@ -30,7 +25,7 @@ function writeTeamStats(tx, results) {
 
         return Promise.all([
             team.getPayroll(tx, results.team[t1].id).get(0),
-            dao.teams.get({ot: tx, key: results.team[t1].id})
+            tx.teams.get(results.team[t1].id)
         ]).spread(function (payroll, t) {
             var att, coachingPaid, count, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketPrice, ticketRevenue, winp, winpOld, won;
 
@@ -241,12 +236,9 @@ function writePlayerStats(tx, results) {
 
             promises.push(player.checkStatisticalFeat(tx, p.id, t.id, p, results));
 
-            promises.push(dao.playerStats.iterate({
-                ot: tx,
-                index: "pid, season, tid",
-                key: [p.id, g.season, t.id],
-                direction: "prev", // In case there are multiple entries for the same player, like he was traded away and then brought back
-                callback: function (ps, shortCircuit) {
+            promises.push(tx.playerStats.index("pid, season, tid")
+                // prev in case there are multiple entries for the same player, like he was traded away and then brought back
+                .iterate([p.id, g.season, t.id], "prev",  function (ps, shortCircuit) {
                     var i, injuredThisGame, keys;
 
                     // Since index is not on playoffs, manually check
@@ -269,7 +261,7 @@ function writePlayerStats(tx, results) {
 
                     // Only update player object (values and injuries) every 10 regular season games or on injury
                     if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
-                        dao.players.get({ot: tx, key: p.id}).then(function (p_) {
+                        tx.players.get(p.id).then(function (p_) {
                             var biggestRatingsLoss, r;
 
                             // Injury crap - assign injury type if player does not already have an injury in the database
@@ -315,13 +307,12 @@ function writePlayerStats(tx, results) {
 
                             return p_;
                         }).then(function (p_) {
-                            dao.players.put({ot: tx, value: p_});
+                            tx.players.put(p_);
                         });
                     }
 
                     return ps;
-                }
-            }));
+                }));
 
             return Promise.all(promises);
         }, {concurrency: Infinity});
@@ -415,11 +406,11 @@ function writeGameStats(tx, results, att) {
         }
     }
 
-    return dao.games.put({ot: tx, value: gameStats});
+    return tx.games.put(gameStats);
 }
 
 function updatePlayoffSeries(tx, results) {
-    return dao.playoffSeries.get({ot: tx, key: g.season}).then(function (playoffSeries) {
+    return tx.playoffSeries.get(g.season).then(function (playoffSeries) {
         var playoffRound;
 
         playoffRound = playoffSeries.series[playoffSeries.currentRound];
@@ -490,7 +481,7 @@ function updatePlayoffSeries(tx, results) {
             }
         });
 
-        return dao.playoffSeries.put({ot: tx, value: playoffSeries});
+        return tx.playoffSeries.put(playoffSeries);
     });
 }
 
@@ -549,16 +540,16 @@ function makeComposite(rating, components, weights) {
  * The team objects contain all the information needed to simulate games. It would be more efficient if it only loaded team data for teams that are actually playing, particularly in the playoffs.
  *
  * @memberOf core.game
- * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players and teams; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction} ot An IndexedDB transaction on players and teams.
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
-function loadTeams(ot) {
+function loadTeams(tx) {
     var loadTeam, promises, tid;
 
     loadTeam = function (tid) {
         return Promise.all([
-            dao.players.getAll({ot: ot, index: "tid", key: tid}),
-            dao.teams.get({ot: ot, key: tid})
+            tx.players.index('tid').getAll(tid),
+            tx.teams.get(tid)
         ]).spread(function (players, team) {
             var i, j, k, numPlayers, p, pos, rating, t, teamSeason;
 
@@ -688,42 +679,35 @@ function play(numDays, start, gidPlayByPlay) {
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
     cbSaveResults = function (results) {
-        var tx;
+        return g.dbl.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite", function (tx) {
+            return Promise.map(results, function (result) {
+                return writeTeamStats(tx, result).then(function (cache) {
+                    return writeGameStats(tx, result, cache.att);
+                }).then(function () {
+                    return writePlayerStats(tx, result);
+                }).then(function () {
+                    return result.gid;
+                });
+            }, {concurrency: Infinity}).then(function (gidsFinished) {
+                var j, promises;
 
-        tx = dao.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite");
+                promises = [];
 
-        return Promise.map(results, function (result) {
-            return writeTeamStats(tx, result).then(function (cache) {
-                return writeGameStats(tx, result, cache.att);
-            }).then(function () {
-                return writePlayerStats(tx, result);
-            }).then(function () {
-                return result.gid;
-            });
-        }, {concurrency: Infinity}).then(function (gidsFinished) {
-            var j, promises;
+                // Update playoff series W/L
+                if (g.phase === g.PHASE.PLAYOFFS) {
+                    promises.push(updatePlayoffSeries(tx, results));
+                }
 
-            promises = [];
+                // Delete finished games from schedule
+                for (j = 0; j < gidsFinished.length; j++) {
+                    promises.push(tx.schedule.delete(gidsFinished[j]));
+                }
 
-            // Update playoff series W/L
-            if (g.phase === g.PHASE.PLAYOFFS) {
-                promises.push(updatePlayoffSeries(tx, results));
-            }
+                // Update ranks
+                promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
 
-            // Delete finished games from schedule
-            for (j = 0; j < gidsFinished.length; j++) {
-                promises.push(dao.schedule.delete({ot: tx, key: gidsFinished[j]}));
-            }
-
-            // Update ranks
-            promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
-
-            // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-            promises.push(dao.players.iterate({
-                ot: tx,
-                index: "tid",
-                key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT),
-                callback: function (p) {
+                // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
+                promises.push(tx.players.index('tid').iterate(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
                     var changed;
 
                     changed = false;
@@ -757,63 +741,58 @@ function play(numDays, start, gidPlayByPlay) {
                     if (changed) {
                         return p;
                     }
-                }
-            }));
+                }));
 
-            return Promise.all(promises);
+                return Promise.all(promises);
+            })
         }).then(function () {
-            return tx.complete().then(function () {
-                var i, raw, url;
+            var i, raw, url;
 
-                // If there was a play by play done for one of these games, get it
-                if (gidPlayByPlay !== undefined) {
-                    for (i = 0; i < results.length; i++) {
-                        if (results[i].playByPlay !== undefined) {
-                            raw = {
-                                gidPlayByPlay: gidPlayByPlay,
-                                playByPlay: results[i].playByPlay
-                            };
-                            url = helpers.leagueUrl(["live_game"]);
-                        }
+            // If there was a play by play done for one of these games, get it
+            if (gidPlayByPlay !== undefined) {
+                for (i = 0; i < results.length; i++) {
+                    if (results[i].playByPlay !== undefined) {
+                        raw = {
+                            gidPlayByPlay: gidPlayByPlay,
+                            playByPlay: results[i].playByPlay
+                        };
+                        url = helpers.leagueUrl(["live_game"]);
                     }
-                } else {
-                    url = undefined;
                 }
+            } else {
+                url = undefined;
+            }
 
-                // Update all advanced stats every day
-                return advStats.calculateAll().then(function () {
-                    ui.realtimeUpdate(["gameSim"], url, function () {
-                        var tx2;
+            // Update all advanced stats every day
+            return advStats.calculateAll().then(function () {
+                ui.realtimeUpdate(["gameSim"], url, function () {
+                    league.updateLastDbChange();
 
-                        league.updateLastDbChange();
-
-                        if (g.phase === g.PHASE.PLAYOFFS) {
-                            // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                            tx2 = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
-                            season.newSchedulePlayoffsDay(tx2).then(function (playoffsOver) {
-                                tx2.complete().then(function () {
-                                    if (playoffsOver) {
-                                        return phase.newPhase(g.PHASE.BEFORE_DRAFT);
-                                    }
-                                }).then(function () {
-                                    play(numDays - 1, false);
+                    if (g.phase === g.PHASE.PLAYOFFS) {
+                        // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
+                        g.dbl.tx(["playoffSeries", "schedule", "teams"], "readwrite", function (tx2) {
+                            return season.newSchedulePlayoffsDay(tx2);
+                        }).then(function (playoffsOver) {
+                            if (playoffsOver) {
+                                return phase.newPhase(g.PHASE.BEFORE_DRAFT);
+                            }
+                        }).then(function () {
+                            play(numDays - 1, false);
+                        });
+                    } else {
+                        // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
+                        Promise.try(function () {
+                            // 100 days in a season (roughly), and we want a death every 50 years on average
+                            if (Math.random() < 1 / (100 * 50)) {
+                                return player.killOne().then(function () {
+                                    ui.realtimeUpdate(["playerMovement"]);
                                 });
-                            });
-                        } else {
-                            // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
-                            Promise.try(function () {
-                                // 100 days in a season (roughly), and we want a death every 50 years on average
-                                if (Math.random() < 1 / (100 * 50)) {
-                                    return player.killOne().then(function () {
-                                        ui.realtimeUpdate(["playerMovement"]);
-                                    });
-                                }
-                            }).then(function () {
-                                play(numDays - 1, false);
-                            });
-                        }
-                    }, raw);
-                });
+                            }
+                        }).then(function () {
+                            play(numDays - 1, false);
+                        });
+                    }
+                }, raw);
             });
         });
     };
@@ -834,45 +813,41 @@ function play(numDays, start, gidPlayByPlay) {
     // Simulates a day of games. If there are no games left, it calls cbNoGames.
     // Promise is resolved after games are run
     cbPlayGames = function () {
-        var tx;
-
         if (numDays === 1) {
             ui.updateStatus("Playing (1 day left)");
         } else {
             ui.updateStatus("Playing (" + numDays + " days left)");
         }
 
-        tx = dao.tx(["players", "schedule", "teams"]);
-
-        // Get the schedule for today
-        return season.getSchedule({ot: tx, oneDay: true}).then(function (schedule) {
-            // Stop if no games
-            // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
-            if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
-                return cbNoGames();
-            }
-
-            // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
-            return loadTeams(tx).then(function (teams) {
-                var tx2;
-
-                // Play games
-                // Will loop through schedule and simulate all games
-                if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
-                    // Sometimes the playoff schedule isn't made the day before, so make it now
-                    // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
-
-                    // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                    tx2 = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite");
-                    season.newSchedulePlayoffsDay(tx2);
-                    return tx2.complete().then(function () {
-                        return season.getSchedule({oneDay: true}).then(function (schedule) {
-// Can't merge easily with next call because of schedule overwriting
-                            return cbSimGames(schedule, teams);
-                        });
-                    });
+        return g.dbl.tx(["players", "schedule", "teams"], function (tx) {
+            // Get the schedule for today
+            return season.getSchedule({ot: tx, oneDay: true}).then(function (schedule) {
+                // Stop if no games
+                // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
+                if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
+                    return cbNoGames();
                 }
-                return cbSimGames(schedule, teams);
+
+                // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
+                return loadTeams(tx).then(function (teams) {
+                    // Play games
+                    // Will loop through schedule and simulate all games
+                    if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
+                        // Sometimes the playoff schedule isn't made the day before, so make it now
+                        // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
+
+                        // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
+                        return g.dbl.tx(["playoffSeries", "schedule", "teams"], "readwrite", function (tx2) {
+                            return season.newSchedulePlayoffsDay(tx2);
+                        }).then(function () {
+                            return season.getSchedule({oneDay: true}).then(function (schedule) {
+                                // Can't merge easily with next cbSimGames call because of schedule overwriting
+                                return cbSimGames(schedule, teams);
+                            });
+                        });
+                    }
+                    return cbSimGames(schedule, teams);
+                });
             });
         });
     };

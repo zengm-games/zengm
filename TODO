@@ -11,6 +11,7 @@ backboard
     see leagueDashboard for example
   remove all instances of dao
   empty inbox at start of game?
+  replace IDBKeyRange and other IDB vars
 
 always expose bbgm, not just in debug mode
 

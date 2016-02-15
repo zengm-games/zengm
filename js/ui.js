@@ -1,6 +1,5 @@
 'use strict';
 
-var dao = require('./dao');
 var g = require('./globals');
 var templates = require('./templates');
 var Promise = require('bluebird');
@@ -233,26 +232,26 @@ function init() {
 
     // Watch list toggle
     $(document).on("click", ".watch", function () {
-        var pid, tx, watchEl;
+        var pid, watchEl;
 
         watchEl = this;
         pid = parseInt(watchEl.dataset.pid, 10);
 
-        tx = dao.tx("players", "readwrite");
-        dao.players.get({ot: tx, key: pid}).then(function (p) {
-            if (watchEl.classList.contains("watch-active")) {
-                p.watch = false;
-                watchEl.classList.remove("watch-active");
-                watchEl.title = "Add to Watch List";
-            } else {
-                p.watch = true;
-                watchEl.classList.add("watch-active");
-                watchEl.title = "Remove from Watch List";
-            }
+        g.dbl.tx("players", "readwrite", function (tx) {
+            tx.players.get(pid).then(function (p) {
+                if (watchEl.classList.contains("watch-active")) {
+                    p.watch = false;
+                    watchEl.classList.remove("watch-active");
+                    watchEl.title = "Add to Watch List";
+                } else {
+                    p.watch = true;
+                    watchEl.classList.add("watch-active");
+                    watchEl.title = "Remove from Watch List";
+                }
 
-            return tx.players.put(p);
-        });
-        tx.complete().then(function () {
+                return tx.players.put(p);
+            });
+        }).then(function () {
             require('./core/league').updateLastDbChange();
             realtimeUpdate(["watchList"]);
         });

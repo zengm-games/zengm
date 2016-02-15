@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var _ = require('underscore');
 
@@ -17,34 +16,30 @@ var _ = require('underscore');
  */
 function assessPayrollMinLuxury(tx) {
     var amount, collectedTax, distribute;
-    tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite", tx);
     collectedTax = 0;
 
     return require('./team').getPayrolls(tx).then(function (payrolls) {
         // Update teams object store
-        return dao.teams.iterate({
-            ot: tx,
-            callback: function (t) {
-                var s;
+        return tx.teams.iterate(function (t) {
+            var s;
 
-                s = t.seasons.length - 1; // Relevant row is the last one
+            s = t.seasons.length - 1; // Relevant row is the last one
 
-                // Store payroll
-                t.seasons[s].payrollEndOfSeason = payrolls[t.tid];
+            // Store payroll
+            t.seasons[s].payrollEndOfSeason = payrolls[t.tid];
 
-                // Assess minimum payroll tax and luxury tax
-                if (payrolls[t.tid] < g.minPayroll) {
-                    t.seasons[s].expenses.minTax.amount = g.minPayroll - payrolls[t.tid];
-                    t.seasons[s].cash -= t.seasons[s].expenses.minTax.amount;
-                } else if (payrolls[t.tid] > g.luxuryPayroll) {
-                    amount = g.luxuryTax * (payrolls[t.tid] - g.luxuryPayroll);
-                    collectedTax += amount;
-                    t.seasons[s].expenses.luxuryTax.amount = amount;
-                    t.seasons[s].cash -= t.seasons[s].expenses.luxuryTax.amount;
-                }
-
-                return t;
+            // Assess minimum payroll tax and luxury tax
+            if (payrolls[t.tid] < g.minPayroll) {
+                t.seasons[s].expenses.minTax.amount = g.minPayroll - payrolls[t.tid];
+                t.seasons[s].cash -= t.seasons[s].expenses.minTax.amount;
+            } else if (payrolls[t.tid] > g.luxuryPayroll) {
+                amount = g.luxuryTax * (payrolls[t.tid] - g.luxuryPayroll);
+                collectedTax += amount;
+                t.seasons[s].expenses.luxuryTax.amount = amount;
+                t.seasons[s].cash -= t.seasons[s].expenses.luxuryTax.amount;
             }
+
+            return t;
         }).then(function () {
             var payteams;
             payteams = payrolls.filter(function (x) {
@@ -52,26 +47,23 @@ function assessPayrollMinLuxury(tx) {
             });
             if (payteams.length > 0 && collectedTax > 0) {
                 distribute = (collectedTax * 0.5) / payteams.length;
-                return dao.teams.iterate({
-                    ot: tx,
-                    callback: function (t) {
-                        var s;
-                        s = t.seasons.length - 1;
+                return tx.teams.iterate(function (t) {
+                    var s;
+                    s = t.seasons.length - 1;
 
-                        if (payrolls[t.tid] <= g.salaryCap) {
-                            t.seasons[s].revenues.luxuryTaxShare = {
-                                amount: distribute,
-                                rank: 15.5
-                            };
-                            t.seasons[s].cash += distribute;
-                        } else {
-                            t.seasons[s].revenues.luxuryTaxShare = {
-                                amount: 0,
-                                rank: 15.5
-                            };
-                        }
-                        return t;
+                    if (payrolls[t.tid] <= g.salaryCap) {
+                        t.seasons[s].revenues.luxuryTaxShare = {
+                            amount: distribute,
+                            rank: 15.5
+                        };
+                        t.seasons[s].cash += distribute;
+                    } else {
+                        t.seasons[s].revenues.luxuryTaxShare = {
+                            amount: 0,
+                            rank: 15.5
+                        };
                     }
+                    return t;
                 });
             }
         });
@@ -86,11 +78,11 @@ function assessPayrollMinLuxury(tx) {
  * Revenue and expenses ranks should be updated any time any revenue or expense occurs - so basically, after every game.
  *
  * @memberOf core.finances
- * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on teams, readwrite; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction} ot An IndexedDB transaction on teams, readwrite.
  * @param {Array.<string>} type The types of ranks to update - some combination of "budget", "expenses", and "revenues"
  * @param {Promise}
  */
-function updateRanks(ot, types) {
+function updateRanks(tx, types) {
     var getByItem, sortFn, updateObj;
 
     sortFn = function (a, b) {
@@ -123,9 +115,7 @@ function updateRanks(ot, types) {
         }
     };
 
-    return dao.teams.getAll({
-        ot: ot
-    }).then(function (teams) {
+    return tx.teams.getAll().then(function (teams) {
         var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam, s;
 
         if (types.indexOf("budget") >= 0) {
@@ -149,21 +139,18 @@ function updateRanks(ot, types) {
             revenuesByItem = getByItem(revenuesByTeam);
         }
 
-        return dao.teams.iterate({
-            ot: ot,
-            callback: function (t) {
-                if (types.indexOf("budget") >= 0) {
-                    updateObj(t.budget, budgetsByItem);
-                }
-                if (types.indexOf("expenses") >= 0) {
-                    updateObj(t.seasons[s].expenses, expensesByItem);
-                }
-                if (types.indexOf("revenues") >= 0) {
-                    updateObj(t.seasons[s].revenues, revenuesByItem);
-                }
-
-                return t;
+        return tx.teams.iterate(function (t) {
+            if (types.indexOf("budget") >= 0) {
+                updateObj(t.budget, budgetsByItem);
             }
+            if (types.indexOf("expenses") >= 0) {
+                updateObj(t.seasons[s].expenses, expensesByItem);
+            }
+            if (types.indexOf("revenues") >= 0) {
+                updateObj(t.seasons[s].revenues, revenuesByItem);
+            }
+
+            return t;
         });
     });
 }

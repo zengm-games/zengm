@@ -1,10 +1,5 @@
-/**
- * @name api
- * @namespace Functions called directly in response to user action (clicking a button, etc).
- */
 'use strict';
 
-var dao = require('./dao');
 var g = require('./globals');
 var ui = require('./ui');
 var freeAgents = require('./core/freeAgents');
@@ -51,7 +46,9 @@ function play(amount) {
                 // This is needed because we can't be sure if core.game.play will be called again
                 ui.updateStatus("Idle");
             }
-            league.setGameAttributesComplete({gamesInProgress: false}).then(ui.updatePlayMenu);
+            league.setGameAttributesComplete({gamesInProgress: false}).then(function () {
+                ui.updatePlayMenu(null);
+            });
         });
     } else if (amount === "untilDraft") {
         if (g.phase === g.PHASE.BEFORE_DRAFT) {
@@ -63,7 +60,7 @@ function play(amount) {
         }
     } else if (amount === "untilFreeAgency") {
         if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-            dao.negotiations.count().then(function (numRemaining) {
+            g.dbl.negotiations.count().then(function (numRemaining) {
                 // Show warning dialog only if there are players remaining un-re-signed
                 if (numRemaining === 0 || window.confirm("Are you sure you want to proceed to free agency while " + numRemaining + " of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.")) {
                     phase.newPhase(g.PHASE.FREE_AGENCY).then(function () {
@@ -78,7 +75,7 @@ function play(amount) {
         }
     } else if (amount === "stopAutoPlay") {
         league.setGameAttributesComplete({autoPlaySeasons: 0}).then(function () {
-            ui.updatePlayMenu();
+            ui.updatePlayMenu(null);
             play("stop");
 
             // Extra toggle to counteract play("stop");

@@ -369,11 +369,7 @@ function newPhaseBeforeDraft(tx) {
             update = false;
 
             // Get player stats, used for HOF calculation
-            return dao.playerStats.getAll({
-                ot: tx,
-                index: "pid, season, tid",
-                key: IDBKeyRange.bound([p.pid], [p.pid, ''])
-            }).then(function (playerStats) {
+            return tx.playerStats.index("pid, season, tid").getAll(IDBKeyRange.bound([p.pid], [p.pid, '']), function (playerStats) {
                 var age, excessAge, excessPot, pot;
 
                 age = g.season - p.born.year;

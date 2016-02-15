@@ -1,6 +1,5 @@
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
@@ -181,15 +180,10 @@ function updateTrade(inputs) {
 
     return Promise.all([
         validateSavedPids(),
-        dao.players.getAll({
-            index: "tid",
-            key: g.userTid,
-            statsSeasons: [g.season]
+        g.dbl.players.index('tid').getAll(g.userTid).then(function (players) {
+            return player.withStats(null, players, {statsSeasons: [g.season]});
         }),
-        dao.draftPicks.getAll({
-            index: "tid",
-            key: g.userTid
-        })
+        g.dbl.draftPicks.index('tid').getAll(g.userTid)
     ]).spread(function (teams, userRoster, userPicks) {
         var attrs, i, ratings, stats;
 
@@ -225,15 +219,10 @@ function updateTrade(inputs) {
 
         // Need to do this after knowing otherTid
         return Promise.all([
-            dao.players.getAll({
-                index: "tid",
-                key: otherTid,
-                statsSeasons: [g.season]
+            g.dbl.players.index('tid').getAll(otherTid).then(function (players) {
+                return player.withStats(null, players, {statsSeasons: [g.season]});
             }),
-            dao.draftPicks.getAll({
-                index: "tid",
-                key: otherTid
-            }),
+            g.dbl.draftPicks.index('tid').getAll(otherTid),
             g.dbl.teams.get(otherTid)
         ]).spread(function (otherRoster, otherPicks, t) {
             var i;

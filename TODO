@@ -10,8 +10,9 @@ backboard
     statsPlayoffs, statsTid, statsSeasons - try to put in another function
     see leagueDashboard for example
   remove all instances of dao
-  empty inbox at start of game?
   replace IDBKeyRange and other IDB vars
+
+on new league, when play to regular season, message appears in inbox but does not show up on dashboard
 
 always expose bbgm, not just in debug mode
 

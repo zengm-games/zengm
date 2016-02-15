@@ -44,6 +44,7 @@ require('./api');
         g: require('./globals'),
         contractNegotiation: require('./core/contractNegotiation'),
         draft: require('./core/draft'),
+        eventLog: require('./util/eventLog'),
         finances: require('./core/finances'),
         freeAgents: require('./core/freeAgents'),
         game: require('./core/game'),

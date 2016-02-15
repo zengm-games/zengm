@@ -1,7 +1,3 @@
-/**
- * @name core.player
- * @namespace Functions operating on player objects, parts of player objects, or arrays of player objects.
- */
 'use strict';
 
 var g = require('../globals');

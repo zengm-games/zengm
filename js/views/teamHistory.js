@@ -1,10 +1,5 @@
-/**
- * @name views.teamHistory
- * @namespace Team history.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
@@ -48,11 +43,11 @@ function updateTeamHistory(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
         return Promise.all([
             g.dbl.teams.get(inputs.tid),
-            dao.players.getAll({
-                index: "statsTids",
-                key: inputs.tid,
-                statsSeasons: "all",
-                statsTid: inputs.tid
+            g.dbl.players.index('statsTids').getAll(inputs.tid).then(function (players) {
+                return player.withStats(null, players, {
+                    statsSeasons: "all",
+                    statsTid: inputs.tid
+                });
             })
         ]).spread(function (userTeam, players) {
             var championships, history, i, j, playoffAppearances, totalLost, totalWon;

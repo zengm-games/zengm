@@ -1,14 +1,8 @@
 backboard
   rm -rf node_modules/backboard/ && npm install backboard
   confirm quotaerrors handled
-  convert dbl
-    convert within dao first
   uncomment bugsnag, or don't load in dev mode
   source-map-support a good idea for production?
-  how to pass extra options to players.getAll and players.get? maybe extra param at end?
-    filter: get rid of (code still there)
-    statsPlayoffs, statsTid, statsSeasons - try to put in another function
-    see leagueDashboard for example
   remove all instances of dao
   replace IDBKeyRange and other IDB vars
   confirm account stuff works

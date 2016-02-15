@@ -1,7 +1,3 @@
-/**
- * @name views.schedule
- * @namespace Show current schedule for user's team.
- */
 'use strict';
 
 var g = require('../globals');
@@ -9,10 +5,10 @@ var ui = require('../ui');
 var $ = require('jquery');
 var ko = require('knockout');
 var _ = require('underscore');
+var player = require('../core/player');
 var bbgmView = require('../util/bbgmView');
 var helpers = require('../util/helpers');
 var components = require('./components');
-var dao = require('../dao');
 var Promise = require('bluebird');
 
 var awardOptions, mapping, optionsTmp;
@@ -109,9 +105,9 @@ function getPlayerAwards(p, awardType) {
         };
     }
 
-    getTeam = function(season) {
+    getTeam = function (season) {
         var stats, tid;
-        stats = _.filter(p.stats, function(s) {
+        stats = p.stats.filter(function(s) {
             return s.season === season;
         });
         tid = _.last(stats);
@@ -123,10 +119,10 @@ function getPlayerAwards(p, awardType) {
         return '-';
     };
 
-    formatYear = function(year) {
+    formatYear = function (year) {
         var keys = _.keys(year),
             sout;
-        sout = _.map(keys, function(k) {
+        sout = _.map(keys, function (k) {
             var s,
                 years = _.pluck(year[k], 'season').join(', ');
             s = k + ' <small>(' + years + ')</small>';
@@ -154,11 +150,11 @@ function getPlayerAwards(p, awardType) {
 
 function updateAwardsRecords(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.awardType !== vm.awardType) {
-        return Promise.all([
-            dao.players.getAll({
-                statsSeasons: "all"
-            })
-        ]).spread(function (players) {
+        return g.dbl.players.getAll().then(function (players) {
+            return player.withStats(null, players, {
+                statsSeasons: 'all'
+            });
+        }).then(function (players) {
             var awardsRecords, i;
 
             awardsRecords = [];

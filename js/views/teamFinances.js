@@ -1,10 +1,5 @@
-/**
- * @name views.teamFinances
- * @namespace Team finances.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var finances = require('../core/finances');
@@ -57,30 +52,31 @@ function post(req) {
 
     $("#finances-settings button").attr("disabled", "disabled").html("Saving...");
 
-    tx = dao.tx("teams", "readwrite");
-    dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-        var budget, key;
+    g.dbl.tx("teams", "readwrite", function (tx) {
+        return tx.teams.get(g.userTid).then(function (t) {
+            var budget, key;
 
-        budget = req.params.budget;
+            budget = req.params.budget;
 
-        for (key in budget) {
-            if (budget.hasOwnProperty(key)) {
-                if (key === "ticketPrice") {
-                    // Already in [dollars]
-                    budget[key] = parseFloat(helpers.round(budget[key], 2));
-                } else {
-                    // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
-                    budget[key] = helpers.round(budget[key] * 100) * 10;
-                }
-                if (budget[key] === budget[key]) { // NaN check
-                    t.budget[key].amount = budget[key];
+            for (key in budget) {
+                if (budget.hasOwnProperty(key)) {
+                    if (key === "ticketPrice") {
+                        // Already in [dollars]
+                        budget[key] = parseFloat(helpers.round(budget[key], 2));
+                    } else {
+                        // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
+                        budget[key] = helpers.round(budget[key] * 100) * 10;
+                    }
+                    if (budget[key] === budget[key]) { // NaN check
+                        t.budget[key].amount = budget[key];
+                    }
                 }
             }
-        }
 
-        return tx.teams.put(t);
-    }).then(function () {
-        return finances.updateRanks(tx, ["budget"]);
+            return tx.teams.put(t);
+        }).then(function () {
+            return finances.updateRanks(tx, ["budget"]);
+        });
     }).then(function () {
         ui.realtimeUpdate(["teamFinances"]);
     });

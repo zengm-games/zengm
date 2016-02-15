@@ -1,10 +1,5 @@
-/**
- * @name views.newLeague
- * @namespace Create new league form.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var league = require('../core/league');

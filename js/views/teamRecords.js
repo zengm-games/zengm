@@ -1,7 +1,3 @@
-/**
- * @name views.schedule
- * @namespace Show current schedule for user's team.
- */
 'use strict';
 
 var g = require('../globals');
@@ -12,7 +8,6 @@ var _ = require('underscore');
 var bbgmView = require('../util/bbgmView');
 var helpers = require('../util/helpers');
 var components = require('./components');
-var dao = require('../dao');
 var Promise = require('bluebird');
 
 var mapping;
@@ -180,8 +175,8 @@ function sumRecordsFor(group, id, name, records) {
 function updateTeamRecords(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.byType !== vm.byType()) {
         return Promise.all([
-            dao.teams.getAll(),
-            dao.awards.getAll()
+            g.dbl.teams.getAll(),
+            g.dbl.awards.getAll()
         ]).spread(function (teams, awards) {
             var awardsPerTeam, confRecords, display, displayName, divRecords, i, seasonCount, teamRecords;
 

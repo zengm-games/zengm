@@ -1,10 +1,5 @@
-/**
- * @name views.player
- * @namespace View a single message.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var freeAgents = require('../core/freeAgents');
@@ -27,15 +22,15 @@ function get(req) {
 function updatePlayer(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
         return Promise.all([
-            dao.players.get({
-                key: inputs.pid,
-                statsSeasons: "all",
-                statsPlayoffs: true
+            g.dbl.players.get(inputs.pid).then(function (p) {
+                return player.withStats(null, [p], {
+                    statsSeasons: "all",
+                    statsPlayoffs: true
+                }).then(function (players) {
+                    return players[0];
+                });
             }),
-            dao.events.getAll({
-                index: "pids",
-                key: inputs.pid
-            })
+            g.dbl.events.index('pids').getAll(inputs.pid)
         ]).spread(function (p, events) {
             var feats;
 

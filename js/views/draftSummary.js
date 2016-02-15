@@ -1,10 +1,5 @@
-/**
- * @name views.draftSummary
- * @namespace Draft summary.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
@@ -55,10 +50,10 @@ mapping = {
 
 function updateDraftSummary(inputs) {
     // Update every time because anything could change this (unless all players from class are retired)
-    return dao.players.getAll({
-        index: "draft.year",
-        key: inputs.season,
-        statsSeasons: "all"
+    return g.dbl.players.index('draft.year').getAll(inputs.season).then(function (players) {
+        return player.withStats(null, players, {
+            statsSeasons: "all"
+        });
     }).then(function (playersAll) {
         var currentPr, i, p, pa, players;
 

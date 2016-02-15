@@ -1,6 +1,5 @@
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var draft = require('../core/draft');
@@ -16,10 +15,7 @@ var helpers = require('../util/helpers');
 var mapping;
 
 function addSeason(season, tid) {
-    return dao.players.getAll({
-        index: "tid",
-        key: tid
-    }).then(function (playersAll) {
+    return g.dbl.players.index('tid').getAll(tid).then(function (playersAll) {
         var i, p, pa, players;
 
         playersAll = player.filter(playersAll, {
@@ -134,79 +130,73 @@ function customDraftClassHandler(e) {
 
         // Get scouting rank, which is used in a couple places below
         g.dbl.teams.get(g.userTid).then(function (t) {
-            var scoutingRank, tx;
+            var scoutingRank;
 
             scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
 
             // Delete old players from draft class
-            tx = dao.tx(["players", "playerStats"], "readwrite");
-            dao.players.iterate({
-                ot: tx,
-                index: "tid",
-                key: IDBKeyRange.only(draftClassTid),
-                callback: function (p) {
-                    return dao.players.delete({ot: tx, key: p.pid});
-                }
-            }).then(function () {
-                var draftYear, i, seasonOffset2, uploadedSeason;
+            return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
+                return tx.players.index('tid').iterate(IDBKeyRange.only(draftClassTid), function (p) {
+                    return tx.players.delete(p.pid);
+                }).then(function () {
+                    var draftYear, i, seasonOffset2, uploadedSeason;
 
-                // Find season from uploaded file, for age adjusting
-                if (uploadedFile.hasOwnProperty("gameAttributes")) {
-                    for (i = 0; i < uploadedFile.gameAttributes.length; i++) {
-                        if (uploadedFile.gameAttributes[i].key === "season") {
-                            uploadedSeason = uploadedFile.gameAttributes[i].value;
-                            break;
+                    // Find season from uploaded file, for age adjusting
+                    if (uploadedFile.hasOwnProperty("gameAttributes")) {
+                        for (i = 0; i < uploadedFile.gameAttributes.length; i++) {
+                            if (uploadedFile.gameAttributes[i].key === "season") {
+                                uploadedSeason = uploadedFile.gameAttributes[i].value;
+                                break;
+                            }
                         }
-                    }
-                } else if (uploadedFile.hasOwnProperty("startingSeason")) {
-                    uploadedSeason = uploadedFile.startingSeason;
-                }
-
-                seasonOffset2 = seasonOffset;
-                if (g.phase >= g.PHASE.FREE_AGENCY) {
-                    // Already generated next year's draft, so bump up one
-                    seasonOffset2 += 1;
-                }
-
-                draftYear = g.season + seasonOffset2;
-
-                // Add new players to database
-                players.forEach(function (p) {
-                    // Make sure player object is fully defined
-                    p = player.augmentPartialPlayer(p, scoutingRank);
-
-                    // Manually set TID, since at this point it is always g.PLAYER.UNDRAFTED
-                    p.tid = draftClassTid;
-
-                    // Manually remove PID, since all it can do is cause trouble
-                    if (p.hasOwnProperty("pid")) {
-                        delete p.pid;
+                    } else if (uploadedFile.hasOwnProperty("startingSeason")) {
+                        uploadedSeason = uploadedFile.startingSeason;
                     }
 
-                    // Adjust age
-                    if (uploadedSeason !== undefined) {
-                        p.born.year += g.season - uploadedSeason + seasonOffset2;
+                    seasonOffset2 = seasonOffset;
+                    if (g.phase >= g.PHASE.FREE_AGENCY) {
+                        // Already generated next year's draft, so bump up one
+                        seasonOffset2 += 1;
                     }
 
-                    // Adjust seasons
-                    p.ratings[0].season = draftYear;
-                    p.draft.year = draftYear;
+                    draftYear = g.season + seasonOffset2;
 
-                    // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
-                    delete p.stats;
+                    // Add new players to database
+                    players.forEach(function (p) {
+                        // Make sure player object is fully defined
+                        p = player.augmentPartialPlayer(p, scoutingRank);
 
-                    player.updateValues(tx, p, []).then(function (p) {
-                        tx.players.put(p);
+                        // Manually set TID, since at this point it is always g.PLAYER.UNDRAFTED
+                        p.tid = draftClassTid;
+
+                        // Manually remove PID, since all it can do is cause trouble
+                        if (p.hasOwnProperty("pid")) {
+                            delete p.pid;
+                        }
+
+                        // Adjust age
+                        if (uploadedSeason !== undefined) {
+                            p.born.year += g.season - uploadedSeason + seasonOffset2;
+                        }
+
+                        // Adjust seasons
+                        p.ratings[0].season = draftYear;
+                        p.draft.year = draftYear;
+
+                        // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
+                        delete p.stats;
+
+                        player.updateValues(tx, p, []).then(function (p) {
+                            tx.players.put(p);
+                        });
                     });
+
+                    // "Top off" the draft class if <70 players imported
+                    if (players.length < 70) {
+                        draft.genPlayers(tx, draftClassTid, scoutingRank, 70 - players.length);
+                    }
                 });
-
-                // "Top off" the draft class if <70 players imported
-                if (players.length < 70) {
-                    draft.genPlayers(tx, draftClassTid, scoutingRank, 70 - players.length);
-                }
-            });
-
-            tx.complete().then(function () {
+            }).then(function () {
                 ui.realtimeUpdate(["dbChange"]);
             });
         });

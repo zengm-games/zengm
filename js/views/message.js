@@ -1,10 +1,5 @@
-/**
- * @name views.message
- * @namespace View a single message.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var league = require('../core/league');
@@ -18,19 +13,14 @@ function get(req) {
 }
 
 function updateMessage(inputs, updateEvents, vm) {
-    var message, readThisPageview, tx;
+    var message, readThisPageview;
 
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.message.mid() !== inputs.mid) {
-        tx = dao.tx("messages", "readwrite");
+        return g.dbl.tx("messages", "readwrite", function (tx) {
+            readThisPageview = false;
 
-        readThisPageview = false;
-
-        // If mid is null, this will open the *unread* message with the highest mid
-        dao.messages.iterate({
-            ot: tx,
-            key: inputs.mid,
-            direction: "prev",
-            callback: function (messageLocal, shortCircuit) {
+            // If mid is null, this will open the *unread* message with the highest mid
+            return tx.messages.iterate(inputs.mid, 'prev', function (messageLocal, shortCircuit) {
                 message = messageLocal;
 
                 if (!message.read) {
@@ -41,10 +31,8 @@ function updateMessage(inputs, updateEvents, vm) {
 
                     return message;
                 }
-            }
-        });
-
-        return tx.complete().then(function () {
+            });
+        }).then(function () {
             league.updateLastDbChange();
 
             if (readThisPageview) {

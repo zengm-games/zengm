@@ -143,9 +143,9 @@ function decreaseDemands() {
             var i;
 
             // Decrease free agent demands
-            p.contract.amount -= 50;
-            if (p.contract.amount < 500) {
-                p.contract.amount = 500;
+            p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
+            if (p.contract.amount < g.minContract) {
+                p.contract.amount = g.minContract;
             }
 
             if (g.phase !== g.PHASE.FREE_AGENCY) {

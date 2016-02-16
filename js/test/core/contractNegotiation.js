@@ -147,8 +147,7 @@ describe("core/contractNegotiation", function () {
             });
 
             return tx.complete().then(function () {
-                return contractNegotiation.accept(8).then(function (error) {
-                    assert.equal((typeof error), "string");
+                return contractNegotiation.accept(8, 60000, 2017).then(function (error) {
                     assert.equal(error, "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");
                 });
             });

@@ -8,6 +8,9 @@ var Davis = require('./lib/davis');
 var account = require('./util/account');
 var helpers = require('./util/helpers');
 
+var Promise = require('bluebird');
+Promise.config({warnings: false});
+
 // Make sure I never accidentally use native promises, because that could fuck with error handling
 window.Promise = function () { throw new Error("USE BLUEBIRD!"); };
 window.Promise.all = function () { throw new Error("USE BLUEBIRD!"); };

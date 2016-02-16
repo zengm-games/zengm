@@ -111,8 +111,8 @@ function uiFirst(vm) {
 
         // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
         scale = {
-            gp: [0, 82],
-            gs: [0, 82],
+            gp: [0, g.numGames],
+            gs: [0, g.numGames],
             min: [0, 50],
             fg: [0, 20],
             fga: [0, 40],

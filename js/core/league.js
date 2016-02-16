@@ -19,6 +19,36 @@ var _ = require('underscore');
 var helpers = require('../util/helpers');
 var random = require('../util/random');
 
+var defaultGameAttributes = {
+    phase: 0,
+    nextPhase: null, // Used only for fantasy draft
+    daysLeft: 0, // Used only for free agency
+    gamesInProgress: false,
+    phaseChangeInProgress: false,
+    stopGames: false,
+    lastDbChange: 0,
+    ownerMood: {
+        wins: 0,
+        playoffs: 0,
+        money: 0
+    },
+    gameOver: false,
+    showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
+    autoPlaySeasons: 0,
+    godMode: false,
+    godModeInPast: false,
+    salaryCap: 60000, // [thousands of dollars]
+    minPayroll: 40000, // [thousands of dollars]
+    luxuryPayroll: 65000, // [thousands of dollars]
+    luxuryTax: 1.5,
+    minContract: 500, // [thousands of dollars]
+    maxContract: 20000, // [thousands of dollars]
+    minRosterSize: 10,
+    numGames: 82, // per season
+    quarterLength: 12, // [minutes]
+    disableInjuries: false
+};
+
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
 function merge(x, y) {
     var i, prop;
@@ -155,35 +185,18 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
         var gameAttributes, i;
 
         // Default values
-        gameAttributes = {
+        gameAttributes = _.extend(helpers.deepCopy(defaultGameAttributes), {
             userTid: tid,
             userTids: [tid],
             season: startingSeason,
             startingSeason: startingSeason,
-            phase: 0,
-            nextPhase: null, // Used only for fantasy draft
-            daysLeft: 0, // Used only for free agency
-            gamesInProgress: false,
-            phaseChangeInProgress: false,
-            stopGames: false,
-            lastDbChange: 0,
             leagueName: name,
-            ownerMood: {
-                wins: 0,
-                playoffs: 0,
-                money: 0
-            },
-            gameOver: false,
             teamAbbrevsCache: _.pluck(teams, "abbrev"),
             teamRegionsCache: _.pluck(teams, "region"),
             teamNamesCache: _.pluck(teams, "name"),
-            showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
             gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
-            numTeams: teams.length, // Will be 30 if the user doesn't supply custom rosters
-            autoPlaySeasons: 0,
-            godMode: false,
-            godModeInPast: false
-        };
+            numTeams: teams.length // Will be 30 if the user doesn't supply custom rosters
+        });
 
         // gameAttributes from input
         skipNewPhase = false;
@@ -530,29 +543,186 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3);
             }
 
+            // Donald Trump Easter Egg
+            if (Math.random() < 0.01) {
+                dao.players.put({ot: tx, value: {
+                    tid: -2,
+                    statsTids: [],
+                    rosterOrder: 666,
+                    ratings: [
+                        {
+                            hgt: 30,
+                            stre: 100,
+                            spd: 90,
+                            jmp: 90,
+                            endu: 90,
+                            ins: 90,
+                            dnk: 90,
+                            ft: 90,
+                            fg: 90,
+                            tp: 90,
+                            blk: 100,
+                            stl: 100,
+                            drb: 90,
+                            pss: 0,
+                            reb: 90,
+                            season: startingSeason,
+                            ovr: 75,
+                            pot: 75,
+                            fuzz: 0,
+                            skills: ["Dp"],
+                            pos: "G"
+                        }
+                    ],
+                    weight: 198,
+                    hgt: 75,
+                    born: {
+                        year: 1946,
+                        loc: "Queens, NY"
+                    },
+                    name: "Donald Trump",
+                    college: "",
+                    imgURL: "//play.basketball-gm.com/img/trump.jpg",
+                    awards: [],
+                    freeAgentMood: [
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0
+                    ],
+                    yearsFreeAgent: 0,
+                    retiredYear: null,
+                    draft: {
+                        round: 0,
+                        pick: 0,
+                        tid: -1,
+                        originalTid: -1,
+                        year: startingSeason,
+                        teamName: null,
+                        teamRegion: null,
+                        pot: 75,
+                        ovr: 75,
+                        skills: ["Dp"]
+                    },
+                    face: {
+                        head: {
+                            id: 0
+                        },
+                        eyebrows: [
+                            {
+                                id: 0,
+                                lr: "l",
+                                cx: 135,
+                                cy: 250
+                            },
+                            {
+                                id: 0,
+                                lr: "r",
+                                cx: 265,
+                                cy: 250
+                            }
+                        ],
+                        eyes: [
+                            {
+                                id: 3,
+                                lr: "l",
+                                cx: 135,
+                                cy: 280,
+                                angle: -2.53978886641562
+                            },
+                            {
+                                id: 3,
+                                lr: "r",
+                                cx: 265,
+                                cy: 280,
+                                angle: -2.53978886641562
+                            }
+                        ],
+                        nose: {
+                            id: 1,
+                            lr: "l",
+                            cx: 200,
+                            cy: 330,
+                            size: 0.46898400504142046,
+                            flip: true
+                        },
+                        mouth: {
+                            id: 3,
+                            cx: 200,
+                            cy: 400
+                        },
+                        hair: {
+                            id: 0
+                        },
+                        fatness: 0.07551302784122527,
+                        color: "#a67358"
+                    },
+                    injury: {
+                        type: "Healthy",
+                        gamesRemaining: 0
+                    },
+                    ptModifier: 1,
+                    hof: false,
+                    watch: false,
+                    gamesUntilTradable: 0,
+                    value: 85.32267878968268,
+                    valueNoPot: 79,
+                    valueFuzz: 86.69999999999999,
+                    valueNoPotFuzz: 81,
+                    valueWithContract: 85.32267878968268,
+                    salaries: [],
+                    contract: {
+                        amount: 500,
+                        exp: startingSeason + 1
+                    }
+                }});
+            }
+
             return tx.complete().then(function () {
                 if (skipNewPhase) {
                     // Game already in progress, just start it
                     return g.lid;
                 }
 
-                // Make schedule, start season
-                return phase.newPhase(g.PHASE.REGULAR_SEASON).then(function () {
-                    var lid, tx;
+                ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
+                ui.updateStatus("Idle");
 
-                    ui.updateStatus("Idle");
+                var lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
-                    lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
+                helpers.bbgmPing("league");
 
-                    helpers.bbgmPing("league");
-
-                    // Auto sort rosters
-                    tx = dao.tx("players", "readwrite");
-                    return Promise.map(teams, function (t) {
-                        return team.rosterAutoSort(tx, t.tid);
-                    }, {concurrency: Infinity}).then(function () {
-                        return lid;
-                    });
+                // Auto sort rosters
+                var tx = dao.tx("players", "readwrite");
+                return Promise.map(teams, function (t) {
+                    return team.rosterAutoSort(tx, t.tid);
+                }, {concurrency: Infinity}).then(function () {
+                    return lid;
                 });
             });
         });
@@ -672,6 +842,11 @@ function loadGameAttribute(ot, key) {
         if (key === "userTid" || key === "userTids") {
             g.vm.multiTeam[key](gameAttribute.value);
         }
+
+        // Set defaults to avoid IndexedDB upgrade
+        if (g[key] === undefined && defaultGameAttributes.hasOwnProperty(key)) {
+            g[key] = defaultGameAttributes[key];
+        }
     });
 }
 
@@ -690,9 +865,14 @@ function loadGameAttributes(ot) {
         }
 
         // Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w
-        if (g.userTids === undefined) {
-            g.userTids = [g.userTid];
-        }
+        if (g.userTids === undefined) { g.userTids = [g.userTid]; }
+
+        // Set defaults to avoid IndexedDB upgrade
+        Object.keys(defaultGameAttributes).forEach(function (key) {
+            if (g[key] === undefined) {
+                g[key] = defaultGameAttributes[key];
+            }
+        });
 
         // UI stuff - see also loadGameAttribute
         g.vm.topMenu.godMode(g.godMode);

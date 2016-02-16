@@ -35,7 +35,6 @@ function limitRating(rating) {
     return Math.floor(rating);
 }
 
-
 /**
  * Calculates the overall rating by averaging together all the other ratings.
  *
@@ -146,7 +145,7 @@ function skills(ratings) {
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
 function genContract(p, randomizeExp, randomizeAmount, noLimit) {
-    var amount, expiration, maxAmount, minAmount, potentialDifference, ratings, years;
+    var amount, expiration, potentialDifference, ratings, years;
 
     ratings = _.last(p.ratings);
 
@@ -154,14 +153,10 @@ function genContract(p, randomizeExp, randomizeAmount, noLimit) {
     randomizeAmount = randomizeAmount !== undefined ? randomizeAmount : true;
     noLimit = noLimit !== undefined ? noLimit : false;
 
-    // Limits on yearly contract amount, in $1000's
-    minAmount = 500;
-    maxAmount = 20000;
-
     // Scale proportional to (ovr*2 + pot)*0.5 120-210
     //amount = ((3 * p.value) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
-    //amount = amount * (maxAmount - minAmount) + minAmount;
-    amount = ((p.value - 1) / 100 - 0.45) * 3.3 * (maxAmount - minAmount) + minAmount;
+    //amount = amount * (g.maxContract - g.minContract) + g.minContract;
+    amount = ((p.value - 1) / 100 - 0.45) * 3.3 * (g.maxContract - g.minContract) + g.minContract;
     if (randomizeAmount) {
         amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
     }
@@ -195,10 +190,10 @@ function genContract(p, randomizeExp, randomizeAmount, noLimit) {
     expiration = g.season + years - 1;
 
     if (!noLimit) {
-        if (amount < minAmount * 1.1) {
-            amount = minAmount;
-        } else if (amount > maxAmount) {
-            amount = maxAmount;
+        if (amount < g.minContract * 1.1) {
+            amount = g.minContract;
+        } else if (amount > g.maxContract) {
+            amount = g.maxContract;
         }
     } else {
         // Well, at least keep it positive
@@ -316,7 +311,7 @@ function pos(ratings) {
         position = 'F';
     } else if ((pg || sg) && (sf || pf)) {
         position = 'GF';
-    } else if (c && (pf || sf)) {
+    } else if (c && pf) {
         position = 'FC';
     } else if (pf && sf) {
         position = 'F';
@@ -1021,10 +1016,12 @@ function injury(healthRank) {
  *
  * @memberOf core.player
  * @param {Object} exp Contract expiration year.
- * @return {number} numGamesRemaining Number of games remaining in the current season (0 to 82).
+ * @return {number} numGamesRemaining Number of games remaining in the current season (0 to g.numGames).
  */
 function contractSeasonsRemaining(exp, numGamesRemaining) {
-    return (exp - g.season) + numGamesRemaining / 82;
+    var frac = numGamesRemaining / g.numGames;
+    if (frac > 1) { frac = 1; } // This only happens if the user changed g.numGames mid season
+    return (exp - g.season) + frac;
 }
 
 /**
@@ -1925,6 +1922,12 @@ function augmentPartialPlayer(p, scoutingRank) {
 
 function checkStatisticalFeat(tx, pid, tid, p, results) {
     var doubles, feat, featText, featTextArr, i, j, k, key, logFeat, saveFeat, statArr, won;
+    var minFactor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
+    var TEN = minFactor * 10;
+    var FIVE = minFactor * 5;
+    var TWENTY = minFactor * 20;
+    var TWENTY_FIVE = minFactor * 25;
+    var FIFTY = minFactor * 50;
 
     saveFeat = false;
 
@@ -1939,17 +1942,17 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
     };
 
     doubles = ["pts", "ast", "stl", "blk"].reduce(function (count, stat) {
-        if (p.stat[stat] >= 10) {
+        if (p.stat[stat] >= TEN) {
             return count + 1;
         }
         return count;
     }, 0);
-    if (p.stat.orb + p.stat.drb >= 10) {
+    if (p.stat.orb + p.stat.drb >= TEN) {
         doubles += 1;
     }
 
     statArr = {};
-    if (p.stat.pts >= 5 && p.stat.ast >= 5 && p.stat.stl >= 5 && p.stat.blk >= 5 && (p.stat.orb + p.stat.drb) >= 5) {
+    if (p.stat.pts >= FIVE && p.stat.ast >= FIVE && p.stat.stl >= FIVE && p.stat.blk >= FIVE && (p.stat.orb + p.stat.drb) >= FIVE) {
         statArr.points = p.stat.pts;
         statArr.rebounds = p.stat.orb + p.stat.drb;
         statArr.assists = p.stat.ast;
@@ -1958,34 +1961,34 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
         saveFeat = true;
     }
     if (doubles >= 3) {
-        if (p.stat.pts >= 10) { statArr.points = p.stat.pts; }
-        if (p.stat.orb + p.stat.drb >= 10) { statArr.rebounds = p.stat.orb + p.stat.drb; }
-        if (p.stat.ast >= 10) { statArr.assists = p.stat.ast; }
-        if (p.stat.stl >= 10) { statArr.steals = p.stat.stl; }
-        if (p.stat.blk >= 10) { statArr.blocks = p.stat.blk; }
+        if (p.stat.pts >= TEN) { statArr.points = p.stat.pts; }
+        if (p.stat.orb + p.stat.drb >= TEN) { statArr.rebounds = p.stat.orb + p.stat.drb; }
+        if (p.stat.ast >= TEN) { statArr.assists = p.stat.ast; }
+        if (p.stat.stl >= TEN) { statArr.steals = p.stat.stl; }
+        if (p.stat.blk >= TEN) { statArr.blocks = p.stat.blk; }
         saveFeat = true;
     }
-    if (p.stat.pts >= 50) {
+    if (p.stat.pts >= FIFTY) {
         statArr.points = p.stat.pts;
         saveFeat = true;
     }
-    if (p.stat.orb + p.stat.drb >= 25) {
+    if (p.stat.orb + p.stat.drb >= TWENTY_FIVE) {
         statArr.rebounds = p.stat.orb + p.stat.drb;
         saveFeat = true;
     }
-    if (p.stat.ast >= 20) {
+    if (p.stat.ast >= TWENTY) {
         statArr.assists = p.stat.ast;
         saveFeat = true;
     }
-    if (p.stat.stl >= 10) {
+    if (p.stat.stl >= TEN) {
         statArr.steals = p.stat.stl;
         saveFeat = true;
     }
-    if (p.stat.blk >= 10) {
+    if (p.stat.blk >= TEN) {
         statArr.blocks = p.stat.blk;
         saveFeat = true;
     }
-    if (p.stat.tp >= 10) {
+    if (p.stat.tp >= TEN) {
         statArr["three pointers"] = p.stat.tp;
         saveFeat = true;
     }
@@ -2025,7 +2028,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
                 featText += ", ";
             }
         }
-        featText += '</a> in a ' + results.team[i].stat.pts + "-" + results.team[j].stat.pts + (won ? ' win over the ' : ' loss to the ') + g.teamNamesCache[results.team[j].id] + '.';
+        featText += '</a> in ' + (results.team[i].stat.pts.toString().charAt(0) === '8' ? 'an ' : 'a ') + results.team[i].stat.pts + "-" + results.team[j].stat.pts + (won ? ' win over the ' : ' loss to the ') + g.teamNamesCache[results.team[j].id] + '.';
 
         logFeat(featText);
 

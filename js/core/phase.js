@@ -448,6 +448,7 @@ function newPhaseBeforeDraft(tx) {
 
                     // Heal injures
                     if (p.injury.type !== "Healthy") {
+                        // This doesn't use g.numGames because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
                         if (p.injury.gamesRemaining <= 82) {
                             p.injury = {type: "Healthy", gamesRemaining: 0};
                         } else {

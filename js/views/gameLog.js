@@ -244,6 +244,7 @@ function updateGamesList(inputs, updateEvents, vm) {
     }
 }
 
+var listenersAdded = false;
 function uiFirst(vm) {
     ko.computed(function () {
         ui.title("Game Log - " + vm.season());
@@ -254,6 +255,23 @@ function uiFirst(vm) {
         vm.boxScore.gid();
         updatePrevNextLinks(vm);
     }).extend({throttle: 1});
+
+    // Would be better if I had an "unmount" function...
+    if (!listenersAdded) {
+        listenersAdded = true;
+        document.addEventListener("keydown", function (e) {
+            var el;
+            if (e.keyCode === 37) {
+                el = document.getElementById('game-log-prev');
+            } else if (e.keyCode === 39) {
+                el = document.getElementById('game-log-next');
+            }
+
+            if (el) {
+                el.click();
+            }
+        });
+    }
 }
 
 function uiEvery(updateEvents, vm) {

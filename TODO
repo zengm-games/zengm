@@ -1,3 +1,13 @@
+god mode option for playoff rounds https://www.reddit.com/r/BasketballGM/comments/44hdzs/new_options_in_god_mode/czrxv2w?context=3
+
+substitutions fucked up in long games https://www.reddit.com/r/BasketballGM/comments/44nv0s/100000_minute_quarters/
+
+league leaders should average more assists/rebounds
+
+injuries on player page https://www.reddit.com/r/BasketballGM/comments/43jj76/injuries_can_have_longterm_effects/czinyzk
+
+more detailed negotiation screen https://www.reddit.com/r/BasketballGM/comments/416o5g/well_this_is_new/cz11w9v?context=3
+
 delete most negotiation code
   remove restriction for one negotiation at a time
     make sure re-signing is handled okay still
@@ -27,6 +37,8 @@ babel
 CURRENT
 -------
 
+Add 'Free Agents' to 'Teams' dropdown menu on 'Player Ratings' page. https://www.reddit.com/r/BasketballGM/comments/3t4kl6/suggestion_add_free_agents_to_teams_dropdown_menu/
+
 "resign all" button https://www.reddit.com/r/BasketballGM/comments/40q8rc/help_beta_test_new_contract_negotiation_feature/cywki5q
 
 https://www.reddit.com/r/BasketballGM/comments/3se2v7/two_small_bugs/
@@ -42,8 +54,6 @@ roster order bug https://www.reddit.com/r/BasketballGM/comments/3gch1i/why_is_my
 fantasy draft summary https://www.reddit.com/r/BasketballGM/comments/3g4p5a/issues_with_fantasy_draft_records/ (link is in player transactions)
 
 crime https://www.reddit.com/r/BasketballGM/comments/3g1ngn/its_2015/ctudznu
-
-track buzzer beaters in statistical feats
 
 potential over 100 https://www.reddit.com/r/BasketballGM/comments/3ft6q8/player_with_potential_over_100/
 
@@ -82,8 +92,6 @@ Too many 8 seeds winning over 1 seeds
     some of this could be running up the score against bad teams
 
 most improved player award
-
-long-term effects of injuries - maybe just decrease endurance and athleticism
 
 player development growth curve projection
 
@@ -143,14 +151,6 @@ in-memory cache
   really, 2 paths forward:
     1. generic caching layer on top of IndexedDB (or my promises-based library) - maybe using fakeIndexedDB
     2. write more specific dao (like sdw) and write caching (or other) layer specific to that
-
-god mode
-  options
-    disable injuries
-    disable ratings display
-    disable salary cap
-  edit player
-    edit diedYear (or null if blank)
 
 refactor draft code
 
@@ -762,6 +762,12 @@ trades
       "I need to cut my payroll and start making more money."
       "I could really use a good rebounder."
   sign and trade (only during resigning phase)
+god mode
+  options
+    disable ratings display
+    playoff round length
+  edit player
+    edit diedYear (or null if blank)
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?

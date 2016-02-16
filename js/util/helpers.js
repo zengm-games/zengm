@@ -891,6 +891,20 @@ function correctLinkLid(event) {
     event.text = event.text.replace(/\/l\/\d+\//g, '/l/' + g.lid + '/');
 }
 
+function overtimeCounter(n) {
+    switch (n) {
+        case 1: return "";
+        case 2: return "double";
+        case 3: return "triple";
+        case 4: return "quadruple";
+        case 5: return "quintuple";
+        case 6: return "sextuple";
+        case 7: return "septuple";
+        case 8: return "octuple";
+        default: return "a " + n + "th";
+    }
+}
+
 module.exports = {
     validateAbbrev: validateAbbrev,
     getAbbrev: getAbbrev,
@@ -924,6 +938,7 @@ module.exports = {
     gameScore: gameScore,
     updateMultiTeam: updateMultiTeam,
     plusMinus: plusMinus,
-    correctLinkLid: correctLinkLid
+    correctLinkLid: correctLinkLid,
+    overtimeCounter: overtimeCounter
 };
 

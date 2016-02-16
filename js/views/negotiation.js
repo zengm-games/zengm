@@ -63,6 +63,7 @@ function generateContractOptions(contract, ovr) {
     for (i = 0; i < 5; i++) {
         factor = 1 + Math.abs(found - i) * growthFactor;
         contractOptions[i].amount = contractOptions[found].amount * factor;
+        contractOptions[i].amount = 0.05 * Math.round(contractOptions[i].amount / 0.05);  // Make it a multiple of 50k
     }
 
     return contractOptions.filter(function (contractOption) {

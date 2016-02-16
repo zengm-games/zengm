@@ -66,11 +66,11 @@ function writeTeamStats(tx, results) {
             localTvRevenue = 0;
             if (g.phase !== g.PHASE.PLAYOFFS) {
                 // All in [thousands of dollars]
-                salaryPaid = payroll / 82;
-                scoutingPaid = t.budget.scouting.amount / 82;
-                coachingPaid = t.budget.coaching.amount / 82;
-                healthPaid = t.budget.health.amount / 82;
-                facilitiesPaid = t.budget.facilities.amount / 82;
+                salaryPaid = payroll / g.numGames;
+                scoutingPaid = t.budget.scouting.amount / g.numGames;
+                coachingPaid = t.budget.coaching.amount / g.numGames;
+                healthPaid = t.budget.health.amount / g.numGames;
+                facilitiesPaid = t.budget.facilities.amount / g.numGames;
                 merchRevenue = 3 * att / 1000;
                 if (merchRevenue > 250) {
                     merchRevenue = 250;
@@ -270,6 +270,8 @@ function writePlayerStats(tx, results) {
                     // Only update player object (values and injuries) every 10 regular season games or on injury
                     if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
                         dao.players.get({ot: tx, key: p.id}).then(function (p_) {
+                            var biggestRatingsLoss, r;
+
                             // Injury crap - assign injury type if player does not already have an injury in the database
                             if (injuredThisGame) {
                                 p_.injury = player.injury(t.healthRank);
@@ -281,11 +283,34 @@ function writePlayerStats(tx, results) {
                                     pids: [p_.pid],
                                     tids: [p_.tid]
                                 });
+
+                                // Some chance of a loss of athleticism from serious injuries
+                                // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
+                                // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
+                                if (p_.injury.gamesRemaining > 25 && Math.random() < p_.injury.gamesRemaining / 150) {
+                                    biggestRatingsLoss = Math.round(p_.injury.gamesRemaining / 10);
+                                    if (biggestRatingsLoss > 10) {
+                                        biggestRatingsLoss = 10;
+                                    }
+
+                                    // Small chance of horrible things
+                                    if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
+                                        biggestRatingsLoss = 30;
+                                    }
+
+                                    r = p_.ratings.length - 1;
+                                    p_.ratings[r].spd = helpers.bound(p_.ratings[r].spd - random.randInt(0, biggestRatingsLoss), 0, 100);
+                                    p_.ratings[r].jmp = helpers.bound(p_.ratings[r].jmp - random.randInt(0, biggestRatingsLoss), 0, 100);
+                                    p_.ratings[r].endu = helpers.bound(p_.ratings[r].endu - random.randInt(0, biggestRatingsLoss), 0, 100);
+                                }
                             }
 
-                            // Player value depends on ratings and regular season stats, neither of which can change in the playoffs
+                            // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
                             if (g.phase !== g.PHASE.PLAYOFFS) {
                                 return player.updateValues(tx, p_, [ps]);
+                            }
+                            if (biggestRatingsLoss) {
+                                return player.updateValues(tx, p_, []);
                             }
 
                             return p_;
@@ -369,6 +394,25 @@ function writeGameStats(tx, results, att) {
             saveToDb: false,
             tids: [results.team[0].id, results.team[1].id]
         });
+    }
+
+    if (results.clutchPlays.length > 0) {
+        for (i = 0; i < results.clutchPlays.length; i++) {
+            if (results.clutchPlays[i].hasOwnProperty("tempText")) {
+                results.clutchPlays[i].text = results.clutchPlays[i].tempText;
+                if (results.clutchPlays[i].tids[0] === results.team[tw].id) {
+                    results.clutchPlays[i].text += ' in ' + (results.team[tw].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a')
+                        + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tw].id], g.season, results.gid]) + '">' 
+                        + results.team[tw].stat.pts + "-" + results.team[tl].stat.pts + '</a> win over the ' + g.teamNamesCache[results.team[tl].id] + '.';
+                } else {
+                    results.clutchPlays[i].text += ' in ' + (results.team[tl].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a')
+                        + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tl].id], g.season, results.gid]) + '">' 
+                        + results.team[tl].stat.pts + "-" + results.team[tw].stat.pts + '</a> loss to the ' + g.teamNamesCache[results.team[tw].id] + '.';
+                }
+                delete results.clutchPlays[i].tempText;
+            }
+            eventLog.add(tx, results.clutchPlays[i]);
+        }
     }
 
     return dao.games.put({ot: tx, value: gameStats});

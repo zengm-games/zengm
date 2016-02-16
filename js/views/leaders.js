@@ -56,7 +56,7 @@ function updateLeaders(inputs, updateEvents, vm) {
                 statsSeasons: [inputs.season]
             })
         ]).spread(function (teams, players) {
-            var categories, gps, i, j, k, leader, pass, playerValue, stats, userAbbrev;
+            var categories, factor, gps, i, j, k, leader, pass, playerValue, stats, userAbbrev;
 
             // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
             gps = [];
@@ -66,8 +66,8 @@ function updateLeaders(inputs, updateEvents, vm) {
                         gps[i] = teams[i].seasons[j].gp;
 
                         // Don't count playoff games
-                        if (gps[i] > 82) {
-                            gps[i] = 82;
+                        if (gps[i] > g.numGames) {
+                            gps[i] = g.numGames;
                         }
 
                         break;
@@ -85,6 +85,7 @@ function updateLeaders(inputs, updateEvents, vm) {
             userAbbrev = helpers.getAbbrev(g.userTid);
 
             // minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
+            factor = (g.numGames / 82) * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
             categories = [];
             categories.push({name: "Points", stat: "Pts", title: "Points Per Game", data: [], minStats: ["gp", "pts"], minValue: [70, 1400]});
             categories.push({name: "Rebounds", stat: "Reb", title: "Rebounds Per Game", data: [], minStats: ["gp", "trb"], minValue: [70, 800]});
@@ -113,7 +114,7 @@ function updateLeaders(inputs, updateEvents, vm) {
                         }
 
                         // Compare against value normalized for team games played
-                        if (playerValue >= Math.ceil(categories[i].minValue[k] * gps[players[j].stats.tid] / 82)) {
+                        if (playerValue >= Math.ceil(categories[i].minValue[k] * factor * gps[players[j].stats.tid] / g.numGames)) {
                             pass = true;
                             break;  // If one is true, don't need to check the others
                         }

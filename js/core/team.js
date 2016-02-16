@@ -867,15 +867,15 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
                         } else {
                             // Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
                             if (i === g.userTid) {
-                                rCurrent = [82, 0];
+                                rCurrent = [g.numGames, 0];
                             } else {
-                                rCurrent = [0, 82];
+                                rCurrent = [0, g.numGames];
                             }
                         }
                         if (i === g.userTid) {
-                            rLast = [50, 32];
+                            rLast = [Math.round(0.6 * g.numGames), Math.round(0.4 * g.numGames)];
                         } else {
-                            rLast = [32, 50]; // Assume a losing season to minimize bad trades
+                            rLast = [Math.round(0.4 * g.numGames), Math.round(0.6 * g.numGames)]; // Assume a losing season to minimize bad trades
                         }
                     } else {
                         // Second (or higher) season
@@ -886,12 +886,13 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
                     gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
 
                     // If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
-                    if (gp >= 41) {
+                    var halfSeason = Math.round(0.5 * g.numGames);
+                    if (gp >= halfSeason) {
                         wps.push(rCurrent[0] / gp);
                     } else if (gp > 0) {
-                        wps.push((gp / 41 * rCurrent[0] / gp + (41 - gp) / 41 * rLast[0] / 82));
+                        wps.push((gp / halfSeason * rCurrent[0] / gp + (halfSeason - gp) / halfSeason * rLast[0] / g.numGames));
                     } else {
-                        wps.push(rLast[0] / 82);
+                        wps.push(rLast[0] / g.numGames);
                     }
                 }
 
@@ -952,8 +953,8 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
                             estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
 
                             // Set fudge factor with more confidence if it's the current season
-                            if (seasons === 0 && gp >= 41) {
-                                fudgeFactor = (1 - gp / 82) * 5;
+                            if (seasons === 0 && gp >= g.numGames / 2) {
+                                fudgeFactor = (1 - gp / g.numGames) * 5;
                             } else {
                                 fudgeFactor = 5;
                             }
@@ -1025,7 +1026,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
     return tx.complete().then(function () {
         var base, contractsFactor, doSkillBonuses, dv, rosterAndAdd, rosterAndRemove, salaryAddedThisSeason, salaryRemoved, skillsNeeded, sumContracts, sumValues;
 
-        gpAvg = helpers.bound(gpAvg, 0, 82);
+        gpAvg = helpers.bound(gpAvg, 0, g.numGames);
 
 /*            // Handle situations where the team goes over the roster size limit
         if (roster.length + remove.length > 15) {
@@ -1173,7 +1174,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
                 contractValue = (p.worth.amount - p.contract.amount) / 1000;
 
                 // Account for duration
-                contractSeasonsRemaining = player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg);
+                contractSeasonsRemaining = player.contractSeasonsRemaining(p.contract.exp, g.numGames - gpAvg);
                 if (contractSeasonsRemaining > 1) {
                     // Don't make it too extreme
                     contractValue *= Math.pow(contractSeasonsRemaining, 0.25);
@@ -1218,7 +1219,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
                     return memo;
                 }
 
-                return memo + p.contract.amount / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, 82 - gpAvg), 0.25 - (onlyThisSeason ? 0.25 : 0));
+                return memo + p.contract.amount / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, g.numGames - gpAvg), 0.25 - (onlyThisSeason ? 0.25 : 0));
             }, 0);
 
             return sum;
@@ -1329,7 +1330,7 @@ function updateStrategies(tx) {
                 // Average age, weighted by minutes played
                 age = numerator / denominator;
 
-                score = 0.8 * dWon + (won - 41) + 5 * (26 - age) + youngStar * 20;
+                score = 0.8 * dWon + (won - g.numGames / 2) + 5 * (26 - age) + youngStar * 20;
 
                 updated = false;
                 if (score > 20 && t.strategy === "rebuilding") {
@@ -1437,7 +1438,7 @@ function checkRosterSizes() {
         // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
         minFreeAgents = [];
         for (i = 0; i < players.length; i++) {
-            if (players[i].contract.amount === 500) {
+            if (players[i].contract.amount === g.minContract) {
                 minFreeAgents.push(players[i]);
             }
         }

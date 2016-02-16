@@ -1,5 +1,8 @@
 'use strict';
 
+var Promise = require('bluebird');
+Promise.config({warnings: false});
+
 require('indexeddb-getall-shim');
 require('../util/templateHelpers');
 

@@ -21,7 +21,7 @@ describe("core/league", function () {
             return dao.leagues.get({key: g.lid}).then(function (l) {
                 assert.equal(l.name, "Test");
                 assert.equal(l.tid, 0);
-                assert.equal(l.phaseText, g.startingSeason + " regular season");
+                assert.equal(l.phaseText, g.startingSeason + " preseason");
             });
         });
         it("should create all necessary object stores", function () {
@@ -51,15 +51,15 @@ describe("core/league", function () {
                 assert.equal(gTest.gamesInProgress, false);
                 assert.equal(typeof gTest.lastDbChange, "number");
                 assert.equal(gTest.leagueName, "Test");
-                assert.equal(gTest.phase, 1);
-                assert.equal(gTest.phaseText, gTest.startingSeason + " regular season");
+                assert.equal(gTest.phase, 0);
+                assert.equal(gTest.phaseText, gTest.startingSeason + " preseason");
                 assert.equal(gTest.season, gTest.startingSeason);
                 assert.equal(gTest.statusText, "Idle");
                 assert.equal(gTest.stopGames, false);
                 assert.equal(gTest.userTid, 0);
                 assert.equal(gTest.gameOver, false);
                 assert.equal(gTest.daysLeft, 0);
-                assert.equal(gTest.showFirstOwnerMessage, false);
+                assert.equal(gTest.showFirstOwnerMessage, true);
 
                 count = 0;
                 for (key in gTest) {
@@ -68,7 +68,7 @@ describe("core/league", function () {
                     }
                 }
 
-                assert.equal(count, 25);
+                assert.equal(count, 28);
             });
         });
         it("should initialize draftOrder object store", function () {

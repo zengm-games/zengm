@@ -162,6 +162,8 @@ function newPhaseRegularSeason(tx) {
             });
         }
     }).then(function () {
+console.log('here');
+        throw new Error('foo');
         return [undefined, ["playerMovement"]];
     });
 }
@@ -355,7 +357,6 @@ function newPhaseBeforeDraft(tx) {
             return p;
         });
     }).then(function () {
-console.log('C');
         var maxAge, minPot;
 
         // Do annual tasks for each player, like checking for retirement
@@ -653,6 +654,26 @@ function newPhase(phase, extra) {
         return;
     }
 
+    // Have this catch any newPhase* errors before phaseChangeTx completes
+    var phaseErrorHandler = function (err) {
+        if (phaseChangeTx && phaseChangeTx.abort) {
+            phaseChangeTx.abort();
+        }
+
+        return require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false}).then(function () {
+            return ui.updatePlayMenu(null);
+        }).then(function () {
+            return eventLog.add(null, {
+                type: "error",
+                text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
+                saveToDb: false,
+                persistent: true
+            });
+        }).then(function () {
+            throw err;
+        });
+    }
+
     return lock.phaseChangeInProgress(null).then(function (phaseChangeInProgress) {
         if (!phaseChangeInProgress) {
             return require('../core/league').setGameAttributesComplete({phaseChangeInProgress: true}).then(function () {
@@ -664,13 +685,13 @@ function newPhase(phase, extra) {
                 if (phase === g.PHASE.PRESEASON) {
                     return g.dbl.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
-                        return newPhasePreseason(tx);
+                        return newPhasePreseason(tx).catch(phaseErrorHandler);
                     });
                 }
                 if (phase === g.PHASE.REGULAR_SEASON) {
                     return g.dbl.tx(["gameAttributes", "messages", "schedule", "teams"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
-                        return newPhaseRegularSeason(tx);
+                        return newPhaseRegularSeason(tx).catch(phaseErrorHandler);
                     });
                 }
                 if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
@@ -679,50 +700,45 @@ function newPhase(phase, extra) {
                 if (phase === g.PHASE.PLAYOFFS) {
                     return g.dbl.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
-                        return newPhasePlayoffs(tx);
+                        return newPhasePlayoffs(tx).catch(phaseErrorHandler);
                     });
                 }
                 if (phase === g.PHASE.BEFORE_DRAFT) {
                     return g.dbl.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
-                        return newPhaseBeforeDraft(tx);
+                        return newPhaseBeforeDraft(tx).catch(phaseErrorHandler);
                     });
                 }
                 if (phase === g.PHASE.DRAFT) {
                     return g.dbl.tx(["draftPicks", "draftOrder", "gameAttributes", "players", "teams"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
-                        return newPhaseDraft(tx);
+                        return newPhaseDraft(tx).catch(phaseErrorHandler);
                     });
                 }
                 if (phase === g.PHASE.AFTER_DRAFT) {
                     return g.dbl.tx(["draftPicks", "gameAttributes"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
-                        return newPhaseAfterDraft(tx);
+                        return newPhaseAfterDraft(tx).catch(phaseErrorHandler);
                     });
                 }
                 if (phase === g.PHASE.RESIGN_PLAYERS) {
                     return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
-                        return newPhaseResignPlayers(tx);
+                        return newPhaseResignPlayers(tx).catch(phaseErrorHandler);
                     });
                 }
                 if (phase === g.PHASE.FREE_AGENCY) {
                     return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
-                        return newPhaseFreeAgency(tx);
+                        return newPhaseFreeAgency(tx).catch(phaseErrorHandler);
                     });
                 }
                 if (phase === g.PHASE.FANTASY_DRAFT) {
                     return g.dbl.tx(["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
-                        return newPhaseFantasyDraft(tx, extra);
+                        return newPhaseFantasyDraft(tx, extra).catch(phaseErrorHandler);
                     });
                 }
-            }).catch(function (err) {
-                console.log('Phase change error');
-                require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false}).then(function () {
-                    throw err;
-                });
             }).spread(function (url, updateEvents) {
                 return finalize(phase, url, updateEvents);
             });

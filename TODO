@@ -4,6 +4,7 @@ backboard
   source-map-support a good idea for production?
   replace IDBKeyRange and other IDB vars
   confirm account stuff works
+  finish backboard, put on npm, fix dependency
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard
 

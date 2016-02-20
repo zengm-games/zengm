@@ -3,6 +3,7 @@
 var g = require('../globals');
 var player = require('../core/player');
 var team = require('../core/team');
+var backboard = require('backboard');
 var _ = require('underscore');
 
 /**
@@ -58,7 +59,7 @@ function calculatePER() {
 
         // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
         // Active players have tid >= 0
-        return g.dbl.players.index('tid').getAll(IDBKeyRange.lowerBound(0)).then(function (players) {
+        return g.dbl.players.index('tid').getAll(backboard.lowerBound(0)).then(function (players) {
             return player.withStats(null, players, {
                 statsSeasons: [g.season],
                 statsPlayoffs: g.PHASE.PLAYOFFS === g.phase

@@ -5,6 +5,7 @@ var ui = require('../ui');
 var player = require('../core/player');
 var season = require('../core/season');
 var team = require('../core/team');
+var backboard = require('backboard');
 var ko = require('knockout');
 var komapping = require('knockout.mapping');
 var _ = require('underscore');
@@ -212,7 +213,7 @@ function updatePlayers(inputs, updateEvents) {
         vars = {};
 
         return g.dbl.tx(["players", "playerStats"], function (tx) {
-            return tx.players.index('tid').getAll(IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED)).then(function (players) {
+            return tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED)).then(function (players) {
                 return player.withStats(tx, players, {statsSeasons: [g.season]});
             }).then(function (players) {
                 var i, stats, userPlayers;

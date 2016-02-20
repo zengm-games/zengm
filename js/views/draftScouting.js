@@ -5,6 +5,7 @@ var ui = require('../ui');
 var draft = require('../core/draft');
 var finances = require('../core/finances');
 var player = require('../core/player');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var $ = require('jquery');
 var ko = require('knockout');
@@ -136,7 +137,7 @@ function customDraftClassHandler(e) {
 
             // Delete old players from draft class
             return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
-                return tx.players.index('tid').iterate(IDBKeyRange.only(draftClassTid), function (p) {
+                return tx.players.index('tid').iterate(backboard.only(draftClassTid), function (p) {
                     return tx.players.delete(p.pid);
                 }).then(function () {
                     var draftYear, i, seasonOffset2, uploadedSeason;

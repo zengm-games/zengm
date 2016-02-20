@@ -1,7 +1,3 @@
-/**
- * @name core.phase
- * @namespace Anything related to moving between phases of the game (e.g. regular season, playoffs, draft, etc.).
- */
 'use strict';
 
 var g = require('../globals');
@@ -13,6 +9,7 @@ var freeAgents = require('./freeAgents');
 var player = require('./player');
 var season = require('./season');
 var team = require('./team');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var _ = require('underscore');
 var account = require('../util/account');
@@ -84,7 +81,7 @@ function newPhasePreseason(tx) {
             return t;
         }).then(function () {
             // Loop through all non-retired players
-            return tx.players.index('tid').iterate(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
+            return tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
                 // Update ratings
                 p = player.addRatingsRow(p, scoutingRank);
                 p = player.develop(p, 1, false, coachingRanks[p.tid]);
@@ -363,13 +360,13 @@ function newPhaseBeforeDraft(tx) {
         maxAge = 34;
         minPot = 40;
 
-        return tx.players.index('tid').iterate(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
+        return tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
             var update;
 
             update = false;
 
             // Get player stats, used for HOF calculation
-            return tx.playerStats.index("pid, season, tid").getAll(IDBKeyRange.bound([p.pid], [p.pid, ''])).then(function (playerStats) {
+            return tx.playerStats.index("pid, season, tid").getAll(backboard.bound([p.pid], [p.pid, ''])).then(function (playerStats) {
                 var age, excessAge, excessPot, pot;
 
                 age = g.season - p.born.year;
@@ -422,7 +419,7 @@ function newPhaseBeforeDraft(tx) {
         });
     }).then(function () {
         // Remove released players' salaries from payrolls if their contract expired this year
-        return tx.releasedPlayers.index('contract.exp').iterate(IDBKeyRange.upperBound(g.season), function (rp) {
+        return tx.releasedPlayers.index('contract.exp').iterate(backboard.upperBound(g.season), function (rp) {
             tx.releasedPlayers.delete(rp.rid);
         });
     }).then(function () {
@@ -504,7 +501,7 @@ function newPhaseAfterDraft(tx) {
 function newPhaseResignPlayers(tx) {
     return player.genBaseMoods(tx).then(function (baseMoods) {
         // Re-sign players on user's team
-        return tx.players.index('tid').iterate(IDBKeyRange.lowerBound(0), function (p) {
+        return tx.players.index('tid').iterate(backboard.lowerBound(0), function (p) {
             var tid;
 
             if (p.contract.exp <= g.season && g.userTids.indexOf(p.tid) >= 0 && g.autoPlaySeasons === 0) {
@@ -550,12 +547,12 @@ function newPhaseFreeAgency(tx) {
         return player.genBaseMoods(tx).then(function (baseMoods) {
             // Reset contract demands of current free agents and undrafted players
             // KeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
-            return tx.players.index('tid').iterate(IDBKeyRange.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), function (p) {
+            return tx.players.index('tid').iterate(backboard.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), function (p) {
                 return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
             }).then(function () {
                 // AI teams re-sign players or they become free agents
                 // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
-                return tx.players.index('tid').iterate(IDBKeyRange.lowerBound(0), function (p) {
+                return tx.players.index('tid').iterate(backboard.lowerBound(0), function (p) {
                     var contract, factor;
 
                     if (p.contract.exp <= g.season && (g.userTids.indexOf(p.tid) < 0 || g.autoPlaySeasons > 0)) {
@@ -622,7 +619,7 @@ function newPhaseFantasyDraft(tx, position) {
             return p;
         }).then(function () {
             // Make all players draftable
-            tx.players.index('tid').iterate(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
+            tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
                 p.tid = g.PLAYER.UNDRAFTED;
                 return p;
             });

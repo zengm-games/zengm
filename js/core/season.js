@@ -4,6 +4,7 @@
 var g = require('../globals');
 var player = require('./player');
 var team = require('./team');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var _ = require('underscore');
 var eventLog = require('../util/eventLog');
@@ -126,7 +127,7 @@ function awards(tx) {
         // Sort teams by tid so it can be easily used in awards formulas
         teams.sort(function (a, b) { return a.tid - b.tid; });
 
-        return [teams, tx.players.index('tid').getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
+        return [teams, tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
             return player.withStats(tx, players, {
                 statsSeasons: [g.season]
             });

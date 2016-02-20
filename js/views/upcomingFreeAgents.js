@@ -3,6 +3,7 @@
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
+var backboard = require('backboard');
 var $ = require('jquery');
 var ko = require('knockout');
 var _ = require('underscore');
@@ -41,7 +42,7 @@ mapping = {
 };
 
 function updateUpcomingFreeAgents(inputs) {
-    return g.dbl.players.index('tid').getAll(IDBKeyRange.lowerBound(0)).then(function (players) {
+    return g.dbl.players.index('tid').getAll(backboard.lowerBound(0)).then(function (players) {
         players = players.filter(function (p) {
             return p.contract.exp === inputs.season;
         });

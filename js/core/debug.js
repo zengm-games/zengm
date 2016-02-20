@@ -4,6 +4,7 @@
 
 var g = require('../globals');
 var player = require('./player');
+var backboard = require('backboard');
 var _ = require('underscore');
 
 function regressRatingsPer() {
@@ -202,7 +203,7 @@ function regressRatingsPer() {
 // Useful to run this while playing with the contract formula in core.player.genContract
 function leagueAverageContract() {
     // All non-retired players
-    g.dbl.players.index('tid').getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
+    g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
         var contract, i, p, total;
 
         total = 0;
@@ -219,7 +220,7 @@ function leagueAverageContract() {
 
 function exportPlayerInfo() {
     // All non-retired players
-    g.dbl.players.index('tid').getAll(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
+    g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
         var contract, i, output, p;
 
         output = "<pre>value,contract.amount\n";

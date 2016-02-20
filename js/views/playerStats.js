@@ -3,6 +3,7 @@
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
+var backboard = require('backboard');
 var $ = require('jquery');
 var ko = require('knockout');
 var components = require('./components');
@@ -47,7 +48,7 @@ mapping = {
 
 function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
-        return g.dbl.players.index('tid').getAll(IDBKeyRange.lowerBound(g.PLAYER.RETIRED)).then(function (players) {
+        return g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED)).then(function (players) {
             return player.withStats(null, players, {
                 statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
                 statsPlayoffs: inputs.playoffs === "playoffs"

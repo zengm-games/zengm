@@ -4,6 +4,7 @@ var g = require('../globals');
 var finances = require('./finances');
 var injuries = require('../data/injuries');
 var names = require('../data/names');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var faces = require('facesjs');
 var _ = require('underscore');
@@ -841,7 +842,7 @@ function addStatsRow(ot, p, playoffs) {
             stopOnSeason = 0;
 
             return dbOrTx.playerStats.index('pid, season, tid')
-                .iterate(IDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]), 'prev', function (psTemp, shortCircuit) {
+                .iterate(backboard.bound([p.pid, 0], [p.pid, g.season + 1]), 'prev', function (psTemp, shortCircuit) {
                     // Skip playoff stats
                     if (psTemp.playoffs) {
                         return;
@@ -1721,7 +1722,7 @@ function updateValues(ot, p, ps) {
             // Start at season and look backwards until we hit
             // This will not work totally right if a player played for multiple teams in a season. It should be ordered by psid, instead it's ordered by tid because of the index used
             return dbOrTx.playerStats.index('pid, season, tid')
-                .iterate(IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]), 'prev', function (psTemp, shortCircuit) {
+                .iterate(backboard.bound([p.pid, 0], [p.pid, season + 1]), 'prev', function (psTemp, shortCircuit) {
                     // Skip playoff stats
                     if (psTemp.playoffs) {
                         return;
@@ -2072,7 +2073,7 @@ function killOne() {
             // Get player stats, used for HOF calculation
             return tx.playerStats.getAll({
                 index: "pid, season, tid",
-                key: IDBKeyRange.bound([p.pid], [p.pid, ''])
+                key: backboard.bound([p.pid], [p.pid, ''])
             });
         }).then(function (playerStats) {
             p = retire(tx, p, playerStats, false);
@@ -2110,13 +2111,13 @@ function withStats(tx, players, options) {
 
             if (options.statsSeasons === "all") {
                 // All seasons
-                key = IDBKeyRange.bound([p.pid], [p.pid, '']);
+                key = backboard.bound([p.pid], [p.pid, '']);
             } else if (options.statsSeasons.length === 1) {
                 // Restrict to one season
-                key = IDBKeyRange.bound([p.pid, options.statsSeasons[0]], [p.pid, options.statsSeasons[0], '']);
+                key = backboard.bound([p.pid, options.statsSeasons[0]], [p.pid, options.statsSeasons[0], '']);
             } else if (options.statsSeasons.length > 1) {
                 // Restrict to range between seasons
-                key = IDBKeyRange.bound([p.pid, Math.min.apply(null, options.statsSeasons)], [p.pid, Math.max.apply(null, options.statsSeasons), '']);
+                key = backboard.bound([p.pid, Math.min.apply(null, options.statsSeasons)], [p.pid, Math.max.apply(null, options.statsSeasons), '']);
             }
 
             return tx.playerStats.index('pid, season, tid').getAll(key).then(function (playerStats) {

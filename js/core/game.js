@@ -10,6 +10,7 @@ var phase = require('./phase');
 var player = require('./player');
 var season = require('./season');
 var team = require('./team');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var advStats = require('../util/advStats');
 var eventLog = require('../util/eventLog');
@@ -707,7 +708,7 @@ function play(numDays, start, gidPlayByPlay) {
                 promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
 
                 // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-                promises.push(tx.players.index('tid').iterate(IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
+                promises.push(tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
                     var changed;
 
                     changed = false;

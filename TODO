@@ -3,10 +3,7 @@ backboard
   source-map-support a good idea for production?
   confirm account stuff works
   check quota again, just to be triple sure
-  some views are REALLY SLOW, maybe ones using withStats?
-    league dashboard
-    player stats
-    game sim too?
+  benchmark
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard
 

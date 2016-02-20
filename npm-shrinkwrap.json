@@ -125,8 +125,8 @@
       "from": "async-each@0.1.6"
     },
     "backboard": {
-      "version": "1.0.2",
-      "from": "backboard@1.0.2"
+      "version": "1.0.3",
+      "from": "backboard@1.0.3"
     },
     "balanced-match": {
       "version": "0.3.0",

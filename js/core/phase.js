@@ -162,8 +162,6 @@ function newPhaseRegularSeason(tx) {
             });
         }
     }).then(function () {
-console.log('here');
-        throw new Error('foo');
         return [undefined, ["playerMovement"]];
     });
 }

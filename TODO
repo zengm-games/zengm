@@ -1,10 +1,9 @@
 backboard
-  rm -rf node_modules/backboard/ && npm install backboard
   uncomment bugsnag, or don't load in dev mode
   source-map-support a good idea for production?
   replace IDBKeyRange and other IDB vars
   confirm account stuff works
-  finish backboard, put on npm, fix dependency
+  check quota again, just to be triple sure
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard
 

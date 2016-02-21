@@ -1,9 +1,11 @@
 backboard
-  uncomment bugsnag, or don't load in dev mode
-  source-map-support a good idea for production?
   confirm account stuff works
   check quota again, just to be triple sure
   benchmark
+
+node-source-map-support for better errors within bluebird
+  in app.js: require('source-map-support').install({handleUncaughtExceptions: false});
+  needs https://github.com/ben-ng/minifyify/issues/116 to be fixed first
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard
 

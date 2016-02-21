@@ -261,9 +261,9 @@ function newPhasePlayoffs(tx) {
 
         return Promise.all([
             tx.playoffSeries.put({
-                    season: g.season,
-                    currentRound: 0,
-                    series: series
+                season: g.season,
+                currentRound: 0,
+                series: series
             }),
 
             // Add row to team stats and team season attributes
@@ -644,13 +644,15 @@ function newPhaseFantasyDraft(tx, position) {
  * @return {Promise}
  */
 function newPhase(phase, extra) {
+    var phaseErrorHandler;
+
     // Prevent at least some cases of code running twice
     if (phase === g.phase) {
         return;
     }
 
     // Have this catch any newPhase* errors before phaseChangeTx completes
-    var phaseErrorHandler = function (err) {
+    phaseErrorHandler = function (err) {
         if (phaseChangeTx && phaseChangeTx.abort) {
             phaseChangeTx.abort();
         }
@@ -667,7 +669,7 @@ function newPhase(phase, extra) {
         }).then(function () {
             throw err;
         });
-    }
+    };
 
     return lock.phaseChangeInProgress(null).then(function (phaseChangeInProgress) {
         if (!phaseChangeInProgress) {

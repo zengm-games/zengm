@@ -9,6 +9,8 @@ var components = require('./components');
 var bbgmView = require('../util/bbgmView');
 var helpers = require('../util/helpers');
 
+var listenersAdded = false;
+
 /**
  * Generate a box score.
  *
@@ -239,7 +241,6 @@ function updateGamesList(inputs, updateEvents, vm) {
     }
 }
 
-var listenersAdded = false;
 function uiFirst(vm) {
     ko.computed(function () {
         ui.title("Game Log - " + vm.season());

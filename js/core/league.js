@@ -678,6 +678,8 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                     });
                 }
             }).then(function () {
+                var lid;
+
                 if (skipNewPhase) {
                     // Game already in progress, just start it
                     return g.lid;
@@ -686,7 +688,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
                 ui.updateStatus("Idle");
 
-                var lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
+                lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
                 helpers.bbgmPing("league");
 

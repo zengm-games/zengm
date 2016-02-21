@@ -749,7 +749,7 @@ function filter(options) {
 
 // estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).
 function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesCached) {
-    var add, getPicks, getPlayers, gpAvg, payroll, pop, remove, roster, strategy, tx;
+    var add, getPicks, getPlayers, gpAvg, payroll, pop, remove, roster, strategy;
 
     // UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
     if (dpidsRemove.length > 2) {
@@ -804,7 +804,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
 
             // Get players to add
             for (i = 0; i < pidsAdd.length; i++) {
-                tx.players.get( pidsAdd[i]).then(function (p) {
+                tx.players.get(pidsAdd[i]).then(function (p) {
                     add.push({
                         value: p.valueWithContract,
                         skills: _.last(p.ratings).skills,
@@ -822,7 +822,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
             if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
                 // Estimate the order of the picks by team
                 tx.teams.getAll().then(function (teams) {
-                    var estPicks, estValues, gp, i, rCurrent, rLast, rookieSalaries, s, sorted, t, withEstValues, wps;
+                    var estPicks, estValues, gp, halfSeason, i, rCurrent, rLast, rookieSalaries, s, sorted, t, withEstValues, wps;
 
                     // This part needs to be run every time so that gpAvg is available
                     wps = []; // Contains estimated winning percentages for all teams by the end of the season
@@ -855,7 +855,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
                         gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
 
                         // If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
-                        var halfSeason = Math.round(0.5 * g.numGames);
+                        halfSeason = Math.round(0.5 * g.numGames);
                         if (gp >= halfSeason) {
                             wps.push(rCurrent[0] / gp);
                         } else if (gp > 0) {

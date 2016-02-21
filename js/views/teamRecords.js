@@ -92,7 +92,7 @@ function getTeamRecord(team, awards) {
 
 function tallyAwards(awards) {
     var teams = [];
-    _.map(_.range(30), function() {
+    _.map(_.range(30), function () {
         teams.push({
             mvp: 0,
             dpoy: 0,
@@ -108,7 +108,7 @@ function tallyAwards(awards) {
         });
     });
 
-    _.map(awards, function(a) {
+    _.map(awards, function (a) {
         var i;
         teams[a.mvp.tid].mvp++;
         teams[a.dpoy.tid].dpoy++;
@@ -130,14 +130,14 @@ function tallyAwards(awards) {
         }
 
         for (i = 0; i < a.allLeague.length; i++) {
-            _.map(a.allLeague[i].players, function(p) {
+            _.map(a.allLeague[i].players, function (p) {
                 teams[p.tid].allLeague[i]++;
                 teams[p.tid].allLeagueTotal++;
             });
         }
 
         for (i = 0; i < a.allDefensive.length; i++) {
-            _.map(a.allDefensive[i].players, function(p) {
+            _.map(a.allDefensive[i].players, function (p) {
                 teams[p.tid].allDefense[i]++;
                 teams[p.tid].allDefenseTotal++;
             });
@@ -152,15 +152,15 @@ function sumRecordsFor(group, id, name, records) {
         keys = _.keys(records[0]),
         out = {},
         v,
-        xRecords = _.filter(records, function(t) {
+        xRecords = _.filter(records, function (t) {
             return t[group] === id;
         });
 
-    _.map(keys, function(k) {
+    _.map(keys, function (k) {
         if (except.indexOf(k) >= 0) {
             v = "-";
         } else {
-            v = _.reduce(xRecords, function(a, b) {
+            v = _.reduce(xRecords, function (a, b) {
                 return a + Number(b[k]);
             }, 0);
         }

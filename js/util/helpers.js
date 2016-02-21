@@ -398,9 +398,9 @@ function resetG() {
 function bbgmPing(type) {
     if (g.enableLogging) {
         if (type === "league") {
-            _gaq.push(["_trackEvent", "BBGM", "New league", g.lid.toString()]);
+            window._gaq.push(["_trackEvent", "BBGM", "New league", g.lid.toString()]); //eslint-disable-line no-underscore-dangle
         } else if (type === "season" && g.autoPlaySeasons === 0) {
-            _gaq.push(["_trackEvent", "BBGM", "Completed season", g.season.toString()]);
+            window._gaq.push(["_trackEvent", "BBGM", "Completed season", g.season.toString()]); //eslint-disable-line no-underscore-dangle
         }
     }
 }

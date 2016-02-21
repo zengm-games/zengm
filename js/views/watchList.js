@@ -127,8 +127,6 @@ function uiFirst(vm) {
 
     clearWatchListEl = document.getElementById("clear-watch-list");
     clearWatchListEl.addEventListener("click", function () {
-        var tx;
-
         clearWatchListEl.disabled = true;
 
         g.dbl.tx("players", "readwrite", function (tx) {

@@ -48,8 +48,6 @@ function get(req) {
 }
 
 function post(req) {
-    var tx;
-
     $("#finances-settings button").attr("disabled", "disabled").html("Saving...");
 
     g.dbl.tx("teams", "readwrite", function (tx) {

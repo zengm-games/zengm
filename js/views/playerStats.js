@@ -60,7 +60,7 @@ function updatePlayers(inputs, updateEvents, vm) {
             if (tid < 0) { tid = null; } // Show all teams
 
             if (!tid && inputs.abbrev === "watch") {
-                players = players.filter(function(p) {
+                players = players.filter(function (p) {
                     return p.watch && typeof p.watch !== "function";
                 });
             }

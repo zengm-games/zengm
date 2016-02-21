@@ -9,7 +9,6 @@ var Promise = require('bluebird');
 var eventLog = require('../util/eventLog');
 var helpers = require('../util/helpers');
 var lock = require('../util/lock');
-var random = require('../util/random');
 
 /**
  * Start a new contract negotiation with a player.
@@ -78,38 +77,6 @@ function create(tx, pid, resigning, tid) {
 }
 
 /**
- * Restrict the input to between g.minContract and g.maxContract, the valid amount of annual thousands of dollars for a contract.
- *
- * @memberOf core.contractNegotiation
- * @param {number} years Annual salary, in thousands of dollars, to be validated.
- * @return {number} An integer between g.minContract and g.maxContract, rounded to the nearest $10k.
- */
-function validAmount(amount) {
-    if (amount < g.minContract) {
-        amount = g.minContract;
-    } else if (amount > g.maxContract) {
-        amount = g.maxContract;
-    }
-    return helpers.round(amount / 10) * 10;
-}
-
-/**
- * Restrict the input to between 1 and 5, the valid number of years for a contract.
- *
- * @memberOf core.contractNegotiation
- * @param {number} years Number of years, to be validated.
- * @return {number} An integer between 1 and 5.
- */
-function validYears(years) {
-    if (years < 1) {
-        years = 1;
-    } else if (years > 5) {
-        years = 5;
-    }
-    return Math.round(years);
-}
-
-/**
  * Cancel contract negotiations with a player.
  *
  * @memberOf core.contractNegotiation
@@ -167,8 +134,6 @@ function accept(pid, amount, exp) {
         g.dbl.negotiations.get(pid),
         team.getPayroll(null, g.userTid).get(0)
     ]).spread(function (negotiation, payroll) {
-        var tx;
-
         // If this contract brings team over the salary cap, it's not a minimum;
         // contract, and it's not re-signing a current player, ERROR!
         if (!negotiation.resigning && (payroll + amount > g.salaryCap && amount > g.minContract)) {

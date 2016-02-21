@@ -2039,7 +2039,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 }
 
 function killOne() {
-    var p, reason, tid, tx;
+    var p, reason, tid;
 
     reason = random.choice([
         "died from a drug overdose",

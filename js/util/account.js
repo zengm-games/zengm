@@ -100,9 +100,9 @@ function addAchievements(achievements, silent) {
     };
 
     addToIndexedDB = function (achievements) {
-        var i, tx;
-
         return g.dbm.tx("achievements", "readwrite", function (tx) {
+            var i;
+
             for (i = 0; i < achievements.length; i++) {
                 tx.achievements.add({
                     slug: achievements[i]
@@ -145,8 +145,6 @@ function check() {
             withCredentials: true
         }
     })).then(function (data) {
-        var tx;
-
         // Save username for display
         g.vm.topMenu.username(data.username);
         g.vm.topMenu.email(data.email);

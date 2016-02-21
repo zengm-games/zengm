@@ -181,7 +181,7 @@ function updateUserRoster(inputs, updateEvents) {
 }
 
 function updateOffers(inputs, updateEvents) {
-    var offers, tx;
+    var offers;
 
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0) {
         offers = [];

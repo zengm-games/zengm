@@ -47,7 +47,7 @@ function autoSign(tx) {
             }
             random.shuffle(tids);
 
-            return Promise.each(tids, function(tid) {
+            return Promise.each(tids, function (tid) {
                 // Skip the user's team
                 if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
                     return;

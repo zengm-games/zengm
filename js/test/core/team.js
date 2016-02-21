@@ -238,7 +238,7 @@ describe("core/team", function () {
 
         function addTen(tid) {
             return g.dbl.tx("players", "readwrite", function (tx) {
-                var  i = 0;
+                var i = 0;
 
                 return tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, function (p, shortCircuit) {
                     if (i >= 10) {

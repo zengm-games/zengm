@@ -9,7 +9,6 @@ var player = require('../core/player');
 var bbgmView = require('../util/bbgmView');
 var helpers = require('../util/helpers');
 var components = require('./components');
-var Promise = require('bluebird');
 
 var awardOptions, mapping, optionsTmp;
 
@@ -107,7 +106,7 @@ function getPlayerAwards(p, awardType) {
 
     getTeam = function (season) {
         var stats, tid;
-        stats = p.stats.filter(function(s) {
+        stats = p.stats.filter(function (s) {
             return s.season === season;
         });
         tid = _.last(stats);

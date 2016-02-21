@@ -239,7 +239,7 @@ function writePlayerStats(tx, results) {
 
             promises.push(tx.playerStats.index("pid, season, tid")
                 // prev in case there are multiple entries for the same player, like he was traded away and then brought back
-                .iterate([p.id, g.season, t.id], "prev",  function (ps, shortCircuit) {
+                .iterate([p.id, g.season, t.id], "prev", function (ps, shortCircuit) {
                     var i, injuredThisGame, keys;
 
                     // Since index is not on playoffs, manually check
@@ -394,11 +394,11 @@ function writeGameStats(tx, results, att) {
                 results.clutchPlays[i].text = results.clutchPlays[i].tempText;
                 if (results.clutchPlays[i].tids[0] === results.team[tw].id) {
                     results.clutchPlays[i].text += ' in ' + (results.team[tw].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a')
-                        + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tw].id], g.season, results.gid]) + '">' 
+                        + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tw].id], g.season, results.gid]) + '">'
                         + results.team[tw].stat.pts + "-" + results.team[tl].stat.pts + '</a> win over the ' + g.teamNamesCache[results.team[tl].id] + '.';
                 } else {
                     results.clutchPlays[i].text += ' in ' + (results.team[tl].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a')
-                        + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tl].id], g.season, results.gid]) + '">' 
+                        + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tl].id], g.season, results.gid]) + '">'
                         + results.team[tl].stat.pts + "-" + results.team[tw].stat.pts + '</a> loss to the ' + g.teamNamesCache[results.team[tw].id] + '.';
                 }
                 delete results.clutchPlays[i].tempText;
@@ -745,7 +745,7 @@ function play(numDays, start, gidPlayByPlay) {
                 }));
 
                 return Promise.all(promises);
-            })
+            });
         }).then(function () {
             var i, raw, url;
 

@@ -78,7 +78,7 @@ describe("util/account", function () {
 
     describe("#checkAchievement.98_degrees()", function () {
         it("should award achievement for 82-0 regular season record and 16-0 playoff record for user's team", function () {
-            var ps, tx;
+            var ps;
 
             // tid 7 wins 4-0 every series
             ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":0,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":0,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
@@ -108,8 +108,6 @@ describe("util/account", function () {
                 });
             }).then(function () {
                 return account.checkAchievement["98_degrees"](false).then(function (awarded) {
-                    var tx;
-
                     assert.equal(awarded, false);
 
                     return g.dbl.tx("teams", "readwrite", function (tx) {
@@ -163,8 +161,6 @@ describe("util/account", function () {
             });
         });
         it("should award dynasty for 6 titles in 8 seasons, but not dynasty_2 or dynasty_3", function () {
-            var tx;
-
             // Add 6 to the existing season, making 7 seasons total
             return g.dbl.tx("teams", "readwrite", function (tx) {
                 return tx.teams.get(g.userTid).then(function (t) {
@@ -188,8 +184,6 @@ describe("util/account", function () {
                     assert.equal(awarded, false);
                 });
             }).then(function () {
-                var tx;
-
                 // Add 1 to the existing 7 seasons, making 8 seasons total
                 return g.dbl.tx("teams", "readwrite", function (tx) {
                     return tx.teams.get(g.userTid).then(function (t) {
@@ -239,8 +233,6 @@ describe("util/account", function () {
             });
         });
         it("should award dynasty, dynasty_2, and dynasty_3 for 11 titles in 13 seasons if there are 8 contiguous", function () {
-            var tx;
-
             // Add 5 to the existing season, making 13 seasons total
             return g.dbl.tx("teams", "readwrite", function (tx) {
                 return tx.teams.get(g.userTid).then(function (t) {

@@ -3,8 +3,9 @@
   "version": "3.4.0",
   "dependencies": {
     "backboard": {
-      "version": "1.0.3",
-      "from": "backboard@1.0.3",
+      "version": "1.0.4",
+      "from": "backboard@1.0.4",
+      "resolved": "https://registry.npmjs.org/backboard/-/backboard-1.0.4.tgz",
       "dependencies": {
         "array-unique": {
           "version": "0.2.1",

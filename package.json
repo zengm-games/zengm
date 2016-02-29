@@ -24,7 +24,7 @@
     "watch-test": "watchify js/test/app.js -o gen/app-test.js"
   },
   "dependencies": {
-    "backboard": "1.0.3",
+    "backboard": "1.0.4",
     "bluebird": "3.3.1",
     "facesjs": "1.0.0",
     "indexeddb-getall-shim": "1.1.2",

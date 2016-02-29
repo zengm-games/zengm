@@ -1,3 +1,5 @@
+can i get rid of http/https links?
+
 node-source-map-support for better errors within bluebird
   in app.js: require('source-map-support').install({handleUncaughtExceptions: false});
   needs https://github.com/ben-ng/minifyify/issues/116 to be fixed first

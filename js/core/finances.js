@@ -166,19 +166,24 @@ function updateRanks(tx, types) {
  * @param {string} item Item inside the category
  * @return {number} Rank, from 1 to g.numTeams (default 30)
  */
-function getRankLastThree(t, category, item) {
+function getRankLastThree(teamSeasons, category, item) {
     var s;
 
-    s = t.seasons.length - 1; // Most recent season index
+    if (teamSeasons.hasOwnProperty('region')) {
+        console.log('ERROR: getRankLastThree called with team object');
+        return 15;
+    }
+
+    s = teamSeasons.length - 1; // Most recent season index
     if (s > 1) {
         // Use three seasons if possible
-        return (t.seasons[s][category][item].rank + t.seasons[s - 1][category][item].rank + t.seasons[s - 2][category][item].rank) / 3;
+        return (teamSeasons[s][category][item].rank + teamSeasons[s - 1][category][item].rank + teamSeasons[s - 2][category][item].rank) / 3;
     }
     if (s > 0) {
         // Use two seasons if possible
-        return (t.seasons[s][category][item].rank + t.seasons[s - 1][category][item].rank + 15.5) / 3;
+        return (teamSeasons[s][category][item].rank + teamSeasons[s - 1][category][item].rank + 15.5) / 3;
     }
-    return (t.seasons[s][category][item].rank + 15.5 + 15.5) / 3;
+    return (teamSeasons[s][category][item].rank + 15.5 + 15.5) / 3;
 }
 
 module.exports = {

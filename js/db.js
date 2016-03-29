@@ -74,7 +74,7 @@ function connectMeta() {
  * @param {number} lid Integer league ID number for new league.
  */
 function createLeague(upgradeDB, lid) {
-    var draftPickStore, eventStore, gameStore, playerFeatStore, playerStatsStore, playerStore, releasedPlayerStore;
+    var draftPickStore, eventStore, gameStore, playerFeatStore, playerStatsStore, playerStore, releasedPlayerStore, teamSeasonsStore, teamStatsStore;
 
     console.log("Creating league" + lid + " database");
 
@@ -82,6 +82,8 @@ function createLeague(upgradeDB, lid) {
     playerStore = upgradeDB.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
     playerStatsStore = upgradeDB.createObjectStore("playerStats", {keyPath: "psid", autoIncrement: true});
     upgradeDB.createObjectStore("teams", {keyPath: "tid"});
+    teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {keyPath: "rid", autoIncrement: true});
+    teamStatsStore = upgradeDB.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
     gameStore = upgradeDB.createObjectStore("games", {keyPath: "gid"});
     upgradeDB.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
     upgradeDB.createObjectStore("playoffSeries", {keyPath: "season"});
@@ -100,8 +102,12 @@ function createLeague(upgradeDB, lid) {
     playerStore.createIndex("draft.year", "draft.year", {unique: false});
     playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
     playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
-    playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false}); // Would be unique if indexed on playoffs too, but that is a boolean and introduces complications... maybe worth fixing though? No, player could get traded back to same team in one season
+    playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false}); // Can't be unique because player could get traded back to same team in one season (and because playoffs is boolean)
 //        gameStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used because currently the season index is used. If multiple indexes are eventually supported, then use this too.
+    teamSeasonsStore.createIndex("tid", "tid", {unique: false});
+    teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {unique: true});
+    teamStatsStore.createIndex("tid", "tid", {unique: false});
+    teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false}); // Not unique because of playoffs
     gameStore.createIndex("season", "season", {unique: false});
     releasedPlayerStore.createIndex("tid", "tid", {unique: false});
     releasedPlayerStore.createIndex("contract.exp", "contract.exp", {unique: false});

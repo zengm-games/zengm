@@ -1,5 +1,7 @@
 'use strict';
 
+require('source-map-support').install({handleUncaughtExceptions: false});
+
 var db = require('./db');
 var views = require('./views');
 var ui = require('./ui');

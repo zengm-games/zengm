@@ -213,9 +213,9 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
 
         return setGameAttributesComplete(gameAttributes);
     }).then(function () {
-        var i, j, k, round, scoutingRank, t, toMaybeAdd;
+        var i, j, k, round, scoutingRank, t, teamStats, teamSeasons, toMaybeAdd;
 
-        return g.dbl.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"], "readwrite", function (tx) {
+        return g.dbl.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"], "readwrite", function (tx) {
             // Draft picks for the first 4 years, as those are the ones can be traded initially
             if (leagueFile.hasOwnProperty("draftPicks")) {
                 for (i = 0; i < leagueFile.draftPicks.length; i++) {
@@ -251,19 +251,36 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
             // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
             for (i = 0; i < g.numTeams; i++) {
                 t = team.generate(teams[i]);
+                tx.teams.add(t);
 
+                if (teams[i].hasOwnProperty("seasons")) {
+                    teamSeasons = teams[i].seasons;
+                } else {
+                    teamSeasons = [team.genSeasonRow(t.tid)];
+                    teamSeasons[0].pop = teams[i].pop;
+                }
+                teamSeasons.forEach(function (teamSeason) {
+                    tx.teamSeasons.add(teamSeason);
+                });
+
+                if (teams[i].hasOwnProperty("stats")) {
+                    teamSeasons = teams[i].stats;
+                } else {
+                    teamStats = [team.genStatsRow(t.tid)];
+                }
                 // If needed for imported league files, set missing blocks against to 0
-                for (j = 0; j < t.stats.length; j++) {
-                    if (!t.stats[j].hasOwnProperty("ba")) {
-                        t.stats[j].ba = 0;
+                for (j = 0; j < teamStats.length; j++) {
+                    if (!teamStats[j].hasOwnProperty("ba")) {
+                        teamStats[j].ba = 0;
                     }
                 }
-
-                tx.teams.add(t);
+                teamStats.forEach(function (teamStat) {
+                    tx.teamStats.add(teamStat);
+                });
 
                 // Save scoutingRank for later
                 if (i === g.userTid) {
-                    scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
+                    scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
                 }
             }
 

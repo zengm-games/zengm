@@ -6,6 +6,7 @@ var player = require('../core/player');
 var season = require('../core/season');
 var team = require('../core/team');
 var backboard = require('backboard');
+var Promise = require('bluebird');
 var ko = require('knockout');
 var komapping = require('knockout.mapping');
 var _ = require('underscore');
@@ -38,11 +39,10 @@ function updateInbox(inputs, updateEvents) {
 
 function updateTeam(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-        return g.dbl.teams.get(g.userTid).then(function (t) {
-            var latestSeason;
-
-            latestSeason = t.seasons[t.seasons.length - 1];
-
+        return Promise.all([
+            g.dbl.teams.get(g.userTid),
+            g.dbl.teamSeasons.index("season, tid").get([g.season, g.userTid])
+        ]).spread(function (t, latestSeason) {
             return {
                 region: t.region,
                 name: t.name,

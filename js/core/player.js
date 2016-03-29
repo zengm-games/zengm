@@ -517,42 +517,36 @@ function bonus(p, amount) {
  *
  * This base mood is then modulated for an individual player in addToFreeAgents.
  *
- * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on teams; if null is passed, then a new transaction will be used.
+ * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on teamSeasons; if null is passed, then a new transaction will be used.
  * @return {Promise} Array of base moods, one for each team.
  */
 function genBaseMoods(ot) {
     var dbOrTx = ot !== null ? ot : g.dbl;
-    return dbOrTx.teams.getAll().then(function (teams) {
-        var baseMoods, i, s;
+    return dbOrTx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, ''])).map(function (teamSeason) {
+        var baseMood;
 
-        baseMoods = [];
-
-        s = teams[0].seasons.length - 1;  // Most recent season index
-
-        for (i = 0; i < teams.length; i++) {
-            // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
-            if (teams[i].seasons[s].playoffRoundsWon === 4 && Math.random() < 0.99) {
-                baseMoods[i] = -0.25; // Should guarantee no refusing to re-sign
-            } else {
-                baseMoods[i] = 0;
-
-                // Hype
-                baseMoods[i] += 0.5 * (1 - teams[i].seasons[s].hype);
-
-                // Facilities
-                baseMoods[i] += 0.1 * (finances.getRankLastThree(teams[i], "expenses", "facilities") - 1) / (g.numTeams - 1);
-
-                // Population
-                baseMoods[i] += 0.2 * (1 - teams[i].seasons[s].pop / 10);
-
-                // Randomness
-                baseMoods[i] += random.uniform(-0.2, 0.2);
-
-                baseMoods[i] = helpers.bound(baseMoods[i], 0, 1);
-            }
+        // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
+        if (teamSeason.playoffRoundsWon === 4 && Math.random() < 0.99) {
+            return -0.25; // Should guarantee no refusing to re-sign
         }
 
-        return baseMoods;
+        baseMood = 0;
+
+        // Hype
+        baseMood += 0.5 * (1 - teamSeason.hype);
+
+        // Facilities
+        baseMood += 0.1 * (finances.getRankLastThree({region: 'foo'}, "expenses", "facilities") - 1) / (g.numTeams - 1);
+
+        // Population
+        baseMood += 0.2 * (1 - teamSeason.pop / 10);
+
+        // Randomness
+        baseMood += random.uniform(-0.2, 0.2);
+
+        baseMood = helpers.bound(baseMood, 0, 1);
+
+        return baseMood;
     });
 }
 

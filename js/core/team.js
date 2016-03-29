@@ -11,6 +11,7 @@ var _ = require('underscore');
 var eventLog = require('../util/eventLog');
 var helpers = require('../util/helpers');
 var random = require('../util/random');
+var sortBy = require('lodash.sortby');
 
 /**
  * Add a new row of season attributes to a team object.
@@ -23,6 +24,8 @@ var random = require('../util/random');
  */
 function addSeasonRow(t) {
     var newSeason, s;
+
+    console.log('OBSOLETE FUNCTION USED: addSeasonRow');
 
     s = t.seasons.length - 1; // Most recent season
 
@@ -130,29 +133,120 @@ function addSeasonRow(t) {
     return t;
 }
 
+function genSeasonRow(tid, prevSeason) {
+    var newSeason;
+
+    // Initial entry
+    newSeason = {
+        tid: tid,
+        season: g.season,
+        gp: 0,
+        gpHome: 0,
+        att: 0,
+        cash: 10000,
+        won: 0,
+        lost: 0,
+        wonHome: 0,
+        lostHome: 0,
+        wonAway: 0,
+        lostAway: 0,
+        wonDiv: 0,
+        lostDiv: 0,
+        wonConf: 0,
+        lostConf: 0,
+        lastTen: [],
+        streak: 0,
+        playoffRoundsWon: -1,  // -1: didn't make playoffs. 0: lost in first round. ... 4: won championship
+        hype: Math.random(),
+        pop: 0,  // Needs to be set somewhere!
+        tvContract: {
+            amount: 0,
+            exp: 0
+        },
+        revenues: {
+            merch: {
+                amount: 0,
+                rank: 15.5
+            },
+            sponsor: {
+                amount: 0,
+                rank: 15.5
+            },
+            ticket: {
+                amount: 0,
+                rank: 15.5
+            },
+            nationalTv: {
+                amount: 0,
+                rank: 15.5
+            },
+            localTv: {
+                amount: 0,
+                rank: 15.5
+            }
+        },
+        expenses: {
+            salary: {
+                amount: 0,
+                rank: 15.5
+            },
+            luxuryTax: {
+                amount: 0,
+                rank: 15.5
+            },
+            minTax: {
+                amount: 0,
+                rank: 15.5
+            },
+            buyOuts: {
+                amount: 0,
+                rank: 15.5
+            },
+            scouting: {
+                amount: 0,
+                rank: 15.5
+            },
+            coaching: {
+                amount: 0,
+                rank: 15.5
+            },
+            health: {
+                amount: 0,
+                rank: 15.5
+            },
+            facilities: {
+                amount: 0,
+                rank: 15.5
+            }
+        },
+        payrollEndOfSeason: -1
+    };
+
+    if (prevSeason) {
+        // New season, carrying over some values from the previous season
+        newSeason.pop = prevSeason.pop * random.uniform(0.98, 1.02);  // Mean population should stay constant, otherwise the economics change too much
+        newSeason.hype = prevSeason.hype;
+        newSeason.cash = prevSeason.cash;
+        newSeason.tvContract = prevSeason.tvContract;
+    }
+
+    return newSeason;
+}
+
 /**
- * Add a new row of stats to a team object.
+ * Generate a new row of team stats.
  *
  * A row contains stats for unique values of (season, playoffs). So new rows need to be added when a new season starts or when a team makes the playoffs.
  *
  * @memberOf core.team
- * @param {Object} t Team object.
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
- * @return {Object} Updated team object.
+ * @return {Object} Team stats object.
  */
-function addStatsRow(t, playoffs) {
-    var i;
-
+function genStatsRow(tid, playoffs) {
     playoffs = playoffs !== undefined ? playoffs : false;
 
-    // If there is already an entry for this season+playoffs, do nothing
-    for (i = 0; i < t.stats.length; i++) {
-        if (t.stats[i].season === g.season && t.stats[i].playoffs === playoffs) {
-            return t;
-        }
-    }
-
-    t.stats.push({
+    return {
+        tid: tid,
         season: g.season,
         playoffs: playoffs,
         gp: 0,
@@ -180,9 +274,7 @@ function addStatsRow(t, playoffs) {
         pf: 0,
         pts: 0,
         oppPts: 0
-    });
-
-    return t;
+    };
 }
 
 /**
@@ -209,8 +301,6 @@ function generate(tm) {
         name: tm.name,
         abbrev: tm.abbrev,
         imgURL: tm.imgURL !== undefined ? tm.imgURL : "",
-        stats: tm.hasOwnProperty("stats") ? tm.stats : [],
-        seasons: tm.hasOwnProperty("seasons") ? tm.seasons : [],
         budget: {
             ticketPrice: {
                 amount: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.amount : helpers.round(25 + 25 * (g.numTeams - tm.popRank) / (g.numTeams - 1), 2),
@@ -235,14 +325,6 @@ function generate(tm) {
         },
         strategy: strategy
     };
-
-    if (!tm.hasOwnProperty("seasons")) {
-        t = addSeasonRow(t);
-        t.seasons[0].pop = tm.pop;
-    }
-    if (!tm.hasOwnProperty("stats")) {
-        t = addStatsRow(t);
-    }
 
     return t;
 }
@@ -681,15 +763,23 @@ function filter(options) {
             for (i = 0; i < ts.length; i++) {
                 ft.stats.push(filterStatsPartial({}, ts[i], options.stats));
             }
-        } else {
-            // Single seasons - merge stats with root object
+        } else 
+{            // Single seasons - merge stats with root object
             ft = filterStatsPartial(ft, ts, options.stats);
         }
     };
 
-
-    return helpers.maybeReuseTx(["players", "releasedPlayers", "teams"], "readonly", options.ot, function (tx) {
-        return tx.teams.getAll(options.tid).then(function (t) {
+    return helpers.maybeReuseTx(["players", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readonly", options.ot, function (tx) {
+        return tx.teams.getAll(options.tid).map(function (t) {
+            return Promise.all([
+                tx.teamSeasons.index("tid").getAll(t.tid),
+                tx.teamStats.index("tid").getAll(t.tid)
+            ]).spread(function (seasons, stats) {
+                t.seasons = sortBy(seasons, "season");
+                t.stats = sortBy(stats, ["season", "playoffs"]);
+                return t;
+            });
+        }).then(function (t) {
             var ft, fts, i, returnOneTeam, savePayroll, sortBy;
 
             // t will be an array of g.numTeams teams (if options.tid is null) or an array of 1 team. If 1, then we want to return just that team object at the end, not an array of 1 team.
@@ -1421,7 +1511,8 @@ function checkRosterSizes() {
 
 module.exports = {
     addSeasonRow: addSeasonRow,
-    addStatsRow: addStatsRow,
+    genSeasonRow: genSeasonRow,
+    genStatsRow: genStatsRow,
     generate: generate,
     findStarters: findStarters,
     rosterAutoSort: rosterAutoSort,

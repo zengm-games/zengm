@@ -264,7 +264,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 });
 
                 if (teams[i].hasOwnProperty("stats")) {
-                    teamSeasons = teams[i].stats;
+                    teamStats = teams[i].stats;
                 } else {
                     teamStats = [team.genStatsRow(t.tid)];
                 }

@@ -115,6 +115,8 @@ function updateRanks(tx, types) {
         }
     };
 
+return require('bluebird').resolve();
+
     return tx.teams.getAll().then(function (teams) {
         var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam, s;
 

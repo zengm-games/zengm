@@ -26,12 +26,18 @@ function writeTeamStats(tx, results) {
 
         return Promise.all([
             team.getPayroll(tx, results.team[t1].id).get(0),
-            tx.teams.get(results.team[t1].id)
-        ]).spread(function (payroll, t) {
+            tx.teams.get(results.team[t1].id),
+            tx.teamSeasons.index("season, tid").get([g.season, results.team[t1].id]),
+            tx.teamStats.index("season, tid").getAll([g.season, results.team[t1].id])
+        ]).spread(function (payroll, t, teamSeason, teamStatsArray) {
             var att, coachingPaid, count, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketPrice, ticketRevenue, winp, winpOld, won;
 
-            teamSeason = t.seasons[t.seasons.length - 1];
-            teamStats = t.stats[t.stats.length - 1];
+            for (i = 0; i < teamStatsArray.length; i++) {
+                if (teamStatsArray[i].playoffs === (g.phase === g.PHASE.PLAYOFFS)) {
+                    teamStats = teamStatsArray[i];
+                    break;
+                }
+            }
 
             if (results.team[t1].stat.pts > results.team[t2].stat.pts) {
                 won = true;
@@ -99,7 +105,7 @@ function writeTeamStats(tx, results) {
 
             // Hype - relative to the expectations of prior seasons
             if (teamSeason.gp > 5 && g.phase !== g.PHASE.PLAYOFFS) {
-                winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
+/*                winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
                 winpOld = 0;
                 count = 0;
                 for (i = t.seasons.length - 2; i >= 0; i--) { // Start at last season, go back
@@ -128,7 +134,7 @@ function writeTeamStats(tx, results) {
                     teamSeason.hype = 1;
                 } else if (teamSeason.hype < 0) {
                     teamSeason.hype = 0;
-                }
+                }*/
             }
 
             revenue = merchRevenue + sponsorRevenue + nationalTvRevenue + localTvRevenue + ticketRevenue;
@@ -213,7 +219,11 @@ function writeTeamStats(tx, results) {
                 }
             }
 
-            return tx.teams.put(t).then(function () {
+            return Promise.all([
+                tx.teams.put(t),
+                tx.teamSeasons.put(teamSeason),
+                tx.teamStats.put(teamStats)
+            ]).then(function () {
                 return {
                     att: att,
                     ticketPrice: ticketPrice
@@ -550,20 +560,15 @@ function loadTeams(tx) {
     loadTeam = function (tid) {
         return Promise.all([
             tx.players.index('tid').getAll(tid),
-            tx.teams.get(tid)
-        ]).spread(function (players, team) {
+            tx.teams.get(tid),
+            tx.teamSeasons.index("season, tid").get([g.season, tid])
+        ]).spread(function (players, team, teamSeason) {
             var i, j, k, numPlayers, p, pos, rating, t, teamSeason;
 
             players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
 
             t = {id: tid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
 
-            for (j = 0; j < team.seasons.length; j++) {
-                if (team.seasons[j].season === g.season) {
-                    teamSeason = team.seasons[j];
-                    break;
-                }
-            }
             t.won = teamSeason.won;
             t.lost = teamSeason.lost;
             t.cid = team.cid;
@@ -680,7 +685,7 @@ function play(numDays, start, gidPlayByPlay) {
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
     cbSaveResults = function (results) {
-        return g.dbl.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite", function (tx) {
+        return g.dbl.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], "readwrite", function (tx) {
             return Promise.map(results, function (result) {
                 return writeTeamStats(tx, result).then(function (cache) {
                     return writeGameStats(tx, result, cache.att);
@@ -820,7 +825,7 @@ function play(numDays, start, gidPlayByPlay) {
             ui.updateStatus("Playing (" + numDays + " days left)");
         }
 
-        return g.dbl.tx(["players", "schedule", "teams"], function (tx) {
+        return g.dbl.tx(["players", "schedule", "teams", "teamSeasons"], function (tx) {
             // Get the schedule for today
             return season.getSchedule({ot: tx, oneDay: true}).then(function (schedule) {
                 // Stop if no games

@@ -6,6 +6,10 @@ optimize team.filter (currently doing getAll for stats and seasons)
 
 sanity check to make sure seasons and stats don't get saved to db
 
+re-add hype changing somehow in game.js
+
+fix finances.updateRanks
+
 restore bugsnag
     <script src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
             data-apikey="c10b95290070cb8888a7a79cc5408555"></script>

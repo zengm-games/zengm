@@ -20,7 +20,7 @@ var random = require('../util/random');
  * @return {Promise}
  */
 function autoSign(tx) {
-    return helpers.maybeReuseTx(["players", "playerStats", "releasedPlayers", "teams"], "readwrite", tx, function (tx) {
+    return helpers.maybeReuseTx(["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", tx, function (tx) {
         return Promise.all([
             team.filter({
                 ot: tx,

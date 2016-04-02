@@ -22,16 +22,16 @@ function post(req) {
 
 function updateDeleteLeague(inputs) {
     return db.connectLeague(inputs.lid).then(function () {
-        return g.dbl.tx(["games", "players", "teams"], function (tx) {
+        return g.dbl.tx(["games", "players", "teamSeasons"], function (tx) {
             return Promise.all([
                 tx.games.count(),
                 tx.players.count(),
-                tx.teams.get(0),
+                tx.teamSeasons.index("tid").getAll(0),
                 g.dbm.leagues.get(inputs.lid)
-            ]).spread(function (numGames, numPlayers, t, l) {
+            ]).spread(function (numGames, numPlayers, teamSeasons, l) {
                 var numSeasons;
 
-                numSeasons = t.seasons.length;
+                numSeasons = teamSeasons.length;
 
                 return {
                     lid: inputs.lid,

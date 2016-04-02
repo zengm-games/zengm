@@ -88,50 +88,42 @@ function updateExportLeague(inputs, updateEvents) {
     var categories;
 
     if (updateEvents.indexOf("firstRun") >= 0) {
-        categories = [
-            {
-                objectStores: "players,releasedPlayers,awards",
-                name: "Players",
-                desc: "All player info, ratings, and awards - but not stats!",
-                checked: true
-            },
-            {
-                objectStores: "playerStats",
-                name: "Player Stats",
-                desc: "All player stats.",
-                checked: true
-            },
-            {
-                objectStores: "teams",
-                name: "Teams",
-                desc: "All team info and stats.",
-                checked: true
-            },
-            {
-                objectStores: "schedule,playoffSeries",
-                name: "Schedule",
-                desc: "Current regular season schedule and playoff series.",
-                checked: true
-            },
-            {
-                objectStores: "draftPicks",
-                name: "Draft Picks",
-                desc: "Traded draft picks.",
-                checked: true
-            },
-            {
-                objectStores: "trade,negotiations,gameAttributes,draftOrder,messages,events,playerFeats",
-                name: "Game State",
-                desc: "Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
-                checked: true
-            },
-            {
-                objectStores: "games",
-                name: "Box Scores",
-                desc: '<span class="text-danger">If you\'ve played more than a few seasons, this takes up a ton of space!</span>',
-                checked: false
-            }
-        ];
+        categories = [{
+            objectStores: "players,releasedPlayers,awards",
+            name: "Players",
+            desc: "All player info, ratings, and awards - but not stats!",
+            checked: true
+        }, {
+            objectStores: "playerStats",
+            name: "Player Stats",
+            desc: "All player stats.",
+            checked: true
+        }, {
+            objectStores: "teams,teamSeasons,teamStats",
+            name: "Teams",
+            desc: "All team info and stats.",
+            checked: true
+        }, {
+            objectStores: "schedule,playoffSeries",
+            name: "Schedule",
+            desc: "Current regular season schedule and playoff series.",
+            checked: true
+        }, {
+            objectStores: "draftPicks",
+            name: "Draft Picks",
+            desc: "Traded draft picks.",
+            checked: true
+        }, {
+            objectStores: "trade,negotiations,gameAttributes,draftOrder,messages,events,playerFeats",
+            name: "Game State",
+            desc: "Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
+            checked: true
+        }, {
+            objectStores: "games",
+            name: "Box Scores",
+            desc: '<span class="text-danger">If you\'ve played more than a few seasons, this takes up a ton of space!</span>',
+            checked: false
+        }];
         return {categories: categories};
     }
 }

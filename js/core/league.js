@@ -778,27 +778,56 @@ function exportLeague(stores) {
         });
     }, {concurrency: Infinity}).then(function () {
         // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
-        var i, j, pid;
+        var i, j, pid, tid;
 
         if (stores.indexOf("playerStats") >= 0) {
             for (i = 0; i < exportedLeague.playerStats.length; i++) {
                 pid = exportedLeague.playerStats[i].pid;
 
-                // Find player corresponding with that stats row
                 for (j = 0; j < exportedLeague.players.length; j++) {
                     if (exportedLeague.players[j].pid === pid) {
                         if (!exportedLeague.players[j].hasOwnProperty("stats")) {
                             exportedLeague.players[j].stats = [];
                         }
-
                         exportedLeague.players[j].stats.push(exportedLeague.playerStats[i]);
-
                         break;
                     }
                 }
             }
 
             delete exportedLeague.playerStats;
+        }
+
+        if (stores.indexOf("teams") >= 0) {
+            for (i = 0; i < exportedLeague.teamSeasons.length; i++) {
+                tid = exportedLeague.teamSeasons[i].tid;
+
+                for (j = 0; j < exportedLeague.teams.length; j++) {
+                    if (exportedLeague.teams[j].tid === tid) {
+                        if (!exportedLeague.teams[j].hasOwnProperty("seasons")) {
+                            exportedLeague.teams[j].seasons = [];
+                        }
+                        exportedLeague.teams[j].seasons.push(exportedLeague.teamSeasons[i]);
+                        break;
+                    }
+                }
+            }
+            for (i = 0; i < exportedLeague.teamStats.length; i++) {
+                tid = exportedLeague.teamStats[i].tid;
+
+                for (j = 0; j < exportedLeague.teams.length; j++) {
+                    if (exportedLeague.teams[j].tid === tid) {
+                        if (!exportedLeague.teams[j].hasOwnProperty("stats")) {
+                            exportedLeague.teams[j].stats = [];
+                        }
+                        exportedLeague.teams[j].stats.push(exportedLeague.teamStats[i]);
+                        break;
+                    }
+                }
+            }
+
+            delete exportedLeague.teamSeasons;
+            delete exportedLeague.teamStats;
         }
     }).then(function () {
         return exportedLeague;

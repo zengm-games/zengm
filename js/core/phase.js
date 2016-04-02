@@ -60,14 +60,10 @@ function newPhasePreseason(tx) {
     return freeAgents.autoSign(tx).then(function () { // Important: do this before changing the season or contracts and stats are fucked up
         return require('../core/league').setGameAttributes(tx, {season: g.season + 1});
     }).then(function () {
-        var coachingRanks, scoutingRank;
-
-        coachingRanks = [];
+        var scoutingRank;
 
         // Add row to team stats and season attributes
         return tx.teams.iterate(function (t) {
-            // Save the coaching rank for later
-            coachingRanks[t.tid] = _.last(t.seasons).expenses.coaching.rank;
 
             // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
             // This is done BEFORE a new season row is added.
@@ -75,11 +71,15 @@ function newPhasePreseason(tx) {
                 scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
             }
 
-            t = team.addSeasonRow(t);
-            t = team.addStatsRow(t);
+            tx.teamSeasons.add(team.genSeasonRow(t.tid));
+            tx.teamStats.add(team.genStatsRow(t.tid));
 
             return t;
         }).then(function () {
+            return tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season - 1, ''])).map(function (teamSeason) {
+                return teamSeason.expenses.coaching.rank;
+            });
+        }).then(function (coachingRanks) {
             // Loop through all non-retired players
             return tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
                 // Update ratings
@@ -676,7 +676,7 @@ function newPhase(phase, extra) {
                 require('../core/league').updateLastDbChange();
 
                 if (phase === g.PHASE.PRESEASON) {
-                    return g.dbl.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams"], "readwrite", function (tx) {
+                    return g.dbl.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
                         return newPhasePreseason(tx).catch(phaseErrorHandler);
                     });
@@ -715,13 +715,13 @@ function newPhase(phase, extra) {
                     });
                 }
                 if (phase === g.PHASE.RESIGN_PLAYERS) {
-                    return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite", function (tx) {
+                    return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
                         return newPhaseResignPlayers(tx).catch(phaseErrorHandler);
                     });
                 }
                 if (phase === g.PHASE.FREE_AGENCY) {
-                    return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams"], "readwrite", function (tx) {
+                    return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
                         return newPhaseFreeAgency(tx).catch(phaseErrorHandler);
                     });

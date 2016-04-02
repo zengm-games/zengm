@@ -703,7 +703,7 @@ function newPhase(phase, extra) {
                     });
                 }
                 if (phase === g.PHASE.DRAFT) {
-                    return g.dbl.tx(["draftPicks", "draftOrder", "gameAttributes", "players", "teams"], "readwrite", function (tx) {
+                    return g.dbl.tx(["draftPicks", "draftOrder", "gameAttributes", "players", "teams", "teamSeasons", "teamStats"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
                         return newPhaseDraft(tx).catch(phaseErrorHandler);
                     });

@@ -1336,7 +1336,7 @@ console.log(dv);*/
  */
 function updateStrategies(tx) {
     return tx.teams.iterate(function (t) {
-        var dWon, s, won;
+        var dWon, won;
 
         // Skip user's team
         if (t.tid === g.userTid) {
@@ -1344,19 +1344,23 @@ function updateStrategies(tx) {
         }
 
         // Change in wins
-        s = t.seasons.length - 1;
-        won = t.seasons[s].won;
-        if (s > 0) {
-            dWon = won - t.seasons[s - 1].won;
-        } else {
-            dWon = 0;
-        }
-
-        // Young stars
-        return tx.players.index('tid').getAll(t.tid).then(function (players) {
-            return player.withStats(tx, players, {
-                statsSeasons: [g.season],
-                statsTid: t.tid
+        return Promise.all([
+            tx.teamSeasons.index("season, tid").get([g.season, t.tid]),
+            tx.teamSeasons.index("season, tid").get([g.season - 1, t.tid])
+        ]).spread(function (teamSeason, teamSeasonOld) {
+            won = teamSeason.won;
+            if (teamSeasonOld) {
+                dWon = won - teamSeasonOld.won;
+            } else {
+                dWon = 0;
+            }
+        }).then(function () {
+            // Young stars
+            return tx.players.index('tid').getAll(t.tid).then(function (players) {
+                return player.withStats(tx, players, {
+                    statsSeasons: [g.season],
+                    statsTid: t.tid
+                });
             });
         }).then(function (players) {
             var age, denominator, i, numerator, score, updated, youngStar;

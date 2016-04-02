@@ -267,13 +267,9 @@ function newPhasePlayoffs(tx) {
             }),
 
             // Add row to team stats and team season attributes
-            tx.teams.iterate(function (t) {
-                var teamSeason;
-
-                teamSeason = t.seasons[t.seasons.length - 1];
-
-                if (tidPlayoffs.indexOf(t.tid) >= 0) {
-                    t = team.addStatsRow(t, true);
+            tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), function (teamSeason) {
+                if (tidPlayoffs.indexOf(teamSeason.tid) >= 0) {
+                    tx.teamStats.add(team.genStatsRow(teamSeason.tid, true));
 
                     teamSeason.playoffRoundsWon = 0;
 
@@ -290,7 +286,7 @@ function newPhasePlayoffs(tx) {
                     }
                 }
 
-                return t;
+                return teamSeason;
             }),
 
             // Add row to player stats
@@ -695,7 +691,7 @@ function newPhase(phase, extra) {
                     return newPhaseAfterTradeDeadline();
                 }
                 if (phase === g.PHASE.PLAYOFFS) {
-                    return g.dbl.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams"], "readwrite", function (tx) {
+                    return g.dbl.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
                         return newPhasePlayoffs(tx).catch(phaseErrorHandler);
                     });

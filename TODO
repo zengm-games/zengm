@@ -1,6 +1,6 @@
 # teams refactor
 
-finances.getRankLastThree is awkward now, should be precomputed?
+finances.getRankLastThree is awkward now, should be precomputed? or is it really needed, could just cap how fast rank changes
 
 optimize team.filter (currently doing getAll for stats and seasons)
 

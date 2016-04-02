@@ -6,6 +6,7 @@
 
 var g = require('../globals');
 var _ = require('underscore');
+var backboard = require('backboard');
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -20,26 +21,22 @@ function assessPayrollMinLuxury(tx) {
 
     return require('./team').getPayrolls(tx).then(function (payrolls) {
         // Update teams object store
-        return tx.teams.iterate(function (t) {
-            var s;
-
-            s = t.seasons.length - 1; // Relevant row is the last one
-
+        return tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), function (teamSeason) {
             // Store payroll
-            t.seasons[s].payrollEndOfSeason = payrolls[t.tid];
+            teamSeason.payrollEndOfSeason = payrolls[teamSeason.tid];
 
             // Assess minimum payroll tax and luxury tax
-            if (payrolls[t.tid] < g.minPayroll) {
-                t.seasons[s].expenses.minTax.amount = g.minPayroll - payrolls[t.tid];
-                t.seasons[s].cash -= t.seasons[s].expenses.minTax.amount;
-            } else if (payrolls[t.tid] > g.luxuryPayroll) {
-                amount = g.luxuryTax * (payrolls[t.tid] - g.luxuryPayroll);
+            if (payrolls[teamSeason.tid] < g.minPayroll) {
+                teamSeason.expenses.minTax.amount = g.minPayroll - payrolls[teamSeason.tid];
+                teamSeason.cash -= teamSeason.expenses.minTax.amount;
+            } else if (payrolls[teamSeason.tid] > g.luxuryPayroll) {
+                amount = g.luxuryTax * (payrolls[teamSeason.tid] - g.luxuryPayroll);
                 collectedTax += amount;
-                t.seasons[s].expenses.luxuryTax.amount = amount;
-                t.seasons[s].cash -= t.seasons[s].expenses.luxuryTax.amount;
+                teamSeason.expenses.luxuryTax.amount = amount;
+                teamSeason.cash -= teamSeason.expenses.luxuryTax.amount;
             }
 
-            return t;
+            return teamSeason;
         }).then(function () {
             var payteams;
             payteams = payrolls.filter(function (x) {
@@ -47,23 +44,20 @@ function assessPayrollMinLuxury(tx) {
             });
             if (payteams.length > 0 && collectedTax > 0) {
                 distribute = (collectedTax * 0.5) / payteams.length;
-                return tx.teams.iterate(function (t) {
-                    var s;
-                    s = t.seasons.length - 1;
-
-                    if (payrolls[t.tid] <= g.salaryCap) {
-                        t.seasons[s].revenues.luxuryTaxShare = {
+                return tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), function (teamSeason) {
+                    if (payrolls[teamSeason.tid] <= g.salaryCap) {
+                        teamSeason.revenues.luxuryTaxShare = {
                             amount: distribute,
                             rank: 15.5
                         };
-                        t.seasons[s].cash += distribute;
+                        teamSeason.cash += distribute;
                     } else {
-                        t.seasons[s].revenues.luxuryTaxShare = {
+                        teamSeason.revenues.luxuryTaxShare = {
                             amount: 0,
                             rank: 15.5
                         };
                     }
-                    return t;
+                    return teamSeason;
                 });
             }
         });
@@ -146,10 +140,10 @@ return require('bluebird').resolve();
                 updateObj(t.budget, budgetsByItem);
             }
             if (types.indexOf("expenses") >= 0) {
-                updateObj(t.seasons[s].expenses, expensesByItem);
+                updateObj(teamSeason.expenses, expensesByItem);
             }
             if (types.indexOf("revenues") >= 0) {
-                updateObj(t.seasons[s].revenues, revenuesByItem);
+                updateObj(teamSeason.revenues, revenuesByItem);
             }
 
             return t;

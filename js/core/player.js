@@ -607,7 +607,7 @@ function addToFreeAgents(ot, p, phase, baseMoods) {
  * This keeps track of what the player's current team owes him, and then calls player.addToFreeAgents.
  *
  * @memberOf core.player
- * @param {IDBTransaction} tx An IndexedDB transaction on players, releasedPlayers, and teams, readwrite.
+ * @param {IDBTransaction} tx An IndexedDB transaction on players, releasedPlayers, and teamSeasons, readwrite.
  * @param {Object} p Player object.
  * @param {boolean} justDrafted True if the player was just drafted by his current team and the regular season hasn't started yet. False otherwise. If True, then the player can be released without paying his salary.
  * @return {Promise}

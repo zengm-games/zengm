@@ -697,7 +697,7 @@ function newPhase(phase, extra) {
                     });
                 }
                 if (phase === g.PHASE.BEFORE_DRAFT) {
-                    return g.dbl.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams"], "readwrite", function (tx) {
+                    return g.dbl.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", function (tx) {
                         phaseChangeTx = tx;
                         return newPhaseBeforeDraft(tx).catch(phaseErrorHandler);
                     });

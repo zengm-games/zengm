@@ -62,7 +62,7 @@ function doReorder(sortedPids) {
 }
 
 function doRelease(pid, justDrafted) {
-    return g.dbl.tx(["players", "releasedPlayers", "teams"], "readwrite", function (tx) {
+    return g.dbl.tx(["players", "releasedPlayers", "teamSeasons"], "readwrite", function (tx) {
         return tx.players.index('tid').count(g.userTid).then(function (numPlayersOnRoster) {
             if (numPlayersOnRoster <= 5) {
                 return "You must keep at least 5 players on your roster.";
@@ -212,7 +212,7 @@ function updateRoster(inputs, updateEvents, vm) {
             ]
         };
 
-        return g.dbl.tx(["players", "playerStats", "releasedPlayers", "schedule", "teams"], function (tx) {
+        return g.dbl.tx(["players", "playerStats", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], function (tx) {
             return team.filter({
                 season: inputs.season,
                 tid: inputs.tid,

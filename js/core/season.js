@@ -574,7 +574,7 @@ function newSchedule(teams) {
  * Create a single day's schedule for an in-progress playoffs.
  *
  * @memberOf core.season
- * @param {(IDBTransaction)} tx An IndexedDB transaction on playoffSeries, schedule, and teams, readwrite.
+ * @param {(IDBTransaction)} tx An IndexedDB transaction on playoffSeries, schedule, and teamSeasons, readwrite.
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
 function newSchedulePlayoffsDay(tx) {
@@ -619,18 +619,14 @@ function newSchedulePlayoffsDay(tx) {
             } else if (series[rnd][0].away.won === 4) {
                 key = series[rnd][0].away.tid;
             }
-            return tx.teams.iterate(key, function (t) {
-                var s;
-
-                s = t.seasons.length - 1;
-
-                t.seasons[s].playoffRoundsWon = 4;
-                t.seasons[s].hype += 0.05;
-                if (t.seasons[s].hype > 1) {
-                    t.seasons[s].hype = 1;
+            return tx.teamSeasons.index("season, tid").iterate([g.season, key], function (teamSeason) {
+                teamSeason.playoffRoundsWon = 4;
+                teamSeason.hype += 0.05;
+                if (teamSeason.hype > 1) {
+                    teamSeason.hype = 1;
                 }
 
-                return t;
+                return teamSeason;
             }).then(function () {
                 // Playoffs are over! Return true!
                 return true;
@@ -674,17 +670,14 @@ function newSchedulePlayoffsDay(tx) {
         return tx.playoffSeries.put(playoffSeries).then(function () {
             // Update hype for winning a series
             return Promise.map(tidsWon, function (tid) {
-                return tx.teams.get(tid).then(function (t) {
-                    var s;
-
-                    s = t.seasons.length - 1;
-                    t.seasons[s].playoffRoundsWon = playoffSeries.currentRound;
-                    t.seasons[s].hype += 0.05;
-                    if (t.seasons[s].hype > 1) {
-                        t.seasons[s].hype = 1;
+                return tx.teamSeasons.index("season, tid").get([g.season, tid]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = playoffSeries.currentRound;
+                    teamSeason.hype += 0.05;
+                    if (teamSeason.hype > 1) {
+                        teamSeason.hype = 1;
                     }
 
-                    return tx.teams.put(t);
+                    return tx.teamSeasons.put(teamSeason);
                 });
             }, {concurrency: Infinity});
         }).then(function () {

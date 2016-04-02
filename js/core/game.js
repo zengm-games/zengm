@@ -776,7 +776,7 @@ function play(numDays, start, gidPlayByPlay) {
 
                     if (g.phase === g.PHASE.PLAYOFFS) {
                         // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                        g.dbl.tx(["playoffSeries", "schedule", "teams"], "readwrite", function (tx2) {
+                        g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", function (tx2) {
                             return season.newSchedulePlayoffsDay(tx2);
                         }).then(function (playoffsOver) {
                             if (playoffsOver) {
@@ -843,7 +843,7 @@ function play(numDays, start, gidPlayByPlay) {
                         // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
 
                         // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                        return g.dbl.tx(["playoffSeries", "schedule", "teams"], "readwrite", function (tx2) {
+                        return g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", function (tx2) {
                             return season.newSchedulePlayoffsDay(tx2);
                         }).then(function () {
                             return season.getSchedule({oneDay: true}).then(function (schedule) {

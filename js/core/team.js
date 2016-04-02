@@ -763,8 +763,8 @@ function filter(options) {
             for (i = 0; i < ts.length; i++) {
                 ft.stats.push(filterStatsPartial({}, ts[i], options.stats));
             }
-        } else 
-{            // Single seasons - merge stats with root object
+        } else {
+            // Single seasons - merge stats with root object
             ft = filterStatsPartial(ft, ts, options.stats);
         }
     };

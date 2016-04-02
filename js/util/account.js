@@ -316,19 +316,19 @@ function checkDynasty(titles, years, slug, saveAchievement) {
         return Promise.resolve(false);
     }
 
-    return g.dbl.teams.get(g.userTid).then(function (t) {
+    return g.dbl.teamSeasons.index("tid").getAll(g.userTid).then(function (teamSeasons) {
         var i, titlesFound;
 
         titlesFound = 0;
         // Look over past years
         for (i = 0; i < years; i++) {
             // Don't overshoot
-            if (t.seasons.length - 1 - i < 0) {
+            if (teamSeasons.length - 1 - i < 0) {
                 break;
             }
 
             // Won title?
-            if (t.seasons[t.seasons.length - 1 - i].playoffRoundsWon === 4) {
+            if (teamSeasons[teamSeasons.length - 1 - i].playoffRoundsWon === 4) {
                 titlesFound += 1;
             }
         }

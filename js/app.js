@@ -49,6 +49,7 @@ require('./api');
         freeAgents: require('./core/freeAgents'),
         game: require('./core/game'),
         gameSim: require('./core/gameSim'),
+        league: require('./core/league'),
         phase: require('./core/phase'),
         player: require('./core/player'),
         season: require('./core/season'),

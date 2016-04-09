@@ -771,9 +771,31 @@ function filter(options) {
 
     return helpers.maybeReuseTx(["players", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readonly", options.ot, function (tx) {
         return tx.teams.getAll(options.tid).map(function (t) {
+            var seasonsPromise, statsPromise;
+
+            if (options.seasonAttrs.length === 0) {
+                seasonsPromise = Promise.resolve([]);
+            } else {
+                if (options.season === null) {
+                    seasonsPromise = tx.teamSeasons.index("tid").getAll(t.tid);
+                } else {
+                    seasonsPromise = tx.teamSeasons.index("season, tid").getAll([options.season, t.tid]);
+                }
+            }
+
+            if (options.stats.length === 0) {
+                statsPromise = Promise.resolve([]);
+            } else {
+                if (options.season === null) {
+                    statsPromise = tx.teamStats.index("tid").getAll(t.tid);
+                } else {
+                    statsPromise = tx.teamStats.index("season, tid").getAll([options.season, t.tid]);
+                }
+            }
+
             return Promise.all([
-                tx.teamSeasons.index("tid").getAll(t.tid),
-                tx.teamStats.index("tid").getAll(t.tid)
+                seasonsPromise,
+                statsPromise
             ]).spread(function (seasons, stats) {
                 t.seasons = sortBy(seasons, "season");
                 t.stats = sortBy(stats, ["season", "playoffs"]);

@@ -159,15 +159,15 @@ function updateTeamFinances(inputs, updateEvents, vm) {
             vars.contractTotals = contractTotals;
             vars.salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
-            return g.dbl.teams.get(inputs.tid).then(function (t) {
+            return g.dbl.teamSeasons.index("tid").getAll(inputs.tid).then(function (teamSeasons) {
                 var barData, barSeasons, i, keys, tempData;
 
-                t.seasons.reverse(); // Most recent season first
+                teamSeasons.reverse(); // Most recent season first
 
                 // Add in luxuryTaxShare if it's missing
-                for (i = 0; i < t.seasons.length; i++) {
-                    if (!t.seasons[i].revenues.hasOwnProperty("luxuryTaxShare")) {
-                        t.seasons[i].revenues.luxuryTaxShare = {
+                for (i = 0; i < teamSeasons.length; i++) {
+                    if (!teamSeasons[i].revenues.hasOwnProperty("luxuryTaxShare")) {
+                        teamSeasons[i].revenues.luxuryTaxShare = {
                             amount: 0,
                             rank: 15
                         };
@@ -177,12 +177,12 @@ function updateTeamFinances(inputs, updateEvents, vm) {
                 keys = ["won", "hype", "pop", "att", "cash", "revenues", "expenses"];
                 barData = {};
                 for (i = 0; i < keys.length; i++) {
-                    if (typeof t.seasons[0][keys[i]] !== "object") {
-                        barData[keys[i]] = helpers.nullPad(_.pluck(t.seasons, keys[i]), showInt);
+                    if (typeof teamSeasons[0][keys[i]] !== "object") {
+                        barData[keys[i]] = helpers.nullPad(_.pluck(teamSeasons, keys[i]), showInt);
                     } else {
                         // Handle an object in the database
                         barData[keys[i]] = {};
-                        tempData = _.pluck(t.seasons, keys[i]);
+                        tempData = _.pluck(teamSeasons, keys[i]);
                         _.each(tempData[0], function (value, key) {
                             barData[keys[i]][key] = helpers.nullPad(_.pluck(_.pluck(tempData, key), "amount"), showInt);
                         });
@@ -191,10 +191,10 @@ function updateTeamFinances(inputs, updateEvents, vm) {
 
                 // Process some values
                 barData.att = _.map(barData.att, function (num, i) {
-                    if (t.seasons[i] !== undefined) {
-                        if (!t.seasons[i].hasOwnProperty("gpHome")) { t.seasons[i].gpHome = Math.round(t.seasons[i].gp / 2); } // See also game.js and team.js
-                        if (t.seasons[i].gpHome > 0) {
-                            return num / t.seasons[i].gpHome; // per game
+                    if (teamSeasons[i] !== undefined) {
+                        if (!teamSeasons[i].hasOwnProperty("gpHome")) { teamSeasons[i].gpHome = Math.round(teamSeasons[i].gp / 2); } // See also game.js and team.js
+                        if (teamSeasons[i].gpHome > 0) {
+                            return num / teamSeasons[i].gpHome; // per game
                         }
                         return 0;
                     }

@@ -260,6 +260,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                     teamSeasons[0].pop = teams[i].pop;
                 }
                 teamSeasons.forEach(function (teamSeason) {
+                    teamSeason.tid = t.tid;
                     tx.teamSeasons.add(teamSeason);
                 });
 
@@ -268,13 +269,11 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 } else {
                     teamStats = [team.genStatsRow(t.tid)];
                 }
-                // If needed for imported league files, set missing blocks against to 0
-                for (j = 0; j < teamStats.length; j++) {
-                    if (!teamStats[j].hasOwnProperty("ba")) {
-                        teamStats[j].ba = 0;
-                    }
-                }
                 teamStats.forEach(function (teamStat) {
+                    teamStat.tid = t.tid;
+                    if (!teamStat.hasOwnProperty("ba")) {
+                        teamStat.ba = 0;
+                    }
                     tx.teamStats.add(teamStat);
                 });
 

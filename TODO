@@ -1,6 +1,9 @@
 # teams refactor
 
 benchmark
+- when viewing dashboard and simulating games in 2057, 13% faster now
+- another 13% (26% total) when optimizing team.filter
+- try again after adding back commented out features
 
 move budget to season
 
@@ -42,6 +45,8 @@ before finish...
   handle import of league files
 
 ---
+
+best record https://www.reddit.com/r/BasketballGM/comments/4djo7g/suggestion_bestworst_record/
 
 can i get rid of http/https links?
 

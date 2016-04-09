@@ -14,19 +14,23 @@ function post(req) {
     button = document.getElementById("edit-team-info");
     button.disabled = true;
 
-    g.dbl.tx('teams', 'readwrite', function (tx) {
+    g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', function (tx) {
         return tx.teams.iterate(function (t) {
             t.abbrev = req.params.abbrev[t.tid];
             t.region = req.params.region[t.tid];
             t.name = req.params.name[t.tid];
-            t.seasons[t.seasons.length - 1].pop = parseFloat(req.params.pop[t.tid]);
 
             if (t.tid === g.userTid) {
                 userName = t.name;
                 userRegion = t.region;
             }
 
-            return t;
+            return tx.teamSeasons.index('season, tid').get([g.season, t.tid]).then(function (teamSeason) {
+                teamSeason.pop = parseFloat(req.params.pop[t.tid]);
+                return tx.teamSeasons.put(teamSeason);
+            }).then(function () {
+                return t;
+            });
         });
     }).then(function () {
         // Update meta cache of user's team
@@ -123,14 +127,13 @@ function uiFirst() {
                 }
             }
 
-            g.dbl.tx('teams', 'readwrite', function (tx) {
+            g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', function (tx) {
                 return tx.teams.iterate(function (t) {
                     t.cid = newTeams[t.tid].cid;
                     t.did = newTeams[t.tid].did;
                     t.region = newTeams[t.tid].region;
                     t.name = newTeams[t.tid].name;
                     t.abbrev = newTeams[t.tid].abbrev;
-                    t.seasons[t.seasons.length - 1].pop = newTeams[t.tid].pop;
                     if (newTeams[t.tid].imgURL) {
                         t.imgURL = newTeams[t.tid].imgURL;
                     }
@@ -140,7 +143,12 @@ function uiFirst() {
                         userRegion = t.region;
                     }
 
-                    return t;
+                    return tx.teamSeasons.index('season, tid').get([g.season, t.tid]).then(function (teamSeason) {
+                        teamSeason.pop = newTeams[t.tid].pop;
+                        return tx.teamSeasons.put(teamSeason);
+                    }).then(function () {
+                        return t;
+                    });
                 });
             }).then(function () {
                 // Update meta cache of user's team

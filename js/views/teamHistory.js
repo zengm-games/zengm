@@ -42,14 +42,14 @@ mapping = {
 function updateTeamHistory(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
         return Promise.all([
-            g.dbl.teams.get(inputs.tid),
+            g.dbl.teamSeasons.index('tid').getAll(inputs.tid),
             g.dbl.players.index('statsTids').getAll(inputs.tid).then(function (players) {
                 return player.withStats(null, players, {
                     statsSeasons: "all",
                     statsTid: inputs.tid
                 });
             })
-        ]).spread(function (userTeam, players) {
+        ]).spread(function (teamSeasons, players) {
             var championships, history, i, j, playoffAppearances, totalLost, totalWon;
 
             history = [];
@@ -57,19 +57,19 @@ function updateTeamHistory(inputs, updateEvents, vm) {
             totalLost = 0;
             playoffAppearances = 0;
             championships = 0;
-            for (i = 0; i < userTeam.seasons.length; i++) {
+            for (i = 0; i < teamSeasons.length; i++) {
                 history.push({
-                    season: userTeam.seasons[i].season,
-                    won: userTeam.seasons[i].won,
-                    lost: userTeam.seasons[i].lost,
-                    playoffRoundsWon: userTeam.seasons[i].playoffRoundsWon
+                    season: teamSeasons[i].season,
+                    won: teamSeasons[i].won,
+                    lost: teamSeasons[i].lost,
+                    playoffRoundsWon: teamSeasons[i].playoffRoundsWon
                 });
-                totalWon += userTeam.seasons[i].won;
-                totalLost += userTeam.seasons[i].lost;
-                if (userTeam.seasons[i].playoffRoundsWon >= 0) {
+                totalWon += teamSeasons[i].won;
+                totalLost += teamSeasons[i].lost;
+                if (teamSeasons[i].playoffRoundsWon >= 0) {
                     playoffAppearances += 1;
                 }
-                if (userTeam.seasons[i].playoffRoundsWon === 4) {
+                if (teamSeasons[i].playoffRoundsWon === 4) {
                     championships += 1;
                 }
             }
@@ -86,7 +86,7 @@ function updateTeamHistory(inputs, updateEvents, vm) {
                 players[i].stats.reverse();
 
                 for (j = 0; j < players[i].stats.length; j++) {
-                    if (players[i].stats[j].abbrev === userTeam.abbrev) {
+                    if (players[i].stats[j].abbrev === g.teamAbbrevsCache[inputs.tid]) {
                         players[i].lastYr = players[i].stats[j].season + ' ';
                         break;
                     }
@@ -103,8 +103,8 @@ function updateTeamHistory(inputs, updateEvents, vm) {
                 history: history,
                 players: players,
                 team: {
-                    name: userTeam.name,
-                    region: userTeam.region,
+                    name: g.teamNamesCache[inputs.tid],
+                    region: g.teamRegionsCache[inputs.tid],
                     tid: inputs.tid
                 },
                 totalWon: totalWon,

@@ -20,20 +20,24 @@ function post(req) {
     deleteOldDataSuccessEl = document.getElementById("delete-old-data-success");
     deleteOldDataSuccessEl.style.visibility = "hidden";
 
-    g.dbl.tx(["games", "teams", "players", "playerStats"], "readwrite", function (tx) {
+    g.dbl.tx(["games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", function (tx) {
         if (req.params.hasOwnProperty("boxScores")) {
             tx.games.clear();
         }
 
-        if (req.params.hasOwnProperty("teamStats") || req.params.hasOwnProperty("teamHistory")) {
-            tx.teams.iterate(function (t) {
-                if (req.params.hasOwnProperty("teamStats")) {
-                    t.stats = [t.stats[t.stats.length - 1]];
+        if (req.params.hasOwnProperty("teamHistory")) {
+            tx.teamSeasons.iterate(function (teamSeason) {
+                if (teamSeason.season < g.season) {
+                    return tx.teamSeasons.delete(teamSeason.rid);
                 }
-                if (req.params.hasOwnProperty("teamHistory")) {
-                    t.seasons = [t.seasons[t.seasons.length - 1]];
+            });
+        }
+
+        if (req.params.hasOwnProperty("teamStats")) {
+            tx.teamStats.iterate(function (teamStats) {
+                if (teamStats.season < g.season) {
+                    return tx.teamStats.delete(teamStats.rid);
                 }
-                return t;
             });
         }
 

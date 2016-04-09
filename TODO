@@ -4,18 +4,22 @@ benchmark
 - when viewing dashboard and simulating games in 2057, 13% faster now
 - another 13% (26% total) when optimizing team.filter
 - try again after adding back commented out features
+- try in new league
 
-move budget to season
+.seasons references
+- team.valueChange
+
+.stats references
 
 finances.getRankLastThree is awkward now, should be precomputed? or is it really needed, could just cap how fast rank changes
-
-optimize team.filter (currently doing getAll for stats and seasons)
 
 sanity check to make sure seasons and stats don't get saved to db
 
 re-add hype changing somehow in game.js
 
 fix finances.updateRanks
+
+fix tests.. ugh
 
 restore bugsnag
     <script src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"

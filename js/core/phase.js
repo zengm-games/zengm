@@ -294,7 +294,7 @@ function newPhasePlayoffs(tx) {
                 return tx.players.index('tid').iterate(tid, function (p) {
                     return player.addStatsRow(tx, p, true);
                 });
-            }, {concurrency: Infinity})
+            })
         ]);
     }).then(function () {
         return Promise.all([

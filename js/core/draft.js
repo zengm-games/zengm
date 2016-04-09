@@ -374,8 +374,6 @@ function genOrder(tx) {
             // Delete from draftPicks object store so that they are completely untradeable
             return Promise.map(draftPicks, function (draftPick) {
                 return tx.draftPicks.delete(draftPick.dpid);
-            }, {
-                concurrency: Infinity
             }).then(function () {
                 return setOrder(tx, draftOrder);
             });

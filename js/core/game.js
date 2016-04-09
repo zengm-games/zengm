@@ -326,8 +326,8 @@ function writePlayerStats(tx, results) {
                 }));
 
             return Promise.all(promises);
-        }, {concurrency: Infinity});
-    }, {concurrency: Infinity});
+        });
+    });
 }
 
 function writeGameStats(tx, results, att) {
@@ -694,7 +694,7 @@ function play(numDays, start, gidPlayByPlay) {
                 }).then(function () {
                     return result.gid;
                 });
-            }, {concurrency: Infinity}).then(function (gidsFinished) {
+            }).then(function (gidsFinished) {
                 var j, promises;
 
                 promises = [];

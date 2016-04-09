@@ -171,7 +171,7 @@ function reset() {
 
         Promise.map(leagues, function (l) {
             return require('./core/league').remove(l.lid);
-        }, {concurrency: Infinity}).then(function () {
+        }).then(function () {
             // Delete any current meta database
             console.log("Deleting any current meta database...");
             g.dbm.close();

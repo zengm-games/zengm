@@ -104,7 +104,7 @@ function setGameAttributes(tx, gameAttributes) {
                 }
             }
         });
-    }, {concurrency: Infinity});
+    });
 }
 
 // Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
@@ -712,7 +712,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 return g.dbl.tx("players", "readwrite", function (tx) {
                     return Promise.map(teams, function (t) {
                         return team.rosterAutoSort(tx, t.tid);
-                    }, {concurrency: Infinity}).then(function () {
+                    }).then(function () {
                         return lid;
                     });
                 });
@@ -775,7 +775,7 @@ function exportLeague(stores) {
         return g.dbl[store].getAll().then(function (contents) {
             exportedLeague[store] = contents;
         });
-    }, {concurrency: Infinity}).then(function () {
+    }).then(function () {
         // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
         var i, j, pid, tid;
 

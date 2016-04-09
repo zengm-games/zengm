@@ -95,7 +95,7 @@ function awards(tx) {
 
                 return tx.players.put(p);
             });
-        }, {concurrency: Infinity});
+        });
     };
 
     // Get teams for won/loss record for awards, as well as finding the teams with the best records
@@ -679,7 +679,7 @@ function newSchedulePlayoffsDay(tx) {
 
                     return tx.teamSeasons.put(teamSeason);
                 });
-            }, {concurrency: Infinity});
+            });
         }).then(function () {
             // Next time, the schedule for the first day of the next round will be set
             return newSchedulePlayoffsDay(tx);

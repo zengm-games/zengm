@@ -2139,7 +2139,7 @@ function withStats(tx, players, options) {
             }).then(function () {
                 return p;
             });
-        }, {concurrency: Infinity});
+        });
     });
 }
 

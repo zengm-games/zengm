@@ -5,6 +5,7 @@ var ui = require('../ui');
 var $ = require('jquery');
 var ko = require('knockout');
 var _ = require('underscore');
+var team = require('../core/team');
 var bbgmView = require('../util/bbgmView');
 var helpers = require('../util/helpers');
 var components = require('./components');
@@ -37,7 +38,7 @@ function getTeamLink(t) {
     return '<a href="' + helpers.leagueUrl(["team_history", t.abbrev]) + '">' + t.region + ' ' + t.name + '</a>';
 }
 
-function getTeamRecord(team, awards) {
+function getTeamRecord(t, awards) {
     var championships, finals, i, lastChampionship, lastPlayoffAppearance, playoffAppearances, totalLost, totalWP, totalWon;
 
     totalWon = 0;
@@ -47,19 +48,19 @@ function getTeamRecord(team, awards) {
     finals = 0;
     lastPlayoffAppearance = "-";
     lastChampionship = "-";
-    for (i = 0; i < team.seasons.length; i++) {
-        totalWon += team.seasons[i].won;
-        totalLost += team.seasons[i].lost;
-        if (team.seasons[i].playoffRoundsWon >= 0) {
+    for (i = 0; i < t.seasons.length; i++) {
+        totalWon += t.seasons[i].won;
+        totalLost += t.seasons[i].lost;
+        if (t.seasons[i].playoffRoundsWon >= 0) {
             playoffAppearances++;
-            lastPlayoffAppearance = team.seasons[i].season;
+            lastPlayoffAppearance = t.seasons[i].season;
         }
-        if (team.seasons[i].playoffRoundsWon >= 3) {
+        if (t.seasons[i].playoffRoundsWon >= 3) {
             finals++;
         }
-        if (team.seasons[i].playoffRoundsWon === 4) {
+        if (t.seasons[i].playoffRoundsWon === 4) {
             championships++;
-            lastChampionship = team.seasons[i].season;
+            lastChampionship = t.seasons[i].season;
         }
     }
 
@@ -67,9 +68,9 @@ function getTeamRecord(team, awards) {
     totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon + totalLost), 3) : "0.000";
 
     return {
-        team: getTeamLink(team),
-        cid: team.cid,
-        did: team.did,
+        team: getTeamLink(t),
+        cid: t.cid,
+        did: t.did,
         won: totalWon.toString(),
         lost: totalLost.toString(),
         winp: totalWP.toString().slice(1),
@@ -78,15 +79,15 @@ function getTeamRecord(team, awards) {
         championships: championships.toString(),
         lastChampionship: lastChampionship.toString(),
         finals: finals.toString(),
-        mvp: awards[team.tid].mvp.toString(),
-        dpoy: awards[team.tid].dpoy.toString(),
-        smoy: awards[team.tid].smoy.toString(),
-        roy: awards[team.tid].roy.toString(),
-        bestRecord: awards[team.tid].bestRecord.toString(),
-        bestRecordConf: awards[team.tid].bestRecordConf.toString(),
-        allRookie: awards[team.tid].allRookie.toString(),
-        allLeague: awards[team.tid].allLeagueTotal.toString(),
-        allDefense: awards[team.tid].allDefenseTotal.toString()
+        mvp: awards[t.tid].mvp.toString(),
+        dpoy: awards[t.tid].dpoy.toString(),
+        smoy: awards[t.tid].smoy.toString(),
+        roy: awards[t.tid].roy.toString(),
+        bestRecord: awards[t.tid].bestRecord.toString(),
+        bestRecordConf: awards[t.tid].bestRecordConf.toString(),
+        allRookie: awards[t.tid].allRookie.toString(),
+        allLeague: awards[t.tid].allLeagueTotal.toString(),
+        allDefense: awards[t.tid].allDefenseTotal.toString()
     };
 }
 
@@ -175,7 +176,10 @@ function sumRecordsFor(group, id, name, records) {
 function updateTeamRecords(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.byType !== vm.byType()) {
         return Promise.all([
-            g.dbl.teams.getAll(),
+            team.filter({
+                attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
+                seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"]
+            }),
             g.dbl.awards.getAll()
         ]).spread(function (teams, awards) {
             var awardsPerTeam, confRecords, display, displayName, divRecords, i, seasonCount, teamRecords;

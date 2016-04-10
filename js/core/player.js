@@ -535,8 +535,8 @@ function genBaseMoods(ot) {
         // Hype
         baseMood += 0.5 * (1 - teamSeason.hype);
 
-        // Facilities
-        baseMood += 0.1 * (finances.getRankLastThree({region: 'foo'}, "expenses", "facilities") - 1) / (g.numTeams - 1);
+        // Facilities - fuck it, just use most recent rank
+        baseMood += 0.1 * (finances.getRankLastThree([teamSeason], "expenses", "facilities") - 1) / (g.numTeams - 1);
 
         // Population
         baseMood += 0.2 * (1 - teamSeason.pop / 10);

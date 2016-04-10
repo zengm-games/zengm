@@ -130,10 +130,10 @@ function customDraftClassHandler(e) {
         });
 
         // Get scouting rank, which is used in a couple places below
-        g.dbl.teams.get(g.userTid).then(function (t) {
+        g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season])).then(function (teamSeasons) {
             var scoutingRank;
 
-            scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
+            scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
 
             // Delete old players from draft class
             return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {

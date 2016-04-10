@@ -6,6 +6,7 @@ var finances = require('../core/finances');
 var league = require('../core/league');
 var player = require('../core/player');
 var team = require('../core/team');
+var backboard = require('backboard');
 var faces = require('facesjs');
 var ko = require('knockout');
 var komapping = require('knockout.mapping');
@@ -250,10 +251,10 @@ function updateCustomizePlayer(inputs, updateEvents) {
 
             if (inputs.pid === null) {
                 // Generate new player as basis
-                return g.dbl.teams.get(g.userTid).then(function (t) {
+                return g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season])).then(function (teamSeasons) {
                     var p, scoutingRank;
 
-                    scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
+                    scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
 
                     p = player.generate(g.PLAYER.FREE_AGENT,
                                     20,

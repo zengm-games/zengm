@@ -20,17 +20,26 @@ var random = require('../util/random');
 
 function writeTeamStats(tx, results) {
     return Promise.reduce([0, 1], function (cache, t1) {
-        var t2;
+        var t2, teamSeasonsPromise;
 
         t2 = t1 === 1 ? 0 : 1;
+
+        if (t1 === 0) {
+            // Get extra seasons because we need it 
+            teamSeasonsPromise = tx.teamSeasons.index("tid, season").getAll(backboard.bound([results.team[t1].id, g.season - 2], [results.team[t1].id, g.season]));
+        } else {
+            teamSeasonsPromise = tx.teamSeasons.index("tid, season").getAll([results.team[t1].id, g.season]);
+        }
 
         return Promise.all([
             team.getPayroll(tx, results.team[t1].id).get(0),
             tx.teams.get(results.team[t1].id),
-            tx.teamSeasons.index("season, tid").get([g.season, results.team[t1].id]),
+            teamSeasonsPromise,
             tx.teamStats.index("season, tid").getAll([g.season, results.team[t1].id])
-        ]).spread(function (payroll, t, teamSeason, teamStatsArray) {
+        ]).spread(function (payroll, t, teamSeasons, teamStatsArray) {
             var att, coachingPaid, count, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketPrice, ticketRevenue, winp, winpOld, won;
+
+            teamSeason = teamSeasons[teamSeasons.length - 1];
 
             for (i = 0; i < teamStatsArray.length; i++) {
                 if (teamStatsArray[i].playoffs === (g.phase === g.PHASE.PLAYOFFS)) {
@@ -92,7 +101,7 @@ function writeTeamStats(tx, results) {
             if (t1 === 0) { // Base on home team
                 att = random.gauss(att, 1000);
                 att *= 30 / ticketPrice;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
-                att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(t, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
+                att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(teamSeasons, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
                 if (att > 25000) {
                     att = 25000;
                 } else if (att < 0) {

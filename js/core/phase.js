@@ -60,21 +60,30 @@ function newPhasePreseason(tx) {
     return freeAgents.autoSign(tx).then(function () { // Important: do this before changing the season or contracts and stats are fucked up
         return require('../core/league').setGameAttributes(tx, {season: g.season + 1});
     }).then(function () {
-        var scoutingRank;
+        var scoutingRank, tid, tids;
 
-        // Add row to team stats and season attributes
-        return tx.teams.iterate(function (t) {
+        tids = [];
+        for (tid = 0; tid < g.numTeams; tid++) {
+            tids.push(tid);
+        }
 
-            // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
-            // This is done BEFORE a new season row is added.
-            if (t.tid === g.userTid) {
-                scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
-            }
+        return Promise.map(tids, function (tid) {
+            // Add row to team stats and season attributes
+            return Promise.try(function () {
 
-            tx.teamSeasons.add(team.genSeasonRow(t.tid));
-            tx.teamStats.add(team.genStatsRow(t.tid));
-
-            return t;
+                // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
+                // This is done BEFORE a new season row is added.
+                if (tid === g.userTid) {
+                    return tx.teamSeasons.index("tid, season").getAll(backboard.bound([tid, g.season - 3], [tid, g.season - 1])).then(function (teamSeasons) {
+                        scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
+                    });
+                }
+            }).then(function () {
+                return Promise.all([
+                    tx.teamSeasons.add(team.genSeasonRow(tid)),
+                    tx.teamStats.add(team.genStatsRow(tid))
+                ]);
+            }).then(function () {});
         }).then(function () {
             return tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season - 1, ''])).map(function (teamSeason) {
                 return teamSeason.expenses.coaching.rank;

@@ -5,6 +5,7 @@ var ui = require('../ui');
 var finances = require('./finances');
 var player = require('./player');
 var team = require('./team');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var _ = require('underscore');
 var eventLog = require('../util/eventLog');
@@ -47,7 +48,7 @@ function setOrder(ot, draftOrder) {
  * This is called after draft classes are moved up a year, to create the new UNDRAFTED_3 class. It's also called 3 times when a new league starts, to create all 3 draft classes.
  *
  * @memberOf core.draft
- * @param {IDBTransaction} tx An IndexedDB transaction on players (and teams if scoutingRank is not set), readwrite.
+ * @param {IDBTransaction} tx An IndexedDB transaction on players (and teamSeasons if scoutingRank is not set), readwrite.
  * @param {number} tid Team ID number for the generated draft class. Should be g.PLAYER.UNDRAFTED, g.PLAYER.UNDRAFTED_2, or g.PLAYER.UNDRAFTED_3.
  * @param {?number=} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
@@ -63,8 +64,8 @@ function genPlayers(tx, tid, scoutingRank, numPlayers) {
     return Promise.try(function () {
         // If scoutingRank is not supplied, have to hit the DB to get it
         if (scoutingRank === null) {
-            return tx.teams.get(g.userTid).then(function (t) {
-                return finances.getRankLastThree(t, "expenses", "scouting");
+            return tx.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season])).then(function (teamSeasons) {
+                return finances.getRankLastThree(teamSeasons, "expenses", "scouting");
             });
         }
 

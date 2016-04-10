@@ -777,7 +777,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
     add = [];
     remove = [];
 
-    return g.dbl.tx(["draftPicks", "players", "releasedPlayers", "teams"], function (tx) {
+    return g.dbl.tx(["draftPicks", "players", "releasedPlayers", "teams", "teamSeasons", "teamStats"], function (tx) {
         // Get players
         getPlayers = function () {
             var fudgeFactor, i;

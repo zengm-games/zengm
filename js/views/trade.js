@@ -3,6 +3,7 @@
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
+var team = require('../core/team');
 var trade = require('../core/trade');
 var Promise = require('bluebird');
 var Davis = require('../lib/davis');
@@ -20,18 +21,15 @@ function updateSummary(vars) {
     return trade.getOtherTid().then(function (otherTid) {
         var teams;
 
-        teams = [
-            {
-                tid: g.userTid,
-                pids: vars.userPids,
-                dpids: vars.userDpids
-            },
-            {
-                tid: otherTid,
-                pids: vars.otherPids,
-                dpids: vars.otherDpids
-            }
-        ];
+        teams = [{
+            tid: g.userTid,
+            pids: vars.userPids,
+            dpids: vars.userDpids
+        }, {
+            tid: otherTid,
+            pids: vars.otherPids,
+            dpids: vars.otherDpids
+        }];
         return trade.summary(teams).then(function (summary) {
             var i;
 
@@ -223,7 +221,12 @@ function updateTrade(inputs) {
                 return player.withStats(null, players, {statsSeasons: [g.season]});
             }),
             g.dbl.draftPicks.index('tid').getAll(otherTid),
-            g.dbl.teams.get(otherTid)
+            team.filter({
+                tid: otherTid,
+                season: g.season,
+                attrs: ["strategy"],
+                seasonAttrs: ["won", "lost"]
+            })
         ]).spread(function (otherRoster, otherPicks, t) {
             var i;
 
@@ -263,8 +266,8 @@ function updateTrade(inputs) {
                 otherRoster: otherRoster,
                 message: inputs.message,
                 strategy: t.strategy,
-                won: t.seasons[t.seasons.length - 1].won,
-                lost: t.seasons[t.seasons.length - 1].lost,
+                won: t.won,
+                lost: t.lost,
                 godMode: g.godMode,
                 forceTrade: false
             };

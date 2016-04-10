@@ -1350,7 +1350,7 @@ function updateStrategies(tx) {
  * @return {Promise.?string} Resolves to null if there is no error, or a string with the error message otherwise.
  */
 function checkRosterSizes() {
-    return g.dbl.tx(["players", "playerStats", "releasedPlayers", "teams"], "readwrite", function (tx) {
+    return g.dbl.tx(["players", "playerStats", "releasedPlayers", "teams", "teamSeasons"], "readwrite", function (tx) {
         var checkRosterSize, minFreeAgents, userTeamSizeError;
 
         checkRosterSize = function (tid) {

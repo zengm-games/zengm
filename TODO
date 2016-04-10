@@ -7,16 +7,14 @@ benchmark
 - try in new league
 
 .seasons references
+  finances.updateRanks
+  hype updating in game.js - maybe just make it linear?
 
 .stats references
 
 finances.getRankLastThree is awkward now, should be precomputed? or is it really needed, could just cap how fast rank changes
 
 sanity check to make sure seasons and stats don't get saved to db
-
-re-add hype changing somehow in game.js
-
-fix finances.updateRanks
 
 fix tests.. ugh
 

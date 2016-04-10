@@ -6,6 +6,7 @@
 
 var g = require('../globals');
 var player = require('./player');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var _ = require('underscore');
 var eventLog = require('../util/eventLog');
@@ -837,18 +838,22 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
             // For each draft pick, estimate its value based on the recent performance of the team
             if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
                 // Estimate the order of the picks by team
-                tx.teams.getAll().then(function (teams) {
-                    var estPicks, estValues, gp, halfSeason, i, rCurrent, rLast, rookieSalaries, s, sorted, t, withEstValues, wps;
+                tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season, ''])).then(function (allTeamSeasons) {
+                    var estPicks, estValues, gp, halfSeason, i, rCurrent, rLast, rookieSalaries, s, sorted, teamSeasons, tid, withEstValues, wps;
 
                     // This part needs to be run every time so that gpAvg is available
                     wps = []; // Contains estimated winning percentages for all teams by the end of the season
-                    for (i = 0; i < teams.length; i++) {
-                        t = teams[i];
-                        s = t.seasons.length;
-                        if (t.seasons.length === 1) {
+
+                    for (tid = 0; tid < g.numTeams; tid++) {
+                        teamSeasons = allTeamSeasons.filter(function (teamSeason) {
+                            return teamSeason.tid === tid;
+                        });
+
+                        s = teamSeasons.length;
+                        if (teamSeasons.length === 1) {
                             // First season
-                            if (t.seasons[0].won + t.seasons[0].lost > 15) {
-                                rCurrent = [t.seasons[0].won, t.seasons[0].lost];
+                            if (teamSeasons[0].won + teamSeasons[0].lost > 15) {
+                                rCurrent = [teamSeasons[0].won, teamSeasons[0].lost];
                             } else {
                                 // Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
                                 if (i === g.userTid) {
@@ -864,8 +869,8 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
                             }
                         } else {
                             // Second (or higher) season
-                            rCurrent = [t.seasons[s - 1].won, t.seasons[s - 1].lost];
-                            rLast = [t.seasons[s - 2].won, t.seasons[s - 2].lost];
+                            rCurrent = [teamSeasons[s - 1].won, teamSeasons[s - 1].lost];
+                            rLast = [teamSeasons[s - 2].won, teamSeasons[s - 2].lost];
                         }
 
                         gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played

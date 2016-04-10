@@ -192,7 +192,7 @@ function updateOffers(inputs, updateEvents) {
             };
         }
 
-        return g.dbl.tx(["players", "playerStats", "draftPicks", "teams"], function (tx) {
+        return g.dbl.tx(["players", "playerStats", "draftPicks", "teams", "teamSeasons"], function (tx) {
             return team.filter({
                 attrs: ["abbrev", "region", "name", "strategy"],
                 seasonAttrs: ["won", "lost"],

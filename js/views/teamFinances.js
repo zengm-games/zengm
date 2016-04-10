@@ -50,7 +50,7 @@ function get(req) {
 function post(req) {
     $("#finances-settings button").attr("disabled", "disabled").html("Saving...");
 
-    g.dbl.tx("teams", "readwrite", function (tx) {
+    g.dbl.tx(["teams", "teamSeasons"], "readwrite", function (tx) {
         return tx.teams.get(g.userTid).then(function (t) {
             var budget, key;
 

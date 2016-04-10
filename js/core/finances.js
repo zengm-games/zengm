@@ -7,6 +7,7 @@
 var g = require('../globals');
 var _ = require('underscore');
 var backboard = require('backboard');
+var Promise = require('bluebird');
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -77,7 +78,7 @@ function assessPayrollMinLuxury(tx) {
  * @param {Promise}
  */
 function updateRanks(tx, types) {
-    var getByItem, sortFn, updateObj;
+    var getByItem, sortFn, teamSeasonsPromise, updateObj;
 
     sortFn = function (a, b) {
         return b.amount - a.amount;
@@ -109,28 +110,33 @@ function updateRanks(tx, types) {
         }
     };
 
-return require('bluebird').resolve();
+    if (types.indexOf("expenses") >= 0 || types.indexOf("revenues") >= 0) {
+        teamSeasonsPromise = tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, '']));
+    } else {
+        teamSeasonsPromise = Promise.resolve();
+    }
 
-    return tx.teams.getAll().then(function (teams) {
-        var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam, s;
+    return Promise.all([
+        tx.teams.getAll(),
+        teamSeasonsPromise
+    ]).spread(function (teams, teamSeasons) {
+        var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam;
 
         if (types.indexOf("budget") >= 0) {
             budgetsByTeam = _.pluck(teams, "budget");
             budgetsByItem = getByItem(budgetsByTeam);
         }
         if (types.indexOf("expenses") >= 0) {
-            s = teams[0].seasons.length - 1;
             expensesByTeam = [];
             for (i = 0; i < teams.length; i++) {
-                expensesByTeam[i] = teams[i].seasons[s].expenses;
+                expensesByTeam[i] = teamSeasons[i].expenses;
             }
             expensesByItem = getByItem(expensesByTeam);
         }
         if (types.indexOf("revenues") >= 0) {
-            s = teams[0].seasons.length - 1;
             revenuesByTeam = [];
             for (i = 0; i < teams.length; i++) {
-                revenuesByTeam[i] = teams[i].seasons[s].revenues;
+                revenuesByTeam[i] = teamSeasons[i].revenues;
             }
             revenuesByItem = getByItem(revenuesByTeam);
         }
@@ -139,14 +145,21 @@ return require('bluebird').resolve();
             if (types.indexOf("budget") >= 0) {
                 updateObj(t.budget, budgetsByItem);
             }
-            if (types.indexOf("expenses") >= 0) {
-                updateObj(teamSeason.expenses, expensesByItem);
-            }
+
             if (types.indexOf("revenues") >= 0) {
-                updateObj(teamSeason.revenues, revenuesByItem);
+                updateObj(teamSeasons[t.tid].expenses, expensesByItem);
+            }
+            if (types.indexOf("expenses") >= 0) {
+                updateObj(teamSeasons[t.tid].revenues, revenuesByItem);
             }
 
             return t;
+        }).then(function () {
+            if (types.indexOf("revenues") >= 0 || types.indexOf("expenses") >= 0) {
+                return Promise.map(teamSeasons, function (teamSeason) {
+                    return tx.teamSeasons.put(teamSeason);
+                });
+            }
         });
     });
 }

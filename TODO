@@ -7,10 +7,8 @@ benchmark
 - try in new league
 
 .seasons references
-  finances.updateRanks
-  hype updating in game.js - maybe just make it linear?
-
-finances.getRankLastThree is awkward now, should be precomputed? or is it really needed, could just cap how fast rank changes
+  hype updating in game.js - maybe just make it linear? or cache values?
+  finances.getRankLastThree is awkward now, should be precomputed? or is it really needed, could just cap how fast rank changes
 
 sanity check to make sure seasons and stats don't get saved to db
 
@@ -38,6 +36,7 @@ restore bugsnag
         });
       }
     </script>
+  node-source-map-support unhandled whatever option, what does it actually do
 
 before finish...
   upgrade new object stores and indexes

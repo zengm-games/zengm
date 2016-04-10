@@ -8,6 +8,7 @@ benchmark
 
 .seasons references
   hype updating in game.js - maybe just make it linear? or cache values?
+    or use teamSeasons that are already there, maybe just make it for 1 and 0 too
 
 sanity check to make sure seasons and stats don't get saved to db
 

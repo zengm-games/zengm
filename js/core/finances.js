@@ -178,11 +178,6 @@ function updateRanks(tx, types) {
 function getRankLastThree(teamSeasons, category, item) {
     var s;
 
-    if (teamSeasons.hasOwnProperty('region')) {
-        console.log('ERROR: getRankLastThree called with team object');
-        return 15;
-    }
-
     s = teamSeasons.length - 1; // Most recent season index
     if (s > 1) {
         // Use three seasons if possible
@@ -192,7 +187,11 @@ function getRankLastThree(teamSeasons, category, item) {
         // Use two seasons if possible
         return (teamSeasons[s][category][item].rank + teamSeasons[s - 1][category][item].rank + 15.5) / 3;
     }
-    return (teamSeasons[s][category][item].rank + 15.5 + 15.5) / 3;
+    if (s === 0) {
+        return (teamSeasons[s][category][item].rank + 15.5 + 15.5) / 3;
+    }
+
+    return 15.5;
 }
 
 module.exports = {

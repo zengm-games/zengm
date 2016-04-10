@@ -5,6 +5,7 @@ var ui = require('../ui');
 var Promise = require('bluebird');
 var $ = require('jquery');
 var ko = require('knockout');
+var team = require('../core/team');
 var bbgmView = require('../util/bbgmView');
 var helpers = require('../util/helpers');
 
@@ -22,7 +23,10 @@ function updateHistory(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0) {
         return Promise.all([
             g.dbl.awards.getAll(),
-            g.dbl.teams.getAll()
+            team.filter({
+                attrs: ["tid", "abbrev", "region", "name"],
+                seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"]
+            })
         ]).spread(function (awards, teams) {
             var championshipsByTid, i, seasons;
 

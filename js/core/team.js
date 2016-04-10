@@ -433,7 +433,7 @@ function getPayrolls(tx) {
  *
  * This can be used to retrieve information about a certain season, compute average statistics from the raw data, etc.
  *
- * This is similar to player.filter, but has some differences. If only one season is requested, the attrs, seasonAttrs, and stats properties will all be merged on the root filtered team object for each team. "stats" is broken out into its own property only when multiple seasons are requested (options.season is undefined). "seasonAttrs" should behave similarly, but it currently doesn't because it just hasn't been used that way anywhere yet.
+ * This is similar to player.filter, but has some differences. If only one season is requested, the attrs, seasonAttrs, and stats properties will all be merged on the root filtered team object for each team. "stats" is broken out into its own property only when multiple seasons are requested (options.season is undefined). "seasonAttrs" behaves similarly, when multiple seasons are requested they appear in an array property "seasons".
  *
  * @memberOf core.team
  * @param {Object} options Options, as described below.
@@ -449,7 +449,7 @@ function getPayrolls(tx) {
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
 function filter(options) {
-    var filterAttrs, filterSeasonAttrs, filterStats, filterStatsPartial;
+    var filterAttrs, filterSeasonAttrs, filterSeasonAttrsPartial, filterStats, filterStatsPartial;
 
     if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
 
@@ -481,66 +481,90 @@ function filter(options) {
         }
     };
 
+    // Filters s by seasonAttrs (which should be options.seasonAttrs) into ft. This is to do one season of seasonAttrs filtering.
+    filterSeasonAttrsPartial = function (ft, tsa, seasonAttrs) {
+        var j, lastTenLost, lastTenWon;
+
+        // For cases when the deleteOldData feature is used
+        if (tsa === undefined) {
+            return;
+        }
+
+        // Revenue and expenses calculation
+        tsa.revenue = _.reduce(tsa.revenues, function (memo, revenue) { return memo + revenue.amount; }, 0);
+        tsa.expense = _.reduce(tsa.expenses, function (memo, expense) { return memo + expense.amount; }, 0);
+
+        for (j = 0; j < seasonAttrs.length; j++) {
+            if (seasonAttrs[j] === "winp") {
+                ft.winp = 0;
+                if (tsa.won + tsa.lost > 0) {
+                    ft.winp = tsa.won / (tsa.won + tsa.lost);
+                }
+            } else if (seasonAttrs[j] === "att") {
+                ft.att = 0;
+                if (!tsa.hasOwnProperty("gpHome")) { tsa.gpHome = Math.round(tsa.gp / 2); } // See also game.js and teamFinances.js
+                if (tsa.gpHome > 0) {
+                    ft.att = tsa.att / tsa.gpHome;
+                }
+            } else if (seasonAttrs[j] === "cash") {
+                ft.cash = tsa.cash / 1000;  // [millions of dollars]
+            } else if (seasonAttrs[j] === "revenue") {
+                ft.revenue = tsa.revenue / 1000;  // [millions of dollars]
+            } else if (seasonAttrs[j] === "profit") {
+                ft.profit = (tsa.revenue - tsa.expense) / 1000;  // [millions of dollars]
+            } else if (seasonAttrs[j] === "salaryPaid") {
+                ft.salaryPaid = tsa.expenses.salary.amount / 1000;  // [millions of dollars]
+            } else if (seasonAttrs[j] === "payroll") {
+                // Handled later
+                ft.payroll = null;
+            } else if (seasonAttrs[j] === "lastTen") {
+                lastTenWon = _.reduce(tsa.lastTen, function (memo, num) { return memo + num; }, 0);
+                lastTenLost = tsa.lastTen.length - lastTenWon;
+                ft.lastTen = lastTenWon + "-" + lastTenLost;
+            } else if (seasonAttrs[j] === "streak") {  // For standings
+                if (tsa.streak === 0) {
+                    ft.streak = "None";
+                } else if (tsa.streak > 0) {
+                    ft.streak = "Won " + tsa.streak;
+                } else if (tsa.streak < 0) {
+                    ft.streak = "Lost " + Math.abs(tsa.streak);
+                }
+            } else {
+                ft[seasonAttrs[j]] = tsa[seasonAttrs[j]];
+            }
+        }
+
+        return ft;
+    };
+
     // Copys/filters the seasonal attributes listed in options.seasonAttrs from p to fp.
     filterSeasonAttrs = function (ft, t, options) {
-        var j, lastTenLost, lastTenWon, tsa;
+        var i, j, ts;
 
         if (options.seasonAttrs.length > 0) {
-            for (j = 0; j < t.seasons.length; j++) {
-                if (t.seasons[j].season === options.season) {
-                    tsa = t.seasons[j];
-                    break;
+            if (options.season !== null) {
+                // Single season
+                for (j = 0; j < t.seasons.length; j++) {
+                    if (t.seasons[j].season === options.season) {
+                        ts = t.seasons[j];
+                        break;
+                    }
                 }
+            } else {
+                // Multiple seasons
+                ts = t.seasons;
             }
+        }
 
-            // For cases when the deleteOldData feature is used
-            if (tsa === undefined) {
-                return;
+        if (ts !== undefined && ts.length >= 0) {
+            ft.seasons = [];
+            // Multiple seasons
+            for (i = 0; i < ts.length; i++) {
+                ft.seasons.push(filterSeasonAttrsPartial({}, ts[i], options.seasonAttrs));
             }
-
-            // Revenue and expenses calculation
-            tsa.revenue = _.reduce(tsa.revenues, function (memo, revenue) { return memo + revenue.amount; }, 0);
-            tsa.expense = _.reduce(tsa.expenses, function (memo, expense) { return memo + expense.amount; }, 0);
-
-            for (j = 0; j < options.seasonAttrs.length; j++) {
-                if (options.seasonAttrs[j] === "winp") {
-                    ft.winp = 0;
-                    if (tsa.won + tsa.lost > 0) {
-                        ft.winp = tsa.won / (tsa.won + tsa.lost);
-                    }
-                } else if (options.seasonAttrs[j] === "att") {
-                    ft.att = 0;
-                    if (!tsa.hasOwnProperty("gpHome")) { tsa.gpHome = Math.round(tsa.gp / 2); } // See also game.js and teamFinances.js
-                    if (tsa.gpHome > 0) {
-                        ft.att = tsa.att / tsa.gpHome;
-                    }
-                } else if (options.seasonAttrs[j] === "cash") {
-                    ft.cash = tsa.cash / 1000;  // [millions of dollars]
-                } else if (options.seasonAttrs[j] === "revenue") {
-                    ft.revenue = tsa.revenue / 1000;  // [millions of dollars]
-                } else if (options.seasonAttrs[j] === "profit") {
-                    ft.profit = (tsa.revenue - tsa.expense) / 1000;  // [millions of dollars]
-                } else if (options.seasonAttrs[j] === "salaryPaid") {
-                    ft.salaryPaid = tsa.expenses.salary.amount / 1000;  // [millions of dollars]
-                } else if (options.seasonAttrs[j] === "payroll") {
-                    // Handled later
-                    ft.payroll = null;
-                } else if (options.seasonAttrs[j] === "lastTen") {
-                    lastTenWon = _.reduce(tsa.lastTen, function (memo, num) { return memo + num; }, 0);
-                    lastTenLost = tsa.lastTen.length - lastTenWon;
-                    ft.lastTen = lastTenWon + "-" + lastTenLost;
-                } else if (options.seasonAttrs[j] === "streak") {  // For standings
-                    if (tsa.streak === 0) {
-                        ft.streak = "None";
-                    } else if (tsa.streak > 0) {
-                        ft.streak = "Won " + tsa.streak;
-                    } else if (tsa.streak < 0) {
-                        ft.streak = "Lost " + Math.abs(tsa.streak);
-                    }
-                } else {
-                    ft[options.seasonAttrs[j]] = tsa[options.seasonAttrs[j]];
-                }
-            }
+        } else {
+            // Single seasons - merge stats with root object
+            ft = filterSeasonAttrsPartial(ft, ts, options.seasonAttrs);
         }
     };
 

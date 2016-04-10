@@ -4,6 +4,7 @@ var db = require('../db');
 var g = require('../globals');
 var ui = require('../ui');
 var league = require('../core/league');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var bbgmView = require('../util/bbgmView');
 var viewHelpers = require('../util/viewHelpers');
@@ -26,7 +27,7 @@ function updateDeleteLeague(inputs) {
             return Promise.all([
                 tx.games.count(),
                 tx.players.count(),
-                tx.teamSeasons.index("tid").getAll(0),
+                tx.teamSeasons.index("tid, season").getAll(backboard.bound([0], [0, ''])),
                 g.dbm.leagues.get(inputs.lid)
             ]).spread(function (numGames, numPlayers, teamSeasons, l) {
                 var numSeasons;

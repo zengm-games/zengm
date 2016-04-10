@@ -3,6 +3,7 @@
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var $ = require('jquery');
 var ko = require('knockout');
@@ -42,7 +43,7 @@ mapping = {
 function updateTeamHistory(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
         return Promise.all([
-            g.dbl.teamSeasons.index('tid').getAll(inputs.tid),
+            g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([inputs.tid], [inputs.tid, ''])),
             g.dbl.players.index('statsTids').getAll(inputs.tid).then(function (players) {
                 return player.withStats(null, players, {
                     statsSeasons: "all",

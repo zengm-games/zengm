@@ -104,7 +104,7 @@ function createLeague(upgradeDB, lid) {
     playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
     playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false}); // Can't be unique because player could get traded back to same team in one season (and because playoffs is boolean)
 //        gameStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used because currently the season index is used. If multiple indexes are eventually supported, then use this too.
-    teamSeasonsStore.createIndex("tid", "tid", {unique: false});
+    teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {unique: false});
     teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {unique: true});
     teamStatsStore.createIndex("tid", "tid", {unique: false});
     teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false}); // Not unique because of playoffs

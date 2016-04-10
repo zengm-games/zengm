@@ -4,6 +4,7 @@ var g = require('../globals');
 var ui = require('../ui');
 var finances = require('../core/finances');
 var team = require('../core/team');
+var backboard = require('backboard');
 var $ = require('jquery');
 var ko = require('knockout');
 var _ = require('underscore');
@@ -159,7 +160,7 @@ function updateTeamFinances(inputs, updateEvents, vm) {
             vars.contractTotals = contractTotals;
             vars.salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
-            return g.dbl.teamSeasons.index("tid").getAll(inputs.tid).then(function (teamSeasons) {
+            return g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([inputs.tid], [inputs.tid, ''])).then(function (teamSeasons) {
                 var barData, barSeasons, i, keys, tempData;
 
                 teamSeasons.reverse(); // Most recent season first

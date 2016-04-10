@@ -3,6 +3,7 @@
 
 var g = require('../globals');
 var team = require('../core/team');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var $ = require('jquery');
 var _ = require('underscore');
@@ -316,7 +317,7 @@ function checkDynasty(titles, years, slug, saveAchievement) {
         return Promise.resolve(false);
     }
 
-    return g.dbl.teamSeasons.index("tid").getAll(g.userTid).then(function (teamSeasons) {
+    return g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid], [g.userTid, ''])).then(function (teamSeasons) {
         var i, titlesFound;
 
         titlesFound = 0;

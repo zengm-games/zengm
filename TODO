@@ -9,6 +9,7 @@ benchmark
 .seasons references
   hype updating in game.js - maybe just make it linear? or cache values?
   finances.getRankLastThree is awkward now, should be precomputed? or is it really needed, could just cap how fast rank changes
+    do i really need this? if so, maybe just use this year and last year, and cache prev values in teamSeason
 
 sanity check to make sure seasons and stats don't get saved to db
 

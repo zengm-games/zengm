@@ -682,7 +682,7 @@ function filter(options) {
                 seasonsPromise = Promise.resolve([]);
             } else {
                 if (options.season === null) {
-                    seasonsPromise = tx.teamSeasons.index("tid").getAll(t.tid);
+                    seasonsPromise = tx.teamSeasons.index("tid", "season").getAll(backboard.bound([t.tid], [t.tid, '']));
                 } else {
                     seasonsPromise = tx.teamSeasons.index("season, tid").getAll([options.season, t.tid]);
                 }

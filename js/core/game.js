@@ -20,24 +20,17 @@ var random = require('../util/random');
 
 function writeTeamStats(tx, results) {
     return Promise.reduce([0, 1], function (cache, t1) {
-        var t2, teamSeasonsPromise;
+        var t2;
 
         t2 = t1 === 1 ? 0 : 1;
-
-        if (t1 === 0) {
-            // Get extra seasons because we need it 
-            teamSeasonsPromise = tx.teamSeasons.index("tid, season").getAll(backboard.bound([results.team[t1].id, g.season - 2], [results.team[t1].id, g.season]));
-        } else {
-            teamSeasonsPromise = tx.teamSeasons.index("tid, season").getAll([results.team[t1].id, g.season]);
-        }
 
         return Promise.all([
             team.getPayroll(tx, results.team[t1].id).get(0),
             tx.teams.get(results.team[t1].id),
-            teamSeasonsPromise,
+            tx.teamSeasons.index("tid, season").getAll(backboard.bound([results.team[t1].id, g.season - 2], [results.team[t1].id, g.season])),
             tx.teamStats.index("season, tid").getAll([g.season, results.team[t1].id])
         ]).spread(function (payroll, t, teamSeasons, teamStatsArray) {
-            var att, coachingPaid, count, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketPrice, ticketRevenue, winp, winpOld, won;
+            var att, coachingPaid, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketPrice, ticketRevenue, winp, winpOld, won;
 
             teamSeason = teamSeasons[teamSeasons.length - 1];
 
@@ -114,18 +107,15 @@ function writeTeamStats(tx, results) {
 
             // Hype - relative to the expectations of prior seasons
             if (teamSeason.gp > 5 && g.phase !== g.PHASE.PLAYOFFS) {
-/*                winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
+                winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
                 winpOld = 0;
-                count = 0;
-                for (i = t.seasons.length - 2; i >= 0; i--) { // Start at last season, go back
-                    winpOld += t.seasons[i].won / (t.seasons[i].won + t.seasons[i].lost);
-                    count++;
-                    if (count === 4) {
-                        break;  // Max 4 seasons
-                    }
+
+                // Avg winning percentage of last 0-2 seasons (as available)
+                for (i = 0; i < teamSeasons.length - 1; i++) {
+                    winpOld += teamSeasons[i].won / (teamSeasons[i].won + teamSeasons[i].lost);
                 }
-                if (count > 0) {
-                    winpOld /= count;
+                if (teamSeasons.length > 1) {
+                    winpOld /= teamSeasons.length - 1;
                 } else {
                     winpOld = 0.5;  // Default for new games
                 }
@@ -143,7 +133,7 @@ function writeTeamStats(tx, results) {
                     teamSeason.hype = 1;
                 } else if (teamSeason.hype < 0) {
                     teamSeason.hype = 0;
-                }*/
+                }
             }
 
             revenue = merchRevenue + sponsorRevenue + nationalTvRevenue + localTvRevenue + ticketRevenue;

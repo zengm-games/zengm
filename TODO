@@ -4,34 +4,7 @@ benchmark
 - 25% faster after 50 seasons
 - 5% slower in a new league
 
-sanity check to make sure seasons and stats don't get saved to db
-
 fix tests.. ugh
-
-restore bugsnag
-    <script src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
-            data-apikey="c10b95290070cb8888a7a79cc5408555"></script>
-    <script type="text/javascript">
-      if (Bugsnag) {
-        Bugsnag.appVersion = "2016.01.04.1366";
-        if (location.host.indexOf("localhost") === 0) {
-          Bugsnag.releaseStage = "development";
-        } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
-          Bugsnag.releaseStage = "beta";
-        } else if (location.host.indexOf("play.basketball-gm.com") === 0) {
-          Bugsnag.releaseStage = "production";
-        } else {
-          Bugsnag.releaseStage = "unknown";
-        }
-        Bugsnag.notifyReleaseStages = ["beta", "production", "unknown"];
-
-        // For errors inside Bluebird
-        window.addEventListener("unhandledrejection", function (err) {
-            Bugsnag.notifyException(err);
-        });
-      }
-    </script>
-  node-source-map-support unhandled whatever option, what does it actually do
 
 before finish...
   upgrade new object stores and indexes

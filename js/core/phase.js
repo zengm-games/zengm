@@ -70,7 +70,6 @@ function newPhasePreseason(tx) {
         return Promise.map(tids, function (tid) {
             // Add row to team stats and season attributes
             return Promise.try(function () {
-
                 // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
                 // This is done BEFORE a new season row is added.
                 if (tid === g.userTid) {

@@ -1,16 +1,18 @@
 'use strict';
 
+var Davis, Promise, account, changes, db, helpers, ui, views;
+
 require('source-map-support').install({handleUncaughtExceptions: false});
 
-var db = require('./db');
-var views = require('./views');
-var ui = require('./ui');
-var changes = require('./data/changes');
-var Davis = require('./lib/davis');
-var account = require('./util/account');
-var helpers = require('./util/helpers');
+db = require('./db');
+views = require('./views');
+ui = require('./ui');
+changes = require('./data/changes');
+Davis = require('./lib/davis');
+account = require('./util/account');
+helpers = require('./util/helpers');
 
-var Promise = require('bluebird');
+Promise = require('bluebird');
 Promise.config({warnings: false});
 
 // Make sure I never accidentally use native promises, because that could fuck with error handling

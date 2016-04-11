@@ -213,7 +213,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
 
         return setGameAttributesComplete(gameAttributes);
     }).then(function () {
-        var i, j, k, round, scoutingRank, t, teamStats, teamSeasons, toMaybeAdd;
+        var i, j, k, round, scoutingRank, t, teamSeasons, teamStats, toMaybeAdd;
 
         return g.dbl.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"], "readwrite", function (tx) {
             // Draft picks for the first 4 years, as those are the ones can be traded initially

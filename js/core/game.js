@@ -562,7 +562,7 @@ function loadTeams(tx) {
             tx.teams.get(tid),
             tx.teamSeasons.index("season, tid").get([g.season, tid])
         ]).spread(function (players, team, teamSeason) {
-            var i, j, k, numPlayers, p, pos, rating, t, teamSeason;
+            var i, j, k, numPlayers, p, pos, rating, t;
 
             players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
 

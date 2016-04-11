@@ -1,10 +1,8 @@
 # teams refactor
 
 benchmark
-- when viewing dashboard and simulating games in 2057, 13% faster now
-- another 13% (26% total) when optimizing team.filter
-- try again after adding back commented out features
-- try in new league
+- 25% faster after 50 seasons
+- 5% slower in a new league
 
 sanity check to make sure seasons and stats don't get saved to db
 
@@ -25,6 +23,7 @@ restore bugsnag
         } else {
           Bugsnag.releaseStage = "unknown";
         }
+        Bugsnag.notifyReleaseStages = ["beta", "production", "unknown"];
 
         // For errors inside Bluebird
         window.addEventListener("unhandledrejection", function (err) {

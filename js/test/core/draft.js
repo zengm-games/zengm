@@ -56,7 +56,7 @@ describe("core/draft", function () {
 
     describe("#genPlayers()", function () {
         it("should generate 70 players for the draft", function () {
-            return g.dbl.tx(["players", "teams"], "readwrite", function (tx) {
+            return g.dbl.tx(["players", "teams", "teamSeasons"], "readwrite", function (tx) {
                 return draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, null);
             }).then(function () {
                 return g.dbl.players.index('draft.year').count(g.season).then(function (numPlayers) {
@@ -69,7 +69,7 @@ describe("core/draft", function () {
     describe("#genOrder()", function () {
         var draftResults, i;
         it("should schedule 60 draft picks", function () {
-            return g.dbl.tx(["draftOrder", "draftPicks", "teams", "players"], "readwrite", function (tx) {
+            return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons", "players"], "readwrite", function (tx) {
                 return tx.teams.iterate(function (t) {
                     return sampleTiebreakers.teams[t.tid]; // load static data
                 }).then(function () {
@@ -139,7 +139,7 @@ describe("core/draft", function () {
 
     describe("#updateChances()", function () {
         it("should distribute combinations to teams with the same record", function () {
-            return g.dbl.tx(["draftOrder", "draftPicks", "teams"], "readwrite", function (tx) {
+            return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons"], "readwrite", function (tx) {
                 return team.filter({
                     ot: tx,
                     attrs: ["tid", "cid"],

@@ -2,6 +2,7 @@
 'use strict';
 
 var assert = require('assert');
+var Promise = require('bluebird');
 var db = require('../../db');
 var g = require('../../globals');
 var league = require('../../core/league');
@@ -146,6 +147,17 @@ describe("util/account", function () {
         });
     });
 
+    function addExtraSeasons(tid, lastSeason, extraSeasons) {
+        return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+            return Promise.each(extraSeasons, function (extraSeason) {
+                lastSeason += 1;
+                extraSeason.tid = tid;
+                extraSeason.season = lastSeason;
+                return tx.teamSeasons.add(extraSeason);
+            });
+        });
+    }
+
     describe("#checkAchievement.dynasty*()", function () {
         it("should gracefully handle case where not enough seasons are present", function () {
             return account.checkAchievement.dynasty(false).then(function (awarded) {
@@ -161,17 +173,9 @@ describe("util/account", function () {
             });
         });
         it("should award dynasty for 6 titles in 8 seasons, but not dynasty_2 or dynasty_3", function () {
+            var extraSeasons = [{playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}];
             // Add 6 to the existing season, making 7 seasons total
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    var extraSeasons;
-
-                    extraSeasons = [{playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}];
-                    t.seasons = t.seasons.concat(extraSeasons);
-
-                    return tx.teams.put(t);
-                });
-            }).then(function () {
+            return addExtraSeasons(g.userTid, g.season, extraSeasons).then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
                     assert.equal(awarded, true);
                 });
@@ -185,16 +189,7 @@ describe("util/account", function () {
                 });
             }).then(function () {
                 // Add 1 to the existing 7 seasons, making 8 seasons total
-                return g.dbl.tx("teams", "readwrite", function (tx) {
-                    return tx.teams.get(g.userTid).then(function (t) {
-                        var extraSeasons;
-
-                        extraSeasons = [{playoffRoundsWon: 3}];
-                        t.seasons = t.seasons.concat(extraSeasons);
-
-                        return tx.teams.put(t);
-                    });
-                });
+                return addExtraSeasons(g.userTid, g.season + 6, [{playoffRoundsWon: 3}]);
             }).then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
                     assert.equal(awarded, true);
@@ -210,13 +205,16 @@ describe("util/account", function () {
             });
         });
         it("should award dynasty and dynasty_2 for 8 titles in 8 seasons, but not dynasty_3", function () {
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    // Update non-winning years from last test
-                    t.seasons[0].playoffRoundsWon = 4;
-                    t.seasons[7].playoffRoundsWon = 4;
-
-                    return tx.teams.put(t);
+            return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                // Update non-winning years from last test
+                return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = 4;
+                    return tx.teamSeasons.put(teamSeason);
+                }).then(function () {
+                    return tx.teamSeasons.index("tid, season").get([g.userTid, g.season + 7]);
+                }).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = 4;
+                    return tx.teamSeasons.put(teamSeason);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
@@ -233,17 +231,20 @@ describe("util/account", function () {
             });
         });
         it("should award dynasty, dynasty_2, and dynasty_3 for 11 titles in 13 seasons if there are 8 contiguous", function () {
+            var extraSeasons = [{playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}];
+
             // Add 5 to the existing season, making 13 seasons total
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    var extraSeasons;
-
-                    t.seasons[0].playoffRoundsWon = 0;
-                    t.seasons[1].playoffRoundsWon = 0;
-                    extraSeasons = [{playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}, {playoffRoundsWon: 4}];
-                    t.seasons = t.seasons.concat(extraSeasons);
-
-                    return tx.teams.put(t);
+            return addExtraSeasons(g.userTid, g.season + 7, extraSeasons).then(function () {
+                return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                    return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                        teamSeason.playoffRoundsWon = 0;
+                        return tx.teamSeasons.put(teamSeason);
+                    }).then(function () {
+                        return tx.teamSeasons.index("tid, season").get([g.userTid, g.season + 1]);
+                    }).then(function (teamSeason) {
+                        teamSeason.playoffRoundsWon = 0;
+                        return tx.teamSeasons.put(teamSeason);
+                    });
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {
@@ -260,13 +261,16 @@ describe("util/account", function () {
             });
         });
         it("should award dynasty and dynasty_3 for 11 titles in 13 seasons, but not dynasty_2 if there are not 8 contiguous", function () {
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    // Swap a couple titles to make no 8 in a row
-                    t.seasons[9].playoffRoundsWon = 0;
-                    t.seasons[0].playoffRoundsWon = 4;
-
-                    return tx.teams.put(t);
+            return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                // Swap a couple titles to make no 8 in a row
+                return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = 4;
+                    return tx.teamSeasons.put(teamSeason);
+                }).then(function () {
+                    return tx.teamSeasons.index("tid, season").get([g.userTid, g.season + 9]);
+                }).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = 0;
+                    return tx.teamSeasons.put(teamSeason);
                 });
             }).then(function () {
                 return account.checkAchievement.dynasty(false).then(function (awarded) {

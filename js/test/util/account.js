@@ -2,6 +2,7 @@
 'use strict';
 
 var assert = require('assert');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var db = require('../../db');
 var g = require('../../globals');
@@ -159,6 +160,16 @@ describe("util/account", function () {
     }
 
     describe("#checkAchievement.dynasty*()", function () {
+        after(function () {
+            return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                return tx.teamSeasons.index('tid, season').iterate(backboard.bound([g.userTid], [g.userTid, '']), function (teamSeason) {
+                    if (teamSeason.season > g.season) {
+                        return tx.teamSeasons.delete(teamSeason.rid);
+                    }
+                });
+            });
+        });
+
         it("should gracefully handle case where not enough seasons are present", function () {
             return account.checkAchievement.dynasty(false).then(function (awarded) {
                 assert.equal(awarded, false);
@@ -290,13 +301,12 @@ describe("util/account", function () {
 
     describe("#checkAchievement.moneyball*()", function () {
         it("should award moneyball and moneyball_2 for title with payroll <= $30M", function () {
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    t.seasons = [t.seasons[0]]; // Reset from dynasty*, only one season
-                    t.seasons[0].playoffRoundsWon = 4;
-                    t.seasons[0].expenses.salary.amount = 30000;
+            return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = 4;
+                    teamSeason.expenses.salary.amount = 30000;
 
-                    return tx.teams.put(t);
+                    return tx.teamSeasons.put(teamSeason);
                 });
             }).then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
@@ -309,11 +319,11 @@ describe("util/account", function () {
             });
         });
         it("should not award either if didn't win title", function () {
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    t.seasons[0].playoffRoundsWon = 3;
+            return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = 3;
 
-                    return tx.teams.put(t);
+                    return tx.teamSeasons.put(teamSeason);
                 });
             }).then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
@@ -326,12 +336,12 @@ describe("util/account", function () {
             });
         });
         it("should award moneyball but not moneyball_2 for title with payroll > $30M and <= $40M", function () {
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    t.seasons[0].playoffRoundsWon = 4;
-                    t.seasons[0].expenses.salary.amount = 40000;
+            return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = 4;
+                    teamSeason.expenses.salary.amount = 40000;
 
-                    return tx.teams.put(t);
+                    return tx.teamSeasons.put(teamSeason);
                 });
             }).then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
@@ -344,11 +354,12 @@ describe("util/account", function () {
             });
         });
         it("should not award either if payroll > $40M", function () {
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    t.seasons[0].expenses.salary.amount = 40001;
+            return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = 4;
+                    teamSeason.expenses.salary.amount = 40001;
 
-                    return tx.teams.put(t);
+                    return tx.teamSeasons.put(teamSeason);
                 });
             }).then(function () {
                 return account.checkAchievement.moneyball(false).then(function (awarded) {
@@ -403,12 +414,12 @@ describe("util/account", function () {
 
     describe("#checkAchievement.small_market()", function () {
         it("should award achievement if user's team wins title in a small market", function () {
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    t.seasons[0].playoffRoundsWon = 4;
-                    t.seasons[0].pop = 1.5;
+            return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = 4;
+                    teamSeason.pop = 1.5;
 
-                    return tx.teams.put(t);
+                    return tx.teamSeasons.put(teamSeason);
                 });
             }).then(function () {
                 return account.checkAchievement.small_market(false).then(function (awarded) {
@@ -417,12 +428,12 @@ describe("util/account", function () {
             });
         });
         it("should not award achievement if user's team is not in a small market", function () {
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    t.seasons[0].playoffRoundsWon = 4;
-                    t.seasons[0].pop = 3;
+            return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = 4;
+                    teamSeason.pop = 3;
 
-                    return tx.teams.put(t);
+                    return tx.teamSeasons.put(teamSeason);
                 });
             }).then(function () {
                 return account.checkAchievement.small_market(false).then(function (awarded) {
@@ -431,12 +442,12 @@ describe("util/account", function () {
             });
         });
         it("should not award achievement if user's team does not win the title", function () {
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    t.seasons[0].playoffRoundsWon = 3;
-                    t.seasons[0].pop = 1.5;
+            return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = 3;
+                    teamSeason.pop = 1.5;
 
-                    return tx.teams.put(t);
+                    return tx.teamSeasons.put(teamSeason);
                 });
             }).then(function () {
                 return account.checkAchievement.small_market(false).then(function (awarded) {

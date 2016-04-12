@@ -61,11 +61,11 @@ describe("util/account", function () {
             return account.checkAchievement.septuawinarian(false).then(function (awarded) {
                 assert.equal(awarded, false);
 
-                return g.dbl.tx("teams", "readwrite", function (tx) {
-                    return tx.teams.get(g.userTid).then(function (t) {
-                        t.seasons[0].won = 70;
+                return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                    return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                        teamSeason.won = 70;
 
-                        return tx.teams.put(t);
+                        return tx.teamSeasons.put(teamSeason);
                     });
                 });
             }).then(function () {
@@ -83,13 +83,13 @@ describe("util/account", function () {
             // tid 7 wins 4-0 every series
             ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":0,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":0,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
-            return g.dbl.tx(["playoffSeries", "teams"], "readwrite", function (tx) {
+            return g.dbl.tx(["playoffSeries", "teamSeasons"], "readwrite", function (tx) {
                 return tx.playoffSeries.put(ps).then(function () {
-                    return tx.teams.get(g.userTid).then(function (t) {
-                        t.seasons[0].won = 82;
-                        t.seasons[0].lost = 0;
+                    return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                        teamSeason.won = 82;
+                        teamSeason.lost = 0;
 
-                        return tx.teams.put(t);
+                        return tx.teamSeasons.put(teamSeason);
                     });
                 });
             }).then(function () {
@@ -99,23 +99,23 @@ describe("util/account", function () {
             });
         });
         it("should not award achievement without 82-0 regular season", function () {
-            return g.dbl.tx("teams", "readwrite", function (tx) {
-                return tx.teams.get(g.userTid).then(function (t) {
-                    t.seasons[0].won = 82;
-                    t.seasons[0].lost = 1;
+            return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                    teamSeason.won = 82;
+                    teamSeason.lost = 1;
 
-                    return tx.teams.put(t);
+                    return tx.teamSeasons.put(teamSeason);
                 });
             }).then(function () {
                 return account.checkAchievement["98_degrees"](false).then(function (awarded) {
                     assert.equal(awarded, false);
 
-                    return g.dbl.tx("teams", "readwrite", function (tx) {
-                        return tx.teams.get(g.userTid).then(function (t) {
-                            t.seasons[0].won = 81;
-                            t.seasons[0].lost = 0;
+                    return g.dbl.tx("teamSeasons", "readwrite", function (tx) {
+                        return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                            teamSeason.won = 81;
+                            teamSeason.lost = 0;
 
-                            return tx.teams.put(t);
+                            return tx.teamSeasons.put(teamSeason);
                         });
                     });
                 });
@@ -129,13 +129,13 @@ describe("util/account", function () {
             // tid 7 lost a game
             var ps = {"season":2013,"currentRound":3,"series":[[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":16,"cid":0,"winp":0.47560975609756095,"won":1,"seed":8}},{"home":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":4,"seed":4},"away":{"tid":15,"cid":0,"winp":0.5609756097560976,"won":1,"seed":5}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":5,"cid":0,"winp":0.5609756097560976,"won":3,"seed":6}},{"home":{"tid":29,"cid":0,"winp":0.6951219512195121,"won":3,"seed":2},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":4,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":23,"cid":1,"winp":0.5365853658536586,"won":0,"seed":8}},{"home":{"tid":12,"cid":1,"winp":0.6829268292682927,"won":1,"seed":4},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":4,"seed":5}},{"home":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3},"away":{"tid":14,"cid":1,"winp":0.5853658536585366,"won":0,"seed":6}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":4,"seed":2},"away":{"tid":18,"cid":1,"winp":0.5487804878048781,"won":3,"seed":7}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":1,"cid":0,"winp":0.6097560975609756,"won":0,"seed":4}},{"home":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":4,"seed":3},"away":{"tid":17,"cid":0,"winp":0.5121951219512195,"won":1,"seed":7}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":24,"cid":1,"winp":0.5853658536585366,"won":3,"seed":5}},{"home":{"tid":6,"cid":1,"winp":0.7439024390243902,"won":1,"seed":2},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":4,"seed":3}}],[{"home":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1},"away":{"tid":26,"cid":0,"winp":0.6219512195121951,"won":0,"seed":3}},{"home":{"tid":11,"cid":1,"winp":0.8048780487804879,"won":4,"seed":1},"away":{"tid":20,"cid":1,"winp":0.7317073170731707,"won":2,"seed":3}}],[{"home":{"tid":4,"cid":1,"winp":0.8048780487804879,"won":0,"seed":1},"away":{"tid":7,"cid":0,"winp":0.7317073170731707,"won":4,"seed":1}}]]};
 
-            return g.dbl.tx(["playoffSeries", "teams"], "readwrite", function (tx) {
+            return g.dbl.tx(["playoffSeries", "teamSeasons"], "readwrite", function (tx) {
                 return tx.playoffSeries.put(ps).then(function () {
-                    return tx.teams.get(g.userTid).then(function (t) {
-                        t.seasons[0].won = 82;
-                        t.seasons[0].lost = 0;
+                    return tx.teamSeasons.index("tid, season").get([g.userTid, g.season]).then(function (teamSeason) {
+                        teamSeason.won = 82;
+                        teamSeason.lost = 0;
 
-                        return tx.teams.put(t);
+                        return tx.teamSeasons.put(teamSeason);
                     });
                 });
             }).then(function () {

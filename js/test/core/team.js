@@ -66,16 +66,19 @@ describe("core/team", function () {
             return db.connectMeta().then(function () {
                 return league.create("Test", 0, undefined, 2013, false);
             }).then(function () {
-                return g.dbl.teams.get(4).then(function (t) {
-                    t.stats[0].gp = 10;
-                    t.stats[0].fg = 50;
-                    t.stats[0].fga = 100;
-                    t = team.addStatsRow(t, true);
-                    t.stats[1].gp = 4;
-                    t.stats[1].fg = 12;
-                    t.stats[1].fga = 120;
+                return g.dbl.teamStats.index('season, tid').get([g.season, 4]).then(function (teamStats) {
+                    teamStats.gp = 10;
+                    teamStats.fg = 50;
+                    teamStats.fga = 100;
 
-                    return g.dbl.teams.put(t);
+                    return g.dbl.teamStats.put(teamStats);
+                }).then(function () {
+                    var teamStats = team.genStatsRow(4, true);
+                    teamStats.gp = 4;
+                    teamStats.fg = 12;
+                    teamStats.fga = 120;
+
+                    return g.dbl.teamStats.put(teamStats);
                 });
             });
         });
@@ -193,7 +196,7 @@ describe("core/team", function () {
             });
         });
         it("should use supplied IndexedDB transaction", function () {
-            return g.dbl.tx(["players", "releasedPlayers", "teams"], function (tx) {
+            return g.dbl.tx(["players", "releasedPlayers", "teams", "teamSeasons"], function (tx) {
                 return team.filter({
                     attrs: ["tid", "abbrev"],
                     seasonAttrs: ["season", "won"],

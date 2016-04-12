@@ -24,7 +24,7 @@ describe("core/league", function () {
             });
         });
         it("should create all necessary object stores", function () {
-            assert.equal(g.dbl.objectStoreNames.length, 16);
+            assert.equal(g.dbl.objectStoreNames.length, 18);
             assert.equal(g.dbl.objectStoreNames.contains("awards"), true);
             assert.equal(g.dbl.objectStoreNames.contains("events"), true);
             assert.equal(g.dbl.objectStoreNames.contains("draftOrder"), true);
@@ -39,6 +39,8 @@ describe("core/league", function () {
             assert.equal(g.dbl.objectStoreNames.contains("releasedPlayers"), true);
             assert.equal(g.dbl.objectStoreNames.contains("schedule"), true);
             assert.equal(g.dbl.objectStoreNames.contains("teams"), true);
+            assert.equal(g.dbl.objectStoreNames.contains("teamSeasons"), true);
+            assert.equal(g.dbl.objectStoreNames.contains("teamStats"), true);
             assert.equal(g.dbl.objectStoreNames.contains("trade"), true);
         });
         it("should initialize gameAttributes object store", function () {
@@ -95,9 +97,17 @@ describe("core/league", function () {
                     assert.equal(typeof teams[i].name, "string");
                     assert.equal(typeof teams[i].region, "string");
                     assert.equal(typeof teams[i].tid, "number");
-                    assert.equal(teams[i].seasons.length, 1);
-                    assert.equal(teams[i].stats.length, 1);
                 }
+            });
+        });
+        it("should initialize teamSeasons object store", function () {
+            return g.dbl.teamSeasons.getAll().then(function (teamSeasons) {
+                assert.equal(teamSeasons.length, g.numTeams);
+            });
+        });
+        it("should initialize teamStats object store", function () {
+            return g.dbl.teamStats.getAll().then(function (teamStats) {
+                assert.equal(teamStats.length, g.numTeams);
             });
         });
         it("should initialize trade object store", function () {

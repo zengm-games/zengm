@@ -255,7 +255,7 @@ describe("core/team", function () {
         }
 
         function removeTen(tid) {
-            return g.dbl.tx(["players", "releasedPlayers", "teams"], "readwrite", function (tx) {
+            return g.dbl.tx(["players", "releasedPlayers", "teams", "teamSeasons"], "readwrite", function (tx) {
                 var i = 0;
 
                 return tx.players.index('tid').iterate(tid, function (p, shortCircuit) {

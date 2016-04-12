@@ -4,8 +4,6 @@ benchmark
 - 25% faster after 50 seasons
 - 5% slower in a new league
 
-fix tests.. ugh
-
 before finish...
   upgrade new object stores and indexes
   handle import of league files

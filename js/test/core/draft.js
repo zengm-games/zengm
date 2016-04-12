@@ -8,6 +8,7 @@ var league = require('../../core/league');
 var team = require('../../core/team');
 var sampleTiebreakers = require('../fixtures/sampleTiebreakers.js');
 var _ = require('underscore');
+var Promise = require('bluebird');
 
 describe("core/draft", function () {
     var testDraftUntilUserOrEnd, testDraftUser, userPick1, userPick2;
@@ -68,13 +69,36 @@ describe("core/draft", function () {
 
     describe("#genOrder()", function () {
         var draftResults, i;
+
+        before(function () {
+            return g.dbl.tx(["teams", "teamSeasons"], "readwrite", function (tx) {
+                // Load static data
+                return tx.teamSeasons.iterate(function (teamSeason) {
+                    tx.teamSeasons.delete(teamSeason.rid);
+                }).then(function () {
+                    return tx.teams.iterate(function (t) {
+                        var st, teamSeasons;
+
+                        st = sampleTiebreakers.teams[t.tid];
+                        teamSeasons = st.seasons;
+                        delete st.seasons;
+                        delete st.stats;
+
+                        return Promise.each(teamSeasons, function (teamSeason) {
+                            teamSeason.tid = t.tid;
+                            return tx.teamSeasons.put(teamSeason);
+                        }).then(function () {
+                            return st;
+                        });
+                    });
+                });
+            });
+        });
+
         it("should schedule 60 draft picks", function () {
             return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons", "players"], "readwrite", function (tx) {
-                return tx.teams.iterate(function (t) {
-                    return sampleTiebreakers.teams[t.tid]; // load static data
-                }).then(function () {
-                    return draft.genOrder(tx);
-                }).then(function () {
+                // Load static data
+                return draft.genOrder(tx).then(function () {
                     return draft.getOrder(tx);
                 }).then(function (draftOrder) {
                     assert.equal(draftOrder.length, 60);
@@ -84,6 +108,7 @@ describe("core/draft", function () {
                 });
             });
         });
+
         it("should give the 3 teams with the lowest win percentage picks not lower than 6", function () {
             var tids = [16, 28, 21]; // teams with lowest winp
             for (i = 0; i < tids.length; i++) {

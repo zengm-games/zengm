@@ -22,7 +22,7 @@ Backboard.on('quotaexceeded', function () {
     });
 });
 Backboard.on('blocked', function () {
-    window.alert("Please close all other tabs with this site open!");
+    window.alert("Please close any other tabs with this league open!");
 });
 
 /**
@@ -134,10 +134,42 @@ function migrateLeague(upgradeDB, lid) {
     if (upgradeDB.oldVersion <= 15) {
         throw new Error('League is too old to upgrade (version ' + upgradeDB.oldVersion + ')');
     }
+    if (upgradeDB.oldVersion <= 16) {
+        (function () {
+            var teamSeasonsStore, teamStatsStore;
+
+            teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {keyPath: "rid", autoIncrement: true});
+            teamStatsStore = upgradeDB.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
+
+            teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {unique: false});
+            teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {unique: true});
+            teamStatsStore.createIndex("tid", "tid", {unique: false});
+            teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false});
+
+            upgradeDB.teams.iterate(function (t) {
+                return Promise.each(t.stats, function (teamStats) {
+                    teamStats.tid = t.tid;
+                    if (!teamStats.hasOwnProperty("ba")) {
+                        teamStats.ba = 0;
+                    }
+                    return upgradeDB.teamStats.add(teamStats);
+                }).then(function () {
+                    return Promise.each(t.seasons, function (teamSeason) {
+                        teamSeason.tid = t.tid;
+                        return upgradeDB.teamSeasons.add(teamSeason);
+                    });
+                }).then(function () {
+                    delete t.stats;
+                    delete t.seasons;
+                    return t;
+                });
+            });
+        }());
+    }
 }
 
 function connectLeague(lid) {
-    return Backboard.open('league' + lid, 16, function (upgradeDB) {
+    return Backboard.open('league' + lid, 17, function (upgradeDB) {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

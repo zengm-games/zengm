@@ -32,7 +32,7 @@
 
       window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
 
-      if (enableLogging) {
+      if (window.enableLogging) {
         // Google Analytics
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-38759330-1']);
@@ -46,7 +46,7 @@
       }
     </script>
 
-    <script src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
+    <script src="https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
             data-apikey="c10b95290070cb8888a7a79cc5408555"></script>
     <script type="text/javascript">
       if (Bugsnag) {
@@ -72,7 +72,7 @@
 
   <body>
     <script type="text/javascript">
-      if (enableLogging) {
+      if (window.enableLogging) {
         // Google Consumer Surveys
         var TriggerPrompt = function(articleUrl, contentId) {
           var ARTICLE_URL = articleUrl;

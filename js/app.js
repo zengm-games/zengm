@@ -2,7 +2,8 @@
 
 var Davis, Promise, account, changes, db, helpers, ui, views;
 
-require('source-map-support').install({handleUncaughtExceptions: false});
+// Sadly this introduces weird interactions with Bugsnag
+//require('source-map-support').install({handleUncaughtExceptions: false});
 
 db = require('./db');
 views = require('./views');

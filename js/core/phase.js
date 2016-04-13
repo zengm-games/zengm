@@ -75,11 +75,15 @@ function newPhasePreseason(tx) {
                 if (tid === g.userTid) {
                     return tx.teamSeasons.index("tid, season").getAll(backboard.bound([tid, g.season - 3], [tid, g.season - 1])).then(function (teamSeasons) {
                         scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
+
+                        return teamSeasons[teamSeasons.length - 1];
                     });
                 }
-            }).then(function () {
+
+                return tx.teamSeasons.index("tid, season").get([tid, g.season - 1]);
+            }).then(function (prevSeason) {
                 return Promise.all([
-                    tx.teamSeasons.add(team.genSeasonRow(tid)),
+                    tx.teamSeasons.add(team.genSeasonRow(tid, prevSeason)),
                     tx.teamStats.add(team.genStatsRow(tid))
                 ]);
             }).then(function () {});

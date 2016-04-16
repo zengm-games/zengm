@@ -1,20 +1,9 @@
-# teams refactor
-
-benchmark
-- 25% faster after 50 seasons
-- 5% slower in a new league
-
-before finish...
-  upgrade new object stores and indexes
-  changes
-
----
-
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 
 best record https://www.reddit.com/r/BasketballGM/comments/4djo7g/suggestion_bestworst_record/
 
 can i get rid of http/https links?
+  tracking prevalence in GA with "Season protocol"
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard
 

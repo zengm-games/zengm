@@ -105,8 +105,10 @@ function uiFirst(vm) {
 
         // Manually clear picture, since we're not using Knockout for this
         pic = document.getElementById("picture");
-        while (pic.firstChild) {
-            pic.removeChild(pic.firstChild);
+        if (pic) {
+            while (pic.firstChild) {
+                pic.removeChild(pic.firstChild);
+            }
         }
 
         // If playerImgURL is not an empty string, use it instead of the generated face
@@ -115,7 +117,9 @@ function uiFirst(vm) {
             img.src = vm.player.imgURL();
             img.style.maxHeight = "100%";
             img.style.maxWidth = "100%";
-            pic.appendChild(img);
+            if (pic) {
+                pic.appendChild(img);
+            }
         } else {
             faces.display("picture", komapping.toJS(vm.player.face));
         }

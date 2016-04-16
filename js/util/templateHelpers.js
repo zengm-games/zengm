@@ -200,7 +200,7 @@ ko.bindingHandlers.recordAndPlayoffs = {
         season = ko.unwrap(args[1]);
         won = ko.unwrap(args[2]);
         lost = ko.unwrap(args[3]);
-        playoffRoundsWon = ko.unwrap(args[4]);
+        playoffRoundsWon = args.length > 4 ? ko.unwrap(args[4]) : null;
         option = args.length > 5 ? ko.unwrap(args[5]) : null;
 
         extraText = "";

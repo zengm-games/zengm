@@ -51,7 +51,10 @@ function updateTeamHistory(inputs, updateEvents, vm) {
                 });
             })
         ]).spread(function (teamSeasons, players) {
-            var championships, history, i, j, playoffAppearances, totalLost, totalWon;
+            var bestRecord, championships, history, i, j, playoffAppearances, totalLost, totalWon, worstRecord;
+
+            bestRecord = null;
+            worstRecord = null;
 
             history = [];
             totalWon = 0;
@@ -73,8 +76,17 @@ function updateTeamHistory(inputs, updateEvents, vm) {
                 if (teamSeasons[i].playoffRoundsWon === 4) {
                     championships += 1;
                 }
+
+                if (bestRecord === null || bestRecord.won < history[history.length - 1].won) {
+                    bestRecord = history[history.length - 1];
+                }
+                if (worstRecord === null || worstRecord.lost < history[history.length - 1].lost) {
+                    worstRecord = history[history.length - 1];
+                }
             }
             history.reverse(); // Show most recent season first
+
+
 
             players = player.filter(players, {
                 attrs: ["pid", "name", "injury", "tid", "hof", "watch"],
@@ -111,7 +123,9 @@ function updateTeamHistory(inputs, updateEvents, vm) {
                 totalWon: totalWon,
                 totalLost: totalLost,
                 playoffAppearances: playoffAppearances,
-                championships: championships
+                championships: championships,
+                bestRecord: bestRecord,
+                worstRecord: worstRecord
             };
         });
     }

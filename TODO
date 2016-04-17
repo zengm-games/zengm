@@ -2,6 +2,9 @@ babel
   confirm source maps still work
   convert with http://lebab.io/
   benchmark, for sanity
+  restore bugsnag
+    <script src="https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
+            data-apikey="c10b95290070cb8888a7a79cc5408555"></script>
 
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 

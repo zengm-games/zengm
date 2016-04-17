@@ -1,3 +1,8 @@
+babel
+  confirm source maps still work
+  convert with http://lebab.io/
+  benchmark, for sanity
+
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 
 can i get rid of http/https links?

@@ -1,26 +1,22 @@
-'use strict';
-
-var Davis, Promise, account, changes, db, helpers, ui, views;
-
 // Sadly this introduces weird interactions with Bugsnag
 require('source-map-support').install({handleUncaughtExceptions: false});
 
-db = require('./db');
-views = require('./views');
-ui = require('./ui');
-changes = require('./data/changes');
-Davis = require('./lib/davis');
-account = require('./util/account');
-helpers = require('./util/helpers');
+const db = require('./db');
+const views = require('./views');
+const ui = require('./ui');
+const changes = require('./data/changes');
+const Davis = require('./lib/davis');
+const account = require('./util/account');
+const helpers = require('./util/helpers');
 
-Promise = require('bluebird');
+const Promise = require('bluebird');
 Promise.config({warnings: false});
 
 // Make sure I never accidentally use native promises, because that could fuck with error handling
-window.Promise = function () { throw new Error("USE BLUEBIRD!"); };
-window.Promise.all = function () { throw new Error("USE BLUEBIRD!"); };
-window.Promise.map = function () { throw new Error("USE BLUEBIRD!"); };
-window.Promise.try = function () { throw new Error("USE BLUEBIRD!"); };
+window.Promise = () => { throw new Error("USE BLUEBIRD!"); };
+window.Promise.all = () => { throw new Error("USE BLUEBIRD!"); };
+window.Promise.map = () => { throw new Error("USE BLUEBIRD!"); };
+window.Promise.try = () => { throw new Error("USE BLUEBIRD!"); };
 
 require('lib/bootstrap-affix');
 require('lib/bootstrap-alert');
@@ -39,9 +35,7 @@ require('jquery-ui-touch-punch');
 require('./util/templateHelpers');
 require('./api');
 
-(function () {
-    var errorMsg;
-
+((() => {
     window.bbgm = {
         debug: require('./core/debug'),
         g: require('./globals'),
@@ -66,7 +60,7 @@ require('./api');
 
     // Check if this is an old browser without IndexedDB support
     if (typeof indexedDB === "undefined") { // Some browsers don't like just plain "indexedDB === undefined"
-        errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
+        let errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
 
         // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
         if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {
@@ -79,7 +73,7 @@ require('./api');
     // Check for Safari (would like to feature detect, but it's so fucking buggy I don't know where to begin, and I don't even have a Mac)
     // https://developer.mozilla.org/en-US/docs/Browser_detection_using_the_user_agent
     if (navigator.userAgent.indexOf("Safari") >= 0 && navigator.userAgent.indexOf("Chrome") < 0) {
-        errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
+        let errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
 
         // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
         if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {
@@ -94,9 +88,9 @@ require('./api');
         // Feature detection! http://stackoverflow.com/a/26779525/786644
         IDBKeyRange.only([1]);
     } catch (e) {
-    //        errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
-    //
-    //        return helpers.error(errorMsg);
+//        errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
+//
+//        return helpers.error(errorMsg);
         return window.location.replace("/export_3.3");
     }
 
@@ -106,9 +100,9 @@ require('./api');
     // Any news?
     changes.check();
 
-    db.connectMeta().then(function () {
-        var app = new Davis(function () {
-            var tryForceHttps;
+    db.connectMeta().then(() => {
+        const app = new Davis(function () {
+            let tryForceHttps;
 
             this.configure(function () {
                 this.generateRequestOnPageLoad = true;
@@ -119,7 +113,7 @@ require('./api');
 
             this.use(Davis.googleAnalytics);
 
-            this.before(function (req) {
+            this.before(req => {
                 if (window.inCordova) {
                     // Normal Cordova pages
                     if (req.path.substr(0, 7) === 'file://') {
@@ -133,19 +127,17 @@ require('./api');
                 }
             });
 
-            this.bind("routeNotFound", function (req) {
+            this.bind("routeNotFound", req => {
                 helpers.error("Page not found.", req.raw.cb);
             });
 
             // Redirect a route to https URL always, unless the URL doesn't include basketball-gm (e.g. localhost)
-            tryForceHttps = function (view) {
-                return function (req) {
-                    if (window.location.protocol === "http:" && window.location.hostname.indexOf("basketball-gm.com") >= 0) {
-                        window.location.replace("https://" + window.location.hostname + req.fullPath);
-                    } else {
-                        view(req);
-                    }
-                };
+            tryForceHttps = view => req => {
+                if (window.location.protocol === "http:" && window.location.hostname.indexOf("basketball-gm.com") >= 0) {
+                    window.location.replace(`https://${window.location.hostname}${req.fullPath}`);
+                } else {
+                    view(req);
+                }
             };
 
             // Non-league views
@@ -276,4 +268,4 @@ require('./api');
 
         account.check();
     });
-}());
+})());

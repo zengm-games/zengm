@@ -1,19 +1,13 @@
-/**
- * @name db
- * @namespace Creating, migrating, and connecting to databases; working with transactions.
- */
-'use strict';
+const Backboard = require('backboard/dist');
+const g = require('./globals');
+const Promise = require('bluebird');
+const Davis = require('./lib/davis');
+const eventLog = require('./util/eventLog');
 
-var Backboard = require('backboard/dist');
-var g = require('./globals');
-var Promise = require('bluebird');
-var Davis = require('./lib/davis');
-var eventLog = require('./util/eventLog');
-
-var migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="https://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
+const migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="https://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
 
 Backboard.setPromiseConstructor(Promise);
-Backboard.on('quotaexceeded', function () {
+Backboard.on('quotaexceeded', () => {
     eventLog.add(null, {
         type: "error",
         text: 'Your browser isn\'t letting Basketball GM store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Improve Performance within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://basketball-gm.com/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>',
@@ -21,7 +15,7 @@ Backboard.on('quotaexceeded', function () {
         persistent: true
     });
 });
-Backboard.on('blocked', function () {
+Backboard.on('blocked', () => {
     window.alert("Please close any other tabs with this league open!");
 });
 
@@ -45,24 +39,24 @@ function createMeta(upgradeDB) {
 function migrateMeta(upgradeDB) {
     document.getElementById("content").innerHTML = migrateMessage;
 
-    console.log("Upgrading meta database from version " + upgradeDB.oldVersion + " to version " + upgradeDB.version);
+    console.log(`Upgrading meta database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
 
     if (upgradeDB.oldVersion <= 6) {
-        (function () {
+        ((() => {
             upgradeDB.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
-        }());
+        })());
     }
 }
 
 function connectMeta() {
-    return Backboard.open('meta', 7, function (upgradeDB) {
+    return Backboard.open('meta', 7, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createMeta(upgradeDB);
         } else {
             migrateMeta(upgradeDB);
         }
-    }).then(function (db) {
-        db.on('versionchange', function () { db.close(); });
+    }).then(db => {
+        db.on('versionchange', () => { db.close(); });
         g.dbm = db;
     });
 }
@@ -74,29 +68,27 @@ function connectMeta() {
  * @param {number} lid Integer league ID number for new league.
  */
 function createLeague(upgradeDB, lid) {
-    var draftPickStore, eventStore, gameStore, playerFeatStore, playerStatsStore, playerStore, releasedPlayerStore, teamSeasonsStore, teamStatsStore;
-
-    console.log("Creating league" + lid + " database");
+    console.log(`Creating league${lid} database`);
 
     // rid ("row id") is used as the keyPath for objects without an innate unique identifier
-    playerStore = upgradeDB.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
-    playerStatsStore = upgradeDB.createObjectStore("playerStats", {keyPath: "psid", autoIncrement: true});
+    const playerStore = upgradeDB.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
+    const playerStatsStore = upgradeDB.createObjectStore("playerStats", {keyPath: "psid", autoIncrement: true});
     upgradeDB.createObjectStore("teams", {keyPath: "tid"});
-    teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {keyPath: "rid", autoIncrement: true});
-    teamStatsStore = upgradeDB.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
-    gameStore = upgradeDB.createObjectStore("games", {keyPath: "gid"});
+    const teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {keyPath: "rid", autoIncrement: true});
+    const teamStatsStore = upgradeDB.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
+    const gameStore = upgradeDB.createObjectStore("games", {keyPath: "gid"});
     upgradeDB.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
     upgradeDB.createObjectStore("playoffSeries", {keyPath: "season"});
-    releasedPlayerStore = upgradeDB.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
+    const releasedPlayerStore = upgradeDB.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
     upgradeDB.createObjectStore("awards", {keyPath: "season"});
     upgradeDB.createObjectStore("trade", {keyPath: "rid"});
     upgradeDB.createObjectStore("draftOrder", {keyPath: "rid"});
     upgradeDB.createObjectStore("negotiations", {keyPath: "pid"});
     upgradeDB.createObjectStore("gameAttributes", {keyPath: "key"});
     upgradeDB.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
-    draftPickStore = upgradeDB.createObjectStore("draftPicks", {keyPath: "dpid", autoIncrement: true});
-    eventStore = upgradeDB.createObjectStore("events", {keyPath: "eid", autoIncrement: true});
-    playerFeatStore = upgradeDB.createObjectStore("playerFeats", {keyPath: "fid", autoIncrement: true});
+    const draftPickStore = upgradeDB.createObjectStore("draftPicks", {keyPath: "dpid", autoIncrement: true});
+    const eventStore = upgradeDB.createObjectStore("events", {keyPath: "eid", autoIncrement: true});
+    const playerFeatStore = upgradeDB.createObjectStore("playerFeats", {keyPath: "fid", autoIncrement: true});
 
     playerStore.createIndex("tid", "tid", {unique: false});
     playerStore.createIndex("draft.year", "draft.year", {unique: false});
@@ -129,64 +121,56 @@ function createLeague(upgradeDB, lid) {
 function migrateLeague(upgradeDB, lid) {
     document.getElementById("content").innerHTML = migrateMessage;
 
-    console.log("Upgrading league" + lid + " database from version " + upgradeDB.oldVersion + " to version " + upgradeDB.version);
+    console.log(`Upgrading league${lid} database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
 
     if (upgradeDB.oldVersion <= 15) {
-        throw new Error('League is too old to upgrade (version ' + upgradeDB.oldVersion + ')');
+        throw new Error(`League is too old to upgrade (version ${upgradeDB.oldVersion})`);
     }
     if (upgradeDB.oldVersion <= 16) {
-        (function () {
-            var teamSeasonsStore, teamStatsStore;
-
-            teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {keyPath: "rid", autoIncrement: true});
-            teamStatsStore = upgradeDB.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
+        ((() => {
+            const teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {keyPath: "rid", autoIncrement: true});
+            const teamStatsStore = upgradeDB.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
 
             teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {unique: false});
             teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {unique: true});
             teamStatsStore.createIndex("tid", "tid", {unique: false});
             teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false});
 
-            upgradeDB.teams.iterate(function (t) {
-                return Promise.each(t.stats, function (teamStats) {
-                    teamStats.tid = t.tid;
-                    if (!teamStats.hasOwnProperty("ba")) {
-                        teamStats.ba = 0;
-                    }
-                    return upgradeDB.teamStats.add(teamStats);
-                }).then(function () {
-                    return Promise.each(t.seasons, function (teamSeason) {
-                        teamSeason.tid = t.tid;
-                        return upgradeDB.teamSeasons.add(teamSeason);
-                    });
-                }).then(function () {
-                    delete t.stats;
-                    delete t.seasons;
-                    return t;
-                });
-            });
-        }());
+            upgradeDB.teams.iterate(t => Promise.each(t.stats, teamStats => {
+                teamStats.tid = t.tid;
+                if (!teamStats.hasOwnProperty("ba")) {
+                    teamStats.ba = 0;
+                }
+                return upgradeDB.teamStats.add(teamStats);
+            }).then(() => Promise.each(t.seasons, teamSeason => {
+                teamSeason.tid = t.tid;
+                return upgradeDB.teamSeasons.add(teamSeason);
+            })).then(() => {
+                delete t.stats;
+                delete t.seasons;
+                return t;
+            }));
+        })());
     }
 }
 
 function connectLeague(lid) {
-    return Backboard.open('league' + lid, 17, function (upgradeDB) {
+    return Backboard.open(`league${lid}`, 17, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {
             migrateLeague(upgradeDB, lid);
         }
-    }).then(function (db) {
-        db.on('versionchange', function () { db.close(); });
+    }).then(db => {
+        db.on('versionchange', () => { db.close(); });
         g.dbl = db;
     });
 }
 
 function reset() {
-    var debug, key;
-
     // localStorage, which is just use for table sorting currently
-    debug = localStorage.debug; // Save debug setting and restore later
-    for (key in localStorage) {
+    const debug = localStorage.debug; // Save debug setting and restore later
+    for (let key in localStorage) {
         if (localStorage.hasOwnProperty(key)) {
             localStorage.removeItem(key);
         }
@@ -195,28 +179,25 @@ function reset() {
 
     // Delete any current league databases
     console.log("Deleting any current league databases...");
-    g.dbm.leagues.getAll().then(function (leagues) {
+    g.dbm.leagues.getAll().then(leagues => {
         if (leagues.length === 0) {
             console.log('No leagues found.');
             Davis.location.assign(new Davis.Request("/"));
         }
 
-        Promise.map(leagues, function (l) {
-            return require('./core/league').remove(l.lid);
-        }).then(function () {
+        Promise.map(leagues, l => require('./core/league').remove(l.lid)).then(() => {
             // Delete any current meta database
             console.log("Deleting any current meta database...");
             g.dbm.close();
             return Backboard.delete("meta");
-        }).then(function () {
+        }).then(() => {
             location.reload();
         });
     });
 }
 
 module.exports = {
-    connectMeta: connectMeta,
-    connectLeague: connectLeague,
-    reset: reset
+    connectMeta,
+    connectLeague,
+    reset
 };
-

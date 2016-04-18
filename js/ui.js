@@ -1,14 +1,12 @@
-'use strict';
-
-var g = require('./globals');
-var templates = require('./templates');
-var Promise = require('bluebird');
-var Davis = require('./lib/davis');
-var html2canvas = require('./lib/html2canvas');
-var $ = require('jquery');
-var ko = require('knockout');
-var helpers = require('./util/helpers');
-var lock = require('./util/lock');
+const g = require('./globals');
+const templates = require('./templates');
+const Promise = require('bluebird');
+const Davis = require('./lib/davis');
+const html2canvas = require('./lib/html2canvas');
+const $ = require('jquery');
+const ko = require('knockout');
+const helpers = require('./util/helpers');
+const lock = require('./util/lock');
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.
@@ -22,14 +20,12 @@ var lock = require('./util/lock');
  * @param {Object=} raw Optional object passed through to Davis's req.raw.
  */
 function realtimeUpdate(updateEvents, url, cb, raw) {
-    var inLeague, refresh;
-
     updateEvents = updateEvents !== undefined ? updateEvents : [];
     url = url !== undefined ? url : location.pathname + location.search;
     raw = raw !== undefined ? raw : {};
 
-    inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
-    refresh = url === location.pathname && inLeague;
+    const inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
+    const refresh = url === location.pathname && inLeague;
 
     // If tracking is enabled, don't track realtime updates for refreshes
     if (Davis.Request.prototype.noTrack !== undefined && refresh) {
@@ -51,8 +47,6 @@ function realtimeUpdate(updateEvents, url, cb, raw) {
 
 // Things to do on initial page load
 function init() {
-    var $playMenuDropdown, api, playMenu, playMenuOptions, screenshotEl, toolsMenu, topMenuCollapse;
-
     ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
     ko.applyBindings(g.vm.multiTeam, document.getElementById("multi-team-menu"));
 
@@ -62,95 +56,95 @@ function init() {
     });
 
     // Handle clicks from play menu
-    api = require("./api");
-    playMenu = $("#play-menu");
-    playMenu.on("click", "#play-menu-stop", function () {
+    const api = require("./api");
+    const playMenu = $("#play-menu");
+    playMenu.on("click", "#play-menu-stop", () => {
         api.play("stop");
         return false;
     });
-    playMenu.on("click", "#play-menu-day", function () {
+    playMenu.on("click", "#play-menu-day", () => {
         api.play("day");
         return false;
     });
-    playMenu.on("click", "#play-menu-week", function () {
+    playMenu.on("click", "#play-menu-week", () => {
         api.play("week");
         return false;
     });
-    playMenu.on("click", "#play-menu-month", function () {
+    playMenu.on("click", "#play-menu-month", () => {
         api.play("month");
         return false;
     });
-    playMenu.on("click", "#play-menu-until-playoffs", function () {
+    playMenu.on("click", "#play-menu-until-playoffs", () => {
         api.play("untilPlayoffs");
         return false;
     });
-    playMenu.on("click", "#play-menu-through-playoffs", function () {
+    playMenu.on("click", "#play-menu-through-playoffs", () => {
         api.play("throughPlayoffs");
         return false;
     });
-    playMenu.on("click", "#play-menu-until-draft", function () {
+    playMenu.on("click", "#play-menu-until-draft", () => {
         api.play("untilDraft");
         return false;
     });
-    playMenu.on("click", "#play-menu-until-resign-players", function () {
+    playMenu.on("click", "#play-menu-until-resign-players", () => {
         api.play("untilResignPlayers");
         return false;
     });
-    playMenu.on("click", "#play-menu-until-free-agency", function () {
+    playMenu.on("click", "#play-menu-until-free-agency", () => {
         api.play("untilFreeAgency");
         return false;
     });
-    playMenu.on("click", "#play-menu-until-preseason", function () {
+    playMenu.on("click", "#play-menu-until-preseason", () => {
         api.play("untilPreseason");
         return false;
     });
-    playMenu.on("click", "#play-menu-until-regular-season", function () {
+    playMenu.on("click", "#play-menu-until-regular-season", () => {
         api.play("untilRegularSeason");
         return false;
     });
-    playMenu.on("click", "#play-menu-abort-phase-change", function () {
+    playMenu.on("click", "#play-menu-abort-phase-change", () => {
         require('./core/phase').abort();
         $("#play-menu .dropdown-toggle").dropdown("toggle");
         return false;
     });
-    playMenu.on("click", "#play-menu-stop-auto", function () {
+    playMenu.on("click", "#play-menu-stop-auto", () => {
         api.play("stopAutoPlay");
         return false;
     });
 
     // Handle clicks from Tools menu
-    toolsMenu = $("#tools-menu");
-    toolsMenu.on("click", "#tools-menu-auto-play-seasons", function () {
+    const toolsMenu = $("#tools-menu");
+    toolsMenu.on("click", "#tools-menu-auto-play-seasons", () => {
         require('./core/league').initAutoPlay();
         $("#tools-menu .dropdown-toggle").dropdown("toggle");
         return false;
     });
-    toolsMenu.on("click", "#tools-menu-skip-to-playoffs", function () {
+    toolsMenu.on("click", "#tools-menu-skip-to-playoffs", () => {
         require('./core/phase').newPhase(g.PHASE.PLAYOFFS);
         $("#tools-menu .dropdown-toggle").dropdown("toggle");
         return false;
     });
-    toolsMenu.on("click", "#tools-menu-skip-to-before-draft", function () {
+    toolsMenu.on("click", "#tools-menu-skip-to-before-draft", () => {
         require('./core/phase').newPhase(g.PHASE.BEFORE_DRAFT);
         $("#tools-menu .dropdown-toggle").dropdown("toggle");
         return false;
     });
-    toolsMenu.on("click", "#tools-menu-skip-to-after-draft", function () {
+    toolsMenu.on("click", "#tools-menu-skip-to-after-draft", () => {
         require('./core/phase').newPhase(g.PHASE.AFTER_DRAFT);
         $("#tools-menu .dropdown-toggle").dropdown("toggle");
         return false;
     });
-    toolsMenu.on("click", "#tools-menu-skip-to-preseason", function () {
+    toolsMenu.on("click", "#tools-menu-skip-to-preseason", () => {
         require('./core/phase').newPhase(g.PHASE.PRESEASON);
         $("#tools-menu .dropdown-toggle").dropdown("toggle");
         return false;
     });
-    toolsMenu.on("click", "#tools-menu-force-resume-draft", function () {
+    toolsMenu.on("click", "#tools-menu-force-resume-draft", () => {
         require('./core/draft').untilUserOrEnd();
         $("#tools-menu .dropdown-toggle").dropdown("toggle");
         return false;
     });
-    toolsMenu.on("click", "#tools-menu-reset-db", function () {
+    toolsMenu.on("click", "#tools-menu-reset-db", () => {
         if (window.confirm("Are you sure you want to reset the database? This will delete all your current saved games.")) {
             require('./db').reset();
         }
@@ -161,8 +155,8 @@ function init() {
     // Bootstrap's collapsable nav doesn't play nice with single page apps
     // unless you manually close it when a link is clicked. However, I need
     // this to run only on real links, not "dropdown" links (#).
-    topMenuCollapse = $("#top-menu-collapse");
-    topMenuCollapse.on("click", "a:not([href='#'])", function () {
+    const topMenuCollapse = $("#top-menu-collapse");
+    topMenuCollapse.on("click", "a:not([href='#'])", () => {
         // Only run when collapsable is open
         if (topMenuCollapse.hasClass("in")) {
             topMenuCollapse.collapse("hide");
@@ -170,10 +164,10 @@ function init() {
     });
 
     // HACK: close bootstrap popovers on click outside of help box
-    $(document).on("click", ".help-icon, .popover", function (event) {
+    $(document).on("click", ".help-icon, .popover", event => {
         event.stopPropagation();
     });
-    $(document).on("click", function () {
+    $(document).on("click", () => {
         $(".help-icon").popover("hide");
 
         // Only run when collapsable is open
@@ -185,15 +179,13 @@ function init() {
     // When a dropdown at the top is open, use hover to move between items,
     // like in a normal menubar.
     $("#nav-primary .dropdown-toggle").on("mouseenter", function () {
-        var foundOpen, i, liHover, liOpen, lis;
-
         if (!topMenuCollapse.hasClass("in")) {
-            liHover = this.parentNode;
+            const liHover = this.parentNode;
 
             // Is any dropdown open?
-            foundOpen = false;
-            lis = document.getElementById("nav-primary").children;
-            for (i = 0; i < lis.length; i++) {
+            let foundOpen = false;
+            const lis = document.getElementById("nav-primary").children;
+            for (let i = 0; i < lis.length; i++) {
                 if (lis[i].classList.contains("open")) {
                     foundOpen = true;
                     liOpen = lis[i];
@@ -215,9 +207,9 @@ function init() {
     });
 
     // Keyboard shortcut
-    $playMenuDropdown = $("#play-menu a.dropdown-toggle");
-    playMenuOptions = document.getElementById("play-menu-options");
-    document.addEventListener("keyup", function (e) {
+    const $playMenuDropdown = $("#play-menu a.dropdown-toggle");
+    const playMenuOptions = document.getElementById("play-menu-options");
+    document.addEventListener("keyup", e => {
         // alt + p
         if (e.altKey && e.keyCode === 80) {
             // ul -> first li -> a -> click
@@ -232,13 +224,11 @@ function init() {
 
     // Watch list toggle
     $(document).on("click", ".watch", function () {
-        var pid, watchEl;
+        const watchEl = this;
+        const pid = parseInt(watchEl.dataset.pid, 10);
 
-        watchEl = this;
-        pid = parseInt(watchEl.dataset.pid, 10);
-
-        g.dbl.tx("players", "readwrite", function (tx) {
-            tx.players.get(pid).then(function (p) {
+        g.dbl.tx("players", "readwrite", tx => {
+            tx.players.get(pid).then(p => {
                 if (watchEl.classList.contains("watch-active")) {
                     p.watch = false;
                     watchEl.classList.remove("watch-active");
@@ -251,34 +241,30 @@ function init() {
 
                 return tx.players.put(p);
             });
-        }).then(function () {
+        }).then(() => {
             require('./core/league').updateLastDbChange();
             realtimeUpdate(["watchList"]);
         });
     });
 
-    screenshotEl = document.getElementById("screenshot");
+    const screenshotEl = document.getElementById("screenshot");
     if (screenshotEl) { // Some errors were showing up otherwise for people with stale index.html maybe
-        screenshotEl.addEventListener("click", function (event) {
-            var contentEl, i, notifications, watermark;
-
+        screenshotEl.addEventListener("click", event => {
             event.preventDefault();
 
-            contentEl = document.getElementById("league_content");
+            let contentEl = document.getElementById("league_content");
             if (!contentEl) { contentEl = document.getElementById("content"); }
 
             // Add watermark
-            watermark = document.createElement("div");
-            watermark.innerHTML = '<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">' +
-                document.getElementsByClassName("navbar-brand")[0].parentNode.innerHTML +
-                '</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>';
+            const watermark = document.createElement("div");
+            watermark.innerHTML = `<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">${document.getElementsByClassName("navbar-brand")[0].parentNode.innerHTML}</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>`;
             contentEl.insertBefore(watermark, contentEl.firstChild);
             contentEl.style.padding = "8px";
 
             // Add notifications
-            notifications = document.getElementsByClassName('notification-container')[0].cloneNode(true);
+            const notifications = document.getElementsByClassName('notification-container')[0].cloneNode(true);
             notifications.classList.remove('notification-container');
-            for (i = 0; i < notifications.childNodes.length; i++) {
+            for (let i = 0; i < notifications.childNodes.length; i++) {
                 // Otherwise screeenshot is taken before fade in is complete
                 notifications.childNodes[0].classList.remove('notification-fadein');
             }
@@ -286,7 +272,7 @@ function init() {
 
             html2canvas(contentEl, {
                 background: "#fff",
-                onrendered: function (canvas) {
+                onrendered(canvas) {
                     // Remove watermark
                     contentEl.removeChild(watermark);
                     contentEl.style.padding = "";
@@ -305,13 +291,13 @@ function init() {
                             image: canvas.toDataURL().split(',')[1]
                         },
                         dataType: "json"
-                    })).then(function (data) {
-                        document.getElementById("screenshot-link").href = "http://imgur.com/" + data.data.id;
+                    })).then(data => {
+                        document.getElementById("screenshot-link").href = `http://imgur.com/${data.data.id}`;
                         $("#modal-screenshot").modal("show");
-                    }).catch(function (err) {
+                    }).catch(err => {
                         console.log(err);
                         if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {
-                            helpers.error('Error saving screenshot. Error message from Imgur: "' + err.responseJSON.error.message + '"');
+                            helpers.error(`Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`);
                         } else {
                             helpers.error("Error saving screenshot.");
                         }
@@ -328,9 +314,9 @@ function init() {
  */
 function title(text) {
     if (g.lid !== null) {
-        text += " - " + g.leagueName;
+        text += ` - ${g.leagueName}`;
     }
-    document.title = text + " - Basketball GM";
+    document.title = `${text} - Basketball GM`;
 }
 
 /**
@@ -342,14 +328,12 @@ function title(text) {
  * @param  {Object} data An object with several properties: "template" the name of the HTML template file in the templates folder; "container" is the id of the container div (probably content or league_content).
  */
 function update(data) {
-    var containerEl, contentEl, rendered;
-
-    rendered = templates[data.template];
-    containerEl = document.getElementById(data.container);
+    const rendered = templates[data.template];
+    const containerEl = document.getElementById(data.container);
     containerEl.innerHTML = rendered;
 
     if (data.container === "league_content") {
-        contentEl = document.getElementById("content");
+        const contentEl = document.getElementById("content");
         if (contentEl) {
             contentEl.dataset.idLoaded = "league";
             contentEl.dataset.idLoading = "";
@@ -361,20 +345,18 @@ function update(data) {
 // Data tables
 // fnStateSave and fnStateLoad are based on http://www.datatables.net/blog/localStorage_for_state_saving except the id of the table is used in the key. This means that whatever you do to a table (sorting, viewing page, etc) will apply to every identical table in other leagues.
 function datatable(table, sortCol, data, extraOptions) {
-    var options;
-
-    options = $.extend({
-        data: data,
+    const options = $.extend({
+        data,
         order: [[sortCol, "desc"]],
         destroy: true,
         deferRender: true,
         stateSave: true,
         // DataTables 1.10 includes something like this, but seems glitchy and URL-dependent
-        stateSaveCallback: function (settings, data) {
-            localStorage.setItem("DataTables_" + table[0].id, JSON.stringify(data));
+        stateSaveCallback(settings, data) {
+            localStorage.setItem(`DataTables_${table[0].id}`, JSON.stringify(data));
         },
-        stateLoadCallback: function () {
-            return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
+        stateLoadCallback() {
+            return JSON.parse(localStorage.getItem(`DataTables_${table[0].id}`));
         },
         pagingType: "bootstrap",
         language: {
@@ -389,21 +371,19 @@ function datatable(table, sortCol, data, extraOptions) {
 }
 
 function datatableSinglePage(table, sortCol, data, extraOptions) {
-    var options;
-
-    options = $.extend({
-        data: data,
+    const options = $.extend({
+        data,
         order: [[sortCol, "desc"]],
         destroy: true,
         searching: false,
         info: false,
         paging: false,
         stateSave: true,
-        stateSaveCallback: function (settings, data) {
-            localStorage.setItem("DataTables_" + table[0].id, JSON.stringify(data));
+        stateSaveCallback(settings, data) {
+            localStorage.setItem(`DataTables_${table[0].id}`, JSON.stringify(data));
         },
-        stateLoadCallback: function () {
-            return JSON.parse(localStorage.getItem("DataTables_" + table[0].id));
+        stateLoadCallback() {
+            return JSON.parse(localStorage.getItem(`DataTables_${table[0].id}`));
         }
     }, extraOptions);
 
@@ -425,25 +405,21 @@ function tableClickableRows(tableEl) {
 // For dropdown menus to change team/season/whatever
 // This should be cleaned up, but it works for now.
 function dropdown(select1, select2, select3, select4) {
-    var handleDropdown;
-
-    handleDropdown = function (select) {
+    const handleDropdown = select => {
         select.off("change");
-        select.change(function () {
-            var args, extraParam, leaguePage, seasonsDropdown, url;
-
+        select.change(() => {
             // UGLY HACK: Stop event handling if it looks like this is a season dropdown and a new season is starting. Otherwise you get double refreshes, often pointing to the previous year, since updating the season dropdown is interpreted as a "change"
-            seasonsDropdown = document.querySelector(".bbgm-dropdown .seasons");
+            const seasonsDropdown = document.querySelector(".bbgm-dropdown .seasons");
             if (seasonsDropdown && parseInt(seasonsDropdown.lastChild.value, 10) < g.season) {
                 return;
             }
 
-            extraParam = select.parent()[0].dataset.extraParam;
+            const extraParam = select.parent()[0].dataset.extraParam;
 
             // Name of the page (like "standings"), with # and ? stuff removed
-            leaguePage = document.URL.split("/", 6)[5].split("#")[0].split("?")[0];
+            const leaguePage = document.URL.split("/", 6)[5].split("#")[0].split("?")[0];
 
-            args = [leaguePage, select1.val()];
+            const args = [leaguePage, select1.val()];
             if (select2 !== undefined) {
                 args.push(select2.val());
             }
@@ -453,10 +429,10 @@ function dropdown(select1, select2, select3, select4) {
             if (select4 !== undefined) {
                 args.push(select4.val());
             }
-            url = helpers.leagueUrl(args);
+            let url = helpers.leagueUrl(args);
 
             if (extraParam !== undefined && extraParam !== null && extraParam !== "") {
-                url += "/" + extraParam;
+                url += `/${extraParam}`;
             }
 
             realtimeUpdate([], url);
@@ -475,17 +451,15 @@ function dropdown(select1, select2, select3, select4) {
     }
 }
 
-   /**
- * Update play menu options based on game state.
- *
- * @memberOf ui
- * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, and negotiations; if null is passed, then a new transaction will be used.
- * @return {Promise}
- */
+/**
+* Update play menu options based on game state.
+*
+* @memberOf ui
+* @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, and negotiations; if null is passed, then a new transaction will be used.
+* @return {Promise}
+*/
 function updatePlayMenu(ot) {
-    var allOptions, keys;
-
-    allOptions = [{id: "play-menu-stop", url: "", label: "Stop"},
+    const allOptions = [{id: "play-menu-stop", url: "", label: "Stop"},
                   {id: "play-menu-day", url: "", label: "One day"},
                   {id: "play-menu-week", url: "", label: "One week"},
                   {id: "play-menu-month", url: "", label: "One month"},
@@ -504,8 +478,9 @@ function updatePlayMenu(ot) {
                   {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"},
                   {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
                   {id: "play-menu-abort-phase-change", url: "", label: "Abort"},
-                  {id: "play-menu-stop-auto", url: "", label: "Stop auto play (" + g.autoPlaySeasons + " seasons left)"}];
+                  {id: "play-menu-stop-auto", url: "", label: `Stop auto play (${g.autoPlaySeasons} seasons left)`}];
 
+    let keys;
     if (g.phase === g.PHASE.PRESEASON) {
         // Preseason
         keys = ["play-menu-until-regular-season"];
@@ -540,9 +515,7 @@ function updatePlayMenu(ot) {
         lock.gamesInProgress(ot),
         lock.negotiationInProgress(ot),
         lock.phaseChangeInProgress(ot)
-    ]).spread(function (unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress) {
-        var i, ids, j, someOptions;
-
+    ]).spread((unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress) => {
         if (unreadMessage) {
             keys = ["play-menu-message"];
         }
@@ -567,13 +540,13 @@ function updatePlayMenu(ot) {
 
         // This code is very ugly. Basically I just want to filter all_options into
         // some_options based on if the ID matches one of the keys.
-        ids = [];
-        for (i = 0; i < allOptions.length; i++) {
+        const ids = [];
+        for (let i = 0; i < allOptions.length; i++) {
             ids.push(allOptions[i].id);
         }
-        someOptions = [];
-        for (i = 0; i < keys.length; i++) {
-            for (j = 0; j < ids.length; j++) {
+        const someOptions = [];
+        for (let i = 0; i < keys.length; i++) {
+            for (let j = 0; j < ids.length; j++) {
                 if (ids[j] === keys[i]) {
                     someOptions.push(allOptions[j]);
                     break;
@@ -599,13 +572,11 @@ Args:
         the client.
 */
 function updateStatus(statusText) {
-    var oldStatus;
-
-    oldStatus = g.statusText;
+    const oldStatus = g.statusText;
     if (statusText === undefined) {
         g.vm.topMenu.statusText(oldStatus);
     } else if (statusText !== oldStatus) {
-        require('./core/league').setGameAttributesComplete({statusText: statusText}).then(function () {
+        require('./core/league').setGameAttributesComplete({statusText}).then(() => {
             g.vm.topMenu.statusText(statusText);
 //                console.log("Set status: " + statusText);
         });
@@ -622,19 +593,17 @@ Args:
         the client.
 */
 function updatePhase(phaseText) {
-    var oldPhaseText;
-
-    oldPhaseText = g.phaseText;
+    const oldPhaseText = g.phaseText;
     if (phaseText === undefined) {
         g.vm.topMenu.phaseText(oldPhaseText);
     } else if (phaseText !== oldPhaseText) {
-        require('./core/league').setGameAttributesComplete({phaseText: phaseText}).then(function () {
+        require('./core/league').setGameAttributesComplete({phaseText}).then(() => {
             g.vm.topMenu.phaseText(phaseText);
 //                console.log("Set phase: " + phaseText);
         });
 
         // Update phase in meta database. No need to have this block updating the UI or anything.
-        g.dbm.leagues.get(g.lid).then(function (l) {
+        g.dbm.leagues.get(g.lid).then(l => {
             l.phaseText = phaseText;
             g.dbm.leagues.put(l);
         });
@@ -642,9 +611,7 @@ function updatePhase(phaseText) {
 }
 
 function highlightPlayButton() {
-    var playButtonLink;
-
-    playButtonLink = $("#play-button-link");
+    const playButtonLink = $("#play-button-link");
 
     playButtonLink.popover({
         trigger: "manual",
@@ -655,31 +622,31 @@ function highlightPlayButton() {
     });
 
     // If the user finds the play button first, don't show the popover
-    playButtonLink.on("click", function () {
+    playButtonLink.on("click", () => {
         playButtonLink.popover("hide");
     });
 
-    setTimeout(function () {
+    setTimeout(() => {
         playButtonLink.popover("show");
 
         // Only do this after showing button, so a quick click doesn't close it early
-        $(document).on("click", function () {
+        $(document).on("click", () => {
             playButtonLink.popover("hide");
         });
     }, 1000);
 }
 
 module.exports = {
-    init: init,
-    datatable: datatable,
-    datatableSinglePage: datatableSinglePage,
-    tableClickableRows: tableClickableRows,
-    dropdown: dropdown,
-    realtimeUpdate: realtimeUpdate,
-    title: title,
-    update: update,
-    updatePhase: updatePhase,
-    updatePlayMenu: updatePlayMenu,
-    updateStatus: updateStatus,
-    highlightPlayButton: highlightPlayButton
+    init,
+    datatable,
+    datatableSinglePage,
+    tableClickableRows,
+    dropdown,
+    realtimeUpdate,
+    title,
+    update,
+    updatePhase,
+    updatePlayMenu,
+    updateStatus,
+    highlightPlayButton
 };

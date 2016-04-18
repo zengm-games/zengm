@@ -1,26 +1,20 @@
-/**
- * @name views
- * @namespace Contains all the view modules.
- */
-'use strict';
+const ui = require('./ui');
+const bbgmView = require('./util/bbgmView');
+const viewHelpers = require('./util/viewHelpers');
 
-var ui = require('./ui');
-var bbgmView = require('./util/bbgmView');
-var viewHelpers = require('./util/viewHelpers');
-
-function staticPage(name, title) {
+const staticPage = (name, title) => {
     return bbgmView.init({
         id: name,
         beforeReq: viewHelpers.beforeNonLeague,
-        runBefore: [function () {}],
-        uiFirst: function () {
+        runBefore: [() => {}],
+        uiFirst() {
             ui.title(title);
         }
     });
 }
 
 module.exports = {
-    staticPage: staticPage,
+    staticPage,
 
     account: require('./views/account'),
     accountUpdateCard: require('./views/accountUpdateCard'),

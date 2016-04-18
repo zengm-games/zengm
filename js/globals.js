@@ -1,12 +1,8 @@
-'use strict';
-
-var ko = require('knockout');
+const ko = require('knockout');
 
 // The way this works is... any "global" variables that need to be widely available are stored in g. Some of these are constants, like the ones defined below. Some others are dynamic, like the year of the current season, and are stored in the gameAttributes object store. The dynamic components of g are retrieved/updated/synced elsewhere. Yes, it's kind of confusing and arbitrary.
 
-var g, splitUrl;
-
-g = {};
+const g = {};
 
 // If any of these things are supposed to change at any point, they should be stored in gameAttributes rather than here.
 g.confs = [{cid: 0, name: "Eastern Conference"}, {cid: 1, name: "Western Conference"}];
@@ -78,7 +74,7 @@ g.enableLogging = window.enableLogging;
 
 // .com or .dev TLD
 if (!window.inCordova) {
-    splitUrl = window.location.hostname.split(".");
+    const splitUrl = window.location.hostname.split(".");
     g.tld = splitUrl[splitUrl.length - 1];
 } else {
     // From within Cordova, window.location.hostname is not set, so always use .com

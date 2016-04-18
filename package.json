@@ -142,13 +142,18 @@
   },
   "browserify": {
     "transform": [
+      "babelify",
       "browserify-shim",
-      "brfs",
-      ["babelify", {"presets": ["es2015"]}]
+      "brfs"
     ]
   },
   "babel": {
-    "ignore": ["js/lib/*"]
+    "presets": [
+      "es2015"
+    ],
+    "ignore": [
+      "js/lib/*"
+    ]
   },
   "private": true
 }

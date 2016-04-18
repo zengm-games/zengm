@@ -1,7 +1,3 @@
-/**
- * @name views.teamStats
- * @namespace Team stats table.
- */
 'use strict';
 
 var g = require('../globals');

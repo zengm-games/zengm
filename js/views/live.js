@@ -1,7 +1,3 @@
-/**
- * @name views.live
- * @namespace Live play-by-play game simulation.
- */
 'use strict';
 
 var g = require('../globals');

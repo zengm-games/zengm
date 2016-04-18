@@ -1,7 +1,3 @@
-/**
- * @name views.newTeam
- * @namespace Pick a new team after being fired.
- */
 'use strict';
 
 var g = require('../globals');

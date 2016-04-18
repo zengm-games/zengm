@@ -1,7 +1,3 @@
-/**
- * @name views.standings
- * @namespace Standings.
- */
 'use strict';
 
 var g = require('../globals');

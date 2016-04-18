@@ -1,7 +1,3 @@
-/**
- * @name views.godMode
- * @namespace Enable or disable God Mode.
- */
 'use strict';
 
 var g = require('../globals');

@@ -1,7 +1,3 @@
-/**
- * @name core.finances
- * @namespace Anything related to budget/finances.
- */
 'use strict';
 
 var g = require('../globals');

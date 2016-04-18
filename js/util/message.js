@@ -1,7 +1,3 @@
-/**
- * @name util.message
- * @namespace Messages from the owner of the team to the GM.
- */
 'use strict';
 
 var g = require('../globals');

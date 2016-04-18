@@ -1,7 +1,3 @@
-/**
- * @name views.components
- * @namespace Small components/widgets, such as drop down menus to switch between seasons/teams.
- */
 'use strict';
 
 var g = require('../globals');

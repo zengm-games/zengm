@@ -1,7 +1,3 @@
-/**
- * @name views.freeAgents
- * @namespace List of free agents.
- */
 'use strict';
 
 var g = require('../globals');

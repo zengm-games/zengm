@@ -1,7 +1,3 @@
-/**
- * @name util.templateHelpers
- * @namespace Knockout helper functions.
- */
 'use strict';
 
 var g = require('../globals');

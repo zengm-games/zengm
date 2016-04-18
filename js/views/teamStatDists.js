@@ -1,7 +1,3 @@
-/**
- * @name views.teamStatDists
- * @namespace Team stat distributions.
- */
 'use strict';
 
 var g = require('../globals');

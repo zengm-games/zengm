@@ -1,7 +1,3 @@
-/**
- * @name core.league
- * @namespace Creating and removing leagues.
- */
 'use strict';
 
 var db = require('../db');

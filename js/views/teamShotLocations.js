@@ -1,7 +1,3 @@
-/**
- * @name views.teamShotLocations
- * @namespace Team shot locations table.
- */
 'use strict';
 
 var g = require('../globals');

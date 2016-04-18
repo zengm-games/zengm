@@ -1,7 +1,3 @@
-/**
- * @name util.random
- * @namespace Module to emulate some of Python's random library.
- */
 'use strict';
 
 

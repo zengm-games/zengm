@@ -1,7 +1,3 @@
-/**
- * @name util.ads
- * @namespace Everyone loves advertisements, right?
- */
 /*eslint new-cap: 0*/
 'use strict';
 

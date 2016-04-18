@@ -1,7 +1,3 @@
-/**
- * @name views.manual
- * @namespace Manual pages.
- */
 'use strict';
 
 var ui = require('../ui');

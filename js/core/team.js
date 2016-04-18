@@ -1,7 +1,3 @@
-/**
- * @name core.team
- * @namespace Functions operating on team objects, parts of team objects, or arrays of team objects.
- */
 'use strict';
 
 var g = require('../globals');

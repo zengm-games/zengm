@@ -1,7 +1,3 @@
-/**
- * @name data.injuries
- * @namespace Injuries. See basketball-gm/data/injuries.ods for more info.
- */
 'use strict';
 
 

@@ -1,7 +1,3 @@
-/**
- * @name views.lostPassword
- * @namespace Lost password handling.
- */
 'use strict';
 
 var g = require('../globals');

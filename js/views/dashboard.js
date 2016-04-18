@@ -1,7 +1,3 @@
-/**
- * @name views.dashboard
- * @namespace Dashboard.
- */
 'use strict';
 
 var g = require('../globals');

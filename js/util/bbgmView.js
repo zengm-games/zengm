@@ -1,7 +1,3 @@
-/**
- * @name util.bbgmView
- * @namespace Framework for loading, displaying, and updating content. bbgmView is designed so that it is easy to write UIs that are granular in both reading from the database and updating the DOM, to minimize useless updates to previously cached or displayed values. See the documentation for util.bbgmView.init for more detail on use.
- */
 'use strict';
 
 var g = require('../globals');

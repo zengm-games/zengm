@@ -1,7 +1,3 @@
-/**
- * @name views.multiTeamMode
- * @namespace Enable or disable Multi Team Mode.
- */
 'use strict';
 
 var g = require('../globals');

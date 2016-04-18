@@ -1,7 +1,3 @@
-/**
- * @name views.exportRosters
- * @namespace Export rosters.
- */
 'use strict';
 
 var g = require('../globals');

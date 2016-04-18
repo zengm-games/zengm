@@ -1,7 +1,3 @@
-/**
- * @name views.changes
- * @namespace Changes.
- */
 'use strict';
 
 var ui = require('../ui');

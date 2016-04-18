@@ -1,7 +1,3 @@
-/**
- * @name views.loginOrRegister
- * @namespace Login and register forms.
- */
 'use strict';
 
 var g = require('../globals');

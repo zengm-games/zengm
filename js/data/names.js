@@ -1,7 +1,3 @@
-/**
- * @name data.names
- * @namespace First names and last names.
- */
 'use strict';
 
 var g = require('../globals');

@@ -438,23 +438,9 @@ function newPhaseDraft(tx) {
 }
 
 function newPhaseAfterDraft(tx) {
-    let promises, round, tid;
-
-    promises = [];
-
-    // Add a new set of draft picks
-    for (tid = 0; tid < g.numTeams; tid++) {
-        for (round = 1; round <= 2; round++) {
-            promises.push(tx.draftPicks.add({
-                tid,
-                originalTid: tid,
-                round,
-                season: g.season + 4
-            }));
-        }
-    }
-
-    return Promise.all(promises).then(() => [undefined, ["playerMovement"]]);
+    return draft.genPicks(tx).then(function () {
+        return [undefined, ["playerMovement"]];
+    });
 }
 
 function newPhaseResignPlayers(tx) {

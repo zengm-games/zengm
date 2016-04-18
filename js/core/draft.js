@@ -10,6 +10,28 @@ const eventLog = require('../util/eventLog');
 const helpers = require('../util/helpers');
 const random = require('../util/random');
 
+function genPicks(tx, season) {
+    season = season === undefined ? g.season + 4 : season;
+
+    const promises = [];
+
+    // Add a new set of draft picks
+    for (let tid = 0; tid < g.numTeams; tid++) {
+        for (let round = 1; round <= 2; round++) {
+            promises.push(tx.draftPicks.add({
+                tid: tid,
+                originalTid: tid,
+                round: round,
+                season: season
+            }));
+        }
+    }
+
+    return Promise.all(promises).then(() => {
+        return;
+    });
+}
+
 /**
  * Retrieve the current remaining draft order.
  *
@@ -273,6 +295,15 @@ function genOrder(tx) {
         }
 
         return tx.draftPicks.index('season').getAll(g.season).then(draftPicks => {
+            // Sometimes picks just fail to generate, for reasons I don't understand
+            if (draftPicks.length === 0) {
+                return genPicks(tx, g.season).then(function () {
+                    return tx.draftPicks.index('season').getAll(g.season);
+                });
+            }
+
+            return draftPicks;
+        }).then(function (draftPicks) {
             // Reorganize this to an array indexed on originalTid and round
             const draftPicksIndexed = [];
             for (let i = 0; i < draftPicks.length; i++) {
@@ -566,6 +597,7 @@ function untilUserOrEnd() {
 }
 
 module.exports = {
+    genPicks,
     getOrder,
     setOrder,
     genPlayers,

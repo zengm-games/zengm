@@ -326,6 +326,8 @@ function genOrder(tx) {
                     return tx.draftPicks.index('season').getAll(g.season);
                 });
             }
+
+            return draftPicks;
         }).then(function (draftPicks) {
             var draftOrder, draftPicksIndexed, i, tid;
 

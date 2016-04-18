@@ -1,16 +1,14 @@
-'use strict';
-
-var g = require('../globals');
-var ui = require('../ui');
-var finances = require('./finances');
-var player = require('./player');
-var team = require('./team');
-var backboard = require('backboard');
-var Promise = require('bluebird');
-var _ = require('underscore');
-var eventLog = require('../util/eventLog');
-var helpers = require('../util/helpers');
-var random = require('../util/random');
+const g = require('../globals');
+const ui = require('../ui');
+const finances = require('./finances');
+const player = require('./player');
+const team = require('./team');
+const backboard = require('backboard');
+const Promise = require('bluebird');
+const _ = require('underscore');
+const eventLog = require('../util/eventLog');
+const helpers = require('../util/helpers');
+const random = require('../util/random');
 
 /**
  * Retrieve the current remaining draft order.
@@ -20,10 +18,8 @@ var random = require('../util/random');
  * @return {Promise} Resolves to an ordered array of pick objects.
  */
 function getOrder(ot) {
-    var dbOrTx = ot || g.dbl;
-    return dbOrTx.draftOrder.get(0).then(function (row) {
-        return row.draftOrder;
-    });
+    const dbOrTx = ot || g.dbl;
+    return dbOrTx.draftOrder.get(0).then(row => row.draftOrder);
 }
 
 /**
@@ -35,10 +31,10 @@ function getOrder(ot) {
  * @return {Promise}
  */
 function setOrder(ot, draftOrder) {
-    var dbOrTx = ot || g.dbl;
+    const dbOrTx = ot || g.dbl;
     return dbOrTx.draftOrder.put({
         rid: 0,
-        draftOrder: draftOrder
+        draftOrder
     });
 }
 
@@ -54,38 +50,32 @@ function setOrder(ot, draftOrder) {
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
  * @return {Promise}
  */
-function genPlayers(tx, tid, scoutingRank, numPlayers) {
-    scoutingRank = scoutingRank !== undefined ? scoutingRank : null;
-
+function genPlayers(tx, tid, scoutingRank=null, numPlayers) {
     if (numPlayers === null || numPlayers === undefined) {
         numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
     }
 
-    return Promise.try(function () {
+    return Promise.try(() => {
         // If scoutingRank is not supplied, have to hit the DB to get it
         if (scoutingRank === null) {
-            return tx.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season])).then(function (teamSeasons) {
-                return finances.getRankLastThree(teamSeasons, "expenses", "scouting");
-            });
+            return tx.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season])).then(teamSeasons => finances.getRankLastThree(teamSeasons, "expenses", "scouting"));
         }
 
         return scoutingRank;
-    }).then(function (scoutingRank) {
-        var agingYears, baseAge, baseRating, draftYear, i, p, pot, profile, profiles, promises;
+    }).then(scoutingRank => {
+        const profiles = ["Point", "Wing", "Big", "Big", ""];
 
-        profiles = ["Point", "Wing", "Big", "Big", ""];
+        const promises = [];
 
-        promises = [];
+        for (let i = 0; i < numPlayers; i++) {
+            const baseRating = random.randInt(8, 31);
+            const pot = Math.round(helpers.bound(random.realGauss(48, 17), baseRating, 90));
 
-        for (i = 0; i < numPlayers; i++) {
-            baseRating = random.randInt(8, 31);
-            pot = Math.round(helpers.bound(random.realGauss(48, 17), baseRating, 90));
+            const profile = profiles[random.randInt(0, profiles.length - 1)];
+            const agingYears = random.randInt(0, 3);
+            let draftYear = g.season;
 
-            profile = profiles[random.randInt(0, profiles.length - 1)];
-            agingYears = random.randInt(0, 3);
-            draftYear = g.season;
-
-            baseAge = 19;
+            let baseAge = 19;
             if (g.season === g.startingSeason && g.phase < g.PHASE.DRAFT) {
                 // New league, creating players for draft in same season and following 2 seasons
                 if (tid === g.PLAYER.UNDRAFTED_2) {
@@ -101,13 +91,11 @@ function genPlayers(tx, tid, scoutingRank, numPlayers) {
                 draftYear += 3;
             }
 
-            p = player.generate(tid, baseAge, profile, baseRating, pot, draftYear, false, scoutingRank);
+            let p = player.generate(tid, baseAge, profile, baseRating, pot, draftYear, false, scoutingRank);
             p = player.develop(p, agingYears, true);
 
             // Update player values after ratings changes
-            promises.push(player.updateValues(tx, p, []).then(function (p) {
-                return tx.players.put(p);
-            }));
+            promises.push(player.updateValues(tx, p, []).then(p => tx.players.put(p)));
         }
 
         return Promise.all(promises);
@@ -115,15 +103,15 @@ function genPlayers(tx, tid, scoutingRank, numPlayers) {
 }
 
 function lotteryLogTxt(tid, type, number) {
-    var txt = 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season]) + '">' + g.teamNamesCache[tid] + '</a>';
+    let txt = `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season])}">${g.teamNamesCache[tid]}</a>`;
     if (type === 'chance') {
-        txt += " have a " + number + "% chance of getting the top overall pick of the " + g.season + " draft.";
+        txt += ` have a ${number}% chance of getting the top overall pick of the ${g.season} draft.`;
     } else if (type === 'movedup') {
-        txt += " moved up in the lottery and will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
+        txt += ` moved up in the lottery and will select ${helpers.ordinal(number)} overall in the ${g.season} draft.`;
     } else if (type === 'moveddown') {
-        txt += " moved down in the lottery and will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
+        txt += ` moved down in the lottery and will select ${helpers.ordinal(number)} overall in the ${g.season} draft.`;
     } else if (type === 'normal') {
-        txt += " will select " + helpers.ordinal(number) + " overall in the " + g.season + " draft.";
+        txt += ` will select ${helpers.ordinal(number)} overall in the ${g.season} draft.`;
     }
     return txt;
 }
@@ -139,19 +127,19 @@ function logAction(tid, txt) {
 }
 
 function logLotteryChances(chances, teams, draftOrder) {
-    var i, origTm, tm, txt;
+    let i, origTm, tm, txt;
 
-    for (i = 0; i < chances.length; i++) {
-        origTm = teams[i].tid;
-        tm = draftOrder[origTm][1].tid;
-        txt = lotteryLogTxt(tm, 'chance', helpers.round(chances[i], 2));
+    for (let i = 0; i < chances.length; i++) {
+        const origTm = teams[i].tid;
+        const tm = draftOrder[origTm][1].tid;
+        const txt = lotteryLogTxt(tm, 'chance', helpers.round(chances[i], 2));
         logAction(tm, txt);
     }
 }
 
 function logLotteryWinners(chances, teams, tm, origTm, pick) {
-    var i, idx, txt;
-    for (i = 0; i < teams.length; i++) {
+    let idx, txt;
+    for (let i = 0; i < teams.length; i++) {
         if (teams[i].tid === origTm) {
             idx = i;
             break;
@@ -174,29 +162,25 @@ function logLotteryWinners(chances, teams, tm, origTm, pick) {
  * of being set as a decimal value on the result.
  */
 function updateChances(chances, teams, isFinal) {
-    var i, j, k, newVal, remainder, tc, total, val, wps;
     isFinal = isFinal || false;
 
-    wps = _.countBy(teams, 'winp');
+    let wps = _.countBy(teams, 'winp');
     wps = _.pairs(wps);
-    wps = _.sortBy(wps, function (x) {
-        return Number(x[0]);
-    });
-    tc = 0;
+    wps = _.sortBy(wps, x => Number(x[0]));
+    let tc = 0;
 
-    for (k = 0; k < wps.length; k++) {
-        val = wps[k][1];
+    for (let k = 0; k < wps.length; k++) {
+        let val = wps[k][1];
         if (val > 1) {
             if (tc + val >= chances.length) {
                 val -= (tc + val - chances.length);
                 // Do not exceed 14, as the chances are only for lottery teams.
             }
-            total = chances.slice(tc, tc + val).reduce(function (a, b) {
-                return a + b;
-            });
-            remainder = (isFinal) ? total % val : 0;
-            newVal = (total - remainder) / val;
+            let total = chances.slice(tc, tc + val).reduce((a, b) => a + b);
+            let remainder = (isFinal) ? total % val : 0;
+            let newVal = (total - remainder) / val;
 
+            let i, j;
             for (i = tc, j = tc + val; i < j; i++) {
                 chances[i] = newVal;
                 if (remainder > 0) {
@@ -218,19 +202,18 @@ function updateChances(chances, teams, isFinal) {
  * Sort teams by making playoffs (NOT playoff performance) and winp, for first round
  */
 function lotterySort(teams) {
-    var i, randValues;
     /**
      * http://www.nba.com/2015/news/04/17/2015-draft-order-of-selection-tiebreak-official-release/index.html
      *
      * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
      */
-    randValues = _.shuffle(_.range(30));
-    for (i = 0; i < teams.length; i++) {
+    const randValues = _.shuffle(_.range(30));
+    for (let i = 0; i < teams.length; i++) {
         teams[i].randVal = randValues[i];
     }
 
-    teams.sort(function (a, b) {
-        var r;
+    teams.sort((a, b) => {
+        let r;
         r = 0;
         if ((a.playoffRoundsWon >= 0) && !(b.playoffRoundsWon >= 0)) {
             r = 1;
@@ -260,30 +243,24 @@ function genOrder(tx) {
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp", "playoffRoundsWon"],
         season: g.season
-    }).then(function (teams) {
-        var chancePct, chanceTotal, chances, draw, firstThree, i, pick;
-
+    }).then(teams => {
         // Draft lottery
         lotterySort(teams);
-        chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
+        const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
         updateChances(chances, teams, true);
 
-        chanceTotal = chances.reduce(function (a, b) {
-            return a + b;
-        });
-        chancePct = chances.map(function (c) {
-            return (c / chanceTotal) * 100;
-        });
+        const chanceTotal = chances.reduce((a, b) => a + b);
+        const chancePct = chances.map(c => (c / chanceTotal) * 100);
 
         // cumsum
-        for (i = 1; i < chances.length; i++) {
+        for (let i = 1; i < chances.length; i++) {
             chances[i] = chances[i] + chances[i - 1];
         }
         // Pick first three picks based on chances
-        firstThree = [];
+        const firstThree = [];
         while (firstThree.length < 3) {
-            draw = random.randInt(1, 1000);
-            for (i = 0; i < chances.length; i++) {
+            let draw = random.randInt(1, 1000);
+            for (let i = 0; i < chances.length; i++) {
                 if (chances[i] > draw) {
                     break;
                 }
@@ -295,13 +272,11 @@ function genOrder(tx) {
             }
         }
 
-        return tx.draftPicks.index('season').getAll(g.season).then(function (draftPicks) {
-            var draftOrder, draftPicksIndexed, i, tid;
-
+        return tx.draftPicks.index('season').getAll(g.season).then(draftPicks => {
             // Reorganize this to an array indexed on originalTid and round
-            draftPicksIndexed = [];
-            for (i = 0; i < draftPicks.length; i++) {
-                tid = draftPicks[i].originalTid;
+            const draftPicksIndexed = [];
+            for (let i = 0; i < draftPicks.length; i++) {
+                let tid = draftPicks[i].originalTid;
                 // Initialize to an array
                 if (draftPicksIndexed.length < tid || draftPicksIndexed[tid] === undefined) {
                     draftPicksIndexed[tid] = [];
@@ -313,39 +288,37 @@ function genOrder(tx) {
 
             logLotteryChances(chancePct, teams, draftPicksIndexed);
 
-            draftOrder = [];
+            const draftOrder = [];
             // First round - lottery winners
-            for (i = 0; i < firstThree.length; i++) {
-                tid = draftPicksIndexed[teams[firstThree[i]].tid][1].tid;
+            for (let i = 0; i < firstThree.length; i++) {
+                let tid = draftPicksIndexed[teams[firstThree[i]].tid][1].tid;
                 draftOrder.push({
                     round: 1,
                     pick: i + 1,
-                    tid: tid,
+                    tid,
                     originalTid: teams[firstThree[i]].tid
                 });
 
-                logLotteryWinners(chancePct, teams, tid,
-                    teams[firstThree[i]].tid, i + 1);
+                logLotteryWinners(chancePct, teams, tid, teams[firstThree[i]].tid, i + 1);
             }
 
             /**
              * First round - everyone else
              *
              */
-            pick = 4;
-            for (i = 0; i < teams.length; i++) {
+            let pick = 4;
+            for (let i = 0; i < teams.length; i++) {
                 if (firstThree.indexOf(i) < 0) {
-                    tid = draftPicksIndexed[teams[i].tid][1].tid;
+                    let tid = draftPicksIndexed[teams[i].tid][1].tid;
                     draftOrder.push({
                         round: 1,
-                        pick: pick,
-                        tid: tid,
+                        pick,
+                        tid,
                         originalTid: teams[i].tid
                     });
 
                     if (pick < 15) {
-                        logLotteryWinners(chancePct, teams, tid,
-                            teams[i].tid, pick);
+                        logLotteryWinners(chancePct, teams, tid, teams[i].tid, pick);
                     }
 
                     pick += 1;
@@ -355,29 +328,24 @@ function genOrder(tx) {
             /**
              * sort by winp with reverse randVal for tiebreakers.
              */
-            teams.sort(function (a, b) {
-                var r;
-                r = a.winp - b.winp;
+            teams.sort((a, b) => {
+                const r = a.winp - b.winp;
                 return (r === 0) ? b.randVal - a.randVal : r;
             });
 
             // Second round
-            for (i = 0; i < teams.length; i++) {
-                tid = draftPicksIndexed[teams[i].tid][2].tid;
+            for (let i = 0; i < teams.length; i++) {
+                let tid = draftPicksIndexed[teams[i].tid][2].tid;
                 draftOrder.push({
                     round: 2,
                     pick: i + 1,
-                    tid: tid,
+                    tid,
                     originalTid: teams[i].tid
                 });
             }
 
             // Delete from draftPicks object store so that they are completely untradeable
-            return Promise.map(draftPicks, function (draftPick) {
-                return tx.draftPicks.delete(draftPick.dpid);
-            }).then(function () {
-                return setOrder(tx, draftOrder);
-            });
+            return Promise.map(draftPicks, draftPick => tx.draftPicks.delete(draftPick.dpid)).then(() => setOrder(tx, draftOrder));
         });
     });
 }
@@ -392,11 +360,9 @@ function genOrder(tx) {
  * @return {Promise}
  */
 function genOrderFantasy(tx, position) {
-    var draftOrder, i, round, tids;
-
     // Randomly-ordered list of tids
-    tids = [];
-    for (i = 0; i < g.numTeams; i++) {
+    const tids = [];
+    for (let i = 0; i < g.numTeams; i++) {
         tids.push(i);
     }
     random.shuffle(tids);
@@ -409,11 +375,11 @@ function genOrderFantasy(tx, position) {
     }
 
     // Set total draft order: 12 rounds, snake
-    draftOrder = [];
-    for (round = 1; round <= 12; round++) {
-        for (i = 0; i < tids.length; i++) {
+    const draftOrder = [];
+    for (let round = 1; round <= 12; round++) {
+        for (let i = 0; i < tids.length; i++) {
             draftOrder.push({
-                round: round,
+                round,
                 pick: i + 1,
                 tid: tids[i],
                 originalTid: tids[i]
@@ -435,10 +401,8 @@ function genOrderFantasy(tx, position) {
  * @return {Array.<number>} Array of salaries, in thousands of dollars/year.
  */
 function getRookieSalaries() {
-    var i, rookieSalaries;
-
     // Default for 60 picks
-    rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];
+    const rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];
 
     while (g.numTeams * 2 > rookieSalaries.length) {
         // Add min contracts on to end
@@ -450,7 +414,7 @@ function getRookieSalaries() {
     }
 
     if (g.minContract !== 500 || g.maxContract !== 20000) {
-        for (i = 0; i < rookieSalaries.length; i++) {
+        for (let i = 0; i < rookieSalaries.length; i++) {
             // Subtract min
             rookieSalaries[i] -= 500;
 
@@ -478,58 +442,50 @@ function getRookieSalaries() {
  * @return {Promise}
  */
 function selectPlayer(pick, pid) {
-    return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
-        return tx.players.get(pid).then(function (p) {
-            var draftName, i, rookieSalaries, years;
+    return g.dbl.tx(["players", "playerStats"], "readwrite", tx => tx.players.get(pid).then(p => {
+        // Draft player
+        p.tid = pick.tid;
+        if (g.phase !== g.PHASE.FANTASY_DRAFT) {
+            p.draft = {
+                round: pick.round,
+                pick: pick.pick,
+                tid: pick.tid,
+                year: g.season,
+                originalTid: pick.originalTid,
+                pot: p.ratings[0].pot,
+                ovr: p.ratings[0].ovr,
+                skills: p.ratings[0].skills
+            };
+        }
 
-            // Draft player
-            p.tid = pick.tid;
-            if (g.phase !== g.PHASE.FANTASY_DRAFT) {
-                p.draft = {
-                    round: pick.round,
-                    pick: pick.pick,
-                    tid: pick.tid,
-                    year: g.season,
-                    originalTid: pick.originalTid,
-                    pot: p.ratings[0].pot,
-                    ovr: p.ratings[0].ovr,
-                    skills: p.ratings[0].skills
-                };
-            }
+        // Contract
+        if (g.phase !== g.PHASE.FANTASY_DRAFT) {
+            const rookieSalaries = getRookieSalaries();
+            const i = pick.pick - 1 + g.numTeams * (pick.round - 1);
+            const years = 4 - pick.round; // 2 years for 2nd round, 3 years for 1st round;
+            p = player.setContract(p, {
+                amount: rookieSalaries[i],
+                exp: g.season + years
+            }, true);
+        }
 
-            // Contract
-            if (g.phase !== g.PHASE.FANTASY_DRAFT) {
-                rookieSalaries = getRookieSalaries();
-                i = pick.pick - 1 + g.numTeams * (pick.round - 1);
-                years = 4 - pick.round; // 2 years for 2nd round, 3 years for 1st round;
-                p = player.setContract(p, {
-                    amount: rookieSalaries[i],
-                    exp: g.season + years
-                }, true);
-            }
-
-            // Add stats row if necessary (fantasy draft in ongoing season)
-            if (g.phase === g.PHASE.FANTASY_DRAFT && g.nextPhase <= g.PHASE.PLAYOFFS) {
-                p = player.addStatsRow(tx, p, g.nextPhase === g.PHASE.PLAYOFFS);
-            }
+        // Add stats row if necessary (fantasy draft in ongoing season)
+        if (g.phase === g.PHASE.FANTASY_DRAFT && g.nextPhase <= g.PHASE.PLAYOFFS) {
+            p = player.addStatsRow(tx, p, g.nextPhase === g.PHASE.PLAYOFFS);
+        }
 
 
-            if (g.phase === g.PHASE.FANTASY_DRAFT) {
-                draftName = g.season + ' fantasy draft';
-            } else {
-                draftName = g.season + ' draft';
-            }
-            eventLog.add(null, {
-                type: "draft",
-                text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season]) + '">' + g.teamNamesCache[pick.tid] + '</a> selected <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> with the ' + helpers.ordinal(pick.pick + (pick.round - 1) * 30) + ' pick in the <a href="' + helpers.leagueUrl(["draft_summary", g.season]) + '">' + draftName + '</a>.',
-                showNotification: false,
-                pids: [p.pid],
-                tids: [p.tid]
-            });
-
-            return tx.players.put(p);
+        const draftName = g.phase === g.PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
+        eventLog.add(null, {
+            type: "draft",
+            text: `${pick.pick}${(pick.round - 1) * 30}The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season])}">${g.teamNamesCache[pick.tid]}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> with the ${helpers.ordinal(pick.pick + (pick.round - 1) * 30)} pick in the <a href="${helpers.leagueUrl(["draft_summary", g.season])}">${draftName}</a>.`,
+            showNotification: false,
+            pids: [p.pid],
+            tids: [p.tid]
         });
-    });
+
+        return tx.players.put(p);
+    }));
 }
 
 /**
@@ -541,84 +497,60 @@ function selectPlayer(pick, pid) {
  * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to array. First argument is the list of draft picks (from getOrder). Second argument is a list of player IDs who were drafted during this function call, in order.
  */
 function untilUserOrEnd() {
-    var pids;
-
-    pids = [];
+    const pids = [];
 
     return Promise.all([
         g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED),
         getOrder()
-    ]).spread(function (playersAll, draftOrder) {
-        var afterDoneAuto, autoSelectPlayer, pick, pid, selection;
-
-        playersAll.sort(function (a, b) {
-            return b.value - a.value;
-        });
+    ]).spread((playersAll, draftOrder) => {
+        playersAll.sort((a, b) => b.value - a.value);
 
         // Called after either the draft is over or it's the user's pick
-        afterDoneAuto = function (draftOrder, pids) {
-            return setOrder(null, draftOrder).then(function () {
-                var phase;
+        const afterDoneAuto = (draftOrder, pids) => setOrder(null, draftOrder).then(() => {
+            // Is draft over?;
+            if (draftOrder.length === 0) {
+                const phase = require('./phase'); // Circular reference
 
-                // Is draft over?;
-                if (draftOrder.length === 0) {
-                    phase = require('./phase'); // Circular reference
+                // Fantasy draft special case!
+                if (g.phase === g.PHASE.FANTASY_DRAFT) {
+                    return g.dbl.tx(["players", "teams"], "readwrite", tx => player.genBaseMoods(tx).then(baseMoods => tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, p => player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods))).then(() => tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_FANTASY_TEMP, p => {
+                        p.tid = g.PLAYER.UNDRAFTED;
 
-                    // Fantasy draft special case!
-                    if (g.phase === g.PHASE.FANTASY_DRAFT) {
-                        return g.dbl.tx(["players", "teams"], "readwrite", function (tx) {
-                            // Undrafted players become free agents
-                            return player.genBaseMoods(tx).then(function (baseMoods) {
-                                return tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, function (p) {
-                                    return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
-                                });
-                            }).then(function () {
-                                // Swap back in normal draft class
-                                return tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_FANTASY_TEMP, function (p) {
-                                    p.tid = g.PLAYER.UNDRAFTED;
-
-                                    return p;
-                                });
-                            }).then(function () {
-                                return require('../core/league').setGameAttributesComplete({
-                                    phase: g.nextPhase,
-                                    nextPhase: null
-                                }).then(function () {
-                                    ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
-                                    return ui.updatePlayMenu(null).then(function () {
-                                        require('../core/league').updateLastDbChange();
-                                        return pids;
-                                    });
-                                });
-                            });
+                        return p;
+                    })).then(() => require('../core/league').setGameAttributesComplete({
+                        phase: g.nextPhase,
+                        nextPhase: null
+                    }).then(() => {
+                        ui.updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
+                        return ui.updatePlayMenu(null).then(() => {
+                            require('../core/league').updateLastDbChange();
+                            return pids;
                         });
-                    }
-
-                    // Non-fantasy draft
-                    return phase.newPhase(g.PHASE.AFTER_DRAFT).then(function () {
-                        return pids;
-                    });
+                    })));
                 }
 
-                // Draft is not over, so continue
-                require('../core/league').updateLastDbChange();
-                return pids;
-            });
-        };
+                // Non-fantasy draft
+                return phase.newPhase(g.PHASE.AFTER_DRAFT).then(() => pids);
+            }
+
+            // Draft is not over, so continue
+            require('../core/league').updateLastDbChange();
+            return pids;
+        });
 
         // This will actually draft "untilUserOrEnd"
-        autoSelectPlayer = function () {
+        const autoSelectPlayer = () => {
             if (draftOrder.length > 0) {
-                pick = draftOrder.shift();
+                const pick = draftOrder.shift();
 
                 if (g.userTids.indexOf(pick.tid) >= 0 && g.autoPlaySeasons === 0) {
                     draftOrder.unshift(pick);
                     return afterDoneAuto(draftOrder, pids);
                 }
 
-                selection = Math.floor(Math.abs(random.gauss(0, 2))); // 0=best prospect, 1=next best prospect, etc.
-                pid = playersAll[selection].pid;
-                return selectPlayer(pick, pid).then(function () {
+                const selection = Math.floor(Math.abs(random.gauss(0, 2))); // 0=best prospect, 1=next best prospect, etc.
+                const pid = playersAll[selection].pid;
+                return selectPlayer(pick, pid).then(() => {
                     pids.push(pid);
                     playersAll.splice(selection, 1); // Delete from the list of undrafted players
 
@@ -634,15 +566,15 @@ function untilUserOrEnd() {
 }
 
 module.exports = {
-    getOrder: getOrder,
-    setOrder: setOrder,
-    genPlayers: genPlayers,
-    genOrder: genOrder,
-    genOrderFantasy: genOrderFantasy,
-    untilUserOrEnd: untilUserOrEnd,
-    getRookieSalaries: getRookieSalaries,
-    selectPlayer: selectPlayer,
-    updateChances: updateChances,
-    lotterySort: lotterySort
+    getOrder,
+    setOrder,
+    genPlayers,
+    genOrder,
+    genOrderFantasy,
+    untilUserOrEnd,
+    getRookieSalaries,
+    selectPlayer,
+    updateChances,
+    lotterySort
 };
 

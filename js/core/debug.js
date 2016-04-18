@@ -1,110 +1,135 @@
-// Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
-
-'use strict';
-
-var g = require('../globals');
-var player = require('./player');
-var backboard = require('backboard');
-var _ = require('underscore');
+const g = require('../globals');
+const player = require('./player');
+const backboard = require('backboard');
+const _ = require('underscore');
 
 function regressRatingsPer() {
-    // http://rosettacode.org/wiki/Multiple_regression#JavaScript
-    function Matrix(ary) {
-        this.mtx = ary;
-        this.height = ary.length;
-        this.width = ary[0].length;
-    }
-
-    Matrix.prototype.toString = function () {
-        var i, s;
-
-        s = [];
-        for (i = 0; i < this.mtx.length; i++) {
-            s.push(this.mtx[i].join(","));
+    class Matrix {
+        constructor(ary) {
+            this.mtx = ary;
+            this.height = ary.length;
+            this.width = ary[0].length;
         }
-        return s.join("\n");
-    };
 
-    // returns a new matrix
-    Matrix.prototype.transpose = function () {
-        var i, j, transposed;
+        toString() {
+            let i, s;
 
-        transposed = [];
-        for (i = 0; i < this.width; i++) {
-            transposed[i] = [];
-            for (j = 0; j < this.height; j++) {
-                transposed[i][j] = this.mtx[j][i];
+            s = [];
+            for (i = 0; i < this.mtx.length; i++) {
+                s.push(this.mtx[i].join(","));
             }
-        }
-        return new Matrix(transposed);
-    };
-
-    // returns a new matrix
-    Matrix.prototype.mult = function (other) {
-        var i, j, k, result, sum;
-
-        if (this.width !== other.height) {
-            throw "error: incompatible sizes";
+            return s.join("\n");
         }
 
-        result = [];
-        for (i = 0; i < this.height; i++) {
-            result[i] = [];
-            for (j = 0; j < other.width; j++) {
-                sum = 0;
-                for (k = 0; k < this.width; k++) {
-                    sum += this.mtx[i][k] * other.mtx[k][j];
+        transpose() {
+            let i, j, transposed;
+
+            transposed = [];
+            for (i = 0; i < this.width; i++) {
+                transposed[i] = [];
+                for (j = 0; j < this.height; j++) {
+                    transposed[i][j] = this.mtx[j][i];
                 }
-                result[i][j] = sum;
             }
+            return new Matrix(transposed);
         }
-        return new Matrix(result);
-    };
 
-    // modifies the matrix in-place
-    Matrix.prototype.toReducedRowEchelonForm = function () {
-        var i, j, lead, r, tmp, val;
+        mult(other) {
+            let i, j, k, result, sum;
 
-        lead = 0;
-        for (r = 0; r < this.height; r++) {
-            if (this.width <= lead) {
-                return;
+            if (this.width !== other.height) {
+                throw "error: incompatible sizes";
             }
-            i = r;
-            while (this.mtx[i][lead] === 0) {
-                i++;
-                if (this.height === i) {
-                    i = r;
-                    lead++;
-                    if (this.width === lead) {
-                        return;
+
+            result = [];
+            for (i = 0; i < this.height; i++) {
+                result[i] = [];
+                for (j = 0; j < other.width; j++) {
+                    sum = 0;
+                    for (k = 0; k < this.width; k++) {
+                        sum += this.mtx[i][k] * other.mtx[k][j];
+                    }
+                    result[i][j] = sum;
+                }
+            }
+            return new Matrix(result);
+        }
+
+        toReducedRowEchelonForm() {
+            let i, j, lead, r, tmp, val;
+
+            lead = 0;
+            for (r = 0; r < this.height; r++) {
+                if (this.width <= lead) {
+                    return;
+                }
+                i = r;
+                while (this.mtx[i][lead] === 0) {
+                    i++;
+                    if (this.height === i) {
+                        i = r;
+                        lead++;
+                        if (this.width === lead) {
+                            return;
+                        }
                     }
                 }
+
+                tmp = this.mtx[i];
+                this.mtx[i] = this.mtx[r];
+                this.mtx[r] = tmp;
+
+                val = this.mtx[r][lead];
+                for (j = 0; j < this.width; j++) {
+                    this.mtx[r][j] /= val;
+                }
+
+                for (i = 0; i < this.height; i++) {
+                    if (i !== r) {
+                        val = this.mtx[i][lead];
+                        for (j = 0; j < this.width; j++) {
+                            this.mtx[i][j] -= val * this.mtx[r][j];
+                        }
+                    }
+                }
+                lead++;
+            }
+        }
+
+        inverse() {
+            let I, i;
+
+            if (this.height !== this.width) {
+                throw "can't invert a non-square matrix";
             }
 
-            tmp = this.mtx[i];
-            this.mtx[i] = this.mtx[r];
-            this.mtx[r] = tmp;
-
-            val = this.mtx[r][lead];
-            for (j = 0; j < this.width; j++) {
-                this.mtx[r][j] /= val;
+            I = new IdentityMatrix(this.height);
+            for (i = 0; i < this.height; i++) {
+                this.mtx[i] = this.mtx[i].concat(I.mtx[i]);
             }
+            this.width *= 2;
+
+            this.toReducedRowEchelonForm();
 
             for (i = 0; i < this.height; i++) {
-                if (i !== r) {
-                    val = this.mtx[i][lead];
-                    for (j = 0; j < this.width; j++) {
-                        this.mtx[i][j] -= val * this.mtx[r][j];
-                    }
-                }
+                this.mtx[i].splice(0, this.height);
             }
-            lead++;
+            this.width /= 2;
+
+            return this;
         }
-    };
+
+        regressionCoefficients(x) {
+            let xT;
+
+            xT = x.transpose();
+
+            return xT.mult(x).inverse().mult(xT).mult(this);
+        }
+    }
 
     function IdentityMatrix(n) {
-        var i, j;
+        let i, j;
 
         this.height = n;
         this.width = n;
@@ -118,47 +143,13 @@ function regressRatingsPer() {
     }
     IdentityMatrix.prototype = Matrix.prototype;
 
-    // modifies the matrix "in place"
-    Matrix.prototype.inverse = function () {
-        var I, i;
-
-        if (this.height !== this.width) {
-            throw "can't invert a non-square matrix";
-        }
-
-        I = new IdentityMatrix(this.height);
-        for (i = 0; i < this.height; i++) {
-            this.mtx[i] = this.mtx[i].concat(I.mtx[i]);
-        }
-        this.width *= 2;
-
-        this.toReducedRowEchelonForm();
-
-        for (i = 0; i < this.height; i++) {
-            this.mtx[i].splice(0, this.height);
-        }
-        this.width /= 2;
-
-        return this;
-    };
-
     function ColumnVector(ary) {
-        return new Matrix(ary.map(function (v) { return [v]; }));
+        return new Matrix(ary.map(v => [v]));
     }
     ColumnVector.prototype = Matrix.prototype;
 
-    Matrix.prototype.regressionCoefficients = function (x) {
-        var xT;
-
-        xT = x.transpose();
-
-        return xT.mult(x).inverse().mult(xT).mult(this);
-    };
-
-    g.dbl.players.getAll().then(function (players) {
-        return player.withStats(null, players, {statsSeasons: "all"});
-    }).then(function (players) {
-        var c, i, j, k, p, pers, ratingLabels, ratings, x, y;
+    g.dbl.players.getAll().then(players => player.withStats(null, players, {statsSeasons: "all"})).then(players => {
+        let c, i, j, k, p, pers, ratingLabels, ratings, x, y;
 
         pers = [];
         ratings = [];
@@ -194,7 +185,7 @@ function regressRatingsPer() {
 
         ratingLabels = ["hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
         for (i = 0; i < ratingLabels.length; i++) {
-            console.log(ratingLabels[i] + ": " + c.mtx[i][0] * 100);
+            console.log(`${ratingLabels[i]}: ${c.mtx[i][0] * 100}`);
         }
     });
 }
@@ -203,8 +194,8 @@ function regressRatingsPer() {
 // Useful to run this while playing with the contract formula in core.player.genContract
 function leagueAverageContract() {
     // All non-retired players
-    g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
-        var contract, i, p, total;
+    g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(players => {
+        let contract, i, p, total;
 
         total = 0;
 
@@ -220,15 +211,15 @@ function leagueAverageContract() {
 
 function exportPlayerInfo() {
     // All non-retired players
-    g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
-        var contract, i, output, p;
+    g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(players => {
+        let contract, i, output, p;
 
         output = "<pre>value,contract.amount\n";
 
         for (i = 0; i < players.length; i++) {
             p = players[i];
             contract = player.genContract(p);
-            output += p.value + "," + contract.amount + "," + _.last(p.ratings).ovr + "," + _.last(p.ratings).pot + "\n";
+            output += `${p.value},${contract.amount},${_.last(p.ratings).ovr},${_.last(p.ratings).pot}\n`;
         }
         output += "</pre>";
 
@@ -241,7 +232,7 @@ function exportPlayerStats() {
 }
 
 function averageCareerArc(baseOvr, basePot, ratingToSave) {
-    var averageOvr, averagePot, averageRat, i, j, k, numPlayers, numSeasons, p, profiles;
+    let averageOvr, averagePot, averageRat, i, j, k, numPlayers, numSeasons, p, profiles;
 
     numPlayers = 1000; // Number of players per profile
     numSeasons = 20;
@@ -278,13 +269,13 @@ function averageCareerArc(baseOvr, basePot, ratingToSave) {
 
     console.log("ovr:"); console.log(averageOvr);
     console.log("pot:"); console.log(averagePot);
-    if (ratingToSave) { console.log(ratingToSave + ":"); console.log(averageRat); }
+    if (ratingToSave) { console.log(`${ratingToSave}:`); console.log(averageRat); }
 }
 
 module.exports = {
-    regressRatingsPer: regressRatingsPer,
-    leagueAverageContract: leagueAverageContract,
-    exportPlayerInfo: exportPlayerInfo,
-    exportPlayerStats: exportPlayerStats,
-    averageCareerArc: averageCareerArc
+    regressRatingsPer,
+    leagueAverageContract,
+    exportPlayerInfo,
+    exportPlayerStats,
+    averageCareerArc
 };

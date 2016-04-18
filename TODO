@@ -4,6 +4,7 @@ babel
     command for no es2015 modules:
     FILE=db; lebab $FILE.js -o $FILE.js --enable class,template,arrow,let,default-param,arg-spread,obj-method,obj-shorthand,no-strict
   benchmark, for sanity
+  promise indentation
   eslint
   sublime
   tests

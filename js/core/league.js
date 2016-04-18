@@ -1,20 +1,18 @@
-'use strict';
+const db = require('../db');
+const g = require('../globals');
+const ui = require('../ui');
+const draft = require('./draft');
+const finances = require('./finances');
+const phase = require('./phase');
+const player = require('./player');
+const team = require('./team');
+const Promise = require('bluebird');
+const $ = require('jquery');
+const _ = require('underscore');
+const helpers = require('../util/helpers');
+const random = require('../util/random');
 
-var db = require('../db');
-var g = require('../globals');
-var ui = require('../ui');
-var draft = require('./draft');
-var finances = require('./finances');
-var phase = require('./phase');
-var player = require('./player');
-var team = require('./team');
-var Promise = require('bluebird');
-var $ = require('jquery');
-var _ = require('underscore');
-var helpers = require('../util/helpers');
-var random = require('../util/random');
-
-var defaultGameAttributes = {
+const defaultGameAttributes = {
     phase: 0,
     nextPhase: null, // Used only for fantasy draft
     daysLeft: 0, // Used only for free agency
@@ -46,7 +44,7 @@ var defaultGameAttributes = {
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
 function merge(x, y) {
-    var i, prop;
+    let i, prop;
 
     for (i = 0; i < x.length; i++) {
         // Fill in default values as needed
@@ -69,7 +67,7 @@ function merge(x, y) {
  * @returns {Promise} Promise for when it finishes.
  */
 function setGameAttributes(tx, gameAttributes) {
-    var key, toUpdate;
+    let key, toUpdate;
 
     toUpdate = [];
     for (key in gameAttributes) {
@@ -80,34 +78,30 @@ function setGameAttributes(tx, gameAttributes) {
         }
     }
 
-    return Promise.map(toUpdate, function (key) {
-        return tx.gameAttributes.put({
-            key: key,
-            value: gameAttributes[key]
-        }).then(function () {
-            g[key] = gameAttributes[key];
+    return Promise.map(toUpdate, key => tx.gameAttributes.put({
+        key,
+        value: gameAttributes[key]
+    }).then(() => {
+        g[key] = gameAttributes[key];
 
-            if (key === "userTid" || key === "userTids") {
-                g.vm.multiTeam[key](gameAttributes[key]);
+        if (key === "userTid" || key === "userTids") {
+            g.vm.multiTeam[key](gameAttributes[key]);
+        }
+    }).then(() => {
+        // Trigger a signal for the team finances view. This is stupid.
+        if (key === "gamesInProgress") {
+            if (gameAttributes[key]) {
+                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
+            } else {
+                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
             }
-        }).then(function () {
-            // Trigger a signal for the team finances view. This is stupid.
-            if (key === "gamesInProgress") {
-                if (gameAttributes[key]) {
-                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-                } else {
-                    $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-                }
-            }
-        });
-    });
+        }
+    }));
 }
 
 // Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
 function setGameAttributesComplete(gameAttributes) {
-    return g.dbl.tx("gameAttributes", "readwrite", function (tx) {
-        return setGameAttributes(tx, gameAttributes);
-    });
+    return g.dbl.tx("gameAttributes", "readwrite", tx => setGameAttributes(tx, gameAttributes));
 }
 
 // Call this after doing DB stuff so other tabs know there is new data.
@@ -124,7 +118,7 @@ function updateLastDbChange() {
  * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
  */
 function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
-    var phaseText, skipNewPhase, teams, teamsDefault;
+    let phaseText, skipNewPhase, teams, teamsDefault;
 
     // Any user input?
     if (!leagueFile) {
@@ -157,25 +151,25 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
 
     // Record in meta db
     return g.dbm.leagues.add({
-        name: name,
-        tid: tid,
-        phaseText: phaseText,
+        name,
+        tid,
+        phaseText,
         teamName: teams[tid].name,
         teamRegion: teams[tid].region
-    }).then(function (lid) {
+    }).then(lid => {
         g.lid = lid;
 
         // Create new league database
         return db.connectLeague(g.lid);
-    }).then(function () {
-        var gameAttributes, i;
+    }).then(() => {
+        let gameAttributes, i;
 
         // Default values
         gameAttributes = _.extend(helpers.deepCopy(defaultGameAttributes), {
             userTid: tid,
             userTids: [tid],
             season: startingSeason,
-            startingSeason: startingSeason,
+            startingSeason,
             leagueName: name,
             teamAbbrevsCache: _.pluck(teams, "abbrev"),
             teamRegionsCache: _.pluck(teams, "region"),
@@ -208,10 +202,10 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
         helpers.resetG();
 
         return setGameAttributesComplete(gameAttributes);
-    }).then(function () {
-        var i, j, k, round, scoutingRank, t, teamSeasons, teamStats, toMaybeAdd;
+    }).then(() => {
+        let i, j, k, round, scoutingRank, t, teamSeasons, teamStats, toMaybeAdd;
 
-        return g.dbl.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"], "readwrite", function (tx) {
+        return g.dbl.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"], "readwrite", tx => {
             // Draft picks for the first 4 years, as those are the ones can be traded initially
             if (leagueFile.hasOwnProperty("draftPicks")) {
                 for (i = 0; i < leagueFile.draftPicks.length; i++) {
@@ -224,7 +218,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                             tx.draftPicks.add({
                                 tid: t,
                                 originalTid: t,
-                                round: round,
+                                round,
                                 season: g.startingSeason + i
                             });
                         }
@@ -255,7 +249,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                     teamSeasons = [team.genSeasonRow(t.tid)];
                     teamSeasons[0].pop = teams[i].pop;
                 }
-                teamSeasons.forEach(function (teamSeason) {
+                teamSeasons.forEach(teamSeason => {
                     teamSeason.tid = t.tid;
                     tx.teamSeasons.add(teamSeason);
                 });
@@ -265,7 +259,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 } else {
                     teamStats = [team.genStatsRow(t.tid)];
                 }
-                teamStats.forEach(function (teamStat) {
+                teamStats.forEach(teamStat => {
                     teamStat.tid = t.tid;
                     if (!teamStat.hasOwnProperty("ba")) {
                         teamStat.ba = 0;
@@ -288,7 +282,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                     rid: 0,
                     teams: [
                         {
-                            tid: tid,
+                            tid,
                             pids: [],
                             dpids: []
                         },
@@ -331,8 +325,8 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 }
             }
 
-            return player.genBaseMoods(tx).then(function (baseMoods) {
-                var agingYears, baseRatings, draftYear, goodNeutralBad, i, n, p, playerTids, players, pots, profile, profiles, t, t2;
+            return player.genBaseMoods(tx).then(baseMoods => {
+                let agingYears, baseRatings, draftYear, goodNeutralBad, i, n, p, playerTids, players, pots, profile, profiles, t, t2;
 
                 // Either add players from league file or generate them
 
@@ -344,7 +338,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                     if (randomizeRosters) {
                         // Assign the team ID of all players to the 'playerTids' array.
                         // Check tid to prevent draft prospects from being swapped with established players
-                        playerTids = _.pluck(players.filter(function (p) { return p.tid >= g.PLAYER.FREE_AGENT; }), "tid");
+                        playerTids = _.pluck(players.filter(p => p.tid >= g.PLAYER.FREE_AGENT), "tid");
 
                         // Shuffle the teams that players are assigned to.
                         random.shuffle(playerTids);
@@ -359,8 +353,8 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                         }
                     }
 
-                    players.forEach(function (p) {
-                        var playerStats;
+                    players.forEach(p => {
+                        let playerStats;
 
                         p = player.augmentPartialPlayer(p, scoutingRank);
 
@@ -371,9 +365,9 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                         playerStats = p.stats;
                         delete p.stats;
 
-                        player.updateValues(tx, p, playerStats.reverse()).then(function (p) {
-                            tx.players.put(p).then(function (pid) {
-                                var addStatsRows;
+                        player.updateValues(tx, p, playerStats.reverse()).then(p => {
+                            tx.players.put(p).then(pid => {
+                                let addStatsRows;
 
                                 // When adding a player, this is the only way to know the pid
                                 p.pid = pid;
@@ -386,8 +380,8 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                                     }
                                 } else {
                                     // If there are stats in the League File, add them to the database
-                                    addStatsRows = function () {
-                                        var ps;
+                                    addStatsRows = () => {
+                                        let ps;
 
                                         ps = playerStats.pop();
 
@@ -410,7 +404,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                                         // Delete psid because it can cause problems due to interaction addStatsRow above
                                         delete ps.psid;
 
-                                        tx.playerStats.add(ps).then(function () {
+                                        tx.playerStats.add(ps).then(() => {
                                             // On to the next one
                                             if (playerStats.length > 0) {
                                                 addStatsRows();
@@ -460,8 +454,8 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                             }
 
                             // Update player values after ratings changes
-                            player.updateValues(tx, p, []).then(function (p) {
-                                var randomizeExp;
+                            player.updateValues(tx, p, []).then(p => {
+                                let randomizeExp;
 
                                 // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
                                 randomizeExp = (p.tid !== g.PLAYER.FREE_AGENT);
@@ -473,7 +467,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                                 if (p.tid === g.PLAYER.FREE_AGENT) {
                                     player.addToFreeAgents(tx, p, null, baseMoods);
                                 } else {
-                                    tx.players.put(p).then(function (pid) {
+                                    tx.players.put(p).then(pid => {
                                         // When adding a player, this is the only way to know the pid
                                         p.pid = pid;
 
@@ -486,23 +480,23 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
 
                         // Initialize rebuilding/contending, when possible
                         if (t2 >= 0) {
-                            (function (goodNeutralBad) {
-                                tx.teams.get(t2).then(function (t) {
+                            ((goodNeutralBad => {
+                                tx.teams.get(t2).then(t => {
                                     t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
                                     tx.teams.put(t);
                                 });
-                            }(goodNeutralBad));
+                            })(goodNeutralBad));
                         }
                     }
                 }
 
                 return players;
             });
-        }).then(function (players) {
-            var createUndrafted1, createUndrafted2, createUndrafted3, i;
+        }).then(players => {
+            let createUndrafted1, createUndrafted2, createUndrafted3, i;
 
             // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
-            return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
+            return g.dbl.tx(["players", "playerStats"], "readwrite", tx => {
                 // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
                 createUndrafted1 = Math.round(70 * g.numTeams / 30);
                 createUndrafted2 = Math.round(70 * g.numTeams / 30);
@@ -689,15 +683,15 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                         }
                     });
                 }
-            }).then(function () {
-                var lid;
+            }).then(() => {
+                let lid;
 
                 if (skipNewPhase) {
                     // Game already in progress, just start it
                     return g.lid;
                 }
 
-                ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
+                ui.updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
                 ui.updateStatus("Idle");
 
                 lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
@@ -705,13 +699,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 helpers.bbgmPing("league");
 
                 // Auto sort rosters
-                return g.dbl.tx("players", "readwrite", function (tx) {
-                    return Promise.map(teams, function (t) {
-                        return team.rosterAutoSort(tx, t.tid);
-                    }).then(function () {
-                        return lid;
-                    });
-                });
+                return g.dbl.tx("players", "readwrite", tx => Promise.map(teams, t => team.rosterAutoSort(tx, t.tid)).then(() => lid));
             });
         });
     });
@@ -725,22 +713,22 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
  * @param {function()=} cb Optional callback.
  */
 function remove(lid) {
-    return new Promise(function (resolve, reject) {
-        var request;
+    return new Promise((resolve, reject) => {
+        let request;
 
         if (g.dbl !== undefined) {
             g.dbl.close();
         }
 
         g.dbm.leagues.delete(lid);
-        request = indexedDB.deleteDatabase("league" + lid);
-        request.onsuccess = function () {
+        request = indexedDB.deleteDatabase(`league${lid}`);
+        request.onsuccess = () => {
             resolve();
         };
-        request.onfailure = function (event) {
+        request.onfailure = event => {
             reject(event);
         };
-        request.onblocked = function () {
+        request.onblocked = () => {
             // Necessary because g.dbl.close() doesn't always finish in time and
             // http://www.w3.org/TR/IndexedDB/#dfn-steps-for-deleting-a-database
             // says it will still be deleted even if onblocked fires.
@@ -758,7 +746,7 @@ function remove(lid) {
  * @return {Promise} Resolve to all the exported league data.
  */
 function exportLeague(stores) {
-    var exportedLeague;
+    let exportedLeague;
 
     exportedLeague = {};
 
@@ -767,13 +755,11 @@ function exportLeague(stores) {
     // name is only used for the file name of the exported roster file.
     exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
 
-    return Promise.map(stores, function (store) {
-        return g.dbl[store].getAll().then(function (contents) {
-            exportedLeague[store] = contents;
-        });
-    }).then(function () {
+    return Promise.map(stores, store => g.dbl[store].getAll().then(contents => {
+        exportedLeague[store] = contents;
+    })).then(() => {
         // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
-        var i, j, pid, tid;
+        let i, j, pid, tid;
 
         if (stores.indexOf("playerStats") >= 0) {
             for (i = 0; i < exportedLeague.playerStats.length; i++) {
@@ -824,13 +810,11 @@ function exportLeague(stores) {
             delete exportedLeague.teamSeasons;
             delete exportedLeague.teamStats;
         }
-    }).then(function () {
-        return exportedLeague;
-    });
+    }).then(() => exportedLeague);
 }
 
 function updateMetaNameRegion(name, region) {
-    return g.dbm.leagues.get(g.lid).then(function (l) {
+    return g.dbm.leagues.get(g.lid).then(l => {
         l.teamName = name;
         l.teamRegion = region;
         return g.dbm.leagues.put(l);
@@ -845,10 +829,10 @@ function updateMetaNameRegion(name, region) {
  * @return {Promise}
  */
 function loadGameAttribute(ot, key) {
-    var dbOrTx = ot !== null ? ot : g.dbl;
-    return dbOrTx.gameAttributes.get(key).then(function (gameAttribute) {
+    const dbOrTx = ot !== null ? ot : g.dbl;
+    return dbOrTx.gameAttributes.get(key).then(gameAttribute => {
         if (gameAttribute === undefined) {
-            throw new Error("Unknown game attribute: " + key);
+            throw new Error(`Unknown game attribute: ${key}`);
         }
 
         g[key] = gameAttribute.value;
@@ -875,10 +859,10 @@ function loadGameAttribute(ot, key) {
  * @return {Promise}
  */
 function loadGameAttributes(ot) {
-    var dbOrTx = ot !== null ? ot : g.dbl;
+    const dbOrTx = ot !== null ? ot : g.dbl;
 
-    return dbOrTx.gameAttributes.getAll().then(function (gameAttributes) {
-        var i;
+    return dbOrTx.gameAttributes.getAll().then(gameAttributes => {
+        let i;
 
         for (i = 0; i < gameAttributes.length; i++) {
             g[gameAttributes[i].key] = gameAttributes[i].value;
@@ -888,7 +872,7 @@ function loadGameAttributes(ot) {
         if (g.userTids === undefined) { g.userTids = [g.userTid]; }
 
         // Set defaults to avoid IndexedDB upgrade
-        Object.keys(defaultGameAttributes).forEach(function (key) {
+        Object.keys(defaultGameAttributes).forEach(key => {
             if (g[key] === undefined) {
                 g[key] = defaultGameAttributes[key];
             }
@@ -903,7 +887,7 @@ function loadGameAttributes(ot) {
 
 // Depending on phase, initiate action that will lead to the next phase
 function autoPlay() {
-    var freeAgents, game, season;
+    let freeAgents, game, season;
     freeAgents = require('./freeAgents');
     game = require('./game');
     season = require('./season');
@@ -935,7 +919,7 @@ function autoPlay() {
 }
 
 function initAutoPlay() {
-    var numSeasons, result;
+    let numSeasons, result;
 
     result = window.prompt("This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?", "5");
     numSeasons = parseInt(result, 10);
@@ -947,15 +931,15 @@ function initAutoPlay() {
 }
 
 module.exports = {
-    create: create,
-    exportLeague: exportLeague,
-    remove: remove,
-    setGameAttributes: setGameAttributes,
-    setGameAttributesComplete: setGameAttributesComplete,
-    updateMetaNameRegion: updateMetaNameRegion,
-    loadGameAttribute: loadGameAttribute,
-    loadGameAttributes: loadGameAttributes,
-    updateLastDbChange: updateLastDbChange,
-    autoPlay: autoPlay,
-    initAutoPlay: initAutoPlay
+    create,
+    exportLeague,
+    remove,
+    setGameAttributes,
+    setGameAttributesComplete,
+    updateMetaNameRegion,
+    loadGameAttribute,
+    loadGameAttributes,
+    updateLastDbChange,
+    autoPlay,
+    initAutoPlay
 };

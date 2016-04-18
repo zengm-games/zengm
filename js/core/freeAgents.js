@@ -1,15 +1,13 @@
-'use strict';
-
-var g = require('../globals');
-var ui = require('../ui');
-var player = require('./player');
-var team = require('./team');
-var Promise = require('bluebird');
-var _ = require('underscore');
-var eventLog = require('../util/eventLog');
-var helpers = require('../util/helpers');
-var lock = require('../util/lock');
-var random = require('../util/random');
+const g = require('../globals');
+const ui = require('../ui');
+const player = require('./player');
+const team = require('./team');
+const Promise = require('bluebird');
+const _ = require('underscore');
+const eventLog = require('../util/eventLog');
+const helpers = require('../util/helpers');
+const lock = require('../util/lock');
+const random = require('../util/random');
 
 /**
  * AI teams sign free agents.
@@ -20,93 +18,89 @@ var random = require('../util/random');
  * @return {Promise}
  */
 function autoSign(tx) {
-    return helpers.maybeReuseTx(["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", tx, function (tx) {
-        return Promise.all([
-            team.filter({
-                ot: tx,
-                attrs: ["strategy"],
-                season: g.season
-            }),
-            tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT)
-        ]).spread(function (teams, players) {
-            var i, strategies, tids;
+    return helpers.maybeReuseTx(["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", tx, tx => Promise.all([
+        team.filter({
+            ot: tx,
+            attrs: ["strategy"],
+            season: g.season
+        }),
+        tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT)
+    ]).spread((teams, players) => {
+        let i, strategies, tids;
 
-            strategies = _.pluck(teams, "strategy");
+        strategies = _.pluck(teams, "strategy");
 
-            // List of free agents, sorted by value
-            players.sort(function (a, b) { return b.value - a.value; });
+        // List of free agents, sorted by value
+        players.sort((a, b) => b.value - a.value);
 
-            if (players.length === 0) {
+        if (players.length === 0) {
+            return;
+        }
+
+        // Randomly order teams
+        tids = [];
+        for (i = 0; i < g.numTeams; i++) {
+            tids.push(i);
+        }
+        random.shuffle(tids);
+
+        return Promise.each(tids, tid => {
+            // Skip the user's team
+            if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
                 return;
             }
 
-            // Randomly order teams
-            tids = [];
-            for (i = 0; i < g.numTeams; i++) {
-                tids.push(i);
+            // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
+            if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
+                return;
             }
-            random.shuffle(tids);
 
-            return Promise.each(tids, function (tid) {
-                // Skip the user's team
-                if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
-                    return;
-                }
-
-                // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
-                if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
-                    return;
-                }
-
-                // Skip rebuilding teams sometimes
-                if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
-                    return;
-                }
+            // Skip rebuilding teams sometimes
+            if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
+                return;
+            }
 
 /*                        // Randomly don't try to sign some players this day
-                while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
-                    players.shift();
-                }*/
+            while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
+                players.shift();
+            }*/
 
-                return Promise.all([
-                    tx.players.index('tid').count(tid),
-                    team.getPayroll(tx, tid).get(0)
-                ]).spread(function (numPlayersOnRoster, payroll) {
-                    var i, p;
+            return Promise.all([
+                tx.players.index('tid').count(tid),
+                team.getPayroll(tx, tid).get(0)
+            ]).spread((numPlayersOnRoster, payroll) => {
+                let i, p;
 
-                    if (numPlayersOnRoster < 15) {
-                        for (i = 0; i < players.length; i++) {
-                            // Don't sign minimum contract players to fill out the roster
-                            if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
-                                p = players[i];
-                                p.tid = tid;
-                                if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                                    p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-                                }
-                                p = player.setContract(p, p.contract, true);
-                                p.gamesUntilTradable = 15;
-
-                                eventLog.add(null, {
-                                    type: "freeAgent",
-                                    text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
-                                    showNotification: false,
-                                    pids: [p.pid],
-                                    tids: [p.tid]
-                                });
-
-                                players.splice(i, 1); // Remove from list of free agents
-
-                                // If we found one, stop looking for this team
-                                return tx.players.put(p).then(function () {
-                                    return team.rosterAutoSort(tx, tid);
-                                });
+                if (numPlayersOnRoster < 15) {
+                    for (i = 0; i < players.length; i++) {
+                        // Don't sign minimum contract players to fill out the roster
+                        if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
+                            p = players[i];
+                            p.tid = tid;
+                            if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                                p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
                             }
+                            p = player.setContract(p, p.contract, true);
+                            p.gamesUntilTradable = 15;
+
+                            eventLog.add(null, {
+                                type: "freeAgent",
+                                text: `${p.contract.amount / 1000}The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                                showNotification: false,
+                                pids: [p.pid],
+                                tids: [p.tid]
+                            });
+
+                            players.splice(i, 1); // Remove from list of free agents
+
+                            // If we found one, stop looking for this team
+                            return tx.players.put(p).then(() => team.rosterAutoSort(tx, tid));
                         }
                     }
-                });
+                }
             });
         });
-    });
+    }));
 }
 
 /**
@@ -118,43 +112,41 @@ function autoSign(tx) {
  * @return {Promise}
  */
 function decreaseDemands() {
-    return g.dbl.tx("players", "readwrite", function (tx) {
-        return tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, function (p) {
-            var i;
+    return g.dbl.tx("players", "readwrite", tx => tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, p => {
+        let i;
 
-            // Decrease free agent demands
-            p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
-            if (p.contract.amount < g.minContract) {
-                p.contract.amount = g.minContract;
-            }
+        // Decrease free agent demands
+        p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
+        if (p.contract.amount < g.minContract) {
+            p.contract.amount = g.minContract;
+        }
 
-            if (g.phase !== g.PHASE.FREE_AGENCY) {
-                // Since this is after the season has already started, ask for a short contract
-                if (p.contract.amount < 1000) {
-                    p.contract.exp = g.season;
-                } else {
-                    p.contract.exp = g.season + 1;
-                }
-            }
-
-            // Free agents' resistance to signing decays after every regular season game
-            for (i = 0; i < p.freeAgentMood.length; i++) {
-                p.freeAgentMood[i] -= 0.075;
-                if (p.freeAgentMood[i] < 0) {
-                    p.freeAgentMood[i] = 0;
-                }
-            }
-
-            // Also, heal.
-            if (p.injury.gamesRemaining > 0) {
-                p.injury.gamesRemaining -= 1;
+        if (g.phase !== g.PHASE.FREE_AGENCY) {
+            // Since this is after the season has already started, ask for a short contract
+            if (p.contract.amount < 1000) {
+                p.contract.exp = g.season;
             } else {
-                p.injury = {type: "Healthy", gamesRemaining: 0};
+                p.contract.exp = g.season + 1;
             }
+        }
 
-            return p;
-        });
-    });
+        // Free agents' resistance to signing decays after every regular season game
+        for (i = 0; i < p.freeAgentMood.length; i++) {
+            p.freeAgentMood[i] -= 0.075;
+            if (p.freeAgentMood[i] < 0) {
+                p.freeAgentMood[i] = 0;
+            }
+        }
+
+        // Also, heal.
+        if (p.injury.gamesRemaining > 0) {
+            p.injury.gamesRemaining -= 1;
+        } else {
+            p.injury = {type: "Healthy", gamesRemaining: 0};
+        }
+
+        return p;
+    }));
 }
 
 /**
@@ -204,18 +196,18 @@ function refuseToNegotiate(amount, mood) {
  * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  */
 function play(numDays, start) {
-    var cbNoDays, cbRunDay, phase;
+    let cbNoDays, cbRunDay, phase;
 
     start = start !== undefined ? start : true;
     phase = require('./phase');
 
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
-    cbNoDays = function () {
-        require('../core/league').setGameAttributesComplete({gamesInProgress: false}).then(function () {
-            ui.updatePlayMenu(null).then(function () {
+    cbNoDays = () => {
+        require('../core/league').setGameAttributesComplete({gamesInProgress: false}).then(() => {
+            ui.updatePlayMenu(null).then(() => {
                 // Check to see if free agency is over
                 if (g.daysLeft === 0) {
-                    phase.newPhase(g.PHASE.PRESEASON).then(function () {
+                    phase.newPhase(g.PHASE.PRESEASON).then(() => {
                         ui.updateStatus("Idle");
                     });
                 }
@@ -224,17 +216,17 @@ function play(numDays, start) {
     };
 
     // This simulates a day, including game simulation and any other bookkeeping that needs to be done
-    cbRunDay = function () {
-        var cbYetAnother;
+    cbRunDay = () => {
+        let cbYetAnother;
 
         // This is called if there are remaining days to simulate
-        cbYetAnother = function () {
-            decreaseDemands().then(function () {
-                autoSign().then(function () {
-                    require('../core/league').setGameAttributesComplete({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}).then(function () {
+        cbYetAnother = () => {
+            decreaseDemands().then(() => {
+                autoSign().then(() => {
+                    require('../core/league').setGameAttributesComplete({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}).then(() => {
                         if (g.daysLeft > 0 && numDays > 0) {
-                            ui.realtimeUpdate(["playerMovement"], undefined, function () {
-                                ui.updateStatus(g.daysLeft + " days left");
+                            ui.realtimeUpdate(["playerMovement"], undefined, () => {
+                                ui.updateStatus(`${g.daysLeft} days left`);
                                 play(numDays - 1, false);
                             });
                         } else if (g.daysLeft === 0) {
@@ -264,10 +256,10 @@ function play(numDays, start) {
     // If this is a request to start a new simulation... are we allowed to do
     // that? If so, set the lock and update the play menu
     if (start) {
-        lock.canStartGames(null).then(function (canStartGames) {
+        lock.canStartGames(null).then(canStartGames => {
             if (canStartGames) {
-                require('../core/league').setGameAttributesComplete({gamesInProgress: true}).then(function () {
-                    ui.updatePlayMenu(null).then(function () {
+                require('../core/league').setGameAttributesComplete({gamesInProgress: true}).then(() => {
+                    ui.updatePlayMenu(null).then(() => {
                         cbRunDay();
                     });
                 });
@@ -279,9 +271,9 @@ function play(numDays, start) {
 }
 
 module.exports = {
-    autoSign: autoSign,
-    decreaseDemands: decreaseDemands,
-    amountWithMood: amountWithMood,
-    refuseToNegotiate: refuseToNegotiate,
-    play: play
+    autoSign,
+    decreaseDemands,
+    amountWithMood,
+    refuseToNegotiate,
+    play
 };

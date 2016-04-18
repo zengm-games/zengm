@@ -1,14 +1,12 @@
-'use strict';
-
-var g = require('../globals');
-var ui = require('../ui');
-var freeAgents = require('./freeAgents');
-var player = require('./player');
-var team = require('./team');
-var Promise = require('bluebird');
-var eventLog = require('../util/eventLog');
-var helpers = require('../util/helpers');
-var lock = require('../util/lock');
+const g = require('../globals');
+const ui = require('../ui');
+const freeAgents = require('./freeAgents');
+const player = require('./player');
+const team = require('./team');
+const Promise = require('bluebird');
+const eventLog = require('../util/eventLog');
+const helpers = require('../util/helpers');
+const lock = require('../util/lock');
 
 /**
  * Start a new contract negotiation with a player.
@@ -20,53 +18,49 @@ var lock = require('../util/lock');
  * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.userTid.
  * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
  */
-function create(tx, pid, resigning, tid) {
-    tid = tid !== undefined ? tid : g.userTid;
-
+function create(tx, pid, resigning, tid=g.userTid) {
     if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) && !resigning) {
         return Promise.resolve("You're not allowed to sign free agents now.");
     }
 
     // Can't flatten because of error callbacks
-    return lock.canStartNegotiation(tx).then(function (canStartNegotiation) {
+    return lock.canStartNegotiation(tx).then(canStartNegotiation => {
         if (!canStartNegotiation) {
             return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.";
         }
 
-        return tx.players.index('tid').count(g.userTid).then(function (numPlayersOnRoster) {
+        return tx.players.index('tid').count(g.userTid).then(numPlayersOnRoster => {
             if (numPlayersOnRoster >= 15 && !resigning) {
                 return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
             }
 
-            return tx.players.get(pid).then(function (p) {
-                var negotiation, playerAmount, playerYears;
-
+            return tx.players.get(pid).then(p => {
                 if (p.tid !== g.PLAYER.FREE_AGENT) {
-                    return p.name + " is not a free agent.";
+                    return `${p.name} is not a free agent.`;
                 }
 
                 // Initial player proposal;
-                playerAmount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
-                playerYears = p.contract.exp - g.season;
+                const playerAmount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
+                let playerYears = p.contract.exp - g.season;
                 // Adjust to account for in-season signings;
                 if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
                     playerYears += 1;
                 }
 
                 if (freeAgents.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
-                    return '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> refuses to sign with you, no matter what you offer.';
+                    return `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> refuses to sign with you, no matter what you offer.`;
                 }
 
-                negotiation = {
-                    pid: pid,
-                    tid: tid,
+                const negotiation = {
+                    pid,
+                    tid,
                     team: {amount: playerAmount, years: playerYears},
                     player: {amount: playerAmount, years: playerYears},
                     orig: {amount: playerAmount, years: playerYears},
-                    resigning: resigning
+                    resigning
                 };
 
-                return tx.negotiations.add(negotiation).then(function () {
+                return tx.negotiations.add(negotiation).then(() => {
                     require('../core/league').updateLastDbChange();
                     ui.updateStatus("Contract negotiation");
                     return ui.updatePlayMenu(tx);
@@ -84,21 +78,16 @@ function create(tx, pid, resigning, tid) {
  * @return {Promise}
  */
 function cancel(pid) {
-    return g.dbl.tx(["gameAttributes", "messages", "negotiations"], "readwrite", function (tx) {
-        return tx.negotiations.delete(pid).then(function () {
-            // If no negotiations are in progress, update status
-            return lock.negotiationInProgress(tx);
-        }).then(function (negotiationInProgress) {
-            if (!negotiationInProgress) {
-                if (g.phase === g.PHASE.FREE_AGENCY) {
-                    ui.updateStatus(g.daysLeft + " days left");
-                } else {
-                    ui.updateStatus("Idle");
-                }
-                ui.updatePlayMenu(tx);
+    return g.dbl.tx(["gameAttributes", "messages", "negotiations"], "readwrite", tx => tx.negotiations.delete(pid).then(() => lock.negotiationInProgress(tx)).then(negotiationInProgress => {
+        if (!negotiationInProgress) {
+            if (g.phase === g.PHASE.FREE_AGENCY) {
+                ui.updateStatus(`${g.daysLeft} days left`);
+            } else {
+                ui.updateStatus("Idle");
             }
-        });
-    }).then(function () {
+            ui.updatePlayMenu(tx);
+        }
+    })).then(() => {
         require('../core/league').updateLastDbChange();
     });
 }
@@ -113,7 +102,7 @@ function cancel(pid) {
  * @return {Promise}
  */
 function cancelAll(tx) {
-    return tx.negotiations.clear().then(function () {
+    return tx.negotiations.clear().then(() => {
         require('../core/league').updateLastDbChange();
         ui.updateStatus("Idle");
         return ui.updatePlayMenu(tx);
@@ -133,7 +122,7 @@ function accept(pid, amount, exp) {
     return Promise.all([
         g.dbl.negotiations.get(pid),
         team.getPayroll(null, g.userTid).get(0)
-    ]).spread(function (negotiation, payroll) {
+    ]).spread((negotiation, payroll) => {
         // If this contract brings team over the salary cap, it's not a minimum;
         // contract, and it's not re-signing a current player, ERROR!
         if (!negotiation.resigning && (payroll + amount > g.salaryCap && amount > g.minContract)) {
@@ -142,7 +131,7 @@ function accept(pid, amount, exp) {
 
         // This error is for sanity checking in multi team mode. Need to check for existence of negotiation.tid because it wasn't there originally and I didn't write upgrade code. Can safely get rid of it later.
         if (negotiation.tid !== undefined && negotiation.tid !== g.userTid) {
-            return "This negotiation was started by the " + g.teamRegionsCache[negotiation.tid] + " " + g.teamNamesCache[negotiation.tid] + " but you are the " + g.teamRegionsCache[g.userTid] + " " + g.teamNamesCache[g.userTid] + ". Either switch teams or cancel this negotiation.";
+            return `This negotiation was started by the ${g.teamRegionsCache[negotiation.tid]} ${g.teamNamesCache[negotiation.tid]} but you are the ${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[g.userTid]}. Either switch teams or cancel this negotiation.`;
         }
 
         // Adjust to account for in-season signings;
@@ -150,52 +139,48 @@ function accept(pid, amount, exp) {
             negotiation.player.years -= 1;
         }
 
-        return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
-            return tx.players.iterate(pid, function (p) {
-                p.tid = g.userTid;
-                p.gamesUntilTradable = 15;
+        return g.dbl.tx(["players", "playerStats"], "readwrite", tx => tx.players.iterate(pid, p => {
+            p.tid = g.userTid;
+            p.gamesUntilTradable = 15;
 
-                // Handle stats if the season is in progress
-                if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                    p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-                }
+            // Handle stats if the season is in progress
+            if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+            }
 
-                p = player.setContract(p, {
-                    amount: amount,
-                    exp: exp
-                }, true);
+            p = player.setContract(p, {
+                amount,
+                exp
+            }, true);
 
-                if (negotiation.resigning) {
-                    eventLog.add(null, {
-                        type: "reSigned",
-                        text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season]) + '">' + g.teamNamesCache[g.userTid] + '</a> re-signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
-                        showNotification: false,
-                        pids: [p.pid],
-                        tids: [g.userTid]
-                    });
-                } else {
-                    eventLog.add(null, {
-                        type: "freeAgent",
-                        text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season]) + '">' + g.teamNamesCache[g.userTid] + '</a> signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
-                        showNotification: false,
-                        pids: [p.pid],
-                        tids: [g.userTid]
-                    });
-                }
+            if (negotiation.resigning) {
+                eventLog.add(null, {
+                    type: "reSigned",
+                    text: `${p.contract.amount / 1000}The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                    showNotification: false,
+                    pids: [p.pid],
+                    tids: [g.userTid]
+                });
+            } else {
+                eventLog.add(null, {
+                    type: "freeAgent",
+                    text: `${p.contract.amount / 1000}The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                    showNotification: false,
+                    pids: [p.pid],
+                    tids: [g.userTid]
+                });
+            }
 
-                return p;
-            });
-        }).then(function () {
-            return cancel(pid);
-        }).then(function () {
+            return p;
+        })).then(() => cancel(pid)).then(() => {
             require('../core/league').updateLastDbChange();
         });
     });
 }
 
 module.exports = {
-    accept: accept,
-    cancel: cancel,
-    cancelAll: cancelAll,
-    create: create
+    accept,
+    cancel,
+    cancelAll,
+    create
 };

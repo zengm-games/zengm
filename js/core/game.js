@@ -1,26 +1,24 @@
-'use strict';
-
-var g = require('../globals');
-var ui = require('../ui');
-var freeAgents = require('./freeAgents');
-var finances = require('./finances');
-var gameSim = require('./gameSim');
-var league = require('./league');
-var phase = require('./phase');
-var player = require('./player');
-var season = require('./season');
-var team = require('./team');
-var backboard = require('backboard');
-var Promise = require('bluebird');
-var advStats = require('../util/advStats');
-var eventLog = require('../util/eventLog');
-var lock = require('../util/lock');
-var helpers = require('../util/helpers');
-var random = require('../util/random');
+const g = require('../globals');
+const ui = require('../ui');
+const freeAgents = require('./freeAgents');
+const finances = require('./finances');
+const gameSim = require('./gameSim');
+const league = require('./league');
+const phase = require('./phase');
+const player = require('./player');
+const season = require('./season');
+const team = require('./team');
+const backboard = require('backboard');
+const Promise = require('bluebird');
+const advStats = require('../util/advStats');
+const eventLog = require('../util/eventLog');
+const lock = require('../util/lock');
+const helpers = require('../util/helpers');
+const random = require('../util/random');
 
 function writeTeamStats(tx, results) {
-    return Promise.reduce([0, 1], function (cache, t1) {
-        var t2;
+    return Promise.reduce([0, 1], (cache, t1) => {
+        let t2;
 
         t2 = t1 === 1 ? 0 : 1;
 
@@ -29,8 +27,8 @@ function writeTeamStats(tx, results) {
             tx.teams.get(results.team[t1].id),
             tx.teamSeasons.index("tid, season").getAll(backboard.bound([results.team[t1].id, g.season - 2], [results.team[t1].id, g.season])),
             tx.teamStats.index("season, tid").getAll([g.season, results.team[t1].id])
-        ]).spread(function (payroll, t, teamSeasons, teamStatsArray) {
-            var att, coachingPaid, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketPrice, ticketRevenue, winp, winpOld, won;
+        ]).spread((payroll, t, teamSeasons, teamStatsArray) => {
+            let att, coachingPaid, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketPrice, ticketRevenue, winp, winpOld, won;
 
             teamSeason = teamSeasons[teamSeasons.length - 1];
 
@@ -222,119 +220,115 @@ function writeTeamStats(tx, results) {
                 tx.teams.put(t),
                 tx.teamSeasons.put(teamSeason),
                 tx.teamStats.put(teamStats)
-            ]).then(function () {
-                return {
-                    att: att,
-                    ticketPrice: ticketPrice
-                };
-            });
+            ]).then(() => ({
+                att,
+                ticketPrice
+            }));
         });
     }, 0);
 }
 
 function writePlayerStats(tx, results) {
-    return Promise.map(results.team, function (t) {
-        return Promise.map(t.player, function (p) {
-            var promises;
+    return Promise.map(results.team, t => Promise.map(t.player, p => {
+        let promises;
 
-            // Only need to write stats if player got minutes
-            if (p.stat.min === 0) {
-                return;
-            }
+        // Only need to write stats if player got minutes
+        if (p.stat.min === 0) {
+            return;
+        }
 
-            promises = [];
+        promises = [];
 
-            promises.push(player.checkStatisticalFeat(tx, p.id, t.id, p, results));
+        promises.push(player.checkStatisticalFeat(tx, p.id, t.id, p, results));
 
-            promises.push(tx.playerStats.index("pid, season, tid")
-                // prev in case there are multiple entries for the same player, like he was traded away and then brought back
-                .iterate([p.id, g.season, t.id], "prev", function (ps, shortCircuit) {
-                    var i, injuredThisGame, keys;
+        promises.push(tx.playerStats.index("pid, season, tid")
+            // prev in case there are multiple entries for the same player, like he was traded away and then brought back
+            .iterate([p.id, g.season, t.id], "prev", (ps, shortCircuit) => {
+                let i, injuredThisGame, keys;
 
-                    // Since index is not on playoffs, manually check
-                    if (ps.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
-                        return;
-                    }
+                // Since index is not on playoffs, manually check
+                if (ps.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
+                    return;
+                }
 
-                    // Found it!
-                    shortCircuit();
+                // Found it!
+                shortCircuit();
 
-                    // Update stats
-                    keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'pm', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts'];
-                    for (i = 0; i < keys.length; i++) {
-                        ps[keys[i]] += p.stat[keys[i]];
-                    }
-                    ps.gp += 1; // Already checked for non-zero minutes played above
-                    ps.trb += p.stat.orb + p.stat.drb;
+                // Update stats
+                keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'pm', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts'];
+                for (i = 0; i < keys.length; i++) {
+                    ps[keys[i]] += p.stat[keys[i]];
+                }
+                ps.gp += 1; // Already checked for non-zero minutes played above
+                ps.trb += p.stat.orb + p.stat.drb;
 
-                    injuredThisGame = p.injured && p.injury.type === "Healthy";
+                injuredThisGame = p.injured && p.injury.type === "Healthy";
 
-                    // Only update player object (values and injuries) every 10 regular season games or on injury
-                    if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
-                        tx.players.get(p.id).then(function (p_) {
-                            var biggestRatingsLoss, r;
+                // Only update player object (values and injuries) every 10 regular season games or on injury
+                if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
+                    tx.players.get(p.id).then(p_ => {
+                        let biggestRatingsLoss, r;
 
-                            // Injury crap - assign injury type if player does not already have an injury in the database
-                            if (injuredThisGame) {
-                                p_.injury = player.injury(t.healthRank);
-                                p.injury = p_.injury; // So it gets written to box score
-                                eventLog.add(tx, {
-                                    type: "injured",
-                                    text: '<a href="' + helpers.leagueUrl(["player", p_.pid]) + '">' + p_.name + '</a> was injured! (' + p_.injury.type + ', out for ' + p_.injury.gamesRemaining + ' games)',
-                                    showNotification: p_.tid === g.userTid,
-                                    pids: [p_.pid],
-                                    tids: [p_.tid]
-                                });
+                        // Injury crap - assign injury type if player does not already have an injury in the database
+                        if (injuredThisGame) {
+                            p_.injury = player.injury(t.healthRank);
+                            p.injury = p_.injury; // So it gets written to box score
+                            eventLog.add(tx, {
+                                type: "injured",
+                                text: `<a href="${helpers.leagueUrl(["player", p_.pid])}">${p_.name}</a> was injured! (${p_.injury.type}, out for ${p_.injury.gamesRemaining} games)`,
+                                showNotification: p_.tid === g.userTid,
+                                pids: [p_.pid],
+                                tids: [p_.tid]
+                            });
 
-                                // Some chance of a loss of athleticism from serious injuries
-                                // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
-                                // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
-                                if (p_.injury.gamesRemaining > 25 && Math.random() < p_.injury.gamesRemaining / 150) {
-                                    biggestRatingsLoss = Math.round(p_.injury.gamesRemaining / 10);
-                                    if (biggestRatingsLoss > 10) {
-                                        biggestRatingsLoss = 10;
-                                    }
-
-                                    // Small chance of horrible things
-                                    if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
-                                        biggestRatingsLoss = 30;
-                                    }
-
-                                    r = p_.ratings.length - 1;
-                                    p_.ratings[r].spd = helpers.bound(p_.ratings[r].spd - random.randInt(0, biggestRatingsLoss), 0, 100);
-                                    p_.ratings[r].jmp = helpers.bound(p_.ratings[r].jmp - random.randInt(0, biggestRatingsLoss), 0, 100);
-                                    p_.ratings[r].endu = helpers.bound(p_.ratings[r].endu - random.randInt(0, biggestRatingsLoss), 0, 100);
+                            // Some chance of a loss of athleticism from serious injuries
+                            // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
+                            // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
+                            if (p_.injury.gamesRemaining > 25 && Math.random() < p_.injury.gamesRemaining / 150) {
+                                biggestRatingsLoss = Math.round(p_.injury.gamesRemaining / 10);
+                                if (biggestRatingsLoss > 10) {
+                                    biggestRatingsLoss = 10;
                                 }
+
+                                // Small chance of horrible things
+                                if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
+                                    biggestRatingsLoss = 30;
+                                }
+
+                                r = p_.ratings.length - 1;
+                                p_.ratings[r].spd = helpers.bound(p_.ratings[r].spd - random.randInt(0, biggestRatingsLoss), 0, 100);
+                                p_.ratings[r].jmp = helpers.bound(p_.ratings[r].jmp - random.randInt(0, biggestRatingsLoss), 0, 100);
+                                p_.ratings[r].endu = helpers.bound(p_.ratings[r].endu - random.randInt(0, biggestRatingsLoss), 0, 100);
                             }
+                        }
 
-                            // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
-                            if (g.phase !== g.PHASE.PLAYOFFS) {
-                                return player.updateValues(tx, p_, [ps]);
-                            }
-                            if (biggestRatingsLoss) {
-                                return player.updateValues(tx, p_, []);
-                            }
+                        // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
+                        if (g.phase !== g.PHASE.PLAYOFFS) {
+                            return player.updateValues(tx, p_, [ps]);
+                        }
+                        if (biggestRatingsLoss) {
+                            return player.updateValues(tx, p_, []);
+                        }
 
-                            return p_;
-                        }).then(function (p_) {
-                            tx.players.put(p_);
-                        });
-                    }
+                        return p_;
+                    }).then(p_ => {
+                        tx.players.put(p_);
+                    });
+                }
 
-                    return ps;
-                }));
+                return ps;
+            }));
 
-            return Promise.all(promises);
-        });
-    });
+        return Promise.all(promises);
+    }));
 }
 
 function writeGameStats(tx, results, att) {
-    var gameStats, i, keys, p, t, text, tl, tw;
+    let gameStats, i, keys, p, t, text, tl, tw;
 
     gameStats = {
         gid: results.gid,
-        att: att,
+        att,
         season: g.season,
         playoffs: g.phase === g.PHASE.PLAYOFFS,
         overtimes: results.overtimes,
@@ -384,14 +378,14 @@ function writeGameStats(tx, results, att) {
     // Event log
     if (results.team[0].id === g.userTid || results.team[1].id === g.userTid) {
         if (results.team[tw].id === g.userTid) {
-            text = 'Your team defeated the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tl].id], g.season]) + '">' + g.teamNamesCache[results.team[tl].id];
+            text = `Your team defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tl].id], g.season])}">${g.teamNamesCache[results.team[tl].id]}`;
         } else {
-            text = 'Your team lost to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tw].id], g.season]) + '">' + g.teamNamesCache[results.team[tw].id];
+            text = `Your team lost to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tw].id], g.season])}">${g.teamNamesCache[results.team[tw].id]}`;
         }
-        text += '</a> <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid]) + '">' + results.team[tw].stat.pts + "-" + results.team[tl].stat.pts + "</a>.";
+        text += `</a> <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
         eventLog.add(tx, {
             type: results.team[tw].id === g.userTid ? "gameWon" : "gameLost",
-            text: text,
+            text,
             saveToDb: false,
             tids: [results.team[0].id, results.team[1].id]
         });
@@ -402,13 +396,9 @@ function writeGameStats(tx, results, att) {
             if (results.clutchPlays[i].hasOwnProperty("tempText")) {
                 results.clutchPlays[i].text = results.clutchPlays[i].tempText;
                 if (results.clutchPlays[i].tids[0] === results.team[tw].id) {
-                    results.clutchPlays[i].text += ' in ' + (results.team[tw].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a')
-                        + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tw].id], g.season, results.gid]) + '">'
-                        + results.team[tw].stat.pts + "-" + results.team[tl].stat.pts + '</a> win over the ' + g.teamNamesCache[results.team[tl].id] + '.';
+                    results.clutchPlays[i].text += ` in ${results.team[tw].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a'} <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tw].id], g.season, results.gid])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a> win over the ${g.teamNamesCache[results.team[tl].id]}.`;
                 } else {
-                    results.clutchPlays[i].text += ' in ' + (results.team[tl].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a')
-                        + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tl].id], g.season, results.gid]) + '">'
-                        + results.team[tl].stat.pts + "-" + results.team[tw].stat.pts + '</a> loss to the ' + g.teamNamesCache[results.team[tw].id] + '.';
+                    results.clutchPlays[i].text += ` in ${results.team[tl].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a'} <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tl].id], g.season, results.gid])}">${results.team[tl].stat.pts}-${results.team[tw].stat.pts}</a> loss to the ${g.teamNamesCache[results.team[tw].id]}.`;
                 }
                 delete results.clutchPlays[i].tempText;
             }
@@ -420,13 +410,13 @@ function writeGameStats(tx, results, att) {
 }
 
 function updatePlayoffSeries(tx, results) {
-    return tx.playoffSeries.get(g.season).then(function (playoffSeries) {
-        var playoffRound;
+    return tx.playoffSeries.get(g.season).then(playoffSeries => {
+        let playoffRound;
 
         playoffRound = playoffSeries.series[playoffSeries.currentRound];
 
-        results.forEach(function (result) {
-            var currentRoundText, i, loserTid, loserWon, series, showNotification, winnerTid, won0;
+        results.forEach(result => {
+            let currentRoundText, i, loserTid, loserWon, series, showNotification, winnerTid, won0;
 
             // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
             if (result.team[0].stat.pts > result.team[1].stat.pts) {
@@ -484,8 +474,8 @@ function updatePlayoffSeries(tx, results) {
                 }
                 eventLog.add(tx, {
                     type: "playoffs",
-                    text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season]) + '">' + g.teamNamesCache[winnerTid] + '</a> defeated the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season]) + '">' + g.teamNamesCache[loserTid] + '</a> in the ' + currentRoundText + ', 4-' + loserWon + '.',
-                    showNotification: showNotification,
+                    text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
+                    showNotification,
                     tids: [winnerTid, loserTid]
                 });
             }
@@ -507,7 +497,7 @@ function updatePlayoffSeries(tx, results) {
  * @return {number} Composite rating, a number between 0 and 1.
  */
 function makeComposite(rating, components, weights) {
-    var component, divideBy, i, r, rcomp;
+    let component, divideBy, i, r, rcomp;
 
     if (weights === undefined) {
         // Default: array of ones with same size as components
@@ -554,90 +544,88 @@ function makeComposite(rating, components, weights) {
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
 function loadTeams(tx) {
-    var loadTeam, promises, tid;
+    let loadTeam, promises, tid;
 
-    loadTeam = function (tid) {
-        return Promise.all([
-            tx.players.index('tid').getAll(tid),
-            tx.teams.get(tid),
-            tx.teamSeasons.index("season, tid").get([g.season, tid])
-        ]).spread(function (players, team, teamSeason) {
-            var i, j, k, numPlayers, p, pos, rating, t;
+    loadTeam = tid => Promise.all([
+        tx.players.index('tid').getAll(tid),
+        tx.teams.get(tid),
+        tx.teamSeasons.index("season, tid").get([g.season, tid])
+    ]).spread((players, team, teamSeason) => {
+        let i, j, k, numPlayers, p, pos, rating, t;
 
-            players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
+        players.sort((a, b) => a.rosterOrder - b.rosterOrder);
 
-            t = {id: tid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
+        t = {id: tid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
 
-            t.won = teamSeason.won;
-            t.lost = teamSeason.lost;
-            t.cid = team.cid;
-            t.did = team.did;
-            t.healthRank = teamSeason.expenses.health.rank;
+        t.won = teamSeason.won;
+        t.lost = teamSeason.lost;
+        t.cid = team.cid;
+        t.did = team.did;
+        t.healthRank = teamSeason.expenses.health.rank;
 
-            for (i = 0; i < players.length; i++) {
-                pos = players[i].ratings[players[i].ratings.length - 1].pos;
-                p = {id: players[i].pid, name: players[i].name, pos: pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
+        for (i = 0; i < players.length; i++) {
+            pos = players[i].ratings[players[i].ratings.length - 1].pos;
+            p = {id: players[i].pid, name: players[i].name, pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
 
-                // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
-                if (t.id !== g.userTid) {
-                    p.ptModifier = 1;
-                }
-
-                for (j = 0; j < players[i].ratings.length; j++) {
-                    if (players[i].ratings[j].season === g.season) {
-                        rating = players[i].ratings[j];
-                        break;
-                    }
-                }
-
-                if (rating === undefined) {
-                    throw new Error("Player with no ratings for this season: " + players[i].name + "(ID: " + players[i].pid + ")");
-                }
-
-                p.skills = rating.skills;
-
-                p.ovr = rating.ovr;
-
-                // These use the same formulas as the skill definitions in player.skills!
-                for (k in g.compositeWeights) {
-                    if (g.compositeWeights.hasOwnProperty(k)) {
-                        p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
-                    }
-                }
-                p.compositeRating.usage = Math.pow(p.compositeRating.usage, 1.9);
-
-                p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, pm: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
-
-                t.player.push(p);
+            // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
+            if (t.id !== g.userTid) {
+                p.ptModifier = 1;
             }
 
-            // Number of players to factor into pace and defense rating calculation
-            numPlayers = t.player.length;
-            if (numPlayers > 7) {
-                numPlayers = 7;
-            }
-
-            // Would be better if these were scaled by average min played and endurancence
-            t.pace = 0;
-            for (i = 0; i < numPlayers; i++) {
-                t.pace += t.player[i].compositeRating.pace;
-            }
-            t.pace /= numPlayers;
-            t.pace = t.pace * 15 + 100;  // Scale between 100 and 115
-
-            // Initialize team composite rating object
-            t.compositeRating = {};
-            for (rating in p.compositeRating) {
-                if (p.compositeRating.hasOwnProperty(rating)) {
-                    t.compositeRating[rating] = 0;
+            for (j = 0; j < players[i].ratings.length; j++) {
+                if (players[i].ratings[j].season === g.season) {
+                    rating = players[i].ratings[j];
+                    break;
                 }
             }
 
-            t.stat = {min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, ptsQtrs: [0]};
+            if (rating === undefined) {
+                throw new Error(`Player with no ratings for this season: ${players[i].name}(ID: ${players[i].pid})`);
+            }
 
-            return t;
-        });
-    };
+            p.skills = rating.skills;
+
+            p.ovr = rating.ovr;
+
+            // These use the same formulas as the skill definitions in player.skills!
+            for (k in g.compositeWeights) {
+                if (g.compositeWeights.hasOwnProperty(k)) {
+                    p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
+                }
+            }
+            p.compositeRating.usage = Math.pow(p.compositeRating.usage, 1.9);
+
+            p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, pm: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
+
+            t.player.push(p);
+        }
+
+        // Number of players to factor into pace and defense rating calculation
+        numPlayers = t.player.length;
+        if (numPlayers > 7) {
+            numPlayers = 7;
+        }
+
+        // Would be better if these were scaled by average min played and endurancence
+        t.pace = 0;
+        for (i = 0; i < numPlayers; i++) {
+            t.pace += t.player[i].compositeRating.pace;
+        }
+        t.pace /= numPlayers;
+        t.pace = t.pace * 15 + 100;  // Scale between 100 and 115
+
+        // Initialize team composite rating object
+        t.compositeRating = {};
+        for (rating in p.compositeRating) {
+            if (p.compositeRating.hasOwnProperty(rating)) {
+                t.compositeRating[rating] = 0;
+            }
+        }
+
+        t.stat = {min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, ptsQtrs: [0]};
+
+        return t;
+    });
 
     promises = [];
 
@@ -659,19 +647,17 @@ function loadTeams(tx) {
  * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the ui.realtimeUpdate raw call.
  */
 function play(numDays, start, gidPlayByPlay) {
-    var cbNoGames, cbPlayGames, cbRunDay, cbSaveResults, cbSimGames;
+    let cbNoGames, cbPlayGames, cbRunDay, cbSaveResults, cbSimGames;
 
     start = start !== undefined ? start : true;
 
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
-    cbNoGames = function () {
+    cbNoGames = () => {
         ui.updateStatus("Idle");
-        return league.setGameAttributesComplete({gamesInProgress: false}).then(function () {
-            return ui.updatePlayMenu(null);
-        }).then(function () {
+        return league.setGameAttributesComplete({gamesInProgress: false}).then(() => ui.updatePlayMenu(null)).then(() => {
             // Check to see if the season is over
             if (g.phase < g.PHASE.PLAYOFFS) {
-                return season.getSchedule().then(function (schedule) {
+                return season.getSchedule().then(schedule => {
                     if (schedule.length === 0) {
                         // No return here, meaning no need to wait for phase.newPhase to resolve - is that correct?
                         phase.newPhase(g.PHASE.PLAYOFFS);
@@ -683,128 +669,114 @@ function play(numDays, start, gidPlayByPlay) {
     };
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
-    cbSaveResults = function (results) {
-        return g.dbl.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], "readwrite", function (tx) {
-            return Promise.map(results, function (result) {
-                return writeTeamStats(tx, result).then(function (cache) {
-                    return writeGameStats(tx, result, cache.att);
-                }).then(function () {
-                    return writePlayerStats(tx, result);
-                }).then(function () {
-                    return result.gid;
+    cbSaveResults = results => g.dbl.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], "readwrite", tx => Promise.map(results, result => writeTeamStats(tx, result).then(cache => writeGameStats(tx, result, cache.att)).then(() => writePlayerStats(tx, result)).then(() => result.gid)).then(gidsFinished => {
+        let j, promises;
+
+        promises = [];
+
+        // Update playoff series W/L
+        if (g.phase === g.PHASE.PLAYOFFS) {
+            promises.push(updatePlayoffSeries(tx, results));
+        }
+
+        // Delete finished games from schedule
+        for (j = 0; j < gidsFinished.length; j++) {
+            promises.push(tx.schedule.delete(gidsFinished[j]));
+        }
+
+        // Update ranks
+        promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
+
+        // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
+        promises.push(tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), p => {
+            let changed;
+
+            changed = false;
+            if (p.injury.gamesRemaining > 0) {
+                p.injury.gamesRemaining -= 1;
+                changed = true;
+            }
+            // Is it already over?
+            if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
+                p.injury = {type: "Healthy", gamesRemaining: 0};
+                changed = true;
+
+                eventLog.add(tx, {
+                    type: "healed",
+                    text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> has recovered from his injury.`,
+                    showNotification: p.tid === g.userTid,
+                    pids: [p.pid],
+                    tids: [p.tid]
                 });
-            }).then(function (gidsFinished) {
-                var j, promises;
-
-                promises = [];
-
-                // Update playoff series W/L
-                if (g.phase === g.PHASE.PLAYOFFS) {
-                    promises.push(updatePlayoffSeries(tx, results));
-                }
-
-                // Delete finished games from schedule
-                for (j = 0; j < gidsFinished.length; j++) {
-                    promises.push(tx.schedule.delete(gidsFinished[j]));
-                }
-
-                // Update ranks
-                promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
-
-                // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-                promises.push(tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), function (p) {
-                    var changed;
-
-                    changed = false;
-                    if (p.injury.gamesRemaining > 0) {
-                        p.injury.gamesRemaining -= 1;
-                        changed = true;
-                    }
-                    // Is it already over?
-                    if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
-                        p.injury = {type: "Healthy", gamesRemaining: 0};
-                        changed = true;
-
-                        eventLog.add(tx, {
-                            type: "healed",
-                            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> has recovered from his injury.',
-                            showNotification: p.tid === g.userTid,
-                            pids: [p.pid],
-                            tids: [p.tid]
-                        });
-                    }
-
-                    // Also check for gamesUntilTradable
-                    if (!p.hasOwnProperty("gamesUntilTradable")) {
-                        p.gamesUntilTradable = 0; // Initialize for old leagues
-                        changed = true;
-                    } else if (p.gamesUntilTradable > 0) {
-                        p.gamesUntilTradable -= 1;
-                        changed = true;
-                    }
-
-                    if (changed) {
-                        return p;
-                    }
-                }));
-
-                return Promise.all(promises);
-            });
-        }).then(function () {
-            var i, raw, url;
-
-            // If there was a play by play done for one of these games, get it
-            if (gidPlayByPlay !== undefined) {
-                for (i = 0; i < results.length; i++) {
-                    if (results[i].playByPlay !== undefined) {
-                        raw = {
-                            gidPlayByPlay: gidPlayByPlay,
-                            playByPlay: results[i].playByPlay
-                        };
-                        url = helpers.leagueUrl(["live_game"]);
-                    }
-                }
-            } else {
-                url = undefined;
             }
 
-            // Update all advanced stats every day
-            return advStats.calculateAll().then(function () {
-                ui.realtimeUpdate(["gameSim"], url, function () {
-                    league.updateLastDbChange();
+            // Also check for gamesUntilTradable
+            if (!p.hasOwnProperty("gamesUntilTradable")) {
+                p.gamesUntilTradable = 0; // Initialize for old leagues
+                changed = true;
+            } else if (p.gamesUntilTradable > 0) {
+                p.gamesUntilTradable -= 1;
+                changed = true;
+            }
 
-                    if (g.phase === g.PHASE.PLAYOFFS) {
-                        // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                        g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", function (tx2) {
-                            return season.newSchedulePlayoffsDay(tx2);
-                        }).then(function (playoffsOver) {
-                            if (playoffsOver) {
-                                return phase.newPhase(g.PHASE.BEFORE_DRAFT);
-                            }
-                        }).then(function () {
-                            play(numDays - 1, false);
-                        });
-                    } else {
-                        // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
-                        Promise.try(function () {
-                            // 100 days in a season (roughly), and we want a death every 50 years on average
-                            if (Math.random() < 1 / (100 * 50)) {
-                                return player.killOne().then(function () {
-                                    ui.realtimeUpdate(["playerMovement"]);
-                                });
-                            }
-                        }).then(function () {
-                            play(numDays - 1, false);
-                        });
-                    }
-                }, raw);
-            });
+            if (changed) {
+                return p;
+            }
+        }));
+
+        return Promise.all(promises);
+    })).then(() => {
+        let i, raw, url;
+
+        // If there was a play by play done for one of these games, get it
+        if (gidPlayByPlay !== undefined) {
+            for (i = 0; i < results.length; i++) {
+                if (results[i].playByPlay !== undefined) {
+                    raw = {
+                        gidPlayByPlay,
+                        playByPlay: results[i].playByPlay
+                    };
+                    url = helpers.leagueUrl(["live_game"]);
+                }
+            }
+        } else {
+            url = undefined;
+        }
+
+        // Update all advanced stats every day
+        return advStats.calculateAll().then(() => {
+            ui.realtimeUpdate(["gameSim"], url, () => {
+                league.updateLastDbChange();
+
+                if (g.phase === g.PHASE.PLAYOFFS) {
+                    // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
+                    g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2)).then(playoffsOver => {
+                        if (playoffsOver) {
+                            return phase.newPhase(g.PHASE.BEFORE_DRAFT);
+                        }
+                    }).then(() => {
+                        play(numDays - 1, false);
+                    });
+                } else {
+                    // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
+                    Promise.try(() => {
+                        // 100 days in a season (roughly), and we want a death every 50 years on average
+                        if (Math.random() < 1 / (100 * 50)) {
+                            return player.killOne().then(() => {
+                                ui.realtimeUpdate(["playerMovement"]);
+                            });
+                        }
+                    }).then(() => {
+                        play(numDays - 1, false);
+                    });
+                }
+            }, raw);
         });
-    };
+    });
 
     // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
-    cbSimGames = function (schedule, teams) {
-        var doPlayByPlay, gs, i, results;
+    cbSimGames = (schedule, teams) => {
+        let doPlayByPlay, gs, i, results;
 
         results = [];
         for (i = 0; i < schedule.length; i++) {
@@ -817,68 +789,55 @@ function play(numDays, start, gidPlayByPlay) {
 
     // Simulates a day of games. If there are no games left, it calls cbNoGames.
     // Promise is resolved after games are run
-    cbPlayGames = function () {
+    cbPlayGames = () => {
         if (numDays === 1) {
             ui.updateStatus("Playing (1 day left)");
         } else {
-            ui.updateStatus("Playing (" + numDays + " days left)");
+            ui.updateStatus(`Playing (${numDays} days left)`);
         }
 
-        return g.dbl.tx(["players", "schedule", "teams", "teamSeasons"], function (tx) {
-            // Get the schedule for today
-            return season.getSchedule({ot: tx, oneDay: true}).then(function (schedule) {
-                // Stop if no games
-                // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
-                if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
-                    return cbNoGames();
+        return g.dbl.tx(["players", "schedule", "teams", "teamSeasons"], tx => season.getSchedule({ot: tx, oneDay: true}).then(schedule => {
+            // Stop if no games
+            // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
+            if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
+                return cbNoGames();
+            }
+
+            // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
+            return loadTeams(tx).then(teams => {
+                // Play games
+                // Will loop through schedule and simulate all games
+                if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
+                    // Sometimes the playoff schedule isn't made the day before, so make it now
+                    // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
+
+                    // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
+                    return g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2)).then(() => season.getSchedule({oneDay: true}).then(schedule => cbSimGames(schedule, teams)));
                 }
-
-                // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
-                return loadTeams(tx).then(function (teams) {
-                    // Play games
-                    // Will loop through schedule and simulate all games
-                    if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
-                        // Sometimes the playoff schedule isn't made the day before, so make it now
-                        // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
-
-                        // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                        return g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", function (tx2) {
-                            return season.newSchedulePlayoffsDay(tx2);
-                        }).then(function () {
-                            return season.getSchedule({oneDay: true}).then(function (schedule) {
-                                // Can't merge easily with next cbSimGames call because of schedule overwriting
-                                return cbSimGames(schedule, teams);
-                            });
-                        });
-                    }
-                    return cbSimGames(schedule, teams);
-                });
+                return cbSimGames(schedule, teams);
             });
-        });
+        }));
     };
 
     // This simulates a day, including game simulation and any other bookkeeping that needs to be done
-    cbRunDay = function () {
+    cbRunDay = () => {
         if (numDays > 0) {
             // Hit the DB to check stopGames in case it came from another tab
-            return league.loadGameAttribute(null, "stopGames").then(function () {
+            return league.loadGameAttribute(null, "stopGames").then(() => {
                 // If we didn't just stop games, let's play
                 // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
                 if (start || !g.stopGames) {
-                    return Promise.try(function () {
+                    return Promise.try(() => {
                         // If start is set, then reset stopGames
                         if (g.stopGames) {
                             return league.setGameAttributesComplete({stopGames: false});
                         }
-                    }).then(function () {
-                        // Check if it's the playoffs and do some special stuff if it is or isn't
-                        return Promise.try(function () {
-                            if (g.phase !== g.PHASE.PLAYOFFS) {
-                                // Decrease free agent demands and let AI teams sign them
-                                return freeAgents.decreaseDemands().then(freeAgents.autoSign);
-                            }
-                        }).then(cbPlayGames);
-                    });
+                    }).then(() => Promise.try(() => {
+                        if (g.phase !== g.PHASE.PLAYOFFS) {
+                            // Decrease free agent demands and let AI teams sign them
+                            return freeAgents.decreaseDemands().then(freeAgents.autoSign);
+                        }
+                    }).then(cbPlayGames));
                 }
 
                 // Update UI if stopped
@@ -895,12 +854,12 @@ function play(numDays, start, gidPlayByPlay) {
     // If this is a request to start a new simulation... are we allowed to do
     // that? If so, set the lock and update the play menu
     if (start) {
-        lock.canStartGames(null).then(function (canStartGames) {
+        lock.canStartGames(null).then(canStartGames => {
 // How do I flatten conditional into promise chain?
             if (canStartGames) {
-                team.checkRosterSizes().then(function (userTeamSizeError) {
+                team.checkRosterSizes().then(userTeamSizeError => {
                     if (userTeamSizeError === null) {
-                        league.setGameAttributesComplete({gamesInProgress: true}).then(function () {
+                        league.setGameAttributesComplete({gamesInProgress: true}).then(() => {
                             ui.updatePlayMenu(null).then(cbRunDay);
                         });
                     } else {
@@ -916,6 +875,6 @@ function play(numDays, start, gidPlayByPlay) {
 }
 
 module.exports = {
-    play: play
+    play
 };
 

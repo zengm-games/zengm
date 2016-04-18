@@ -1,9 +1,7 @@
-'use strict';
-
-var g = require('../globals');
-var _ = require('underscore');
-var backboard = require('backboard');
-var Promise = require('bluebird');
+const g = require('../globals');
+const _ = require('underscore');
+const backboard = require('backboard');
+const Promise = require('bluebird');
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -13,12 +11,11 @@ var Promise = require('bluebird');
  * @return {Promise}
  */
 function assessPayrollMinLuxury(tx) {
-    var amount, collectedTax, distribute;
-    collectedTax = 0;
+    let collectedTax = 0;
 
-    return require('./team').getPayrolls(tx).then(function (payrolls) {
-        // Update teams object store
-        return tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), function (teamSeason) {
+    return require('./team').getPayrolls(tx)
+        .then(payrolls => tx.teamSeasons.index("season, tid")
+        .iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
             // Store payroll
             teamSeason.payrollEndOfSeason = payrolls[teamSeason.tid];
 
@@ -27,38 +24,37 @@ function assessPayrollMinLuxury(tx) {
                 teamSeason.expenses.minTax.amount = g.minPayroll - payrolls[teamSeason.tid];
                 teamSeason.cash -= teamSeason.expenses.minTax.amount;
             } else if (payrolls[teamSeason.tid] > g.luxuryPayroll) {
-                amount = g.luxuryTax * (payrolls[teamSeason.tid] - g.luxuryPayroll);
+                const amount = g.luxuryTax * (payrolls[teamSeason.tid] - g.luxuryPayroll);
                 collectedTax += amount;
                 teamSeason.expenses.luxuryTax.amount = amount;
                 teamSeason.cash -= teamSeason.expenses.luxuryTax.amount;
             }
 
             return teamSeason;
-        }).then(function () {
-            var payteams;
-            payteams = payrolls.filter(function (x) {
-                return x <= g.salaryCap;
-            });
+        })
+        .then(() => {
+            let payteams;
+            payteams = payrolls.filter(x => x <= g.salaryCap);
             if (payteams.length > 0 && collectedTax > 0) {
-                distribute = (collectedTax * 0.5) / payteams.length;
-                return tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), function (teamSeason) {
-                    if (payrolls[teamSeason.tid] <= g.salaryCap) {
-                        teamSeason.revenues.luxuryTaxShare = {
-                            amount: distribute,
-                            rank: 15.5
-                        };
-                        teamSeason.cash += distribute;
-                    } else {
-                        teamSeason.revenues.luxuryTaxShare = {
-                            amount: 0,
-                            rank: 15.5
-                        };
-                    }
-                    return teamSeason;
-                });
+                const distribute = (collectedTax * 0.5) / payteams.length;
+                return tx.teamSeasons.index("season, tid")
+                    .iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
+                        if (payrolls[teamSeason.tid] <= g.salaryCap) {
+                            teamSeason.revenues.luxuryTaxShare = {
+                                amount: distribute,
+                                rank: 15.5
+                            };
+                            teamSeason.cash += distribute;
+                        } else {
+                            teamSeason.revenues.luxuryTaxShare = {
+                                amount: 0,
+                                rank: 15.5
+                            };
+                        }
+                        return teamSeason;
+                    });
             }
-        });
-    });
+        }));
 }
 
 /**
@@ -74,14 +70,10 @@ function assessPayrollMinLuxury(tx) {
  * @param {Promise}
  */
 function updateRanks(tx, types) {
-    var getByItem, sortFn, teamSeasonsPromise, updateObj;
+    const sortFn = (a, b) => b.amount - a.amount;
 
-    sortFn = function (a, b) {
-        return b.amount - a.amount;
-    };
-
-    getByItem = function (byTeam) {
-        var byItem, item;
+    const getByItem = byTeam => {
+        let byItem, item;
         byItem = {};
         for (item in byTeam[0]) {
             if (byTeam[0].hasOwnProperty(item)) {
@@ -92,8 +84,8 @@ function updateRanks(tx, types) {
         return byItem;
     };
 
-    updateObj = function (obj, byItem) {
-        var i, item;
+    const updateObj = (obj, byItem) => {
+        let i, item;
         for (item in obj) {
             if (obj.hasOwnProperty(item)) {
                 for (i = 0; i < byItem[item].length; i++) {
@@ -106,58 +98,57 @@ function updateRanks(tx, types) {
         }
     };
 
+    let teamSeasonsPromise;
     if (types.indexOf("expenses") >= 0 || types.indexOf("revenues") >= 0) {
         teamSeasonsPromise = tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, '']));
     } else {
         teamSeasonsPromise = Promise.resolve();
     }
 
-    return Promise.all([
-        tx.teams.getAll(),
-        teamSeasonsPromise
-    ]).spread(function (teams, teamSeasons) {
-        var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam;
+    return Promise.all([tx.teams.getAll(), teamSeasonsPromise])
+        .spread((teams, teamSeasons) => {
+            let budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, revenuesByItem, revenuesByTeam;
 
-        if (types.indexOf("budget") >= 0) {
-            budgetsByTeam = _.pluck(teams, "budget");
-            budgetsByItem = getByItem(budgetsByTeam);
-        }
-        if (types.indexOf("expenses") >= 0) {
-            expensesByTeam = [];
-            for (i = 0; i < teams.length; i++) {
-                expensesByTeam[i] = teamSeasons[i].expenses;
-            }
-            expensesByItem = getByItem(expensesByTeam);
-        }
-        if (types.indexOf("revenues") >= 0) {
-            revenuesByTeam = [];
-            for (i = 0; i < teams.length; i++) {
-                revenuesByTeam[i] = teamSeasons[i].revenues;
-            }
-            revenuesByItem = getByItem(revenuesByTeam);
-        }
-
-        return tx.teams.iterate(function (t) {
             if (types.indexOf("budget") >= 0) {
-                updateObj(t.budget, budgetsByItem);
-            }
-
-            if (types.indexOf("revenues") >= 0) {
-                updateObj(teamSeasons[t.tid].expenses, expensesByItem);
+                budgetsByTeam = _.pluck(teams, "budget");
+                budgetsByItem = getByItem(budgetsByTeam);
             }
             if (types.indexOf("expenses") >= 0) {
-                updateObj(teamSeasons[t.tid].revenues, revenuesByItem);
+                expensesByTeam = [];
+                for (let i = 0; i < teams.length; i++) {
+                    expensesByTeam[i] = teamSeasons[i].expenses;
+                }
+                expensesByItem = getByItem(expensesByTeam);
+            }
+            if (types.indexOf("revenues") >= 0) {
+                revenuesByTeam = [];
+                for (let i = 0; i < teams.length; i++) {
+                    revenuesByTeam[i] = teamSeasons[i].revenues;
+                }
+                revenuesByItem = getByItem(revenuesByTeam);
             }
 
-            return t;
-        }).then(function () {
-            if (types.indexOf("revenues") >= 0 || types.indexOf("expenses") >= 0) {
-                return Promise.map(teamSeasons, function (teamSeason) {
-                    return tx.teamSeasons.put(teamSeason);
+            return tx.teams
+                .iterate(t => {
+                    if (types.indexOf("budget") >= 0) {
+                        updateObj(t.budget, budgetsByItem);
+                    }
+
+                    if (types.indexOf("revenues") >= 0) {
+                        updateObj(teamSeasons[t.tid].expenses, expensesByItem);
+                    }
+                    if (types.indexOf("expenses") >= 0) {
+                        updateObj(teamSeasons[t.tid].revenues, revenuesByItem);
+                    }
+
+                    return t;
+                })
+                .then(() => {
+                    if (types.indexOf("revenues") >= 0 || types.indexOf("expenses") >= 0) {
+                        return Promise.map(teamSeasons, teamSeason => tx.teamSeasons.put(teamSeason));
+                    }
                 });
-            }
         });
-    });
 }
 
 /**
@@ -172,9 +163,7 @@ function updateRanks(tx, types) {
  * @return {number} Rank, from 1 to g.numTeams (default 30)
  */
 function getRankLastThree(teamSeasons, category, item) {
-    var s;
-
-    s = teamSeasons.length - 1; // Most recent season index
+    const s = teamSeasons.length - 1; // Most recent season index
     if (s > 1) {
         // Use three seasons if possible
         return (teamSeasons[s][category][item].rank + teamSeasons[s - 1][category][item].rank + teamSeasons[s - 2][category][item].rank) / 3;
@@ -191,8 +180,8 @@ function getRankLastThree(teamSeasons, category, item) {
 }
 
 module.exports = {
-    assessPayrollMinLuxury: assessPayrollMinLuxury,
-    updateRanks: updateRanks,
-    getRankLastThree: getRankLastThree
+    assessPayrollMinLuxury,
+    updateRanks,
+    getRankLastThree
 };
 

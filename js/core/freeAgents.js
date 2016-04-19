@@ -17,18 +17,19 @@ const random = require('../util/random');
  * @memberOf core.freeAgents
  * @return {Promise}
  */
-function autoSign(tx) {
-    return helpers.maybeReuseTx(["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", tx, tx => Promise.all([
-        team.filter({
-            ot: tx,
-            attrs: ["strategy"],
-            season: g.season
-        }),
-        tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT)
-    ]).spread((teams, players) => {
-        let i, strategies, tids;
+async function autoSign(tx) {
+    const objectStores = ["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"];
+    await helpers.maybeReuseTx(objectStores, "readwrite", tx, async tx => {
+        const [teams, players] = await Promise.all([
+            team.filter({
+                ot: tx,
+                attrs: ["strategy"],
+                season: g.season
+            }),
+            tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT)
+        ]);
 
-        strategies = _.pluck(teams, "strategy");
+        const strategies = _.pluck(teams, "strategy");
 
         // List of free agents, sorted by value
         players.sort((a, b) => b.value - a.value);
@@ -38,69 +39,67 @@ function autoSign(tx) {
         }
 
         // Randomly order teams
-        tids = [];
-        for (i = 0; i < g.numTeams; i++) {
-            tids.push(i);
-        }
+        const tids = _.range(g.numTeams);
         random.shuffle(tids);
 
-        return Promise.each(tids, tid => {
+        for (let tid of tids) {
             // Skip the user's team
             if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
-                return;
-            }
+                continue;
+            }            
 
             // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
             if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
-                return;
+                continue;
             }
 
             // Skip rebuilding teams sometimes
             if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
-                return;
+                continue;
             }
 
-/*                        // Randomly don't try to sign some players this day
+/*            // Randomly don't try to sign some players this day
             while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
                 players.shift();
             }*/
 
-            return Promise.all([
+            const [numPlayersOnRoster, payroll] = await Promise.all([
                 tx.players.index('tid').count(tid),
                 team.getPayroll(tx, tid).get(0)
-            ]).spread((numPlayersOnRoster, payroll) => {
-                let i, p;
+            ]);
 
-                if (numPlayersOnRoster < 15) {
-                    for (i = 0; i < players.length; i++) {
-                        // Don't sign minimum contract players to fill out the roster
-                        if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
-                            p = players[i];
-                            p.tid = tid;
-                            if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                                p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-                            }
-                            p = player.setContract(p, p.contract, true);
-                            p.gamesUntilTradable = 15;
-
-                            eventLog.add(null, {
-                                type: "freeAgent",
-                                text: `${p.contract.amount / 1000}The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
-                                showNotification: false,
-                                pids: [p.pid],
-                                tids: [p.tid]
-                            });
-
-                            players.splice(i, 1); // Remove from list of free agents
-
-                            // If we found one, stop looking for this team
-                            return tx.players.put(p).then(() => team.rosterAutoSort(tx, tid));
+            if (numPlayersOnRoster < 15) {
+                for (let i = 0; i < players.length; i++) {
+                    // Don't sign minimum contract players to fill out the roster
+                    if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
+                        let p = players[i];
+                        p.tid = tid;
+                        if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                            p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
                         }
+                        p = player.setContract(p, p.contract, true);
+                        p.gamesUntilTradable = 15;
+
+                        eventLog.add(null, {
+                            type: "freeAgent",
+                            text: `${p.contract.amount / 1000}The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                            showNotification: false,
+                            pids: [p.pid],
+                            tids: [p.tid]
+                        });
+
+                        players.splice(i, 1); // Remove from list of free agents
+
+                        await tx.players.put(p);
+                        await team.rosterAutoSort(tx, tid);
+
+                        // We found one, so stop looking for this team
+                        break;
                     }
                 }
-            });
-        });
-    }));
+            }
+        }
+    });
 }
 
 /**
@@ -111,42 +110,44 @@ function autoSign(tx) {
  * @memberOf core.freeAgents
  * @return {Promise}
  */
-function decreaseDemands() {
-    return g.dbl.tx("players", "readwrite", tx => tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, p => {
-        let i;
+async function decreaseDemands() {
+    await g.dbl.tx("players", "readwrite", async tx => {
+        await tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, p => {
+            let i;
 
-        // Decrease free agent demands
-        p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
-        if (p.contract.amount < g.minContract) {
-            p.contract.amount = g.minContract;
-        }
+            // Decrease free agent demands
+            p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
+            if (p.contract.amount < g.minContract) {
+                p.contract.amount = g.minContract;
+            }
 
-        if (g.phase !== g.PHASE.FREE_AGENCY) {
-            // Since this is after the season has already started, ask for a short contract
-            if (p.contract.amount < 1000) {
-                p.contract.exp = g.season;
+            if (g.phase !== g.PHASE.FREE_AGENCY) {
+                // Since this is after the season has already started, ask for a short contract
+                if (p.contract.amount < 1000) {
+                    p.contract.exp = g.season;
+                } else {
+                    p.contract.exp = g.season + 1;
+                }
+            }
+
+            // Free agents' resistance to signing decays after every regular season game
+            for (i = 0; i < p.freeAgentMood.length; i++) {
+                p.freeAgentMood[i] -= 0.075;
+                if (p.freeAgentMood[i] < 0) {
+                    p.freeAgentMood[i] = 0;
+                }
+            }
+
+            // Also, heal.
+            if (p.injury.gamesRemaining > 0) {
+                p.injury.gamesRemaining -= 1;
             } else {
-                p.contract.exp = g.season + 1;
+                p.injury = {type: "Healthy", gamesRemaining: 0};
             }
-        }
 
-        // Free agents' resistance to signing decays after every regular season game
-        for (i = 0; i < p.freeAgentMood.length; i++) {
-            p.freeAgentMood[i] -= 0.075;
-            if (p.freeAgentMood[i] < 0) {
-                p.freeAgentMood[i] = 0;
-            }
-        }
-
-        // Also, heal.
-        if (p.injury.gamesRemaining > 0) {
-            p.injury.gamesRemaining -= 1;
-        } else {
-            p.injury = {type: "Healthy", gamesRemaining: 0};
-        }
-
-        return p;
-    }));
+            return p;
+        });
+    });
 }
 
 /**

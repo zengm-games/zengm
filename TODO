@@ -1,10 +1,11 @@
 babel
   confirm source maps still work
   convert with http://lebab.io/
-    command for no es2015 modules:
-    FILE=db; lebab $FILE.js -o $FILE.js --enable class,template,arrow,let,default-param,arg-spread,obj-method,obj-shorthand,no-strict
+    convert.sh
+    then manually go over, fix:
+      let/const definitions inline
+      async/await
   benchmark, for sanity
-  promise indentation? wait for now, might replace with async/await
   merge with master
   eslint
   sublime
@@ -12,6 +13,8 @@ babel
   why do i need regenerator? don't ff and chrome support generators?
 
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
+
+_.range(30) - change to numTeams
 
 can i get rid of http/https links?
   tracking prevalence in GA with "Season protocol"

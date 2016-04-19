@@ -188,8 +188,7 @@ function init() {
             for (let i = 0; i < lis.length; i++) {
                 if (lis[i].classList.contains("open")) {
                     foundOpen = true;
-                    liOpen = lis[i];
-                    if (liOpen === liHover) {
+                    if (lis[i] === liHover) {
                         // The hovered menu is already open
                         return;
                     }

@@ -438,7 +438,7 @@ function newPhaseDraft(tx) {
 }
 
 function newPhaseAfterDraft(tx) {
-    return draft.genPicks(tx).then(function () {
+    return draft.genPicks(tx, g.season + 4).then(function () {
         return [undefined, ["playerMovement"]];
     });
 }

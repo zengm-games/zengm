@@ -2,8 +2,10 @@
 
 var Davis, Promise, account, changes, db, helpers, ui, views;
 
-// Sadly this introduces weird interactions with Bugsnag
-//require('source-map-support').install({handleUncaughtExceptions: false});
+// Sadly only in debug mode, due to weird interactions with Bugsnag
+if (localStorage.debug === 'debug') {
+    require('source-map-support').install();
+}
 
 db = require('./db');
 views = require('./views');

@@ -1,5 +1,8 @@
-// Sadly this introduces weird interactions with Bugsnag
-require('source-map-support').install({handleUncaughtExceptions: false});
+// Needed because of https://github.com/petkaantonov/bluebird/issues/363
+// Sadly only enabled in debug mode, due to weird interactions with Bugsnag
+if (localStorage.debug === 'debug') {
+    require('source-map-support').install();
+}
 
 const db = require('./db');
 const views = require('./views');

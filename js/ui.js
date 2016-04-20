@@ -458,26 +458,28 @@ function dropdown(select1, select2, select3, select4) {
 * @return {Promise}
 */
 function updatePlayMenu(ot) {
-    const allOptions = [{id: "play-menu-stop", url: "", label: "Stop"},
-                  {id: "play-menu-day", url: "", label: "One day"},
-                  {id: "play-menu-week", url: "", label: "One week"},
-                  {id: "play-menu-month", url: "", label: "One month"},
-                  {id: "play-menu-until-playoffs", url: "", label: "Until playoffs"},
-                  {id: "play-menu-through-playoffs", url: "", label: "Through playoffs"},
-                  {id: "play-menu-day-live", url: helpers.leagueUrl(["live"]), label: "One day (live)"},
-                  {id: "play-menu-until-draft", url: "", label: "Until draft"},
-                  {id: "play-menu-view-draft", url: helpers.leagueUrl(["draft"]), label: "View draft"},
-                  {id: "play-menu-until-resign-players", url: "", label: "Re-sign players with expiring contracts"},
-                  {id: "play-menu-until-free-agency", url: "", label: "Until free agency"},
-                  {id: "play-menu-until-preseason", url: "", label: "Until preseason"},
-                  {id: "play-menu-until-regular-season", url: "", label: "Until regular season"},
-                  {id: "play-menu-contract-negotiation", url: helpers.leagueUrl(["negotiation"]), label: "Continue contract negotiation"},
-                  {id: "play-menu-contract-negotiation-list", url: helpers.leagueUrl(["negotiation"]), label: "Continue re-signing players"},
-                  {id: "play-menu-message", url: helpers.leagueUrl(["message"]), label: "Read new message"},
-                  {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"},
-                  {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
-                  {id: "play-menu-abort-phase-change", url: "", label: "Abort"},
-                  {id: "play-menu-stop-auto", url: "", label: `Stop auto play (${g.autoPlaySeasons} seasons left)`}];
+    const allOptions = [
+        {id: "play-menu-stop", url: "", label: "Stop"},
+        {id: "play-menu-day", url: "", label: "One day"},
+        {id: "play-menu-week", url: "", label: "One week"},
+        {id: "play-menu-month", url: "", label: "One month"},
+        {id: "play-menu-until-playoffs", url: "", label: "Until playoffs"},
+        {id: "play-menu-through-playoffs", url: "", label: "Through playoffs"},
+        {id: "play-menu-day-live", url: helpers.leagueUrl(["live"]), label: "One day (live)"},
+        {id: "play-menu-until-draft", url: "", label: "Until draft"},
+        {id: "play-menu-view-draft", url: helpers.leagueUrl(["draft"]), label: "View draft"},
+        {id: "play-menu-until-resign-players", url: "", label: "Re-sign players with expiring contracts"},
+        {id: "play-menu-until-free-agency", url: "", label: "Until free agency"},
+        {id: "play-menu-until-preseason", url: "", label: "Until preseason"},
+        {id: "play-menu-until-regular-season", url: "", label: "Until regular season"},
+        {id: "play-menu-contract-negotiation", url: helpers.leagueUrl(["negotiation"]), label: "Continue contract negotiation"},
+        {id: "play-menu-contract-negotiation-list", url: helpers.leagueUrl(["negotiation"]), label: "Continue re-signing players"},
+        {id: "play-menu-message", url: helpers.leagueUrl(["message"]), label: "Read new message"},
+        {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"},
+        {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
+        {id: "play-menu-abort-phase-change", url: "", label: "Abort"},
+        {id: "play-menu-stop-auto", url: "", label: `Stop auto play (${g.autoPlaySeasons} seasons left)`}
+    ];
 
     let keys;
     if (g.phase === g.PHASE.PRESEASON) {

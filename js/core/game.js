@@ -8,6 +8,7 @@ const phase = require('./phase');
 const player = require('./player');
 const season = require('./season');
 const team = require('./team');
+const _ = require('underscore');
 const backboard = require('backboard');
 const Promise = require('bluebird');
 const advStats = require('../util/advStats');
@@ -17,214 +18,209 @@ const helpers = require('../util/helpers');
 const random = require('../util/random');
 
 function writeTeamStats(tx, results) {
-    return Promise.reduce([0, 1], (cache, t1) => {
-        let t2;
+    return Promise.reduce([0, 1], async (cache, t1) => {
+        const t2 = t1 === 1 ? 0 : 1;
 
-        t2 = t1 === 1 ? 0 : 1;
-
-        return Promise.all([
+        const [payroll, t, teamSeasons, teamStatsArray] = await Promise.all([
             team.getPayroll(tx, results.team[t1].id).get(0),
             tx.teams.get(results.team[t1].id),
             tx.teamSeasons.index("tid, season").getAll(backboard.bound([results.team[t1].id, g.season - 2], [results.team[t1].id, g.season])),
             tx.teamStats.index("season, tid").getAll([g.season, results.team[t1].id])
-        ]).spread((payroll, t, teamSeasons, teamStatsArray) => {
-            let att, coachingPaid, expenses, facilitiesPaid, healthPaid, i, keys, localTvRevenue, merchRevenue, nationalTvRevenue, revenue, salaryPaid, scoutingPaid, sponsorRevenue, teamSeason, teamStats, ticketPrice, ticketRevenue, winp, winpOld, won;
+        ]);
 
-            teamSeason = teamSeasons[teamSeasons.length - 1];
+        const teamSeason = teamSeasons[teamSeasons.length - 1];
 
-            for (i = 0; i < teamStatsArray.length; i++) {
-                if (teamStatsArray[i].playoffs === (g.phase === g.PHASE.PLAYOFFS)) {
-                    teamStats = teamStatsArray[i];
-                    break;
-                }
+        let teamStats;
+        for (let i = 0; i < teamStatsArray.length; i++) {
+            if (teamStatsArray[i].playoffs === (g.phase === g.PHASE.PLAYOFFS)) {
+                teamStats = teamStatsArray[i];
+                break;
             }
+        }
 
-            if (results.team[t1].stat.pts > results.team[t2].stat.pts) {
-                won = true;
+        const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
+
+        // Attendance - base calculation now, which is used for other revenue estimates
+        let att = cache.att;
+        let ticketPrice = cache.ticketPrice;
+        if (t1 === 0) { // Base on home team
+            att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
+            if (g.phase === g.PHASE.PLAYOFFS) {
+                att *= 1.5;  // Playoff bonus
+            }
+            ticketPrice = t.budget.ticketPrice.amount;
+        }
+
+        // Some things are only paid for regular season games.
+        let salaryPaid = 0;
+        let scoutingPaid = 0;
+        let coachingPaid = 0;
+        let healthPaid = 0;
+        let facilitiesPaid = 0;
+        let merchRevenue = 0;
+        let sponsorRevenue = 0;
+        let nationalTvRevenue = 0;
+        let localTvRevenue = 0;
+        if (g.phase !== g.PHASE.PLAYOFFS) {
+            // All in [thousands of dollars]
+            salaryPaid = payroll / g.numGames;
+            scoutingPaid = t.budget.scouting.amount / g.numGames;
+            coachingPaid = t.budget.coaching.amount / g.numGames;
+            healthPaid = t.budget.health.amount / g.numGames;
+            facilitiesPaid = t.budget.facilities.amount / g.numGames;
+            merchRevenue = 3 * att / 1000;
+            if (merchRevenue > 250) {
+                merchRevenue = 250;
+            }
+            sponsorRevenue = 10 * att / 1000;
+            if (sponsorRevenue > 600) {
+                sponsorRevenue = 600;
+            }
+            nationalTvRevenue = 250;
+            localTvRevenue = 10 * att / 1000;
+            if (localTvRevenue > 1200) {
+                localTvRevenue = 1200;
+            }
+        }
+
+        // Attendance - final estimate
+        if (t1 === 0) { // Base on home team
+            att = random.gauss(att, 1000);
+            att *= 30 / ticketPrice;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
+            att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(teamSeasons, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
+            if (att > 25000) {
+                att = 25000;
+            } else if (att < 0) {
+                att = 0;
+            }
+            att = Math.round(att);
+        }
+        // This doesn't really make sense
+        const ticketRevenue = ticketPrice * att / 1000;  // [thousands of dollars]
+
+        // Hype - relative to the expectations of prior seasons
+        if (teamSeason.gp > 5 && g.phase !== g.PHASE.PLAYOFFS) {
+            let winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
+            let winpOld = 0;
+
+            // Avg winning percentage of last 0-2 seasons (as available)
+            for (i = 0; i < teamSeasons.length - 1; i++) {
+                winpOld += teamSeasons[i].won / (teamSeasons[i].won + teamSeasons[i].lost);
+            }
+            if (teamSeasons.length > 1) {
+                winpOld /= teamSeasons.length - 1;
             } else {
-                won = false;
+                winpOld = 0.5;  // Default for new games
             }
 
-            // Attendance - base calculation now, which is used for other revenue estimates
-            att = cache.att;
-            ticketPrice = cache.ticketPrice;
-            if (t1 === 0) { // Base on home team
-                att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
-                if (g.phase === g.PHASE.PLAYOFFS) {
-                    att *= 1.5;  // Playoff bonus
-                }
-                ticketPrice = t.budget.ticketPrice.amount;
+            // It should never happen, but winp and winpOld sometimes turn up as NaN due to a duplicate season entry or the user skipping seasons
+            if (winp !== winp) {
+                winp = 0;
             }
-
-            // Some things are only paid for regular season games.
-            salaryPaid = 0;
-            scoutingPaid = 0;
-            coachingPaid = 0;
-            healthPaid = 0;
-            facilitiesPaid = 0;
-            merchRevenue = 0;
-            sponsorRevenue = 0;
-            nationalTvRevenue = 0;
-            localTvRevenue = 0;
-            if (g.phase !== g.PHASE.PLAYOFFS) {
-                // All in [thousands of dollars]
-                salaryPaid = payroll / g.numGames;
-                scoutingPaid = t.budget.scouting.amount / g.numGames;
-                coachingPaid = t.budget.coaching.amount / g.numGames;
-                healthPaid = t.budget.health.amount / g.numGames;
-                facilitiesPaid = t.budget.facilities.amount / g.numGames;
-                merchRevenue = 3 * att / 1000;
-                if (merchRevenue > 250) {
-                    merchRevenue = 250;
-                }
-                sponsorRevenue = 10 * att / 1000;
-                if (sponsorRevenue > 600) {
-                    sponsorRevenue = 600;
-                }
-                nationalTvRevenue = 250;
-                localTvRevenue = 10 * att / 1000;
-                if (localTvRevenue > 1200) {
-                    localTvRevenue = 1200;
-                }
-            }
-
-            // Attendance - final estimate
-            if (t1 === 0) { // Base on home team
-                att = random.gauss(att, 1000);
-                att *= 30 / ticketPrice;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
-                att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(teamSeasons, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
-                if (att > 25000) {
-                    att = 25000;
-                } else if (att < 0) {
-                    att = 0;
-                }
-                att = Math.round(att);
-            }
-            // This doesn't really make sense
-            ticketRevenue = ticketPrice * att / 1000;  // [thousands of dollars]
-
-            // Hype - relative to the expectations of prior seasons
-            if (teamSeason.gp > 5 && g.phase !== g.PHASE.PLAYOFFS) {
-                winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
+            if (winpOld !== winpOld) {
                 winpOld = 0;
-
-                // Avg winning percentage of last 0-2 seasons (as available)
-                for (i = 0; i < teamSeasons.length - 1; i++) {
-                    winpOld += teamSeasons[i].won / (teamSeasons[i].won + teamSeasons[i].lost);
-                }
-                if (teamSeasons.length > 1) {
-                    winpOld /= teamSeasons.length - 1;
-                } else {
-                    winpOld = 0.5;  // Default for new games
-                }
-
-                // It should never happen, but winp and winpOld sometimes turn up as NaN due to a duplicate season entry or the user skipping seasons
-                if (winp !== winp) {
-                    winp = 0;
-                }
-                if (winpOld !== winpOld) {
-                    winpOld = 0;
-                }
-
-                teamSeason.hype = teamSeason.hype + 0.01 * (winp - 0.55) + 0.015 * (winp - winpOld);
-                if (teamSeason.hype > 1) {
-                    teamSeason.hype = 1;
-                } else if (teamSeason.hype < 0) {
-                    teamSeason.hype = 0;
-                }
             }
 
-            revenue = merchRevenue + sponsorRevenue + nationalTvRevenue + localTvRevenue + ticketRevenue;
-            expenses = salaryPaid + scoutingPaid + coachingPaid + healthPaid + facilitiesPaid;
-            teamSeason.cash += revenue - expenses;
+            teamSeason.hype = teamSeason.hype + 0.01 * (winp - 0.55) + 0.015 * (winp - winpOld);
+            if (teamSeason.hype > 1) {
+                teamSeason.hype = 1;
+            } else if (teamSeason.hype < 0) {
+                teamSeason.hype = 0;
+            }
+        }
+
+        const revenue = merchRevenue + sponsorRevenue + nationalTvRevenue + localTvRevenue + ticketRevenue;
+        const expenses = salaryPaid + scoutingPaid + coachingPaid + healthPaid + facilitiesPaid;
+        teamSeason.cash += revenue - expenses;
+        if (t1 === 0) {
+            // Only home team gets attendance...
+            teamSeason.att += att;
+
+            // This is only used for attendance tracking
+            if (!teamSeason.hasOwnProperty("gpHome")) { teamSeason.gpHome = Math.round(teamSeason.gp / 2); } // See also team.js and teamFinances.js
+            teamSeason.gpHome += 1;
+        }
+        teamSeason.gp += 1;
+        teamSeason.revenues.merch.amount += merchRevenue;
+        teamSeason.revenues.sponsor.amount += sponsorRevenue;
+        teamSeason.revenues.nationalTv.amount += nationalTvRevenue;
+        teamSeason.revenues.localTv.amount += localTvRevenue;
+        teamSeason.revenues.ticket.amount += ticketRevenue;
+        teamSeason.expenses.salary.amount += salaryPaid;
+        teamSeason.expenses.scouting.amount += scoutingPaid;
+        teamSeason.expenses.coaching.amount += coachingPaid;
+        teamSeason.expenses.health.amount += healthPaid;
+        teamSeason.expenses.facilities.amount += facilitiesPaid;
+
+        const keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
+        for (let i = 0; i < keys.length; i++) {
+            teamStats[keys[i]] += results.team[t1].stat[keys[i]];
+        }
+        teamStats.gp += 1;
+        teamStats.trb += results.team[t1].stat.orb + results.team[t1].stat.drb;
+        teamStats.oppPts += results.team[t2].stat.pts;
+        teamStats.ba += results.team[t2].stat.blk;
+
+        if (teamSeason.lastTen.length === 10 && g.phase !== g.PHASE.PLAYOFFS) {
+            teamSeason.lastTen.pop();
+        }
+
+        if (won && g.phase !== g.PHASE.PLAYOFFS) {
+            teamSeason.won += 1;
+            if (results.team[0].did === results.team[1].did) {
+                teamSeason.wonDiv += 1;
+            }
+            if (results.team[0].cid === results.team[1].cid) {
+                teamSeason.wonConf += 1;
+            }
+
             if (t1 === 0) {
-                // Only home team gets attendance...
-                teamSeason.att += att;
-
-                // This is only used for attendance tracking
-                if (!teamSeason.hasOwnProperty("gpHome")) { teamSeason.gpHome = Math.round(teamSeason.gp / 2); } // See also team.js and teamFinances.js
-                teamSeason.gpHome += 1;
-            }
-            teamSeason.gp += 1;
-            teamSeason.revenues.merch.amount += merchRevenue;
-            teamSeason.revenues.sponsor.amount += sponsorRevenue;
-            teamSeason.revenues.nationalTv.amount += nationalTvRevenue;
-            teamSeason.revenues.localTv.amount += localTvRevenue;
-            teamSeason.revenues.ticket.amount += ticketRevenue;
-            teamSeason.expenses.salary.amount += salaryPaid;
-            teamSeason.expenses.scouting.amount += scoutingPaid;
-            teamSeason.expenses.coaching.amount += coachingPaid;
-            teamSeason.expenses.health.amount += healthPaid;
-            teamSeason.expenses.facilities.amount += facilitiesPaid;
-
-            keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'pf', 'pts'];
-            for (i = 0; i < keys.length; i++) {
-                teamStats[keys[i]] += results.team[t1].stat[keys[i]];
-            }
-            teamStats.gp += 1;
-            teamStats.trb += results.team[t1].stat.orb + results.team[t1].stat.drb;
-            teamStats.oppPts += results.team[t2].stat.pts;
-            teamStats.ba += results.team[t2].stat.blk;
-
-            if (teamSeason.lastTen.length === 10 && g.phase !== g.PHASE.PLAYOFFS) {
-                teamSeason.lastTen.pop();
+                teamSeason.wonHome += 1;
+            } else {
+                teamSeason.wonAway += 1;
             }
 
-            if (won && g.phase !== g.PHASE.PLAYOFFS) {
-                teamSeason.won += 1;
-                if (results.team[0].did === results.team[1].did) {
-                    teamSeason.wonDiv += 1;
-                }
-                if (results.team[0].cid === results.team[1].cid) {
-                    teamSeason.wonConf += 1;
-                }
+            teamSeason.lastTen.unshift(1);
 
-                if (t1 === 0) {
-                    teamSeason.wonHome += 1;
-                } else {
-                    teamSeason.wonAway += 1;
-                }
-
-                teamSeason.lastTen.unshift(1);
-
-                if (teamSeason.streak >= 0) {
-                    teamSeason.streak += 1;
-                } else {
-                    teamSeason.streak = 1;
-                }
-            } else if (g.phase !== g.PHASE.PLAYOFFS) {
-                teamSeason.lost += 1;
-                if (results.team[0].did === results.team[1].did) {
-                    teamSeason.lostDiv += 1;
-                }
-                if (results.team[0].cid === results.team[1].cid) {
-                    teamSeason.lostConf += 1;
-                }
-
-                if (t1 === 0) {
-                    teamSeason.lostHome += 1;
-                } else {
-                    teamSeason.lostAway += 1;
-                }
-
-                teamSeason.lastTen.unshift(0);
-
-                if (teamSeason.streak <= 0) {
-                    teamSeason.streak -= 1;
-                } else {
-                    teamSeason.streak = -1;
-                }
+            if (teamSeason.streak >= 0) {
+                teamSeason.streak += 1;
+            } else {
+                teamSeason.streak = 1;
+            }
+        } else if (g.phase !== g.PHASE.PLAYOFFS) {
+            teamSeason.lost += 1;
+            if (results.team[0].did === results.team[1].did) {
+                teamSeason.lostDiv += 1;
+            }
+            if (results.team[0].cid === results.team[1].cid) {
+                teamSeason.lostConf += 1;
             }
 
-            return Promise.all([
-                tx.teams.put(t),
-                tx.teamSeasons.put(teamSeason),
-                tx.teamStats.put(teamStats)
-            ]).then(() => ({
-                att,
-                ticketPrice
-            }));
-        });
+            if (t1 === 0) {
+                teamSeason.lostHome += 1;
+            } else {
+                teamSeason.lostAway += 1;
+            }
+
+            teamSeason.lastTen.unshift(0);
+
+            if (teamSeason.streak <= 0) {
+                teamSeason.streak -= 1;
+            } else {
+                teamSeason.streak = -1;
+            }
+        }
+
+        await Promise.all([
+            tx.teams.put(t),
+            tx.teamSeasons.put(teamSeason),
+            tx.teamStats.put(teamStats)
+        ]);
+
+        return {
+            att,
+            ticketPrice
+        };
     }, 0);
 }
 
@@ -243,9 +239,7 @@ function writePlayerStats(tx, results) {
 
         promises.push(tx.playerStats.index("pid, season, tid")
             // prev in case there are multiple entries for the same player, like he was traded away and then brought back
-            .iterate([p.id, g.season, t.id], "prev", (ps, shortCircuit) => {
-                let i, injuredThisGame, keys;
-
+            .iterate([p.id, g.season, t.id], "prev", async (ps, shortCircuit) => {
                 // Since index is not on playoffs, manually check
                 if (ps.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
                     return;
@@ -255,65 +249,62 @@ function writePlayerStats(tx, results) {
                 shortCircuit();
 
                 // Update stats
-                keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'pm', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts'];
-                for (i = 0; i < keys.length; i++) {
+                const keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'pm', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts'];
+                for (let i = 0; i < keys.length; i++) {
                     ps[keys[i]] += p.stat[keys[i]];
                 }
                 ps.gp += 1; // Already checked for non-zero minutes played above
                 ps.trb += p.stat.orb + p.stat.drb;
 
-                injuredThisGame = p.injured && p.injury.type === "Healthy";
+                const injuredThisGame = p.injured && p.injury.type === "Healthy";
 
                 // Only update player object (values and injuries) every 10 regular season games or on injury
                 if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
-                    tx.players.get(p.id).then(p_ => {
-                        let biggestRatingsLoss, r;
+                    const p_ = await tx.players.get(p.id);
 
-                        // Injury crap - assign injury type if player does not already have an injury in the database
-                        if (injuredThisGame) {
-                            p_.injury = player.injury(t.healthRank);
-                            p.injury = p_.injury; // So it gets written to box score
-                            eventLog.add(tx, {
-                                type: "injured",
-                                text: `<a href="${helpers.leagueUrl(["player", p_.pid])}">${p_.name}</a> was injured! (${p_.injury.type}, out for ${p_.injury.gamesRemaining} games)`,
-                                showNotification: p_.tid === g.userTid,
-                                pids: [p_.pid],
-                                tids: [p_.tid]
-                            });
+                    // Injury crap - assign injury type if player does not already have an injury in the database
+                    let biggestRatingsLoss;
+                    if (injuredThisGame) {
+                        p_.injury = player.injury(t.healthRank);
+                        p.injury = p_.injury; // So it gets written to box score
+                        eventLog.add(tx, {
+                            type: "injured",
+                            text: `<a href="${helpers.leagueUrl(["player", p_.pid])}">${p_.name}</a> was injured! (${p_.injury.type}, out for ${p_.injury.gamesRemaining} games)`,
+                            showNotification: p_.tid === g.userTid,
+                            pids: [p_.pid],
+                            tids: [p_.tid]
+                        });
 
-                            // Some chance of a loss of athleticism from serious injuries
-                            // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
-                            // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
-                            if (p_.injury.gamesRemaining > 25 && Math.random() < p_.injury.gamesRemaining / 150) {
-                                biggestRatingsLoss = Math.round(p_.injury.gamesRemaining / 10);
-                                if (biggestRatingsLoss > 10) {
-                                    biggestRatingsLoss = 10;
-                                }
-
-                                // Small chance of horrible things
-                                if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
-                                    biggestRatingsLoss = 30;
-                                }
-
-                                r = p_.ratings.length - 1;
-                                p_.ratings[r].spd = helpers.bound(p_.ratings[r].spd - random.randInt(0, biggestRatingsLoss), 0, 100);
-                                p_.ratings[r].jmp = helpers.bound(p_.ratings[r].jmp - random.randInt(0, biggestRatingsLoss), 0, 100);
-                                p_.ratings[r].endu = helpers.bound(p_.ratings[r].endu - random.randInt(0, biggestRatingsLoss), 0, 100);
+                        // Some chance of a loss of athleticism from serious injuries
+                        // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
+                        // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
+                        if (p_.injury.gamesRemaining > 25 && Math.random() < p_.injury.gamesRemaining / 150) {
+                            biggestRatingsLoss = Math.round(p_.injury.gamesRemaining / 10);
+                            if (biggestRatingsLoss > 10) {
+                                biggestRatingsLoss = 10;
                             }
-                        }
 
-                        // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
-                        if (g.phase !== g.PHASE.PLAYOFFS) {
-                            return player.updateValues(tx, p_, [ps]);
-                        }
-                        if (biggestRatingsLoss) {
-                            return player.updateValues(tx, p_, []);
-                        }
+                            // Small chance of horrible things
+                            if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
+                                biggestRatingsLoss = 30;
+                            }
 
-                        return p_;
-                    }).then(p_ => {
-                        tx.players.put(p_);
-                    });
+                            const r = p_.ratings.length - 1;
+                            p_.ratings[r].spd = helpers.bound(p_.ratings[r].spd - random.randInt(0, biggestRatingsLoss), 0, 100);
+                            p_.ratings[r].jmp = helpers.bound(p_.ratings[r].jmp - random.randInt(0, biggestRatingsLoss), 0, 100);
+                            p_.ratings[r].endu = helpers.bound(p_.ratings[r].endu - random.randInt(0, biggestRatingsLoss), 0, 100);
+                        }
+                    }
+
+                    // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
+                    if (g.phase !== g.PHASE.PLAYOFFS) {
+                        await player.updateValues(tx, p_, [ps]);
+                    }
+                    if (biggestRatingsLoss) {
+                        await player.updateValues(tx, p_, []);
+                    }
+
+                    await tx.players.put(p_);
                 }
 
                 return ps;
@@ -323,10 +314,8 @@ function writePlayerStats(tx, results) {
     }));
 }
 
-function writeGameStats(tx, results, att) {
-    let gameStats, i, keys, p, t, text, tl, tw;
-
-    gameStats = {
+async function writeGameStats(tx, results, att) {
+    const gameStats = {
         gid: results.gid,
         att,
         season: g.season,
@@ -340,18 +329,18 @@ function writeGameStats(tx, results, att) {
         ]
     };
 
-    for (t = 0; t < 2; t++) {
-        keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts', 'ptsQtrs'];
-        for (i = 0; i < keys.length; i++) {
+    for (let t = 0; t < 2; t++) {
+        const keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts', 'ptsQtrs'];
+        for (let i = 0; i < keys.length; i++) {
             gameStats.teams[t][keys[i]] = results.team[t].stat[keys[i]];
         }
         gameStats.teams[t].trb = results.team[t].stat.orb + results.team[t].stat.drb;
 
         keys.unshift("gs"); // Also record starters, in addition to other stats
         keys.push("pm");
-        for (p = 0; p < results.team[t].player.length; p++) {
+        for (let p = 0; p < results.team[t].player.length; p++) {
             gameStats.teams[t].players[p] = {name: results.team[t].player[p].name, pos: results.team[t].player[p].pos};
-            for (i = 0; i < keys.length; i++) {
+            for (let i = 0; i < keys.length; i++) {
                 gameStats.teams[t].players[p][keys[i]] = results.team[t].player[p].stat[keys[i]];
             }
             gameStats.teams[t].players[p].trb = results.team[t].player[p].stat.orb + results.team[t].player[p].stat.drb;
@@ -362,6 +351,7 @@ function writeGameStats(tx, results, att) {
     }
 
     // Store some extra junk to make box scores easy
+    let tl, tw;
     if (results.team[0].stat.pts > results.team[1].stat.pts) {
         tw = 0;
         tl = 1;
@@ -377,6 +367,7 @@ function writeGameStats(tx, results, att) {
 
     // Event log
     if (results.team[0].id === g.userTid || results.team[1].id === g.userTid) {
+        let text;
         if (results.team[tw].id === g.userTid) {
             text = `Your team defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tl].id], g.season])}">${g.teamNamesCache[results.team[tl].id]}`;
         } else {
@@ -392,7 +383,7 @@ function writeGameStats(tx, results, att) {
     }
 
     if (results.clutchPlays.length > 0) {
-        for (i = 0; i < results.clutchPlays.length; i++) {
+        for (let i = 0; i < results.clutchPlays.length; i++) {
             if (results.clutchPlays[i].hasOwnProperty("tempText")) {
                 results.clutchPlays[i].text = results.clutchPlays[i].tempText;
                 if (results.clutchPlays[i].tids[0] === results.team[tw].id) {
@@ -406,83 +397,81 @@ function writeGameStats(tx, results, att) {
         }
     }
 
-    return tx.games.put(gameStats);
+    await tx.games.put(gameStats);
 }
 
-function updatePlayoffSeries(tx, results) {
-    return tx.playoffSeries.get(g.season).then(playoffSeries => {
-        let playoffRound;
+async function updatePlayoffSeries(tx, results) {
+    const playoffSeries = await tx.playoffSeries.get(g.season);
 
-        playoffRound = playoffSeries.series[playoffSeries.currentRound];
+    const playoffRound = playoffSeries.series[playoffSeries.currentRound];
 
-        results.forEach(result => {
-            let currentRoundText, i, loserTid, loserWon, series, showNotification, winnerTid, won0;
+    results.forEach(result => {
+        let currentRoundText, i, loserTid, loserWon, series, showNotification, winnerTid, won0;
 
-            // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
-            if (result.team[0].stat.pts > result.team[1].stat.pts) {
-                won0 = true;
+        // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
+        if (result.team[0].stat.pts > result.team[1].stat.pts) {
+            won0 = true;
+        } else {
+            won0 = false;
+        }
+
+        for (i = 0; i < playoffRound.length; i++) {
+            series = playoffRound[i];
+
+            if (series.home.tid === result.team[0].id) {
+                if (won0) {
+                    series.home.won += 1;
+                } else {
+                    series.away.won += 1;
+                }
+                break;
+            } else if (series.away.tid === result.team[0].id) {
+                if (won0) {
+                    series.away.won += 1;
+                } else {
+                    series.home.won += 1;
+                }
+                break;
+            }
+        }
+
+        // Log result of playoff series
+        if (series.away.won >= 4 || series.home.won >= 4) {
+            if (series.away.won >= 4) {
+                winnerTid = series.away.tid;
+                loserTid = series.home.tid;
+                loserWon = series.home.won;
             } else {
-                won0 = false;
+                winnerTid = series.home.tid;
+                loserTid = series.away.tid;
+                loserWon = series.away.won;
             }
 
-            for (i = 0; i < playoffRound.length; i++) {
-                series = playoffRound[i];
-
-                if (series.home.tid === result.team[0].id) {
-                    if (won0) {
-                        series.home.won += 1;
-                    } else {
-                        series.away.won += 1;
-                    }
-                    break;
-                } else if (series.away.tid === result.team[0].id) {
-                    if (won0) {
-                        series.away.won += 1;
-                    } else {
-                        series.home.won += 1;
-                    }
-                    break;
-                }
+            if (playoffSeries.currentRound === 0) {
+                currentRoundText = "first round of the playoffs";
+            } else if (playoffSeries.currentRound === 1) {
+                currentRoundText = "second round of the playoffs";
+            } else if (playoffSeries.currentRound === 2) {
+                currentRoundText = "conference finals";
+            } else if (playoffSeries.currentRound === 3) {
+                currentRoundText = "league championship";
             }
 
-            // Log result of playoff series
-            if (series.away.won >= 4 || series.home.won >= 4) {
-                if (series.away.won >= 4) {
-                    winnerTid = series.away.tid;
-                    loserTid = series.home.tid;
-                    loserWon = series.home.won;
-                } else {
-                    winnerTid = series.home.tid;
-                    loserTid = series.away.tid;
-                    loserWon = series.away.won;
-                }
-
-                if (playoffSeries.currentRound === 0) {
-                    currentRoundText = "first round of the playoffs";
-                } else if (playoffSeries.currentRound === 1) {
-                    currentRoundText = "second round of the playoffs";
-                } else if (playoffSeries.currentRound === 2) {
-                    currentRoundText = "conference finals";
-                } else if (playoffSeries.currentRound === 3) {
-                    currentRoundText = "league championship";
-                }
-
-                if (series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3) {
-                    showNotification = true;
-                } else {
-                    showNotification = false;
-                }
-                eventLog.add(tx, {
-                    type: "playoffs",
-                    text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
-                    showNotification,
-                    tids: [winnerTid, loserTid]
-                });
+            if (series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3) {
+                showNotification = true;
+            } else {
+                showNotification = false;
             }
-        });
-
-        return tx.playoffSeries.put(playoffSeries);
+            eventLog.add(tx, {
+                type: "playoffs",
+                text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
+                showNotification,
+                tids: [winnerTid, loserTid]
+            });
+        }
     });
+
+    await tx.playoffSeries.put(playoffSeries);
 }
 
 /**
@@ -543,19 +532,17 @@ function makeComposite(rating, components, weights) {
  * @param {IDBTransaction} ot An IndexedDB transaction on players and teams.
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
-function loadTeams(tx) {
-    let loadTeam, promises, tid;
-
-    loadTeam = tid => Promise.all([
-        tx.players.index('tid').getAll(tid),
-        tx.teams.get(tid),
-        tx.teamSeasons.index("season, tid").get([g.season, tid])
-    ]).spread((players, team, teamSeason) => {
-        let i, j, k, numPlayers, p, pos, rating, t;
+async function loadTeams(tx) {
+    return Promise.map(_.range(g.numTeams), async tid => {
+        const [players, team, teamSeason] = await Promise.all([
+            tx.players.index('tid').getAll(tid),
+            tx.teams.get(tid),
+            tx.teamSeasons.index("season, tid").get([g.season, tid])
+        ]);
 
         players.sort((a, b) => a.rosterOrder - b.rosterOrder);
 
-        t = {id: tid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
+        const t = {id: tid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
 
         t.won = teamSeason.won;
         t.lost = teamSeason.lost;
@@ -563,8 +550,9 @@ function loadTeams(tx) {
         t.did = team.did;
         t.healthRank = teamSeason.expenses.health.rank;
 
-        for (i = 0; i < players.length; i++) {
-            pos = players[i].ratings[players[i].ratings.length - 1].pos;
+        let p;
+        for (let i = 0; i < players.length; i++) {
+            const pos = players[i].ratings[players[i].ratings.length - 1].pos;
             p = {id: players[i].pid, name: players[i].name, pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
 
             // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
@@ -572,7 +560,8 @@ function loadTeams(tx) {
                 p.ptModifier = 1;
             }
 
-            for (j = 0; j < players[i].ratings.length; j++) {
+            let rating;
+            for (let j = 0; j < players[i].ratings.length; j++) {
                 if (players[i].ratings[j].season === g.season) {
                     rating = players[i].ratings[j];
                     break;
@@ -580,7 +569,7 @@ function loadTeams(tx) {
             }
 
             if (rating === undefined) {
-                throw new Error(`Player with no ratings for this season: ${players[i].name}(ID: ${players[i].pid})`);
+                throw new Error(`Player with no ratings for this season: ${players[i].name} (ID: ${players[i].pid})`);
             }
 
             p.skills = rating.skills;
@@ -588,7 +577,7 @@ function loadTeams(tx) {
             p.ovr = rating.ovr;
 
             // These use the same formulas as the skill definitions in player.skills!
-            for (k in g.compositeWeights) {
+            for (let k in g.compositeWeights) {
                 if (g.compositeWeights.hasOwnProperty(k)) {
                     p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
                 }
@@ -601,14 +590,14 @@ function loadTeams(tx) {
         }
 
         // Number of players to factor into pace and defense rating calculation
-        numPlayers = t.player.length;
+        let numPlayers = t.player.length;
         if (numPlayers > 7) {
             numPlayers = 7;
         }
 
         // Would be better if these were scaled by average min played and endurancence
         t.pace = 0;
-        for (i = 0; i < numPlayers; i++) {
+        for (let i = 0; i < numPlayers; i++) {
             t.pace += t.player[i].compositeRating.pace;
         }
         t.pace /= numPlayers;
@@ -616,7 +605,7 @@ function loadTeams(tx) {
 
         // Initialize team composite rating object
         t.compositeRating = {};
-        for (rating in p.compositeRating) {
+        for (let rating in p.compositeRating) {
             if (p.compositeRating.hasOwnProperty(rating)) {
                 t.compositeRating[rating] = 0;
             }
@@ -626,14 +615,6 @@ function loadTeams(tx) {
 
         return t;
     });
-
-    promises = [];
-
-    for (tid = 0; tid < g.numTeams; tid++) {
-        promises.push(loadTeam(tid));
-    }
-
-    return Promise.all(promises);
 }
 
 /**
@@ -646,91 +627,94 @@ function loadTeams(tx) {
  * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the ui.realtimeUpdate raw call.
  */
-function play(numDays, start, gidPlayByPlay) {
-    let cbNoGames, cbPlayGames, cbRunDay, cbSaveResults, cbSimGames;
-
-    start = start !== undefined ? start : true;
-
+async function play(numDays, start = true, gidPlayByPlay = null) {
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
-    cbNoGames = () => {
+    const cbNoGames = async () => {
         ui.updateStatus("Idle");
-        return league.setGameAttributesComplete({gamesInProgress: false}).then(() => ui.updatePlayMenu(null)).then(() => {
-            // Check to see if the season is over
-            if (g.phase < g.PHASE.PLAYOFFS) {
-                return season.getSchedule().then(schedule => {
-                    if (schedule.length === 0) {
-                        // No return here, meaning no need to wait for phase.newPhase to resolve - is that correct?
-                        phase.newPhase(g.PHASE.PLAYOFFS);
-                        ui.updateStatus("Idle");  // Just to be sure..
-                    }
-                });
+        await league.setGameAttributesComplete({gamesInProgress: false});
+        await ui.updatePlayMenu(null);
+
+        // Check to see if the season is over
+        if (g.phase < g.PHASE.PLAYOFFS) {
+            const schedule = await season.getSchedule();
+            if (schedule.length === 0) {
+                // No return here, meaning no need to wait for phase.newPhase to resolve - is that correct?
+                phase.newPhase(g.PHASE.PLAYOFFS);
+                ui.updateStatus("Idle"); // Just to be sure..
             }
-        });
+        }
     };
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
-    cbSaveResults = results => g.dbl.tx(["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], "readwrite", tx => Promise.map(results, result => writeTeamStats(tx, result).then(cache => writeGameStats(tx, result, cache.att)).then(() => writePlayerStats(tx, result)).then(() => result.gid)).then(gidsFinished => {
-        let j, promises;
+    const cbSaveResults = async results => {
+        const objectStores = ["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"];
+        await g.dbl.tx(objectStores, "readwrite", async tx => {
+            const gidsFinished = await Promise.map(results, async result => {
+                const cache = await writeTeamStats(tx, result);
+                await writeGameStats(tx, result, cache.att);
+                await writePlayerStats(tx, result);
+                return result.gid;
+            });
 
-        promises = [];
+            const promises = [];
 
-        // Update playoff series W/L
-        if (g.phase === g.PHASE.PLAYOFFS) {
-            promises.push(updatePlayoffSeries(tx, results));
-        }
-
-        // Delete finished games from schedule
-        for (j = 0; j < gidsFinished.length; j++) {
-            promises.push(tx.schedule.delete(gidsFinished[j]));
-        }
-
-        // Update ranks
-        promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
-
-        // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-        promises.push(tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), p => {
-            let changed;
-
-            changed = false;
-            if (p.injury.gamesRemaining > 0) {
-                p.injury.gamesRemaining -= 1;
-                changed = true;
-            }
-            // Is it already over?
-            if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
-                p.injury = {type: "Healthy", gamesRemaining: 0};
-                changed = true;
-
-                eventLog.add(tx, {
-                    type: "healed",
-                    text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> has recovered from his injury.`,
-                    showNotification: p.tid === g.userTid,
-                    pids: [p.pid],
-                    tids: [p.tid]
-                });
+            // Update playoff series W/L
+            if (g.phase === g.PHASE.PLAYOFFS) {
+                promises.push(updatePlayoffSeries(tx, results));
             }
 
-            // Also check for gamesUntilTradable
-            if (!p.hasOwnProperty("gamesUntilTradable")) {
-                p.gamesUntilTradable = 0; // Initialize for old leagues
-                changed = true;
-            } else if (p.gamesUntilTradable > 0) {
-                p.gamesUntilTradable -= 1;
-                changed = true;
+            // Delete finished games from schedule
+            for (let j = 0; j < gidsFinished.length; j++) {
+                promises.push(tx.schedule.delete(gidsFinished[j]));
             }
 
-            if (changed) {
-                return p;
-            }
-        }));
+            // Update ranks
+            promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
 
-        return Promise.all(promises);
-    })).then(() => {
-        let i, raw, url;
+            // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
+            promises.push(tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), p => {
+                let changed;
+
+                changed = false;
+                if (p.injury.gamesRemaining > 0) {
+                    p.injury.gamesRemaining -= 1;
+                    changed = true;
+                }
+                // Is it already over?
+                if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
+                    p.injury = {type: "Healthy", gamesRemaining: 0};
+                    changed = true;
+
+                    eventLog.add(tx, {
+                        type: "healed",
+                        text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> has recovered from his injury.`,
+                        showNotification: p.tid === g.userTid,
+                        pids: [p.pid],
+                        tids: [p.tid]
+                    });
+                }
+
+                // Also check for gamesUntilTradable
+                if (!p.hasOwnProperty("gamesUntilTradable")) {
+                    p.gamesUntilTradable = 0; // Initialize for old leagues
+                    changed = true;
+                } else if (p.gamesUntilTradable > 0) {
+                    p.gamesUntilTradable -= 1;
+                    changed = true;
+                }
+
+                if (changed) {
+                    return p;
+                }
+            }));
+
+            await Promise.all(promises);
+        });
 
         // If there was a play by play done for one of these games, get it
-        if (gidPlayByPlay !== undefined) {
-            for (i = 0; i < results.length; i++) {
+        let url, raw;
+        if (gidPlayByPlay !== null) {
+            for (let i = 0; i < results.length; i++) {
                 if (results[i].playByPlay !== undefined) {
                     raw = {
                         gidPlayByPlay,
@@ -743,39 +727,31 @@ function play(numDays, start, gidPlayByPlay) {
             url = undefined;
         }
 
-        // Update all advanced stats every day
-        return advStats.calculateAll().then(() => {
-            ui.realtimeUpdate(["gameSim"], url, () => {
-                league.updateLastDbChange();
+        await advStats.calculateAll();
 
-                if (g.phase === g.PHASE.PLAYOFFS) {
-                    // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                    g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2)).then(playoffsOver => {
-                        if (playoffsOver) {
-                            return phase.newPhase(g.PHASE.BEFORE_DRAFT);
-                        }
-                    }).then(() => {
-                        play(numDays - 1, false);
-                    });
-                } else {
-                    // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
-                    Promise.try(() => {
-                        // 100 days in a season (roughly), and we want a death every 50 years on average
-                        if (Math.random() < 1 / (100 * 50)) {
-                            return player.killOne().then(() => {
-                                ui.realtimeUpdate(["playerMovement"]);
-                            });
-                        }
-                    }).then(() => {
-                        play(numDays - 1, false);
-                    });
+        ui.realtimeUpdate(["gameSim"], url, async () => {
+            league.updateLastDbChange();
+
+            if (g.phase === g.PHASE.PLAYOFFS) {
+                // tx2 is to make sure newSchedulePlayoffsDay finishes before continuing
+                const playoffsOver = await g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2));
+                if (playoffsOver) {
+                    await phase.newPhase(g.PHASE.BEFORE_DRAFT);
                 }
-            }, raw);
-        });
-    });
+            } else {
+                // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
+                // 100 days in a season (roughly), and we want a death every 50 years on average
+                if (Math.random() < 1 / (100 * 50)) {
+                    await player.killOne();
+                    ui.realtimeUpdate(["playerMovement"]);
+                }
+            }
+            play(numDays - 1, false);
+        }, raw);
+    };
 
     // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
-    cbSimGames = (schedule, teams) => {
+    const cbSimGames = async (schedule, teams) => {
         let doPlayByPlay, gs, i, results;
 
         results = [];
@@ -784,19 +760,21 @@ function play(numDays, start, gidPlayByPlay) {
             gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid], doPlayByPlay);
             results.push(gs.run());
         }
-        return cbSaveResults(results);
+        await cbSaveResults(results);
     };
 
     // Simulates a day of games. If there are no games left, it calls cbNoGames.
     // Promise is resolved after games are run
-    cbPlayGames = () => {
+    const cbPlayGames = async () => {
         if (numDays === 1) {
             ui.updateStatus("Playing (1 day left)");
         } else {
             ui.updateStatus(`Playing (${numDays} days left)`);
         }
 
-        return g.dbl.tx(["players", "schedule", "teams", "teamSeasons"], tx => season.getSchedule({ot: tx, oneDay: true}).then(schedule => {
+        await g.dbl.tx(["players", "schedule", "teams", "teamSeasons"], async tx => {
+            const schedule = await season.getSchedule({ot: tx, oneDay: true});
+
             // Stop if no games
             // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
             if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
@@ -804,71 +782,67 @@ function play(numDays, start, gidPlayByPlay) {
             }
 
             // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
-            return loadTeams(tx).then(teams => {
-                // Play games
-                // Will loop through schedule and simulate all games
-                if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
-                    // Sometimes the playoff schedule isn't made the day before, so make it now
-                    // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
+            const teams = await loadTeams(tx)
 
-                    // oncomplete is to make sure newSchedulePlayoffsDay finishes before continuing
-                    return g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2)).then(() => season.getSchedule({oneDay: true}).then(schedule => cbSimGames(schedule, teams)));
-                }
-                return cbSimGames(schedule, teams);
-            });
-        }));
+            // Play games
+            // Will loop through schedule and simulate all games
+            if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
+                // Sometimes the playoff schedule isn't made the day before, so make it now
+                // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
+
+                // tx2 to make sure newSchedulePlayoffsDay finishes before continuing
+                await g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2));
+                const schedule = await season.getSchedule({oneDay: true});
+            }
+            await cbSimGames(schedule, teams);
+        });
     };
 
     // This simulates a day, including game simulation and any other bookkeeping that needs to be done
-    cbRunDay = () => {
+    const cbRunDay = async () => {
         if (numDays > 0) {
             // Hit the DB to check stopGames in case it came from another tab
-            return league.loadGameAttribute(null, "stopGames").then(() => {
-                // If we didn't just stop games, let's play
-                // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
-                if (start || !g.stopGames) {
-                    return Promise.try(() => {
-                        // If start is set, then reset stopGames
-                        if (g.stopGames) {
-                            return league.setGameAttributesComplete({stopGames: false});
-                        }
-                    }).then(() => Promise.try(() => {
-                        if (g.phase !== g.PHASE.PLAYOFFS) {
-                            // Decrease free agent demands and let AI teams sign them
-                            return freeAgents.decreaseDemands().then(freeAgents.autoSign);
-                        }
-                    }).then(cbPlayGames));
+            await league.loadGameAttribute(null, "stopGames");
+
+            // If we didn't just stop games, let's play
+            // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
+            if (start || !g.stopGames) {
+                // If start is set, then reset stopGames
+                if (g.stopGames) {
+                    await league.setGameAttributesComplete({stopGames: false});
                 }
 
+                if (g.phase !== g.PHASE.PLAYOFFS) {
+                    await freeAgents.decreaseDemands()
+                    await freeAgents.autoSign();
+                }
+                
+                await cbPlayGames();
+            } else {
                 // Update UI if stopped
-                return cbNoGames();
-            });
-        }
-
-        if (numDays === 0) {
+                await cbNoGames();
+            }
+        } else if (numDays === 0) {
             // If this is the last day, update play menu
-            return cbNoGames();
+            await cbNoGames();
         }
     };
 
     // If this is a request to start a new simulation... are we allowed to do
     // that? If so, set the lock and update the play menu
     if (start) {
-        lock.canStartGames(null).then(canStartGames => {
-// How do I flatten conditional into promise chain?
-            if (canStartGames) {
-                team.checkRosterSizes().then(userTeamSizeError => {
-                    if (userTeamSizeError === null) {
-                        league.setGameAttributesComplete({gamesInProgress: true}).then(() => {
-                            ui.updatePlayMenu(null).then(cbRunDay);
-                        });
-                    } else {
-                        ui.updateStatus("Idle");
-                        helpers.errorNotify(userTeamSizeError);
-                    }
-                });
+        const canStartGames = await lock.canStartGames(null);
+        if (canStartGames) {
+            const userTeamSizeError = await team.checkRosterSizes();
+            if (userTeamSizeError === null) {
+                await league.setGameAttributesComplete({gamesInProgress: true});
+                await ui.updatePlayMenu(null)
+                cbRunDay();
+            } else {
+                ui.updateStatus("Idle");
+                helpers.errorNotify(userTeamSizeError);
             }
-        });
+        }
     } else {
         cbRunDay();
     }
@@ -877,4 +851,3 @@ function play(numDays, start, gidPlayByPlay) {
 module.exports = {
     play
 };
-

@@ -5,6 +5,8 @@ babel
     then manually go over, fix:
       let/const definitions inline
       async/await
+        core after game, data, test, util, views, .
+        any other instances of .then or .catch?
   benchmark, for sanity
   merge with master
   eslint

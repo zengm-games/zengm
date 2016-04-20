@@ -104,13 +104,13 @@ function writeTeamStats(tx, results) {
             let winpOld = 0;
 
             // Avg winning percentage of last 0-2 seasons (as available)
-            for (i = 0; i < teamSeasons.length - 1; i++) {
+            for (let i = 0; i < teamSeasons.length - 1; i++) {
                 winpOld += teamSeasons[i].won / (teamSeasons[i].won + teamSeasons[i].lost);
             }
             if (teamSeasons.length > 1) {
                 winpOld /= teamSeasons.length - 1;
             } else {
-                winpOld = 0.5;  // Default for new games
+                winpOld = 0.5; // Default for new games
             }
 
             // It should never happen, but winp and winpOld sometimes turn up as NaN due to a duplicate season entry or the user skipping seasons

@@ -66,7 +66,7 @@ function merge(x, y) {
  * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
  * @returns {Promise} Promise for when it finishes.
  */
-function setGameAttributes(tx, gameAttributes) {
+async function setGameAttributes(tx, gameAttributes) {
     let key, toUpdate;
 
     toUpdate = [];
@@ -78,16 +78,18 @@ function setGameAttributes(tx, gameAttributes) {
         }
     }
 
-    return Promise.map(toUpdate, key => tx.gameAttributes.put({
-        key,
-        value: gameAttributes[key]
-    }).then(() => {
+    await Promise.map(toUpdate, async key => {
+        await tx.gameAttributes.put({
+            key,
+            value: gameAttributes[key]
+        });
+        
         g[key] = gameAttributes[key];
 
         if (key === "userTid" || key === "userTids") {
             g.vm.multiTeam[key](gameAttributes[key]);
         }
-    }).then(() => {
+
         // Trigger a signal for the team finances view. This is stupid.
         if (key === "gamesInProgress") {
             if (gameAttributes[key]) {
@@ -96,12 +98,12 @@ function setGameAttributes(tx, gameAttributes) {
                 $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
             }
         }
-    }));
+    });
 }
 
 // Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
-function setGameAttributesComplete(gameAttributes) {
-    return g.dbl.tx("gameAttributes", "readwrite", tx => setGameAttributes(tx, gameAttributes));
+async function setGameAttributesComplete(gameAttributes) {
+    await g.dbl.tx("gameAttributes", "readwrite", tx => setGameAttributes(tx, gameAttributes));
 }
 
 // Call this after doing DB stuff so other tabs know there is new data.
@@ -493,16 +495,14 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 return players;
             });
         }).then(players => {
-            let createUndrafted1, createUndrafted2, createUndrafted3, i;
-
             // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
             return g.dbl.tx(["players", "playerStats"], "readwrite", tx => {
                 // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
-                createUndrafted1 = Math.round(70 * g.numTeams / 30);
-                createUndrafted2 = Math.round(70 * g.numTeams / 30);
-                createUndrafted3 = Math.round(70 * g.numTeams / 30);
+                let createUndrafted1 = Math.round(70 * g.numTeams / 30);
+                let createUndrafted2 = Math.round(70 * g.numTeams / 30);
+                let createUndrafted3 = Math.round(70 * g.numTeams / 30);
                 if (players !== undefined) {
-                    for (i = 0; i < players.length; i++) {
+                    for (let i = 0; i < players.length; i++) {
                         if (players[i].tid === g.PLAYER.UNDRAFTED) {
                             createUndrafted1 -= 1;
                         } else if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
@@ -522,170 +522,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 if (createUndrafted3) {
                     draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3);
                 }
-
-                // Donald Trump Easter Egg
-                if (Math.random() < 0.01) {
-                    tx.players.put({
-                        tid: -2,
-                        statsTids: [],
-                        rosterOrder: 666,
-                        ratings: [
-                            {
-                                hgt: 30,
-                                stre: 100,
-                                spd: 90,
-                                jmp: 90,
-                                endu: 90,
-                                ins: 90,
-                                dnk: 90,
-                                ft: 90,
-                                fg: 90,
-                                tp: 90,
-                                blk: 100,
-                                stl: 100,
-                                drb: 90,
-                                pss: 0,
-                                reb: 90,
-                                season: startingSeason,
-                                ovr: 75,
-                                pot: 75,
-                                fuzz: 0,
-                                skills: ["Dp"],
-                                pos: "G"
-                            }
-                        ],
-                        weight: 198,
-                        hgt: 75,
-                        born: {
-                            year: 1946,
-                            loc: "Queens, NY"
-                        },
-                        name: "Donald Trump",
-                        college: "",
-                        imgURL: "//play.basketball-gm.com/img/trump.jpg",
-                        awards: [],
-                        freeAgentMood: [
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            0
-                        ],
-                        yearsFreeAgent: 0,
-                        retiredYear: null,
-                        draft: {
-                            round: 0,
-                            pick: 0,
-                            tid: -1,
-                            originalTid: -1,
-                            year: startingSeason,
-                            teamName: null,
-                            teamRegion: null,
-                            pot: 75,
-                            ovr: 75,
-                            skills: ["Dp"]
-                        },
-                        face: {
-                            head: {
-                                id: 0
-                            },
-                            eyebrows: [
-                                {
-                                    id: 0,
-                                    lr: "l",
-                                    cx: 135,
-                                    cy: 250
-                                },
-                                {
-                                    id: 0,
-                                    lr: "r",
-                                    cx: 265,
-                                    cy: 250
-                                }
-                            ],
-                            eyes: [
-                                {
-                                    id: 3,
-                                    lr: "l",
-                                    cx: 135,
-                                    cy: 280,
-                                    angle: -2.53978886641562
-                                },
-                                {
-                                    id: 3,
-                                    lr: "r",
-                                    cx: 265,
-                                    cy: 280,
-                                    angle: -2.53978886641562
-                                }
-                            ],
-                            nose: {
-                                id: 1,
-                                lr: "l",
-                                cx: 200,
-                                cy: 330,
-                                size: 0.46898400504142046,
-                                flip: true
-                            },
-                            mouth: {
-                                id: 3,
-                                cx: 200,
-                                cy: 400
-                            },
-                            hair: {
-                                id: 0
-                            },
-                            fatness: 0.07551302784122527,
-                            color: "#a67358"
-                        },
-                        injury: {
-                            type: "Healthy",
-                            gamesRemaining: 0
-                        },
-                        ptModifier: 1,
-                        hof: false,
-                        watch: false,
-                        gamesUntilTradable: 0,
-                        value: 85.32267878968268,
-                        valueNoPot: 79,
-                        valueFuzz: 86.69999999999999,
-                        valueNoPotFuzz: 81,
-                        valueWithContract: 85.32267878968268,
-                        salaries: [],
-                        contract: {
-                            amount: 500,
-                            exp: startingSeason + 1
-                        }
-                    });
-                }
             }).then(() => {
-                let lid;
-
                 if (skipNewPhase) {
                     // Game already in progress, just start it
                     return g.lid;
@@ -694,7 +531,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 ui.updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
                 ui.updateStatus("Idle");
 
-                lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
+                const lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
                 helpers.bbgmPing("league");
 
@@ -813,12 +650,11 @@ function exportLeague(stores) {
     }).then(() => exportedLeague);
 }
 
-function updateMetaNameRegion(name, region) {
-    return g.dbm.leagues.get(g.lid).then(l => {
-        l.teamName = name;
-        l.teamRegion = region;
-        return g.dbm.leagues.put(l);
-    });
+async function updateMetaNameRegion(name, region) {
+    const l = await g.dbm.leagues.get(g.lid);
+    l.teamName = name;
+    l.teamRegion = region;
+    await g.dbm.leagues.put(l);
 }
 
 /**
@@ -828,28 +664,28 @@ function updateMetaNameRegion(name, region) {
  * @param {string} key Key in gameAttributes to load the value for.
  * @return {Promise}
  */
-function loadGameAttribute(ot, key) {
+async function loadGameAttribute(ot, key) {
     const dbOrTx = ot !== null ? ot : g.dbl;
-    return dbOrTx.gameAttributes.get(key).then(gameAttribute => {
-        if (gameAttribute === undefined) {
-            throw new Error(`Unknown game attribute: ${key}`);
-        }
+    const gameAttribute = await dbOrTx.gameAttributes.get(key)
 
-        g[key] = gameAttribute.value;
+    if (gameAttribute === undefined) {
+        throw new Error(`Unknown game attribute: ${key}`);
+    }
 
-        // UI stuff - see also loadGameAttributes
-        if (key === "godMode") {
-            g.vm.topMenu.godMode(g.godMode);
-        }
-        if (key === "userTid" || key === "userTids") {
-            g.vm.multiTeam[key](gameAttribute.value);
-        }
+    g[key] = gameAttribute.value;
 
-        // Set defaults to avoid IndexedDB upgrade
-        if (g[key] === undefined && defaultGameAttributes.hasOwnProperty(key)) {
-            g[key] = defaultGameAttributes[key];
-        }
-    });
+    // UI stuff - see also loadGameAttributes
+    if (key === "godMode") {
+        g.vm.topMenu.godMode(g.godMode);
+    }
+    if (key === "userTid" || key === "userTids") {
+        g.vm.multiTeam[key](gameAttribute.value);
+    }
+
+    // Set defaults to avoid IndexedDB upgrade
+    if (g[key] === undefined && defaultGameAttributes.hasOwnProperty(key)) {
+        g[key] = defaultGameAttributes[key];
+    }
 }
 
 /**
@@ -858,39 +694,36 @@ function loadGameAttribute(ot, key) {
  * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
  * @return {Promise}
  */
-function loadGameAttributes(ot) {
+async function loadGameAttributes(ot) {
     const dbOrTx = ot !== null ? ot : g.dbl;
 
-    return dbOrTx.gameAttributes.getAll().then(gameAttributes => {
-        let i;
+    const gameAttributes = await dbOrTx.gameAttributes.getAll();
 
-        for (i = 0; i < gameAttributes.length; i++) {
-            g[gameAttributes[i].key] = gameAttributes[i].value;
+    for (let i = 0; i < gameAttributes.length; i++) {
+        g[gameAttributes[i].key] = gameAttributes[i].value;
+    }
+
+    // Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w
+    if (g.userTids === undefined) { g.userTids = [g.userTid]; }
+
+    // Set defaults to avoid IndexedDB upgrade
+    Object.keys(defaultGameAttributes).forEach(key => {
+        if (g[key] === undefined) {
+            g[key] = defaultGameAttributes[key];
         }
-
-        // Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w
-        if (g.userTids === undefined) { g.userTids = [g.userTid]; }
-
-        // Set defaults to avoid IndexedDB upgrade
-        Object.keys(defaultGameAttributes).forEach(key => {
-            if (g[key] === undefined) {
-                g[key] = defaultGameAttributes[key];
-            }
-        });
-
-        // UI stuff - see also loadGameAttribute
-        g.vm.topMenu.godMode(g.godMode);
-        g.vm.multiTeam.userTid(g.userTid);
-        g.vm.multiTeam.userTids(g.userTids);
     });
+
+    // UI stuff - see also loadGameAttribute
+    g.vm.topMenu.godMode(g.godMode);
+    g.vm.multiTeam.userTid(g.userTid);
+    g.vm.multiTeam.userTids(g.userTids);
 }
 
 // Depending on phase, initiate action that will lead to the next phase
 function autoPlay() {
-    let freeAgents, game, season;
-    freeAgents = require('./freeAgents');
-    game = require('./game');
-    season = require('./season');
+    const freeAgents = require('./freeAgents');
+    const game = require('./game');
+    const season = require('./season');
 
     if (g.phase === g.PHASE.PRESEASON) {
         return phase.newPhase(g.PHASE.REGULAR_SEASON);
@@ -918,15 +751,13 @@ function autoPlay() {
     }
 }
 
-function initAutoPlay() {
-    let numSeasons, result;
-
-    result = window.prompt("This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?", "5");
-    numSeasons = parseInt(result, 10);
+async function initAutoPlay() {
+    const result = window.prompt("This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?", "5");
+    const numSeasons = parseInt(result, 10);
 
     if (Number.isInteger(numSeasons)) {
-        setGameAttributesComplete({autoPlaySeasons: numSeasons})
-            .then(autoPlay);
+        await setGameAttributesComplete({autoPlaySeasons: numSeasons});
+        autoPlay();
     }
 }
 

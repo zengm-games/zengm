@@ -5,7 +5,7 @@ babel
     then manually go over, fix:
       let/const definitions inline
       async/await
-        core after gameSim, data, test, util, views, .
+        league.create, core after league, data, test, util, views, .
         any other instances of .then or .catch?
   benchmark, for sanity
   merge with master
@@ -13,6 +13,9 @@ babel
   sublime
   tests
   why do i need regenerator? don't ff and chrome support generators?
+
+league.remove still uses indexedDB.deleteDatabase
+  anything else?
 
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 

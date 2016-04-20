@@ -51,7 +51,7 @@ async function getOrder(ot) {
  */
 async function setOrder(ot, draftOrder) {
     const dbOrTx = ot || g.dbl;
-    return await dbOrTx.draftOrder.put({
+    await dbOrTx.draftOrder.put({
         rid: 0,
         draftOrder
     });
@@ -77,7 +77,7 @@ async function genPlayers(tx, tid, scoutingRank=null, numPlayers) {
     // If scoutingRank is not supplied, have to hit the DB to get it
     if (scoutingRank === null) {
         const teamSeasons = await tx.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
-        scoutingRank = await finances.getRankLastThree(teamSeasons, "expenses", "scouting");
+        scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
     }
 
     const profiles = ["Point", "Wing", "Big", "Big", ""];
@@ -115,7 +115,7 @@ async function genPlayers(tx, tid, scoutingRank=null, numPlayers) {
         promises.push(player.updateValues(tx, p, []).then(p => tx.players.put(p)));
     }
 
-    return await Promise.all(promises);
+    await Promise.all(promises);
 }
 
 function lotteryLogTxt(tid, type, number) {
@@ -368,7 +368,7 @@ async function genOrder(tx) {
     // Delete from draftPicks object store so that they are completely untradeable
     await Promise.map(draftPicks, draftPick => tx.draftPicks.delete(draftPick.dpid));
 
-    return await setOrder(tx, draftOrder);
+    await setOrder(tx, draftOrder);
 }
 
 /**
@@ -410,7 +410,7 @@ async function genOrderFantasy(tx, position) {
         tids.reverse(); // Snake
     }
 
-    return await setOrder(tx, draftOrder);
+    await setOrder(tx, draftOrder);
 }
 
 /**

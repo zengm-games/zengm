@@ -196,46 +196,36 @@ function refuseToNegotiate(amount, mood) {
  * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all of free agency will be simulated up until the preseason starts.
  * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  */
-function play(numDays, start) {
-    let cbNoDays, cbRunDay, phase;
-
-    start = start !== undefined ? start : true;
-    phase = require('./phase');
+async function play(numDays, start = true) {
+    const phase = require('./phase');
 
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
-    cbNoDays = () => {
-        require('../core/league').setGameAttributesComplete({gamesInProgress: false}).then(() => {
-            ui.updatePlayMenu(null).then(() => {
-                // Check to see if free agency is over
-                if (g.daysLeft === 0) {
-                    phase.newPhase(g.PHASE.PRESEASON).then(() => {
-                        ui.updateStatus("Idle");
-                    });
-                }
-            });
-        });
+    const cbNoDays = async () => {
+        await require('../core/league').setGameAttributesComplete({gamesInProgress: false});
+        await ui.updatePlayMenu(null);
+
+        // Check to see if free agency is over
+        if (g.daysLeft === 0) {
+            await phase.newPhase(g.PHASE.PRESEASON);
+            ui.updateStatus("Idle");
+        }
     };
 
     // This simulates a day, including game simulation and any other bookkeeping that needs to be done
-    cbRunDay = () => {
-        let cbYetAnother;
-
+    const cbRunDay = async () => {
         // This is called if there are remaining days to simulate
-        cbYetAnother = () => {
-            decreaseDemands().then(() => {
-                autoSign().then(() => {
-                    require('../core/league').setGameAttributesComplete({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()}).then(() => {
-                        if (g.daysLeft > 0 && numDays > 0) {
-                            ui.realtimeUpdate(["playerMovement"], undefined, () => {
-                                ui.updateStatus(`${g.daysLeft} days left`);
-                                play(numDays - 1, false);
-                            });
-                        } else if (g.daysLeft === 0) {
-                            cbNoDays();
-                        }
-                    });
+        const cbYetAnother = async () => {
+            await decreaseDemands();
+            await autoSign();
+            await require('../core/league').setGameAttributesComplete({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()});
+            if (g.daysLeft > 0 && numDays > 0) {
+                ui.realtimeUpdate(["playerMovement"], undefined, () => {
+                    ui.updateStatus(`${g.daysLeft} days left`);
+                    play(numDays - 1, false);
                 });
-            });
+            } else if (g.daysLeft === 0) {
+                cbNoDays();
+            }
         };
 
         if (numDays > 0) {
@@ -243,10 +233,9 @@ function play(numDays, start) {
             // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
             if (start || !g.stopGames) {
                 if (g.stopGames) {
-                    require('../core/league').setGameAttributesComplete({stopGames: false}).then(cbYetAnother);
-                } else {
-                    cbYetAnother();
+                    await require('../core/league').setGameAttributesComplete({stopGames: false});
                 }
+                cbYetAnother();
             }
         } else if (numDays === 0) {
             // If this is the last day, update play menu
@@ -257,15 +246,12 @@ function play(numDays, start) {
     // If this is a request to start a new simulation... are we allowed to do
     // that? If so, set the lock and update the play menu
     if (start) {
-        lock.canStartGames(null).then(canStartGames => {
-            if (canStartGames) {
-                require('../core/league').setGameAttributesComplete({gamesInProgress: true}).then(() => {
-                    ui.updatePlayMenu(null).then(() => {
-                        cbRunDay();
-                    });
-                });
-            }
-        });
+        const canStartGames = await lock.canStartGames(null);
+        if (canStartGames) {
+            await require('../core/league').setGameAttributesComplete({gamesInProgress: true});
+            await ui.updatePlayMenu(null);
+            cbRunDay();
+        }
     } else {
         cbRunDay();
     }

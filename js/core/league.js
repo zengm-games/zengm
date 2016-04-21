@@ -720,34 +720,30 @@ async function loadGameAttributes(ot) {
 }
 
 // Depending on phase, initiate action that will lead to the next phase
-function autoPlay() {
+async function autoPlay() {
     const freeAgents = require('./freeAgents');
     const game = require('./game');
     const season = require('./season');
 
     if (g.phase === g.PHASE.PRESEASON) {
-        return phase.newPhase(g.PHASE.REGULAR_SEASON);
-    }
-    if (g.phase === g.PHASE.REGULAR_SEASON) {
-        return season.getDaysLeftSchedule().then(game.play);
-    }
-    if (g.phase === g.PHASE.PLAYOFFS) {
-        return game.play(100);
-    }
-    if (g.phase === g.PHASE.BEFORE_DRAFT) {
-        return phase.newPhase(g.PHASE.DRAFT);
-    }
-    if (g.phase === g.PHASE.DRAFT) {
-        return draft.untilUserOrEnd();
-    }
-    if (g.phase === g.PHASE.AFTER_DRAFT) {
-        return phase.newPhase(g.PHASE.RESIGN_PLAYERS);
-    }
-    if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-        return phase.newPhase(g.PHASE.FREE_AGENCY);
-    }
-    if (g.phase === g.PHASE.FREE_AGENCY) {
-        return freeAgents.play(g.daysLeft);
+        await phase.newPhase(g.PHASE.REGULAR_SEASON);
+    } else if (g.phase === g.PHASE.REGULAR_SEASON) {
+        const numDays = await season.getDaysLeftSchedule();
+        await game.play(numDays);
+    } else if (g.phase === g.PHASE.PLAYOFFS) {
+        await game.play(100);
+    } else if (g.phase === g.PHASE.BEFORE_DRAFT) {
+        await phase.newPhase(g.PHASE.DRAFT);
+    } else if (g.phase === g.PHASE.DRAFT) {
+        await draft.untilUserOrEnd();
+    } else if (g.phase === g.PHASE.AFTER_DRAFT) {
+        await phase.newPhase(g.PHASE.RESIGN_PLAYERS);
+    } else if (g.phase === g.PHASE.RESIGN_PLAYERS) {
+        await phase.newPhase(g.PHASE.FREE_AGENCY);
+    } else if (g.phase === g.PHASE.FREE_AGENCY) {
+        await freeAgents.play(g.daysLeft);
+    } else {
+        throw new Error(`Unknown phase: ${g.phase}`);
     }
 }
 

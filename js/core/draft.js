@@ -599,7 +599,7 @@ function untilUserOrEnd() {
 
                     // Fantasy draft special case!
                     if (g.phase === g.PHASE.FANTASY_DRAFT) {
-                        return g.dbl.tx(["players", "teams"], "readwrite", function (tx) {
+                        return g.dbl.tx(["players", "teamSeasons"], "readwrite", function (tx) {
                             // Undrafted players become free agents
                             return player.genBaseMoods(tx).then(function (baseMoods) {
                                 return tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, function (p) {

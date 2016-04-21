@@ -12,14 +12,9 @@ const Davis = require('./lib/davis');
 const account = require('./util/account');
 const helpers = require('./util/helpers');
 
-const Promise = require('bluebird');
-Promise.config({warnings: false});
-
-// Make sure I never accidentally use native promises, because that could fuck with error handling
-window.Promise = () => { throw new Error("USE BLUEBIRD!"); };
-window.Promise.all = () => { throw new Error("USE BLUEBIRD!"); };
-window.Promise.map = () => { throw new Error("USE BLUEBIRD!"); };
-window.Promise.try = () => { throw new Error("USE BLUEBIRD!"); };
+// Overwrite Promise object globally so Kneden uses it
+window.Promise = require('bluebird');
+window.Promise.config({warnings: false});
 
 require('lib/bootstrap-affix');
 require('lib/bootstrap-alert');

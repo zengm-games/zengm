@@ -12,12 +12,15 @@ babel
     new league
     gamesim
       like 10-20% slower
-      try kneden?
   merge with master
   eslint
   sublime
   tests
-  why do i need regenerator? don't ff and chrome support generators?
+  how to make async/await fast
+    why do i need regenerator? don't ff and chrome support generators?
+      http://stackoverflow.com/questions/36775097/babel-plugin-transform-async-to-module-method-without-regenerator
+    kneden: claims to be buggy
+    fast-async: babel gives errors when i use it
 
 league.remove still uses indexedDB.deleteDatabase
   anything else?

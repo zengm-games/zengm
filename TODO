@@ -1,5 +1,4 @@
 babel
-  confirm source maps still work
   convert with http://lebab.io/
     convert.sh
     then manually go over, fix:
@@ -11,7 +10,6 @@ babel
     ctrl+r
     new league
     gamesim
-      like 10-20% slower
   merge with master
   eslint
   sublime

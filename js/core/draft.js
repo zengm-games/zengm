@@ -539,11 +539,14 @@ async function untilUserOrEnd() {
 
             // Fantasy draft special case!
             if (g.phase === g.PHASE.FANTASY_DRAFT) {
-                await g.dbl.tx(["players", "teams"], "readwrite", async tx => {
+                await g.dbl.tx(["players", "teamSeasons"], "readwrite", async tx => {
+                    // Undrafted players become free agents
                     const baseMoods = await player.genBaseMoods(tx);
                     await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, p => {
                         return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods)
                     });
+
+                    // Swap back in normal draft class
                     await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_FANTASY_TEMP, p => {
                         p.tid = g.PLAYER.UNDRAFTED;
 

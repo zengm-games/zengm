@@ -223,7 +223,7 @@ function lotterySort(teams) {
      *
      * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
      */
-    const randValues = _.shuffle(_.range(30));
+    const randValues = _.shuffle(_.range(g.numTeams));
     for (let i = 0; i < teams.length; i++) {
         teams[i].randVal = randValues[i];
     }

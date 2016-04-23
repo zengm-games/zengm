@@ -31,76 +31,80 @@ let phaseChangeTx;
  * @param {Array.<string>=} updateEvents Optional array of strings.
  * @return {Promise}
  */
-function finalize(phase, url, updateEvents=[]) {
+async function finalize(phase, url, updateEvents=[]) {
     // Set phase before updating play menu
-    return require('../core/league').setGameAttributesComplete({phase, phaseChangeInProgress: false}).then(() => {
-        ui.updatePhase(`${g.season} ${g.PHASE_TEXT[phase]}`);
-        return ui.updatePlayMenu(null).then(() => {
-            // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
-            require('../core/league').updateLastDbChange();
-            updateEvents.push("newPhase");
-            ui.realtimeUpdate(updateEvents, url);
-        });
-    }).then(() => {
-        // If auto-simulating, initiate next action
-        if (g.autoPlaySeasons > 0) {
-            // Not totally sure why setTimeout is needed, but why not?
-            setTimeout(() => {
-                require('../core/league').autoPlay();
-            }, 100);
-        }
+    await require('../core/league').setGameAttributesComplete({
+        phase,
+        phaseChangeInProgress: false
     });
+    ui.updatePhase(`${g.season} ${g.PHASE_TEXT[phase]}`);
+    await ui.updatePlayMenu(null);
+
+    // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
+    require('../core/league').updateLastDbChange();
+    updateEvents.push("newPhase");
+    ui.realtimeUpdate(updateEvents, url);
+
+    // If auto-simulating, initiate next action
+    if (g.autoPlaySeasons > 0) {
+        // Not totally sure why setTimeout is needed, but why not?
+        setTimeout(() => {
+            require('../core/league').autoPlay();
+        }, 100);
+    }
 }
 
-function newPhasePreseason(tx) {
-    return freeAgents.autoSign(tx).then(() => require('../core/league').setGameAttributes(tx, {season: g.season + 1})).then(() => {
-        let scoutingRank, tid, tids;
+async function newPhasePreseason(tx) {
+    await freeAgents.autoSign(tx);
+    await require('../core/league').setGameAttributes(tx, {season: g.season + 1});
 
-        tids = [];
-        for (tid = 0; tid < g.numTeams; tid++) {
-            tids.push(tid);
+    const tids = _.range(g.numTeams);
+
+    let scoutingRank, prevSeason;
+    await Promise.map(tids, async tid => {
+        // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
+        // This is done BEFORE a new season row is added.
+        if (tid === g.userTid) {
+            const teamSeasons = await tx.teamSeasons.index("tid, season").getAll(backboard.bound([tid, g.season - 3], [tid, g.season - 1]));
+            scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
+
+            prevSeason = teamSeasons[teamSeasons.length - 1];
+        } else {
+            prevSeason = await tx.teamSeasons.index("tid, season").get([tid, g.season - 1]);
         }
 
-        return Promise.map(tids, tid => Promise.try(() => {
-            // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
-            // This is done BEFORE a new season row is added.
-            if (tid === g.userTid) {
-                return tx.teamSeasons.index("tid, season").getAll(backboard.bound([tid, g.season - 3], [tid, g.season - 1])).then(teamSeasons => {
-                    scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
-
-                    return teamSeasons[teamSeasons.length - 1];
-                });
-            }
-
-            return tx.teamSeasons.index("tid, season").get([tid, g.season - 1]);
-        }).then(prevSeason => Promise.all([
-            tx.teamSeasons.add(team.genSeasonRow(tid, prevSeason)),
-            tx.teamStats.add(team.genStatsRow(tid))
-        ])).then(() => {})).then(() => tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season - 1, ''])).map(teamSeason => teamSeason.expenses.coaching.rank)).then(coachingRanks => tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), p => {
-            // Update ratings
-            p = player.addRatingsRow(p, scoutingRank);
-            p = player.develop(p, 1, false, coachingRanks[p.tid]);
-
-            // Update player values after ratings changes
-            return player.updateValues(tx, p, []).then(p => {
-                // Add row to player stats if they are on a team
-                if (p.tid >= 0) {
-                    p = player.addStatsRow(tx, p, false);
-                }
-                return p;
-            });
-        })).then(() => {
-            if (g.autoPlaySeasons > 0) {
-                return require('../core/league').setGameAttributes(tx, {autoPlaySeasons: g.autoPlaySeasons - 1});
-            }
-        }).then(() => {
-            if (g.enableLogging && !window.inCordova) {
-                ads.show();
-            }
-
-            return [undefined, ["playerMovement"]];
-        });
+        await tx.teamSeasons.add(team.genSeasonRow(tid, prevSeason)),
+        await tx.teamStats.add(team.genStatsRow(tid))
     });
+
+    const teamSeasons = await tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season - 1, '']));
+    const coachingRanks = teamSeasons.map(teamSeason => teamSeason.expenses.coaching.rank);
+
+    await tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), async p => {
+        // Update ratings
+        p = player.addRatingsRow(p, scoutingRank);
+        p = player.develop(p, 1, false, coachingRanks[p.tid]);
+
+        // Update player values after ratings changes
+        p = await player.updateValues(tx, p, []);
+
+        // Add row to player stats if they are on a team
+        if (p.tid >= 0) {
+            p = player.addStatsRow(tx, p, false);
+        }
+
+        return p;
+    });
+
+    if (g.autoPlaySeasons > 0) {
+        return require('../core/league').setGameAttributes(tx, {autoPlaySeasons: g.autoPlaySeasons - 1});
+    }
+
+    if (g.enableLogging && !window.inCordova) {
+        ads.show();
+    }
+
+    return [undefined, ["playerMovement"]];
 }
 
 function newPhaseRegularSeason(tx) {

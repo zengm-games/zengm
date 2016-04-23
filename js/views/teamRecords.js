@@ -93,7 +93,7 @@ function getTeamRecord(t, awards) {
 
 function tallyAwards(awards) {
     var teams = [];
-    _.map(_.range(30), function () {
+    _.map(_.range(g.numTeams), function () {
         teams.push({
             mvp: 0,
             dpoy: 0,

@@ -17,6 +17,7 @@ babel
   how to make async/await fast
     why do i need regenerator? don't ff and chrome support generators?
       http://stackoverflow.com/questions/36775097/babel-plugin-transform-async-to-module-method-without-regenerator
+    https://babeljs.io/docs/plugins/transform-async-to-generator/
 
 one month gamesim benchmarks while viewing dashboard:
   original 000:01:43.710

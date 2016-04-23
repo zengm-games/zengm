@@ -576,103 +576,95 @@ async function newPhaseFantasyDraft(tx, position) {
  * @param {} extra Parameter containing extra info to be passed to phase changing function. Currently only used for newPhaseFantasyDraft.
  * @return {Promise}
  */
-function newPhase(phase, extra) {
-    let phaseErrorHandler;
-
+async function newPhase(phase, extra) {
     // Prevent at least some cases of code running twice
     if (phase === g.phase) {
         return;
     }
 
     // Have this catch any newPhase* errors before phaseChangeTx completes
-    phaseErrorHandler = err => {
+    const phaseErrorHandler = async err => {
         if (phaseChangeTx && phaseChangeTx.abort) {
             phaseChangeTx.abort();
         }
 
-        return require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false}).then(() => ui.updatePlayMenu(null)).then(() => eventLog.add(null, {
+        await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false});
+        await ui.updatePlayMenu(null);
+        await eventLog.add(null, {
             type: "error",
             text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
             saveToDb: false,
             persistent: true
-        })).then(() => {
-            throw err;
         });
+
+        throw err;
     };
 
-    return lock.phaseChangeInProgress(null).then(phaseChangeInProgress => {
-        if (!phaseChangeInProgress) {
-            return require('../core/league').setGameAttributesComplete({phaseChangeInProgress: true}).then(() => {
-                ui.updatePlayMenu(null);
-
-                // In Chrome, this will update play menu in other windows. In Firefox, it won't because ui.updatePlayMenu gets blocked until phaseChangeTx finishes for some reason.
-                require('../core/league').updateLastDbChange();
-
-                if (phase === g.PHASE.PRESEASON) {
-                    return g.dbl.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", tx => {
-                        phaseChangeTx = tx;
-                        return newPhasePreseason(tx).catch(phaseErrorHandler);
-                    });
-                }
-                if (phase === g.PHASE.REGULAR_SEASON) {
-                    return g.dbl.tx(["gameAttributes", "messages", "schedule", "teams"], "readwrite", tx => {
-                        phaseChangeTx = tx;
-                        return newPhaseRegularSeason(tx).catch(phaseErrorHandler);
-                    });
-                }
-                if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
-                    return newPhaseAfterTradeDeadline();
-                }
-                if (phase === g.PHASE.PLAYOFFS) {
-                    return g.dbl.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], "readwrite", tx => {
-                        phaseChangeTx = tx;
-                        return newPhasePlayoffs(tx).catch(phaseErrorHandler);
-                    });
-                }
-                if (phase === g.PHASE.BEFORE_DRAFT) {
-                    return g.dbl.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", tx => {
-                        phaseChangeTx = tx;
-                        return newPhaseBeforeDraft(tx).catch(phaseErrorHandler);
-                    });
-                }
-                if (phase === g.PHASE.DRAFT) {
-                    return g.dbl.tx(["draftPicks", "draftOrder", "gameAttributes", "players", "teams", "teamSeasons", "teamStats"], "readwrite", tx => {
-                        phaseChangeTx = tx;
-                        return newPhaseDraft(tx).catch(phaseErrorHandler);
-                    });
-                }
-                if (phase === g.PHASE.AFTER_DRAFT) {
-                    return g.dbl.tx(["draftPicks", "gameAttributes"], "readwrite", tx => {
-                        phaseChangeTx = tx;
-                        return newPhaseAfterDraft(tx).catch(phaseErrorHandler);
-                    });
-                }
-                if (phase === g.PHASE.RESIGN_PLAYERS) {
-                    return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"], "readwrite", tx => {
-                        phaseChangeTx = tx;
-                        return newPhaseResignPlayers(tx).catch(phaseErrorHandler);
-                    });
-                }
-                if (phase === g.PHASE.FREE_AGENCY) {
-                    return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"], "readwrite", tx => {
-                        phaseChangeTx = tx;
-                        return newPhaseFreeAgency(tx).catch(phaseErrorHandler);
-                    });
-                }
-                if (phase === g.PHASE.FANTASY_DRAFT) {
-                    return g.dbl.tx(["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"], "readwrite", tx => {
-                        phaseChangeTx = tx;
-                        return newPhaseFantasyDraft(tx, extra).catch(phaseErrorHandler);
-                    });
-                }
-            }).spread((url, updateEvents) => finalize(phase, url, updateEvents));
-        }
-
+    const phaseChangeInProgress = await lock.phaseChangeInProgress(null);
+    if (phaseChangeInProgress) {
         helpers.errorNotify("Phase change already in progress, maybe in another tab.");
-    });
+    } else {
+        await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: true});
+        ui.updatePlayMenu(null);
+
+        // In Chrome, this will update play menu in other windows. In Firefox, it won't because ui.updatePlayMenu gets blocked until phaseChangeTx finishes for some reason.
+        require('../core/league').updateLastDbChange();
+
+        let updateEvents, url;
+        if (phase === g.PHASE.PRESEASON) {
+            await g.dbl.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
+                phaseChangeTx = tx;
+                [url, updateEvents] = await newPhasePreseason(tx).catch(phaseErrorHandler);
+            });
+        } else if (phase === g.PHASE.REGULAR_SEASON) {
+            await g.dbl.tx(["gameAttributes", "messages", "schedule", "teams"], "readwrite", async tx => {
+                phaseChangeTx = tx;
+                [url, updateEvents] = await newPhaseRegularSeason(tx).catch(phaseErrorHandler);
+            });
+        } else if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
+            await newPhaseAfterTradeDeadline();
+        } else if (phase === g.PHASE.PLAYOFFS) {
+            await g.dbl.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
+                phaseChangeTx = tx;
+                [url, updateEvents] = await newPhasePlayoffs(tx).catch(phaseErrorHandler);
+            });
+        } else if (phase === g.PHASE.BEFORE_DRAFT) {
+            await g.dbl.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
+                phaseChangeTx = tx;
+                [url, updateEvents] = await newPhaseBeforeDraft(tx).catch(phaseErrorHandler);
+            });
+        } else if (phase === g.PHASE.DRAFT) {
+            await g.dbl.tx(["draftPicks", "draftOrder", "gameAttributes", "players", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
+                phaseChangeTx = tx;
+                [url, updateEvents] = await newPhaseDraft(tx).catch(phaseErrorHandler);
+            });
+        } else if (phase === g.PHASE.AFTER_DRAFT) {
+            await g.dbl.tx(["draftPicks", "gameAttributes"], "readwrite", async tx => {
+                phaseChangeTx = tx;
+                [url, updateEvents] = await newPhaseAfterDraft(tx).catch(phaseErrorHandler);
+            });
+        } else if (phase === g.PHASE.RESIGN_PLAYERS) {
+            await g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
+                phaseChangeTx = tx;
+                [url, updateEvents] = await newPhaseResignPlayers(tx).catch(phaseErrorHandler);
+            });
+        } else if (phase === g.PHASE.FREE_AGENCY) {
+            await g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
+                phaseChangeTx = tx;
+                [url, updateEvents] = await newPhaseFreeAgency(tx).catch(phaseErrorHandler);
+            });
+        } else if (phase === g.PHASE.FANTASY_DRAFT) {
+            await g.dbl.tx(["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"], "readwrite", async tx => {
+                phaseChangeTx = tx;
+                [url, updateEvents] = await newPhaseFantasyDraft(tx, extra).catch(phaseErrorHandler);
+            });
+        }
+        
+        await finalize(phase, url, updateEvents);
+    }
 }
 
-function abort() {
+async function abort() {
     try {
         phaseChangeTx.abort();
     } catch (err) {
@@ -682,7 +674,8 @@ function abort() {
         helpers.errorNotify("If \"Abort\" doesn't work, check if you have another tab open.");
     } finally {
         // If another window has a phase change in progress, this won't do anything until that finishes
-        require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false}).then(() => ui.updatePlayMenu(null));
+        await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false});
+        await ui.updatePlayMenu(null);
     }
 }
 

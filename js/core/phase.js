@@ -107,15 +107,14 @@ async function newPhasePreseason(tx) {
     return [undefined, ["playerMovement"]];
 }
 
-function newPhaseRegularSeason(tx) {
-    return tx.teams.getAll().then(teams => season.setSchedule(tx, season.newSchedule(teams))).then(() => {
-        let nagged;
+async function newPhaseRegularSeason(tx) {
+    const teams = await tx.teams.getAll();
+    await season.setSchedule(tx, season.newSchedule(teams));
 
-        // First message from owner
-        if (g.showFirstOwnerMessage) {
-            return message.generate(tx, {wins: 0, playoffs: 0, money: 0});
-        }
-
+    // First message from owner
+    if (g.showFirstOwnerMessage) {
+        await message.generate(tx, {wins: 0, playoffs: 0, money: 0});
+    } else {
         // Spam user with another message?
         if (localStorage.nagged === "true") {
             // This used to store a boolean, switch to number
@@ -124,184 +123,185 @@ function newPhaseRegularSeason(tx) {
             localStorage.nagged = "0";
         }
 
-        nagged = parseInt(localStorage.nagged, 10);
+        const nagged = parseInt(localStorage.nagged, 10);
 
         if (g.season === g.startingSeason + 3 && g.lid > 3 && nagged === 0) {
             localStorage.nagged = "1";
-            return tx.messages.add({
+            await tx.messages.add({
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
                 text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>'
             });
-        }
-        if ((nagged === 1 && Math.random() < 0.25) || (nagged >= 2 && Math.random < 0.025)) {
+        } else if ((nagged === 1 && Math.random() < 0.25) || (nagged >= 2 && Math.random < 0.025)) {
             localStorage.nagged = "2";
-            return tx.messages.add({
+            await tx.messages.add({
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
                 text: '<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a></p><p><a href="https://www.facebook.com/basketball.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/BasketballGM/">Discuss Basketball GM on Reddit</a></p><p>The more people that play Basketball GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@basketball-gm.com">email me</a>.</p>'
             });
-        }
-        // Skipping 3, obsolete
-        if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random < 0.05)) {
+        } else if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random < 0.05)) {
+            // Skipping 3, obsolete
             localStorage.nagged = "4";
-            return tx.messages.add({
+            await tx.messages.add({
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
                 text: '<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="http://basketball-gm.co.nf/">you can find a user-made list of them here</a>.</p>'
             });
         }
-    }).then(() => [undefined, ["playerMovement"]]);
+    }
+
+    return [undefined, ["playerMovement"]];
 }
 
-function newPhaseAfterTradeDeadline() {
+async function newPhaseAfterTradeDeadline() {
     throw new Error("newPhaseAfterTradeDeadline not implemented");
 }
 
-function newPhasePlayoffs(tx) {
+async function newPhasePlayoffs(tx) {
     // Achievements after regular season
     account.checkAchievement.septuawinarian();
 
     // Set playoff matchups
-    return team.filter({
+    const teams = await team.filter({
         ot: tx,
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp"],
         season: g.season,
         sortBy: "winp"
-    }).then(teams => {
-        let cid, i, series, teamsConf, tidPlayoffs;
+    });
 
-        // Add entry for wins for each team; delete winp, which was only needed for sorting
-        for (i = 0; i < teams.length; i++) {
-            teams[i].won = 0;
-        }
+    // Add entry for wins for each team; delete winp, which was only needed for sorting
+    for (let i = 0; i < teams.length; i++) {
+        teams[i].won = 0;
+    }
 
-        if (!localStorage.top16playoffs) {
-            // Default: top 8 teams in each conference
-            tidPlayoffs = [];
-            series = [[], [], [], []];  // First round, second round, third round, fourth round
-            for (cid = 0; cid < 2; cid++) {
-                teamsConf = [];
-                for (i = 0; i < teams.length; i++) {
-                    if (teams[i].cid === cid) {
-                        if (teamsConf.length < 8) {
-                            teamsConf.push(teams[i]);
-                            tidPlayoffs.push(teams[i].tid);
-                        }
+    let series, tidPlayoffs;
+    if (!localStorage.top16playoffs) {
+        // Default: top 8 teams in each conference
+        tidPlayoffs = [];
+        series = [[], [], [], []];  // First round, second round, third round, fourth round
+        for (let cid = 0; cid < 2; cid++) {
+            const teamsConf = [];
+            for (let i = 0; i < teams.length; i++) {
+                if (teams[i].cid === cid) {
+                    if (teamsConf.length < 8) {
+                        teamsConf.push(teams[i]);
+                        tidPlayoffs.push(teams[i].tid);
                     }
                 }
-                series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
-                series[0][cid * 4].home.seed = 1;
-                series[0][cid * 4].away.seed = 8;
-                series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
-                series[0][1 + cid * 4].home.seed = 4;
-                series[0][1 + cid * 4].away.seed = 5;
-                series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
-                series[0][2 + cid * 4].home.seed = 3;
-                series[0][2 + cid * 4].away.seed = 6;
-                series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
-                series[0][3 + cid * 4].home.seed = 2;
-                series[0][3 + cid * 4].away.seed = 7;
             }
-        } else {
-            // Alternative (localStorage.top16playoffs): top 16 teams overall
-            tidPlayoffs = [];
-            series = [[], [], [], []];  // First round, second round, third round, fourth round
-            teamsConf = [];
-            for (i = 0; i < teams.length; i++) {
-                if (teamsConf.length < 16) {
-                    teamsConf.push(teams[i]);
-                    tidPlayoffs.push(teams[i].tid);
-                }
-            }
-            series[0][0] = {home: teamsConf[0], away: teamsConf[15]};
-            series[0][0].home.seed = 1;
-            series[0][0].away.seed = 16;
-            series[0][1] = {home: teamsConf[7], away: teamsConf[8]};
-            series[0][1].home.seed = 8;
-            series[0][1].away.seed = 9;
-            series[0][2] = {home: teamsConf[3], away: teamsConf[12]};
-            series[0][2].home.seed = 4;
-            series[0][2].away.seed = 13;
-            series[0][3] = {home: teamsConf[4], away: teamsConf[11]};
-            series[0][3].home.seed = 5;
-            series[0][3].away.seed = 12;
-            series[0][4] = {home: teamsConf[1], away: teamsConf[14]};
-            series[0][4].home.seed = 2;
-            series[0][4].away.seed = 15;
-            series[0][5] = {home: teamsConf[6], away: teamsConf[9]};
-            series[0][5].home.seed = 7;
-            series[0][5].away.seed = 10;
-            series[0][6] = {home: teamsConf[2], away: teamsConf[13]};
-            series[0][6].home.seed = 3;
-            series[0][6].away.seed = 14;
-            series[0][7] = {home: teamsConf[5], away: teamsConf[10]};
-            series[0][7].home.seed = 6;
-            series[0][7].away.seed = 11;
+            series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
+            series[0][cid * 4].home.seed = 1;
+            series[0][cid * 4].away.seed = 8;
+            series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
+            series[0][1 + cid * 4].home.seed = 4;
+            series[0][1 + cid * 4].away.seed = 5;
+            series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
+            series[0][2 + cid * 4].home.seed = 3;
+            series[0][2 + cid * 4].away.seed = 6;
+            series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
+            series[0][3 + cid * 4].home.seed = 2;
+            series[0][3 + cid * 4].away.seed = 7;
         }
+    } else {
+        // Alternative (localStorage.top16playoffs): top 16 teams overall
+        tidPlayoffs = [];
+        series = [[], [], [], []];  // First round, second round, third round, fourth round
+        const teamsConf = [];
+        for (let i = 0; i < teams.length; i++) {
+            if (teamsConf.length < 16) {
+                teamsConf.push(teams[i]);
+                tidPlayoffs.push(teams[i].tid);
+            }
+        }
+        series[0][0] = {home: teamsConf[0], away: teamsConf[15]};
+        series[0][0].home.seed = 1;
+        series[0][0].away.seed = 16;
+        series[0][1] = {home: teamsConf[7], away: teamsConf[8]};
+        series[0][1].home.seed = 8;
+        series[0][1].away.seed = 9;
+        series[0][2] = {home: teamsConf[3], away: teamsConf[12]};
+        series[0][2].home.seed = 4;
+        series[0][2].away.seed = 13;
+        series[0][3] = {home: teamsConf[4], away: teamsConf[11]};
+        series[0][3].home.seed = 5;
+        series[0][3].away.seed = 12;
+        series[0][4] = {home: teamsConf[1], away: teamsConf[14]};
+        series[0][4].home.seed = 2;
+        series[0][4].away.seed = 15;
+        series[0][5] = {home: teamsConf[6], away: teamsConf[9]};
+        series[0][5].home.seed = 7;
+        series[0][5].away.seed = 10;
+        series[0][6] = {home: teamsConf[2], away: teamsConf[13]};
+        series[0][6].home.seed = 3;
+        series[0][6].away.seed = 14;
+        series[0][7] = {home: teamsConf[5], away: teamsConf[10]};
+        series[0][7].home.seed = 6;
+        series[0][7].away.seed = 11;
+    }
 
-        tidPlayoffs.forEach(tid => {
-            eventLog.add(null, {
-                type: "playoffs",
-                text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season])}">${g.teamNamesCache[tid]}</a> made the <a href="${helpers.leagueUrl(["playoffs", g.season])}">playoffs</a>.`,
-                showNotification: tid === g.userTid,
-                tids: [tid]
-            });
+    tidPlayoffs.forEach(tid => {
+        eventLog.add(null, {
+            type: "playoffs",
+            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season])}">${g.teamNamesCache[tid]}</a> made the <a href="${helpers.leagueUrl(["playoffs", g.season])}">playoffs</a>.`,
+            showNotification: tid === g.userTid,
+            tids: [tid]
         });
+    });
 
-        return Promise.all([
-            tx.playoffSeries.put({
-                season: g.season,
-                currentRound: 0,
-                series
-            }),
+    await Promise.all([
+        tx.playoffSeries.put({
+            season: g.season,
+            currentRound: 0,
+            series
+        }),
 
-            // Add row to team stats and team season attributes
-            tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
-                if (tidPlayoffs.indexOf(teamSeason.tid) >= 0) {
-                    tx.teamStats.add(team.genStatsRow(teamSeason.tid, true));
+        // Add row to team stats and team season attributes
+        tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), async teamSeason => {
+            if (tidPlayoffs.indexOf(teamSeason.tid) >= 0) {
+                await tx.teamStats.add(team.genStatsRow(teamSeason.tid, true));
 
-                    teamSeason.playoffRoundsWon = 0;
+                teamSeason.playoffRoundsWon = 0;
 
-                    // More hype for making the playoffs
-                    teamSeason.hype += 0.05;
-                    if (teamSeason.hype > 1) {
-                        teamSeason.hype = 1;
-                    }
-                } else {
-                    // Less hype for missing the playoffs
-                    teamSeason.hype -= 0.05;
-                    if (teamSeason.hype < 0) {
-                        teamSeason.hype = 0;
-                    }
+                // More hype for making the playoffs
+                teamSeason.hype += 0.05;
+                if (teamSeason.hype > 1) {
+                    teamSeason.hype = 1;
                 }
+            } else {
+                // Less hype for missing the playoffs
+                teamSeason.hype -= 0.05;
+                if (teamSeason.hype < 0) {
+                    teamSeason.hype = 0;
+                }
+            }
 
-                return teamSeason;
-            }),
+            return teamSeason;
+        }),
 
-            // Add row to player stats
-            Promise.map(tidPlayoffs, tid => tx.players.index('tid').iterate(tid, p => player.addStatsRow(tx, p, true)))
-        ]);
-    }).then(() => Promise.all([
+        // Add row to player stats
+        Promise.map(tidPlayoffs, tid => tx.players.index('tid').iterate(tid, p => player.addStatsRow(tx, p, true)))
+    ]);
+
+
+    await Promise.all([
         finances.assessPayrollMinLuxury(tx),
         season.newSchedulePlayoffsDay(tx)
-    ])).then(() => {
-        let url;
+    ]);
 
-        // Don't redirect if we're viewing a live game now
-        if (location.pathname.indexOf("/live_game") === -1) {
-            url = helpers.leagueUrl(["playoffs"]);
-        }
+    // Don't redirect if we're viewing a live game now
+    let url;
+    if (location.pathname.indexOf("/live_game") === -1) {
+        url = helpers.leagueUrl(["playoffs"]);
+    }
 
-        return [url, ["teamFinances"]];
-    });
+    return [url, ["teamFinances"]];
 }
 
-function newPhaseBeforeDraft(tx) {
+async function newPhaseBeforeDraft(tx) {
     // Achievements after playoffs
     account.checkAchievement.fo_fo_fo();
     account.checkAchievement["98_degrees"]();
@@ -312,115 +312,115 @@ function newPhaseBeforeDraft(tx) {
     account.checkAchievement.moneyball_2();
     account.checkAchievement.small_market();
 
-    // Select winners of the season's awards
-    return season.awards(tx).then(() => team.filter({
+    await season.awards(tx);
+
+    const teams = await team.filter({
         ot: tx,
         attrs: ["tid"],
         seasonAttrs: ["playoffRoundsWon"],
         season: g.season
-    })).then(teams => {
-        let i, tid;
+    });
 
-        // Give award to all players on the championship team
-        for (i = 0; i < teams.length; i++) {
-            if (teams[i].playoffRoundsWon === 4) {
-                tid = teams[i].tid;
-                break;
+    // Give award to all players on the championship team
+    let tid;
+    for (let i = 0; i < teams.length; i++) {
+        if (teams[i].playoffRoundsWon === 4) {
+            tid = teams[i].tid;
+            break;
+        }
+    }
+    await tx.players.index('tid').iterate(tid, p => {
+        p.awards.push({season: g.season, type: "Won Championship"});
+        return p;
+    });
+
+    // Do annual tasks for each player, like checking for retirement
+
+    // Players meeting one of these cutoffs might retire
+    const maxAge = 34;
+    const minPot = 40;
+
+    await tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), async p => {
+        let update = false;
+
+        // Get player stats, used for HOF calculation
+        const playerStats = await tx.playerStats.index("pid, season, tid").getAll(backboard.bound([p.pid], [p.pid, '']));
+
+        const age = g.season - p.born.year;
+        const pot = p.ratings[p.ratings.length - 1].pot;
+
+        if (age > maxAge || pot < minPot) {
+            if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
+                let excessAge = 0;
+                if (age > 34) {
+                    excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
+                }
+                const excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
+                if (excessAge + excessPot + random.gauss(0, 1) > 0) {
+                    p = player.retire(tx, p, playerStats);
+                    update = true;
+                }
             }
         }
-        return tx.players.index('tid').iterate(tid, p => {
-            p.awards.push({season: g.season, type: "Won Championship"});
-            return p;
-        });
-    }).then(() => {
-        let maxAge, minPot;
 
-        // Do annual tasks for each player, like checking for retirement
-
-        // Players meeting one of these cutoffs might retire
-        maxAge = 34;
-        minPot = 40;
-
-        return tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), p => {
-            let update;
-
-            update = false;
-
-            // Get player stats, used for HOF calculation
-            return tx.playerStats.index("pid, season, tid").getAll(backboard.bound([p.pid], [p.pid, ''])).then(playerStats => {
-                let age, excessAge, excessPot, pot;
-
-                age = g.season - p.born.year;
-                pot = p.ratings[p.ratings.length - 1].pot;
-
-                if (age > maxAge || pot < minPot) {
-                    excessAge = 0;
-                    if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
-                        if (age > 34) {
-                            excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
-                        }
-                        excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
-                        if (excessAge + excessPot + random.gauss(0, 1) > 0) {
-                            p = player.retire(tx, p, playerStats);
-                            update = true;
-                        }
-                    }
-                }
-
-                // Update "free agent years" counter and retire players who have been free agents for more than one years
-                if (p.tid === g.PLAYER.FREE_AGENT) {
-                    if (p.yearsFreeAgent >= 1) {
-                        p = player.retire(tx, p, playerStats);
-                    } else {
-                        p.yearsFreeAgent += 1;
-                    }
-                    p.contract.exp += 1;
-                    update = true;
-                } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
-                    p.yearsFreeAgent = 0;
-                    update = true;
-                }
-
-                // Heal injures
-                if (p.injury.type !== "Healthy") {
-                    // This doesn't use g.numGames because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
-                    if (p.injury.gamesRemaining <= 82) {
-                        p.injury = {type: "Healthy", gamesRemaining: 0};
-                    } else {
-                        p.injury.gamesRemaining -= 82;
-                    }
-                    update = true;
-                }
-
-                // Update player in DB, if necessary
-                if (update) {
-                    return p;
-                }
-            });
-        });
-    }).then(() => tx.releasedPlayers.index('contract.exp').iterate(backboard.upperBound(g.season), rp => {
-        tx.releasedPlayers.delete(rp.rid);
-    })).then(() => team.updateStrategies(tx)).then(() => season.updateOwnerMood(tx)).then(deltas => message.generate(tx, deltas)).then(() => {
-        let url;
-
-        // Don't redirect if we're viewing a live game now
-        if (location.pathname.indexOf("/live_game") === -1) {
-            url = helpers.leagueUrl(["history"]);
+        // Update "free agent years" counter and retire players who have been free agents for more than one years
+        if (p.tid === g.PLAYER.FREE_AGENT) {
+            if (p.yearsFreeAgent >= 1) {
+                p = player.retire(tx, p, playerStats);
+            } else {
+                p.yearsFreeAgent += 1;
+            }
+            p.contract.exp += 1;
+            update = true;
+        } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
+            p.yearsFreeAgent = 0;
+            update = true;
         }
 
-        helpers.bbgmPing("season");
+        // Heal injures
+        if (p.injury.type !== "Healthy") {
+            // This doesn't use g.numGames because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
+            if (p.injury.gamesRemaining <= 82) {
+                p.injury = {type: "Healthy", gamesRemaining: 0};
+            } else {
+                p.injury.gamesRemaining -= 82;
+            }
+            update = true;
+        }
 
-        return [url, ["playerMovement"]];
+        // Update player in DB, if necessary
+        if (update) {
+            return p;
+        }
     });
+
+    await tx.releasedPlayers.index('contract.exp').iterate(backboard.upperBound(g.season), rp => {
+        tx.releasedPlayers.delete(rp.rid);
+    })
+
+    await team.updateStrategies(tx);
+
+    const deltas = await season.updateOwnerMood(tx);
+    await message.generate(tx, deltas);
+
+    // Don't redirect if we're viewing a live game now
+    let url;
+    if (location.pathname.indexOf("/live_game") === -1) {
+        url = helpers.leagueUrl(["history"]);
+    }
+
+    helpers.bbgmPing("season");
+
+    return [url, ["playerMovement"]];
 }
 
-function newPhaseDraft(tx) {
+async function newPhaseDraft(tx) {
     // Achievements after awards
     account.checkAchievement.hardware_store();
     account.checkAchievement.sleeper_pick();
 
     // Kill off old retired players (done here since not much else happens in this phase change, so making it a little slower is fine)
-    return tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
+    await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
         let probDeath;
         if (p.hasOwnProperty("diedYear") && p.diedYear) {
             return;
@@ -433,40 +433,51 @@ function newPhaseDraft(tx) {
             p.diedYear = g.season;
             return p;
         }
-    }).then(() => draft.genOrder(tx)).then(() => tx.players.index('draft.year').iterate(g.season, p => {
+    });
+
+    await draft.genOrder(tx);
+
+    // Not sure what this is for
+    await tx.players.index('draft.year').iterate(g.season, p => {
         if (p.tid >= 0) {
             p.draft.year -= 1;
             return p;
         }
-    })).then(() => [helpers.leagueUrl(["draft"])]);
+    })
+
+    return [helpers.leagueUrl(["draft"])];
 }
 
-function newPhaseAfterDraft(tx) {
-    return draft.genPicks(tx, g.season + 4).then(function () {
-        return [undefined, ["playerMovement"]];
-    });
+async function newPhaseAfterDraft(tx) {
+    await draft.genPicks(tx, g.season + 4);
+
+    return [undefined, ["playerMovement"]];
 }
 
-function newPhaseResignPlayers(tx) {
-    return player.genBaseMoods(tx).then(baseMoods => tx.players.index('tid').iterate(backboard.lowerBound(0), p => {
-        let tid;
+async function newPhaseResignPlayers(tx) {
+    const baseMoods = await player.genBaseMoods(tx);
 
+    await tx.players.index('tid').iterate(backboard.lowerBound(0), async p => {
         if (p.contract.exp <= g.season && g.userTids.indexOf(p.tid) >= 0 && g.autoPlaySeasons === 0) {
-            tid = p.tid;
+            const tid = p.tid;
 
             // Add to free agents first, to generate a contract demand
-            return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods).then(() => contractNegotiation.create(tx, p.pid, true, tid).then(error => {
-                if (error !== undefined && error) {
-                    eventLog.add(null, {
-                        type: "refuseToSign",
-                        text: error,
-                        pids: [p.pid],
-                        tids: [tid]
-                    });
-                }
-            }));
+            await player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
+            const error = await contractNegotiation.create(tx, p.pid, true, tid);
+            if (error !== undefined && error) {
+                eventLog.add(null, {
+                    type: "refuseToSign",
+                    text: error,
+                    pids: [p.pid],
+                    tids: [tid]
+                });
+            }
         }
-    })).then(() => require('../core/league').setGameAttributes(tx, {daysLeft: 30})).then(() => [helpers.leagueUrl(["negotiation"]), ["playerMovement"]]);
+    });
+
+    await require('../core/league').setGameAttributes(tx, {daysLeft: 30});
+
+    return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
 }
 
 function newPhaseFreeAgency(tx) {

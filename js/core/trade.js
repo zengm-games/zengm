@@ -7,6 +7,7 @@ const _ = require('underscore');
 const eventLog = require('../util/eventLog');
 const helpers = require('../util/helpers');
 
+
 /**
  * Get the contents of the current trade from the database.
  *
@@ -14,8 +15,10 @@ const helpers = require('../util/helpers');
  * @param {Promise.<Array.<Object>>} Resolves to an array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
  */
 function get(ot) {
-    const dbOrTx = ot || g.dbl;
-    return dbOrTx.trade.get(0).then(tr => tr.teams);
+    var dbOrTx = ot || g.dbl;
+    return dbOrTx.trade.get(0).then(function (tr) {
+        return tr.teams;
+    });
 }
 
 /**
@@ -26,7 +29,7 @@ function get(ot) {
  * @return {Promise}
  */
 function create(teams) {
-    return get().then(oldTeams => {
+    return get().then(function (oldTeams) {
         // If nothing is in this trade, it's just a team switch, so keep the old stuff from the user's team
         if (teams[0].pids.length === 0 && teams[1].pids.length === 0 && teams[0].dpids.length === 0 && teams[1].dpids.length === 0) {
             teams[0].pids = oldTeams[0].pids;
@@ -34,18 +37,22 @@ function create(teams) {
         }
 
         // Make sure tid is set
-        return Promise.try(() => {
+        return Promise.try(function () {
             if (teams[1].tid === undefined || teams[1].tid === null) {
-                return g.dbl.players.get(teams[1].pids[0]).then(p => {
+                return g.dbl.players.get(teams[1].pids[0]).then(function (p) {
                     teams[1].tid = p.tid;
                 });
             }
-        }).then(() => g.dbl.tx("trade", "readwrite", tx => tx.trade.put({
-            rid: 0,
-            teams
-        })).then(() => {
-            league.updateLastDbChange();
-        }));
+        }).then(function () {
+            return g.dbl.tx("trade", "readwrite", function (tx) {
+                return tx.trade.put({
+                    rid: 0,
+                    teams: teams
+                });
+            }).then(function () {
+                league.updateLastDbChange();
+            });
+        });
     });
 }
 
@@ -56,7 +63,9 @@ function create(teams) {
  * @return {er} Resolves to the other team's team ID.
  */
 function getOtherTid() {
-    return get().then(teams => teams[1].tid);
+    return get().then(function (teams) {
+        return teams[1].tid;
+    });
 }
 
 /**
@@ -69,7 +78,7 @@ function getOtherTid() {
  * @return {Array.<Object>} Processed input
  */
 function filterUntradable(players) {
-    let i;
+    var i;
 
     for (i = 0; i < players.length; i++) {
         if (players[i].contract.exp <= g.season && g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
@@ -79,7 +88,7 @@ function filterUntradable(players) {
         } else if (players[i].gamesUntilTradable > 0) {
             // Can't trade players who recently were signed or traded
             players[i].untradable = true;
-            players[i].untradableMsg = `Cannot trade recently-acquired player for ${players[i].gamesUntilTradable} more games`;
+            players[i].untradableMsg = "Cannot trade recently-acquired player for " + players[i].gamesUntilTradable + " more games";
         } else {
             players[i].untradable = false;
             players[i].untradableMsg = "";
@@ -112,20 +121,20 @@ function isUntradable(player) {
  * @return {Promise.<Array.<Object>>} Resolves to an array taht's the same as the input, but with invalid entries removed.
  */
 function updatePlayers(teams) {
-    let promises;
+    var promises;
 
     // This is just for debugging
-    team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(dv => {
+    team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(function (dv) {
         console.log(dv);
     });
 
-    return g.dbl.tx(["draftPicks", "players"], tx => {
+    return g.dbl.tx(["draftPicks", "players"], function (tx) {
         // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
         promises = [];
-        teams.forEach(t => {
+        teams.forEach(function (t) {
             // Check players
-            promises.push(tx.players.index('tid').getAll(t.tid).then(players => {
-                let j, pidsGood;
+            promises.push(tx.players.index('tid').getAll(t.tid).then(function (players) {
+                var j, pidsGood;
 
                 pidsGood = [];
                 for (j = 0; j < players.length; j++) {
@@ -138,8 +147,8 @@ function updatePlayers(teams) {
             }));
 
             // Check draft picks
-            promises.push(tx.draftPicks.index('tid').getAll(t.tid).then(dps => {
-                let dpidsGood, j;
+            promises.push(tx.draftPicks.index('tid').getAll(t.tid).then(function (dps) {
+                var dpidsGood, j;
 
                 dpidsGood = [];
                 for (j = 0; j < dps.length; j++) {
@@ -151,44 +160,50 @@ function updatePlayers(teams) {
             }));
         });
 
-        return Promise.all(promises).then(() => {
-            let updated;
+        return Promise.all(promises).then(function () {
+            var updated;
 
             updated = false; // Has the trade actually changed?
 
-            return g.dbl.tx("trade", "readwrite", tx => get(tx).then(oldTeams => {
-                let i;
+            return g.dbl.tx("trade", "readwrite", function (tx) {
+                return get(tx).then(function (oldTeams) {
+                    var i;
 
-                for (i = 0; i < 2; i++) {
-                    if (teams[i].tid !== oldTeams[i].tid) {
-                        updated = true;
-                        break;
+                    for (i = 0; i < 2; i++) {
+                        if (teams[i].tid !== oldTeams[i].tid) {
+                            updated = true;
+                            break;
+                        }
+                        if (teams[i].pids.toString() !== oldTeams[i].pids.toString()) {
+                            updated = true;
+                            break;
+                        }
+                        if (teams[i].dpids.toString() !== oldTeams[i].dpids.toString()) {
+                            updated = true;
+                            break;
+                        }
                     }
-                    if (teams[i].pids.toString() !== oldTeams[i].pids.toString()) {
-                        updated = true;
-                        break;
-                    }
-                    if (teams[i].dpids.toString() !== oldTeams[i].dpids.toString()) {
-                        updated = true;
-                        break;
-                    }
-                }
 
-                if (updated) {
-                    return tx.trade.put({
-                        rid: 0,
-                        teams
-                    }).then(() => updated);
-                }
+                    if (updated) {
+                        return tx.trade.put({
+                            rid: 0,
+                            teams: teams
+                        }).then(function () {
+                            return updated;
+                        });
+                    }
 
-                return updated;
-            }));
+                    return updated;
+                });
+            });
         });
-    }).then(updated => {
+    }).then(function (updated) {
         if (updated) {
             league.updateLastDbChange();
         }
-    }).then(() => teams);
+    }).then(function () {
+        return teams;
+    });
 }
 
 
@@ -200,7 +215,7 @@ function updatePlayers(teams) {
  * @return {Promise.Object} Resolves to an object contianing the trade summary.
  */
 function summary(teams) {
-    let dpids, i, pids, players, promises, s, tids;
+    var dpids, i, pids, players, promises, s, tids;
 
     tids = [teams[0].tid, teams[1].tid];
     pids = [teams[0].pids, teams[1].pids];
@@ -211,49 +226,49 @@ function summary(teams) {
         s.teams.push({trade: [], total: 0, payrollAfterTrade: 0, name: ""});
     }
 
-    return g.dbl.tx(["draftPicks", "players", "releasedPlayers"], tx => {
+    return g.dbl.tx(["draftPicks", "players", "releasedPlayers"], function (tx) {
         // Calculate properties of the trade
         players = [[], []];
         promises = [];
-        [0, 1].forEach(i => {
-            promises.push(tx.players.index('tid').getAll(tids[i]).then(playersTemp => {
+        [0, 1].forEach(function (i) {
+            promises.push(tx.players.index('tid').getAll(tids[i]).then(function (playersTemp) {
                 players[i] = player.filter(playersTemp, {
                     attrs: ["pid", "name", "contract"],
                     season: g.season,
                     tid: tids[i],
                     showRookies: true
                 });
-                s.teams[i].trade = players[i].filter(player => pids[i].indexOf(player.pid) >= 0);
-                s.teams[i].total = s.teams[i].trade.reduce((memo, player) => memo + player.contract.amount, 0);
+                s.teams[i].trade = players[i].filter(function (player) { return pids[i].indexOf(player.pid) >= 0; });
+                s.teams[i].total = s.teams[i].trade.reduce(function (memo, player) { return memo + player.contract.amount; }, 0);
             }));
 
-            promises.push(tx.draftPicks.index('tid').getAll(tids[i]).then(picks => {
-                let j;
+            promises.push(tx.draftPicks.index('tid').getAll(tids[i]).then(function (picks) {
+                var j;
 
                 s.teams[i].picks = [];
                 for (j = 0; j < picks.length; j++) {
                     if (dpids[i].indexOf(picks[j].dpid) >= 0) {
-                        s.teams[i].picks.push({desc: `${picks[j].round === 1}${picks[j].season} ${picks[j].round === 1 ? "1st" : "2nd"} round pick (${g.teamAbbrevsCache[picks[j].originalTid]})`});
+                        s.teams[i].picks.push({desc: picks[j].season + " " + (picks[j].round === 1 ? "1st" : "2nd") + " round pick (" + g.teamAbbrevsCache[picks[j].originalTid] + ")"});
                     }
                 }
             }));
         });
 
-        return Promise.all(promises).then(() => {
-            let overCap, ratios;
+        return Promise.all(promises).then(function () {
+            var overCap, ratios;
 
             // Test if any warnings need to be displayed
             overCap = [false, false];
             ratios = [0, 0];
-            return Promise.map([0, 1], j => {
-                let k;
+            return Promise.map([0, 1], function (j) {
+                var k;
                 if (j === 0) {
                     k = 1;
                 } else if (j === 1) {
                     k = 0;
                 }
 
-                s.teams[j].name = `${g.teamRegionsCache[tids[j]]} ${g.teamNamesCache[tids[j]]}`;
+                s.teams[j].name = g.teamRegionsCache[tids[j]] + " " + g.teamNamesCache[tids[j]];
 
                 if (s.teams[j].total > 0) {
                     ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
@@ -263,14 +278,14 @@ function summary(teams) {
                     ratios[j] = 100;
                 }
 
-                return team.getPayroll(tx, tids[j]).get(0).then(payroll => {
+                return team.getPayroll(tx, tids[j]).get(0).then(function (payroll) {
                     s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
                     if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
                         overCap[j] = true;
                     }
                 });
-            }).then(() => {
-                let j;
+            }).then(function () {
+                var j;
 
                 if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
                     // Which team is at fault?;
@@ -279,7 +294,7 @@ function summary(teams) {
                     } else {
                         j = 1;
                     }
-                    s.warning = `The ${s.teams[j].name} are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is ${ratios[j]}%.`;
+                    s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
                 }
 
                 return s;
@@ -296,16 +311,18 @@ function summary(teams) {
  * @return {Promise}
  */
 function clear() {
-    return g.dbl.tx("trade", "readwrite", tx => tx.trade.get(0).then(tr => {
-        let i;
+    return g.dbl.tx("trade", "readwrite", function (tx) {
+        return tx.trade.get(0).then(function (tr) {
+            var i;
 
-        for (i = 0; i < tr.teams.length; i++) {
-            tr.teams[i].pids = [];
-            tr.teams[i].dpids = [];
-        }
+            for (i = 0; i < tr.teams.length; i++) {
+                tr.teams[i].pids = [];
+                tr.teams[i].dpids = [];
+            }
 
-        return tx.trade.put(tr);
-    })).then(() => {
+            return tx.trade.put(tr);
+        });
+    }).then(function () {
         league.updateLastDbChange();
     });
 }
@@ -319,13 +336,15 @@ function clear() {
  * @param {boolean} forceTrade When true (like in God Mode), this trade is accepted regardless of the AI
  * @return {Promise.<boolean, string>} Resolves to an array. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
  */
-function propose(forceTrade=false) {
+function propose(forceTrade) {
+    forceTrade = forceTrade !== undefined ? forceTrade : false;
+
     if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
         return Promise.resove([false, "Error! You're not allowed to make trades now."]);
     }
 
-    return get().then(teams => {
-        let dpids, pids, tids;
+    return get().then(function (teams) {
+        var dpids, pids, tids;
 
         tids = [teams[0].tid, teams[1].tid];
         pids = [teams[0].pids, teams[1].pids];
@@ -334,8 +353,8 @@ function propose(forceTrade=false) {
         // The summary will return a warning if (there is a problem. In that case,
         // that warning will already be pushed to the user so there is no need to
         // return a redundant message here.
-        return summary(teams).then(s => {
-            let outcome;
+        return summary(teams).then(function (s) {
+            var outcome;
 
             if (s.warning && !forceTrade) {
                 return [false, null];
@@ -343,15 +362,15 @@ function propose(forceTrade=false) {
 
             outcome = "rejected"; // Default
 
-            return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(dv => {
-                let formatAssetsEventLog;
+            return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(function (dv) {
+                var formatAssetsEventLog;
 
-                return g.dbl.tx(["draftPicks", "players", "playerStats"], "readwrite", tx => {
+                return g.dbl.tx(["draftPicks", "players", "playerStats"], "readwrite", function (tx) {
                     if (dv > 0 || forceTrade) {
                         // Trade players
                         outcome = "accepted";
-                        [0, 1].forEach(j => {
-                            let k;
+                        [0, 1].forEach(function (j) {
+                            var k;
 
                             if (j === 0) {
                                 k = 1;
@@ -359,8 +378,8 @@ function propose(forceTrade=false) {
                                 k = 0;
                             }
 
-                            pids[j].forEach(pid => {
-                                tx.players.get(pid).then(p => {
+                            pids[j].forEach(function (pid) {
+                                tx.players.get(pid).then(function (p) {
                                     p.tid = tids[k];
                                     // Don't make traded players untradable
                                     //p.gamesUntilTradable = 15;
@@ -372,8 +391,8 @@ function propose(forceTrade=false) {
                                 });
                             });
 
-                            dpids[j].forEach(dpid => {
-                                tx.draftPicks.get(dpid).then(dp => {
+                            dpids[j].forEach(function (dpid) {
+                                tx.draftPicks.get(dpid).then(function (dp) {
                                     dp.tid = tids[k];
                                     dp.abbrev = g.teamAbbrevsCache[tids[k]];
                                     return tx.draftPicks.put(dp);
@@ -382,16 +401,16 @@ function propose(forceTrade=false) {
                         });
 
                         // Log event
-                        formatAssetsEventLog = t => {
-                            let i, strings, text;
+                        formatAssetsEventLog = function (t) {
+                            var i, strings, text;
 
                             strings = [];
 
-                            t.trade.forEach(p => {
-                                strings.push(`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`);
+                            t.trade.forEach(function (p) {
+                                strings.push('<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>');
                             });
-                            t.picks.forEach(dp => {
-                                strings.push(`a ${dp.desc}`);
+                            t.picks.forEach(function (dp) {
+                                strings.push('a ' + dp.desc);
                             });
 
                             if (strings.length === 0) {
@@ -399,14 +418,14 @@ function propose(forceTrade=false) {
                             } else if (strings.length === 1) {
                                 text = strings[0];
                             } else if (strings.length === 2) {
-                                text = `${strings[0]} and ${strings[1]}`;
+                                text = strings[0] + " and " + strings[1];
                             } else {
                                 text = strings[0];
                                 for (i = 1; i < strings.length; i++) {
                                     if (i === strings.length - 1) {
-                                        text += `, and ${strings[i]}`;
+                                        text += ", and " + strings[i];
                                     } else {
-                                        text += `, ${strings[i]}`;
+                                        text += ", " + strings[i];
                                     }
                                 }
                             }
@@ -416,20 +435,24 @@ function propose(forceTrade=false) {
 
                         eventLog.add(null, {
                             type: "trade",
-                            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(s.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(s.teams[1])}.`,
+                            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season]) + '">' + g.teamNamesCache[tids[0]] + '</a> traded ' + formatAssetsEventLog(s.teams[0]) + ' to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season]) + '">' + g.teamNamesCache[tids[1]] + '</a> for ' + formatAssetsEventLog(s.teams[1]) + '.',
                             showNotification: false,
                             pids: pids[0].concat(pids[1]),
-                            tids
+                            tids: tids
                         });
                     }
-                }).then(() => {
+                }).then(function () {
                     if (outcome === "accepted") {
-                        return clear().then(() => { // This includes dbChange
+                        return clear().then(function () { // This includes dbChange
                             // Auto-sort CPU team roster
                             if (g.userTids.indexOf(tids[1]) < 0) {
-                                return g.dbl.tx("players", "readwrite", tx => team.rosterAutoSort(tx, tids[1]));
+                                return g.dbl.tx("players", "readwrite", function (tx) {
+                                    return team.rosterAutoSort(tx, tids[1]);
+                                });
                             }
-                        }).then(() => [true, 'Trade accepted! "Nice doing business with you!"']);
+                        }).then(function () {
+                            return [true, 'Trade accepted! "Nice doing business with you!"'];
+                        });
                     }
 
                     return [false, 'Trade rejected! "What, are you crazy?"'];
@@ -451,20 +474,20 @@ function propose(forceTrade=false) {
  * @return {Promise.[boolean, Object]} Resolves to an array with one or two elements. First is a boolean indicating whether "make it work" was successful. If true, then the second argument is set to a teams object (similar to first input) with the "made it work" trade info.
  */
 function makeItWork(teams, holdUserConstant, estValuesCached) {
-    let added, initialSign, testTrade, tryAddAsset;
+    var added, initialSign, testTrade, tryAddAsset;
 
     added = 0;
 
     // Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
-    tryAddAsset = () => {
-        let assets;
+    tryAddAsset = function () {
+        var assets;
 
         assets = [];
 
-        return g.dbl.tx(["draftPicks", "players"], tx => {
+        return g.dbl.tx(["draftPicks", "players"], function (tx) {
             if (!holdUserConstant) {
                 // Get all players not in userPids
-                tx.players.index('tid').iterate(teams[0].tid, p => {
+                tx.players.index('tid').iterate(teams[0].tid, function (p) {
                     if (teams[0].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                         assets.push({
                             type: "player",
@@ -476,7 +499,7 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
             }
 
             // Get all players not in otherPids
-            tx.players.index('tid').iterate(teams[1].tid, p => {
+            tx.players.index('tid').iterate(teams[1].tid, function (p) {
                 if (teams[1].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                     assets.push({
                         type: "player",
@@ -488,7 +511,7 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
 
             if (!holdUserConstant) {
                 // Get all draft picks not in userDpids
-                tx.draftPicks.index('tid').iterate(teams[0].tid, dp => {
+                tx.draftPicks.index('tid').iterate(teams[0].tid, function (dp) {
                     if (teams[0].dpids.indexOf(dp.dpid) < 0) {
                         assets.push({
                             type: "draftPick",
@@ -500,7 +523,7 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
             }
 
             // Get all draft picks not in otherDpids
-            tx.draftPicks.index('tid').iterate(teams[1].tid, dp => {
+            tx.draftPicks.index('tid').iterate(teams[1].tid, function (dp) {
                 if (teams[1].dpids.indexOf(dp.dpid) < 0) {
                     assets.push({
                         type: "draftPick",
@@ -509,8 +532,8 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
                     });
                 }
             });
-        }).then(() => {
-            let otherDpids, otherPids, userDpids, userPids;
+        }).then(function () {
+            var otherDpids, otherPids, userDpids, userPids;
 
             // If we've already added 5 assets or there are no more to try, stop
             if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
@@ -518,7 +541,7 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
             }
 
             // Calculate the value for each asset added to the trade, for use in forward selection
-            return Promise.map(assets, asset => {
+            return Promise.map(assets, function (asset) {
                 userPids = teams[0].pids.slice();
                 otherPids = teams[1].pids.slice();
                 userDpids = teams[0].dpids.slice();
@@ -537,13 +560,13 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
                         otherDpids.push(asset.dpid);
                     }
                 }
-                return team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached).then(dv => {
+                return team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached).then(function (dv) {
                     asset.dv = dv;
                 });
-            }).then(() => {
-                let asset, j;
+            }).then(function () {
+                var asset, j;
 
-                assets.sort((a, b) => b.dv - a.dv);
+                assets.sort(function (a, b) { return b.dv - a.dv; });
 
                 // Find the asset that will push the trade value the smallest amount above 0
                 for (j = 0; j < assets.length; j++) {
@@ -577,23 +600,25 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
     };
 
     // See if the AI team likes the current trade. If not, try adding something to it.
-    testTrade = () => team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(dv => {
-        if (dv > 0 && initialSign === -1) {
-            return [true, teams];
-        }
-
-        if ((added > 2 || (added > 0 && Math.random() > 0.5)) && initialSign === 1) {
-            if (dv > 0) {
+    testTrade = function () {
+        return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
+            if (dv > 0 && initialSign === -1) {
                 return [true, teams];
             }
 
-            return [false];
-        }
+            if ((added > 2 || (added > 0 && Math.random() > 0.5)) && initialSign === 1) {
+                if (dv > 0) {
+                    return [true, teams];
+                }
 
-        return tryAddAsset();
-    });
+                return [false];
+            }
 
-    return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(dv => {
+            return tryAddAsset();
+        });
+    };
+
+    return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
         if (dv > 0) {
             // Try to make trade better for user's team
             initialSign = 1;
@@ -616,7 +641,7 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
  * @return {Promise.Object} Resolves to estimated draft pick values.
  */
 function getPickValues(ot) {
-    let dbOrTx, estValues, i, promises;
+    var dbOrTx, estValues, i, promises;
 
     dbOrTx = ot || g.dbl;
 
@@ -627,18 +652,20 @@ function getPickValues(ot) {
     // Look up to 4 season in the future, but depending on whether this is before or after the draft, the first or last will be empty/incomplete
     promises = [];
     for (i = g.season; i < g.season + 4; i++) {
-        promises.push(dbOrTx.players.index('draft.year').getAll(i).then(players => {
+        promises.push(dbOrTx.players.index('draft.year').getAll(i).then(function (players) {
             if (players.length > 0) {
                 for (i = 0; i < players.length; i++) {
                     players[i].value += 4; // +4 is to generally make picks more valued
                 }
-                players.sort((a, b) => b.value - a.value);
+                players.sort(function (a, b) { return b.value - a.value; });
                 estValues[players[0].draft.year] = _.pluck(players, "value");
             }
         }));
     }
 
-    return Promise.all(promises).then(() => estValues);
+    return Promise.all(promises).then(function () {
+        return estValues;
+    });
 }
 
 /**
@@ -653,48 +680,52 @@ function makeItWorkTrade() {
     return Promise.all([
         getPickValues(),
         get()
-    ]).spread((estValues, teams0) => makeItWork(helpers.deepCopy(teams0), false, estValues).spread((found, teams) => {
-        if (!found) {
-            return `${g.teamRegionsCache[teams0[1].tid]} GM: "I can't afford to give up so much."`;
-        }
-
-        return summary(teams).then(s => {
-            let i, updated;
-
-            // Store AI's proposed trade in database, if it's different
-            updated = false;
-
-            for (i = 0; i < 2; i++) {
-                if (teams[i].tid !== teams0[i].tid) {
-                    updated = true;
-                    break;
-                }
-                if (teams[i].pids.toString() !== teams0[i].pids.toString()) {
-                    updated = true;
-                    break;
-                }
-                if (teams[i].dpids.toString() !== teams0[i].dpids.toString()) {
-                    updated = true;
-                    break;
-                }
+    ]).spread(function (estValues, teams0) {
+        return makeItWork(helpers.deepCopy(teams0), false, estValues).spread(function (found, teams) {
+            if (!found) {
+                return g.teamRegionsCache[teams0[1].tid] + ' GM: "I can\'t afford to give up so much."';
             }
 
-            return Promise.try(() => {
-                if (updated) {
-                    return g.dbl.tx("trade", "readwrite", tx => tx.trade.put({
-                        rid: 0,
-                        teams
-                    }));
-                }
-            }).then(() => {
-                if (s.warning) {
-                    return `${g.teamRegionsCache[teams[1].tid]} GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."`;
+            return summary(teams).then(function (s) {
+                var i, updated;
+
+                // Store AI's proposed trade in database, if it's different
+                updated = false;
+
+                for (i = 0; i < 2; i++) {
+                    if (teams[i].tid !== teams0[i].tid) {
+                        updated = true;
+                        break;
+                    }
+                    if (teams[i].pids.toString() !== teams0[i].pids.toString()) {
+                        updated = true;
+                        break;
+                    }
+                    if (teams[i].dpids.toString() !== teams0[i].dpids.toString()) {
+                        updated = true;
+                        break;
+                    }
                 }
 
-                return `${g.teamRegionsCache[teams[1].tid]} GM: "How does this sound?"`;
+                return Promise.try(function () {
+                    if (updated) {
+                        return g.dbl.tx("trade", "readwrite", function (tx) {
+                            return tx.trade.put({
+                                rid: 0,
+                                teams: teams
+                            });
+                        });
+                    }
+                }).then(function () {
+                    if (s.warning) {
+                        return g.teamRegionsCache[teams[1].tid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."';
+                    }
+
+                    return g.teamRegionsCache[teams[1].tid] + ' GM: "How does this sound?"';
+                });
             });
         });
-    }));
+    });
 }
 
 module.exports = {

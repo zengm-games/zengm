@@ -12,6 +12,7 @@ const random = require('../util/random');
 
 let playerNames;
 
+
 /**
  * Limit a rating to between 0 and 100.
  *
@@ -72,12 +73,12 @@ function fuzzRating(rating, fuzz) {
  * @return {Array.<string>} Array of skill IDs.
  */
 function skills(ratings) {
-    let hasSkill, sk;
+    var hasSkill, sk;
 
     sk = [];
 
-    hasSkill = (ratings, components, weights) => {
-        let denominator, i, numerator, rating;
+    hasSkill = function (ratings, components, weights) {
+        var denominator, i, numerator, rating;
 
         if (weights === undefined) {
             // Default: array of ones with same size as components
@@ -139,7 +140,7 @@ function skills(ratings) {
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
 function genContract(p, randomizeExp, randomizeAmount, noLimit) {
-    let amount, expiration, potentialDifference, ratings, years;
+    var amount, expiration, potentialDifference, ratings, years;
 
     ratings = _.last(p.ratings);
 
@@ -198,7 +199,7 @@ function genContract(p, randomizeExp, randomizeAmount, noLimit) {
 
     amount = 50 * Math.round(amount / 50);  // Make it a multiple of 50k
 
-    return {amount, exp: expiration};
+    return {amount: amount, exp: expiration};
 }
 
 /**
@@ -211,7 +212,7 @@ function genContract(p, randomizeExp, randomizeAmount, noLimit) {
  * @return {Object} Updated player object.
  */
 function setContract(p, contract, signed) {
-    let i, start;
+    var i, start;
 
     p.contract = contract;
 
@@ -239,7 +240,7 @@ function setContract(p, contract, signed) {
  * @return {string} Position.
  */
 function pos(ratings) {
-    let c, pf, pg, position, sf, sg;
+    var c, pf, pg, position, sf, sg;
 
     pg = false;
     sg = false;
@@ -329,7 +330,7 @@ function pos(ratings) {
  * @return {Object} Updated player object.
  */
 function develop(p, years, generate, coachingRank) {
-    let age, baseChange, baseChangeLocal, calcBaseChange, i, j, r, ratingKeys;
+    var age, baseChange, baseChangeLocal, calcBaseChange, i, j, r, ratingKeys;
 
     years = years !== undefined ? years : 1;
     generate = generate !== undefined ? generate : false;
@@ -339,8 +340,8 @@ function develop(p, years, generate, coachingRank) {
 
     age = g.season - p.born.year;
 
-    calcBaseChange = (age, potentialDifference) => {
-        let val;
+    calcBaseChange = function (age, potentialDifference) {
+        var val;
 
         // Average rating change if there is no potential difference
         if (age <= 21) {
@@ -486,7 +487,7 @@ function develop(p, years, generate, coachingRank) {
  * @return {Object} Updated player object.
  */
 function bonus(p, amount) {
-    let age, i, key, r, ratingKeys;
+    var age, i, key, r, ratingKeys;
 
     // Make sure age is always defined
     age = g.season - p.born.year;
@@ -519,9 +520,9 @@ function bonus(p, amount) {
  * @return {Promise} Array of base moods, one for each team.
  */
 function genBaseMoods(ot) {
-    const dbOrTx = ot !== null ? ot : g.dbl;
-    return dbOrTx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, ''])).map(teamSeason => {
-        let baseMood;
+    var dbOrTx = ot !== null ? ot : g.dbl;
+    return dbOrTx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, ''])).map(function (teamSeason) {
+        var baseMood;
 
         // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
         if (teamSeason.playoffRoundsWon === 4 && Math.random() < 0.99) {
@@ -562,8 +563,8 @@ function genBaseMoods(ot) {
  * @return {Promise}
  */
 function addToFreeAgents(ot, p, phase, baseMoods) {
-    let pr;
-    const dbOrTx = ot !== null ? ot : g.dbl;
+    var pr;
+    var dbOrTx = ot !== null ? ot : g.dbl;
 
     phase = phase !== null ? phase : g.phase;
 
@@ -571,7 +572,7 @@ function addToFreeAgents(ot, p, phase, baseMoods) {
     p = setContract(p, genContract(p), false);
 
     // Set initial player mood towards each team
-    p.freeAgentMood = _.map(baseMoods, mood => {
+    p.freeAgentMood = _.map(baseMoods, function (mood) {
         if (pr.ovr + pr.pot < 80) {
             // Bad players don't have the luxury to be choosy about teams
             return 0;
@@ -594,7 +595,9 @@ function addToFreeAgents(ot, p, phase, baseMoods) {
     p.ptModifier = 1; // Reset
 
     // The put doesn't always work in Chrome. No idea why.
-    return dbOrTx.players.put(p).then(() => {});
+    return dbOrTx.players.put(p).then(function () {
+        return; // No output
+    });
 }
 
 /**
@@ -624,13 +627,15 @@ function release(tx, p, justDrafted) {
 
     eventLog.add(null, {
         type: "release",
-        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>.`,
+        text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> released <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>.',
         showNotification: false,
         pids: [p.pid],
         tids: [p.tid]
     });
 
-    return genBaseMoods(tx).then(baseMoods => addToFreeAgents(tx, p, g.phase, baseMoods));
+    return genBaseMoods(tx).then(function (baseMoods) {
+        return addToFreeAgents(tx, p, g.phase, baseMoods);
+    });
 }
 
 /**
@@ -643,7 +648,7 @@ function release(tx, p, justDrafted) {
  * @return {number} Fuzz, between -5 and 5.
  */
 function genFuzz(scoutingRank) {
-    let cutoff, fuzz, sigma;
+    var cutoff, fuzz, sigma;
 
     cutoff = 2 + 8 * (scoutingRank - 1) / (g.numTeams - 1);  // Max error is from 2 to 10, based on scouting rank
     sigma = 1 + 2 * (scoutingRank - 1) / (g.numTeams - 1);  // Stddev is from 1 to 3, based on scouting rank
@@ -670,7 +675,7 @@ function genFuzz(scoutingRank) {
  * @return {Object} Ratings object
  */
 function genRatings(profile, baseRating, pot, season, scoutingRank, tid) {
-    let i, j, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
+    var i, j, key, profileId, profiles, ratingKeys, ratings, rawRating, rawRatings, sigmas;
 
     if (profile === "Point") {
         profileId = 1;
@@ -739,7 +744,7 @@ function genRatings(profile, baseRating, pot, season, scoutingRank, tid) {
 }
 
 function name() {
-    let fn, fnRand, i, ln, lnRand;
+    var fn, fnRand, i, ln, lnRand;
 
     if (!playerNames) {
         // This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
@@ -764,7 +769,7 @@ function name() {
     }
     ln = playerNames.last[i][0];
 
-    return `${fn} ${ln}`;
+    return fn + " " + ln;
 }
 
 /**
@@ -778,7 +783,7 @@ function name() {
  * @return {Object} Updated player object.
  */
 function addRatingsRow(p, scoutingRank) {
-    let key, newRatings, r;
+    var key, newRatings, r;
 
     newRatings = {};
     r = p.ratings.length - 1; // Most recent ratings
@@ -808,12 +813,12 @@ function addRatingsRow(p, scoutingRank) {
  * @return {Object} Updated player object.
  */
 function addStatsRow(ot, p, playoffs) {
-    let ps, statsRow, stopOnSeason;
-    const dbOrTx = ot !== null ? ot : g.dbl;
+    var ps, statsRow, stopOnSeason;
+    var dbOrTx = ot !== null ? ot : g.dbl;
 
     playoffs = playoffs !== undefined ? playoffs : false;
 
-    statsRow = {pid: p.pid, season: g.season, tid: p.tid, playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, pm: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, per: 0, ewa: 0, yearsWithTeam: 1};
+    statsRow = {pid: p.pid, season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, pm: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, per: 0, ewa: 0, yearsWithTeam: 1};
 
     p.statsTids.push(p.tid);
     p.statsTids = _.uniq(p.statsTids);
@@ -821,7 +826,7 @@ function addStatsRow(ot, p, playoffs) {
     // Calculate yearsWithTeam
     // Iterate over player stats objects, most recent first
     ps = [];
-    Promise.try(() => {
+    Promise.try(function () {
         if (!playoffs) {
             // Because the "pid, season, tid" index does not order by psid, the first time we see a tid !== p.tid could
             // be the same season a player was traded to that team, and there still could be one more with tid ===
@@ -830,7 +835,7 @@ function addStatsRow(ot, p, playoffs) {
             stopOnSeason = 0;
 
             return dbOrTx.playerStats.index('pid, season, tid')
-                .iterate(backboard.bound([p.pid, 0], [p.pid, g.season + 1]), 'prev', (psTemp, shortCircuit) => {
+                .iterate(backboard.bound([p.pid, 0], [p.pid, g.season + 1]), 'prev', function (psTemp, shortCircuit) {
                     // Skip playoff stats
                     if (psTemp.playoffs) {
                         return;
@@ -850,10 +855,13 @@ function addStatsRow(ot, p, playoffs) {
                     }
                 });
         }
-    }).then(() => {
-        let i;
+    }).then(function () {
+        var i;
 
-        ps = ps.sort((a, b) => b.psid - a.psid);
+        ps = ps.sort(function (a, b) {
+            // Sort seasons in descending order. This is necessary because otherwise the index will cause ordering to be by tid within a season, which is probably not what is ever wanted.
+            return b.psid - a.psid;
+        });
 
         // Count non-playoff seasons starting from the current one
         for (i = 0; i < ps.length; i++) {
@@ -877,7 +885,7 @@ function addStatsRow(ot, p, playoffs) {
 }
 
 function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scoutingRank) {
-    let maxHgt, maxWeight, minHgt, minWeight, nationality, p, rand;
+    var maxHgt, maxWeight, minHgt, minWeight, nationality, p, rand;
 
     p = {}; // Will be saved to database
     p.tid = tid;
@@ -936,7 +944,7 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
         year: draftYear,
         teamName: null,
         teamRegion: null,
-        pot,
+        pot: pot,
         ovr: p.ratings[0].ovr,
         skills: p.ratings[0].skills
     };
@@ -973,7 +981,7 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
  * @return {Object} Injury object (type and gamesRemaining)
  */
 function injury(healthRank) {
-    let i, rand;
+    var i, rand;
 
     rand = random.uniform(0, 10882);
     for (i = 0; i < injuries.cumSum.length; i++) {
@@ -995,7 +1003,7 @@ function injury(healthRank) {
  * @return {number} numGamesRemaining Number of games remaining in the current season (0 to g.numGames).
  */
 function contractSeasonsRemaining(exp, numGamesRemaining) {
-    let frac = numGamesRemaining / g.numGames;
+    var frac = numGamesRemaining / g.numGames;
     if (frac > 1) { frac = 1; } // This only happens if the user changed g.numGames mid season
     return (exp - g.season) + frac;
 }
@@ -1030,7 +1038,7 @@ function contractSeasonsRemaining(exp, numGamesRemaining) {
  * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.
  */
 function filter(p, options) {
-    let filterAttrs, filterRatings, filterStats, filterStatsPartial, fp, fps, gatherStats, i, returnOnePlayer;
+    var filterAttrs, filterRatings, filterStats, filterStatsPartial, fp, fps, gatherStats, i, returnOnePlayer;
 
     returnOnePlayer = false;
     if (!_.isArray(p)) {
@@ -1060,8 +1068,8 @@ function filter(p, options) {
     }
 
     // Copys/filters the attributes listed in options.attrs from p to fp.
-    filterAttrs = (fp, p, options) => {
-        let award, awardsGroupedTemp, i;
+    filterAttrs = function (fp, p, options) {
+        var award, awardsGroupedTemp, i;
 
         for (i = 0; i < options.attrs.length; i++) {
             if (options.attrs[i] === "age") {
@@ -1109,12 +1117,12 @@ function filter(p, options) {
             } else if (options.attrs[i] === "injury" && options.season !== null && options.season < g.season) {
                 fp.injury = {type: "Healthy", gamesRemaining: 0};
             } else if (options.attrs[i] === "salaries") {
-                fp.salaries = _.map(p.salaries, salary => { salary.amount /= 1000; return salary; });
+                fp.salaries = _.map(p.salaries, function (salary) { salary.amount /= 1000; return salary; });
             } else if (options.attrs[i] === "salariesTotal") {
-                fp.salariesTotal = _.reduce(fp.salaries, (memo, salary) => memo + salary.amount, 0);
+                fp.salariesTotal = _.reduce(fp.salaries, function (memo, salary) { return memo + salary.amount; }, 0);
             } else if (options.attrs[i] === "awardsGrouped") {
                 fp.awardsGrouped = [];
-                awardsGroupedTemp = _.groupBy(p.awards, award => award.type);
+                awardsGroupedTemp = _.groupBy(p.awards, function (award) { return award.type; });
                 for (award in awardsGroupedTemp) {
                     if (awardsGroupedTemp.hasOwnProperty(award)) {
                         fp.awardsGrouped.push({
@@ -1131,8 +1139,8 @@ function filter(p, options) {
     };
 
     // Copys/filters the ratings listed in options.ratings from p to fp.
-    filterRatings = (fp, p, options) => {
-        let cat, hasStats, i, j, k, kk, pr, tidTemp;
+    filterRatings = function (fp, p, options) {
+        var cat, hasStats, i, j, k, kk, pr, tidTemp;
 
         if (options.season !== null) {
             // One season
@@ -1231,8 +1239,8 @@ function filter(p, options) {
     };
 
     // Returns stats object, containing properties "r" for regular season, "p" for playoffs, and "cr"/"cp" for career. "r" and "p" can be either objects (single season) or arrays of objects (multiple seasons). All these outputs are raw season totals, not per-game averages.
-    gatherStats = (p, options) => {
-        let ignoredKeys, j, key, ps;
+    gatherStats = function (p, options) {
+        var ignoredKeys, j, key, ps;
 
         ps = {};
 
@@ -1298,9 +1306,9 @@ function filter(p, options) {
                     for (key in ps.r[0]) {
                         if (ps.r[0].hasOwnProperty(key)) {
                             if (ignoredKeys.indexOf(key) < 0) {
-                                ps.cr[key] = _.reduce(_.pluck(ps.r, key), (memo, num) => memo + num, 0);
+                                ps.cr[key] = _.reduce(_.pluck(ps.r, key), function (memo, num) { return memo + num; }, 0);
                                 if (options.playoffs) {
-                                    ps.cp[key] = _.reduce(_.pluck(ps.p, key), (memo, num) => memo + num, 0);
+                                    ps.cp[key] = _.reduce(_.pluck(ps.p, key), function (memo, num) { return memo + num; }, 0);
                                 }
                             }
                         }
@@ -1313,8 +1321,8 @@ function filter(p, options) {
     };
 
     // Filters s by stats (which should be options.stats) and returns a filtered object. This is to do one season of stats filtering.
-    filterStatsPartial = (p, s, stats) => {
-        let j, row;
+    filterStatsPartial = function (p, s, stats) {
+        var j, row;
 
         row = {};
 
@@ -1415,8 +1423,8 @@ function filter(p, options) {
     };
 
     // Copys/filters the stats listed in options.stats from p to fp. If no stats are found for the supplied settings, then fp.stats remains undefined.
-    filterStats = (fp, p, options) => {
-        let i, ps;
+    filterStats = function (fp, p, options) {
+        var i, ps;
 
         ps = gatherStats(p, options);
 
@@ -1441,17 +1449,17 @@ function filter(p, options) {
                 fp.careerStats = filterStatsPartial(p, ps.cr, options.stats);
                 // Special case for PER - weight by minutes per season
                 if (options.totals) {
-                    fp.careerStats.per = _.reduce(ps.r, (memo, psr) => memo + psr.per * psr.min, 0) / (fp.careerStats.min);
+                    fp.careerStats.per = _.reduce(ps.r, function (memo, psr) { return memo + psr.per * psr.min; }, 0) / (fp.careerStats.min);
                 } else {
-                    fp.careerStats.per = _.reduce(ps.r, (memo, psr) => memo + psr.per * psr.min, 0) / (fp.careerStats.min * fp.careerStats.gp);
+                    fp.careerStats.per = _.reduce(ps.r, function (memo, psr) { return memo + psr.per * psr.min; }, 0) / (fp.careerStats.min * fp.careerStats.gp);
                 }
                 if (isNaN(fp.careerStats.per)) { fp.careerStats.per = 0; }
-                fp.careerStats.ewa = _.reduce(ps.r, (memo, psr) => memo + psr.ewa, 0); // Special case for EWA - sum
+                fp.careerStats.ewa = _.reduce(ps.r, function (memo, psr) { return memo + psr.ewa; }, 0); // Special case for EWA - sum
                 if (options.playoffs) {
                     fp.careerStatsPlayoffs = filterStatsPartial(p, ps.cp, options.stats);
-                    fp.careerStatsPlayoffs.per = _.reduce(ps.p, (memo, psp) => memo + psp.per * psp.min, 0) / (fp.careerStatsPlayoffs.min * fp.careerStatsPlayoffs.gp); // Special case for PER - weight by minutes per season
+                    fp.careerStatsPlayoffs.per = _.reduce(ps.p, function (memo, psp) { return memo + psp.per * psp.min; }, 0) / (fp.careerStatsPlayoffs.min * fp.careerStatsPlayoffs.gp); // Special case for PER - weight by minutes per season
                     if (isNaN(fp.careerStatsPlayoffs.per)) { fp.careerStatsPlayoffs.per = 0; }
-                    fp.careerStatsPlayoffs.ewa = _.reduce(ps.p, (memo, psp) => memo + psp.ewa, 0); // Special case for EWA - sum
+                    fp.careerStatsPlayoffs.ewa = _.reduce(ps.p, function (memo, psp) { return memo + psp.ewa; }, 0); // Special case for EWA - sum
                 }
             } else if (options.stats.length > 0) { // Return 0 stats if no entry and a single year was requested, unless no stats were explicitly requested
                 // Single seasons
@@ -1500,7 +1508,7 @@ function filter(p, options) {
  * @return {boolean} Hall of Fame worthy?
  */
 function madeHof(p, playerStats) {
-    let df, ewa, ewas, fudgeSeasons, i, mins, pers, pos, prls, va;
+    var df, ewa, ewas, fudgeSeasons, i, mins, pers, pos, prls, va;
 
     mins = _.pluck(playerStats, "min");
     pers = _.pluck(playerStats, "per");
@@ -1529,7 +1537,7 @@ function madeHof(p, playerStats) {
 //console.log(_.pluck(p.stats, "ewa"))
 
     // Calculate career EWA and "dominance factor" DF (top 5 years EWA - 50)
-    ewas.sort((a, b) => b - a); // Descending order
+    ewas.sort(function (a, b) { return b - a; }); // Descending order
     ewa = 0;
     df = -50;
     for (i = 0; i < ewas.length; i++) {
@@ -1575,7 +1583,7 @@ function madeHof(p, playerStats) {
  *     ratings.
  */
 function value(p, ps, options) {
-    let age, current, potential, pr, ps1, ps2, s;
+    var age, current, potential, pr, ps1, ps2, s;
 
     options = options !== undefined ? options : {};
     options.noPot = options.noPot !== undefined ? options.noPot : false;
@@ -1685,9 +1693,9 @@ function value(p, ps, options) {
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
 function updateValues(ot, p, ps) {
-    const dbOrTx = ot !== null ? ot : g.dbl;
-    return Promise.try(() => {
-        let season;
+    var dbOrTx = ot !== null ? ot : g.dbl;
+    return Promise.try(function () {
+        var season;
 
         // Require up to the two most recent regular season stats entries, unless the current season has 2000+ minutes
         if (ps.length === 0 || (ps.length === 1 && ps[0].min < 2000)) {
@@ -1707,7 +1715,7 @@ function updateValues(ot, p, ps) {
             // Start at season and look backwards until we hit
             // This will not work totally right if a player played for multiple teams in a season. It should be ordered by psid, instead it's ordered by tid because of the index used
             return dbOrTx.playerStats.index('pid, season, tid')
-                .iterate(backboard.bound([p.pid, 0], [p.pid, season + 1]), 'prev', (psTemp, shortCircuit) => {
+                .iterate(backboard.bound([p.pid, 0], [p.pid, season + 1]), 'prev', function (psTemp, shortCircuit) {
                     // Skip playoff stats
                     if (psTemp.playoffs) {
                         return;
@@ -1722,7 +1730,7 @@ function updateValues(ot, p, ps) {
                     }
                 });
         }
-    }).then(() => {
+    }).then(function () {
         p.value = value(p, ps);
         p.valueNoPot = value(p, ps, {noPot: true});
         p.valueFuzz = value(p, ps, {fuzz: true});
@@ -1743,11 +1751,13 @@ function updateValues(ot, p, ps) {
  * @param {Object} p Player object.
  * @return {Object} p Updated (retired) player object.
  */
-function retire(tx, p, playerStats, retiredNotification=true) {
+function retire(tx, p, playerStats, retiredNotification) {
+    retiredNotification = retiredNotification !== undefined ? retiredNotification : true;
+
     if (retiredNotification) {
         eventLog.add(tx, {
             type: "retired",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>  retired.`,
+            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>  retired.',
             showNotification: p.tid === g.userTid,
             pids: [p.pid],
             tids: [p.tid]
@@ -1763,7 +1773,7 @@ function retire(tx, p, playerStats, retiredNotification=true) {
         p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
         eventLog.add(tx, {
             type: "hallOfFame",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> was inducted into the <a href="${helpers.leagueUrl(["hall_of_fame"])}">Hall of Fame</a>.`,
+            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> was inducted into the <a href="' + helpers.leagueUrl(["hall_of_fame"]) + '">Hall of Fame</a>.',
             showNotification: p.statsTids.indexOf(g.userTid) >= 0,
             pids: [p.pid],
             tids: p.statsTids
@@ -1812,7 +1822,7 @@ function moodColorText(p) {
  * @return {Object} p Full player object.
  */
 function augmentPartialPlayer(p, scoutingRank) {
-    let age, i, pg, simpleDefaults;
+    var age, i, pg, simpleDefaults;
 
     if (!p.hasOwnProperty("born")) {
         age = random.randInt(19, 35);
@@ -1891,27 +1901,27 @@ function augmentPartialPlayer(p, scoutingRank) {
 }
 
 function checkStatisticalFeat(tx, pid, tid, p, results) {
-    let doubles, feat, featText, featTextArr, i, j, k, key, logFeat, saveFeat, statArr, won;
-    const minFactor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
-    const TEN = minFactor * 10;
-    const FIVE = minFactor * 5;
-    const TWENTY = minFactor * 20;
-    const TWENTY_FIVE = minFactor * 25;
-    const FIFTY = minFactor * 50;
+    var doubles, feat, featText, featTextArr, i, j, k, key, logFeat, saveFeat, statArr, won;
+    var minFactor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
+    var TEN = minFactor * 10;
+    var FIVE = minFactor * 5;
+    var TWENTY = minFactor * 20;
+    var TWENTY_FIVE = minFactor * 25;
+    var FIFTY = minFactor * 50;
 
     saveFeat = false;
 
-    logFeat = text => {
+    logFeat = function (text) {
         eventLog.add(tx, {
             type: "playerFeat",
-            text,
+            text: text,
             showNotification: tid === g.userTid,
             pids: [pid],
             tids: [tid]
         });
     };
 
-    doubles = ["pts", "ast", "stl", "blk"].reduce((count, stat) => {
+    doubles = ["pts", "ast", "stl", "blk"].reduce(function (count, stat) {
         if (p.stat[stat] >= TEN) {
             return count + 1;
         }
@@ -1982,11 +1992,11 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
         featTextArr = [];
         for (key in statArr) {
             if (statArr.hasOwnProperty(key)) {
-                featTextArr.push(`${statArr[key]} ${key}`);
+                featTextArr.push(statArr[key] + " " + key);
             }
         }
 
-        featText = `<a href="${helpers.leagueUrl(["player", pid])}">${p.name}</a> had <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid])}">`;
+        featText = '<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> had <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">';
         for (k = 0; k < featTextArr.length; k++) {
             if (featTextArr.length > 1 && k === featTextArr.length - 1) {
                 featText += " and ";
@@ -1998,22 +2008,22 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
                 featText += ", ";
             }
         }
-        featText += `</a> in ${results.team[i].stat.pts.toString().charAt(0) === '8' ? 'an ' : 'a '}${results.team[i].stat.pts}-${results.team[j].stat.pts}${won ? ' win over the ' : ' loss to the '}${g.teamNamesCache[results.team[j].id]}.`;
+        featText += '</a> in ' + (results.team[i].stat.pts.toString().charAt(0) === '8' ? 'an ' : 'a ') + results.team[i].stat.pts + "-" + results.team[j].stat.pts + (won ? ' win over the ' : ' loss to the ') + g.teamNamesCache[results.team[j].id] + '.';
 
         logFeat(featText);
 
         feat = {
-            pid,
+            pid: pid,
             name: p.name,
             pos: p.pos,
             season: g.season,
-            tid,
+            tid: tid,
             oppTid: results.team[j].id,
             playoffs: g.phase === g.PHASE.PLAYOFFS,
             gid: results.gid,
             stats: p.stat,
-            won,
-            score: `${results.team[i].stat.pts}-${results.team[j].stat.pts}`,
+            won: won,
+            score: results.team[i].stat.pts + "-" + results.team[j].stat.pts,
             overtimes: results.overtimes
         };
 
@@ -2022,7 +2032,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 }
 
 function killOne() {
-    let p, reason, tid;
+    var p, reason, tid;
 
     reason = random.choice([
         "died from a drug overdose",
@@ -2048,31 +2058,33 @@ function killOne() {
     // Pick random team
     tid = random.randInt(0, g.numTeams - 1);
 
-    return g.dbl.tx(["events", "playerStats", "players"], "readwrite", tx => tx.players.index('tid').getAll(tid).then(players => {
-        // Pick a random player on that team
-        p = random.choice(players);
+    return g.dbl.tx(["events", "playerStats", "players"], "readwrite", function (tx) {
+        return tx.players.index('tid').getAll(tid).then(function (players) {
+            // Pick a random player on that team
+            p = random.choice(players);
 
-        // Get player stats, used for HOF calculation
-        return tx.playerStats.getAll({
-            index: "pid, season, tid",
-            key: backboard.bound([p.pid], [p.pid, ''])
+            // Get player stats, used for HOF calculation
+            return tx.playerStats.getAll({
+                index: "pid, season, tid",
+                key: backboard.bound([p.pid], [p.pid, ''])
+            });
+        }).then(function (playerStats) {
+            p = retire(tx, p, playerStats, false);
+
+            p.diedYear = g.season;
+
+            return tx.players.put(p);
+        }).then(function () {
+            eventLog.add(tx, {
+                type: "tragedy",
+                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ' + reason + '.',
+                showNotification: tid === g.userTid,
+                pids: [p.pid],
+                tids: [tid],
+                persistent: true
+            });
         });
-    }).then(playerStats => {
-        p = retire(tx, p, playerStats, false);
-
-        p.diedYear = g.season;
-
-        return tx.players.put(p);
-    }).then(() => {
-        eventLog.add(tx, {
-            type: "tragedy",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> ${reason}.`,
-            showNotification: tid === g.userTid,
-            pids: [p.pid],
-            tids: [tid],
-            persistent: true
-        });
-    }));
+    });
 }
 
 function withStats(tx, players, options) {
@@ -2080,15 +2092,15 @@ function withStats(tx, players, options) {
     options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
     options.filter = options.filter !== undefined ? options.filter : null;
 
-    return helpers.maybeReuseTx(["players", "playerStats"], "readonly", tx, tx => {
+    return helpers.maybeReuseTx(["players", "playerStats"], "readonly", tx, function (tx) {
         if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
             // No stats needed! Yay!
             return players;
         }
 
         // Get stats
-        return Promise.map(players, p => {
-            let key;
+        return Promise.map(players, function (p) {
+            var key;
 
             if (options.statsSeasons === "all") {
                 // All seasons
@@ -2101,9 +2113,9 @@ function withStats(tx, players, options) {
                 key = backboard.bound([p.pid, Math.min.apply(null, options.statsSeasons)], [p.pid, Math.max.apply(null, options.statsSeasons), '']);
             }
 
-            return tx.playerStats.index('pid, season, tid').getAll(key).then(playerStats => {
+            return tx.playerStats.index('pid, season, tid').getAll(key).then(function (playerStats) {
                 // Due to indexes not necessarily handling all cases, still need to filter
-                p.stats = playerStats.filter(ps => {
+                p.stats = playerStats.filter(function (ps) {
                     // statsSeasons is defined, but this season isn't in it
                     if (options.statsSeasons !== "all" && options.statsSeasons.indexOf(ps.season) < 0) {
                         return false;
@@ -2119,8 +2131,13 @@ function withStats(tx, players, options) {
                     }
 
                     return true;
-                }).sort((a, b) => a.psid - b.psid);
-            }).then(() => p);
+                }).sort(function (a, b) {
+                    // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
+                    return a.psid - b.psid;
+                });
+            }).then(function () {
+                return p;
+            });
         });
     });
 }
@@ -2152,4 +2169,3 @@ module.exports = {
     killOne,
     withStats
 };
-

@@ -8,6 +8,7 @@ const eventLog = require('../util/eventLog');
 const helpers = require('../util/helpers');
 const random = require('../util/random');
 
+
 /**
  * Update g.ownerMood based on performance this season.
  *
@@ -23,8 +24,8 @@ function updateOwnerMood(tx) {
         seasonAttrs: ["won", "playoffRoundsWon", "profit"],
         season: g.season,
         tid: g.userTid
-    }).then(t => {
-        let deltas, ownerMood;
+    }).then(function (t) {
+        var deltas, ownerMood;
 
         deltas = {};
         deltas.wins = 0.25 * (t.won - g.numGames / 2) / (g.numGames / 2);
@@ -37,7 +38,7 @@ function updateOwnerMood(tx) {
         }
         deltas.money = (t.profit - 15) / 100;
 
-        return Promise.try(() => {
+        return Promise.try(function () {
             // Only update owner mood if grace period is over
             if (g.season >= g.gracePeriodEnd) {
                 ownerMood = {};
@@ -50,9 +51,11 @@ function updateOwnerMood(tx) {
                 if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
                 if (ownerMood.money > 1) { ownerMood.money = 1; }
 
-                return require('../core/league').setGameAttributes(tx, {ownerMood});
+                return require('../core/league').setGameAttributes(tx, {ownerMood: ownerMood});
             }
-        }).then(() => deltas);
+        }).then(function () {
+            return deltas;
+        });
     });
 }
 
@@ -66,29 +69,31 @@ function updateOwnerMood(tx) {
  * @return {Promise}
  */
 function awards(tx) {
-    let awards, awardsByPlayer, saveAwardsByPlayer;
+    var awards, awardsByPlayer, saveAwardsByPlayer;
 
     awards = {season: g.season};
 
     // [{pid, type}]
     awardsByPlayer = [];
 
-    saveAwardsByPlayer = awardsByPlayer => {
-        let pids;
+    saveAwardsByPlayer = function (awardsByPlayer) {
+        var pids;
 
         pids = _.uniq(_.pluck(awardsByPlayer, "pid"));
 
-        return Promise.map(pids, pid => tx.players.get(pid).then(p => {
-            let i;
+        return Promise.map(pids, function (pid) {
+            return tx.players.get(pid).then(function (p) {
+                var i;
 
-            for (i = 0; i < awardsByPlayer.length; i++) {
-                if (p.pid === awardsByPlayer[i].pid) {
-                    p.awards.push({season: g.season, type: awardsByPlayer[i].type});
+                for (i = 0; i < awardsByPlayer.length; i++) {
+                    if (p.pid === awardsByPlayer[i].pid) {
+                        p.awards.push({season: g.season, type: awardsByPlayer[i].type});
+                    }
                 }
-            }
 
-            return tx.players.put(p);
-        }));
+                return tx.players.put(p);
+            });
+        });
     };
 
     // Get teams for won/loss record for awards, as well as finding the teams with the best records
@@ -98,8 +103,8 @@ function awards(tx) {
         season: g.season,
         sortBy: "winp",
         ot: tx
-    }).then(teams => {
-        let foundEast, foundWest, i, t;
+    }).then(function (teams) {
+        var foundEast, foundWest, i, t;
 
         for (i = 0; i < teams.length; i++) {
             if (!foundEast && teams[i].cid === 0) {
@@ -118,13 +123,15 @@ function awards(tx) {
         }
 
         // Sort teams by tid so it can be easily used in awards formulas
-        teams.sort((a, b) => a.tid - b.tid);
+        teams.sort(function (a, b) { return a.tid - b.tid; });
 
-        return [teams, tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(players => player.withStats(tx, players, {
-            statsSeasons: [g.season]
-        }))];
-    }).spread((teams, players) => {
-        let champTid, i, p, rookies, type;
+        return [teams, tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
+            return player.withStats(tx, players, {
+                statsSeasons: [g.season]
+            });
+        })];
+    }).spread(function (teams, players) {
+        var champTid, i, p, rookies, type;
 
         players = player.filter(players, {
             attrs: ["pid", "name", "tid", "abbrev", "draft"],
@@ -143,7 +150,10 @@ function awards(tx) {
         }
 
         // Rookie of the Year
-        rookies = players.filter(p => p.draft.year === g.season - 1).sort((a, b) => b.stats.ewa - a.stats.ewa); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
+        rookies = players.filter(function (p) {
+            // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+            return p.draft.year === g.season - 1;
+        }).sort(function (a, b) { return b.stats.ewa - a.stats.ewa; }); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
         p = rookies[0];
         if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
             awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
@@ -161,7 +171,7 @@ function awards(tx) {
         }
 
         // Most Valuable Player
-        players.sort((a, b) => (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won));
+        players.sort(function (a, b) { return (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won); });
         p = players[0];
         awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
         awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
@@ -190,11 +200,11 @@ function awards(tx) {
                 type = "Third Team All-League";
             }
             _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type});
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
         }
 
         // Defensive Player of the Year
-        players.sort((a, b) => b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl));
+        players.sort(function (a, b) { return b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl); });
         p = players[0];
         awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
         awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
@@ -212,7 +222,7 @@ function awards(tx) {
                 type = "Third Team All-Defensive";
             }
             _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type});
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
         }
 
         // Finals MVP - most WS in playoffs
@@ -223,13 +233,15 @@ function awards(tx) {
             }
         }
         // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
-        return [champTid, tx.players.index('tid').getAll(champTid).then(players => player.withStats(tx, players, {
-            statsSeasons: [g.season],
-            statsTid: champTid,
-            statsPlayoffs: true
-        }))];
-    }).spread((champTid, players) => {
-        let p;
+        return [champTid, tx.players.index('tid').getAll(champTid).then(function (players) {
+            return player.withStats(tx, players, {
+                statsSeasons: [g.season],
+                statsTid: champTid,
+                statsPlayoffs: true
+            });
+        })];
+    }).spread(function (champTid, players) {
+        var p;
 
         players = player.filter(players, { // Only the champions, only playoff stats
             attrs: ["pid", "name", "tid", "abbrev"],
@@ -238,13 +250,15 @@ function awards(tx) {
             playoffs: true,
             tid: champTid
         });
-        players.sort((a, b) => b.statsPlayoffs.ewa - a.statsPlayoffs.ewa);
+        players.sort(function (a, b) { return b.statsPlayoffs.ewa - a.statsPlayoffs.ewa; });
         p = players[0];
         awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
         awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
 
-        return tx.awards.put(awards).then(() => saveAwardsByPlayer(awardsByPlayer)).then(() => {
-            let i, p, text;
+        return tx.awards.put(awards).then(function () {
+            return saveAwardsByPlayer(awardsByPlayer);
+        }).then(function () {
+            var i, p, text;
 
             // None of this stuff needs to block, it's just notifications of crap
 
@@ -252,15 +266,15 @@ function awards(tx) {
             for (i = 0; i < awardsByPlayer.length; i++) {
                 p = awardsByPlayer[i];
 
-                text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> (<a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamAbbrevsCache[p.tid]}</a>) `;
+                text = '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamAbbrevsCache[p.tid] + '</a>) ';
                 if (p.type.indexOf("Team") >= 0) {
-                    text += `made the ${p.type}.`;
+                    text += 'made the ' + p.type + '.';
                 } else {
-                    text += `won the ${p.type} award.`;
+                    text += 'won the ' + p.type + ' award.';
                 }
                 eventLog.add(null, {
                     type: "award",
-                    text,
+                    text: text,
                     showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",
                     pids: [p.pid],
                     tids: [p.tid]
@@ -278,31 +292,34 @@ function awards(tx) {
  * @param {boolean} options.oneDay Number of days of games requested. Default false.
  * @return {Promise} Resolves to the requested schedule array.
  */
-function getSchedule(options={}) {
+function getSchedule(options) {
+    options = options !== undefined ? options : {};
     options.ot = options.ot !== undefined ? options.ot : null;
     options.oneDay = options.oneDay !== undefined ? options.oneDay : false;
 
-    return helpers.maybeReuseTx(["schedule"], "readonly", options.ot, tx => tx.schedule.getAll().then(schedule => {
-        let i, tids;
+    return helpers.maybeReuseTx(["schedule"], "readonly", options.ot, function (tx) {
+        return tx.schedule.getAll().then(function (schedule) {
+            var i, tids;
 
-        if (options.oneDay) {
-            schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
+            if (options.oneDay) {
+                schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
 
-            // Only take the games up until right before a team plays for the second time that day
-            tids = [];
-            for (i = 0; i < schedule.length; i++) {
-                if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
-                    tids.push(schedule[i].homeTid);
-                    tids.push(schedule[i].awayTid);
-                } else {
-                    break;
+                // Only take the games up until right before a team plays for the second time that day
+                tids = [];
+                for (i = 0; i < schedule.length; i++) {
+                    if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
+                        tids.push(schedule[i].homeTid);
+                        tids.push(schedule[i].awayTid);
+                    } else {
+                        break;
+                    }
                 }
+                schedule = schedule.slice(0, i);
             }
-            schedule = schedule.slice(0, i);
-        }
 
-        return schedule;
-    }));
+            return schedule;
+        });
+    });
 }
 
 /**
@@ -314,7 +331,7 @@ function getSchedule(options={}) {
  * @return {Promise}
  */
 function setSchedule(tx, tids) {
-    let i, newSchedule;
+    var i, newSchedule;
 
     newSchedule = [];
     for (i = 0; i < tids.length; i++) {
@@ -324,7 +341,11 @@ function setSchedule(tx, tids) {
         });
     }
 
-    return tx.schedule.clear().then(() => Promise.each(newSchedule, matchup => tx.schedule.add(matchup)));
+    return tx.schedule.clear().then(function () {
+        return Promise.each(newSchedule, function (matchup) {
+            return tx.schedule.add(matchup);
+        });
+    });
 }
 
 /**
@@ -336,7 +357,7 @@ function setSchedule(tx, tids) {
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
 function newScheduleDefault(teams) {
-    let cid, dids, game, games, good, i, ii, iters, j, jj, k, matchup, matchups, n, newMatchup, t, tids, tidsByConf, tryNum;
+    var cid, dids, game, games, good, i, ii, iters, j, jj, k, matchup, matchups, n, newMatchup, t, tids, tidsByConf, tryNum;
 
     tids = [];  // tid_home, tid_away
 
@@ -453,7 +474,7 @@ function newScheduleDefault(teams) {
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
 function newScheduleCrappy() {
-    let i, j, numRemaining, numWithRemaining, tids, tries;
+    var i, j, numRemaining, numWithRemaining, tids, tries;
 
     // Number of games left to reschedule for each team
     numRemaining = [];
@@ -476,7 +497,7 @@ function newScheduleCrappy() {
             if (tries > 10000) {
                 console.log(tids, tids.length);
                 console.log(numRemaining.length);
-                throw new Error(`Failed to generate schedule with ${g.numTeams} teams and ${g.numGames} games.`);
+                throw new Error('Failed to generate schedule with ' + g.numTeams + ' teams and ' + g.numGames + ' games.');
             }
         }
 
@@ -510,7 +531,7 @@ function newScheduleCrappy() {
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
 function newSchedule(teams) {
-    let days, i, j, jMax, tids, tidsInDays, used;
+    var days, i, j, jMax, tids, tidsInDays, used;
 
     if (g.numTeams === 30 && g.numGames === 82) {
         tids = newScheduleDefault(teams);
@@ -555,10 +576,10 @@ function newSchedule(teams) {
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
 function newSchedulePlayoffsDay(tx) {
-    let playoffSeries, rnd, series, tids;
+    var playoffSeries, rnd, series, tids;
 
-    return tx.playoffSeries.get(g.season).then(playoffSeriesLocal => {
-        let i, numGames;
+    return tx.playoffSeries.get(g.season).then(function (playoffSeriesLocal) {
+        var i, numGames;
 
         playoffSeries = playoffSeriesLocal;
         series = playoffSeries.series;
@@ -577,14 +598,16 @@ function newSchedulePlayoffsDay(tx) {
                 }
             }
         }
-    }).then(() => {
-        let i, key, matchup, team1, team2, tidsWon;
+    }).then(function () {
+        var i, key, matchup, team1, team2, tidsWon;
 
         // Now playoffSeries, rnd, series, and tids are set
 
         // If series are still in progress, write games and short circuit
         if (tids.length > 0) {
-            return setSchedule(tx, tids).then(() => false);
+            return setSchedule(tx, tids).then(function () {
+                return false;
+            });
         }
 
         // If playoffs are over, update winner and go to next phase
@@ -594,7 +617,7 @@ function newSchedulePlayoffsDay(tx) {
             } else if (series[rnd][0].away.won === 4) {
                 key = series[rnd][0].away.tid;
             }
-            return tx.teamSeasons.index("season, tid").iterate([g.season, key], teamSeason => {
+            return tx.teamSeasons.index("season, tid").iterate([g.season, key], function (teamSeason) {
                 teamSeason.playoffRoundsWon = 4;
                 teamSeason.hype += 0.05;
                 if (teamSeason.hype > 1) {
@@ -602,7 +625,10 @@ function newSchedulePlayoffsDay(tx) {
                 }
 
                 return teamSeason;
-            }).then(() => true);
+            }).then(function () {
+                // Playoffs are over! Return true!
+                return true;
+            });
         }
 
         // Playoffs are not over! Make another round
@@ -639,15 +665,23 @@ function newSchedulePlayoffsDay(tx) {
         }
 
         playoffSeries.currentRound += 1;
-        return tx.playoffSeries.put(playoffSeries).then(() => Promise.map(tidsWon, tid => tx.teamSeasons.index("season, tid").get([g.season, tid]).then(teamSeason => {
-            teamSeason.playoffRoundsWon = playoffSeries.currentRound;
-            teamSeason.hype += 0.05;
-            if (teamSeason.hype > 1) {
-                teamSeason.hype = 1;
-            }
+        return tx.playoffSeries.put(playoffSeries).then(function () {
+            // Update hype for winning a series
+            return Promise.map(tidsWon, function (tid) {
+                return tx.teamSeasons.index("season, tid").get([g.season, tid]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = playoffSeries.currentRound;
+                    teamSeason.hype += 0.05;
+                    if (teamSeason.hype > 1) {
+                        teamSeason.hype = 1;
+                    }
 
-            return tx.teamSeasons.put(teamSeason);
-        }))).then(() => newSchedulePlayoffsDay(tx));
+                    return tx.teamSeasons.put(teamSeason);
+                });
+            });
+        }).then(function () {
+            // Next time, the schedule for the first day of the next round will be set
+            return newSchedulePlayoffsDay(tx);
+        });
     });
 }
 
@@ -658,8 +692,8 @@ function newSchedulePlayoffsDay(tx) {
  * @return {Promise} The number of days left in the schedule.
  */
 function getDaysLeftSchedule() {
-    return getSchedule().then(schedule => {
-        let i, numDays, tids;
+    return getSchedule().then(function (schedule) {
+        var i, numDays, tids;
 
         numDays = 0;
 
@@ -691,4 +725,3 @@ module.exports = {
     newSchedulePlayoffsDay,
     getDaysLeftSchedule
 };
-

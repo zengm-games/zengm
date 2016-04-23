@@ -120,7 +120,7 @@ function updateLastDbChange() {
  * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
  */
 function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
-    let phaseText, skipNewPhase, teams, teamsDefault;
+    var phaseText, skipNewPhase, teams, teamsDefault;
 
     // Any user input?
     if (!leagueFile) {
@@ -153,25 +153,25 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
 
     // Record in meta db
     return g.dbm.leagues.add({
-        name,
-        tid,
-        phaseText,
+        name: name,
+        tid: tid,
+        phaseText: phaseText,
         teamName: teams[tid].name,
         teamRegion: teams[tid].region
-    }).then(lid => {
+    }).then(function (lid) {
         g.lid = lid;
 
         // Create new league database
         return db.connectLeague(g.lid);
-    }).then(() => {
-        let gameAttributes, i;
+    }).then(function () {
+        var gameAttributes, i;
 
         // Default values
         gameAttributes = _.extend(helpers.deepCopy(defaultGameAttributes), {
             userTid: tid,
             userTids: [tid],
             season: startingSeason,
-            startingSeason,
+            startingSeason: startingSeason,
             leagueName: name,
             teamAbbrevsCache: _.pluck(teams, "abbrev"),
             teamRegionsCache: _.pluck(teams, "region"),
@@ -204,10 +204,10 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
         helpers.resetG();
 
         return setGameAttributesComplete(gameAttributes);
-    }).then(() => {
-        let i, j, k, round, scoutingRank, t, teamSeasons, teamStats, toMaybeAdd;
+    }).then(function () {
+        var i, j, k, round, scoutingRank, t, teamSeasons, teamStats, toMaybeAdd;
 
-        return g.dbl.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"], "readwrite", tx => {
+        return g.dbl.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"], "readwrite", function (tx) {
             // Draft picks for the first 4 years, as those are the ones can be traded initially
             if (leagueFile.hasOwnProperty("draftPicks")) {
                 for (i = 0; i < leagueFile.draftPicks.length; i++) {
@@ -220,7 +220,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                             tx.draftPicks.add({
                                 tid: t,
                                 originalTid: t,
-                                round,
+                                round: round,
                                 season: g.startingSeason + i
                             });
                         }
@@ -251,7 +251,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                     teamSeasons = [team.genSeasonRow(t.tid)];
                     teamSeasons[0].pop = teams[i].pop;
                 }
-                teamSeasons.forEach(teamSeason => {
+                teamSeasons.forEach(function (teamSeason) {
                     teamSeason.tid = t.tid;
                     tx.teamSeasons.add(teamSeason);
                 });
@@ -261,7 +261,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 } else {
                     teamStats = [team.genStatsRow(t.tid)];
                 }
-                teamStats.forEach(teamStat => {
+                teamStats.forEach(function (teamStat) {
                     teamStat.tid = t.tid;
                     if (!teamStat.hasOwnProperty("ba")) {
                         teamStat.ba = 0;
@@ -284,7 +284,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                     rid: 0,
                     teams: [
                         {
-                            tid,
+                            tid: tid,
                             pids: [],
                             dpids: []
                         },
@@ -327,8 +327,8 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 }
             }
 
-            return player.genBaseMoods(tx).then(baseMoods => {
-                let agingYears, baseRatings, draftYear, goodNeutralBad, i, n, p, playerTids, players, pots, profile, profiles, t, t2;
+            return player.genBaseMoods(tx).then(function (baseMoods) {
+                var agingYears, baseRatings, draftYear, goodNeutralBad, i, n, p, playerTids, players, pots, profile, profiles, t, t2;
 
                 // Either add players from league file or generate them
 
@@ -340,7 +340,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                     if (randomizeRosters) {
                         // Assign the team ID of all players to the 'playerTids' array.
                         // Check tid to prevent draft prospects from being swapped with established players
-                        playerTids = _.pluck(players.filter(p => p.tid >= g.PLAYER.FREE_AGENT), "tid");
+                        playerTids = _.pluck(players.filter(function (p) { return p.tid >= g.PLAYER.FREE_AGENT; }), "tid");
 
                         // Shuffle the teams that players are assigned to.
                         random.shuffle(playerTids);
@@ -355,8 +355,8 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                         }
                     }
 
-                    players.forEach(p => {
-                        let playerStats;
+                    players.forEach(function (p) {
+                        var playerStats;
 
                         p = player.augmentPartialPlayer(p, scoutingRank);
 
@@ -367,9 +367,9 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                         playerStats = p.stats;
                         delete p.stats;
 
-                        player.updateValues(tx, p, playerStats.reverse()).then(p => {
-                            tx.players.put(p).then(pid => {
-                                let addStatsRows;
+                        player.updateValues(tx, p, playerStats.reverse()).then(function (p) {
+                            tx.players.put(p).then(function (pid) {
+                                var addStatsRows;
 
                                 // When adding a player, this is the only way to know the pid
                                 p.pid = pid;
@@ -382,8 +382,8 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                                     }
                                 } else {
                                     // If there are stats in the League File, add them to the database
-                                    addStatsRows = () => {
-                                        let ps;
+                                    addStatsRows = function () {
+                                        var ps;
 
                                         ps = playerStats.pop();
 
@@ -406,7 +406,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                                         // Delete psid because it can cause problems due to interaction addStatsRow above
                                         delete ps.psid;
 
-                                        tx.playerStats.add(ps).then(() => {
+                                        tx.playerStats.add(ps).then(function () {
                                             // On to the next one
                                             if (playerStats.length > 0) {
                                                 addStatsRows();
@@ -456,8 +456,8 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                             }
 
                             // Update player values after ratings changes
-                            player.updateValues(tx, p, []).then(p => {
-                                let randomizeExp;
+                            player.updateValues(tx, p, []).then(function (p) {
+                                var randomizeExp;
 
                                 // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
                                 randomizeExp = (p.tid !== g.PLAYER.FREE_AGENT);
@@ -469,7 +469,7 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                                 if (p.tid === g.PLAYER.FREE_AGENT) {
                                     player.addToFreeAgents(tx, p, null, baseMoods);
                                 } else {
-                                    tx.players.put(p).then(pid => {
+                                    tx.players.put(p).then(function (pid) {
                                         // When adding a player, this is the only way to know the pid
                                         p.pid = pid;
 
@@ -482,27 +482,29 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
 
                         // Initialize rebuilding/contending, when possible
                         if (t2 >= 0) {
-                            ((goodNeutralBad => {
-                                tx.teams.get(t2).then(t => {
+                            (function (goodNeutralBad) {
+                                tx.teams.get(t2).then(function (t) {
                                     t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
                                     tx.teams.put(t);
                                 });
-                            })(goodNeutralBad));
+                            }(goodNeutralBad));
                         }
                     }
                 }
 
                 return players;
             });
-        }).then(players => {
+        }).then(function (players) {
+            var createUndrafted1, createUndrafted2, createUndrafted3, i;
+
             // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
-            return g.dbl.tx(["players", "playerStats"], "readwrite", tx => {
+            return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
                 // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
-                let createUndrafted1 = Math.round(70 * g.numTeams / 30);
-                let createUndrafted2 = Math.round(70 * g.numTeams / 30);
-                let createUndrafted3 = Math.round(70 * g.numTeams / 30);
+                createUndrafted1 = Math.round(70 * g.numTeams / 30);
+                createUndrafted2 = Math.round(70 * g.numTeams / 30);
+                createUndrafted3 = Math.round(70 * g.numTeams / 30);
                 if (players !== undefined) {
-                    for (let i = 0; i < players.length; i++) {
+                    for (i = 0; i < players.length; i++) {
                         if (players[i].tid === g.PLAYER.UNDRAFTED) {
                             createUndrafted1 -= 1;
                         } else if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
@@ -522,21 +524,29 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 if (createUndrafted3) {
                     draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3);
                 }
-            }).then(() => {
+            }).then(function () {
+                var lid;
+
                 if (skipNewPhase) {
                     // Game already in progress, just start it
                     return g.lid;
                 }
 
-                ui.updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
+                ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
                 ui.updateStatus("Idle");
 
-                const lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
+                lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
                 helpers.bbgmPing("league");
 
                 // Auto sort rosters
-                return g.dbl.tx("players", "readwrite", tx => Promise.map(teams, t => team.rosterAutoSort(tx, t.tid)).then(() => lid));
+                return g.dbl.tx("players", "readwrite", function (tx) {
+                    return Promise.map(teams, function (t) {
+                        return team.rosterAutoSort(tx, t.tid);
+                    }).then(function () {
+                        return lid;
+                    });
+                });
             });
         });
     });

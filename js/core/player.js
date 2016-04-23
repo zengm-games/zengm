@@ -12,7 +12,6 @@ const random = require('../util/random');
 
 let playerNames;
 
-
 /**
  * Limit a rating to between 0 and 100.
  *
@@ -73,11 +72,9 @@ function fuzzRating(rating, fuzz) {
  * @return {Array.<string>} Array of skill IDs.
  */
 function skills(ratings) {
-    var hasSkill, sk;
+    const sk = [];
 
-    sk = [];
-
-    hasSkill = function (ratings, components, weights) {
+    const hasSkill = (ratings, components, weights) => {
         var denominator, i, numerator, rating;
 
         if (weights === undefined) {
@@ -139,27 +136,21 @@ function skills(ratings) {
  * @param {boolean} randomizeExp If true, then it is assumed that some random amount of years has elapsed since the contract was signed, thus decreasing the expiration date. This is used when generating players in a new league.
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
-function genContract(p, randomizeExp, randomizeAmount, noLimit) {
-    var amount, expiration, potentialDifference, ratings, years;
-
-    ratings = _.last(p.ratings);
-
-    randomizeExp = randomizeExp !== undefined ? randomizeExp : false;
-    randomizeAmount = randomizeAmount !== undefined ? randomizeAmount : true;
-    noLimit = noLimit !== undefined ? noLimit : false;
+function genContract(p, randomizeExp = false, randomizeAmount = true, noLimit = false) {
+    const ratings = p.ratings[p.ratings.length - 1];
 
     // Scale proportional to (ovr*2 + pot)*0.5 120-210
     //amount = ((3 * p.value) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
     //amount = amount * (g.maxContract - g.minContract) + g.minContract;
-    amount = ((p.value - 1) / 100 - 0.45) * 3.3 * (g.maxContract - g.minContract) + g.minContract;
+    let amount = ((p.value - 1) / 100 - 0.45) * 3.3 * (g.maxContract - g.minContract) + g.minContract;
     if (randomizeAmount) {
         amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
     }
 
     // Expiration
     // Players with high potentials want short contracts
-    potentialDifference = Math.round((ratings.pot - ratings.ovr) / 4.0);
-    years = 5 - potentialDifference;
+    const potentialDifference = Math.round((ratings.pot - ratings.ovr) / 4.0);
+    let years = 5 - potentialDifference;
     if (years < 2) {
         years = 2;
     }
@@ -182,7 +173,7 @@ function genContract(p, randomizeExp, randomizeAmount, noLimit) {
         }
     }
 
-    expiration = g.season + years - 1;
+    const expiration = g.season + years - 1;
 
     if (!noLimit) {
         if (amount < g.minContract * 1.1) {
@@ -199,7 +190,7 @@ function genContract(p, randomizeExp, randomizeAmount, noLimit) {
 
     amount = 50 * Math.round(amount / 50);  // Make it a multiple of 50k
 
-    return {amount: amount, exp: expiration};
+    return {amount, exp: expiration};
 }
 
 /**
@@ -212,19 +203,17 @@ function genContract(p, randomizeExp, randomizeAmount, noLimit) {
  * @return {Object} Updated player object.
  */
 function setContract(p, contract, signed) {
-    var i, start;
-
     p.contract = contract;
 
     // Only write to salary log if the player is actually signed. Otherwise, we're just generating a value for a negotiation.
     if (signed) {
         // Is this contract beginning with an in-progress season, or next season?
-        start = g.season;
+        let start = g.season;
         if (g.phase > g.PHASE.AFTER_TRADE_DEADLINE) {
             start += 1;
         }
 
-        for (i = start; i <= p.contract.exp; i++) {
+        for (let i = start; i <= p.contract.exp; i++) {
             p.salaries.push({season: i, amount: contract.amount});
         }
     }
@@ -240,13 +229,13 @@ function setContract(p, contract, signed) {
  * @return {string} Position.
  */
 function pos(ratings) {
-    var c, pf, pg, position, sf, sg;
+    let pg = false;
+    let sg = false;
+    let sf = false;
+    let pf = false;
+    let c = false;
 
-    pg = false;
-    sg = false;
-    sf = false;
-    pf = false;
-    c = false;
+    let position;
 
     // With no real skills, default is a G, GF, or F
     if (ratings.hgt < 35) {
@@ -329,19 +318,13 @@ function pos(ratings) {
  * @param {number=} coachingRank From 1 to g.numTeams (default 30), where 1 is best coaching staff and g.numTeams is worst. Default is 15.5
  * @return {Object} Updated player object.
  */
-function develop(p, years, generate, coachingRank) {
-    var age, baseChange, baseChangeLocal, calcBaseChange, i, j, r, ratingKeys;
+function develop(p, years = 1, generate = false, coachingRank = 15.5) {
+    const r = p.ratings.length - 1;
 
-    years = years !== undefined ? years : 1;
-    generate = generate !== undefined ? generate : false;
-    coachingRank = coachingRank !== undefined ? coachingRank : 15.5; // This applies to free agents!
-
-    r = p.ratings.length - 1;
-
-    age = g.season - p.born.year;
+    let age = g.season - p.born.year;
 
     calcBaseChange = function (age, potentialDifference) {
-        var val;
+        let val;
 
         // Average rating change if there is no potential difference
         if (age <= 21) {
@@ -384,7 +367,7 @@ function develop(p, years, generate, coachingRank) {
         return val;
     };
 
-    for (i = 0; i < years; i++) {
+    for (let i = 0; i < years; i++) {
         age += 1;
 
         // Randomly make a big jump
@@ -397,7 +380,7 @@ function develop(p, years, generate, coachingRank) {
             p.ratings[r].pot -= random.uniform(5, 25);
         }
 
-        baseChange = calcBaseChange(age, p.ratings[r].pot - p.ratings[r].ovr);
+        let baseChange = calcBaseChange(age, p.ratings[r].pot - p.ratings[r].ovr);
 
         // Modulate by coaching
         if (baseChange >= 0) { // life is normal
@@ -407,8 +390,9 @@ function develop(p, years, generate, coachingRank) {
         }
 
         // Ratings that can only increase a little, and only when young. Decrease when old.
-        ratingKeys = ["spd", "jmp", "endu"];
-        for (j = 0; j < ratingKeys.length; j++) {
+        let ratingKeys = ["spd", "jmp", "endu"];
+        for (let j = 0; j < ratingKeys.length; j++) {
+            let baseChangeLocal;
             if (age <= 24) {
                 baseChangeLocal = baseChange;
             } else if (age <= 30) {
@@ -421,19 +405,20 @@ function develop(p, years, generate, coachingRank) {
 
         // Ratings that can only increase a little, and only when young. Decrease slowly when old.
         ratingKeys = ["drb", "pss", "reb"];
-        for (j = 0; j < ratingKeys.length; j++) {
+        for (let j = 0; j < ratingKeys.length; j++) {
             p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChange * random.uniform(0.5, 1.5), -1, 10));
         }
 
         // Ratings that can increase a lot, but only when young. Decrease when old.
         ratingKeys = ["stre", "dnk", "blk", "stl"];
-        for (j = 0; j < ratingKeys.length; j++) {
+        for (let j = 0; j < ratingKeys.length; j++) {
             p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChange * random.uniform(0.5, 1.5));
         }
 
         // Ratings that increase most when young, but can continue increasing for a while and only decrease very slowly.
         ratingKeys = ["ins", "ft", "fg", "tp"];
-        for (j = 0; j < ratingKeys.length; j++) {
+        for (let j = 0; j < ratingKeys.length; j++) {
+            let baseChangeLocal;
             if (age <= 24) {
                 baseChangeLocal = baseChange;
             } else if (age <= 30) {
@@ -487,16 +472,14 @@ function develop(p, years, generate, coachingRank) {
  * @return {Object} Updated player object.
  */
 function bonus(p, amount) {
-    var age, i, key, r, ratingKeys;
-
     // Make sure age is always defined
-    age = g.season - p.born.year;
+    const age = g.season - p.born.year;
 
-    r = p.ratings.length - 1;
+    const r = p.ratings.length - 1;
 
     ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb', 'pot'];
-    for (i = 0; i < ratingKeys.length; i++) {
-        key = ratingKeys[i];
+    for (let i = 0; i < ratingKeys.length; i++) {
+        const key = ratingKeys[i];
         p.ratings[r][key] = limitRating(p.ratings[r][key] + amount);
     }
 
@@ -519,17 +502,17 @@ function bonus(p, amount) {
  * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on teamSeasons; if null is passed, then a new transaction will be used.
  * @return {Promise} Array of base moods, one for each team.
  */
-function genBaseMoods(ot) {
-    var dbOrTx = ot !== null ? ot : g.dbl;
-    return dbOrTx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, ''])).map(function (teamSeason) {
-        var baseMood;
+async function genBaseMoods(ot) {
+    const dbOrTx = ot !== null ? ot : g.dbl;
+    const teamSeasons = await dbOrTx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, '']));
 
+    return teamSeasons.map(teamSeason => {
         // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
         if (teamSeason.playoffRoundsWon === 4 && Math.random() < 0.99) {
             return -0.25; // Should guarantee no refusing to re-sign
         }
 
-        baseMood = 0;
+        let baseMood = 0;
 
         // Hype
         baseMood += 0.5 * (1 - teamSeason.hype);
@@ -2158,7 +2141,7 @@ module.exports = {
     skills,
     filter,
     madeHof,
-    //value: value,
+    //value,
     updateValues,
     retire,
     name,

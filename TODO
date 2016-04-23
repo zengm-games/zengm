@@ -22,6 +22,8 @@ babel
     https://babeljs.io/docs/plugins/transform-async-to-generator/ - try this with global Bluebird
     typescript
   errors on draft until user or end
+  ctrl+F Kneden for bugs
+    one in game.js, look into ASAP! make a test like in kneden repo
 
 one month gamesim benchmarks while viewing dashboard:
   original 000:01:43.710

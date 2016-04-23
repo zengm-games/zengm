@@ -437,7 +437,7 @@ async function newPhaseDraft(tx) {
 
     await draft.genOrder(tx);
 
-    // Not sure what this is for
+    // This is a hack to handle weird cases where players have draft.year set to the current season, which fucks up the draft UI
     await tx.players.index('draft.year').iterate(g.season, p => {
         if (p.tid >= 0) {
             p.draft.year -= 1;
@@ -475,37 +475,40 @@ async function newPhaseResignPlayers(tx) {
         }
     });
 
+    // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
     await require('../core/league').setGameAttributes(tx, {daysLeft: 30});
 
     return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
 }
 
-function newPhaseFreeAgency(tx) {
-    let strategies;
-
-    return team.filter({
+async function newPhaseFreeAgency(tx) {
+    const teams = await team.filter({
         ot: tx,
         attrs: ["strategy"],
         season: g.season
-    }).then(teams => {
-        strategies = _.pluck(teams, "strategy");
+    });
+    const strategies = teams.map(t => t.strategy);
 
-        // Delete all current negotiations to resign players
-        return contractNegotiation.cancelAll(tx);
-    }).then(() => player.genBaseMoods(tx).then(baseMoods => tx.players.index('tid').iterate(backboard.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), p => player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods)).then(() => tx.players.index('tid').iterate(backboard.lowerBound(0), p => {
-        let contract, factor;
+    // Delete all current negotiations to resign players
+    await contractNegotiation.cancelAll(tx);
+    
+    const baseMoods = await player.genBaseMoods(tx);
 
+    // Reset contract demands of current free agents and undrafted players
+    // KeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
+    await tx.players.index('tid').iterate(backboard.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), p => {player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
+    });
+
+    // AI teams re-sign players or they become free agents
+    // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
+    await tx.players.index('tid').iterate(backboard.lowerBound(0), p => {
         if (p.contract.exp <= g.season && (g.userTids.indexOf(p.tid) < 0 || g.autoPlaySeasons > 0)) {
             // Automatically negotiate with teams
-            if (strategies[p.tid] === "rebuilding") {
-                factor = 0.4;
-            } else {
-                factor = 0;
-            }
+            const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
 
             if (Math.random() < p.value / 100 - factor) { // Should eventually be smarter than a coin flip
                 // See also core.team
-                contract = player.genContract(p);
+                const contract = player.genContract(p);
                 contract.exp += 1; // Otherwise contracts could expire this season
                 p = player.setContract(p, contract, true);
                 p.gamesUntilTradable = 15;
@@ -523,28 +526,42 @@ function newPhaseFreeAgency(tx) {
 
             return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
         }
-    }))).then(() => tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_2, p => {
+    })
+
+    await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_2, p => {
         p.tid = g.PLAYER.UNDRAFTED;
         p.ratings[0].fuzz /= 2;
         return p;
-    }).then(() => tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_3, p => {
+    });
+    await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_3, p => {
         p.tid = g.PLAYER.UNDRAFTED_2;
         p.ratings[0].fuzz /= 2;
         return p;
-    }))).then(() => draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3)).then(() => [helpers.leagueUrl(["free_agents"]), ["playerMovement"]]));
+    });
+    await draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3);
+
+    return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];
 }
 
-function newPhaseFantasyDraft(tx, position) {
-    return contractNegotiation.cancelAll(tx).then(() => draft.genOrderFantasy(tx, position)).then(() => require('../core/league').setGameAttributes(tx, {nextPhase: g.phase})).then(() => tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, p => {
+async function newPhaseFantasyDraft(tx, position) {
+    await contractNegotiation.cancelAll(tx);
+    await draft.genOrderFantasy(tx, position);
+    await require('../core/league').setGameAttributes(tx, {nextPhase: g.phase});
+    await tx.releasedPlayers.clear();
+
+    // Protect draft prospects from being included in this
+    await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, p => {
         p.tid = g.PLAYER.UNDRAFTED_FANTASY_TEMP;
         return p;
-    }).then(() => {
-        // Make all players draftable
-        tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), p => {
-            p.tid = g.PLAYER.UNDRAFTED;
-            return p;
-        });
-    })).then(() => tx.releasedPlayers.clear()).then(() => [helpers.leagueUrl(["draft"]), ["playerMovement"]]);
+    });
+
+    // Make all players draftable
+    await tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), p => {
+        p.tid = g.PLAYER.UNDRAFTED;
+        return p;
+    });
+
+    return [helpers.leagueUrl(["draft"]), ["playerMovement"]];
 }
 
 /**

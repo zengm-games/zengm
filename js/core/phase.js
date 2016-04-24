@@ -675,7 +675,7 @@ async function abort() {
     } finally {
         // If another window has a phase change in progress, this won't do anything until that finishes
         await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false});
-        await ui.updatePlayMenu(null);
+        ui.updatePlayMenu(null);
     }
 }
 

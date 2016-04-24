@@ -458,7 +458,7 @@ class GameSim {
         }
 
         // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
-        let probAndOne, probMissAndFoul, type;
+        let probAndOne, probMake, probMissAndFoul, type;
         if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.5 && Math.random() < (0.35 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
             // Three pointer
             type = "threePointer";
@@ -490,7 +490,7 @@ class GameSim {
             }
         }
 
-        let probMake = (probMake - 0.25 * this.team[this.d].compositeRating.defense + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def)) * fatigue;
+        probMake = (probMake - 0.25 * this.team[this.d].compositeRating.defense + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def)) * fatigue;
 
         // Assisted shots are easier
         if (passer >= 0) {

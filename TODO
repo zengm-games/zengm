@@ -1,4 +1,7 @@
 babel
+  minify es6, or compile babel es2015 without regenerator
+    https://github.com/mishoo/UglifyJS2/issues/448
+    https://github.com/mishoo/UglifyJS2/tree/harmony
   convert with http://lebab.io/
     convert.sh
       loses some comments! maybe don't use.

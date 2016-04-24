@@ -9,7 +9,7 @@ var bundler = new browserify({debug: true});
 
 bundler.add('js/app.js');
 
-bundler.plugin('minifyify', {
+/*bundler.plugin('minifyify', {
     map: '/gen/app.js.map',
     uglify: {
         // https://github.com/ben-ng/minifyify/issues/116
@@ -18,7 +18,7 @@ bundler.plugin('minifyify', {
         },
         sourceRoot: '/' // This has no affect on anything, I'm not sure why. Instead all my paths contain /gen, sigh.
     }
-});
+});*/
 
 bundler.bundle(function (err, src, map) {
     if (err) {

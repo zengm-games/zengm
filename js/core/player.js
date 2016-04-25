@@ -75,20 +75,18 @@ function skills(ratings) {
     const sk = [];
 
     const hasSkill = (ratings, components, weights) => {
-        var denominator, i, numerator, rating;
-
         if (weights === undefined) {
             // Default: array of ones with same size as components
             weights = [];
-            for (i = 0; i < components.length; i++) {
+            for (let i = 0; i < components.length; i++) {
                 weights.push(1);
             }
         }
 
-        numerator = 0;
-        denominator = 0;
-        for (i = 0; i < components.length; i++) {
-            rating = components[i] === 'hgt' ? ratings[components[i]] : fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
+        let numerator = 0;
+        let denominator = 0;
+        for (let i = 0; i < components.length; i++) {
+            const rating = components[i] === 'hgt' ? ratings[components[i]] : fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
             numerator += rating * weights[i];
             denominator += 100 * weights[i];
         }
@@ -1076,12 +1074,12 @@ function filter(p, options) {
             } else if (options.attrs[i] === "injury" && options.season !== null && options.season < g.season) {
                 fp.injury = {type: "Healthy", gamesRemaining: 0};
             } else if (options.attrs[i] === "salaries") {
-                fp.salaries = _.map(p.salaries, function (salary) { salary.amount /= 1000; return salary; });
+                fp.salaries = _.map(p.salaries, salary => { salary.amount /= 1000; return salary; });
             } else if (options.attrs[i] === "salariesTotal") {
-                fp.salariesTotal = _.reduce(fp.salaries, function (memo, salary) { return memo + salary.amount; }, 0);
+                fp.salariesTotal = _.reduce(fp.salaries, (memo, salary) => memo + salary.amount, 0);
             } else if (options.attrs[i] === "awardsGrouped") {
                 fp.awardsGrouped = [];
-                const awardsGroupedTemp = _.groupBy(p.awards, function (award) { return award.type; });
+                const awardsGroupedTemp = _.groupBy(p.awards, award => award.type);
                 for (let award in awardsGroupedTemp) {
                     if (awardsGroupedTemp.hasOwnProperty(award)) {
                         fp.awardsGrouped.push({
@@ -1261,9 +1259,9 @@ function filter(p, options) {
                     const ignoredKeys = ["age", "playoffs", "season", "tid"];
                     for (let key of Object.keys(ps.r[0])) {
                         if (ignoredKeys.indexOf(key) < 0) {
-                            ps.cr[key] = _.reduce(_.pluck(ps.r, key), function (memo, num) { return memo + num; }, 0);
+                            ps.cr[key] = _.reduce(_.pluck(ps.r, key), (memo, num) => memo + num, 0);
                             if (options.playoffs) {
-                                ps.cp[key] = _.reduce(_.pluck(ps.p, key), function (memo, num) { return memo + num; }, 0);
+                                ps.cp[key] = _.reduce(_.pluck(ps.p, key), (memo, num) => memo + num, 0);
                             }
                         }
                     }
@@ -1399,17 +1397,17 @@ function filter(p, options) {
                 fp.careerStats = filterStatsPartial(p, ps.cr, options.stats);
                 // Special case for PER - weight by minutes per season
                 if (options.totals) {
-                    fp.careerStats.per = _.reduce(ps.r, function (memo, psr) { return memo + psr.per * psr.min; }, 0) / (fp.careerStats.min);
+                    fp.careerStats.per = _.reduce(ps.r, (memo, psr) => memo + psr.per * psr.min, 0) / (fp.careerStats.min);
                 } else {
-                    fp.careerStats.per = _.reduce(ps.r, function (memo, psr) { return memo + psr.per * psr.min; }, 0) / (fp.careerStats.min * fp.careerStats.gp);
+                    fp.careerStats.per = _.reduce(ps.r, (memo, psr) => memo + psr.per * psr.min, 0) / (fp.careerStats.min * fp.careerStats.gp);
                 }
                 if (isNaN(fp.careerStats.per)) { fp.careerStats.per = 0; }
-                fp.careerStats.ewa = _.reduce(ps.r, function (memo, psr) { return memo + psr.ewa; }, 0); // Special case for EWA - sum
+                fp.careerStats.ewa = _.reduce(ps.r, (memo, psr) => memo + psr.ewa, 0); // Special case for EWA - sum
                 if (options.playoffs) {
                     fp.careerStatsPlayoffs = filterStatsPartial(p, ps.cp, options.stats);
-                    fp.careerStatsPlayoffs.per = _.reduce(ps.p, function (memo, psp) { return memo + psp.per * psp.min; }, 0) / (fp.careerStatsPlayoffs.min * fp.careerStatsPlayoffs.gp); // Special case for PER - weight by minutes per season
+                    fp.careerStatsPlayoffs.per = _.reduce(ps.p, (memo, psp) => memo + psp.per * psp.min, 0) / (fp.careerStatsPlayoffs.min * fp.careerStatsPlayoffs.gp); // Special case for PER - weight by minutes per season
                     if (isNaN(fp.careerStatsPlayoffs.per)) { fp.careerStatsPlayoffs.per = 0; }
-                    fp.careerStatsPlayoffs.ewa = _.reduce(ps.p, function (memo, psp) { return memo + psp.ewa; }, 0); // Special case for EWA - sum
+                    fp.careerStatsPlayoffs.ewa = _.reduce(ps.p, (memo, psp) => memo + psp.ewa, 0); // Special case for EWA - sum
                 }
             } else if (options.stats.length > 0) { // Return 0 stats if no entry and a single year was requested, unless no stats were explicitly requested
                 // Single seasons
@@ -1483,7 +1481,7 @@ function madeHof(p, playerStats) {
     }
 
     // Calculate career EWA and "dominance factor" DF (top 5 years EWA - 50)
-    ewas.sort(function (a, b) { return b - a; }); // Descending order
+    ewas.sort((a, b) => b - a); // Descending order
     let ewa = 0;
     let df = -50;
     for (let i = 0; i < ewas.length; i++) {
@@ -1856,7 +1854,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
         });
     };
 
-    let doubles = ["pts", "ast", "stl", "blk"].reduce(function (count, stat) {
+    let doubles = ["pts", "ast", "stl", "blk"].reduce((count, stat) => {
         if (p.stat[stat] >= TEN) {
             return count + 1;
         }
@@ -2016,16 +2014,15 @@ function withStats(tx, players, options) {
     options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
     options.filter = options.filter !== undefined ? options.filter : null;
 
-    return helpers.maybeReuseTx(["players", "playerStats"], "readonly", tx, function (tx) {
+    return helpers.maybeReuseTx(["players", "playerStats"], "readonly", tx, tx => {
         if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
             // No stats needed! Yay!
             return players;
         }
 
         // Get stats
-        return Promise.map(players, function (p) {
-            var key;
-
+        return Promise.map(players, async p => {
+            let key;
             if (options.statsSeasons === "all") {
                 // All seasons
                 key = backboard.bound([p.pid], [p.pid, '']);
@@ -2037,31 +2034,31 @@ function withStats(tx, players, options) {
                 key = backboard.bound([p.pid, Math.min.apply(null, options.statsSeasons)], [p.pid, Math.max.apply(null, options.statsSeasons), '']);
             }
 
-            return tx.playerStats.index('pid, season, tid').getAll(key).then(function (playerStats) {
-                // Due to indexes not necessarily handling all cases, still need to filter
-                p.stats = playerStats.filter(function (ps) {
-                    // statsSeasons is defined, but this season isn't in it
-                    if (options.statsSeasons !== "all" && options.statsSeasons.indexOf(ps.season) < 0) {
-                        return false;
-                    }
+            const playerStats = await tx.playerStats.index('pid, season, tid').getAll(key);
 
-                    // If options.statsPlayoffs is false, don't include playoffs. Otherwise, include both
-                    if (!options.statsPlayoffs && options.statsPlayoffs !== ps.playoffs) {
-                        return false;
-                    }
+            // Due to indexes not necessarily handling all cases, still need to filter
+            p.stats = playerStats.filter(ps => {
+                // statsSeasons is defined, but this season isn't in it
+                if (options.statsSeasons !== "all" && options.statsSeasons.indexOf(ps.season) < 0) {
+                    return false;
+                }
 
-                    if (options.statsTid !== null && options.statsTid !== ps.tid) {
-                        return false;
-                    }
+                // If options.statsPlayoffs is false, don't include playoffs. Otherwise, include both
+                if (!options.statsPlayoffs && options.statsPlayoffs !== ps.playoffs) {
+                    return false;
+                }
 
-                    return true;
-                }).sort(function (a, b) {
-                    // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
-                    return a.psid - b.psid;
-                });
-            }).then(function () {
-                return p;
-            });
+                if (options.statsTid !== null && options.statsTid !== ps.tid) {
+                    return false;
+                }
+
+                return true;
+            })
+
+            // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
+            p.stats.sort((a, b) => a.psid - b.psid);
+
+            return p;
         });
     });
 }

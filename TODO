@@ -27,6 +27,7 @@ babel
   errors on draft until user or end
   ctrl+F Kneden for bugs
     one in game.js, look into ASAP! make a test like in kneden repo
+  investigate backboard tx canceling error propagation, see tx in newPhase
 
 one month gamesim benchmarks while viewing dashboard:
   original 000:01:43.710

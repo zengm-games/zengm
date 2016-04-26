@@ -578,24 +578,6 @@ async function newPhase(phase, extra) {
         return;
     }
 
-    // Have this catch any newPhase* errors before phaseChangeTx completes
-    const phaseErrorHandler = async err => {
-        if (phaseChangeTx && phaseChangeTx.abort) {
-            phaseChangeTx.abort();
-        }
-
-        await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false});
-        await ui.updatePlayMenu(null);
-        await eventLog.add(null, {
-            type: "error",
-            text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
-            saveToDb: false,
-            persistent: true
-        });
-
-        throw err;
-    };
-
     const phaseChangeInfo = {
         [g.PHASE.PRESEASON]: {
             objectStores: ["gameAttributes", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
@@ -646,11 +628,30 @@ async function newPhase(phase, extra) {
         require('../core/league').updateLastDbChange();
 
         if (phaseChangeInfo.hasOwnProperty(phase)) {
-            // Careful rewriting this async/await style... make sure it actually does abort phase change! Might need some more clever try/catch
-            const result = await g.dbl.tx(phaseChangeInfo[phase].objectStores, "readwrite", tx => {
+            // Careful rewriting this async/await style... for some reason that "throw err" does not stop execution of things after the tx promise because that still resolves
+            const result = await g.dbl.tx(phaseChangeInfo[phase].objectStores, "readwrite", async tx => {
                 phaseChangeTx = tx;
-                return phaseChangeInfo[phase].func(tx, extra).catch(phaseErrorHandler);
+
+                try {
+                    return await phaseChangeInfo[phase].func(tx, extra);
+                } catch (err) {
+                    if (phaseChangeTx && phaseChangeTx.abort) {
+                        phaseChangeTx.abort();
+                    }
+
+                    await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false});
+                    await ui.updatePlayMenu(null);
+                    await eventLog.add(null, {
+                        type: "error",
+                        text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
+                        saveToDb: false,
+                        persistent: true
+                    });
+
+                    throw err;
+                }
             });
+
             if (result && result.length === 2) {
                 const [url, updateEvents] = result;
                 return finalize(phase, url, updateEvents);

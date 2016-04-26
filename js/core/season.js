@@ -8,7 +8,6 @@ const eventLog = require('../util/eventLog');
 const helpers = require('../util/helpers');
 const random = require('../util/random');
 
-
 /**
  * Update g.ownerMood based on performance this season.
  *
@@ -18,45 +17,41 @@ const random = require('../util/random');
  * @param {(IDBTransaction|null)} tx An IndexedDB transaction on gameAttributes and and teams, readwrite.
  * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
  */
-function updateOwnerMood(tx) {
-    return team.filter({
+async function updateOwnerMood(tx) {
+    const t = await team.filter({
         ot: tx,
         seasonAttrs: ["won", "playoffRoundsWon", "profit"],
         season: g.season,
         tid: g.userTid
-    }).then(function (t) {
-        var deltas, ownerMood;
-
-        deltas = {};
-        deltas.wins = 0.25 * (t.won - g.numGames / 2) / (g.numGames / 2);
-        if (t.playoffRoundsWon < 0) {
-            deltas.playoffs = -0.2;
-        } else if (t.playoffRoundsWon < 4) {
-            deltas.playoffs = 0.04 * t.playoffRoundsWon;
-        } else {
-            deltas.playoffs = 0.2;
-        }
-        deltas.money = (t.profit - 15) / 100;
-
-        return Promise.try(function () {
-            // Only update owner mood if grace period is over
-            if (g.season >= g.gracePeriodEnd) {
-                ownerMood = {};
-                ownerMood.wins = g.ownerMood.wins + deltas.wins;
-                ownerMood.playoffs = g.ownerMood.playoffs + deltas.playoffs;
-                ownerMood.money = g.ownerMood.money + deltas.money;
-
-                // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
-                if (ownerMood.wins > 1) { ownerMood.wins = 1; }
-                if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
-                if (ownerMood.money > 1) { ownerMood.money = 1; }
-
-                return require('../core/league').setGameAttributes(tx, {ownerMood: ownerMood});
-            }
-        }).then(function () {
-            return deltas;
-        });
     });
+
+    const deltas = {};
+    deltas.wins = 0.25 * (t.won - g.numGames / 2) / (g.numGames / 2);
+    if (t.playoffRoundsWon < 0) {
+        deltas.playoffs = -0.2;
+    } else if (t.playoffRoundsWon < 4) {
+        deltas.playoffs = 0.04 * t.playoffRoundsWon;
+    } else {
+        deltas.playoffs = 0.2;
+    }
+    deltas.money = (t.profit - 15) / 100;
+
+    // Only update owner mood if grace period is over
+    if (g.season >= g.gracePeriodEnd) {
+        const ownerMood = {};
+        ownerMood.wins = g.ownerMood.wins + deltas.wins;
+        ownerMood.playoffs = g.ownerMood.playoffs + deltas.playoffs;
+        ownerMood.money = g.ownerMood.money + deltas.money;
+
+        // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
+        if (ownerMood.wins > 1) { ownerMood.wins = 1; }
+        if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
+        if (ownerMood.money > 1) { ownerMood.money = 1; }
+
+        await require('../core/league').setGameAttributes(tx, {ownerMood: ownerMood});
+    }
+    
+    return deltas;
 }
 
 /**
@@ -68,222 +63,209 @@ function updateOwnerMood(tx) {
  * @param {(IDBTransaction)} tx An IndexedDB transaction on awards, players, playerStats, releasedPlayers, and teams, readwrite.
  * @return {Promise}
  */
-function awards(tx) {
-    var awards, awardsByPlayer, saveAwardsByPlayer;
-
-    awards = {season: g.season};
+async function awards(tx) {
+    const awards = {season: g.season};
 
     // [{pid, type}]
-    awardsByPlayer = [];
+    const awardsByPlayer = [];
 
-    saveAwardsByPlayer = function (awardsByPlayer) {
-        var pids;
+    const saveAwardsByPlayer = async awardsByPlayer => {
+        const pids = _.uniq(awardsByPlayer.map(award => award.pid));
 
-        pids = _.uniq(_.pluck(awardsByPlayer, "pid"));
+        await Promise.map(pids, async pid => {
+            const p = await tx.players.get(pid);
 
-        return Promise.map(pids, function (pid) {
-            return tx.players.get(pid).then(function (p) {
-                var i;
-
-                for (i = 0; i < awardsByPlayer.length; i++) {
-                    if (p.pid === awardsByPlayer[i].pid) {
-                        p.awards.push({season: g.season, type: awardsByPlayer[i].type});
-                    }
+            for (let i = 0; i < awardsByPlayer.length; i++) {
+                if (p.pid === awardsByPlayer[i].pid) {
+                    p.awards.push({season: g.season, type: awardsByPlayer[i].type});
                 }
+            }
 
-                return tx.players.put(p);
-            });
+            await tx.players.put(p);
         });
     };
 
     // Get teams for won/loss record for awards, as well as finding the teams with the best records
-    return team.filter({
+    const teams = await team.filter({
         attrs: ["tid", "abbrev", "region", "name", "cid"],
         seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
         season: g.season,
         sortBy: "winp",
         ot: tx
-    }).then(function (teams) {
-        var foundEast, foundWest, i, t;
+    });
 
-        for (i = 0; i < teams.length; i++) {
-            if (!foundEast && teams[i].cid === 0) {
-                t = teams[i];
-                awards.bre = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
-                foundEast = true;
-            } else if (!foundWest && teams[i].cid === 1) {
-                t = teams[i];
-                awards.brw = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
-                foundWest = true;
-            }
-
-            if (foundEast && foundWest) {
-                break;
-            }
+    let foundEast = false;
+    let foundWest = false;
+    for (let i = 0; i < teams.length; i++) {
+        if (!foundEast && teams[i].cid === 0) {
+            const t = teams[i];
+            awards.bre = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
+            foundEast = true;
+        } else if (!foundWest && teams[i].cid === 1) {
+            const t = teams[i];
+            awards.brw = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
+            foundWest = true;
         }
 
-        // Sort teams by tid so it can be easily used in awards formulas
-        teams.sort(function (a, b) { return a.tid - b.tid; });
-
-        return [teams, tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
-            return player.withStats(tx, players, {
-                statsSeasons: [g.season]
-            });
-        })];
-    }).spread(function (teams, players) {
-        var champTid, i, p, rookies, type;
-
-        players = player.filter(players, {
-            attrs: ["pid", "name", "tid", "abbrev", "draft"],
-            stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
-            season: g.season
-        });
-
-        // Add team games won to players
-        for (i = 0; i < players.length; i++) {
-            // Special handling for players who were cut mid-season
-            if (players[i].tid >= 0) {
-                players[i].won = teams[players[i].tid].won;
-            } else {
-                players[i].won = 20;
-            }
+        if (foundEast && foundWest) {
+            break;
         }
+    }
 
-        // Rookie of the Year
-        rookies = players.filter(function (p) {
-            // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-            return p.draft.year === g.season - 1;
-        }).sort(function (a, b) { return b.stats.ewa - a.stats.ewa; }); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
-        p = rookies[0];
-        if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
-            awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
-        }
+    // Sort teams by tid so it can be easily used in awards formulas
+    teams.sort((a, b) => a.tid - b.tid);
 
-        // All Rookie Team - same sort as ROY
-        awards.allRookie = [];
-        for (i = 0; i < 5; i++) {
-            p = rookies[i];
-            if (p !== undefined) {
-                awards.allRookie.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
-                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "All Rookie Team"});
-            }
-        }
-
-        // Most Valuable Player
-        players.sort(function (a, b) { return (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won); });
-        p = players[0];
-        awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
-
-        // Sixth Man of the Year - same sort as MVP
-        for (i = 0; i < players.length; i++) {
-            // Must have come off the bench in most games
-            if (players[i].stats.gs === 0 || players[i].stats.gp / players[i].stats.gs > 2) {
-                break;
-            }
-        }
-        p = players[i];
-        awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
-
-        // All League Team - same sort as MVP
-        awards.allLeague = [{title: "First Team", players: []}];
-        type = "First Team All-League";
-        for (i = 0; i < 15; i++) {
-            p = players[i];
-            if (i === 5) {
-                awards.allLeague.push({title: "Second Team", players: []});
-                type = "Second Team All-League";
-            } else if (i === 10) {
-                awards.allLeague.push({title: "Third Team", players: []});
-                type = "Third Team All-League";
-            }
-            _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
-        }
-
-        // Defensive Player of the Year
-        players.sort(function (a, b) { return b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl); });
-        p = players[0];
-        awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
-
-        // All Defensive Team - same sort as DPOY
-        awards.allDefensive = [{title: "First Team", players: []}];
-        type = "First Team All-Defensive";
-        for (i = 0; i < 15; i++) {
-            p = players[i];
-            if (i === 5) {
-                awards.allDefensive.push({title: "Second Team", players: []});
-                type = "Second Team All-Defensive";
-            } else if (i === 10) {
-                awards.allDefensive.push({title: "Third Team", players: []});
-                type = "Third Team All-Defensive";
-            }
-            _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
-        }
-
-        // Finals MVP - most WS in playoffs
-        for (i = 0; i < teams.length; i++) {
-            if (teams[i].playoffRoundsWon === 4) {
-                champTid = teams[i].tid;
-                break;
-            }
-        }
-        // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
-        return [champTid, tx.players.index('tid').getAll(champTid).then(function (players) {
-            return player.withStats(tx, players, {
-                statsSeasons: [g.season],
-                statsTid: champTid,
-                statsPlayoffs: true
-            });
-        })];
-    }).spread(function (champTid, players) {
-        var p;
-
-        players = player.filter(players, { // Only the champions, only playoff stats
-            attrs: ["pid", "name", "tid", "abbrev"],
-            stats: ["pts", "trb", "ast", "ewa"],
-            season: g.season,
-            playoffs: true,
-            tid: champTid
-        });
-        players.sort(function (a, b) { return b.statsPlayoffs.ewa - a.statsPlayoffs.ewa; });
-        p = players[0];
-        awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
-
-        return tx.awards.put(awards).then(function () {
-            return saveAwardsByPlayer(awardsByPlayer);
-        }).then(function () {
-            var i, p, text;
-
-            // None of this stuff needs to block, it's just notifications of crap
-
-            // Notifications for awards for user's players
-            for (i = 0; i < awardsByPlayer.length; i++) {
-                p = awardsByPlayer[i];
-
-                text = '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamAbbrevsCache[p.tid] + '</a>) ';
-                if (p.type.indexOf("Team") >= 0) {
-                    text += 'made the ' + p.type + '.';
-                } else {
-                    text += 'won the ' + p.type + ' award.';
-                }
-                eventLog.add(null, {
-                    type: "award",
-                    text: text,
-                    showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",
-                    pids: [p.pid],
-                    tids: [p.tid]
-                });
-            }
+    let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(players => {
+        return player.withStats(tx, players, {
+            statsSeasons: [g.season]
         });
     });
-}
 
+    players = player.filter(players, {
+        attrs: ["pid", "name", "tid", "abbrev", "draft"],
+        stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
+        season: g.season
+    });
+
+    // Add team games won to players
+    for (let i = 0; i < players.length; i++) {
+        // Special handling for players who were cut mid-season
+        if (players[i].tid >= 0) {
+            players[i].won = teams[players[i].tid].won;
+        } else {
+            players[i].won = 20;
+        }
+    }
+
+    // Rookie of the Year
+    rookies = players.filter(p => {
+        // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+        return p.draft.year === g.season - 1;
+    }).sort((a, b) => b.stats.ewa - a.stats.ewa); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
+    let p = rookies[0];
+    if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
+        awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
+    }
+
+    // All Rookie Team - same sort as ROY
+    awards.allRookie = [];
+    for (let i = 0; i < 5; i++) {
+        const p = rookies[i];
+        if (p !== undefined) {
+            awards.allRookie.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "All Rookie Team"});
+        }
+    }
+
+    // Most Valuable Player
+    players.sort((a, b) => (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won));
+    p = players[0];
+    awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
+
+    // Sixth Man of the Year - same sort as MVP
+    let i;
+    for (i = 0; i < players.length; i++) {
+        // Must have come off the bench in most games
+        if (players[i].stats.gs === 0 || players[i].stats.gp / players[i].stats.gs > 2) {
+            break;
+        }
+    }
+    p = players[i];
+    awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
+
+    // All League Team - same sort as MVP
+    awards.allLeague = [{title: "First Team", players: []}];
+    let type = "First Team All-League";
+    for (i = 0; i < 15; i++) {
+        const p = players[i];
+        if (i === 5) {
+            awards.allLeague.push({title: "Second Team", players: []});
+            type = "Second Team All-League";
+        } else if (i === 10) {
+            awards.allLeague.push({title: "Third Team", players: []});
+            type = "Third Team All-League";
+        }
+        _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
+        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
+    }
+
+    // Defensive Player of the Year
+    players.sort((a, b) => b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl));
+    p = players[0];
+    awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
+    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
+
+    // All Defensive Team - same sort as DPOY
+    awards.allDefensive = [{title: "First Team", players: []}];
+    type = "First Team All-Defensive";
+    for (let i = 0; i < 15; i++) {
+        p = players[i];
+        if (i === 5) {
+            awards.allDefensive.push({title: "Second Team", players: []});
+            type = "Second Team All-Defensive";
+        } else if (i === 10) {
+            awards.allDefensive.push({title: "Third Team", players: []});
+            type = "Third Team All-Defensive";
+        }
+        _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
+        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
+    }
+
+    // Finals MVP - most WS in playoffs
+    let champTid;
+    for (i = 0; i < teams.length; i++) {
+        if (teams[i].playoffRoundsWon === 4) {
+            champTid = teams[i].tid;
+            break;
+        }
+    }
+
+    // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
+    let champPlayers = await tx.players.index('tid').getAll(champTid).then(function (players) {
+        return player.withStats(tx, players, {
+            statsSeasons: [g.season],
+            statsTid: champTid,
+            statsPlayoffs: true
+        });
+    });
+
+    champPlayers = player.filter(champPlayers, { // Only the champions, only playoff stats
+        attrs: ["pid", "name", "tid", "abbrev"],
+        stats: ["pts", "trb", "ast", "ewa"],
+        season: g.season,
+        playoffs: true,
+        tid: champTid
+    });
+    champPlayers.sort((a, b) => b.statsPlayoffs.ewa - a.statsPlayoffs.ewa);
+    p = champPlayers[0];
+    awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
+    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
+
+    await tx.awards.put(awards);
+    await saveAwardsByPlayer(awardsByPlayer);
+
+    // None of this stuff needs to block, it's just notifications of crap
+    // Notifications for awards for user's players
+    for (let i = 0; i < awardsByPlayer.length; i++) {
+        const p = awardsByPlayer[i];
+        let text = '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamAbbrevsCache[p.tid] + '</a>) ';
+        if (p.type.indexOf("Team") >= 0) {
+            text += 'made the ' + p.type + '.';
+        } else {
+            text += 'won the ' + p.type + ' award.';
+        }
+        eventLog.add(null, {
+            type: "award",
+            text: text,
+            showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",
+            pids: [p.pid],
+            tids: [p.tid]
+        });
+    }
+}
 
 /**
  * Get an array of games from the schedule.
@@ -297,28 +279,26 @@ function getSchedule(options) {
     options.ot = options.ot !== undefined ? options.ot : null;
     options.oneDay = options.oneDay !== undefined ? options.oneDay : false;
 
-    return helpers.maybeReuseTx(["schedule"], "readonly", options.ot, function (tx) {
-        return tx.schedule.getAll().then(function (schedule) {
-            var i, tids;
+    return helpers.maybeReuseTx(["schedule"], "readonly", options.ot, async tx => {
+        let schedule = await tx.schedule.getAll();
+        if (options.oneDay) {
+            schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
 
-            if (options.oneDay) {
-                schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
-
-                // Only take the games up until right before a team plays for the second time that day
-                tids = [];
-                for (i = 0; i < schedule.length; i++) {
-                    if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
-                        tids.push(schedule[i].homeTid);
-                        tids.push(schedule[i].awayTid);
-                    } else {
-                        break;
-                    }
+            // Only take the games up until right before a team plays for the second time that day
+            const tids = [];
+            let i;
+            for (i = 0; i < schedule.length; i++) {
+                if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
+                    tids.push(schedule[i].homeTid);
+                    tids.push(schedule[i].awayTid);
+                } else {
+                    break;
                 }
-                schedule = schedule.slice(0, i);
             }
+            schedule = schedule.slice(0, i);
+        }
 
-            return schedule;
-        });
+        return schedule;
     });
 }
 
@@ -330,22 +310,18 @@ function getSchedule(options) {
         away teams, respectively, for every game in the season, respectively.
  * @return {Promise}
  */
-function setSchedule(tx, tids) {
-    var i, newSchedule;
-
-    newSchedule = [];
-    for (i = 0; i < tids.length; i++) {
+async function setSchedule(tx, tids) {
+    const newSchedule = [];
+    for (let i = 0; i < tids.length; i++) {
         newSchedule.push({
             homeTid: tids[i][0],
             awayTid: tids[i][1]
         });
     }
 
-    return tx.schedule.clear().then(function () {
-        return Promise.each(newSchedule, function (matchup) {
-            return tx.schedule.add(matchup);
-        });
-    });
+    await tx.schedule.clear();
+
+    await Promise.each(newSchedule, matchup => tx.schedule.add(matchup));
 }
 
 /**
@@ -357,19 +333,17 @@ function setSchedule(tx, tids) {
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
 function newScheduleDefault(teams) {
-    var cid, dids, game, games, good, i, ii, iters, j, jj, k, matchup, matchups, n, newMatchup, t, tids, tidsByConf, tryNum;
-
-    tids = [];  // tid_home, tid_away
+    const tids = []; // tid_home, tid_away
 
     // Collect info needed for scheduling
-    for (i = 0; i < teams.length; i++) {
+    for (let i = 0; i < teams.length; i++) {
         teams[i].homeGames = 0;
         teams[i].awayGames = 0;
     }
-    for (i = 0; i < teams.length; i++) {
-        for (j = 0; j < teams.length; j++) {
+    for (let i = 0; i < teams.length; i++) {
+        for (let j = 0; j < teams.length; j++) {
             if (teams[i].tid !== teams[j].tid) {
-                game = [teams[i].tid, teams[j].tid];
+                const game = [teams[i].tid, teams[j].tid];
 
                 // Constraint: 1 home game vs. each team in other conference
                 if (teams[i].cid !== teams[j].cid) {
@@ -399,30 +373,30 @@ function newScheduleDefault(teams) {
 
     // Constraint: 1-2 home games vs. each team in same conference and different division
     // Constraint: We need 8 more of these games per home team!
-    tidsByConf = [[], []];
-    dids = [[], []];
-    for (i = 0; i < teams.length; i++) {
+    const tidsByConf = [[], []];
+    const dids = [[], []];
+    for (let i = 0; i < teams.length; i++) {
         tidsByConf[teams[i].cid].push(i);
         dids[teams[i].cid].push(teams[i].did);
     }
 
-    for (cid = 0; cid < 2; cid++) {
-        matchups = [];
+    for (let cid = 0; cid < 2; cid++) {
+        const matchups = [];
         matchups.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
-        games = 0;
+        let games = 0;
         while (games < 8) {
-            newMatchup = [];
-            n = 0;
+            let newMatchup = [];
+            let n = 0;
             while (n <= 14) {  // 14 = num teams in conference - 1
-                iters = 0;
+                let iters = 0;
                 while (true) {
-                    tryNum = random.randInt(0, 14);
+                    const tryNum = random.randInt(0, 14);
                     // Pick tryNum such that it is in a different division than n and has not been picked before
                     if (dids[cid][tryNum] !== dids[cid][n] && newMatchup.indexOf(tryNum) < 0) {
-                        good = true;
+                        let good = true;
                         // Check for duplicate games
                         for (j = 0; j < matchups.length; j++) {
-                            matchup = matchups[j];
+                            const matchup = matchups[j];
                             if (matchup[n] === tryNum) {
                                 good = false;
                                 break;
@@ -448,13 +422,13 @@ function newScheduleDefault(teams) {
             games += 1;
         }
         matchups.shift();  // Remove the first row in matchups
-        for (j = 0; j < matchups.length; j++) {
+        for (let j = 0; j < matchups.length; j++) {
             matchup = matchups[j];
-            for (k = 0; k < matchup.length; k++) {
-                t = matchup[k];
-                ii = tidsByConf[cid][t];
-                jj = tidsByConf[cid][matchup[t]];
-                game = [teams[ii].tid, teams[jj].tid];
+            for (let k = 0; k < matchup.length; k++) {
+                const t = matchup[k];
+                const ii = tidsByConf[cid][t];
+                const jj = tidsByConf[cid][matchup[t]];
+                const game = [teams[ii].tid, teams[jj].tid];
                 tids.push(game);
                 teams[ii].homeGames += 1;
                 teams[jj].awayGames += 1;

@@ -97,7 +97,7 @@ async function newPhasePreseason(tx) {
     });
 
     if (g.autoPlaySeasons > 0) {
-        return require('../core/league').setGameAttributes(tx, {autoPlaySeasons: g.autoPlaySeasons - 1});
+        await require('../core/league').setGameAttributes(tx, {autoPlaySeasons: g.autoPlaySeasons - 1});
     }
 
     if (g.enableLogging && !window.inCordova) {

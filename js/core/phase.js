@@ -156,10 +156,6 @@ async function newPhaseRegularSeason(tx) {
     return [undefined, ["playerMovement"]];
 }
 
-async function newPhaseAfterTradeDeadline() {
-    throw new Error("newPhaseAfterTradeDeadline not implemented");
-}
-
 async function newPhasePlayoffs(tx) {
     // Achievements after regular season
     account.checkAchievement.septuawinarian();
@@ -600,6 +596,45 @@ async function newPhase(phase, extra) {
         throw err;
     };
 
+    const phaseChangeInfo = {
+        [g.PHASE.PRESEASON]: {
+            objectStores: ["gameAttributes", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
+            func: newPhasePreseason
+        },
+        [g.PHASE.REGULAR_SEASON]: {
+            objectStores: ["gameAttributes", "messages", "schedule", "teams"],
+            func: newPhaseRegularSeason
+        },
+        [g.PHASE.PLAYOFFS]: {
+            objectStores: ["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"],
+            func: newPhasePlayoffs
+        },
+        [g.PHASE.BEFORE_DRAFT]: {
+            objectStores: ["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
+            func: newPhaseBeforeDraft
+        },
+        [g.PHASE.DRAFT]: {
+            objectStores: ["draftPicks", "draftOrder", "gameAttributes", "players", "teams", "teamSeasons", "teamStats"],
+            func: newPhaseDraft
+        },
+        [g.PHASE.AFTER_DRAFT]: {
+            objectStores: ["draftPicks", "gameAttributes"],
+            func: newPhaseAfterDraft
+        },
+        [g.PHASE.RESIGN_PLAYERS]: {
+            objectStores: ["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"],
+            func: newPhaseResignPlayers
+        },
+        [g.PHASE.FREE_AGENCY]: {
+            objectStores: ["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"],
+            func: newPhaseFreeAgency
+        },
+        [g.PHASE.FANTASY_DRAFT]: {
+            objectStores: ["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"],
+            func: newPhaseFantasyDraft
+        },
+    };
+
     const phaseChangeInProgress = await lock.phaseChangeInProgress(null);
     if (phaseChangeInProgress) {
         helpers.errorNotify("Phase change already in progress, maybe in another tab.");
@@ -610,57 +645,19 @@ async function newPhase(phase, extra) {
         // In Chrome, this will update play menu in other windows. In Firefox, it won't because ui.updatePlayMenu gets blocked until phaseChangeTx finishes for some reason.
         require('../core/league').updateLastDbChange();
 
-        let updateEvents, url;
-        if (phase === g.PHASE.PRESEASON) {
-            await g.dbl.tx(["gameAttributes", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
+        if (phaseChangeInfo.hasOwnProperty(phase)) {
+            // Careful rewriting this async/await style... make sure it actually does abort phase change! Might need some more clever try/catch
+            const result = await g.dbl.tx(phaseChangeInfo[phase].objectStores, "readwrite", tx => {
                 phaseChangeTx = tx;
-                [url, updateEvents] = await newPhasePreseason(tx).catch(phaseErrorHandler);
+                return phaseChangeInfo[phase].func(tx, extra).catch(phaseErrorHandler);
             });
-        } else if (phase === g.PHASE.REGULAR_SEASON) {
-            await g.dbl.tx(["gameAttributes", "messages", "schedule", "teams"], "readwrite", async tx => {
-                phaseChangeTx = tx;
-                [url, updateEvents] = await newPhaseRegularSeason(tx).catch(phaseErrorHandler);
-            });
-        } else if (phase === g.PHASE.AFTER_TRADE_DEADLINE) {
-            await newPhaseAfterTradeDeadline();
-        } else if (phase === g.PHASE.PLAYOFFS) {
-            await g.dbl.tx(["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
-                phaseChangeTx = tx;
-                [url, updateEvents] = await newPhasePlayoffs(tx).catch(phaseErrorHandler);
-            });
-        } else if (phase === g.PHASE.BEFORE_DRAFT) {
-            await g.dbl.tx(["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
-                phaseChangeTx = tx;
-                [url, updateEvents] = await newPhaseBeforeDraft(tx).catch(phaseErrorHandler);
-            });
-        } else if (phase === g.PHASE.DRAFT) {
-            await g.dbl.tx(["draftPicks", "draftOrder", "gameAttributes", "players", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
-                phaseChangeTx = tx;
-                [url, updateEvents] = await newPhaseDraft(tx).catch(phaseErrorHandler);
-            });
-        } else if (phase === g.PHASE.AFTER_DRAFT) {
-            await g.dbl.tx(["draftPicks", "gameAttributes"], "readwrite", async tx => {
-                phaseChangeTx = tx;
-                [url, updateEvents] = await newPhaseAfterDraft(tx).catch(phaseErrorHandler);
-            });
-        } else if (phase === g.PHASE.RESIGN_PLAYERS) {
-            await g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
-                phaseChangeTx = tx;
-                [url, updateEvents] = await newPhaseResignPlayers(tx).catch(phaseErrorHandler);
-            });
-        } else if (phase === g.PHASE.FREE_AGENCY) {
-            await g.dbl.tx(["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"], "readwrite", async tx => {
-                phaseChangeTx = tx;
-                [url, updateEvents] = await newPhaseFreeAgency(tx).catch(phaseErrorHandler);
-            });
-        } else if (phase === g.PHASE.FANTASY_DRAFT) {
-            await g.dbl.tx(["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"], "readwrite", async tx => {
-                phaseChangeTx = tx;
-                [url, updateEvents] = await newPhaseFantasyDraft(tx, extra).catch(phaseErrorHandler);
-            });
+            if (result && result.length === 2) {
+                const [url, updateEvents] = result;
+                return finalize(phase, url, updateEvents);
+            }
+        } else {
+            throw new Error(`Unknown phase number ${phase}`);
         }
-        
-        await finalize(phase, url, updateEvents);
     }
 }
 

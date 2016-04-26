@@ -27,8 +27,6 @@ babel
   errors on draft until user or end
   ctrl+F Kneden for bugs
     one in game.js, look into ASAP! make a test like in kneden repo
-  confirm throwing error in awards prevents phase change
-    same thing for regular season... phase change doesn't seem to be blocked by error
 
 one month gamesim benchmarks while viewing dashboard:
   original 000:01:43.710

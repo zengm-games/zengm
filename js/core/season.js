@@ -448,22 +448,20 @@ function newScheduleDefault(teams) {
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
 function newScheduleCrappy() {
-    var i, j, numRemaining, numWithRemaining, tids, tries;
-
     // Number of games left to reschedule for each team
-    numRemaining = [];
-    for (i = 0; i < g.numTeams; i++) {
+    const numRemaining = [];
+    for (let i = 0; i < g.numTeams; i++) {
         numRemaining[i] = g.numGames;
     }
-    numWithRemaining = g.numTeams; // Number of teams with numRemaining > 0
+    let numWithRemaining = g.numTeams; // Number of teams with numRemaining > 0
 
-    tids = [];
+    const tids = [];
 
     while (tids.length < g.numGames * g.numTeams / 2) {
-        i = -1; // Home tid
-        j = -1; // Away tid
+        let i = -1; // Home tid
+        let j = -1; // Away tid
 
-        tries = 0;
+        let tries = 0;
         while (i === j || numRemaining[i] === 0 || numRemaining[j] === 0) {
             i = random.randInt(0, g.numTeams - 1);
             j = random.randInt(0, g.numTeams - 1);
@@ -505,8 +503,7 @@ function newScheduleCrappy() {
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
 function newSchedule(teams) {
-    var days, i, j, jMax, tids, tidsInDays, used;
-
+    let tids;
     if (g.numTeams === 30 && g.numGames === 82) {
         tids = newScheduleDefault(teams);
     } else {
@@ -515,12 +512,12 @@ function newSchedule(teams) {
 
     // Order the schedule so that it takes fewer days to play
     random.shuffle(tids);
-    days = [[]];
-    tidsInDays = [[]];
-    jMax = 0;
-    for (i = 0; i < tids.length; i++) {
-        used = false;
-        for (j = 0; j <= jMax; j++) {
+    const days = [[]];
+    const tidsInDays = [[]];
+    let jMax = 0;
+    for (let i = 0; i < tids.length; i++) {
+        let used = false;
+        for (let j = 0; j <= jMax; j++) {
             if (tidsInDays[j].indexOf(tids[i][0]) < 0 && tidsInDays[j].indexOf(tids[i][1]) < 0) {
                 tidsInDays[j].push(tids[i][0]);
                 tidsInDays[j].push(tids[i][1]);
@@ -549,114 +546,108 @@ function newSchedule(teams) {
  * @param {(IDBTransaction)} tx An IndexedDB transaction on playoffSeries, schedule, and teamSeasons, readwrite.
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
-function newSchedulePlayoffsDay(tx) {
-    var playoffSeries, rnd, series, tids;
+async function newSchedulePlayoffsDay(tx) {
+    const playoffSeries = await tx.playoffSeries.get(g.season);
 
-    return tx.playoffSeries.get(g.season).then(function (playoffSeriesLocal) {
-        var i, numGames;
+    const series = playoffSeries.series;
+    const rnd = playoffSeries.currentRound;
+    const tids = [];
 
-        playoffSeries = playoffSeriesLocal;
-        series = playoffSeries.series;
-        rnd = playoffSeries.currentRound;
-        tids = [];
-
-        // Try to schedule games if there are active series
-        for (i = 0; i < series[rnd].length; i++) {
-            if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
-                // Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
-                numGames = series[rnd][i].home.won + series[rnd][i].away.won;
-                if (numGames === 0 || numGames === 1 || numGames === 4 || numGames === 6) {
-                    tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
-                } else {
-                    tids.push([series[rnd][i].away.tid, series[rnd][i].home.tid]);
-                }
-            }
-        }
-    }).then(function () {
-        var i, key, matchup, team1, team2, tidsWon;
-
-        // Now playoffSeries, rnd, series, and tids are set
-
-        // If series are still in progress, write games and short circuit
-        if (tids.length > 0) {
-            return setSchedule(tx, tids).then(function () {
-                return false;
-            });
-        }
-
-        // If playoffs are over, update winner and go to next phase
-        if (rnd === 3) {
-            if (series[rnd][0].home.won === 4) {
-                key = series[rnd][0].home.tid;
-            } else if (series[rnd][0].away.won === 4) {
-                key = series[rnd][0].away.tid;
-            }
-            return tx.teamSeasons.index("season, tid").iterate([g.season, key], function (teamSeason) {
-                teamSeason.playoffRoundsWon = 4;
-                teamSeason.hype += 0.05;
-                if (teamSeason.hype > 1) {
-                    teamSeason.hype = 1;
-                }
-
-                return teamSeason;
-            }).then(function () {
-                // Playoffs are over! Return true!
-                return true;
-            });
-        }
-
-        // Playoffs are not over! Make another round
-
-        // Set matchups for next round
-        tidsWon = [];
-        for (i = 0; i < series[rnd].length; i += 2) {
-            // Find the two winning teams
-            if (series[rnd][i].home.won === 4) {
-                team1 = helpers.deepCopy(series[rnd][i].home);
-                tidsWon.push(series[rnd][i].home.tid);
+    // Try to schedule games if there are active series
+    for (let i = 0; i < series[rnd].length; i++) {
+        if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
+            // Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
+            const numGames = series[rnd][i].home.won + series[rnd][i].away.won;
+            if (numGames === 0 || numGames === 1 || numGames === 4 || numGames === 6) {
+                tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
             } else {
-                team1 = helpers.deepCopy(series[rnd][i].away);
-                tidsWon.push(series[rnd][i].away.tid);
+                tids.push([series[rnd][i].away.tid, series[rnd][i].home.tid]);
             }
-            if (series[rnd][i + 1].home.won === 4) {
-                team2 = helpers.deepCopy(series[rnd][i + 1].home);
-                tidsWon.push(series[rnd][i + 1].home.tid);
-            } else {
-                team2 = helpers.deepCopy(series[rnd][i + 1].away);
-                tidsWon.push(series[rnd][i + 1].away.tid);
-            }
+        }
+    }
 
-            // Set home/away in the next round
-            if (team1.winp > team2.winp) {
-                matchup = {home: team1, away: team2};
-            } else {
-                matchup = {home: team2, away: team1};
-            }
+    // If series are still in progress, write games and short circuit
+    if (tids.length > 0) {
+        await setSchedule(tx, tids);
+        return false;
+    }
 
-            matchup.home.won = 0;
-            matchup.away.won = 0;
-            series[rnd + 1][i / 2] = matchup;
+    // If playoffs are over, update winner and go to next phase
+    if (rnd === 3) {
+        let key;
+        if (series[rnd][0].home.won === 4) {
+            key = series[rnd][0].home.tid;
+        } else if (series[rnd][0].away.won === 4) {
+            key = series[rnd][0].away.tid;
         }
 
-        playoffSeries.currentRound += 1;
-        return tx.playoffSeries.put(playoffSeries).then(function () {
-            // Update hype for winning a series
-            return Promise.map(tidsWon, function (tid) {
-                return tx.teamSeasons.index("season, tid").get([g.season, tid]).then(function (teamSeason) {
-                    teamSeason.playoffRoundsWon = playoffSeries.currentRound;
-                    teamSeason.hype += 0.05;
-                    if (teamSeason.hype > 1) {
-                        teamSeason.hype = 1;
-                    }
+        await tx.teamSeasons.index("season, tid").iterate([g.season, key], teamSeason => {
+            teamSeason.playoffRoundsWon = 4;
+            teamSeason.hype += 0.05;
+            if (teamSeason.hype > 1) {
+                teamSeason.hype = 1;
+            }
 
-                    return tx.teamSeasons.put(teamSeason);
-                });
-            });
-        }).then(function () {
-            // Next time, the schedule for the first day of the next round will be set
-            return newSchedulePlayoffsDay(tx);
+            return teamSeason;
         });
+
+        // Playoffs are over! Return true!
+        return true;
+    }
+
+    // Playoffs are not over! Make another round
+
+    // Set matchups for next round
+    const tidsWon = [];
+    for (let i = 0; i < series[rnd].length; i += 2) {
+        // Find the two winning teams
+        let team1, team2;
+        if (series[rnd][i].home.won === 4) {
+            team1 = helpers.deepCopy(series[rnd][i].home);
+            tidsWon.push(series[rnd][i].home.tid);
+        } else {
+            team1 = helpers.deepCopy(series[rnd][i].away);
+            tidsWon.push(series[rnd][i].away.tid);
+        }
+        if (series[rnd][i + 1].home.won === 4) {
+            team2 = helpers.deepCopy(series[rnd][i + 1].home);
+            tidsWon.push(series[rnd][i + 1].home.tid);
+        } else {
+            team2 = helpers.deepCopy(series[rnd][i + 1].away);
+            tidsWon.push(series[rnd][i + 1].away.tid);
+        }
+
+        // Set home/away in the next round
+        let matchup;
+        if (team1.winp > team2.winp) {
+            matchup = {home: team1, away: team2};
+        } else {
+            matchup = {home: team2, away: team1};
+        }
+
+        matchup.home.won = 0;
+        matchup.away.won = 0;
+        series[rnd + 1][i / 2] = matchup;
+    }
+
+    playoffSeries.currentRound += 1;
+    await tx.playoffSeries.put(playoffSeries);
+
+    // Update hype for winning a series
+    await Promise.map(tidsWon, async tid => {
+        const teamSeason = await tx.teamSeasons.index("season, tid").get([g.season, tid]);
+
+        teamSeason.playoffRoundsWon = playoffSeries.currentRound;
+        teamSeason.hype += 0.05;
+        if (teamSeason.hype > 1) {
+            teamSeason.hype = 1;
+        }
+
+        await tx.teamSeasons.put(teamSeason);
     });
+
+    // Next time, the schedule for the first day of the next round will be set
+    return newSchedulePlayoffsDay(tx);
 }
 
 /**
@@ -665,29 +656,28 @@ function newSchedulePlayoffsDay(tx) {
  * @memberOf core.season
  * @return {Promise} The number of days left in the schedule.
  */
-function getDaysLeftSchedule() {
-    return getSchedule().then(function (schedule) {
-        var i, numDays, tids;
+async function getDaysLeftSchedule() {
+    let schedule = await getSchedule();
 
-        numDays = 0;
+    let numDays = 0;
 
-        while (schedule.length > 0) {
-            // Only take the games up until right before a team plays for the second time that day
-            tids = [];
-            for (i = 0; i < schedule.length; i++) {
-                if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
-                    tids.push(schedule[i].homeTid);
-                    tids.push(schedule[i].awayTid);
-                } else {
-                    break;
-                }
+    while (schedule.length > 0) {
+        // Only take the games up until right before a team plays for the second time that day
+        const tids = [];
+        let i;
+        for (i = 0; i < schedule.length; i++) {
+            if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
+                tids.push(schedule[i].homeTid);
+                tids.push(schedule[i].awayTid);
+            } else {
+                break;
             }
-            numDays += 1;
-            schedule = schedule.slice(i);
         }
+        numDays += 1;
+        schedule = schedule.slice(i);
+    }
 
-        return numDays;
-    });
+    return numDays;
 }
 
 module.exports = {

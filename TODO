@@ -8,7 +8,7 @@ babel
     then manually go over, fix:
       let/const definitions inline
       async/await
-        league.create, core after player, data, test, util, views, .
+        league.create, core after season, data, test, util, views, .
         any other instances of .then or .catch?
         go over files in core (phase and before), . and restore missing comments
   benchmark, for sanity
@@ -27,7 +27,7 @@ babel
   errors on draft until user or end
   ctrl+F Kneden for bugs
     one in game.js, look into ASAP! make a test like in kneden repo
-  investigate backboard tx canceling error propagation, see tx in newPhase
+  investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being cancelled (resolve) and error returned (Reject)
 
 one month gamesim benchmarks while viewing dashboard:
   original 000:01:43.710

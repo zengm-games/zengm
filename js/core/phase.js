@@ -28,10 +28,10 @@ let phaseChangeTx;
  * @memberOf core.phase
  * @param {number} phase Integer representing the new phase of the game (see other functions in this module).
  * @param {string=} url Optional URL to pass to ui.realtimeUpdate for redirecting on new phase. If undefined, then the current page will just be refreshed.
- * @param {Array.<string>=} updateEvents Optional array of strings.
+ * @param {Array.<string>=} updateEvents Array of strings.
  * @return {Promise}
  */
-async function finalize(phase, url, updateEvents=[]) {
+async function finalize(phase, url, updateEvents) {
     // Set phase before updating play menu
     await require('../core/league').setGameAttributesComplete({
         phase,
@@ -439,9 +439,9 @@ async function newPhaseDraft(tx) {
             p.draft.year -= 1;
             return p;
         }
-    })
+    });
 
-    return [helpers.leagueUrl(["draft"])];
+    return [helpers.leagueUrl(["draft"]), []];
 }
 
 async function newPhaseAfterDraft(tx) {
@@ -655,6 +655,8 @@ async function newPhase(phase, extra) {
             if (result && result.length === 2) {
                 const [url, updateEvents] = result;
                 return finalize(phase, url, updateEvents);
+            } else {
+                throw new Error('Invalid result from phase change: ' + JSON.stringify(result));
             }
         } else {
             throw new Error(`Unknown phase number ${phase}`);

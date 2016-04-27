@@ -17,6 +17,8 @@ babel
     gamesim
   merge with master
   eslint
+    get working
+    no var
   sublime
   tests
   how to make async/await fast

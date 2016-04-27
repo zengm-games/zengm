@@ -494,8 +494,7 @@ function filter(options) {
 
     // Copys/filters the seasonal attributes listed in options.seasonAttrs from p to fp.
     const filterSeasonAttrs = (ft, t, options) => {
-        var ts;
-
+        let ts;
         if (options.seasonAttrs.length > 0) {
             if (options.season !== null) {
                 // Single season
@@ -592,8 +591,7 @@ function filter(options) {
 
     // Copys/filters the stats listed in options.stats from p to fp.
     const filterStats = (ft, t, options) => {
-        var ts;
-
+        let ts;
         if (options.stats.length > 0) {
             if (options.season !== null) {
                 // Single season
@@ -626,10 +624,9 @@ function filter(options) {
         }
     };
 
-    return helpers.maybeReuseTx(["players", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readonly", options.ot, tx => {
-        return tx.teams.getAll(options.tid).map(function (t) {
-            var seasonsPromise, statsPromise;
-
+    return helpers.maybeReuseTx(["players", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readonly", options.ot, async tx => {
+        const teams = await tx.teams.getAll(options.tid).map(async t => {
+            let seasonsPromise;
             if (options.seasonAttrs.length === 0) {
                 seasonsPromise = Promise.resolve([]);
             } else {
@@ -640,6 +637,7 @@ function filter(options) {
                 }
             }
 
+            let statsPromise;
             if (options.stats.length === 0) {
                 statsPromise = Promise.resolve([]);
             } else {
@@ -650,87 +648,77 @@ function filter(options) {
                 }
             }
 
-            return Promise.all([
+            const [seasons, stats] = await Promise.all([
                 seasonsPromise,
                 statsPromise
-            ]).spread(function (seasons, stats) {
-                t.seasons = sortBy(seasons, "season");
-                t.stats = sortBy(stats, ["season", "playoffs"]);
-                return t;
-            });
-        }).then(function (t) {
-            var ft, fts, i, returnOneTeam, sortBy;
+            ]);
+            t.seasons = sortBy(seasons, "season");
+            t.stats = sortBy(stats, ["season", "playoffs"]);
+            return t;
+        });
 
-            // t will be an array of g.numTeams teams (if options.tid is null) or an array of 1 team. If 1, then we want to return just that team object at the end, not an array of 1 team.
-            returnOneTeam = false;
-            if (t.length === 1) {
-                returnOneTeam = true;
-            }
+        // teams will be an array of g.numTeams teams (if options.tid is null) or an array of 1 team. If 1, then we want to return just that team object at the end, not an array of 1 team.
+        const returnOneTeam = teams.length === 1;
 
-            fts = [];
+        const fts = teams.map(t => {
+            const ft = {};
+            filterAttrs(ft, t, options);
+            filterSeasonAttrs(ft, t, options);
+            filterStats(ft, t, options);
+            return ft;
+        });
 
-            for (i = 0; i < t.length; i++) {
-                ft = {};
-                filterAttrs(ft, t[i], options);
-                filterSeasonAttrs(ft, t[i], options);
-                filterStats(ft, t[i], options);
-                fts.push(ft);
-            }
+        if (Array.isArray(options.sortBy)) {
+            // Sort by multiple properties
+            const sortBy = options.sortBy.slice();
+            fts.sort((a, b) => {
+                let result;
+                for (i = 0; i < sortBy.length; i++) {
+                    result = (sortBy[i].indexOf("-") === 1) ? a[sortBy[i]] - b[sortBy[i]] : b[sortBy[i]] - a[sortBy[i]];
 
-            if (Array.isArray(options.sortBy)) {
-                // Sort by multiple properties
-                sortBy = options.sortBy.slice();
-                fts.sort(function (a, b) {
-                    var result;
-
-                    for (i = 0; i < sortBy.length; i++) {
-                        result = (sortBy[i].indexOf("-") === 1) ? a[sortBy[i]] - b[sortBy[i]] : b[sortBy[i]] - a[sortBy[i]];
-
-                        if (result || i === sortBy.length - 1) {
-                            return result;
-                        }
+                    if (result || i === sortBy.length - 1) {
+                        return result;
                     }
-                });
-            } else if (options.sortBy === "winp") {
-                // Sort by winning percentage, descending
-                fts.sort((a, b) => b.winp - a.winp);
-            }
+                }
+            });
+        } else if (options.sortBy === "winp") {
+            // Sort by winning percentage, descending
+            fts.sort((a, b) => b.winp - a.winp);
+        }
 
-            // If payroll for the current season was requested, find the current payroll for each team. Otherwise, don't.
-            if (options.seasonAttrs.indexOf("payroll") < 0 || options.season !== g.season) {
+        // If payroll for the current season was requested, find the current payroll for each team. Otherwise, don't.
+        if (options.seasonAttrs.indexOf("payroll") < 0 || options.season !== g.season) {
+            return returnOneTeam ? fts[0] : fts;
+        }
+
+        const savePayroll = async i => {
+            const payroll = await getPayroll(options.ot, teams[i].tid).get(0);
+            fts[i].payroll = payroll / 1000;
+            if (i === fts.length - 1) {
                 return returnOneTeam ? fts[0] : fts;
             }
 
-            const savePayroll = async i => {
-                const payroll = await getPayroll(options.ot, t[i].tid).get(0);
-                fts[i].payroll = payroll / 1000;
-                if (i === fts.length - 1) {
-                    return returnOneTeam ? fts[0] : fts;
-                }
+            return savePayroll(i + 1);
+        };
 
-                return savePayroll(i + 1);
-            };
-
-            return savePayroll(0);
-        });
+        return savePayroll(0);
     });
 }
 
 // estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).
-function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesCached) {
-    var add, gpAvg, payroll, pop, remove, roster, strategy;
-
+async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesCached) {
     // UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
     if (dpidsRemove.length > 2) {
-        return Promise.resolve(-1);
+        return -1;
     }
 
     // Get value and skills for each player on team or involved in the proposed transaction
-    roster = [];
-    add = [];
-    remove = [];
+    const roster = [];
+    let add = [];
+    let remove = [];
 
-    return g.dbl.tx(["draftPicks", "players", "releasedPlayers", "teams", "teamSeasons", "teamStats"], tx => {
+    let gpAvg, payroll, pop, strategy;
+    await g.dbl.tx(["draftPicks", "players", "releasedPlayers", "teams", "teamSeasons", "teamStats"], async tx => {
         // Get players
         const getPlayers = async () => {
             // Fudge factor for AI overvaluing its own players
@@ -780,7 +768,7 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
             if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
                 // Estimate the order of the picks by team
                 tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season, ''])).then(function (allTeamSeasons) {
-                    var estPicks, estValues, gp, halfSeason, i, rCurrent, rLast, rookieSalaries, s, sorted, teamSeasons, tid, withEstValues, wps;
+                    var estPicks, estValues, gp, halfSeason, i, rCurrent, rLast, rookieSalaries, s, sorted, teamSeasons, tid, wps;
 
                     // This part needs to be run every time so that gpAvg is available
                     wps = []; // Contains estimated winning percentages for all teams by the end of the season
@@ -832,87 +820,83 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
                     rookieSalaries = require('./draft').getRookieSalaries();
 
                     // Actually add picks after some stuff below is done
-                    withEstValues = function () {
-                        var i;
+                    const withEstValues = () => {
+                        Promise.map(dpidsAdd, async dpid => {
+                            const dp = await tx.draftPicks.get(dpid);
 
-                        for (i = 0; i < dpidsAdd.length; i++) {
-                            tx.draftPicks.get(dpidsAdd[i]).then(function (dp) {
-                                var estPick, seasons, value;
+                            let estPick = estPicks[dp.originalTid];
 
-                                estPick = estPicks[dp.originalTid];
+                            // For future draft picks, add some uncertainty
+                            const seasons = dp.season - g.season;
+                            estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
 
-                                // For future draft picks, add some uncertainty
-                                seasons = dp.season - g.season;
-                                estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
+                            // No fudge factor, since this is coming from the user's team (or eventually, another AI)
+                            let value;
+                            if (estValues[dp.season]) {
+                                value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)];
+                            }
+                            if (!value) {
+                                value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)];
+                            }
 
-                                // No fudge factor, since this is coming from the user's team (or eventually, another AI)
-                                if (estValues[dp.season]) {
-                                    value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)];
-                                }
-                                if (!value) {
-                                    value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)];
-                                }
-
-                                add.push({
-                                    value: value,
-                                    skills: [],
-                                    contract: {
-                                        amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
-                                        exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
-                                    },
-                                    worth: {
-                                        amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
-                                        exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
-                                    },
-                                    injury: {type: "Healthy", gamesRemaining: 0},
-                                    age: 19,
-                                    draftPick: true
-                                });
+                            add.push({
+                                value: value,
+                                skills: [],
+                                contract: {
+                                    amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
+                                    exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                                },
+                                worth: {
+                                    amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
+                                    exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                                },
+                                injury: {type: "Healthy", gamesRemaining: 0},
+                                age: 19,
+                                draftPick: true
                             });
-                        }
+                        });
 
-                        for (i = 0; i < dpidsRemove.length; i++) {
-                            tx.draftPicks.get(dpidsRemove[i]).then(function (dp) {
-                                var estPick, fudgeFactor, seasons, value;
+                        Promise.map(dpidsRemove, async dpid => {
+                            const dp = await tx.draftPicks.get(dpid);
+                            let estPick = estPicks[dp.originalTid];
 
-                                estPick = estPicks[dp.originalTid];
+                            // For future draft picks, add some uncertainty
+                            const seasons = dp.season - g.season;
+                            estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
 
-                                // For future draft picks, add some uncertainty
-                                seasons = dp.season - g.season;
-                                estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
+                            // Set fudge factor with more confidence if it's the current season
+                            let fudgeFactor;
+                            if (seasons === 0 && gp >= g.numGames / 2) {
+                                fudgeFactor = (1 - gp / g.numGames) * 5;
+                            } else {
+                                fudgeFactor = 5;
+                            }
 
-                                // Set fudge factor with more confidence if it's the current season
-                                if (seasons === 0 && gp >= g.numGames / 2) {
-                                    fudgeFactor = (1 - gp / g.numGames) * 5;
-                                } else {
-                                    fudgeFactor = 5;
-                                }
+                            // Use fudge factor: AI teams like their own picks
+                            let value;
+                            if (estValues[dp.season]) {
+                                value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
+                            }
+                            if (!value) {
+                                value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
+                            }
 
-                                // Use fudge factor: AI teams like their own picks
-                                if (estValues[dp.season]) {
-                                    value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
-                                }
-                                if (!value) {
-                                    value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
-                                }
-
-                                remove.push({
-                                    value: value,
-                                    skills: [],
-                                    contract: {
-                                        amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
-                                        exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
-                                    },
-                                    worth: {
-                                        amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
-                                        exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
-                                    },
-                                    injury: {type: "Healthy", gamesRemaining: 0},
-                                    age: 19,
-                                    draftPick: true
-                                });
+                            remove.push({
+                                value: value,
+                                skills: [],
+                                contract: {
+                                    amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
+                                    exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                                },
+                                worth: {
+                                    amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
+                                    exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                                },
+                                injury: {type: "Healthy", gamesRemaining: 0},
+                                age: 19,
+                                draftPick: true
                             });
-                        }
+                        });
                     };
 
                     if (estValuesCached) {
@@ -929,260 +913,250 @@ function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesC
         };
 
         // Get team strategy and population, for future use
-        filter({
+        const t = await filter({
             attrs: ["strategy"],
             seasonAttrs: ["pop"],
             stats: ["gp"],
             season: g.season,
             tid: tid,
             ot: tx
-        }).then(function (t) {
-            strategy = t.strategy;
-            pop = t.pop;
-            if (pop > 20) {
-                pop = 20;
-            }
-            gpAvg = t.gp; // Ideally would be done separately for each team, but close enough
-
-            getPlayers();
-            getPicks();
         });
 
-        getPayroll(tx, tid).then(function (payrollLocal) {
-            payroll = payrollLocal;
-        });
-    }).then(function () {
-        var base, contractsFactor, dv, rosterAndAdd, rosterAndRemove, salaryAddedThisSeason, salaryRemoved, skillsNeeded;
-
-        gpAvg = helpers.bound(gpAvg, 0, g.numGames);
-
-/*            // Handle situations where the team goes over the roster size limit
-        if (roster.length + remove.length > 15) {
-            // Already over roster limit, so don't worry unless this trade actually makes it worse
-            needToDrop = (roster.length + add.length) - (roster.length + remove.length);
-        } else {
-            needToDrop = (roster.length + add.length) - 15;
+        strategy = t.strategy;
+        pop = t.pop;
+        if (pop > 20) {
+            pop = 20;
         }
-        roster.sort(function (a, b) { return a.value - b.value; }); // Sort by value, ascending
-        add.sort(function (a, b) { return a.value - b.value; }); // Sort by value, ascending
-        while (needToDrop > 0) {
-            // Find lowest value player, from roster or add. Delete him and move his salary to the second lowest value player.
-            if (roster[0].value < add[0].value) {
-                if (roster[1].value < add[0].value) {
-                    roster[1].contract.amount += roster[0].contract.amount;
-                } else {
-                    add[0].contract.amount += roster[0].contract.amount;
-                }
-                roster.shift(); // Remove from value calculation
+        gpAvg = helpers.bound(t.gp, 0, g.numGames); // Ideally would be done separately for each team, but close enough
+
+        getPlayers();
+        getPicks();
+
+        payroll = await getPayroll(tx, tid);
+    });
+
+/*    // Handle situations where the team goes over the roster size limit
+    if (roster.length + remove.length > 15) {
+        // Already over roster limit, so don't worry unless this trade actually makes it worse
+        needToDrop = (roster.length + add.length) - (roster.length + remove.length);
+    } else {
+        needToDrop = (roster.length + add.length) - 15;
+    }
+    roster.sort((a, b) => a.value - b.value); // Sort by value, ascending
+    add.sort((a, b) => a.value - b.value); // Sort by value, ascending
+    while (needToDrop > 0) {
+        // Find lowest value player, from roster or add. Delete him and move his salary to the second lowest value player.
+        if (roster[0].value < add[0].value) {
+            if (roster[1].value < add[0].value) {
+                roster[1].contract.amount += roster[0].contract.amount;
             } else {
-                if (add.length > 1 && add[1].value < roster[0].value) {
-                    add[1].contract.amount += add[0].contract.amount;
-                } else {
-                    roster[0].contract.amount += add[0].contract.amount;
-                }
-                add.shift(); // Remove from value calculation
+                add[0].contract.amount += roster[0].contract.amount;
             }
-
-            needToDrop -= 1;
-        }*/
-
-        // This roughly corresponds with core.gameSim.updateSynergy
-        skillsNeeded = {
-            "3": 5,
-            A: 5,
-            B: 3,
-            Di: 2,
-            Dp: 2,
-            Po: 2,
-            Ps: 4,
-            R: 3
-        };
-
-        const doSkillBonuses = (test, roster) => {
-            // What are current skills?
-            let rosterSkills = [];
-            for (let i = 0; i < roster.length; i++) {
-                if (roster[i].value >= 45) {
-                    rosterSkills.push(roster[i].skills);
-                }
+            roster.shift(); // Remove from value calculation
+        } else {
+            if (add.length > 1 && add[1].value < roster[0].value) {
+                add[1].contract.amount += add[0].contract.amount;
+            } else {
+                roster[0].contract.amount += add[0].contract.amount;
             }
-            rosterSkills = _.flatten(rosterSkills);
-            const rosterSkillsCount = _.countBy(rosterSkills);
+            add.shift(); // Remove from value calculation
+        }
 
-            // Sort test by value, so that the highest value players get bonuses applied first
-            test.sort((a, b) => b.value - a.value);
+        needToDrop -= 1;
+    }*/
 
-            for (let i = 0; i < test.length; i++) {
-                if (test.value >= 45) {
-                    for (let j = 0; j < test[i].skills.length; j++) {
-                        const s = test[i].skills[j];
+    // This roughly corresponds with core.gameSim.updateSynergy
+    const skillsNeeded = {
+        "3": 5,
+        A: 5,
+        B: 3,
+        Di: 2,
+        Dp: 2,
+        Po: 2,
+        Ps: 4,
+        R: 3
+    };
 
-                        if (rosterSkillsCount[s] <= skillsNeeded[s] - 2) {
-                            // Big bonus
-                            test.value *= 1.1;
-                        } else if (rosterSkillsCount[s] <= skillsNeeded[s] - 1) {
-                            // Medium bonus
-                            test.value *= 1.05;
-                        } else if (rosterSkillsCount[s] <= skillsNeeded[s]) {
-                            // Little bonus
-                            test.value *= 1.025;
-                        }
+    const doSkillBonuses = (test, roster) => {
+        // What are current skills?
+        let rosterSkills = [];
+        for (let i = 0; i < roster.length; i++) {
+            if (roster[i].value >= 45) {
+                rosterSkills.push(roster[i].skills);
+            }
+        }
+        rosterSkills = _.flatten(rosterSkills);
+        const rosterSkillsCount = _.countBy(rosterSkills);
 
-                        // Account for redundancy in test
-                        rosterSkillsCount[s] += 1;
+        // Sort test by value, so that the highest value players get bonuses applied first
+        test.sort((a, b) => b.value - a.value);
+
+        for (let i = 0; i < test.length; i++) {
+            if (test.value >= 45) {
+                for (let j = 0; j < test[i].skills.length; j++) {
+                    const s = test[i].skills[j];
+
+                    if (rosterSkillsCount[s] <= skillsNeeded[s] - 2) {
+                        // Big bonus
+                        test.value *= 1.1;
+                    } else if (rosterSkillsCount[s] <= skillsNeeded[s] - 1) {
+                        // Medium bonus
+                        test.value *= 1.05;
+                    } else if (rosterSkillsCount[s] <= skillsNeeded[s]) {
+                        // Little bonus
+                        test.value *= 1.025;
                     }
+
+                    // Account for redundancy in test
+                    rosterSkillsCount[s] += 1;
                 }
             }
+        }
 
-            return test;
-        };
+        return test;
+    };
 
-        // Apply bonuses based on skills coming in and leaving
-        rosterAndRemove = roster.concat(remove);
-        rosterAndAdd = roster.concat(add);
-        add = doSkillBonuses(add, rosterAndRemove);
-        remove = doSkillBonuses(remove, rosterAndAdd);
+    // Apply bonuses based on skills coming in and leaving
+    const rosterAndRemove = roster.concat(remove);
+    const rosterAndAdd = roster.concat(add);
+    add = doSkillBonuses(add, rosterAndRemove);
+    remove = doSkillBonuses(remove, rosterAndAdd);
 
-        // This actually doesn't do anything because I'm an idiot
-        base = 1.25;
+    // This actually doesn't do anything because I'm an idiot
+    const base = 1.25;
 
-        const sumValues = (players, includeInjuries) => {
-            includeInjuries = includeInjuries !== undefined ? includeInjuries : false;
+    const sumValues = (players, includeInjuries) => {
+        includeInjuries = includeInjuries !== undefined ? includeInjuries : false;
 
-            if (players.length === 0) {
-                return 0;
-            }
+        if (players.length === 0) {
+            return 0;
+        }
 
-            const exponential = players.reduce((memo, p) => {
-                let playerValue = p.value;
+        const exponential = players.reduce((memo, p) => {
+            let playerValue = p.value;
 
-                if (strategy === "rebuilding") {
-                    // Value young/cheap players and draft picks more. Penalize expensive/old players
-                    if (p.draftPick) {
+            if (strategy === "rebuilding") {
+                // Value young/cheap players and draft picks more. Penalize expensive/old players
+                if (p.draftPick) {
+                    playerValue *= 1.15;
+                } else {
+                    if (p.age <= 19) {
                         playerValue *= 1.15;
-                    } else {
-                        if (p.age <= 19) {
-                            playerValue *= 1.15;
-                        } else if (p.age === 20) {
-                            playerValue *= 1.1;
-                        } else if (p.age === 21) {
-                            playerValue *= 1.075;
-                        } else if (p.age === 22) {
-                            playerValue *= 1.05;
-                        } else if (p.age === 23) {
-                            playerValue *= 1.025;
-                        } else if (p.age === 27) {
-                            playerValue *= 0.975;
-                        } else if (p.age === 28) {
-                            playerValue *= 0.95;
-                        } else if (p.age >= 29) {
-                            playerValue *= 0.9;
-                        }
+                    } else if (p.age === 20) {
+                        playerValue *= 1.1;
+                    } else if (p.age === 21) {
+                        playerValue *= 1.075;
+                    } else if (p.age === 22) {
+                        playerValue *= 1.05;
+                    } else if (p.age === 23) {
+                        playerValue *= 1.025;
+                    } else if (p.age === 27) {
+                        playerValue *= 0.975;
+                    } else if (p.age === 28) {
+                        playerValue *= 0.95;
+                    } else if (p.age >= 29) {
+                        playerValue *= 0.9;
                     }
                 }
+            }
 
-                // Anything below 45 is pretty worthless
-                playerValue -= 45;
+            // Anything below 45 is pretty worthless
+            playerValue -= 45;
 
-                // Normalize for injuries
-                if (includeInjuries && tid !== g.userTid) {
-                    if (p.injury.gamesRemaining > 75) {
-                        playerValue -= playerValue * 0.75;
-                    } else {
-                        playerValue -= playerValue * p.injury.gamesRemaining / 100;
-                    }
-                }
-
-                let contractValue = (p.worth.amount - p.contract.amount) / 1000;
-
-                // Account for duration
-                const contractSeasonsRemaining = player.contractSeasonsRemaining(p.contract.exp, g.numGames - gpAvg);
-                if (contractSeasonsRemaining > 1) {
-                    // Don't make it too extreme
-                    contractValue *= Math.pow(contractSeasonsRemaining, 0.25);
+            // Normalize for injuries
+            if (includeInjuries && tid !== g.userTid) {
+                if (p.injury.gamesRemaining > 75) {
+                    playerValue -= playerValue * 0.75;
                 } else {
-                    // Raising < 1 to < 1 power would make this too large
-                    contractValue *= contractSeasonsRemaining;
+                    playerValue -= playerValue * p.injury.gamesRemaining / 100;
                 }
+            }
 
-                // Really bad players will just get no PT
-                if (playerValue < 0) {
-                    playerValue = 0;
-                }
+            let contractValue = (p.worth.amount - p.contract.amount) / 1000;
+
+            // Account for duration
+            const contractSeasonsRemaining = player.contractSeasonsRemaining(p.contract.exp, g.numGames - gpAvg);
+            if (contractSeasonsRemaining > 1) {
+                // Don't make it too extreme
+                contractValue *= Math.pow(contractSeasonsRemaining, 0.25);
+            } else {
+                // Raising < 1 to < 1 power would make this too large
+                contractValue *= contractSeasonsRemaining;
+            }
+
+            // Really bad players will just get no PT
+            if (playerValue < 0) {
+                playerValue = 0;
+            }
 //console.log([playerValue, contractValue]);
 
-                let value = playerValue + 0.5 * contractValue;
+            let value = playerValue + 0.5 * contractValue;
 
-                if (value === 0) {
-                    return memo;
-                }
-                return memo + Math.pow(Math.abs(value), base) * Math.abs(value) / value;
-            }, 0);
-
-            if (exponential === 0) {
-                return exponential;
+            if (value === 0) {
+                return memo;
             }
-            return Math.pow(Math.abs(exponential), 1 / base) * Math.abs(exponential) / exponential;
-        };
+            return memo + Math.pow(Math.abs(value), base) * Math.abs(value) / value;
+        }, 0);
 
-        // Sum of contracts
-        // If onlyThisSeason is set, then amounts after this season are ignored and the return value is the sum of this season's contract amounts in millions of dollars
-        const sumContracts = (players, onlyThisSeason) => {
-            onlyThisSeason = onlyThisSeason !== undefined ? onlyThisSeason : false;
+        if (exponential === 0) {
+            return exponential;
+        }
+        return Math.pow(Math.abs(exponential), 1 / base) * Math.abs(exponential) / exponential;
+    };
 
-            if (players.length === 0) {
-                return 0;
-            }
+    // Sum of contracts
+    // If onlyThisSeason is set, then amounts after this season are ignored and the return value is the sum of this season's contract amounts in millions of dollars
+    const sumContracts = (players, onlyThisSeason) => {
+        onlyThisSeason = onlyThisSeason !== undefined ? onlyThisSeason : false;
 
-            return players.reduce((memo, p) => {
-                if (p.draftPick) {
-                    return memo;
-                }
-
-                return memo + p.contract.amount / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, g.numGames - gpAvg), 0.25 - (onlyThisSeason ? 0.25 : 0));
-            }, 0);
-        };
-
-        if (strategy === "rebuilding") {
-            contractsFactor = 0.3;
-        } else {
-            contractsFactor = 0.1;
+        if (players.length === 0) {
+            return 0;
         }
 
-        salaryRemoved = sumContracts(remove) - sumContracts(add);
+        return players.reduce((memo, p) => {
+            if (p.draftPick) {
+                return memo;
+            }
 
-        dv = sumValues(add, true) - sumValues(remove) + contractsFactor * salaryRemoved;
+            return memo + p.contract.amount / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, g.numGames - gpAvg), 0.25 - (onlyThisSeason ? 0.25 : 0));
+        }, 0);
+    };
+
+    const contractsFactor = strategy === "rebuilding" ? 0.3 : 0.1;
+
+    const salaryRemoved = sumContracts(remove) - sumContracts(add);
+
+    let dv = sumValues(add, true) - sumValues(remove) + contractsFactor * salaryRemoved;
 /*console.log("Added players/picks: " + sumValues(add, true));
 console.log("Removed players/picks: " + (-sumValues(remove)));
 console.log("Added contract quality: -" + contractExcessFactor + " * " + sumContractExcess(add));
 console.log("Removed contract quality: -" + contractExcessFactor + " * " + sumContractExcess(remove));
 console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved);*/
 
-        // Aversion towards losing cap space in a trade during free agency
-        if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {
-            // Only care if cap space is over 2 million
-            if (payroll + 2000 < g.salaryCap) {
-                salaryAddedThisSeason = sumContracts(add, true) - sumContracts(remove, true);
-                // Only care if cap space is being used
-                if (salaryAddedThisSeason > 0) {
+    // Aversion towards losing cap space in a trade during free agency
+    if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {
+        // Only care if cap space is over 2 million
+        if (payroll + 2000 < g.salaryCap) {
+            const salaryAddedThisSeason = sumContracts(add, true) - sumContracts(remove, true);
+            // Only care if cap space is being used
+            if (salaryAddedThisSeason > 0) {
 //console.log("Free agency penalty: -" + (0.2 + 0.8 * g.daysLeft / 30) * salaryAddedThisSeason);
-                    dv -= (0.2 + 0.8 * g.daysLeft / 30) * salaryAddedThisSeason; // 0.2 to 1 times the amount, depending on stage of free agency
-                }
+                dv -= (0.2 + 0.8 * g.daysLeft / 30) * salaryAddedThisSeason; // 0.2 to 1 times the amount, depending on stage of free agency
             }
         }
+    }
 
-        // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
-        // This is a fudge factor, since it's one-sided to punish the player
-        if (add.length > remove.length) {
-            dv -= add.length - remove.length;
-        }
+    // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
+    // This is a fudge factor, since it's one-sided to punish the player
+    if (add.length > remove.length) {
+        dv -= add.length - remove.length;
+    }
 
-        return dv;
+    return dv;
 /*console.log('---');
 console.log([sumValues(add), sumContracts(add)]);
 console.log([sumValues(remove), sumContracts(remove)]);
 console.log(dv);*/
-    });
 }
 
 /**

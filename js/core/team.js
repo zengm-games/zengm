@@ -763,152 +763,150 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
             }
         };
 
-        const getPicks = () => {
+        const getPicks = async () => {
             // For each draft pick, estimate its value based on the recent performance of the team
             if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
                 // Estimate the order of the picks by team
-                tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season, ''])).then(function (allTeamSeasons) {
-                    var estPicks, estValues, gp, halfSeason, i, rCurrent, rLast, rookieSalaries, s, sorted, teamSeasons, tid, wps;
+                const allTeamSeasons = await tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season, '']));
 
-                    // This part needs to be run every time so that gpAvg is available
-                    wps = []; // Contains estimated winning percentages for all teams by the end of the season
+                // This part needs to be run every time so that gpAvg is available
+                const wps = []; // Contains estimated winning percentages for all teams by the end of the season
 
-                    for (tid = 0; tid < g.numTeams; tid++) {
-                        teamSeasons = allTeamSeasons.filter(teamSeason => teamSeason.tid === tid);
+                let gp;
+                for (let tid = 0; tid < g.numTeams; tid++) {
+                    const teamSeasons = allTeamSeasons.filter(teamSeason => teamSeason.tid === tid);
+                    const s = teamSeasons.length;
 
-                        s = teamSeasons.length;
-                        if (teamSeasons.length === 1) {
-                            // First season
-                            if (teamSeasons[0].won + teamSeasons[0].lost > 15) {
-                                rCurrent = [teamSeasons[0].won, teamSeasons[0].lost];
-                            } else {
-                                // Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
-                                if (i === g.userTid) {
-                                    rCurrent = [g.numGames, 0];
-                                } else {
-                                    rCurrent = [0, g.numGames];
-                                }
-                            }
-                            if (i === g.userTid) {
-                                rLast = [Math.round(0.6 * g.numGames), Math.round(0.4 * g.numGames)];
-                            } else {
-                                rLast = [Math.round(0.4 * g.numGames), Math.round(0.6 * g.numGames)]; // Assume a losing season to minimize bad trades
-                            }
+                    let rCurrent, rLast;
+                    if (teamSeasons.length === 1) {
+                        // First season
+                        if (teamSeasons[0].won + teamSeasons[0].lost > 15) {
+                            rCurrent = [teamSeasons[0].won, teamSeasons[0].lost];
                         } else {
-                            // Second (or higher) season
-                            rCurrent = [teamSeasons[s - 1].won, teamSeasons[s - 1].lost];
-                            rLast = [teamSeasons[s - 2].won, teamSeasons[s - 2].lost];
-                        }
-
-                        gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
-
-                        // If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
-                        halfSeason = Math.round(0.5 * g.numGames);
-                        if (gp >= halfSeason) {
-                            wps.push(rCurrent[0] / gp);
-                        } else if (gp > 0) {
-                            wps.push((gp / halfSeason * rCurrent[0] / gp + (halfSeason - gp) / halfSeason * rLast[0] / g.numGames));
-                        } else {
-                            wps.push(rLast[0] / g.numGames);
-                        }
-                    }
-
-                    // Get rank order of wps http://stackoverflow.com/a/14834599/786644
-                    sorted = wps.slice().sort((a, b) => a - b);
-                    estPicks = wps.slice().map(v => sorted.indexOf(v) + 1); // For each team, what is their estimated draft position?
-
-                    rookieSalaries = require('./draft').getRookieSalaries();
-
-                    // Actually add picks after some stuff below is done
-                    const withEstValues = () => {
-                        Promise.map(dpidsAdd, async dpid => {
-                            const dp = await tx.draftPicks.get(dpid);
-
-                            let estPick = estPicks[dp.originalTid];
-
-                            // For future draft picks, add some uncertainty
-                            const seasons = dp.season - g.season;
-                            estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
-
-                            // No fudge factor, since this is coming from the user's team (or eventually, another AI)
-                            let value;
-                            if (estValues[dp.season]) {
-                                value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)];
-                            }
-                            if (!value) {
-                                value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)];
-                            }
-
-                            add.push({
-                                value: value,
-                                skills: [],
-                                contract: {
-                                    amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
-                                    exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
-                                },
-                                worth: {
-                                    amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
-                                    exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
-                                },
-                                injury: {type: "Healthy", gamesRemaining: 0},
-                                age: 19,
-                                draftPick: true
-                            });
-                        });
-
-                        Promise.map(dpidsRemove, async dpid => {
-                            const dp = await tx.draftPicks.get(dpid);
-                            let estPick = estPicks[dp.originalTid];
-
-                            // For future draft picks, add some uncertainty
-                            const seasons = dp.season - g.season;
-                            estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
-
-                            // Set fudge factor with more confidence if it's the current season
-                            let fudgeFactor;
-                            if (seasons === 0 && gp >= g.numGames / 2) {
-                                fudgeFactor = (1 - gp / g.numGames) * 5;
+                            // Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
+                            if (tid === g.userTid) {
+                                rCurrent = [g.numGames, 0];
                             } else {
-                                fudgeFactor = 5;
+                                rCurrent = [0, g.numGames];
                             }
-
-                            // Use fudge factor: AI teams like their own picks
-                            let value;
-                            if (estValues[dp.season]) {
-                                value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
-                            }
-                            if (!value) {
-                                value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
-                            }
-
-                            remove.push({
-                                value: value,
-                                skills: [],
-                                contract: {
-                                    amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
-                                    exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
-                                },
-                                worth: {
-                                    amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
-                                    exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
-                                },
-                                injury: {type: "Healthy", gamesRemaining: 0},
-                                age: 19,
-                                draftPick: true
-                            });
-                        });
-                    };
-
-                    if (estValuesCached) {
-                        estValues = estValuesCached;
-                        withEstValues();
+                        }
+                        if (tid === g.userTid) {
+                            rLast = [Math.round(0.6 * g.numGames), Math.round(0.4 * g.numGames)];
+                        } else {
+                            rLast = [Math.round(0.4 * g.numGames), Math.round(0.6 * g.numGames)]; // Assume a losing season to minimize bad trades
+                        }
                     } else {
-                        require('./trade').getPickValues(tx).then(function (newEstValues) {
-                            estValues = newEstValues;
-                            withEstValues();
-                        });
+                        // Second (or higher) season
+                        rCurrent = [teamSeasons[s - 1].won, teamSeasons[s - 1].lost];
+                        rLast = [teamSeasons[s - 2].won, teamSeasons[s - 2].lost];
                     }
-                });
+
+                    gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
+
+                    // If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
+                    const halfSeason = Math.round(0.5 * g.numGames);
+                    if (gp >= halfSeason) {
+                        wps.push(rCurrent[0] / gp);
+                    } else if (gp > 0) {
+                        wps.push((gp / halfSeason * rCurrent[0] / gp + (halfSeason - gp) / halfSeason * rLast[0] / g.numGames));
+                    } else {
+                        wps.push(rLast[0] / g.numGames);
+                    }
+                }
+
+                // Get rank order of wps http://stackoverflow.com/a/14834599/786644
+                const sorted = wps.slice().sort((a, b) => a - b);
+                const estPicks = wps.slice().map(v => sorted.indexOf(v) + 1); // For each team, what is their estimated draft position?
+
+                const rookieSalaries = require('./draft').getRookieSalaries();
+
+                // Actually add picks after some stuff below is done
+                const withEstValues = () => {
+                    Promise.map(dpidsAdd, async dpid => {
+                        const dp = await tx.draftPicks.get(dpid);
+
+                        let estPick = estPicks[dp.originalTid];
+
+                        // For future draft picks, add some uncertainty
+                        const seasons = dp.season - g.season;
+                        estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
+
+                        // No fudge factor, since this is coming from the user's team (or eventually, another AI)
+                        let value;
+                        if (estValues[dp.season]) {
+                            value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)];
+                        }
+                        if (!value) {
+                            value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)];
+                        }
+
+                        add.push({
+                            value: value,
+                            skills: [],
+                            contract: {
+                                amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
+                                exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                            },
+                            worth: {
+                                amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
+                                exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                            },
+                            injury: {type: "Healthy", gamesRemaining: 0},
+                            age: 19,
+                            draftPick: true
+                        });
+                    });
+
+                    Promise.map(dpidsRemove, async dpid => {
+                        const dp = await tx.draftPicks.get(dpid);
+                        let estPick = estPicks[dp.originalTid];
+
+                        // For future draft picks, add some uncertainty
+                        const seasons = dp.season - g.season;
+                        estPick = Math.round(estPick * (5 - seasons) / 5 + 15 * seasons / 5);
+
+                        // Set fudge factor with more confidence if it's the current season
+                        let fudgeFactor;
+                        if (seasons === 0 && gp >= g.numGames / 2) {
+                            fudgeFactor = (1 - gp / g.numGames) * 5;
+                        } else {
+                            fudgeFactor = 5;
+                        }
+
+                        // Use fudge factor: AI teams like their own picks
+                        let value;
+                        if (estValues[dp.season]) {
+                            value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
+                        }
+                        if (!value) {
+                            value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
+                        }
+
+                        remove.push({
+                            value: value,
+                            skills: [],
+                            contract: {
+                                amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
+                                exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                            },
+                            worth: {
+                                amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
+                                exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                            },
+                            injury: {type: "Healthy", gamesRemaining: 0},
+                            age: 19,
+                            draftPick: true
+                        });
+                    });
+                };
+
+                let estValues;
+                if (estValuesCached) {
+                    estValues = estValuesCached;
+                } else {
+                    estValues = await require('./trade').getPickValues(tx);
+                }
+                withEstValues();
             }
         };
 

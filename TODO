@@ -8,7 +8,7 @@ babel
     then manually go over, fix:
       let/const definitions inline
       async/await
-        league.create, core after season, data, test, util, views, .
+        league.create, core after team, data, test, util, views, .
         any other instances of .then or .catch?
         go over files in core (phase and before), . and restore missing comments
   benchmark, for sanity

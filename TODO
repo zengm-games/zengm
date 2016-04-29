@@ -10,7 +10,7 @@ babel
       async/await
         league.create, data, test, util, views, .
         any other instances of .then or .catch?
-        go over files in core (phase and before), . and restore missing comments
+        go over files in core (league and before), . and restore missing comments
   benchmark, for sanity
     ctrl+r
     new league

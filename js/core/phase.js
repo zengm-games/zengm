@@ -80,6 +80,7 @@ async function newPhasePreseason(tx) {
     const teamSeasons = await tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season - 1, '']));
     const coachingRanks = teamSeasons.map(teamSeason => teamSeason.expenses.coaching.rank);
 
+    // Loop through all non-retired players
     await tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), async p => {
         // Update ratings
         p = player.addRatingsRow(p, scoutingRank);
@@ -453,11 +454,12 @@ async function newPhaseAfterDraft(tx) {
 async function newPhaseResignPlayers(tx) {
     const baseMoods = await player.genBaseMoods(tx);
 
+    // Re-sign players on user's team, and some AI players
     await tx.players.index('tid').iterate(backboard.lowerBound(0), async p => {
         if (p.contract.exp <= g.season && g.userTids.indexOf(p.tid) >= 0 && g.autoPlaySeasons === 0) {
             const tid = p.tid;
 
-            // Add to free agents first, to generate a contract demand
+            // Add to free agents first, to generate a contract demand, then open negotiations with player
             await player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
             const error = await contractNegotiation.create(tx, p.pid, true, tid);
             if (error !== undefined && error) {
@@ -522,8 +524,9 @@ async function newPhaseFreeAgency(tx) {
 
             return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
         }
-    })
+    });
 
+    // Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
     await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_2, p => {
         p.tid = g.PLAYER.UNDRAFTED;
         p.ratings[0].fuzz /= 2;

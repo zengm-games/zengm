@@ -323,7 +323,7 @@ async function propose(forceTrade) {
         if (dv > 0 || forceTrade) {
             // Trade players
             outcome = "accepted";
-            [0, 1].forEach(function (j) {
+            [0, 1].forEach(j => {
                 const k = j === 0 ? 1 : 0;
 
                 Promise.map(pids[j], async pid => {
@@ -409,18 +409,18 @@ async function propose(forceTrade) {
  * @param {?Object} estValuesCached Estimated draft pick values from trade.getPickValues, or null. Only pass if you're going to call this repeatedly, then it'll be faster if you cache the values up front.
  * @return {Promise.[boolean, Object]} Resolves to an array with one or two elements. First is a boolean indicating whether "make it work" was successful. If true, then the second argument is set to a teams object (similar to first input) with the "made it work" trade info.
  */
-function makeItWork(teams, holdUserConstant, estValuesCached) {
+async function makeItWork(teams, holdUserConstant, estValuesCached) {
     let initialSign;
     let added = 0;
 
     // Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
-    const tryAddAsset = () => {
+    const tryAddAsset = async () => {
         const assets = [];
 
-        return g.dbl.tx(["draftPicks", "players"], tx => {
+        await g.dbl.tx(["draftPicks", "players"], tx => {
             if (!holdUserConstant) {
                 // Get all players not in userPids
-                tx.players.index('tid').iterate(teams[0].tid, function (p) {
+                tx.players.index('tid').iterate(teams[0].tid, p => {
                     if (teams[0].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                         assets.push({
                             type: "player",
@@ -432,7 +432,7 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
             }
 
             // Get all players not in otherPids
-            tx.players.index('tid').iterate(teams[1].tid, function (p) {
+            tx.players.index('tid').iterate(teams[1].tid, p => {
                 if (teams[1].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                     assets.push({
                         type: "player",
@@ -444,7 +444,7 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
 
             if (!holdUserConstant) {
                 // Get all draft picks not in userDpids
-                tx.draftPicks.index('tid').iterate(teams[0].tid, function (dp) {
+                tx.draftPicks.index('tid').iterate(teams[0].tid, dp => {
                     if (teams[0].dpids.indexOf(dp.dpid) < 0) {
                         assets.push({
                             type: "draftPick",
@@ -456,7 +456,7 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
             }
 
             // Get all draft picks not in otherDpids
-            tx.draftPicks.index('tid').iterate(teams[1].tid, function (dp) {
+            tx.draftPicks.index('tid').iterate(teams[1].tid, dp => {
                 if (teams[1].dpids.indexOf(dp.dpid) < 0) {
                     assets.push({
                         type: "draftPick",
@@ -465,103 +465,98 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
                     });
                 }
             });
-        }).then(function () {
-            var otherDpids, otherPids, userDpids, userPids;
+        });
 
-            // If we've already added 5 assets or there are no more to try, stop
-            if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
-                return [false];
+        // If we've already added 5 assets or there are no more to try, stop
+        if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
+            return [false];
+        }
+
+        // Calculate the value for each asset added to the trade, for use in forward selection
+        await Promise.map(assets, async asset => {
+            const userPids = teams[0].pids.slice();
+            const otherPids = teams[1].pids.slice();
+            const userDpids = teams[0].dpids.slice();
+            const otherDpids = teams[1].dpids.slice();
+
+            if (asset.type === "player") {
+                if (asset.tid === g.userTid) {
+                    userPids.push(asset.pid);
+                } else {
+                    otherPids.push(asset.pid);
+                }
+            } else {
+                if (asset.tid === g.userTid) {
+                    userDpids.push(asset.dpid);
+                } else {
+                    otherDpids.push(asset.dpid);
+                }
             }
 
-            // Calculate the value for each asset added to the trade, for use in forward selection
-            return Promise.map(assets, function (asset) {
-                userPids = teams[0].pids.slice();
-                otherPids = teams[1].pids.slice();
-                userDpids = teams[0].dpids.slice();
-                otherDpids = teams[1].dpids.slice();
-
-                if (asset.type === "player") {
-                    if (asset.tid === g.userTid) {
-                        userPids.push(asset.pid);
-                    } else {
-                        otherPids.push(asset.pid);
-                    }
-                } else {
-                    if (asset.tid === g.userTid) {
-                        userDpids.push(asset.dpid);
-                    } else {
-                        otherDpids.push(asset.dpid);
-                    }
-                }
-                return team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached).then(function (dv) {
-                    asset.dv = dv;
-                });
-            }).then(function () {
-                var asset, j;
-
-                assets.sort(function (a, b) { return b.dv - a.dv; });
-
-                // Find the asset that will push the trade value the smallest amount above 0
-                for (j = 0; j < assets.length; j++) {
-                    if (assets[j].dv < 0) {
-                        break;
-                    }
-                }
-                if (j > 0) {
-                    j -= 1;
-                }
-                asset = assets[j];
-                if (asset.type === "player") {
-                    if (asset.tid === g.userTid) {
-                        teams[0].pids.push(asset.pid);
-                    } else {
-                        teams[1].pids.push(asset.pid);
-                    }
-                } else {
-                    if (asset.tid === g.userTid) {
-                        teams[0].dpids.push(asset.dpid);
-                    } else {
-                        teams[1].dpids.push(asset.dpid);
-                    }
-                }
-
-                added += 1;
-
-                return testTrade();
-            });
+            asset.dv = await team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached);
         });
+
+        assets.sort((a, b) => b.dv - a.dv);
+
+        // Find the asset that will push the trade value the smallest amount above 0
+        let j;
+        for (j = 0; j < assets.length; j++) {
+            if (assets[j].dv < 0) {
+                break;
+            }
+        }
+        if (j > 0) {
+            j -= 1;
+        }
+        const asset = assets[j];
+        if (asset.type === "player") {
+            if (asset.tid === g.userTid) {
+                teams[0].pids.push(asset.pid);
+            } else {
+                teams[1].pids.push(asset.pid);
+            }
+        } else {
+            if (asset.tid === g.userTid) {
+                teams[0].dpids.push(asset.dpid);
+            } else {
+                teams[1].dpids.push(asset.dpid);
+            }
+        }
+
+        added += 1;
+
+        return testTrade();
     };
 
     // See if the AI team likes the current trade. If not, try adding something to it.
-    const testTrade = () => {
-        return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
-            if (dv > 0 && initialSign === -1) {
+    const testTrade = async () => {
+        const dv = await team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached);
+
+        if (dv > 0 && initialSign === -1) {
+            return [true, teams];
+        }
+
+        if ((added > 2 || (added > 0 && Math.random() > 0.5)) && initialSign === 1) {
+            if (dv > 0) {
                 return [true, teams];
             }
 
-            if ((added > 2 || (added > 0 && Math.random() > 0.5)) && initialSign === 1) {
-                if (dv > 0) {
-                    return [true, teams];
-                }
-
-                return [false];
-            }
-
-            return tryAddAsset();
-        });
-    };
-
-    return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached).then(function (dv) {
-        if (dv > 0) {
-            // Try to make trade better for user's team
-            initialSign = 1;
-        } else {
-            // Try to make trade better for AI team
-            initialSign = -1;
+            return [false];
         }
 
-        return testTrade();
-    });
+        return tryAddAsset();
+    };
+
+    const dv = await team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached);
+    if (dv > 0) {
+        // Try to make trade better for user's team
+        initialSign = 1;
+    } else {
+        // Try to make trade better for AI team
+        initialSign = -1;
+    }
+
+    return testTrade();
 }
 
 /**
@@ -573,32 +568,30 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
  * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players; if null is passed, then a new transaction will be used.
  * @return {Promise.Object} Resolves to estimated draft pick values.
  */
-function getPickValues(ot) {
-    var dbOrTx, estValues, i, promises;
+async function getPickValues(ot) {
+    const dbOrTx = ot || g.dbl;
 
-    dbOrTx = ot || g.dbl;
-
-    estValues = {
+    const estValues = {
         default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37] // This is basically arbitrary
     };
 
     // Look up to 4 season in the future, but depending on whether this is before or after the draft, the first or last will be empty/incomplete
-    promises = [];
-    for (i = g.season; i < g.season + 4; i++) {
-        promises.push(dbOrTx.players.index('draft.year').getAll(i).then(function (players) {
+    const promises = [];
+    for (let i = g.season; i < g.season + 4; i++) {
+        promises.push(dbOrTx.players.index('draft.year').getAll(i).then(players => {
             if (players.length > 0) {
-                for (i = 0; i < players.length; i++) {
+                for (let i = 0; i < players.length; i++) {
                     players[i].value += 4; // +4 is to generally make picks more valued
                 }
-                players.sort(function (a, b) { return b.value - a.value; });
-                estValues[players[0].draft.year] = _.pluck(players, "value");
+                players.sort((a, b) => b.value - a.value);
+                estValues[players[0].draft.year] = players.map(p => p.value);
             }
         }));
     }
 
-    return Promise.all(promises).then(function () {
-        return estValues;
-    });
+    await Promise.all(promises);
+    
+    return estValues;
 }
 
 /**
@@ -609,56 +602,50 @@ function getPickValues(ot) {
  * @memberOf core.trade
  * @return {Promise.string} Resolves to a string containing a message to be dispalyed to the user, as if it came from the AI GM.
  */
-function makeItWorkTrade() {
-    return Promise.all([
+async function makeItWorkTrade() {
+    const [estValues, teams0] = await Promise.all([
         getPickValues(),
         get()
-    ]).spread(function (estValues, teams0) {
-        return makeItWork(helpers.deepCopy(teams0), false, estValues).spread(function (found, teams) {
-            if (!found) {
-                return g.teamRegionsCache[teams0[1].tid] + ' GM: "I can\'t afford to give up so much."';
-            }
+    ]);
 
-            return summary(teams).then(function (s) {
-                var i, updated;
+    const [found, teams] = await makeItWork(helpers.deepCopy(teams0), false, estValues)
 
-                // Store AI's proposed trade in database, if it's different
-                updated = false;
+    if (!found) {
+        return `${g.teamRegionsCache[teams0[1].tid]} GM: "I can\'t afford to give up so much."`;
+    }
 
-                for (i = 0; i < 2; i++) {
-                    if (teams[i].tid !== teams0[i].tid) {
-                        updated = true;
-                        break;
-                    }
-                    if (teams[i].pids.toString() !== teams0[i].pids.toString()) {
-                        updated = true;
-                        break;
-                    }
-                    if (teams[i].dpids.toString() !== teams0[i].dpids.toString()) {
-                        updated = true;
-                        break;
-                    }
-                }
+    const s = await summary(teams);
 
-                return Promise.try(function () {
-                    if (updated) {
-                        return g.dbl.tx("trade", "readwrite", tx => {
-                            return tx.trade.put({
-                                rid: 0,
-                                teams: teams
-                            });
-                        });
-                    }
-                }).then(function () {
-                    if (s.warning) {
-                        return g.teamRegionsCache[teams[1].tid] + ' GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."';
-                    }
+    // Store AI's proposed trade in database, if it's different
+    let updated = false;
 
-                    return g.teamRegionsCache[teams[1].tid] + ' GM: "How does this sound?"';
-                });
-            });
-        });
-    });
+    for (let i = 0; i < 2; i++) {
+        if (teams[i].tid !== teams0[i].tid) {
+            updated = true;
+            break;
+        }
+        if (teams[i].pids.toString() !== teams0[i].pids.toString()) {
+            updated = true;
+            break;
+        }
+        if (teams[i].dpids.toString() !== teams0[i].dpids.toString()) {
+            updated = true;
+            break;
+        }
+    }
+
+    if (updated) {
+        await g.dbl.tx("trade", "readwrite", tx => tx.trade.put({
+            rid: 0,
+            teams: teams
+        }));
+    }
+
+    if (s.warning) {
+        return `${g.teamRegionsCache[teams[1].tid]} GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."`;
+    }
+
+    return `${g.teamRegionsCache[teams[1].tid]} GM: "How does this sound?"`;
 }
 
 module.exports = {

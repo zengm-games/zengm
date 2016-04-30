@@ -1,10 +1,6 @@
-'use strict';
+const eventLog = require('../util/eventLog');
 
-var eventLog = require('../util/eventLog');
-
-var all;
-
-all = [{
+const all = [{
     date: "2013-09-21",
     msg: "The \"What would make this deal work?\" button can add assets from either team, either to make a trade good enough for the AI to accept or to have the AI offer up assets to entice the user. Previously, it would only add assets from the user's team to make the trade better for the AI."
 }, {
@@ -109,20 +105,18 @@ all = [{
 }];
 
 function check() {
-    var i, linked, text, unread;
-
     // Don't show anything on first visit
     if (localStorage.changesRead === undefined) {
         localStorage.changesRead = all.length;
     }
 
     if (localStorage.changesRead < all.length) {
-        unread = all.slice(localStorage.changesRead);
+        const unread = all.slice(localStorage.changesRead);
 
-        text = "";
-        linked = false;
+        let text = "";
+        let linked = false;
 
-        for (i = 0; i < unread.length; i++) {
+        for (let i = 0; i < unread.length; i++) {
             if (i > 0) {
                 text += "<br>";
             }
@@ -149,6 +143,6 @@ function check() {
 }
 
 module.exports = {
-    all: all,
-    check: check
+    all,
+    check
 };

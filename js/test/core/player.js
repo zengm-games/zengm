@@ -45,11 +45,11 @@ describe("core/player", function () {
 
     describe("#madeHof()", function () {
         it("should correctly assign players to the Hall of Fame", function () {
-            var p;
+            var p, playerStats;
 
             // Like player from http://www.reddit.com/r/BasketballGM/comments/222k8b/so_a_10x_dpoy_apparently_doesnt_have_what_it/
             p = player.generate(0, 19, "", 25, 55, 2012, false, 15.5);
-            p.stats = [{
+            playerStats = [{
                 min: 1 * 2.6,
                 per: 18.7,
                 ewa: 0
@@ -115,7 +115,7 @@ describe("core/player", function () {
                 ewa: 4.1
             }];
 
-            assert.equal(player.madeHof(p), false);
+            assert.equal(player.madeHof(p, playerStats), false);
         });
     });
 

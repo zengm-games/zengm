@@ -16,8 +16,9 @@ babel
   eslint
     get working
     no var
+    use some consensus rules http://blog.javascripting.com/2015/09/07/fine-tuning-airbnbs-eslint-config/
   sublime
-  tests
+  tests don't work in firefox
   how to make async/await fast
     why do i need regenerator? don't ff and chrome support generators?
       http://stackoverflow.com/questions/36775097/babel-plugin-transform-async-to-module-method-without-regenerator

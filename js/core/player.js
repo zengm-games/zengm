@@ -1152,7 +1152,7 @@ function filter(p, options) {
                 // If a specific tid was requested, only return ratings if a stat was accumulated for that tid
                 if (options.tid !== null) {
                     let hasStats = false;
-                    for (j = 0; j < p.stats.length; j++) {
+                    for (let j = 0; j < p.stats.length; j++) {
                         if (options.tid === p.stats[j].tid && p.ratings[k].season === p.stats[j].season) {
                             hasStats = true;
                             break;

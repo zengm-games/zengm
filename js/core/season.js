@@ -395,7 +395,7 @@ function newScheduleDefault(teams) {
                     if (dids[cid][tryNum] !== dids[cid][n] && newMatchup.indexOf(tryNum) < 0) {
                         let good = true;
                         // Check for duplicate games
-                        for (j = 0; j < matchups.length; j++) {
+                        for (let j = 0; j < matchups.length; j++) {
                             const matchup = matchups[j];
                             if (matchup[n] === tryNum) {
                                 good = false;
@@ -423,7 +423,7 @@ function newScheduleDefault(teams) {
         }
         matchups.shift();  // Remove the first row in matchups
         for (let j = 0; j < matchups.length; j++) {
-            matchup = matchups[j];
+            const matchup = matchups[j];
             for (let k = 0; k < matchup.length; k++) {
                 const t = matchup[k];
                 const ii = tidsByConf[cid][t];

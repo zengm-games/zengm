@@ -673,7 +673,7 @@ function filter(options) {
             const sortBy = options.sortBy.slice();
             fts.sort((a, b) => {
                 let result;
-                for (i = 0; i < sortBy.length; i++) {
+                for (let i = 0; i < sortBy.length; i++) {
                     result = (sortBy[i].indexOf("-") === 1) ? a[sortBy[i]] - b[sortBy[i]] : b[sortBy[i]] - a[sortBy[i]];
 
                     if (result || i === sortBy.length - 1) {
@@ -750,7 +750,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
             }
 
             // Get players to add
-            for (i = 0; i < pidsAdd.length; i++) {
+            for (let i = 0; i < pidsAdd.length; i++) {
                 const p = await tx.players.get(pidsAdd[i]);
                 add.push({
                     value: p.valueWithContract,
@@ -1275,7 +1275,7 @@ function checkRosterSizes() {
                     const promises = [];
                     while (numPlayersOnRoster < g.minRosterSize) {
                         // See also core.phase
-                        p = minFreeAgents.shift();
+                        let p = minFreeAgents.shift();
                         p.tid = tid;
                         p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
                         p = player.setContract(p, p.contract, true);

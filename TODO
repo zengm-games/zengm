@@ -3,14 +3,12 @@ babel
     https://github.com/mishoo/UglifyJS2/issues/448
     https://github.com/mishoo/UglifyJS2/tree/harmony
   convert with http://lebab.io/
-    convert.sh
-      loses some comments! maybe don't use.
     then manually go over, fix:
       let/const definitions inline
       async/await
-        league.create, data, test, util, views, .
+        core/league, data, test, util, views, .
         any other instances of .then or .catch?
-        go over files in core (league and before), . and restore missing comments
+        go over files in core (gameSim and before), . and restore missing comments
   benchmark, for sanity
     ctrl+r
     new league

@@ -44,11 +44,9 @@ const defaultGameAttributes = {
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
 function merge(x, y) {
-    let i, prop;
-
-    for (i = 0; i < x.length; i++) {
+    for (let i = 0; i < x.length; i++) {
         // Fill in default values as needed
-        for (prop in y[i]) {
+        for (let prop in y[i]) {
             if (y[i].hasOwnProperty(prop) && !x[i].hasOwnProperty(prop)) {
                 x[i][prop] = y[i][prop];
             }
@@ -67,10 +65,8 @@ function merge(x, y) {
  * @returns {Promise} Promise for when it finishes.
  */
 async function setGameAttributes(tx, gameAttributes) {
-    let key, toUpdate;
-
-    toUpdate = [];
-    for (key in gameAttributes) {
+    const toUpdate = [];
+    for (let key in gameAttributes) {
         if (gameAttributes.hasOwnProperty(key)) {
             if (g[key] !== gameAttributes[key]) {
                 toUpdate.push(key);
@@ -83,7 +79,7 @@ async function setGameAttributes(tx, gameAttributes) {
             key,
             value: gameAttributes[key]
         });
-        
+
         g[key] = gameAttributes[key];
 
         if (key === "userTid" || key === "userTids") {
@@ -561,14 +557,12 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
  */
 function remove(lid) {
     return new Promise((resolve, reject) => {
-        let request;
-
         if (g.dbl !== undefined) {
             g.dbl.close();
         }
 
         g.dbm.leagues.delete(lid);
-        request = indexedDB.deleteDatabase(`league${lid}`);
+        const request = indexedDB.deleteDatabase(`league${lid}`);
         request.onsuccess = () => {
             resolve();
         };
@@ -593,9 +587,7 @@ function remove(lid) {
  * @return {Promise} Resolve to all the exported league data.
  */
 function exportLeague(stores) {
-    let exportedLeague;
-
-    exportedLeague = {};
+    const exportedLeague = {};
 
     // Row from leagueStore in meta db.
     // phaseText is needed if a phase is set in gameAttributes.

@@ -615,4 +615,3 @@ module.exports = {
     updateChances,
     lotterySort
 };
-

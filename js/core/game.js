@@ -844,10 +844,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
             }
         }
     } else {
-        // !start check needed because of Kneden bug
-        if (!start) {
-            cbRunDay();
-        }
+        cbRunDay();
     }
 }
 

@@ -12,7 +12,7 @@ const Davis = require('./lib/davis');
 const account = require('./util/account');
 const helpers = require('./util/helpers');
 
-// Overwrite Promise object globally so Kneden uses it
+// Overwrite Promise object globally so Babel uses it when transpiling async/await (not totally sure if necessary)
 window.Promise = require('bluebird');
 window.Promise.config({warnings: false});
 

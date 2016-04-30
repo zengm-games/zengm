@@ -15,9 +15,7 @@ Backboard.on('quotaexceeded', () => {
         persistent: true
     });
 });
-Backboard.on('blocked', () => {
-    window.alert("Please close any other tabs with this league open!");
-});
+Backboard.on('blocked', () => window.alert("Please close any other tabs with this league open!"));
 
 /**
  * Create new meta database with the latest structure.
@@ -48,17 +46,17 @@ function migrateMeta(upgradeDB) {
     }
 }
 
-function connectMeta() {
-    return Backboard.open('meta', 7, upgradeDB => {
+async function connectMeta() {
+    const db = await Backboard.open('meta', 7, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createMeta(upgradeDB);
         } else {
             migrateMeta(upgradeDB);
         }
-    }).then(db => {
-        db.on('versionchange', () => { db.close(); });
-        g.dbm = db;
     });
+
+    db.on('versionchange', () => db.close());
+    g.dbm = db;
 }
 
 /**
@@ -127,7 +125,7 @@ function migrateLeague(upgradeDB, lid) {
         throw new Error(`League is too old to upgrade (version ${upgradeDB.oldVersion})`);
     }
     if (upgradeDB.oldVersion <= 16) {
-        ((() => {
+        ((async () => {
             const teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {keyPath: "rid", autoIncrement: true});
             const teamStatsStore = upgradeDB.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
 
@@ -136,38 +134,40 @@ function migrateLeague(upgradeDB, lid) {
             teamStatsStore.createIndex("tid", "tid", {unique: false});
             teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false});
 
-            upgradeDB.teams.iterate(t => Promise.each(t.stats, teamStats => {
-                teamStats.tid = t.tid;
-                if (!teamStats.hasOwnProperty("ba")) {
-                    teamStats.ba = 0;
-                }
-                return upgradeDB.teamStats.add(teamStats);
-            }).then(() => Promise.each(t.seasons, teamSeason => {
-                teamSeason.tid = t.tid;
-                return upgradeDB.teamSeasons.add(teamSeason);
-            })).then(() => {
+            await upgradeDB.teams.iterate(async t => {
+                await Promise.each(t.stats, async teamStats => {
+                    teamStats.tid = t.tid;
+                    if (!teamStats.hasOwnProperty("ba")) {
+                        teamStats.ba = 0;
+                    }
+                    await upgradeDB.teamStats.add(teamStats);
+                });
+                await Promise.each(t.seasons, async teamSeason => {
+                    teamSeason.tid = t.tid;
+                    await upgradeDB.teamSeasons.add(teamSeason);
+                });
                 delete t.stats;
                 delete t.seasons;
                 return t;
-            }));
+            });
         })());
     }
 }
 
-function connectLeague(lid) {
-    return Backboard.open(`league${lid}`, 17, upgradeDB => {
+async function connectLeague(lid) {
+    const db = await Backboard.open(`league${lid}`, 17, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {
             migrateLeague(upgradeDB, lid);
         }
-    }).then(db => {
-        db.on('versionchange', () => { db.close(); });
-        g.dbl = db;
     });
+
+    db.on('versionchange', () => db.close());
+    g.dbl = db;
 }
 
-function reset() {
+async function reset() {
     // localStorage, which is just use for table sorting currently
     const debug = localStorage.debug; // Save debug setting and restore later
     for (let key in localStorage) {
@@ -179,21 +179,21 @@ function reset() {
 
     // Delete any current league databases
     console.log("Deleting any current league databases...");
-    g.dbm.leagues.getAll().then(leagues => {
-        if (leagues.length === 0) {
-            console.log('No leagues found.');
-            Davis.location.assign(new Davis.Request("/"));
-        }
+    const leagues = await g.dbm.leagues.getAll();
+    if (leagues.length === 0) {
+        console.log('No leagues found.');
+        Davis.location.assign(new Davis.Request("/"));
+    }
 
-        Promise.map(leagues, l => require('./core/league').remove(l.lid)).then(() => {
-            // Delete any current meta database
-            console.log("Deleting any current meta database...");
-            g.dbm.close();
-            return Backboard.delete("meta");
-        }).then(() => {
-            location.reload();
-        });
-    });
+    const league = require('./core/league');
+    await Promise.map(leagues, l => league.remove(l.lid));
+
+    // Delete any current meta database
+    console.log("Deleting any current meta database...");
+    g.dbm.close();
+    await Backboard.delete("meta");
+
+    location.reload();
 }
 
 module.exports = {

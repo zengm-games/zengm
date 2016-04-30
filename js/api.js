@@ -7,10 +7,10 @@ const phase = require('./core/phase');
 const season = require('./core/season');
 const $ = require('jquery');
 
-function play(amount) {
+async function play(amount) {
     let numDays;
 
-    if (['day', 'week', 'month', 'throughPlayoffs', "untilPreseason"].indexOf(amount) >= 0) {
+    if (['day', 'week', 'month', 'throughPlayoffs', 'untilPreseason'].indexOf(amount) >= 0) {
         if (amount === "day") {
             numDays = 1;
         } else if (amount === "week") {
@@ -36,18 +36,17 @@ function play(amount) {
     } else if (amount === "untilPlayoffs") {
         if (g.phase < g.PHASE.PLAYOFFS) {
             ui.updateStatus("Playing..."); // For quick UI updating, before game.play
-            season.getDaysLeftSchedule().then(game.play);
+            await season.getDaysLeftSchedule();
+            game.play();
         }
     } else if (amount === "stop") {
-        league.setGameAttributesComplete({stopGames: true}).then(() => {
-            if (g.phase !== g.PHASE.FREE_AGENCY) {
-                // This is needed because we can't be sure if core.game.play will be called again
-                ui.updateStatus("Idle");
-            }
-            league.setGameAttributesComplete({gamesInProgress: false}).then(() => {
-                ui.updatePlayMenu(null);
-            });
-        });
+        await league.setGameAttributesComplete({stopGames: true});
+        if (g.phase !== g.PHASE.FREE_AGENCY) {
+            // This is needed because we can't be sure if core.game.play will be called again
+            ui.updateStatus("Idle");
+        }
+        await league.setGameAttributesComplete({gamesInProgress: false});
+        ui.updatePlayMenu(null);
     } else if (amount === "untilDraft") {
         if (g.phase === g.PHASE.BEFORE_DRAFT) {
             phase.newPhase(g.PHASE.DRAFT);
@@ -58,27 +57,24 @@ function play(amount) {
         }
     } else if (amount === "untilFreeAgency") {
         if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-            g.dbl.negotiations.count().then(numRemaining => {
-                // Show warning dialog only if there are players remaining un-re-signed
-                if (numRemaining === 0 || window.confirm(`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.`)) {
-                    phase.newPhase(g.PHASE.FREE_AGENCY).then(() => {
-                        ui.updateStatus(`${g.daysLeft} days left`);
-                    });
-                }
-            });
+            const numRemaining = await g.dbl.negotiations.count();
+            // Show warning dialog only if there are players remaining un-re-signed
+            if (numRemaining === 0 || window.confirm(`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.`)) {
+                await phase.newPhase(g.PHASE.FREE_AGENCY);
+                ui.updateStatus(`${g.daysLeft} days left`);
+            }
         }
     } else if (amount === "untilRegularSeason") {
         if (g.phase === g.PHASE.PRESEASON) {
             phase.newPhase(g.PHASE.REGULAR_SEASON);
         }
     } else if (amount === "stopAutoPlay") {
-        league.setGameAttributesComplete({autoPlaySeasons: 0}).then(() => {
-            ui.updatePlayMenu(null);
-            play("stop");
+        await league.setGameAttributesComplete({autoPlaySeasons: 0});
+        ui.updatePlayMenu(null);
+        play("stop");
 
-            // Extra toggle to counteract play("stop");
-            $("#play-menu .dropdown-toggle").dropdown("toggle");
-        });
+        // Extra toggle to counteract play("stop");
+        $("#play-menu .dropdown-toggle").dropdown("toggle");
     }
 
     // Close the menu

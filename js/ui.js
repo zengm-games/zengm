@@ -19,10 +19,8 @@ const lock = require('./util/lock');
  * @param {function()=} cb Optional callback that will run after the page updates.
  * @param {Object=} raw Optional object passed through to Davis's req.raw.
  */
-function realtimeUpdate(updateEvents, url, cb, raw) {
-    updateEvents = updateEvents !== undefined ? updateEvents : [];
+function realtimeUpdate(updateEvents=[], url, cb, raw={}) {
     url = url !== undefined ? url : location.pathname + location.search;
-    raw = raw !== undefined ? raw : {};
 
     const inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
     const refresh = url === location.pathname && inLeague;
@@ -51,7 +49,7 @@ function init() {
     ko.applyBindings(g.vm.multiTeam, document.getElementById("multi-team-menu"));
 
     // This is messy, but it interacts with the binding in templateHelpers
-    $('#multi-team-menu').on('change', '#multi-team-select', function () {
+    $('#multi-team-menu').on('change', '#multi-team-select', () => {
         helpers.updateMultiTeam(parseInt(this.options[this.selectedIndex].value, 10));
     });
 
@@ -178,9 +176,9 @@ function init() {
 
     // When a dropdown at the top is open, use hover to move between items,
     // like in a normal menubar.
-    $("#nav-primary .dropdown-toggle").on("mouseenter", function () {
+    $("#nav-primary .dropdown-toggle").on("mouseenter", event => {
         if (!topMenuCollapse.hasClass("in")) {
-            const liHover = this.parentNode;
+            const liHover = event.target.parentNode;
 
             // Is any dropdown open?
             let foundOpen = false;
@@ -222,28 +220,26 @@ function init() {
     });
 
     // Watch list toggle
-    $(document).on("click", ".watch", function () {
-        const watchEl = this;
+    $(document).on("click", ".watch", async event => {
+        const watchEl = event.target;
         const pid = parseInt(watchEl.dataset.pid, 10);
 
-        g.dbl.tx("players", "readwrite", tx => {
-            tx.players.get(pid).then(p => {
-                if (watchEl.classList.contains("watch-active")) {
-                    p.watch = false;
-                    watchEl.classList.remove("watch-active");
-                    watchEl.title = "Add to Watch List";
-                } else {
-                    p.watch = true;
-                    watchEl.classList.add("watch-active");
-                    watchEl.title = "Remove from Watch List";
-                }
-
-                return tx.players.put(p);
-            });
-        }).then(() => {
-            require('./core/league').updateLastDbChange();
-            realtimeUpdate(["watchList"]);
+        await g.dbl.tx("players", "readwrite", async tx => {
+            const p = await tx.players.get(pid);
+            if (watchEl.classList.contains("watch-active")) {
+                p.watch = false;
+                watchEl.classList.remove("watch-active");
+                watchEl.title = "Add to Watch List";
+            } else {
+                p.watch = true;
+                watchEl.classList.add("watch-active");
+                watchEl.title = "Remove from Watch List";
+            }
+            await tx.players.put(p);
         });
+
+        require('./core/league').updateLastDbChange();
+        realtimeUpdate(["watchList"]);
     });
 
     const screenshotEl = document.getElementById("screenshot");
@@ -271,7 +267,7 @@ function init() {
 
             html2canvas(contentEl, {
                 background: "#fff",
-                onrendered(canvas) {
+                async onrendered(canvas) {
                     // Remove watermark
                     contentEl.removeChild(watermark);
                     contentEl.style.padding = "";
@@ -279,28 +275,29 @@ function init() {
                     // Remove notifications
                     contentEl.removeChild(notifications);
 
-                    Promise.resolve($.ajax({
-                        url: "https://imgur-apiv3.p.mashape.com/3/image",
-                        type: "post",
-                        headers: {
-                            Authorization: "Client-ID c2593243d3ea679",
-                            "X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H"
-                        },
-                        data: {
-                            image: canvas.toDataURL().split(',')[1]
-                        },
-                        dataType: "json"
-                    })).then(data => {
+                    try {
+                        const data = await Promise.resolve($.ajax({
+                            url: "https://imgur-apiv3.p.mashape.com/3/image",
+                            type: "post",
+                            headers: {
+                                Authorization: "Client-ID c2593243d3ea679",
+                                "X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H"
+                            },
+                            data: {
+                                image: canvas.toDataURL().split(',')[1]
+                            },
+                            dataType: "json"
+                        }));
                         document.getElementById("screenshot-link").href = `http://imgur.com/${data.data.id}`;
                         $("#modal-screenshot").modal("show");
-                    }).catch(err => {
+                    } catch (err) {
                         console.log(err);
                         if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {
-                            helpers.error(`Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`);
+                            helpers.errorNotify(`Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`);
                         } else {
-                            helpers.error("Error saving screenshot.");
+                            helpers.errorNotify("Error saving screenshot.");
                         }
-                    });
+                    }
                 }
             });
         });
@@ -391,12 +388,12 @@ function datatableSinglePage(table, sortCol, data, extraOptions) {
 
 function tableClickableRows(tableEl) {
     tableEl.addClass("table-hover");
-    tableEl.on("click", "tbody tr", function () {
+    tableEl.on("click", "tbody tr", event => {
         // Toggle highlight
-        if (this.classList.contains("warning")) {
-            this.classList.remove("warning");
+        if (event.currentTarget.classList.contains("warning")) {
+            event.currentTarget.classList.remove("warning");
         } else {
-            this.classList.add("warning");
+            event.currentTarget.classList.add("warning");
         }
     });
 }
@@ -572,15 +569,13 @@ Args:
     status: A string containing the current status message to be pushed to
         the client.
 */
-function updateStatus(statusText) {
+async function updateStatus(statusText) {
     const oldStatus = g.statusText;
     if (statusText === undefined) {
         g.vm.topMenu.statusText(oldStatus);
     } else if (statusText !== oldStatus) {
-        require('./core/league').setGameAttributesComplete({statusText}).then(() => {
-            g.vm.topMenu.statusText(statusText);
-//                console.log("Set status: " + statusText);
-        });
+        await require('./core/league').setGameAttributesComplete({statusText});
+        g.vm.topMenu.statusText(statusText);
     }
 }
 
@@ -593,21 +588,18 @@ Args:
     phaseText: A string containing the current phase text to be pushed to
         the client.
 */
-function updatePhase(phaseText) {
+async function updatePhase(phaseText) {
     const oldPhaseText = g.phaseText;
     if (phaseText === undefined) {
         g.vm.topMenu.phaseText(oldPhaseText);
     } else if (phaseText !== oldPhaseText) {
-        require('./core/league').setGameAttributesComplete({phaseText}).then(() => {
-            g.vm.topMenu.phaseText(phaseText);
-//                console.log("Set phase: " + phaseText);
-        });
+        await require('./core/league').setGameAttributesComplete({phaseText});
+        g.vm.topMenu.phaseText(phaseText);
 
         // Update phase in meta database. No need to have this block updating the UI or anything.
-        g.dbm.leagues.get(g.lid).then(l => {
-            l.phaseText = phaseText;
-            g.dbm.leagues.put(l);
-        });
+        const l = await g.dbm.leagues.get(g.lid);
+        l.phaseText = phaseText;
+        await g.dbm.leagues.put(l);
     }
 }
 

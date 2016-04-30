@@ -6,8 +6,8 @@ babel
     then manually go over, fix:
       let/const definitions inline
       async/await
-        core/league, data, test, util, views, .
-        any other instances of .then or .catch?
+        core/league, data, test, util, views
+        any other instances of .then or .catch? function (
   benchmark, for sanity
     ctrl+r
     new league

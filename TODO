@@ -2,11 +2,12 @@ babel
   minify es6, or compile babel es2015 without regenerator
     https://github.com/mishoo/UglifyJS2/issues/448
     https://github.com/mishoo/UglifyJS2/tree/harmony
+    how can i gracefully show an error message in browsers without generators?
   convert with http://lebab.io/
     then manually go over, fix:
       let/const definitions inline
       async/await
-        core/league, test, util after account, views
+        core/league, test, util after ads, views
         any other instances of .then or .catch? function (
   benchmark, for sanity
     ctrl+r

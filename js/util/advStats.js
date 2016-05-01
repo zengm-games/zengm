@@ -1,10 +1,8 @@
-'use strict';
-
-var g = require('../globals');
-var player = require('../core/player');
-var team = require('../core/team');
-var backboard = require('backboard');
-var _ = require('underscore');
+const g = require('../globals');
+const player = require('../core/player');
+const team = require('../core/team');
+const backboard = require('backboard');
+const _ = require('underscore');
 
 /**
  * Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.

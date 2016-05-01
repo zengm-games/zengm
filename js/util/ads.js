@@ -1,16 +1,14 @@
 /*eslint new-cap: 0*/
-'use strict';
-
-var g = require('../globals');
-var $ = require('jquery');
+const g = require('../globals');
+const $ = require('jquery');
 
 function showGCS() {
     window.TriggerPrompt("http://www.basketball-gm.com/", (new Date()).getTime());
 }
 
 function showSurvata() {
-    window.Survata.ready(function () {
-        var s = window.Survata.createSurveywall({
+    window.Survata.ready(() => {
+        const s = window.Survata.createSurveywall({
             brand: "Basketball GM",
             explainer: "Please take this short survey to support Basketball GM!",
             disallowClose: true,
@@ -18,7 +16,7 @@ function showSurvata() {
             contentName: new Date().toISOString()
         });
 
-        s.on("load", function (data) {
+        s.on("load", data => {
             if (data.status === "monetizable") {
                 s.startInterview();
             } else {
@@ -51,28 +49,26 @@ function showModal() {
 }*/
 
 function show() {
-    var adTimer, currentTimestamp, now, r;
-
     // No ads during multi season auto sim
     if (g.autoPlaySeasons > 0) {
         return;
     }
 
     // No ads for Gold members
-    currentTimestamp = Math.floor(Date.now() / 1000);
+    const currentTimestamp = Math.floor(Date.now() / 1000);
     if (!g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil()) {
         return;
     }
 
-    r = Math.random();
+    const r = Math.random();
     if (r < 0.68) {
         showGCS();
     } else if (r < 0.75) {
         showModal();
     } else {
         // This is all in milliseconds!
-        adTimer = localStorage.adTimer !== undefined ? parseInt(localStorage.adTimer, 10) : 0;
-        now = Date.now();
+        const adTimer = localStorage.adTimer !== undefined ? parseInt(localStorage.adTimer, 10) : 0;
+        const now = Date.now();
 
         // Only show ad once per 60 minutes, at most
         if (now - adTimer > 1000 * 60 * 60) {

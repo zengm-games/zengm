@@ -35,6 +35,7 @@ require('./api');
 
 ((async () => {
     window.bbgm = {
+        account: require('./util/account'),
         debug: require('./core/debug'),
         g: require('./globals'),
         contractNegotiation: require('./core/contractNegotiation'),

@@ -1,18 +1,14 @@
 /*eslint camelcase: 0*/
-'use strict';
-
-var g = require('../globals');
-var team = require('../core/team');
-var backboard = require('backboard');
-var Promise = require('bluebird');
-var $ = require('jquery');
-var _ = require('underscore');
-var eventLog = require('./eventLog');
-
-var allAchievements, checkAchievement;
+const g = require('../globals');
+const team = require('../core/team');
+const backboard = require('backboard');
+const Promise = require('bluebird');
+const $ = require('jquery');
+const _ = require('underscore');
+const eventLog = require('./eventLog');
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
-allAchievements = [{
+const allAchievements = [{
     slug: "participation",
     name: "Participation",
     desc: "You get an achievement just for creating an account, you special snowflake!"
@@ -76,20 +72,14 @@ allAchievements = [{
  * @param {boolean=} silent If true, don't show any notifications (like if achievements are only being moved from IDB to remote). Default false.
  * @return {Promise}
  */
-function addAchievements(achievements, silent) {
-    var addToIndexedDB, notify;
-
-    silent = silent !== undefined ? silent : false;
-
-    notify = function (slug) {
-        var i;
-
+async function addAchievements(achievements, silent = false) {
+    const notify = slug => {
         if (silent) {
             return;
         }
 
         // Find name of achievement
-        for (i = 0; i < allAchievements.length; i++) {
+        for (let i = 0; i < allAchievements.length; i++) {
             if (allAchievements[i].slug === slug) {
                 eventLog.add(null, {
                     type: "achievement",
@@ -100,52 +90,48 @@ function addAchievements(achievements, silent) {
         }
     };
 
-    addToIndexedDB = function (achievements) {
-        return g.dbm.tx("achievements", "readwrite", function (tx) {
-            var i;
-
-            for (i = 0; i < achievements.length; i++) {
-                tx.achievements.add({
-                    slug: achievements[i]
-                });
-                notify(achievements[i]);
-            }
+    const addToIndexedDB = achievements => {
+        return g.dbm.tx("achievements", "readwrite", tx => {
+            return Promise.each(achievements, async achievement => {
+                await tx.achievements.add({slug: achievement});
+                notify(achievement);
+            });
         });
     };
 
-    return Promise.resolve($.ajax({
-        type: "POST",
-        url: "//account.basketball-gm." + g.tld + "/add_achievements.php",
-        data: {achievements: achievements, sport: g.sport},
-        dataType: "json",
-        xhrFields: {
-            withCredentials: true
-        }
-    })).then(function (data) {
-        var i;
+    try {
+        const data = await Promise.resolve($.ajax({
+            type: "POST",
+            url: "//account.basketball-gm." + g.tld + "/add_achievements.php",
+            data: {achievements: achievements, sport: g.sport},
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true
+            }
+        }));
 
         if (data.success) {
-            for (i = 0; i < achievements.length; i++) {
-                notify(achievements[i]);
-            }
+            achievements.forEach(notify);
         } else {
             return addToIndexedDB(achievements);
         }
-    }).catch(function () {
+    } catch (err) {
         return addToIndexedDB(achievements);
-    });
+    }
 }
 
-function check() {
-    return Promise.resolve($.ajax({
-        type: "GET",
-        url: "//account.basketball-gm." + g.tld + "/user_info.php",
-        data: "sport=" + g.sport,
-        dataType: "json",
-        xhrFields: {
-            withCredentials: true
-        }
-    })).then(function (data) {
+async function check() {
+    try {
+        const data = await Promise.resolve($.ajax({
+            type: "GET",
+            url: "//account.basketball-gm." + g.tld + "/user_info.php",
+            data: "sport=" + g.sport,
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true
+            }
+        }));
+
         // Save username for display
         g.vm.topMenu.username(data.username);
         g.vm.topMenu.email(data.email);
@@ -154,317 +140,260 @@ function check() {
 
         // If user is logged in, upload any locally saved achievements
         if (data.username !== "") {
-            return g.dbm.tx("achievements", "readwrite", function (tx) {
-                return tx.achievements.getAll().then(function (achievements) {
-                    achievements = _.pluck(achievements, "slug");
+            await g.dbm.tx("achievements", "readwrite", async tx => {
+                let achievements = await tx.achievements.getAll();
+                achievements = achievements.map(achievement => achievement.slug);
 
-                    // If any exist, delete and upload
-                    if (achievements.length > 0) {
-                        tx.achievements.clear();
-                        // If this fails to save remotely, will be added to IDB again
-                        return addAchievements(achievements, true);
-                    }
-                });
+                // If any exist, delete and upload
+                if (achievements.length > 0) {
+                    await tx.achievements.clear();
+                    // If this fails to save remotely, will be added to IDB again
+                    await addAchievements(achievements, true);
+                }
             });
         }
-    }).catch(function () {});
+    } catch (err) {
+        // Don't freak out if an AJAX request fails or whatever
+    }
 }
 
-function getAchievements() {
-    var achievements;
+async function getAchievements() {
+    const achievements = allAchievements.slice();
+    const achievementsLocal = await g.dbm.achievements.getAll();
 
-    achievements = allAchievements.slice();
+    // Initialize counts
+    for (let i = 0; i < achievements.length; i++) {
+        achievements[i].count = 0;
+    }
 
-    return g.dbm.achievements.getAll().then(function (achievementsLocal) {
-        var i, j;
-
-        // Initialize counts
-        for (i = 0; i < achievements.length; i++) {
-            achievements[i].count = 0;
-        }
-
-        // Handle any achivements stored in IndexedDB
-        for (j = 0; j < achievementsLocal.length; j++) {
-            for (i = 0; i < achievements.length; i++) {
-                if (achievements[i].slug === achievementsLocal[j].slug) {
-                    achievements[i].count += 1;
-                }
+    // Handle any achivements stored in IndexedDB
+    for (let j = 0; j < achievementsLocal.length; j++) {
+        for (let i = 0; i < achievements.length; i++) {
+            if (achievements[i].slug === achievementsLocal[j].slug) {
+                achievements[i].count += 1;
             }
         }
+    }
 
+    try {
         // Handle any achievements stored in the cloud
-        return Promise.resolve($.ajax({
+        const achievementsRemote = await Promise.resolve($.ajax({
             type: "GET",
-            url: "//account.basketball-gm." + g.tld + "/get_achievements.php",
+            url: `//account.basketball-gm.${g.tld}/get_achievements.php`,
             data: "sport=" + g.sport,
             dataType: "json",
             xhrFields: {
                 withCredentials: true
             }
-        })).then(function (achievementsRemote) {
-            var i;
+        }));
 
-            // Merge local and remote achievements
-            for (i = 0; i < achievements.length; i++) {
-                achievements[i].count += achievementsRemote[achievements[i].slug] !== undefined ? achievementsRemote[achievements[i].slug] : 0;
-            }
-
-            return achievements;
-        }).catch(function () {
-            // No remote connection, just return local achievements
-            return achievements;
-        });
-    });
+        // Merge local and remote achievements
+        for (let i = 0; i < achievements.length; i++) {
+            achievements[i].count += achievementsRemote[achievements[i].slug] !== undefined ? achievementsRemote[achievements[i].slug] : 0;
+        }
+    } finally {
+        // If remote fails, this will be just local. Otherwise it will merge.
+        return achievements;
+    }
 }
 
 // FOR EACH checkAchievement FUNCTION:
 // Returns a promise that resolves to true or false depending on whether the achievement was awarded.
 // HOWEVER, it's only saved to the database if saveAchievement is true (this is the default), but the saving happens asynchronously. It is theoretically possible that this could cause a notification to be displayed to the user about getting an achievement, but some error occurs when saving it.
-checkAchievement = {};
+const checkAchievement = {};
 
-checkAchievement.fo_fo_fo = function (saveAchievement) {
-    saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
-
+checkAchievement.fo_fo_fo = async (saveAchievement=true) => {
     if (g.godModeInPast) {
-        return Promise.resolve(false);
+        return false;
     }
 
-    return g.dbl.playoffSeries.get(g.season).then(function (playoffSeries) {
-        var found, i, round, series;
+    const playoffSeries = await g.dbl.playoffSeries.get(g.season);
+    const series = playoffSeries.series;
 
-        series = playoffSeries.series;
-
-        for (round = 0; round < series.length; round++) {
-            found = false;
-            for (i = 0; i < series[round].length; i++) {
-                if (series[round][i].away.won === 4 && series[round][i].home.won === 0 && series[round][i].away.tid === g.userTid) {
-                    found = true;
-                    break;
-                }
-                if (series[round][i].home.won === 4 && series[round][i].away.won === 0 && series[round][i].home.tid === g.userTid) {
-                    found = true;
-                    break;
-                }
+    for (let round = 0; round < series.length; round++) {
+        let found = false;
+        for (let i = 0; i < series[round].length; i++) {
+            if (series[round][i].away.won === 4 && series[round][i].home.won === 0 && series[round][i].away.tid === g.userTid) {
+                found = true;
+                break;
             }
-            if (!found) {
-                return false;
+            if (series[round][i].home.won === 4 && series[round][i].away.won === 0 && series[round][i].home.tid === g.userTid) {
+                found = true;
+                break;
             }
         }
-
-        if (saveAchievement) {
-            addAchievements(["fo_fo_fo"]);
+        if (!found) {
+            return false;
         }
-        return true;
-    });
+    }
+
+    if (saveAchievement) {
+        addAchievements(["fo_fo_fo"]);
+    }
+    return true;
 };
 
-checkAchievement.septuawinarian = function (saveAchievement) {
-    saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
-
+checkAchievement.septuawinarian = async (saveAchievement=true) => {
     if (g.godModeInPast) {
-        return Promise.resolve(false);
+        return false;
     }
 
-    return team.filter({
+    const t = await team.filter({
         seasonAttrs: ["won"],
         season: g.season,
         tid: g.userTid
-    }).then(function (t) {
-        if (t.won >= 70) {
+    });
+
+    if (t.won >= 70) {
+        if (saveAchievement) {
+            addAchievements(["septuawinarian"]);
+        }
+        return true;
+    }
+
+    return false;
+};
+
+checkAchievement["98_degrees"] = async (saveAchievement=true) => {
+    if (g.godModeInPast) {
+        return false;
+    }
+
+    const awarded = await checkAchievement.fo_fo_fo(false);
+    if (awarded) {
+        const t = await team.filter({
+            seasonAttrs: ["won", "lost"],
+            season: g.season,
+            tid: g.userTid
+        });
+        if (t.won === 82 && t.lost === 0) {
             if (saveAchievement) {
-                addAchievements(["septuawinarian"]);
+                addAchievements(["98_degrees"]);
             }
             return true;
         }
 
         return false;
-    });
-};
-
-checkAchievement["98_degrees"] = function (saveAchievement) {
-    saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
-
-    if (g.godModeInPast) {
-        return Promise.resolve(false);
     }
 
-    return checkAchievement.fo_fo_fo(false).then(function (awarded) {
-        if (awarded) {
-            return team.filter({
-                seasonAttrs: ["won", "lost"],
-                season: g.season,
-                tid: g.userTid
-            }).then(function (t) {
-                if (t.won === 82 && t.lost === 0) {
-                    if (saveAchievement) {
-                        addAchievements(["98_degrees"]);
-                    }
-                    return true;
-                }
-
-                return false;
-            });
-        }
-
-        return false;
-    });
+    return false;
 };
 
-function checkDynasty(titles, years, slug, saveAchievement) {
-    saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
-
+async function checkDynasty(titles, years, slug, saveAchievement) {
     if (g.godModeInPast) {
-        return Promise.resolve(false);
+        return false;
     }
 
-    return g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid], [g.userTid, ''])).then(function (teamSeasons) {
-        var i, titlesFound;
+    const teamSeasons = await g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid], [g.userTid, '']));
 
-        titlesFound = 0;
-        // Look over past years
-        for (i = 0; i < years; i++) {
-            // Don't overshoot
-            if (teamSeasons.length - 1 - i < 0) {
-                break;
-            }
-
-            // Won title?
-            if (teamSeasons[teamSeasons.length - 1 - i].playoffRoundsWon === 4) {
-                titlesFound += 1;
-            }
+    let titlesFound = 0;
+    // Look over past years
+    for (let i = 0; i < years; i++) {
+        // Don't overshoot
+        if (teamSeasons.length - 1 - i < 0) {
+            break;
         }
 
-        if (titlesFound >= titles) {
-            if (saveAchievement) {
-                addAchievements([slug]);
-            }
-            return true;
+        // Won title?
+        if (teamSeasons[teamSeasons.length - 1 - i].playoffRoundsWon === 4) {
+            titlesFound += 1;
         }
+    }
 
-        return false;
-    });
+    if (titlesFound >= titles) {
+        if (saveAchievement) {
+            addAchievements([slug]);
+        }
+        return true;
+    }
+
+    return false;
 }
 
-checkAchievement.dynasty = function (saveAchievement) {
-    return checkDynasty(6, 8, "dynasty", saveAchievement);
-};
+checkAchievement.dynasty = (saveAchievement=true) => checkDynasty(6, 8, "dynasty", saveAchievement);
+checkAchievement.dynasty_2 = (saveAchievement=true) => checkDynasty(8, 8, "dynasty_2", saveAchievement);
+checkAchievement.dynasty_3 = (saveAchievement=true) => checkDynasty(11, 13, "dynasty_3", saveAchievement);
 
-checkAchievement.dynasty_2 = function (saveAchievement) {
-    return checkDynasty(8, 8, "dynasty_2", saveAchievement);
-};
-
-checkAchievement.dynasty_3 = function (saveAchievement) {
-    return checkDynasty(11, 13, "dynasty_3", saveAchievement);
-};
-
-function checkMoneyball(maxPayroll, slug, saveAchievement) {
-    saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
-
+async function checkMoneyball(maxPayroll, slug, saveAchievement) {
     if (g.godModeInPast) {
-        return Promise.resolve(false);
+        return false;
     }
 
-    return team.filter({
+    const t = await team.filter({
         seasonAttrs: ["expenses", "playoffRoundsWon"],
         season: g.season,
         tid: g.userTid
-    }).then(function (t) {
-        if (t.playoffRoundsWon === 4 && t.expenses.salary.amount <= maxPayroll) {
-            if (saveAchievement) {
-                addAchievements([slug]);
-            }
-            return true;
-        }
-
-        return false;
     });
+
+    if (t.playoffRoundsWon === 4 && t.expenses.salary.amount <= maxPayroll) {
+        if (saveAchievement) {
+            addAchievements([slug]);
+        }
+        return true;
+    }
+
+    return false;
 }
 
-checkAchievement.moneyball = function (saveAchievement) {
-    saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
+checkAchievement.moneyball = (saveAchievement=true) => checkMoneyball(40000, "moneyball", saveAchievement);
 
+checkAchievement.moneyball_2 = (saveAchievement=true) => checkMoneyball(30000, "moneyball_2", saveAchievement);
+
+checkAchievement.hardware_store = async (saveAchievement=true) => {
     if (g.godModeInPast) {
-        return Promise.resolve(false);
-    }
-
-    return checkMoneyball(40000, "moneyball", saveAchievement);
-};
-
-checkAchievement.moneyball_2 = function (saveAchievement) {
-    saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
-
-    if (g.godModeInPast) {
-        return Promise.resolve(false);
-    }
-
-    return checkMoneyball(30000, "moneyball_2", saveAchievement);
-};
-
-checkAchievement.hardware_store = function (saveAchievement) {
-    saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
-
-    if (g.godModeInPast) {
-        return Promise.resolve(false);
-    }
-
-    return g.dbl.awards.get(g.season).then(function (awards) {
-        if (awards.mvp.tid === g.userTid && awards.dpoy.tid === g.userTid && awards.smoy.tid === g.userTid && awards.roy.tid === g.userTid && awards.finalsMvp.tid === g.userTid) {
-            if (saveAchievement) {
-                addAchievements(["hardware_store"]);
-            }
-            return true;
-        }
-
         return false;
-    });
-};
-
-checkAchievement.small_market = function (saveAchievement) {
-    saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
-
-    if (g.godModeInPast) {
-        return Promise.resolve(false);
     }
 
-    return team.filter({
+    const awards = await g.dbl.awards.get(g.season);
+
+    if (awards.mvp.tid === g.userTid && awards.dpoy.tid === g.userTid && awards.smoy.tid === g.userTid && awards.roy.tid === g.userTid && awards.finalsMvp.tid === g.userTid) {
+        if (saveAchievement) {
+            addAchievements(["hardware_store"]);
+        }
+        return true;
+    }
+
+    return false;
+};
+
+checkAchievement.small_market = async (saveAchievement=true) => {
+    if (g.godModeInPast) {
+        return false;
+    }
+
+    const t = await team.filter({
         seasonAttrs: ["playoffRoundsWon", "pop"],
         season: g.season,
         tid: g.userTid
-    }).then(function (t) {
-        if (t.playoffRoundsWon === 4 && t.pop <= 2) {
+    });
+
+    if (t.playoffRoundsWon === 4 && t.pop <= 2) {
+        if (saveAchievement) {
+            addAchievements(["small_market"]);
+        }
+        return true;
+    }
+
+    return false;
+};
+
+checkAchievement.sleeper_pick = async (saveAchievement=true) => {
+    if (g.godModeInPast) {
+        return false;
+    }
+
+    const awards = await g.dbl.awards.get(g.season);
+    if (awards.roy.tid === g.userTid) {
+        const p = await g.dbl.players.get(awards.roy.pid);
+        if (p.tid === g.userTid && p.draft.tid === g.userTid && p.draft.year === g.season - 1 && (p.draft.round > 1 || p.draft.pick >= 15)) {
             if (saveAchievement) {
-                addAchievements(["small_market"]);
+                addAchievements(["sleeper_pick"]);
             }
             return true;
         }
-
-        return false;
-    });
-};
-
-checkAchievement.sleeper_pick = function (saveAchievement) {
-    saveAchievement = saveAchievement !== undefined ? saveAchievement : true;
-
-    if (g.godModeInPast) {
-        return Promise.resolve(false);
     }
 
-    return g.dbl.awards.get(g.season).then(function (awards) {
-        if (awards.roy.tid === g.userTid) {
-            return g.dbl.players.get(awards.roy.pid).then(function (p) {
-                if (p.tid === g.userTid && p.draft.tid === g.userTid && p.draft.year === g.season - 1 && (p.draft.round > 1 || p.draft.pick >= 15)) {
-                    if (saveAchievement) {
-                        addAchievements(["sleeper_pick"]);
-                    }
-                    return true;
-                }
-
-                return false;
-            });
-        }
-
-        return false;
-    });
+    return false;
 };
 
 module.exports = {

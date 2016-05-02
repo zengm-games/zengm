@@ -162,7 +162,7 @@ function getTeams(selectedTid = -1) {
 function addPopRank(teams) {
     // Add popRank
     const teamsSorted = teams.slice(); // Deep copy
-    teamsSorted.sort(function (a, b) { return b.pop - a.pop; });
+    teamsSorted.sort((a, b) => b.pop - a.pop);
     for (let i = 0; i < teams.length; i++) {
         for (let j = 0; j < teamsSorted.length; j++) {
             if (teams[i].tid === teamsSorted[j].tid) {
@@ -285,24 +285,22 @@ function globalError(req) {
  * @memberOf util.helpers
  * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
  */
-function leagueError(req) {
+async function leagueError(req) {
     const ui = require('../ui');
     const viewHelpers = require('./viewHelpers');
 
-    viewHelpers.beforeLeague(req).then(function () {
-        var contentEl;
+    await viewHelpers.beforeLeague(req);
 
-        ui.update({
-            container: "league_content",
-            template: "error"
-        });
-
-        contentEl = document.getElementById("league_content");
-        ko.cleanNode(contentEl);
-        ko.applyBindings({error: req.params.error}, contentEl);
-        ui.title("Error");
-        req.raw.cb();
+    ui.update({
+        container: "league_content",
+        template: "error"
     });
+
+    const contentEl = document.getElementById("league_content");
+    ko.cleanNode(contentEl);
+    ko.applyBindings({error: req.params.error}, contentEl);
+    ui.title("Error");
+    req.raw.cb();
 }
 
 /**
@@ -316,7 +314,7 @@ function leagueError(req) {
  * @param {boolean} forceGlobal If true, always call globalError (needed if league/global distinction can't be inferred from URL).
  */
 function error(errorText, cb, forceGlobal = false) {
-    const req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : function () {}}};
+    const req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : () => {}}};
 
     const lid = location.pathname.split("/")[2]; // lid derived from URL
     if (/^\d+$/.test(lid) && typeof indexedDB !== "undefined" && !forceGlobal) { // Show global error of no IndexedDB
@@ -747,7 +745,7 @@ function checkNaNs() {
                 if (window.Bugsnag) {
                     window.Bugsnag.notifyException(err, "NaNFound", {
                         details: {
-                            objectWithNaN: JSON.stringify(obj, function (key, value) {
+                            objectWithNaN: JSON.stringify(obj, (key, value) => {
                                 if (value !== value) {
                                     return "FUCKING NaN RIGHT HERE";
                                 }
@@ -772,7 +770,7 @@ function checkNaNs() {
                     input: obj,
                     "this": this,
                     gSend: gSend
-                }, function (key, value) {
+                }, (key, value) => {
                     if (value != value) {
                         return "NaN RIGHT HERE";
                     }

@@ -1,19 +1,15 @@
-'use strict';
-
-var g = require('../globals');
-var Promise = require('bluebird');
-var helpers = require('./helpers');
-var random = require('./random');
-
-var activities, first, intro, money, ovr, playoffs, wins;
+const g = require('../globals');
+const Promise = require('bluebird');
+const helpers = require('./helpers');
+const random = require('./random');
 
 // First message after new game
-first = [
+const first = [
     "<p>Hey, sorry I didn't recognize you in the lobby this morning. I'm sure I'll get to know you eventually. Maybe after I get back from my trip to Tahiti?</p><p>Well, listen. Times are rough. Profit only increased by 10% last year. I know, I know, horrible. And I had to let half of our junior staffers go just to get that 10%!</p><p>So I'll cut right to the chase. I need money. And championships. Money and championships, that's what I'm interested in.</p><p>Get it done.</p>"
 ];
 
 // Random activities the owner claims to be doing
-activities = [
+const activities = [
     "learning how to windsurf while carrying a naked girl on my back",
     "working on my new \"mountaintop removal\" mining company (it's fascinating stuff)",
     "having sex with half the freshman girls at the local university (it's hard work, believe me)",
@@ -44,8 +40,7 @@ activities = [
 ];
 
 // Intro of annual message
-intro = [];
-intro = [
+const intro = [
     "Sorry we haven't chatted much this year, but I've been busy {{activity}}. "
 ];
 
@@ -56,7 +51,7 @@ intro = [
 // 4: good overall, improving
 
 // Wins
-wins = [];
+const wins = [];
 wins[0] = [
     "This is an embarassment. We lose so much, I can't even show my face around town. Buying this team was supposed to make me a celebrity, but not one of those bad celebrities that everyone hates. Turn it around.",
     "I need some wins. Fans hate losers. Free agents hate losers. What's your strategy? Keep on losing until I fire you? You're making good progress, then."
@@ -79,7 +74,7 @@ wins[4] = [
 ];
 
 // Playoffs
-playoffs = [];
+const playoffs = [];
 playoffs[0] = [
     "This town is starving, absolutely starving, for some postseason success. But with the job you're doing, we're not even close to the playoffs. Unacceptable.",
     "Playoffs? Don't talk to me about playoffs. You kidding me? Playoffs? I just hope we can win a game!"
@@ -102,7 +97,7 @@ playoffs[4] = [
 ];
 
 // Money
-money = [];
+const money = [];
 money[0] = [
     "Money is an issue. I'm going broke. This is ridiculous. I'm supposed to be rich, but I can barely afford my monacle polish these days.",
     "I can't afford a season in the red. Is it really that hard to turn a big profit in this business?"
@@ -128,7 +123,7 @@ money[4] = [
 // 2: good
 
 // Overall
-ovr = [];
+const ovr = [];
 ovr[0] = [
     "Bye.",
     "Please, don't bother me until you have some good news.",
@@ -146,27 +141,25 @@ ovr[2] = [
 /**
  * @param {IDBTransaction} tx An IndexedDB transaction on gameAttributes and messages, readwrite.
  */
-function generate(tx, deltas) {
-    var activity1, activity2, indMoney, indOvr, indPlayoffs, indWins, m, ownerMoodSum;
-
+async function generate(tx, deltas) {
     // If auto play seasons or multi team mode, no messages
     if (g.autoPlaySeasons > 0 || g.userTids.length > 1) {
-        return Promise.resolve();
+        return;
     }
 
-    ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
+    const ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
 
     if (g.showFirstOwnerMessage) {
         m = random.choice(first);
         require('../core/league').setGameAttributes(tx, {showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
     } else {
-        activity1 = random.choice(activities);
-        activity2 = random.choice(activities);
+        const activity1 = random.choice(activities);
+        let activity2 = random.choice(activities);
         while (activity1 === activity2) {
             activity2 = random.choice(activities);
         }
 
-        indWins = 2;
+        let indWins = 2;
         if (g.ownerMood.wins <= 0 && deltas.wins < 0) {
             indWins = 0;
         } else if (g.ownerMood.wins < -0.5 && deltas.wins >= 0) {
@@ -177,6 +170,7 @@ function generate(tx, deltas) {
             indWins = 4;
         }
 
+        let indPlayoffs;
         if (g.ownerMood.playoffs <= 0 && deltas.playoffs < 0) {
             indPlayoffs = 0;
         } else if (g.ownerMood.playoffs <= 0 && deltas.playoffs === 0) {
@@ -192,7 +186,7 @@ function generate(tx, deltas) {
             indPlayoffs = 4;
         }
 
-        indMoney = 2;
+        let indMoney = 2;
         if (g.ownerMood.money < 0 && deltas.money < 0) {
             indMoney = 0;
         } else if (g.ownerMood.money < -0.5 && deltas.money >= 0) {
@@ -203,13 +197,14 @@ function generate(tx, deltas) {
             indMoney = 4;
         }
 
-        indOvr = 1;
+        let indOvr = 1;
         if (ownerMoodSum > 0.5) {
             indOvr = 2;
         } else if (ownerMoodSum < -0.5) {
             indOvr = 0;
         }
 
+        let m;
         if (ownerMoodSum > -1) {
             m = "<p>" + random.choice(intro).replace("{{activity}}", activity1) + "</p>" +
                 "<p>" + random.choice(wins[indWins]) + " " + random.choice(playoffs[indPlayoffs]) + "</p>" +
@@ -239,27 +234,28 @@ function generate(tx, deltas) {
         }
     }
 
-    return tx.messages.add({
+    await tx.messages.add({
         read: false,
         from: "The Owner",
         year: g.season,
         text: m
-    }).then(function () {
-        if (ownerMoodSum > -1) {
-            return;
-        }
-        if (g.season < g.gracePeriodEnd || g.godMode) {
-            // Can't get fired yet... or because of God Mode
-            return;
-        }
-        // Fired!
-        return require('../core/league').setGameAttributes(tx, {
-            gameOver: true,
-            showFirstOwnerMessage: true
-        });
+    });
+
+    if (ownerMoodSum > -1) {
+        return;
+    }
+    if (g.season < g.gracePeriodEnd || g.godMode) {
+        // Can't get fired yet... or because of God Mode
+        return;
+    }
+
+    // Fired!
+    await require('../core/league').setGameAttributes(tx, {
+        gameOver: true,
+        showFirstOwnerMessage: true
     });
 }
 
 module.exports = {
-    generate: generate
+    generate
 };

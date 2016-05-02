@@ -1,7 +1,5 @@
-'use strict';
-
-var g = require('../globals');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const helpers = require('../util/helpers');
 
 /**
  * Is game simulation in progress?
@@ -12,10 +10,9 @@ var helpers = require('../util/helpers');
  * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
-function gamesInProgress(ot) {
-    return require('../core/league').loadGameAttribute(ot, "gamesInProgress").then(function () {
-        return g.gamesInProgress;
-    });
+async function gamesInProgress(ot) {
+    await require('../core/league').loadGameAttribute(ot, "gamesInProgress");
+    return g.gamesInProgress;
 }
 
 /**
@@ -27,14 +24,10 @@ function gamesInProgress(ot) {
  * @param {IDBTransaction|null} ot An IndexedDB transaction on negotiations; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
-function negotiationInProgress(ot) {
-    var dbOrTx = ot !== null ? ot : g.dbl;
-    return dbOrTx.negotiations.getAll().then(function (negotiations) {
-        if (negotiations.length > 0) {
-            return true;
-        }
-        return false;
-    });
+async function negotiationInProgress(ot) {
+    const dbOrTx = ot !== null ? ot : g.dbl;
+    const negotiations = await dbOrTx.negotiations.getAll();
+    return negotiations.length > 0;
 }
 
 /**
@@ -44,10 +37,9 @@ function negotiationInProgress(ot) {
  * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
-function phaseChangeInProgress(ot) {
-    return require('../core/league').loadGameAttribute(ot, "phaseChangeInProgress").then(function () {
-        return g.phaseChangeInProgress;
-    });
+async function phaseChangeInProgress(ot) {
+    await require('../core/league').loadGameAttribute(ot, "phaseChangeInProgress");
+    return g.phaseChangeInProgress;
 }
 
 /**
@@ -60,26 +52,23 @@ function phaseChangeInProgress(ot) {
  * @return {Promise.boolean}
  */
 function canStartGames(ot) {
-    return helpers.maybeReuseTx(["gameAttributes", "negotiations"], "readonly", ot, function (tx) {
-        return gamesInProgress(tx).then(function (gamesInProgressBool) {
-            if (gamesInProgressBool) {
-                return false;
-            }
+    return helpers.maybeReuseTx(["gameAttributes", "negotiations"], "readonly", ot, async tx => {
+        const gamesInProgressBool = await gamesInProgress(tx);
+        if (gamesInProgressBool) {
+            return false;
+        }
 
-            return negotiationInProgress(tx).then(function (negotiationInProgressBool) {
-                if (negotiationInProgressBool) {
-                    return false;
-                }
+        const negotiationInProgressBool = await negotiationInProgress(tx);
+        if (negotiationInProgressBool) {
+            return false;
+        }
 
-                return phaseChangeInProgress(tx).then(function (phaseChangeInProgressBool) {
-                    if (phaseChangeInProgressBool) {
-                        return false;
-                    }
+        const phaseChangeInProgressBool = await phaseChangeInProgress(tx);
+        if (phaseChangeInProgressBool) {
+            return false;
+        }
 
-                    return true;
-                });
-            });
-        });
+        return true;
     });
 }
 
@@ -93,27 +82,24 @@ function canStartGames(ot) {
  * @return {Promise.boolean}
  */
 function canStartNegotiation(ot) {
-    return helpers.maybeReuseTx(["gameAttributes", "negotiations"], "readonly", ot, function (tx) {
-        return gamesInProgress(tx).then(function (gamesInProgressBool) {
-            if (gamesInProgressBool) {
+    return helpers.maybeReuseTx(["gameAttributes", "negotiations"], "readonly", ot, async tx => {
+        const gamesInProgressBool = await gamesInProgress(tx);
+        if (gamesInProgressBool) {
+            return false;
+        }
+
+        // Allow multiple parallel negotiations only for re-signing players
+        const negotiations = await tx.negotiations.getAll();
+
+        for (let i = 0; i < negotiations.length; i++) {
+            if (!negotiations[i].resigning) {
                 return false;
             }
+        }
 
-            // Allow multiple parallel negotiations only for re-signing players
-            return tx.negotiations.getAll().then(function (negotiations) {
-                var i;
+        return true;
 
-                for (i = 0; i < negotiations.length; i++) {
-                    if (!negotiations[i].resigning) {
-                        return false;
-                    }
-                }
-
-                return true;
-
-                // Don't also check phase change because negotiations are auto-started in phase change
-            });
-        });
+        // Don't also check phase change because negotiations are auto-started in phase change
     });
 }
 
@@ -126,27 +112,23 @@ function canStartNegotiation(ot) {
  * @param {IDBTransaction|null} ot An IndexedDB transaction on messages; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
-function unreadMessage(ot) {
-    var dbOrTx = ot !== null ? ot : g.dbl;
-    return dbOrTx.messages.getAll().then(function (messages) {
-        var i;
-
-        for (i = 0; i < messages.length; i++) {
-            if (!messages[i].read) {
-                return true;
-            }
+async function unreadMessage(ot) {
+    const dbOrTx = ot !== null ? ot : g.dbl;
+    const messages = await dbOrTx.messages.getAll();
+    for (let i = 0; i < messages.length; i++) {
+        if (!messages[i].read) {
+            return true;
         }
-
-        return false;
-    });
+    }
+    return false;
 }
 
 module.exports = {
-    gamesInProgress: gamesInProgress,
-    negotiationInProgress: negotiationInProgress,
-    phaseChangeInProgress: phaseChangeInProgress,
-    canStartGames: canStartGames,
-    canStartNegotiation: canStartNegotiation,
-    unreadMessage: unreadMessage
+    gamesInProgress,
+    negotiationInProgress,
+    phaseChangeInProgress,
+    canStartGames,
+    canStartNegotiation,
+    unreadMessage
 };
 

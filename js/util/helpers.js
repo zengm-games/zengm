@@ -1,8 +1,6 @@
-'use strict';
-
-var g = require('../globals');
-var ko = require('knockout');
-var eventLog = require('./eventLog');
+const g = require('../globals');
+const ko = require('knockout');
+const eventLog = require('./eventLog');
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -14,9 +12,7 @@ var eventLog = require('./eventLog');
  * @return {Array} Array with two elements, the team ID and the validated abbreviation.
  */
 function validateAbbrev(abbrev) {
-    var tid;
-
-    tid = g.teamAbbrevsCache.indexOf(abbrev);
+    let tid = g.teamAbbrevsCache.indexOf(abbrev);
 
     if (tid < 0) {
         tid = g.userTid;
@@ -36,14 +32,12 @@ function validateAbbrev(abbrev) {
  * @return {Array} Array with two elements, the validated team ID and the corresponding abbreviation.
  */
 function validateTid(tid) {
-    var abbrev;
-
     tid = parseInt(tid, 10);
 
     if (tid < 0 || tid >= g.teamAbbrevsCache.length || isNaN(tid)) {
         tid = g.userTid;
     }
-    abbrev = g.teamAbbrevsCache[tid];
+    const abbrev = g.teamAbbrevsCache[tid];
 
     return [tid, abbrev];
 }
@@ -58,8 +52,6 @@ function validateTid(tid) {
  * @return {string} Abbreviation
  */
 function getAbbrev(tid) {
-    var abbrev, result;
-
     if (tid === g.PLAYER.FREE_AGENT) {
         return "FA";
     }
@@ -67,9 +59,8 @@ function getAbbrev(tid) {
         // Draft prospect or retired
         return "";
     }
-    result = validateTid(tid);
-    tid = result[0];
-    abbrev = result[1];
+    const result = validateTid(tid);
+    const abbrev = result[1];
 
     return abbrev;
 }
@@ -106,13 +97,11 @@ function validateSeason(season) {
  * @return {Array.<Object>} List of seasons. Each element in the list is an object with with two properties: "season" which contains the year, and "selectedSeason" which is a boolean for whether the year matched selectedSeason.
  */
 function getSeasons(selectedSeason, ignoredSeason) {
-    var season, seasons;
-
     selectedSeason = parseInt(selectedSeason, 10);
     ignoredSeason = ignoredSeason !== undefined ? parseInt(ignoredSeason, 10) : null;
 
-    seasons = [];
-    for (season = g.startingSeason; season <= g.season; season++) {
+    const seasons = [];
+    for (let season = g.startingSeason; season <= g.season; season++) {
         if (season !== ignoredSeason) {
             seasons.push({season: season, selected: selectedSeason === season});
         }
@@ -134,21 +123,19 @@ function getSeasons(selectedSeason, ignoredSeason) {
  * @param {number|string} selectedTid A team ID or abbrev for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.
  * @return {Array.Object} All teams.
  */
-function getTeams(selectedTid) {
-    var i, result, teams;
-
+function getTeams(selectedTid = -1) {
     selectedTid = selectedTid !== undefined ? selectedTid : -1;
 
     if (typeof selectedTid === "string") {
         if (isNaN(parseInt(selectedTid, 10))) {
             // It's an abbrev, not a tid!
-            result = validateAbbrev(selectedTid);
+            const result = validateAbbrev(selectedTid);
             selectedTid = result[0];
         }
     }
 
-    teams = [];
-    for (i = 0; i < g.numTeams; i++) {
+    const teams = [];
+    for (let i = 0; i < g.numTeams; i++) {
         teams[i] = {
             abbrev: g.teamAbbrevsCache[i],
             region: g.teamRegionsCache[i],
@@ -157,7 +144,7 @@ function getTeams(selectedTid) {
     }
 
     if (selectedTid >= 0) {
-        for (i = 0; i < teams.length; i++) {
+        for (let i = 0; i < teams.length; i++) {
             teams[i].selected = false;
         }
         teams[selectedTid].selected = true;
@@ -173,13 +160,11 @@ function getTeams(selectedTid) {
  * @return {Array.<Object>} Teams with added popRank properties.
  */
 function addPopRank(teams) {
-    var i, j, teamsSorted;
-
     // Add popRank
-    teamsSorted = teams.slice(); // Deep copy
+    const teamsSorted = teams.slice(); // Deep copy
     teamsSorted.sort(function (a, b) { return b.pop - a.pop; });
-    for (i = 0; i < teams.length; i++) {
-        for (j = 0; j < teamsSorted.length; j++) {
+    for (let i = 0; i < teams.length; i++) {
+        for (let j = 0; j < teamsSorted.length; j++) {
             if (teams[i].tid === teamsSorted[j].tid) {
                 teams[i].popRank = j + 1;
                 break;
@@ -211,9 +196,7 @@ function addPopRank(teams) {
  * @return {Array.<Object>} All teams.
  */
 function getTeamsDefault() {
-    var teams;
-
-    teams = [
+    let teams = [
         {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Gold Club", abbrev: "ATL", pop: 4.3},
         {tid: 1, cid: 0, did: 2, region: "Baltimore", name: "Crabs", abbrev: "BAL", pop: 2.2},
         {tid: 2, cid: 0, did: 0, region: "Boston", name: "Massacre", abbrev: "BOS", pop: 4.4},
@@ -260,13 +243,11 @@ function getTeamsDefault() {
  * @param {Object} obj Object to be cloned.
  */
 function deepCopy(obj) {
-    var key, retVal;
-
     if (typeof obj !== "object" || obj === null) { return obj; }
     if (obj.constructor === RegExp) { return obj; }
 
-    retVal = new obj.constructor();
-    for (key in obj) {
+    const retVal = new obj.constructor();
+    for (let key in obj) {
         if (obj.hasOwnProperty(key)) {
             retVal[key] = deepCopy(obj[key]);
         }
@@ -281,10 +262,8 @@ function deepCopy(obj) {
  * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error".
  */
 function globalError(req) {
-    var contentEl, ui, viewHelpers;
-
-    ui = require('../ui');
-    viewHelpers = require('./viewHelpers');
+    const ui = require('../ui');
+    const viewHelpers = require('./viewHelpers');
 
     viewHelpers.beforeNonLeague();
 
@@ -293,7 +272,7 @@ function globalError(req) {
         template: "error"
     });
 
-    contentEl = document.getElementById("content");
+    const contentEl = document.getElementById("content");
     ko.cleanNode(contentEl);
     ko.applyBindings({error: req.params.error}, contentEl);
     ui.title("Error");
@@ -307,10 +286,8 @@ function globalError(req) {
  * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
  */
 function leagueError(req) {
-    var ui, viewHelpers;
-
-    ui = require('../ui');
-    viewHelpers = require('./viewHelpers');
+    const ui = require('../ui');
+    const viewHelpers = require('./viewHelpers');
 
     viewHelpers.beforeLeague(req).then(function () {
         var contentEl;
@@ -338,14 +315,10 @@ function leagueError(req) {
  * @param {function()} cb Optional callback function.
  * @param {boolean} forceGlobal If true, always call globalError (needed if league/global distinction can't be inferred from URL).
  */
-function error(errorText, cb, forceGlobal) {
-    var lid, req;
+function error(errorText, cb, forceGlobal = false) {
+    const req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : function () {}}};
 
-    forceGlobal = forceGlobal !== undefined ? forceGlobal : false;
-
-    req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : function () {}}};
-
-    lid = location.pathname.split("/")[2]; // lid derived from URL
+    const lid = location.pathname.split("/")[2]; // lid derived from URL
     if (/^\d+$/.test(lid) && typeof indexedDB !== "undefined" && !forceGlobal) { // Show global error of no IndexedDB
         req.params.lid = parseInt(lid, 10);
         leagueError(req);
@@ -378,9 +351,7 @@ function errorNotify(errorText) {
  * @memberOf util.helpers
  */
 function resetG() {
-    var key;
-
-    for (key in g) {
+    for (let key in g) {
         if (g.hasOwnProperty(key) && g.notInDb.indexOf(key) < 0) {
             delete g[key];
         }
@@ -414,9 +385,7 @@ function bbgmPing(type) {
  * @return {string} String of HTML-formatted skill labels, ready for output.
  */
 function skillsBlock(skills) {
-    var i, skillsHtml, tooltips;
-
-    tooltips = {
+    const tooltips = {
         "3": "Three Point Shooter",
         A: "Athlete",
         B: "Ball Handler",
@@ -427,9 +396,9 @@ function skillsBlock(skills) {
         R: "Rebounder"
     };
 
-    skillsHtml = '';
+    let skillsHtml = '';
     if (skills !== undefined) {
-        for (i = 0; i < skills.length; i++) {
+        for (let i = 0; i < skills.length; i++) {
             skillsHtml += '<span class="skill" title="' + tooltips[skills[i]] + '">' + skills[i] + '</span>';
         }
     }
@@ -446,14 +415,13 @@ function skillsBlock(skills) {
  * @param {object|number?} lid League ID number, either a number or a knockout observable. If not passed, then g.lid is used. This is needed to make some observables (navbar) depend on the lid.
  * @return {string} URL
  */
-function leagueUrl(components, options, lid) {
-    var i, url;
+function leagueUrl(components, options = {}, lid = g.lid) {
+    if (lid !== g.lid) {
+        lid = ko.unwrap(lid);
+    }
 
-    options = options !== undefined ? options : {};
-    lid = lid !== undefined ? ko.unwrap(lid) : g.lid;
-
-    url = "/l/" + lid;
-    for (i = 0; i < components.length; i++) {
+    let url = "/l/" + lid;
+    for (let i = 0; i < components.length; i++) {
         if (components[i] !== undefined) {
             url += "/" + ko.unwrap(components[i]);
         }
@@ -485,9 +453,7 @@ function watchBlock(pid, watch) {
  * @return {string} String of HTML-formatted skill labels, ready for output.
  */
 function playerNameLabels(pid, name, injury, skills, watch) {
-    var html;
-
-    html = '<a href="' + leagueUrl(["player", pid]) + '">' + name + '</a>';
+    let html = '<a href="' + leagueUrl(["player", pid]) + '">' + name + '</a>';
 
     if (injury !== undefined) {
         if (injury.gamesRemaining > 0) {
@@ -606,10 +572,8 @@ function bound(x, min, max) {
  * @return {string} HTML link(s).
  */
 function draftAbbrev(tid, originalTid, season) {
-    var abbrev, originalAbbrev;
-
-    abbrev = g.teamAbbrevsCache[tid];
-    originalAbbrev = g.teamAbbrevsCache[originalTid];
+    const abbrev = g.teamAbbrevsCache[tid];
+    const originalAbbrev = g.teamAbbrevsCache[originalTid];
 
     if (abbrev === originalAbbrev) {
         return '<a href="' + leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a>';
@@ -619,9 +583,7 @@ function draftAbbrev(tid, originalTid, season) {
 }
 
 function pickDesc(pick) {
-    var desc;
-
-    desc = pick.season + " " + (pick.round === 1 ? "first" : "second") + " round pick";
+    let desc = pick.season + " " + (pick.round === 1 ? "first" : "second") + " round pick";
     if (pick.tid !== pick.originalTid) {
         desc += " (from " + g.teamAbbrevsCache[pick.originalTid] + ")";
     }
@@ -630,8 +592,7 @@ function pickDesc(pick) {
 }
 
 function ordinal(x) {
-    var suffix;
-
+    let suffix;
     if (x >= 11 && x <= 13) {
         suffix = "th";
     } else if (x % 10 === 1) {
@@ -657,29 +618,27 @@ function ordinal(x) {
  * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
  * @return {Promise.<Array.<Object>>} Resolves to a list of game objects.
  */
-function gameLogList(abbrev, season, gid, loadedGames) {
-    var games, maxGid, out, tid;
-
-    out = validateAbbrev(abbrev);
-    tid = out[0];
+async function gameLogList(abbrev, season, gid, loadedGames) {
+    const out = validateAbbrev(abbrev);
+    const tid = out[0];
     abbrev = out[1];
 
+    let maxGid;
     if (loadedGames.length > 0) {
         maxGid = loadedGames[0].gid; // Load new games
     } else {
         maxGid = -1; // Load all games
     }
 
-    games = [];
+    const games = [];
 
     // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
-    return g.dbl.games.index('season').iterate(season, "prev", function (game, shortCircuit) {
-        var i, overtime;
-
+    await g.dbl.games.index('season').iterate(season, "prev", (game, shortCircuit) => {
         if (game.gid <= maxGid) {
             return shortCircuit();
         }
 
+        let overtime;
         if (game.overtimes === 1) {
             overtime = " (OT)";
         } else if (game.overtimes > 1) {
@@ -697,7 +656,7 @@ function gameLogList(abbrev, season, gid, loadedGames) {
                 overtime: overtime
             });
 
-            i = games.length - 1;
+            const i = games.length - 1;
             if (game.teams[0].tid === tid) {
                 games[i].home = true;
                 games[i].pts = game.teams[0].pts;
@@ -714,22 +673,20 @@ function gameLogList(abbrev, season, gid, loadedGames) {
                 games[i].won = game.teams[1].pts > game.teams[0].pts;
             }
         }
-    }).then(function () {
-        return games;
     });
+
+    return games;
 }
 
 function formatCompletedGame(game) {
-    var output, team0, team1;
-
     // If not specified, assume user's team is playing
     game.tid = game.tid !== undefined ? game.tid : g.userTid;
 
     // team0 and team1 are different than they are above! Here it refers to user and opponent, not home and away
-    team0 = {tid: game.tid, abbrev: g.teamAbbrevsCache[game.tid], region: g.teamRegionsCache[game.tid], name: g.teamNamesCache[game.tid], pts: game.pts};
-    team1 = {tid: game.oppTid, abbrev: g.teamAbbrevsCache[game.oppTid], region: g.teamRegionsCache[game.oppTid], name: g.teamNamesCache[game.oppTid], pts: game.oppPts};
+    const team0 = {tid: game.tid, abbrev: g.teamAbbrevsCache[game.tid], region: g.teamRegionsCache[game.tid], name: g.teamNamesCache[game.tid], pts: game.pts};
+    const team1 = {tid: game.oppTid, abbrev: g.teamAbbrevsCache[game.oppTid], region: g.teamRegionsCache[game.oppTid], name: g.teamNamesCache[game.oppTid], pts: game.oppPts};
 
-    output = {
+    const output = {
         gid: game.gid,
         overtime: game.overtime,
         won: game.won
@@ -755,16 +712,12 @@ function gb(team0, team) {
 }
 
 function checkNaNs() {
-    var checkObject, wrap, wrapperNaNChecker;
-
     // Check all properties of an object for NaN
-    checkObject = function (obj, foundNaN, replace) {
-        var prop;
-
+    const checkObject = (obj, foundNaN, replace) => {
         foundNaN = foundNaN !== undefined ? foundNaN : false;
         replace = replace !== undefined ? replace : false;
 
-        for (prop in obj) {
+        for (let prop in obj) {
             if (obj.hasOwnProperty(prop)) {
                 if (typeof obj[prop] === "object" && obj[prop] !== null) {
                     foundNaN = checkObject(obj[prop], foundNaN, replace);
@@ -781,19 +734,15 @@ function checkNaNs() {
         return foundNaN;
     };
 
-    wrap = function (parent, name, wrapper) {
-        var original;
-
-        original = parent[name];
+    const wrap = (parent, name, wrapper) => {
+        const original = parent[name];
         parent[name] = wrapper(original);
     };
 
-    wrapperNaNChecker = function (_super) {
+    const wrapperNaNChecker = _super => {
         return function (obj) {
-            var err;
-
             if (checkObject(obj)) {
-                err = new Error("NaN found before writing to IndexedDB");
+                const err = new Error("NaN found before writing to IndexedDB");
 
                 if (window.Bugsnag) {
                     window.Bugsnag.notifyException(err, "NaNFound", {
@@ -862,14 +811,14 @@ function gameScore(arg) {
     return round(arg.pts + 0.4 * arg.fg - 0.7 * arg.fga - 0.4 * (arg.fta - arg.ft) + 0.7 * arg.orb + 0.3 * (arg.trb - arg.orb) + arg.stl + 0.7 * arg.ast + 0.7 * arg.blk - 0.4 * arg.pf - arg.tov, 1);
 }
 
-function updateMultiTeam(tid) {
-    require('../core/league').setGameAttributesComplete({
+async function updateMultiTeam(tid) {
+    await require('../core/league').setGameAttributesComplete({
         userTid: tid
-    }).then(function () {
-        // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
-        require('../ui').realtimeUpdate(["dbChange"]);
-        require('../core/league').updateLastDbChange();
     });
+
+    // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
+    require('../ui').realtimeUpdate(["dbChange"]);
+    require('../core/league').updateLastDbChange();
 }
 
 function plusMinus(arg, d) {
@@ -905,40 +854,39 @@ function maybeReuseTx(storeNames, mode, tx, cb) {
 }
 
 module.exports = {
-    validateAbbrev: validateAbbrev,
-    getAbbrev: getAbbrev,
-    validateTid: validateTid,
-    validateSeason: validateSeason,
-    getSeasons: getSeasons,
-    getTeams: getTeams,
-    addPopRank: addPopRank,
-    getTeamsDefault: getTeamsDefault,
-    deepCopy: deepCopy,
-    error: error,
-    errorNotify: errorNotify,
-    resetG: resetG,
-    bbgmPing: bbgmPing,
-    skillsBlock: skillsBlock,
-    watchBlock: watchBlock,
-    playerNameLabels: playerNameLabels,
-    round: round,
-    nullPad: nullPad,
-    formatCurrency: formatCurrency,
-    numberWithCommas: numberWithCommas,
-    bound: bound,
-    leagueUrl: leagueUrl,
-    draftAbbrev: draftAbbrev,
-    pickDesc: pickDesc,
-    ordinal: ordinal,
-    gameLogList: gameLogList,
-    formatCompletedGame: formatCompletedGame,
-    gb: gb,
-    checkNaNs: checkNaNs,
-    gameScore: gameScore,
-    updateMultiTeam: updateMultiTeam,
-    plusMinus: plusMinus,
-    correctLinkLid: correctLinkLid,
-    overtimeCounter: overtimeCounter,
-    maybeReuseTx: maybeReuseTx
+    validateAbbrev,
+    getAbbrev,
+    validateTid,
+    validateSeason,
+    getSeasons,
+    getTeams,
+    addPopRank,
+    getTeamsDefault,
+    deepCopy,
+    error,
+    errorNotify,
+    resetG,
+    bbgmPing,
+    skillsBlock,
+    watchBlock,
+    playerNameLabels,
+    round,
+    nullPad,
+    formatCurrency,
+    numberWithCommas,
+    bound,
+    leagueUrl,
+    draftAbbrev,
+    pickDesc,
+    ordinal,
+    gameLogList,
+    formatCompletedGame,
+    gb,
+    checkNaNs,
+    gameScore,
+    updateMultiTeam,
+    plusMinus,
+    correctLinkLid,
+    overtimeCounter,
+    maybeReuseTx
 };
-

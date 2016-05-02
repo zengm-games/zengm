@@ -1,17 +1,13 @@
-'use strict';
-
-var g = require('../globals');
-var bbgmNotifications = require('../lib/bbgm-notifications');
+const g = require('../globals');
+const bbgmNotifications = require('../lib/bbgm-notifications');
 
 function add(ot, options) {
-    var dbOrTx, notificationContainer, title;
-
     options.saveToDb = options.saveToDb !== undefined ? options.saveToDb : true;
     options.showNotification = options.showNotification !== undefined ? options.showNotification : true;
     options.persistent = options.persistent !== undefined ? options.persistent : false;
 
     if (options.saveToDb && g.lid) { // Only save to league event log if within a league
-        dbOrTx = ot !== null ? ot : g.dbl;
+        const dbOrTx = ot !== null ? ot : g.dbl;
         dbOrTx.events.add({
             season: g.season,
             type: options.type,
@@ -22,7 +18,7 @@ function add(ot, options) {
     }
 
     if (options.showNotification) {
-        title = null;
+        let title = null;
         if (options.type === "error") {
             title = "Error!";
         } else if (options.type === "changes") {
@@ -41,7 +37,7 @@ function add(ot, options) {
     }
 
     // Hacky way to make sure there is room for the multi team mode menu
-    notificationContainer = document.getElementById("notification-container");
+    const notificationContainer = document.getElementById("notification-container");
     if (g.userTids !== undefined && g.userTids.length > 1 && !notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
         notificationContainer.classList.add("notification-container-extra-margin-bottom");
     } else if (g.userTids !== undefined && g.userTids.length === 1 && notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
@@ -50,5 +46,5 @@ function add(ot, options) {
 }
 
 module.exports = {
-    add: add
+    add
 };

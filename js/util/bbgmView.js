@@ -1,25 +1,20 @@
-'use strict';
+const g = require('../globals');
+const ui = require('../ui');
+const Promise = require('bluebird');
+const $ = require('jquery');
+const ko = require('knockout');
+const komapping = require('knockout.mapping');
+const _ = require('underscore');
+const helpers = require('./helpers');
+const viewHelpers = require('./viewHelpers');
 
-var g = require('../globals');
-var ui = require('../ui');
-var Promise = require('bluebird');
-var $ = require('jquery');
-var ko = require('knockout');
-var komapping = require('knockout.mapping');
-var _ = require('underscore');
-var helpers = require('./helpers');
-var viewHelpers = require('./viewHelpers');
-
-var vm;
+let vm;
 
 function display(args, updateEvents) {
-    var container, containerEl;
-
-    container = g.lid !== null ? "league_content" : "content";
-    containerEl = document.getElementById(container);
+    const container = g.lid !== null ? "league_content" : "content";
+    const containerEl = document.getElementById(container);
 
     if (containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading === args.id) {
-//console.log('draw from scratch')
         ui.update({
             container: container,
             template: args.id
@@ -35,11 +30,9 @@ function display(args, updateEvents) {
 }
 
 function update(args) {
-    return function (inputs, updateEvents, cb) {
-        var container, containerEl, promisesBefore, promisesWhenever;
-
-        container = g.lid !== null ? "league_content" : "content";
-        containerEl = document.getElementById(container);
+    return async (inputs, updateEvents, cb) => {
+        const container = g.lid !== null ? "league_content" : "content";
+        const containerEl = document.getElementById(container);
 
         // Reset league content and view model only if it's:
         // (1) if it's not loaded and not loading yet
@@ -61,99 +54,93 @@ function update(args) {
         }
 
         // Resolve all the promises before updating the UI to minimize flicker
-        promisesBefore = args.runBefore.map(function (fn) { return fn(inputs, updateEvents, vm); });
+        const promisesBefore = args.runBefore.map(fn => fn(inputs, updateEvents, vm));
 
         // Run promises in parallel, update when each one is ready
         // This runs no matter what
-        promisesWhenever = args.runWhenever.map(function (fn) {
-            return Promise.resolve(fn(inputs, updateEvents, vm)).then(function (vars) {
-                if (vars !== undefined) {
-                    komapping.fromJS(vars, args.mapping, vm);
-                }
-            });
-        });
-
-        Promise.all(promisesBefore).then(function (results) {
-            var promisesAfter, vars;
-
-            if (results.length > 1) {
-                vars = $.extend.apply(null, results);
-            } else {
-                vars = results[0];
-            }
-
+        const promisesWhenever = args.runWhenever.map(async fn => {
+            const vars = await Promise.resolve(fn(inputs, updateEvents, vm));
             if (vars !== undefined) {
-                // Check for errors/redirects
-                if (vars.errorMessage !== undefined) {
-                    return helpers.error(vars.errorMessage, cb);
-                }
-                if (vars.redirectUrl !== undefined) {
-                    return ui.realtimeUpdate([], vars.redirectUrl, cb);
-                }
-
-                // This might not do the update all at once, so in cases where you have things like if (x) { y } in the UI, changing x might casue y to get read before y is set. So be careful to set things earlier. See js/views/roster.js filterUntradable stuff.
                 komapping.fromJS(vars, args.mapping, vm);
             }
-
-            display(args, updateEvents);
-
-            // Run promises in parallel, update when each one is ready
-            // This only runs if it hasn't been short-circuited yet
-            promisesAfter = args.runAfter.map(function (fn) {
-                return Promise.resolve(fn(inputs, updateEvents, vm)).then(function (vars) {
-                    if (vars !== undefined) {
-                        komapping.fromJS(vars, args.mapping, vm);
-                    }
-                });
-            });
-
-            return Promise.all([
-                Promise.all(promisesAfter),
-                Promise.all(promisesWhenever)
-            ]).then(function () {
-                if (containerEl.dataset.idLoading === containerEl.dataset.idLoaded) {
-                    containerEl.dataset.idLoading = ""; // Done loading
-                }
-
-                // Scroll to top
-                if (_.isEqual(updateEvents, ["firstRun"])) {
-                    window.scrollTo(window.pageXOffset, 0);
-                }
-
-                cb();
-            });
         });
+
+        const results = await Promise.all(promisesBefore);
+
+        let vars;
+        if (results.length > 1) {
+            vars = $.extend.apply(null, results);
+        } else {
+            vars = results[0];
+        }
+
+        if (vars !== undefined) {
+            // Check for errors/redirects
+            if (vars.errorMessage !== undefined) {
+                return helpers.error(vars.errorMessage, cb);
+            }
+            if (vars.redirectUrl !== undefined) {
+                return ui.realtimeUpdate([], vars.redirectUrl, cb);
+            }
+
+            // This might not do the update all at once, so in cases where you have things like if (x) { y } in the UI, changing x might casue y to get read before y is set. So be careful to set things earlier. See js/views/roster.js filterUntradable stuff.
+            komapping.fromJS(vars, args.mapping, vm);
+        }
+
+        display(args, updateEvents);
+
+        // Run promises in parallel, update when each one is ready
+        // This only runs if it hasn't been short-circuited yet
+        const promisesAfter = args.runAfter.map(async fn => {
+            const vars = await Promise.resolve(fn(inputs, updateEvents, vm));
+            if (vars !== undefined) {
+                komapping.fromJS(vars, args.mapping, vm);
+            }
+        });
+
+        await Promise.all([
+            Promise.all(promisesAfter),
+            Promise.all(promisesWhenever)
+        ]);
+
+        if (containerEl.dataset.idLoading === containerEl.dataset.idLoaded) {
+            containerEl.dataset.idLoading = ""; // Done loading
+        }
+
+        // Scroll to top
+        if (_.isEqual(updateEvents, ["firstRun"])) {
+            window.scrollTo(window.pageXOffset, 0);
+        }
+
+        cb();
     };
 }
 
 function get(fnBeforeReq, fnGet, fnUpdate) {
-    return function (req) {
-        fnBeforeReq(req).spread(function (updateEvents, cb) {
-            var inputs;
+    return async req => {
+        const [updateEvents, cb] = await fnBeforeReq(req);
 
-            inputs = fnGet(req);
-            if (inputs === undefined) {
-                inputs = {};
-            }
+        let inputs = fnGet(req);
+        if (inputs === undefined) {
+            inputs = {};
+        }
 
-            // Check for errors/redirects
-            if (inputs.errorMessage !== undefined) {
-                return helpers.error(inputs.errorMessage, cb);
-            }
-            if (inputs.redirectUrl !== undefined) {
-                return ui.realtimeUpdate([], inputs.redirectUrl, cb);
-            }
+        // Check for errors/redirects
+        if (inputs.errorMessage !== undefined) {
+            return helpers.error(inputs.errorMessage, cb);
+        }
+        if (inputs.redirectUrl !== undefined) {
+            return ui.realtimeUpdate([], inputs.redirectUrl, cb);
+        }
 
-            fnUpdate(inputs, updateEvents, cb);
-        });
+        fnUpdate(inputs, updateEvents, cb);
     };
 }
 
 function post(fnBeforeReq, fnPost) {
-    return function (req) {
-        fnBeforeReq(req).then(function () {
-            fnPost(req);
-        });
+    return async req => {
+        await fnBeforeReq(req);
+        fnPost(req);
     };
 }
 
@@ -183,17 +170,15 @@ function post(fnBeforeReq, fnPost) {
  * @return {Object} Object with module's exposed properties: get, post, and update.
  */
 function init(args) {
-    var output;
-
-    args.InitViewModel = args.InitViewModel !== undefined ? args.InitViewModel : function () { };
+    args.InitViewModel = args.InitViewModel !== undefined ? args.InitViewModel : function () {};
     args.beforeReq = args.beforeReq !== undefined ? args.beforeReq : viewHelpers.beforeLeague;
-    args.get = args.get !== undefined ? args.get : function () { return {}; };
+    args.get = args.get !== undefined ? args.get : () => { return {}; };
     args.runBefore = args.runBefore !== undefined ? args.runBefore : [];
     args.runAfter = args.runAfter !== undefined ? args.runAfter : [];
     args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
     args.mapping = args.mapping !== undefined ? args.mapping : {};
 
-    output = {};
+    const output = {};
     output.update = update(args);
     output.get = get(args.beforeReq, args.get, output.update);
     if (args.post !== undefined) {
@@ -204,5 +189,5 @@ function init(args) {
 }
 
 module.exports = {
-    init: init
+    init
 };

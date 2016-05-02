@@ -156,12 +156,12 @@ async function calculatePER() {
 
     // Save to database
     await g.dbl.tx("playerStats", "readwrite", async tx => {
-        await Promise.map(players, async p => {
+        await Promise.map(players, async (p, i) => {
             if (!p.active) {
                 return;
             }
 
-            await tx.playerStats.index("pid, season, tid").iterate([players[i].pid, g.season, players[i].tid], "prev", (ps, shortCircuit) => {
+            await tx.playerStats.index("pid, season, tid").iterate([p.pid, g.season, p.tid], "prev", (ps, shortCircuit) => {
                 // Since index is not on playoffs, manually check
                 if (ps.playoffs === (g.phase === g.PHASE.PLAYOFFS)) {
                     shortCircuit();

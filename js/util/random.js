@@ -20,13 +20,11 @@ function randInt(a, b) {
  * @param {array} list List to be shuffled in place.
  */
 function shuffle(list) {
-    var i, j, l, t;
-
-    l = list.length;
-    for (i = 1; i < l; i++) {
-        j = randInt(0, i);
+    const l = list.length;
+    for (let i = 1; i < l; i++) {
+        const j = randInt(0, i);
         if (j !== i) {
-            t = list[i];  // swap list[i] and list[j]
+            const t = list[i];  // swap list[i] and list[j]
             list[i] = list[j];
             list[j] = t;
         }
@@ -45,9 +43,7 @@ function shuffle(list) {
  * @param {number} sigma Standard deviation (default: 1).
  * @return {number} Random number from Gaussian distribution.
  */
-function gauss(mu, sigma) {
-    mu = mu !== undefined ? mu : 0;
-    sigma = sigma !== undefined ? sigma : 1;
+function gauss(mu = 0, sigma = 1) {
     return ((Math.random() * 2 - 1) + (Math.random() * 2 - 1) + (Math.random() * 2 - 1)) * sigma + mu;
 }
 
@@ -69,19 +65,15 @@ function gauss(mu, sigma) {
  * @param {number} sigma Standard deviation (default: 1).
  * @return {number} Random number from Gaussian distribution.
  */
-function realGauss(mu, sigma) {
-    var marsaglia, radius, z1, z2;
-
-    mu = mu !== undefined ? mu : 0;
-    sigma = sigma !== undefined ? sigma : 1;
-
+function realGauss(mu = 0, sigma = 1) {
+    let radius, z1, z2;
     do {
         z1 = 2 * Math.random() - 1;
         z2 = 2 * Math.random() - 1;
         radius = z1 * z1 + z2 * z2;
     } while (radius >= 1 || radius === 0); // only use inside the unit circle
 
-    marsaglia = Math.sqrt(-2 * Math.log(radius) / radius);
+    const marsaglia = Math.sqrt(-2 * Math.log(radius) / radius);
 
     return (z1 * marsaglia) * sigma + mu;
 }
@@ -109,11 +101,11 @@ function choice(x) {
 }
 
 module.exports = {
-    randInt: randInt,
-    shuffle: shuffle,
-    gauss: gauss,
-    realGauss: realGauss,
-    uniform: uniform,
-    choice: choice
+    randInt,
+    shuffle,
+    gauss,
+    realGauss,
+    uniform,
+    choice
 };
 

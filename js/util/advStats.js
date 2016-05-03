@@ -2,6 +2,7 @@ const g = require('../globals');
 const player = require('../core/player');
 const team = require('../core/team');
 const backboard = require('backboard');
+const Promise = require('bluebird');
 const _ = require('underscore');
 
 /**

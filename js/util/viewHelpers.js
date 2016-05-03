@@ -2,7 +2,6 @@ const db = require('../db');
 const g = require('../globals');
 const ui = require('../ui');
 const league = require('../core/league');
-const Promise = require('bluebird');
 const $ = require('jquery');
 const ko = require('knockout');
 const helpers = require('./helpers');

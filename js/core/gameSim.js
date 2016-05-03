@@ -1157,7 +1157,7 @@ class GameSim {
                 //text = random.choice(texts);
                 let text = texts[0];
                 if (names) {
-                    for (i = 0; i < names.length; i++) {
+                    for (let i = 0; i < names.length; i++) {
                         text = text.replace(`{${i}}`, names[i]);
                     }
                 }

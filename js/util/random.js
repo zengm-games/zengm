@@ -1,6 +1,3 @@
-'use strict';
-
-
 /**
  * Choose a random integer from [a, b]
  *

@@ -1,5 +1,3 @@
-'use strict';
-
 var g = require('../globals');
 var ui = require('../ui');
 var ko = require('knockout');

@@ -1,5 +1,3 @@
-'use strict';
-
 var ui = require('../ui');
 var bbgmView = require('../util/bbgmView');
 var viewHelpers = require('../util/viewHelpers');

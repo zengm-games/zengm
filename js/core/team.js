@@ -315,7 +315,7 @@ async function getContracts(tx, tid) {
             amount: p.contract.amount,
             exp: p.contract.exp,
             released: false
-        }
+        };
     });
 
     // Then, get any released players still owed money
@@ -821,6 +821,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                 const rookieSalaries = require('./draft').getRookieSalaries();
 
                 // Actually add picks after some stuff below is done
+                let estValues;
                 const withEstValues = () => {
                     Promise.map(dpidsAdd, async dpid => {
                         const dp = await tx.draftPicks.get(dpid);
@@ -900,7 +901,6 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                     });
                 };
 
-                let estValues;
                 if (estValuesCached) {
                     estValues = estValuesCached;
                 } else {
@@ -1177,7 +1177,7 @@ function updateStrategies(tx) {
         const [teamSeason, teamSeasonOld] = await Promise.all([
             tx.teamSeasons.index("season, tid").get([g.season, t.tid]),
             tx.teamSeasons.index("season, tid").get([g.season - 1, t.tid])
-        ])
+        ]);
 
         const won = teamSeason.won;
         const dWon = teamSeasonOld ? won - teamSeasonOld.won : 0;
@@ -1321,7 +1321,7 @@ function checkRosterSizes() {
             promises.push(checkRosterSize(i));
         }
         await Promise.all(promises);
-        
+
         return userTeamSizeError;
     });
 }

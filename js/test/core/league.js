@@ -1,5 +1,3 @@
-'use strict';
-
 var assert = require('assert');
 var db = require('../../db');
 var g = require('../../globals');

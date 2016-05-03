@@ -1,5 +1,3 @@
-'use strict';
-
 var assert = require('assert');
 var g = require('../../globals');
 var season = require('../../core/season');

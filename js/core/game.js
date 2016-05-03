@@ -260,26 +260,26 @@ function writePlayerStats(tx, results) {
 
                 // Only update player object (values and injuries) every 10 regular season games or on injury
                 if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
-                    const p_ = await tx.players.get(p.id);
+                    const p2 = await tx.players.get(p.id);
 
                     // Injury crap - assign injury type if player does not already have an injury in the database
                     let biggestRatingsLoss;
                     if (injuredThisGame) {
-                        p_.injury = player.injury(t.healthRank);
-                        p.injury = p_.injury; // So it gets written to box score
+                        p2.injury = player.injury(t.healthRank);
+                        p.injury = p2.injury; // So it gets written to box score
                         eventLog.add(tx, {
                             type: "injured",
-                            text: `<a href="${helpers.leagueUrl(["player", p_.pid])}">${p_.name}</a> was injured! (${p_.injury.type}, out for ${p_.injury.gamesRemaining} games)`,
-                            showNotification: p_.tid === g.userTid,
-                            pids: [p_.pid],
-                            tids: [p_.tid]
+                            text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.name}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
+                            showNotification: p2.tid === g.userTid,
+                            pids: [p2.pid],
+                            tids: [p2.tid]
                         });
 
                         // Some chance of a loss of athleticism from serious injuries
                         // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
                         // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
-                        if (p_.injury.gamesRemaining > 25 && Math.random() < p_.injury.gamesRemaining / 150) {
-                            biggestRatingsLoss = Math.round(p_.injury.gamesRemaining / 10);
+                        if (p2.injury.gamesRemaining > 25 && Math.random() < p2.injury.gamesRemaining / 150) {
+                            biggestRatingsLoss = Math.round(p2.injury.gamesRemaining / 10);
                             if (biggestRatingsLoss > 10) {
                                 biggestRatingsLoss = 10;
                             }
@@ -289,22 +289,22 @@ function writePlayerStats(tx, results) {
                                 biggestRatingsLoss = 30;
                             }
 
-                            const r = p_.ratings.length - 1;
-                            p_.ratings[r].spd = helpers.bound(p_.ratings[r].spd - random.randInt(0, biggestRatingsLoss), 0, 100);
-                            p_.ratings[r].jmp = helpers.bound(p_.ratings[r].jmp - random.randInt(0, biggestRatingsLoss), 0, 100);
-                            p_.ratings[r].endu = helpers.bound(p_.ratings[r].endu - random.randInt(0, biggestRatingsLoss), 0, 100);
+                            const r = p2.ratings.length - 1;
+                            p2.ratings[r].spd = helpers.bound(p2.ratings[r].spd - random.randInt(0, biggestRatingsLoss), 0, 100);
+                            p2.ratings[r].jmp = helpers.bound(p2.ratings[r].jmp - random.randInt(0, biggestRatingsLoss), 0, 100);
+                            p2.ratings[r].endu = helpers.bound(p2.ratings[r].endu - random.randInt(0, biggestRatingsLoss), 0, 100);
                         }
                     }
 
                     // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
                     if (g.phase !== g.PHASE.PLAYOFFS) {
-                        await player.updateValues(tx, p_, [ps]);
+                        await player.updateValues(tx, p2, [ps]);
                     }
                     if (biggestRatingsLoss) {
-                        await player.updateValues(tx, p_, []);
+                        await player.updateValues(tx, p2, []);
                     }
 
-                    await tx.players.put(p_);
+                    await tx.players.put(p2);
                 }
 
                 return ps;
@@ -712,7 +712,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
         });
 
         // If there was a play by play done for one of these games, get it
-        let url, raw;
+        let raw, url;
         if (gidPlayByPlay !== null) {
             for (let i = 0; i < results.length; i++) {
                 if (results[i].playByPlay !== undefined) {
@@ -773,7 +773,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
         }
 
         await g.dbl.tx(["players", "schedule", "teams", "teamSeasons"], async tx => {
-            const schedule = await season.getSchedule({ot: tx, oneDay: true});
+            let schedule = await season.getSchedule({ot: tx, oneDay: true});
 
             // Stop if no games
             // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
@@ -782,7 +782,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
             }
 
             // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
-            const teams = await loadTeams(tx)
+            const teams = await loadTeams(tx);
 
             // Play games
             // Will loop through schedule and simulate all games
@@ -792,7 +792,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
 
                 // tx2 to make sure newSchedulePlayoffsDay finishes before continuing
                 await g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2));
-                const schedule = await season.getSchedule({oneDay: true});
+                schedule = await season.getSchedule({oneDay: true});
             }
             await cbSimGames(schedule, teams);
         });
@@ -813,10 +813,10 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
                 }
 
                 if (g.phase !== g.PHASE.PLAYOFFS) {
-                    await freeAgents.decreaseDemands()
+                    await freeAgents.decreaseDemands();
                     await freeAgents.autoSign();
                 }
-                
+
                 await cbPlayGames();
             } else {
                 // Update UI if stopped
@@ -836,7 +836,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
             const userTeamSizeError = await team.checkRosterSizes();
             if (userTeamSizeError === null) {
                 await league.setGameAttributesComplete({gamesInProgress: true});
-                await ui.updatePlayMenu(null)
+                await ui.updatePlayMenu(null);
                 cbRunDay();
             } else {
                 ui.updateStatus("Idle");

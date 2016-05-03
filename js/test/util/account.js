@@ -1,6 +1,4 @@
 /*eslint comma-spacing: 0, key-spacing: 0, no-unused-expressions: 0*/
-'use strict';
-
 var assert = require('assert');
 var backboard = require('backboard');
 var Promise = require('bluebird');

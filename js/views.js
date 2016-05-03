@@ -11,7 +11,7 @@ const staticPage = (name, title) => {
             ui.title(title);
         }
     });
-}
+};
 
 module.exports = {
     staticPage,

@@ -4,7 +4,6 @@ const team = require('../core/team');
 const backboard = require('backboard');
 const Promise = require('bluebird');
 const $ = require('jquery');
-const _ = require('underscore');
 const eventLog = require('./eventLog');
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
@@ -202,7 +201,7 @@ async function getAchievements() {
 // HOWEVER, it's only saved to the database if saveAchievement is true (this is the default), but the saving happens asynchronously. It is theoretically possible that this could cause a notification to be displayed to the user about getting an achievement, but some error occurs when saving it.
 const checkAchievement = {};
 
-checkAchievement.fo_fo_fo = async (saveAchievement=true) => {
+checkAchievement.fo_fo_fo = async (saveAchievement = true) => {
     if (g.godModeInPast) {
         return false;
     }
@@ -233,7 +232,7 @@ checkAchievement.fo_fo_fo = async (saveAchievement=true) => {
     return true;
 };
 
-checkAchievement.septuawinarian = async (saveAchievement=true) => {
+checkAchievement.septuawinarian = async (saveAchievement = true) => {
     if (g.godModeInPast) {
         return false;
     }
@@ -254,7 +253,7 @@ checkAchievement.septuawinarian = async (saveAchievement=true) => {
     return false;
 };
 
-checkAchievement["98_degrees"] = async (saveAchievement=true) => {
+checkAchievement["98_degrees"] = async (saveAchievement = true) => {
     if (g.godModeInPast) {
         return false;
     }
@@ -310,9 +309,9 @@ async function checkDynasty(titles, years, slug, saveAchievement) {
     return false;
 }
 
-checkAchievement.dynasty = (saveAchievement=true) => checkDynasty(6, 8, "dynasty", saveAchievement);
-checkAchievement.dynasty_2 = (saveAchievement=true) => checkDynasty(8, 8, "dynasty_2", saveAchievement);
-checkAchievement.dynasty_3 = (saveAchievement=true) => checkDynasty(11, 13, "dynasty_3", saveAchievement);
+checkAchievement.dynasty = (saveAchievement = true) => checkDynasty(6, 8, "dynasty", saveAchievement);
+checkAchievement.dynasty_2 = (saveAchievement = true) => checkDynasty(8, 8, "dynasty_2", saveAchievement);
+checkAchievement.dynasty_3 = (saveAchievement = true) => checkDynasty(11, 13, "dynasty_3", saveAchievement);
 
 async function checkMoneyball(maxPayroll, slug, saveAchievement) {
     if (g.godModeInPast) {
@@ -335,11 +334,11 @@ async function checkMoneyball(maxPayroll, slug, saveAchievement) {
     return false;
 }
 
-checkAchievement.moneyball = (saveAchievement=true) => checkMoneyball(40000, "moneyball", saveAchievement);
+checkAchievement.moneyball = (saveAchievement = true) => checkMoneyball(40000, "moneyball", saveAchievement);
 
-checkAchievement.moneyball_2 = (saveAchievement=true) => checkMoneyball(30000, "moneyball_2", saveAchievement);
+checkAchievement.moneyball_2 = (saveAchievement = true) => checkMoneyball(30000, "moneyball_2", saveAchievement);
 
-checkAchievement.hardware_store = async (saveAchievement=true) => {
+checkAchievement.hardware_store = async (saveAchievement = true) => {
     if (g.godModeInPast) {
         return false;
     }
@@ -356,7 +355,7 @@ checkAchievement.hardware_store = async (saveAchievement=true) => {
     return false;
 };
 
-checkAchievement.small_market = async (saveAchievement=true) => {
+checkAchievement.small_market = async (saveAchievement = true) => {
     if (g.godModeInPast) {
         return false;
     }
@@ -377,7 +376,7 @@ checkAchievement.small_market = async (saveAchievement=true) => {
     return false;
 };
 
-checkAchievement.sleeper_pick = async (saveAchievement=true) => {
+checkAchievement.sleeper_pick = async (saveAchievement = true) => {
     if (g.godModeInPast) {
         return false;
     }

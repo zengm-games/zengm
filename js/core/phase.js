@@ -60,7 +60,7 @@ async function newPhasePreseason(tx) {
 
     const tids = _.range(g.numTeams);
 
-    let scoutingRank, prevSeason;
+    let prevSeason, scoutingRank;
     await Promise.map(tids, async tid => {
         // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
         // This is done BEFORE a new season row is added.
@@ -73,8 +73,8 @@ async function newPhasePreseason(tx) {
             prevSeason = await tx.teamSeasons.index("tid, season").get([tid, g.season - 1]);
         }
 
-        await tx.teamSeasons.add(team.genSeasonRow(tid, prevSeason)),
-        await tx.teamStats.add(team.genStatsRow(tid))
+        await tx.teamSeasons.add(team.genSeasonRow(tid, prevSeason));
+        await tx.teamStats.add(team.genStatsRow(tid));
     });
 
     const teamSeasons = await tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season - 1, '']));
@@ -391,9 +391,7 @@ async function newPhaseBeforeDraft(tx) {
         }
     });
 
-    await tx.releasedPlayers.index('contract.exp').iterate(backboard.upperBound(g.season), rp => {
-        tx.releasedPlayers.delete(rp.rid);
-    })
+    await tx.releasedPlayers.index('contract.exp').iterate(backboard.upperBound(g.season), rp => tx.releasedPlayers.delete(rp.rid));
 
     await team.updateStrategies(tx);
 
@@ -489,13 +487,12 @@ async function newPhaseFreeAgency(tx) {
 
     // Delete all current negotiations to resign players
     await contractNegotiation.cancelAll(tx);
-    
+
     const baseMoods = await player.genBaseMoods(tx);
 
     // Reset contract demands of current free agents and undrafted players
     // KeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
-    await tx.players.index('tid').iterate(backboard.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), p => {player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods);
-    });
+    await tx.players.index('tid').iterate(backboard.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), p => player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods));
 
     // AI teams re-sign players or they become free agents
     // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
@@ -617,7 +614,7 @@ async function newPhase(phase, extra) {
         [g.PHASE.FANTASY_DRAFT]: {
             objectStores: ["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"],
             func: newPhaseFantasyDraft
-        },
+        }
     };
 
     const phaseChangeInProgress = await lock.phaseChangeInProgress(null);
@@ -658,9 +655,8 @@ async function newPhase(phase, extra) {
             if (result && result.length === 2) {
                 const [url, updateEvents] = result;
                 return finalize(phase, url, updateEvents);
-            } else {
-                throw new Error('Invalid result from phase change: ' + JSON.stringify(result));
             }
+            throw new Error(`Invalid result from phase change: ${JSON.stringify(result)}`);
         } else {
             throw new Error(`Unknown phase number ${phase}`);
         }

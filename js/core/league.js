@@ -668,7 +668,7 @@ async function updateMetaNameRegion(name, region) {
  */
 async function loadGameAttribute(ot, key) {
     const dbOrTx = ot !== null ? ot : g.dbl;
-    const gameAttribute = await dbOrTx.gameAttributes.get(key)
+    const gameAttribute = await dbOrTx.gameAttributes.get(key);
 
     if (gameAttribute === undefined) {
         throw new Error(`Unknown game attribute: ${key}`);

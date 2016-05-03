@@ -8,8 +8,6 @@
  * makes horizontal rather than vertical box plots.
  */
 
-'use strict';
-
 function quartile(data, quart) {
     if (quart === 1 || quart === 2 || quart === 3) {
         return data[Math.round(data.length * quart / 4)];

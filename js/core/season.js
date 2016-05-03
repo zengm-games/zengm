@@ -50,7 +50,7 @@ async function updateOwnerMood(tx) {
 
         await require('../core/league').setGameAttributes(tx, {ownerMood: ownerMood});
     }
-    
+
     return deltas;
 }
 
@@ -138,7 +138,7 @@ async function awards(tx) {
     }
 
     // Rookie of the Year
-    rookies = players.filter(p => {
+    const rookies = players.filter(p => {
         // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
         return p.draft.year === g.season - 1;
     }).sort((a, b) => b.stats.ewa - a.stats.ewa); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA

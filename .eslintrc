@@ -1,4 +1,5 @@
 {
+    "parser": "babel-eslint",
     "env": {
         "browser": true,
         "node": true,
@@ -6,7 +7,6 @@
         "mocha": true,
         "jasmine": false
     },
-
     "rules": {
         "no-alert": 0,
         "no-array-constructor": 2,

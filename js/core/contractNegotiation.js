@@ -18,7 +18,7 @@ const lock = require('../util/lock');
  * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.userTid.
  * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
  */
-async function create(tx, pid, resigning, tid=g.userTid) {
+async function create(tx, pid, resigning, tid = g.userTid) {
     if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) && !resigning) {
         return "You're not allowed to sign free agents now.";
     }

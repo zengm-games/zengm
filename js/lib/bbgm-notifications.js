@@ -1,8 +1,5 @@
 // Originally based on https://github.com/Srirangan/notifer.js/
 
-'use strict';
-
-
 var Notifier, container;
 
 container = document.createElement("div");

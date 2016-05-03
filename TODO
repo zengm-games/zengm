@@ -15,11 +15,9 @@ babel
     gamesim
   merge with master
   eslint
-    get working
     no var
     use some consensus rules http://blog.javascripting.com/2015/09/07/fine-tuning-airbnbs-eslint-config/
-  sublime
-  tests don't work in firefox
+    sublime
   how to make async/await fast
     why do i need regenerator? don't ff and chrome support generators?
       http://stackoverflow.com/questions/36775097/babel-plugin-transform-async-to-module-method-without-regenerator
@@ -29,6 +27,7 @@ babel
   ctrl+F Kneden for bugs
     one in game.js, look into ASAP! make a test like in kneden repo
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being cancelled (resolve) and error returned (Reject)
+  confirm feats still work and text is fine
 
 one month gamesim benchmarks while viewing dashboard:
   original 000:01:43.710

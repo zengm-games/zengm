@@ -46,7 +46,7 @@ async function autoSign(tx) {
             // Skip the user's team
             if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
                 continue;
-            }            
+            }
 
             // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
             if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {

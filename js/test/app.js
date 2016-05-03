@@ -1,5 +1,3 @@
-'use strict';
-
 // Overwrite Promise object globally so Babel uses it when transpiling async/await (not totally sure if necessary)
 window.Promise = require('bluebird');
 window.Promise.config({warnings: false});

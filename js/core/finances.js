@@ -13,7 +13,7 @@ const Promise = require('bluebird');
 async function assessPayrollMinLuxury(tx) {
     let collectedTax = 0;
 
-    const payrolls = await require('./team').getPayrolls(tx)
+    const payrolls = await require('./team').getPayrolls(tx);
 
     await tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
         // Store payroll

@@ -1823,7 +1823,7 @@ function augmentPartialPlayer(p, scoutingRank) {
 
     // Handle old format position
     if (p.hasOwnProperty("pos")) {
-        for (i = 0; i < p.ratings.length; i++) {
+        for (let i = 0; i < p.ratings.length; i++) {
             if (!p.ratings[i].hasOwnProperty("pos")) {
                 p.ratings[i].pos = p.pos;
             }
@@ -1918,10 +1918,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 
         const won = results.team[i].stat.pts > results.team[j].stat.pts;
 
-        const featTextArr = [];
-        for (let key in Object.keys(statArr)) {
-            featTextArr.push(statArr[key] + " " + key);
-        }
+        const featTextArr = Object.keys(statArr).map((stat, key) => `${stat} ${key}`);
 
         let featText = '<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> had <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">';
         for (let k = 0; k < featTextArr.length; k++) {
@@ -2053,7 +2050,7 @@ function withStats(tx, players, options) {
                 }
 
                 return true;
-            })
+            });
 
             // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
             p.stats.sort((a, b) => a.psid - b.psid);

@@ -69,7 +69,7 @@ async function setOrder(ot, draftOrder) {
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
  * @return {Promise}
  */
-async function genPlayers(tx, tid, scoutingRank=null, numPlayers) {
+async function genPlayers(tx, tid, scoutingRank = null, numPlayers) {
     if (numPlayers === null || numPlayers === undefined) {
         numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
     }
@@ -143,8 +143,6 @@ function logAction(tid, txt) {
 }
 
 function logLotteryChances(chances, teams, draftOrder) {
-    let i, origTm, tm, txt;
-
     for (let i = 0; i < chances.length; i++) {
         const origTm = teams[i].tid;
         const tm = draftOrder[origTm][1].tid;
@@ -388,7 +386,7 @@ async function genOrderFantasy(tx, position) {
     }
     random.shuffle(tids);
     if (position >= 1 && position <= g.numTeams) {
-        i = 0;
+        let i = 0;
         while (tids[position - 1] !== g.userTid && i < 1000) {
             random.shuffle(tids);
             i += 1;
@@ -542,14 +540,11 @@ async function untilUserOrEnd() {
                 await g.dbl.tx(["players", "teamSeasons"], "readwrite", async tx => {
                     // Undrafted players become free agents
                     const baseMoods = await player.genBaseMoods(tx);
-                    await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, p => {
-                        return player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods)
-                    });
+                    await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, p => player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods));
 
                     // Swap back in normal draft class
                     await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_FANTASY_TEMP, p => {
                         p.tid = g.PLAYER.UNDRAFTED;
-
                         return p;
                     });
                 });

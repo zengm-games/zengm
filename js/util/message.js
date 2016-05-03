@@ -1,5 +1,4 @@
 const g = require('../globals');
-const Promise = require('bluebird');
 const helpers = require('./helpers');
 const random = require('./random');
 
@@ -149,6 +148,7 @@ async function generate(tx, deltas) {
 
     const ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
 
+    let m;
     if (g.showFirstOwnerMessage) {
         m = random.choice(first);
         require('../core/league').setGameAttributes(tx, {showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
@@ -204,7 +204,6 @@ async function generate(tx, deltas) {
             indOvr = 0;
         }
 
-        let m;
         if (ownerMoodSum > -1) {
             m = "<p>" + random.choice(intro).replace("{{activity}}", activity1) + "</p>" +
                 "<p>" + random.choice(wins[indWins]) + " " + random.choice(playoffs[indPlayoffs]) + "</p>" +

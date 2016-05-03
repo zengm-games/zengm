@@ -19,7 +19,7 @@ const lock = require('./util/lock');
  * @param {function()=} cb Optional callback that will run after the page updates.
  * @param {Object=} raw Optional object passed through to Davis's req.raw.
  */
-function realtimeUpdate(updateEvents=[], url, cb, raw={}) {
+function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
     url = url !== undefined ? url : location.pathname + location.search;
 
     const inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)

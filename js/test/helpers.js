@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Finds the number of times an element appears in an array.
  *

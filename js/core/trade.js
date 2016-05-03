@@ -3,7 +3,6 @@ const league = require('./league');
 const player = require('./player');
 const team = require('./team');
 const Promise = require('bluebird');
-const _ = require('underscore');
 const eventLog = require('../util/eventLog');
 const helpers = require('../util/helpers');
 
@@ -414,6 +413,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
     let added = 0;
 
     // Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
+    let testTrade;
     const tryAddAsset = async () => {
         const assets = [];
 
@@ -529,7 +529,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
     };
 
     // See if the AI team likes the current trade. If not, try adding something to it.
-    const testTrade = async () => {
+    testTrade = async () => {
         const dv = await team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached);
 
         if (dv > 0 && initialSign === -1) {
@@ -590,7 +590,7 @@ async function getPickValues(ot) {
     }
 
     await Promise.all(promises);
-    
+
     return estValues;
 }
 
@@ -608,7 +608,7 @@ async function makeItWorkTrade() {
         get()
     ]);
 
-    const [found, teams] = await makeItWork(helpers.deepCopy(teams0), false, estValues)
+    const [found, teams] = await makeItWork(helpers.deepCopy(teams0), false, estValues);
 
     if (!found) {
         return `${g.teamRegionsCache[teams0[1].tid]} GM: "I can\'t afford to give up so much."`;

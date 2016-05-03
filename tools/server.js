@@ -1,21 +1,21 @@
-var express = require("express");
-var path = require("path");
+const express = require("express");
+const path = require("path");
 
-var app = express();
+const app = express();
 
-var options = {
+const options = {
     root: path.join(__dirname, "..")
 };
 
-function showStatic(req, res) {
+const showStatic = (req, res) => {
     res.sendFile(req.url.substr(1), options);
-}
-function showStaticWithHtml(req, res) {
+};
+const showStaticWithHtml = (req, res) => {
     res.sendFile(req.url.substr(1) + ".html", options);
-}
-function showIndex(req, res) {
+};
+const showIndex = (req, res) => {
     res.sendFile("index.html", options);
-}
+};
 
 app.get("/export_3.3", showStaticWithHtml);
 app.get("/manifest_hack", showStaticWithHtml);
@@ -35,8 +35,8 @@ app.get("/templates/*", showStatic);
 
 app.get("/*", showIndex);
 
-var server = app.listen(3000, function () {
-    var address = server.address();
+const server = app.listen(3000, () => {
+    const address = server.address();
 
     console.log("View Basketball GM at http://%s:%s", address.address, address.port);
 });

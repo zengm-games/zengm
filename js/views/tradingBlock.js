@@ -121,14 +121,10 @@ function post(req) {
 
 mapping = {
     userPicks: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     },
     userRoster: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
@@ -308,9 +304,9 @@ function uiFirst(vm) {
 
 module.exports = bbgmView.init({
     id: "tradingBlock",
-    get: get,
+    get,
     post: post,
-    mapping: mapping,
+    mapping,
     runBefore: [updateUserRoster, updateOffers],
-    uiFirst: uiFirst
+    uiFirst
 });

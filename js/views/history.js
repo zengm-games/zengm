@@ -109,8 +109,8 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "history",
-    get: get,
+    get,
     runBefore: [updateHistory],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });

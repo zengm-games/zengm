@@ -71,8 +71,8 @@ function uiFirst() {
 
 module.exports = bbgmView.init({
     id: "newTeam",
-    get: get,
+    get,
     post: post,
     runBefore: [updateTeamSelect],
-    uiFirst: uiFirst
+    uiFirst
 });

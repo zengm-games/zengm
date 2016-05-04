@@ -38,9 +38,7 @@ function get() {
 
 mapping = {
     players: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
@@ -131,9 +129,9 @@ function uiEvery() {
 
 module.exports = bbgmView.init({
     id: "freeAgents",
-    get: get,
-    mapping: mapping,
+    get,
+    mapping,
     runBefore: [updateFreeAgents],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });

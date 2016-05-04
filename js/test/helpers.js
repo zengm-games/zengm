@@ -7,10 +7,8 @@
  * @return {number} The number of times x was found in array.
  */
 function numInArrayEqualTo(array, x) {
-    var idx, n;
-
-    n = 0;
-    idx = array.indexOf(x);
+    let n = 0;
+    let idx = array.indexOf(x);
     while (idx !== -1) {
         n += 1;
         idx = array.indexOf(x, idx + 1);
@@ -19,6 +17,6 @@ function numInArrayEqualTo(array, x) {
 }
 
 module.exports = {
-    numInArrayEqualTo: numInArrayEqualTo
+    numInArrayEqualTo
 };
 

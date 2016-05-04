@@ -130,5 +130,5 @@ module.exports = bbgmView.init({
     id: "exportLeague",
     post: post,
     runBefore: [updateExportLeague],
-    uiFirst: uiFirst
+    uiFirst
 });

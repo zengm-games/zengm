@@ -27,14 +27,10 @@ function get(req) {
 
 mapping = {
     history: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     },
     players: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
@@ -158,9 +154,9 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "teamHistory",
-    get: get,
-    mapping: mapping,
+    get,
+    mapping,
     runBefore: [updateTeamHistory],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });

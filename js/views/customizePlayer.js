@@ -1,23 +1,19 @@
-var g = require('../globals');
-var ui = require('../ui');
-var finances = require('../core/finances');
-var league = require('../core/league');
-var player = require('../core/player');
-var team = require('../core/team');
-var backboard = require('backboard');
-var faces = require('facesjs');
-var ko = require('knockout');
-var komapping = require('knockout.mapping');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
-
-var mapping;
+const g = require('../globals');
+const ui = require('../ui');
+const finances = require('../core/finances');
+const league = require('../core/league');
+const player = require('../core/player');
+const team = require('../core/team');
+const backboard = require('backboard');
+const faces = require('facesjs');
+const ko = require('knockout');
+const komapping = require('knockout.mapping');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
 // Same as faces.generate, but round of long decimals
 function generateFace() {
-    var face;
-
-    face = faces.generate();
+    const face = faces.generate();
     face.fatness = helpers.round(face.fatness, 2);
     face.eyes[0].angle = helpers.round(face.eyes[0].angle, 1);
     face.eyes[1].angle = helpers.round(face.eyes[1].angle, 1);
@@ -44,8 +40,6 @@ function get(req) {
 }
 
 function InitViewModel() {
-    var ratingKeys;
-
     this.p = {
         face: ko.observable(),
         ratings: ko.observableArray(),
@@ -68,7 +62,7 @@ function InitViewModel() {
 
     // Easy access to ratings array, since it could have any number of entries and we only want the last one
     this.ratings = {};
-    ratingKeys = ["pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
+    const ratingKeys = ["pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
     ratingKeys.forEach(function (ratingKey) {
         this.ratings[ratingKey] = ko.computed({
             read: function () {
@@ -79,8 +73,7 @@ function InitViewModel() {
                 return 0;
             },
             write: function (value) {
-                var rating;
-                rating = helpers.bound(parseInt(value, 10), 0, 100);
+                let rating = helpers.bound(parseInt(value, 10), 0, 100);
                 if (isNaN(rating)) { rating = 0; }
                 this.p.ratings()[this.p.ratings().length - 1][ratingKey](rating);
             },
@@ -94,8 +87,7 @@ function InitViewModel() {
             return g.season - this.p.born.year();
         },
         write: function (value) {
-            var age;
-            age = parseInt(value, 10);
+            let age = parseInt(value, 10);
             if (age !== age) { age = 25; } // NaN check
             this.p.born.year(g.season - age);
         },
@@ -124,9 +116,8 @@ function InitViewModel() {
                 return this.p.contract.amount() / 1000;
             },
             write: function (value) {
-                var amount;
                 // Allow any value, even above or below normal limits, but round to $10k
-                amount = helpers.round(100 * parseFloat(value)) * 10;
+                let amount = helpers.round(100 * parseFloat(value)) * 10;
                 if (isNaN(amount)) { amount = g.minContract; }
                 this.p.contract.amount(amount);
             },
@@ -137,8 +128,7 @@ function InitViewModel() {
                 return this.p.contract.exp();
             },
             write: function (value) {
-                var season;
-                season = parseInt(value, 10);
+                let season = parseInt(value, 10);
                 if (isNaN(season)) { season = g.season; }
 
                 // No contracts expiring in the past
@@ -173,8 +163,7 @@ function InitViewModel() {
                 return this.p.injury.gamesRemaining();
             },
             write: function (value) {
-                var gamesRemaining;
-                gamesRemaining = parseInt(value, 10);
+                let gamesRemaining = parseInt(value, 10);
                 if (isNaN(gamesRemaining)) { gamesRemaining = 0; }
 
                 if (gamesRemaining < 0) { gamesRemaining = 0; }
@@ -186,110 +175,97 @@ function InitViewModel() {
     };
 }
 
-mapping = {
+const mapping = {
     teams: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
-function updateCustomizePlayer(inputs, updateEvents) {
+async function updateCustomizePlayer(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0) {
-        return team.filter({
+        const teams = await team.filter({
             attrs: ["tid", "region", "name"],
             season: g.season
-        }).then(function (teams) {
-            var i, positions, seasonOffset, vars;
-
-            // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-            if (g.phase < g.PHASE.FREE_AGENCY) {
-                seasonOffset = 0;
-            } else {
-                seasonOffset = 1;
-            }
-
-            for (i = 0; i < teams.length; i++) {
-                teams[i].text = teams[i].region + " " + teams[i].name;
-            }
-            teams.unshift({
-                tid: g.PLAYER.RETIRED,
-                text: "Retired"
-            });
-            teams.unshift({
-                tid: g.PLAYER.UNDRAFTED_3,
-                text: (g.season + seasonOffset + 2) + " Draft Prospect"
-            });
-            teams.unshift({
-                tid: g.PLAYER.UNDRAFTED_2,
-                text: (g.season + seasonOffset + 1) + " Draft Prospect"
-            });
-            teams.unshift({
-                tid: g.PLAYER.UNDRAFTED,
-                text: (g.season + seasonOffset) + " Draft Prospect"
-            });
-            teams.unshift({
-                tid: g.PLAYER.FREE_AGENT,
-                text: "Free Agent"
-            });
-
-            positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];
-
-            vars = {
-                appearanceOptions: ["Cartoon Face", "Image URL"],
-                faceOptions: {
-                    eyes: [0, 1, 2, 3],
-                    nose: [0, 1, 2],
-                    mouth: [0, 1, 2, 3, 4],
-                    hair: [0, 1, 2, 3, 4]
-                },
-                positions: positions,
-                teams: teams
-            };
-
-            if (inputs.pid === null) {
-                // Generate new player as basis
-                return g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season])).then(function (teamSeasons) {
-                    var p, scoutingRank;
-
-                    scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
-
-                    p = player.generate(g.PLAYER.FREE_AGENT,
-                                    20,
-                                    null,
-                                    50,
-                                    50,
-                                    g.season,
-                                    false,
-                                    scoutingRank);
-
-                    p.face.fatness = helpers.round(p.face.fatness, 2);
-                    p.face.eyes[0].angle = helpers.round(p.face.eyes[0].angle, 1);
-                    p.face.eyes[1].angle = helpers.round(p.face.eyes[1].angle, 1);
-
-                    vars.appearanceOption = "Cartoon Face";
-                    p.imgURL = "http://";
-
-                    vars.p = p;
-                    return vars;
-                });
-            }
-
-            // Load a player to edit
-            return g.dbl.players.get(inputs.pid).then(function (p) {
-                if (p.imgURL.length > 0) {
-                    vars.appearanceOption = "Image URL";
-                } else {
-                    vars.appearanceOption = "Cartoon Face";
-                    p.imgURL = "http://";
-                }
-
-                vars.originalTid = p.tid;
-                vars.p = p;
-
-                return vars;
-            });
         });
+
+        // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
+        const seasonOffset = g.phase < g.PHASE.FREE_AGENCY ? 0 : 1;
+
+        for (let i = 0; i < teams.length; i++) {
+            teams[i].text = teams[i].region + " " + teams[i].name;
+        }
+        teams.unshift({
+            tid: g.PLAYER.RETIRED,
+            text: "Retired"
+        });
+        teams.unshift({
+            tid: g.PLAYER.UNDRAFTED_3,
+            text: (g.season + seasonOffset + 2) + " Draft Prospect"
+        });
+        teams.unshift({
+            tid: g.PLAYER.UNDRAFTED_2,
+            text: (g.season + seasonOffset + 1) + " Draft Prospect"
+        });
+        teams.unshift({
+            tid: g.PLAYER.UNDRAFTED,
+            text: (g.season + seasonOffset) + " Draft Prospect"
+        });
+        teams.unshift({
+            tid: g.PLAYER.FREE_AGENT,
+            text: "Free Agent"
+        });
+
+        const positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];
+
+        const vars = {
+            appearanceOptions: ["Cartoon Face", "Image URL"],
+            faceOptions: {
+                eyes: [0, 1, 2, 3],
+                nose: [0, 1, 2],
+                mouth: [0, 1, 2, 3, 4],
+                hair: [0, 1, 2, 3, 4]
+            },
+            positions,
+            teams
+        };
+
+        if (inputs.pid === null) {
+            // Generate new player as basis
+            const teamSeasons = await g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
+            const scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
+
+            const p = player.generate(g.PLAYER.FREE_AGENT,
+                20,
+                null,
+                50,
+                50,
+                g.season,
+                false,
+                scoutingRank);
+
+            p.face.fatness = helpers.round(p.face.fatness, 2);
+            p.face.eyes[0].angle = helpers.round(p.face.eyes[0].angle, 1);
+            p.face.eyes[1].angle = helpers.round(p.face.eyes[1].angle, 1);
+
+            vars.appearanceOption = "Cartoon Face";
+            p.imgURL = "http://";
+
+            vars.p = p;
+        } else {
+            // Load a player to edit
+            const p = await g.dbl.players.get(inputs.pid);
+            if (p.imgURL.length > 0) {
+                vars.appearanceOption = "Image URL";
+            } else {
+                vars.appearanceOption = "Cartoon Face";
+                p.imgURL = "http://";
+            }
+
+            vars.originalTid = p.tid;
+            vars.p = p;
+        }
+
+        return vars;
     }
 }
 
@@ -313,7 +289,7 @@ function uiFirst(vm) {
     }).extend({throttle: 1});
 
     // Update picture display
-    ko.computed(function () {
+    ko.computed(() => {
         // This ensures it's not drawn when not visible (like if defaulting to Image URL for a
         // player), and it also ensures that this computed is called when appearanceOption
         // changes. Without this "if", it hows a corrupted display for some reason if Image URL
@@ -323,10 +299,8 @@ function uiFirst(vm) {
         }
     }).extend({throttle: 1});
 
-    document.getElementById("create-a-player").addEventListener("click", function () {
-        var p, pid, r;
-
-        p = komapping.toJS(vm.p);
+    document.getElementById("create-a-player").addEventListener("click", async () => {
+        let p = komapping.toJS(vm.p);
 
         // Fix integers that Knockout may have mangled
         p.tid = parseInt(p.tid, 10);
@@ -353,7 +327,7 @@ function uiFirst(vm) {
         }
 
         // Set ovr, skills, and bound pot by ovr
-        r = p.ratings.length - 1;
+        const r = p.ratings.length - 1;
         p.ratings[r].ovr = player.ovr(p.ratings[r]);
         p.ratings[r].skills = player.skills(p.ratings[r]);
         if (p.ratings[r].ovr > p.ratings[r].pot) {
@@ -385,37 +359,35 @@ function uiFirst(vm) {
         }
 
         // Recalculate player values, since ratings may have changed
-        player.updateValues(null, p, []).then(function (p) {
-            return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
-                tx.players.put(p).then(function (pidLocal) {
-                    // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
-                    // When adding a player, this is the only way to know the pid
-                    pid = pidLocal;
+        p = await player.updateValues(null, p, []);
+        let pid;
+        await g.dbl.tx(["players", "playerStats"], "readwrite", async tx => {
+            // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
+            // When adding a player, this is the only way to know the pid
+            pid = await tx.players.put(p);
 
-                    // Add regular season or playoffs stat row, if necessary
-                    if (p.tid >= 0 && p.tid !== vm.originalTid() && g.phase <= g.PHASE.PLAYOFFS) {
-                        p.pid = pid;
+            // Add regular season or playoffs stat row, if necessary
+            if (p.tid >= 0 && p.tid !== vm.originalTid() && g.phase <= g.PHASE.PLAYOFFS) {
+                p.pid = pid;
 
-                        // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
+                p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
 
-                        // Add back to database
-                        tx.players.put(p);
-                    }
-                });
-            });
-        }).then(function () {
-            league.updateLastDbChange();
-            ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
+                // Add back to database
+                await tx.players.put(p);
+            }
         });
+
+        league.updateLastDbChange();
+        ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
     });
 }
 
 module.exports = bbgmView.init({
     id: "customizePlayer",
-    get: get,
-    InitViewModel: InitViewModel,
-    mapping: mapping,
+    get,
+    InitViewModel,
+    mapping,
     runBefore: [updateCustomizePlayer],
-    uiFirst: uiFirst
+    uiFirst
 });

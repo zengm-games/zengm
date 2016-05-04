@@ -190,8 +190,8 @@ function uiFirst(vm) {
 
 module.exports = bbgmView.init({
     id: "negotiation",
-    get: get,
+    get,
     post: post,
     runBefore: [updateNegotiation],
-    uiFirst: uiFirst
+    uiFirst
 });

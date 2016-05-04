@@ -81,8 +81,8 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "playoffs",
-    get: get,
+    get,
     runBefore: [updatePlayoffs],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });

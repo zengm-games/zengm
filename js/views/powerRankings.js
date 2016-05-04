@@ -13,9 +13,7 @@ var mapping;
 
 mapping = {
     teams: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
@@ -127,7 +125,7 @@ function uiFirst(vm) {
 
 module.exports = bbgmView.init({
     id: "powerRankings",
-    mapping: mapping,
+    mapping,
     runBefore: [updatePowerRankings],
-    uiFirst: uiFirst
+    uiFirst
 });

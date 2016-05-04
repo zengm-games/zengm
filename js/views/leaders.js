@@ -150,10 +150,10 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "leaders",
-    get: get,
-    InitViewModel: InitViewModel,
-    mapping: mapping,
+    get,
+    InitViewModel,
+    mapping,
     runBefore: [updateLeaders],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });

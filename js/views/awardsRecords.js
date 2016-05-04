@@ -1,14 +1,12 @@
-var g = require('../globals');
-var ui = require('../ui');
-var $ = require('jquery');
-var ko = require('knockout');
-var _ = require('underscore');
-var player = require('../core/player');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
-var components = require('./components');
-
-var awardOptions, mapping, optionsTmp;
+const g = require('../globals');
+const ui = require('../ui');
+const $ = require('jquery');
+const ko = require('knockout');
+const _ = require('underscore');
+const player = require('../core/player');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
+const components = require('./components');
 
 function get(req) {
     return {
@@ -22,15 +20,13 @@ function InitViewModel() {
     this.awardTypeVal = ko.observable();
 }
 
-mapping = {
+const mapping = {
     awardsRecords: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
-optionsTmp = [{
+const optionsTmp = [{
     val: "Won Championship",
     key: "champion"
 }, {
@@ -74,116 +70,93 @@ optionsTmp = [{
     key: "all_def"
 }];
 
-awardOptions = {};
-optionsTmp.map(function (o) {
+const awardOptions = {};
+optionsTmp.forEach(o => {
     awardOptions[o.key] = o.val;
 });
 
-function getPlayerLink(p) {
-    return '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>';
-}
-
 function getPlayerAwards(p, awardType) {
-    var aType, awards, filter, formatYear, getTeam, last, years;
-    aType = awardOptions[awardType];
+    const aType = awardOptions[awardType];
+    let filter;
     if (awardType === 'all_league') {
-        filter = function (a) {
-            var o = awardOptions;
+        filter = a => {
+            const o = awardOptions;
             return a.type === o.first_team || a.type === o.second_team || a.type === o.third_team;
         };
     } else if (awardType === 'all_def') {
-        filter = function (a) {
-            var o = awardOptions;
+        filter = a => {
+            const o = awardOptions;
             return a.type === o.first_def || a.type === o.second_def || a.type === o.third_def;
         };
     } else {
-        filter = function (a) {
-            return a.type === aType;
-        };
+        filter = a => a.type === aType;
     }
 
-    getTeam = function (season) {
-        var stats, tid;
-        stats = p.stats.filter(function (s) {
-            return s.season === season;
-        });
-        tid = _.last(stats);
-        if (tid) {
-            tid = tid.tid;
+    const getTeam = season => {
+        const stats = p.stats.filter(s => s.season === season);
+        if (stats.length > 0) {
+            const tid = stats[stats.length - 1].tid;
             return g.teamAbbrevsCache[tid];
         }
 
         return '-';
     };
 
-    formatYear = function (year) {
-        var keys = _.keys(year),
-            sout;
-        sout = _.map(keys, function (k) {
-            var s,
-                years = _.pluck(year[k], 'season').join(', ');
-            s = k + ' <small>(' + years + ')</small>';
-            return s;
-        });
-        return sout.join(', ');
+    const formatYear = year => {
+        return Object.keys(year).map(k => {
+            const years = year[k].map(y => y.season).join(', ');
+            return `${k} <small>(${years})</small>`;
+        }).join(', ');
     };
 
-    awards = p.awards.filter(filter);
-    years = awards.map(function (a) {
+    const awards = p.awards.filter(filter);
+    let years = awards.map(a => {
         return {team: getTeam(a.season), season: a.season};
     });
-    last = _.max(_.pluck(years, 'season'));
+    const lastYear = _.max(years.map(y => y.season)).toString();
     years = formatYear(_.groupBy(years, 'team'));
+
     return {
-        player: getPlayerLink(p),
+        player: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`,
         count: awards.length,
         countText: awards.length.toString(),
-        years: years,
-        lastYear: last.toString(),
+        years,
+        lastYear,
         retired: (p.retiredYear) ? "yes" : "no",
         hof: (p.hof) ? "yes" : "no"
     };
 }
 
-function updateAwardsRecords(inputs, updateEvents, vm) {
+async function updateAwardsRecords(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.awardType !== vm.awardType) {
-        return g.dbl.players.getAll().then(function (players) {
-            return player.withStats(null, players, {
-                statsSeasons: 'all'
-            });
-        }).then(function (players) {
-            var awardsRecords, i;
-
-            awardsRecords = [];
-            players = players.filter(function (p) {
-                return p.awards.length > 0;
-            });
-            for (i = 0; i < players.length; i++) {
-                awardsRecords.push(getPlayerAwards(players[i], inputs.awardType));
-            }
-            awardsRecords = awardsRecords.filter(function (o) {
-                return o.count > 0;
-            });
-
-            return {
-                awardsRecords: awardsRecords,
-                playerCount: awardsRecords.length,
-                awardTypeVal: awardOptions[inputs.awardType],
-                awardType: inputs.awardType
-            };
+        let players = await g.dbl.players.getAll();
+        players = await player.withStats(null, players, {
+            statsSeasons: 'all'
         });
+        players = players.filter(p => p.awards.length > 0);
+
+        const awardsRecords = players
+            .map(p => getPlayerAwards(p, inputs.awardType))
+            .filter(o => o.count > 0);
+
+        return {
+            awardsRecords,
+            playerCount: awardsRecords.length,
+            awardTypeVal: awardOptions[inputs.awardType],
+            awardType: inputs.awardType
+        };
     }
 }
 
 function uiFirst(vm) {
-    ko.computed(function () {
+    ko.computed(() => {
         ui.title("Awards Records");
     }).extend({
         throttle: 1
     });
 
-    ko.computed(function () {
-        ui.datatableSinglePage($("#awards-records"), 0, _.map(vm.awardsRecords(), function (p) {
+    ko.computed(() => {
+        ui.datatableSinglePage($("#awards-records"), 0, vm.awardsRecords().map(p => {
             return [p.player, p.countText, p.years, p.lastYear, p.retired, p.hof];
         }), {
             paging: true,
@@ -203,11 +176,11 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "awardsRecords",
-    get: get,
-    InitViewModel: InitViewModel,
-    mapping: mapping,
+    get,
+    InitViewModel,
+    mapping,
     runBefore: [updateAwardsRecords],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });
 

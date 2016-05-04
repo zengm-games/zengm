@@ -1,27 +1,25 @@
-var g = require('../globals');
-var ui = require('../ui');
-var draft = require('../core/draft');
-var player = require('../core/player');
-var Promise = require('bluebird');
-var $ = require('jquery');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const draft = require('../core/draft');
+const player = require('../core/player');
+const Promise = require('bluebird');
+const $ = require('jquery');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
 function updateDraftTables(pids) {
-    var draftedPlayer, draftedRows, i, j, jMax, undraftedTds;
-
-    for (i = 0; i < pids.length; i++) {
-        draftedPlayer = [];
+    for (let i = 0; i < pids.length; i++) {
+        const draftedPlayer = [];
         // Find row in undrafted players table, get metadata, delete row
-        undraftedTds = $("#undrafted-" + pids[i] + " td");
-        jMax = g.phase === g.PHASE.FANTASY_DRAFT ? 8 : 5;
-        for (j = 0; j < jMax; j++) {
+        const undraftedTds = $("#undrafted-" + pids[i] + " td");
+        const jMax = g.phase === g.PHASE.FANTASY_DRAFT ? 8 : 5;
+        for (let j = 0; j < jMax; j++) {
             draftedPlayer[j] = undraftedTds[j].innerHTML;
         }
 
         // Find correct row (first blank row) in drafted players table, write metadata
-        draftedRows = $("#drafted tbody tr");
-        for (j = 0; j < draftedRows.length; j++) {
+        const draftedRows = $("#drafted tbody tr");
+        for (let j = 0; j < draftedRows.length; j++) {
             if (draftedRows[j].children[3].innerHTML.length === 0) {
                 $("#undrafted-" + pids[i]).remove();
                 draftedRows[j].children[2].innerHTML = draftedPlayer[0];
@@ -40,45 +38,35 @@ function updateDraftTables(pids) {
     }
 }
 
-function draftUser(pid) {
-    return draft.getOrder().then(function (draftOrder) {
-        var pick;
+async function draftUser(pid) {
+    const draftOrder = await draft.getOrder();
+    const pick = draftOrder.shift();
+    if (g.userTids.indexOf(pick.tid) >= 0) {
+        await draft.selectPlayer(pick, pid);
+        await g.dbl.tx("draftOrder", "readwrite", tx => draft.setOrder(tx, draftOrder));
+        return pid;
+    }
 
-        pick = draftOrder.shift();
-        if (g.userTids.indexOf(pick.tid) >= 0) {
-            return draft.selectPlayer(pick, pid).then(function () {
-                return g.dbl.tx("draftOrder", "readwrite", function (tx) {
-                    draft.setOrder(tx, draftOrder);
-                }).then(function () {
-                    return pid;
-                });
-            });
-        }
-
-        console.log("ERROR: User trying to draft out of turn.");
-    });
+    console.log("ERROR: User trying to draft out of turn.");
 }
 
-function draftUntilUserOrEnd() {
+async function draftUntilUserOrEnd() {
     ui.updateStatus("Draft in progress...");
-    draft.untilUserOrEnd().then(function (pids) {
-        draft.getOrder().then(function (draftOrder) {
-            var done;
+    const pids = await draft.untilUserOrEnd();
+    const draftOrder = await draft.getOrder();
 
-            done = false;
-            if (draftOrder.length === 0) {
-                done = true;
-                ui.updateStatus("Idle");
+    let done = false;
+    if (draftOrder.length === 0) {
+        done = true;
+        ui.updateStatus("Idle");
 
-                $("#undrafted th:last-child, #undrafted td:last-child").remove();
-            }
+        $("#undrafted th:last-child, #undrafted td:last-child").remove();
+    }
 
-            updateDraftTables(pids);
-            if (!done) {
-                $("#undrafted button").removeAttr("disabled");
-            }
-        });
-    });
+    updateDraftTables(pids);
+    if (!done) {
+        $("#undrafted button").removeAttr("disabled");
+    }
 }
 
 function get() {
@@ -89,103 +77,93 @@ function get() {
     }
 }
 
-function updateDraft() {
+async function updateDraft() {
     // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
     // This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
-    return g.dbl.tx("players", "readwrite", function (tx) {
-        return tx.players.index('tid').get(g.PLAYER.UNDRAFTED).then(function (p) {
-            var season;
-
-            season = p.ratings[0].season;
-            if (season !== g.season && g.phase === g.PHASE.DRAFT) {
-                console.log("FIXING FUCKED UP DRAFT CLASS");
-                console.log(season);
-                tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, function (p) {
-                    p.ratings[0].season = g.season;
-                    p.draft.year = g.season;
-                    return p;
-                });
-            }
-        });
-    }).then(function () {
-        return Promise.all([
-            g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED).then(function (players) {
-                return player.withStats(null, players, {
-                    statsSeasons: [g.season]
-                });
-            }),
-            g.dbl.players.index('draft.year').getAll(g.season).then(function (players) {
-                return player.withStats(null, players, {
-                    statsSeasons: [g.season]
-                });
-            })
-        ]);
-    }).spread(function (undrafted, players) {
-        var drafted, i, started;
-
-        undrafted.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });
-        undrafted = player.filter(undrafted, {
-            attrs: ["pid", "name", "age", "injury", "contract", "watch"],
-            ratings: ["ovr", "pot", "skills", "pos"],
-            stats: ["per", "ewa"],
-            season: g.season,
-            showNoStats: true,
-            showRookies: true,
-            fuzz: true
-        });
-
-        players = player.filter(players, {
-            attrs: ["pid", "tid", "name", "age", "draft", "injury", "contract", "watch"],
-            ratings: ["ovr", "pot", "skills", "pos"],
-            stats: ["per", "ewa"],
-            season: g.season,
-            showRookies: true,
-            fuzz: true
-        });
-
-        drafted = [];
-        for (i = 0; i < players.length; i++) {
-            if (players[i].tid >= 0) {
-                drafted.push(players[i]);
-            }
+    await g.dbl.tx("players", "readwrite", async tx => {
+        const p = await tx.players.index('tid').get(g.PLAYER.UNDRAFTED);
+        const season = p.ratings[0].season;
+        if (season !== g.season && g.phase === g.PHASE.DRAFT) {
+            console.log("FIXING FUCKED UP DRAFT CLASS");
+            console.log(season);
+            await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, p => {
+                p.ratings[0].season = g.season;
+                p.draft.year = g.season;
+                return p;
+            });
         }
-        drafted.sort(function (a, b) { return (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick); });
-
-        started = drafted.length > 0;
-
-        return draft.getOrder().then(function (draftOrder) {
-            var i, slot;
-
-            for (i = 0; i < draftOrder.length; i++) {
-                slot = draftOrder[i];
-                drafted.push({
-                    draft: {
-                        tid: slot.tid,
-                        originalTid: slot.originalTid,
-                        round: slot.round,
-                        pick: slot.pick
-                    },
-                    pid: -1
-                });
-            }
-
-            return {
-                undrafted: undrafted,
-                drafted: drafted,
-                started: started,
-                fantasyDraft: g.phase === g.PHASE.FANTASY_DRAFT,
-                userTids: g.userTids
-            };
-        });
     });
+
+    let [undrafted, players] = await Promise.all([
+        g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED).then(players => {
+            return player.withStats(null, players, {
+                statsSeasons: [g.season]
+            });
+        }),
+        g.dbl.players.index('draft.year').getAll(g.season).then(players => {
+            return player.withStats(null, players, {
+                statsSeasons: [g.season]
+            });
+        })
+    ]);
+
+    undrafted.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });
+    undrafted = player.filter(undrafted, {
+        attrs: ["pid", "name", "age", "injury", "contract", "watch"],
+        ratings: ["ovr", "pot", "skills", "pos"],
+        stats: ["per", "ewa"],
+        season: g.season,
+        showNoStats: true,
+        showRookies: true,
+        fuzz: true
+    });
+
+    players = player.filter(players, {
+        attrs: ["pid", "tid", "name", "age", "draft", "injury", "contract", "watch"],
+        ratings: ["ovr", "pot", "skills", "pos"],
+        stats: ["per", "ewa"],
+        season: g.season,
+        showRookies: true,
+        fuzz: true
+    });
+
+    const drafted = [];
+    for (let i = 0; i < players.length; i++) {
+        if (players[i].tid >= 0) {
+            drafted.push(players[i]);
+        }
+    }
+    drafted.sort((a, b) => (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick));
+
+    const started = drafted.length > 0;
+
+    const draftOrder = await draft.getOrder();
+    for (let i = 0; i < draftOrder.length; i++) {
+        const slot = draftOrder[i];
+        drafted.push({
+            draft: {
+                tid: slot.tid,
+                originalTid: slot.originalTid,
+                round: slot.round,
+                pick: slot.pick
+            },
+            pid: -1
+        });
+    }
+
+    return {
+        undrafted,
+        drafted,
+        started,
+        fantasyDraft: g.phase === g.PHASE.FANTASY_DRAFT,
+        userTids: g.userTids
+    };
 }
 
 function uiFirst() {
-    var startDraft, undraftedContainer;
-
     ui.title("Draft");
 
-    startDraft = $("#start-draft");
+    const startDraft = $("#start-draft");
     startDraft.click(function () {
         $(startDraft.parent()).hide();
         draftUntilUserOrEnd();
@@ -207,7 +185,7 @@ function uiFirst() {
     });
 
     // Scroll undrafted to the right, so "Draft" button is never cut off
-    undraftedContainer = document.getElementById("undrafted").parentNode;
+    const undraftedContainer = document.getElementById("undrafted").parentNode;
     undraftedContainer.scrollLeft = undraftedContainer.scrollWidth;
 
     ui.tableClickableRows($("#undrafted"));
@@ -229,7 +207,7 @@ function uiFirst() {
 
 module.exports = bbgmView.init({
     id: "draft",
-    get: get,
+    get,
     runBefore: [updateDraft],
-    uiFirst: uiFirst
+    uiFirst
 });

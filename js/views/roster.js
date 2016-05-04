@@ -456,11 +456,11 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "roster",
-    get: get,
-    InitViewModel: InitViewModel,
-    mapping: mapping,
+    get,
+    InitViewModel,
+    mapping,
     runBefore: [updateRoster],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });
 

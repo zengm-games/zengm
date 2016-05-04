@@ -286,10 +286,10 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "gameLog",
-    get: get,
-    InitViewModel: InitViewModel,
+    get,
+    InitViewModel,
     runBefore: [updateBoxScore, updateTeamSeason],
     runWhenever: [updateGamesList],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });

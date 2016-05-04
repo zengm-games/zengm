@@ -26,9 +26,7 @@ function InitViewModel() {
 
 mapping = {
     teamRecords: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
@@ -245,11 +243,11 @@ function uiEvery(updateTeamRecords, vm) {
 
 module.exports = bbgmView.init({
     id: "teamRecords",
-    get: get,
-    InitViewModel: InitViewModel,
-    mapping: mapping,
+    get,
+    InitViewModel,
+    mapping,
     runBefore: [updateTeamRecords],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });
 

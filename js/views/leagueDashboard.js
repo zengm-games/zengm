@@ -368,7 +368,7 @@ function uiFirst() {
 
 module.exports = bbgmView.init({
     id: "leagueDashboard",
-    InitViewModel: InitViewModel,
+    InitViewModel,
     runBefore: [updateInbox, updateTeam, updatePayroll, updateTeams, updateGames, updateSchedule, updatePlayers, updatePlayoffs, updateStandings],
-    uiFirst: uiFirst
+    uiFirst
 });

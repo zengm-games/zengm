@@ -1,13 +1,12 @@
-var g = require('../globals');
-var ui = require('../ui');
-var Promise = require('bluebird');
-var $ = require('jquery');
-var account = require('../util/account');
-var bbgmView = require('../util/bbgmView');
-var viewHelpers = require('../util/viewHelpers');
+const g = require('../globals');
+const ui = require('../ui');
+const Promise = require('bluebird');
+const $ = require('jquery');
+const account = require('../util/account');
+const bbgmView = require('../util/bbgmView');
+const viewHelpers = require('../util/viewHelpers');
 
-var ajaxErrorMsg;
-ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
+const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
 function get(req) {
     return {
@@ -16,83 +15,78 @@ function get(req) {
     };
 }
 
-function updateAccount(inputs, updateEvents) {
+async function updateAccount(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("account") >= 0) {
-        return account.check().then(function () {
-            var currentTimestamp, goldUntilDate, goldUntilDateString, showGoldActive, showGoldCancelled, showGoldPitch;
+        await account.check();
 
-            goldUntilDate = new Date(g.vm.topMenu.goldUntil() * 1000);
-            goldUntilDateString = goldUntilDate.toDateString();
+        const goldUntilDate = new Date(g.vm.topMenu.goldUntil() * 1000);
+        const goldUntilDateString = goldUntilDate.toDateString();
 
-            currentTimestamp = Math.floor(Date.now() / 1000);
-            showGoldActive = !g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil();
-            showGoldCancelled = g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil();
-            showGoldPitch = !showGoldActive;
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+        const showGoldActive = !g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil();
+        const showGoldCancelled = g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil();
+        const showGoldPitch = !showGoldActive;
 
-            return {
-                username: g.vm.topMenu.username,
-                goldUntilDateString: goldUntilDateString,
-                showGoldActive: showGoldActive,
-                showGoldCancelled: showGoldCancelled,
-                showGoldPitch: showGoldPitch,
-                goldSuccess: inputs.goldSuccess,
-                goldMessage: inputs.goldMessage
-            };
-        });
+        return {
+            username: g.vm.topMenu.username,
+            goldUntilDateString,
+            showGoldActive,
+            showGoldCancelled,
+            showGoldPitch,
+            goldSuccess: inputs.goldSuccess,
+            goldMessage: inputs.goldMessage
+        };
     }
 }
 
-function updateAchievements(inputs, updateEvents) {
+async function updateAchievements(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0) {
-        return account.getAchievements().then(function (achievements) {
-            return {
-                achievements: achievements
-            };
-        });
+        const achievements = await account.getAchievements();
+
+        return {
+            achievements: achievements
+        };
     }
 }
 
 
 function handleStripeButton() {
-    var buttonEl;
-
-    buttonEl = document.getElementById("stripe-button");
+    const buttonEl = document.getElementById("stripe-button");
 
     if (!buttonEl) { return; }
 
-    $.getScript('https://checkout.stripe.com/checkout.js', function () {
-        var email, handler;
+    $.getScript('https://checkout.stripe.com/checkout.js', () => {
+        const email = g.vm.topMenu.email();
 
-        email = g.vm.topMenu.email();
-
-        handler = window.StripeCheckout.configure({
+        const handler = window.StripeCheckout.configure({
             key: g.stripePublishableKey,
             image: '/ico/icon128.png',
-            token: function (token) {
-                Promise.resolve($.ajax({
-                    type: "POST",
-                    url: "//account.basketball-gm." + g.tld + "/gold_start.php",
-                    data: {
-                        sport: "basketball",
-                        token: token.id
-                    },
-                    dataType: "json",
-                    xhrFields: {
-                        withCredentials: true
-                    }
-                })).then(function (data) {
+            token: async token => {
+                try {
+                    const data = await Promise.resolve($.ajax({
+                        type: "POST",
+                        url: "//account.basketball-gm." + g.tld + "/gold_start.php",
+                        data: {
+                            sport: "basketball",
+                            token: token.id
+                        },
+                        dataType: "json",
+                        xhrFields: {
+                            withCredentials: true
+                        }
+                    }));
                     ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
-                }).catch(function (err) {
+                } catch (err) {
                     console.log(err);
                     ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
                         success: false,
                         message: ajaxErrorMsg
                     }});
-                });
+                }
             }
         });
 
-        buttonEl.addEventListener("click", function (e) {
+        buttonEl.addEventListener("click", e => {
             handler.open({
                 name: 'Basketball GM Gold',
                 description: '',
@@ -107,33 +101,32 @@ function handleStripeButton() {
 }
 
 function handleCancelLink() {
-    document.getElementById("gold-cancel").addEventListener("click", function (e) {
-        var result;
-
+    document.getElementById("gold-cancel").addEventListener("click", async e => {
         e.preventDefault();
 
-        result = window.confirm("Are you sure you want to cancel your Basketball GM Gold subscription?");
+        const result = window.confirm("Are you sure you want to cancel your Basketball GM Gold subscription?");
 
         if (result) {
-            Promise.resolve($.ajax({
-                type: "POST",
-                url: "//account.basketball-gm." + g.tld + "/gold_cancel.php",
-                data: {
-                    sport: "basketball"
-                },
-                dataType: "json",
-                xhrFields: {
-                    withCredentials: true
-                }
-            })).then(function (data) {
+            try {
+                const data = await Promise.resolve($.ajax({
+                    type: "POST",
+                    url: "//account.basketball-gm." + g.tld + "/gold_cancel.php",
+                    data: {
+                        sport: "basketball"
+                    },
+                    dataType: "json",
+                    xhrFields: {
+                        withCredentials: true
+                    }
+                }));
                 ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
-            }).catch(function (err) {
+            } catch (err) {
                 console.log(err);
                 ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
                     success: false,
                     message: ajaxErrorMsg
                 }});
-            });
+            }
         }
     });
 }
@@ -141,7 +134,7 @@ function handleCancelLink() {
 function uiFirst() {
     ui.title("Account");
 
-    document.getElementById("logout").addEventListener("click", function (e) {
+    document.getElementById("logout").addEventListener("click", e => {
         e.preventDefault();
 
         // Reset error display
@@ -154,14 +147,14 @@ function uiFirst() {
             xhrFields: {
                 withCredentials: true
             },
-            success: function () {
+            success: () => {
                 // Reset error display
                 document.getElementById("logout-error").innerHTML = "";
 
                 g.vm.topMenu.username("");
                 ui.realtimeUpdate(["account"], "/");
             },
-            error: function () {
+            error: () => {
                 document.getElementById("logout-error").innerHTML = "Error connecting to server. Check your Internet connection or try again later.";
             }
         });
@@ -173,8 +166,8 @@ function uiFirst() {
 
 module.exports = bbgmView.init({
     id: "account",
-    get: get,
+    get,
     beforeReq: viewHelpers.beforeNonLeague,
     runBefore: [updateAccount, updateAchievements],
-    uiFirst: uiFirst
+    uiFirst
 });

@@ -33,7 +33,7 @@ function uiFirst() {
 
 module.exports = bbgmView.init({
     id: "fantasyDraft",
-    get: get,
+    get,
     post: post,
-    uiFirst: uiFirst
+    uiFirst
 });

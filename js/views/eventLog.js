@@ -1,18 +1,16 @@
-var g = require('../globals');
-var ui = require('../ui');
-var ko = require('knockout');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
-var components = require('./components');
+const g = require('../globals');
+const ui = require('../ui');
+const ko = require('knockout');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
+const components = require('./components');
 
 function get(req) {
-    var out;
-
-    out = helpers.validateAbbrev(req.params.abbrev);
+    const [tid, abbrev] = helpers.validateAbbrev(req.params.abbrev);
 
     return {
-        tid: out[0],
-        abbrev: out[1],
+        tid,
+        abbrev,
         season: helpers.validateSeason(req.params.season)
     };
 }
@@ -23,9 +21,7 @@ function InitViewModel() {
     this.events = ko.observableArray([]);
 }
 
-function updateEventLog(inputs, updateEvents, vm) {
-    var maxEid, newEvents;
-
+async function updateEventLog(inputs, updateEvents, vm) {
     if (updateEvents.length >= 0 || inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev()) {
         if (inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev()) {
             vm.events([]);
@@ -33,33 +29,30 @@ function updateEventLog(inputs, updateEvents, vm) {
 
         if (vm.events().length === 0) {
             // Show all events, newest at top
-            return g.dbl.events.index('season').getAll(inputs.season).then(function (events) {
-                events.reverse(); // Newest first
+            let events = await g.dbl.events.index('season').getAll(inputs.season);
+            events.reverse(); // Newest first
 
-                // Filter by team
-                events = events.filter(function (event) {
-                    if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
-                        return true;
-                    }
-                });
-
-                events.map(helpers.correctLinkLid);
-
-                return {
-                    abbrev: inputs.abbrev,
-                    events: events,
-                    season: inputs.season
-                };
+            // Filter by team
+            events = events.filter(function (event) {
+                if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
+                    return true;
+                }
             });
+
+            events.forEach(helpers.correctLinkLid);
+
+            return {
+                abbrev: inputs.abbrev,
+                events,
+                season: inputs.season
+            };
         }
 
         if (inputs.season === g.season) { // Can't update old seasons!
             // Update by adding any new events to the top of the list
-            maxEid = ko.unwrap(vm.events()[0].eid); // unwrap shouldn't be necessary
-            newEvents = [];
-            return g.dbl.events.index('season').iterate(inputs.season, "prev", function (event, shortCircuit) {
-                var i;
-
+            const maxEid = ko.unwrap(vm.events()[0].eid); // unwrap shouldn't be necessary
+            const newEvents = [];
+            await g.dbl.events.index('season').iterate(inputs.season, "prev", (event, shortCircuit) => {
                 if (event.eid > maxEid) {
                     if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
                         newEvents.push(event);
@@ -67,21 +60,21 @@ function updateEventLog(inputs, updateEvents, vm) {
                 } else {
                     shortCircuit();
                     // Oldest first (cursor is in "prev" direction and we're adding to the front of vm.events)
-                    for (i = newEvents.length - 1; i >= 0; i--) {
+                    for (let i = newEvents.length - 1; i >= 0; i--) {
                         vm.events.unshift(newEvents[i]);
                     }
                 }
-            }).then(function () {
-                return {
-                    season: inputs.season
-                };
             });
+
+            return {
+                season: inputs.season
+            };
         }
     }
 }
 
 function uiFirst(vm) {
-    ko.computed(function () {
+    ko.computed(() => {
         ui.title("Event Log - " + vm.season());
     }).extend({throttle: 1});
 }
@@ -92,10 +85,9 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "eventLog",
-    get: get,
-    InitViewModel: InitViewModel,
+    get,
+    InitViewModel,
     runBefore: [updateEventLog],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });
-

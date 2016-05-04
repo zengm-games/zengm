@@ -84,7 +84,7 @@ function uiFirst(vm) {
 
 module.exports = bbgmView.init({
     id: "live",
-    InitViewModel: InitViewModel,
+    InitViewModel,
     runBefore: [updateGamesList],
-    uiFirst: uiFirst
+    uiFirst
 });

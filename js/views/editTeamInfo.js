@@ -1,19 +1,18 @@
-var g = require('../globals');
-var ui = require('../ui');
-var league = require('../core/league');
-var team = require('../core/team');
-var _ = require('underscore');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const league = require('../core/league');
+const team = require('../core/team');
+const _ = require('underscore');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
-function post(req) {
-    var button, userName, userRegion;
-
-    button = document.getElementById("edit-team-info");
+async function post(req) {
+    const button = document.getElementById("edit-team-info");
     button.disabled = true;
 
-    g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', function (tx) {
-        return tx.teams.iterate(function (t) {
+    let userName, userRegion;
+    await g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
+        return tx.teams.iterate(async t => {
             t.abbrev = req.params.abbrev[t.tid];
             t.region = req.params.region[t.tid];
             t.name = req.params.name[t.tid];
@@ -23,72 +22,64 @@ function post(req) {
                 userRegion = t.region;
             }
 
-            return tx.teamSeasons.index('season, tid').get([g.season, t.tid]).then(function (teamSeason) {
-                teamSeason.pop = parseFloat(req.params.pop[t.tid]);
-                return tx.teamSeasons.put(teamSeason);
-            }).then(function () {
-                return t;
-            });
+            const teamSeason = await tx.teamSeasons.index('season, tid').get([g.season, t.tid]);
+            teamSeason.pop = parseFloat(req.params.pop[t.tid]);
+            await tx.teamSeasons.put(teamSeason);
+
+            return t;
         });
-    }).then(function () {
-        // Update meta cache of user's team
-        return league.updateMetaNameRegion(userName, userRegion);
-    }).then(function () {
-        return league.setGameAttributesComplete({
-            teamAbbrevsCache: req.params.abbrev,
-            teamRegionsCache: req.params.region,
-            teamNamesCache: req.params.name
-        });
-    }).then(function () {
-        league.updateLastDbChange();
-        button.disabled = false;
-        ui.realtimeUpdate([], helpers.leagueUrl(["edit_team_info"]));
     });
+
+    await league.updateMetaNameRegion(userName, userRegion);
+
+    await league.setGameAttributesComplete({
+        teamAbbrevsCache: req.params.abbrev,
+        teamRegionsCache: req.params.region,
+        teamNamesCache: req.params.name
+    });
+
+    league.updateLastDbChange();
+    button.disabled = false;
+    ui.realtimeUpdate([], helpers.leagueUrl(["edit_team_info"]));
 }
 
-function updateTeamInfo() {
-    return team.filter({
+async function updateTeamInfo() {
+    const teams = await team.filter({
         attrs: ["tid", "abbrev", "region", "name"],
         seasonAttrs: ["pop"],
         season: g.season
-    }).then(function (teams) {
-        var i;
-
-        for (i = 0; i < teams.length; i++) {
-            teams[i].pop = helpers.round(teams[i].pop, 6);
-        }
-
-        return {
-            teams: teams
-        };
     });
+
+    for (let i = 0; i < teams.length; i++) {
+        teams[i].pop = helpers.round(teams[i].pop, 6);
+    }
+
+    return {
+        teams
+    };
 }
 
 function uiFirst() {
-    var fileEl;
-
     ui.title("Edit Team Names");
 
-    fileEl = document.getElementById("custom-teams");
-    fileEl.addEventListener("change", function () {
+    const fileEl = document.getElementById("custom-teams");
+    fileEl.addEventListener("change", () => {
         var file, reader;
 
         file = fileEl.files[0];
 
         reader = new window.FileReader();
         reader.readAsText(file);
-        reader.onload = function (event) {
-            var i, newTeams, rosters, userName, userRegion;
-
-            rosters = JSON.parse(event.target.result);
-            newTeams = rosters.teams;
+        reader.onload = async event => {
+            const rosters = JSON.parse(event.target.result);
+            const newTeams = rosters.teams;
 
             // Validate teams
             if (newTeams.length < g.numTeams) {
                 console.log("ROSTER ERROR: Wrong number of teams");
                 return;
             }
-            for (i = 0; i < newTeams.length; i++) {
+            for (let i = 0; i < newTeams.length; i++) {
                 if (i !== newTeams[i].tid) {
                     console.log("ROSTER ERROR: Wrong tid, team " + i);
                     return;
@@ -125,8 +116,9 @@ function uiFirst() {
                 }
             }
 
-            g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', function (tx) {
-                return tx.teams.iterate(function (t) {
+            let userName, userRegion;
+            await g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
+                return tx.teams.iterate(async t => {
                     t.cid = newTeams[t.tid].cid;
                     t.did = newTeams[t.tid].did;
                     t.region = newTeams[t.tid].region;
@@ -141,26 +133,24 @@ function uiFirst() {
                         userRegion = t.region;
                     }
 
-                    return tx.teamSeasons.index('season, tid').get([g.season, t.tid]).then(function (teamSeason) {
-                        teamSeason.pop = newTeams[t.tid].pop;
-                        return tx.teamSeasons.put(teamSeason);
-                    }).then(function () {
-                        return t;
-                    });
+                    const teamSeason = await tx.teamSeasons.index('season, tid').get([g.season, t.tid]);
+                    teamSeason.pop = newTeams[t.tid].pop;
+                    await tx.teamSeasons.put(teamSeason);
+
+                    return t;
                 });
-            }).then(function () {
-                // Update meta cache of user's team
-                return league.updateMetaNameRegion(userName, userRegion);
-            }).then(function () {
-                return league.setGameAttributesComplete({
-                    teamAbbrevsCache: _.pluck(newTeams, "abbrev"),
-                    teamRegionsCache: _.pluck(newTeams, "region"),
-                    teamNamesCache: _.pluck(newTeams, "name")
-                });
-            }).then(function () {
-                league.updateLastDbChange();
-                ui.realtimeUpdate(["dbChange"]);
             });
+
+            await league.updateMetaNameRegion(userName, userRegion);
+
+            await league.setGameAttributesComplete({
+                teamAbbrevsCache: newTeams.map(t => t.abbrev),
+                teamRegionsCache: newTeams.map(t => t.region),
+                teamNamesCache: newTeams.map(t => t.name)
+            });
+
+            league.updateLastDbChange();
+            ui.realtimeUpdate(["dbChange"]);
         };
     });
 }
@@ -169,5 +159,5 @@ module.exports = bbgmView.init({
     id: "editTeamInfo",
     post: post,
     runBefore: [updateTeamInfo],
-    uiFirst: uiFirst
+    uiFirst
 });

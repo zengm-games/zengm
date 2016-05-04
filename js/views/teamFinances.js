@@ -107,9 +107,7 @@ mapping = {
         }
     },
     contracts: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
@@ -356,12 +354,12 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "teamFinances",
-    get: get,
+    get,
     post: post,
-    InitViewModel: InitViewModel,
-    mapping: mapping,
+    InitViewModel,
+    mapping,
     runBefore: [updateTeamFinances],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });
 

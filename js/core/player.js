@@ -1918,7 +1918,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 
         const won = results.team[i].stat.pts > results.team[j].stat.pts;
 
-        const featTextArr = Object.keys(statArr).map((stat, key) => `${stat} ${key}`);
+        const featTextArr = Object.keys(statArr).map(stat => `${statArr[stat]} ${stat}`);
 
         let featText = '<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> had <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">';
         for (let k = 0; k < featTextArr.length; k++) {

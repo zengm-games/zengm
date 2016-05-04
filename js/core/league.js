@@ -6,6 +6,7 @@ const finances = require('./finances');
 const phase = require('./phase');
 const player = require('./player');
 const team = require('./team');
+const backboard = require('backboard');
 const Promise = require('bluebird');
 const $ = require('jquery');
 const _ = require('underscore');
@@ -115,22 +116,13 @@ function updateLastDbChange() {
  * @param {string} name The name of the league.
  * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
  */
-function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
-    var phaseText, skipNewPhase, teams, teamsDefault;
-
-    // Any user input?
-    if (!leagueFile) {
-        leagueFile = {}; // Allow checking of properties
-    }
-
-    // Default teams
-    teamsDefault = helpers.getTeamsDefault();
+async function create(name, tid, leagueFile = {}, startingSeason, randomizeRosters) {
+    const teamsDefault = helpers.getTeamsDefault();
 
     // Any custom teams?
+    let teams;
     if (leagueFile.hasOwnProperty("teams")) {
         teams = merge(leagueFile.teams, teamsDefault);
-
-        // Add in popRanks
         teams = helpers.addPopRank(teams);
     } else {
         teams = teamsDefault;
@@ -141,410 +133,368 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
         tid = random.randInt(0, teams.length - 1);
     }
 
+    let phaseText;
     if (leagueFile.hasOwnProperty("meta") && leagueFile.meta.hasOwnProperty("phaseText")) {
         phaseText = leagueFile.meta.phaseText;
     } else {
         phaseText = "";
     }
 
-    // Record in meta db
-    return g.dbm.leagues.add({
-        name: name,
-        tid: tid,
-        phaseText: phaseText,
+    g.lid = await g.dbm.leagues.add({
+        name,
+        tid,
+        phaseText,
         teamName: teams[tid].name,
         teamRegion: teams[tid].region
-    }).then(function (lid) {
-        g.lid = lid;
+    });
+    await db.connectLeague(g.lid);
 
-        // Create new league database
-        return db.connectLeague(g.lid);
-    }).then(function () {
-        var gameAttributes, i;
+    const gameAttributes = _.extend(helpers.deepCopy(defaultGameAttributes), {
+        userTid: tid,
+        userTids: [tid],
+        season: startingSeason,
+        startingSeason,
+        leagueName: name,
+        teamAbbrevsCache: _.pluck(teams, "abbrev"),
+        teamRegionsCache: _.pluck(teams, "region"),
+        teamNamesCache: _.pluck(teams, "name"),
+        gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
+        numTeams: teams.length // Will be 30 if the user doesn't supply custom rosters
+    });
 
-        // Default values
-        gameAttributes = _.extend(helpers.deepCopy(defaultGameAttributes), {
-            userTid: tid,
-            userTids: [tid],
-            season: startingSeason,
-            startingSeason: startingSeason,
-            leagueName: name,
-            teamAbbrevsCache: _.pluck(teams, "abbrev"),
-            teamRegionsCache: _.pluck(teams, "region"),
-            teamNamesCache: _.pluck(teams, "name"),
-            gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
-            numTeams: teams.length // Will be 30 if the user doesn't supply custom rosters
-        });
-
-        // gameAttributes from input
-        skipNewPhase = false;
-        if (leagueFile.hasOwnProperty("gameAttributes")) {
-            for (i = 0; i < leagueFile.gameAttributes.length; i++) {
-                // Set default for anything except team ID and name, since they can be overwritten by form input.
-                if (leagueFile.gameAttributes[i].key !== "userTid" && leagueFile.gameAttributes[i].key !== "leagueName") {
-                    gameAttributes[leagueFile.gameAttributes[i].key] = leagueFile.gameAttributes[i].value;
-                }
-
-                if (leagueFile.gameAttributes[i].key === "phase") {
-                    skipNewPhase = true;
-                }
+    // gameAttributes from input
+    let skipNewPhase = false;
+    if (leagueFile.hasOwnProperty("gameAttributes")) {
+        for (let i = 0; i < leagueFile.gameAttributes.length; i++) {
+            // Set default for anything except team ID and name, since they can be overwritten by form input.
+            if (leagueFile.gameAttributes[i].key !== "userTid" && leagueFile.gameAttributes[i].key !== "leagueName") {
+                gameAttributes[leagueFile.gameAttributes[i].key] = leagueFile.gameAttributes[i].value;
             }
 
-            // Special case for userTids - don't use saved value if userTid is not in it
-            if (gameAttributes.userTids.indexOf(gameAttributes.userTid) < 0) {
-                gameAttributes.userTids = [gameAttributes.userTid];
+            if (leagueFile.gameAttributes[i].key === "phase") {
+                skipNewPhase = true;
             }
         }
 
-        // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
-        helpers.resetG();
+        // Special case for userTids - don't use saved value if userTid is not in it
+        if (gameAttributes.userTids.indexOf(gameAttributes.userTid) < 0) {
+            gameAttributes.userTids = [gameAttributes.userTid];
+        }
+    }
 
-        return setGameAttributesComplete(gameAttributes);
-    }).then(function () {
-        var i, j, k, round, scoutingRank, t, teamSeasons, teamStats, toMaybeAdd;
+    // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
+    helpers.resetG();
 
-        return g.dbl.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"], "readwrite", function (tx) {
-            // Draft picks for the first 4 years, as those are the ones can be traded initially
-            if (leagueFile.hasOwnProperty("draftPicks")) {
-                for (i = 0; i < leagueFile.draftPicks.length; i++) {
-                    tx.draftPicks.add(leagueFile.draftPicks[i]);
-                }
-            } else {
-                for (i = 0; i < 4; i++) {
-                    for (t = 0; t < g.numTeams; t++) {
-                        for (round = 1; round <= 2; round++) {
-                            tx.draftPicks.add({
-                                tid: t,
-                                originalTid: t,
-                                round: round,
-                                season: g.startingSeason + i
-                            });
-                        }
-                    }
-                }
+    await setGameAttributesComplete(gameAttributes);
+
+    let players, scoutingRank;
+    const objectStores = ["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
+    await g.dbl.tx(objectStores, "readwrite", async tx => {
+        // Draft picks for the first 4 years, as those are the ones can be traded initially
+        if (leagueFile.hasOwnProperty("draftPicks")) {
+            for (let i = 0; i < leagueFile.draftPicks.length; i++) {
+                tx.draftPicks.add(leagueFile.draftPicks[i]);
             }
-
-            // Initialize draft order object store for later use
-            if (leagueFile.hasOwnProperty("draftOrder")) {
-                for (i = 0; i < leagueFile.draftOrder.length; i++) {
-                    tx.draftOrder.add(leagueFile.draftOrder[i]);
-                }
-            } else {
-                tx.draftOrder.add({
-                    rid: 1,
-                    draftOrder: []
-                });
-            }
-
-            // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
-            for (i = 0; i < g.numTeams; i++) {
-                t = team.generate(teams[i]);
-                tx.teams.add(t);
-
-                if (teams[i].hasOwnProperty("seasons")) {
-                    teamSeasons = teams[i].seasons;
-                } else {
-                    teamSeasons = [team.genSeasonRow(t.tid)];
-                    teamSeasons[0].pop = teams[i].pop;
-                }
-                teamSeasons.forEach(function (teamSeason) {
-                    teamSeason.tid = t.tid;
-                    tx.teamSeasons.add(teamSeason);
-                });
-
-                if (teams[i].hasOwnProperty("stats")) {
-                    teamStats = teams[i].stats;
-                } else {
-                    teamStats = [team.genStatsRow(t.tid)];
-                }
-                teamStats.forEach(function (teamStat) {
-                    teamStat.tid = t.tid;
-                    if (!teamStat.hasOwnProperty("ba")) {
-                        teamStat.ba = 0;
-                    }
-                    tx.teamStats.add(teamStat);
-                });
-
-                // Save scoutingRank for later
-                if (i === g.userTid) {
-                    scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
-                }
-            }
-
-            if (leagueFile.hasOwnProperty("trade")) {
-                for (i = 0; i < leagueFile.trade.length; i++) {
-                    tx.trade.add(leagueFile.trade[i]);
-                }
-            } else {
-                tx.trade.add({
-                    rid: 0,
-                    teams: [
-                        {
-                            tid: tid,
-                            pids: [],
-                            dpids: []
-                        },
-                        {
-                            tid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1).
-                            pids: [],
-                            dpids: []
-                        }
-                    ]
-                });
-            }
-
-            // Fix missing +/-, blocks against in boxscore
-            if (leagueFile.hasOwnProperty("games")) {
-                for (i = 0; i < leagueFile.games.length; i++) {
-                    if (!leagueFile.games[i].teams[0].hasOwnProperty("ba")) {
-                        leagueFile.games[i].teams[0].ba = 0;
-                        leagueFile.games[i].teams[1].ba = 0;
-                    }
-                    for (j = 0; j < leagueFile.games[i].teams.length; j++) {
-                        for (k = 0; k < leagueFile.games[i].teams[j].players.length; k++) {
-                            if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("ba")) {
-                                leagueFile.games[i].teams[j].players[k].ba = 0;
-                            }
-                            if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("pm")) {
-                                leagueFile.games[i].teams[j].players[k].pm = 0;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // These object stores are blank by default
-            toMaybeAdd = ["releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
-            for (j = 0; j < toMaybeAdd.length; j++) {
-                if (leagueFile.hasOwnProperty(toMaybeAdd[j])) {
-                    for (i = 0; i < leagueFile[toMaybeAdd[j]].length; i++) {
-                        tx[toMaybeAdd[j]].add(leagueFile[toMaybeAdd[j]][i]);
-                    }
-                }
-            }
-
-            return player.genBaseMoods(tx).then(function (baseMoods) {
-                var agingYears, baseRatings, draftYear, goodNeutralBad, i, n, p, playerTids, players, pots, profile, profiles, t, t2;
-
-                // Either add players from league file or generate them
-
-                if (leagueFile.hasOwnProperty("players")) {
-                    // Use pre-generated players, filling in attributes as needed
-                    players = leagueFile.players;
-
-                    // Does the player want the rosters randomized?
-                    if (randomizeRosters) {
-                        // Assign the team ID of all players to the 'playerTids' array.
-                        // Check tid to prevent draft prospects from being swapped with established players
-                        playerTids = _.pluck(players.filter(function (p) { return p.tid >= g.PLAYER.FREE_AGENT; }), "tid");
-
-                        // Shuffle the teams that players are assigned to.
-                        random.shuffle(playerTids);
-                        for (i = 0; i < players.length; i++) {
-                            if (players[i].tid >= g.PLAYER.FREE_AGENT) {
-                                players[i].tid = playerTids.pop();
-                                if (players[i].stats && players[i].stats.length > 0) {
-                                    players[i].stats[players[i].stats.length - 1].tid = players[i].tid;
-                                    players[i].statsTids.push(players[i].tid);
-                                }
-                            }
-                        }
-                    }
-
-                    players.forEach(function (p) {
-                        var playerStats;
-
-                        p = player.augmentPartialPlayer(p, scoutingRank);
-
-                        // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
-                        p.contract.amount = Math.max(10 * helpers.round(p.contract.amount / 10), g.minContract);
-
-                        // Separate out stats
-                        playerStats = p.stats;
-                        delete p.stats;
-
-                        player.updateValues(tx, p, playerStats.reverse()).then(function (p) {
-                            tx.players.put(p).then(function (pid) {
-                                var addStatsRows;
-
-                                // When adding a player, this is the only way to know the pid
-                                p.pid = pid;
-
-                                // If no stats in League File, create blank stats rows for active players if necessary
-                                if (playerStats.length === 0) {
-                                    if (p.tid >= 0 && g.phase <= g.PHASE.PLAYOFFS) {
-                                        // Needs pid, so must be called after put. It's okay, statsTid was already set in player.augmentPartialPlayer
-                                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-                                    }
-                                } else {
-                                    // If there are stats in the League File, add them to the database
-                                    addStatsRows = function () {
-                                        var ps;
-
-                                        ps = playerStats.pop();
-
-                                        // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
-                                        ps.pid = p.pid;
-
-                                        // Could be calculated correctly if I wasn't lazy
-                                        if (!ps.hasOwnProperty("yearsWithTeam")) {
-                                            ps.yearsWithTeam = 1;
-                                        }
-
-                                        // If needed, set missing +/-, blocks against to 0
-                                        if (!ps.hasOwnProperty("ba")) {
-                                            ps.ba = 0;
-                                        }
-                                        if (!ps.hasOwnProperty("pm")) {
-                                            ps.pm = 0;
-                                        }
-
-                                        // Delete psid because it can cause problems due to interaction addStatsRow above
-                                        delete ps.psid;
-
-                                        tx.playerStats.add(ps).then(function () {
-                                            // On to the next one
-                                            if (playerStats.length > 0) {
-                                                addStatsRows();
-                                            }
-                                        });
-                                    };
-                                    addStatsRows();
-                                }
-                            });
+        } else {
+            for (let i = 0; i < 4; i++) {
+                for (let t = 0; t < g.numTeams; t++) {
+                    for (let round = 1; round <= 2; round++) {
+                        tx.draftPicks.add({
+                            tid: t,
+                            originalTid: t,
+                            round,
+                            season: g.startingSeason + i
                         });
-                    });
+                    }
+                }
+            }
+        }
+
+        // Initialize draft order object store for later use
+        if (leagueFile.hasOwnProperty("draftOrder")) {
+            for (let i = 0; i < leagueFile.draftOrder.length; i++) {
+                tx.draftOrder.add(leagueFile.draftOrder[i]);
+            }
+        } else {
+            tx.draftOrder.add({
+                rid: 1,
+                draftOrder: []
+            });
+        }
+
+        // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
+        for (let i = 0; i < g.numTeams; i++) {
+            const t = team.generate(teams[i]);
+            tx.teams.add(t);
+
+            let teamSeasons;
+            if (teams[i].hasOwnProperty("seasons")) {
+                teamSeasons = teams[i].seasons;
+            } else {
+                teamSeasons = [team.genSeasonRow(t.tid)];
+                teamSeasons[0].pop = teams[i].pop;
+            }
+            teamSeasons.forEach(teamSeason => {
+                teamSeason.tid = t.tid;
+                tx.teamSeasons.add(teamSeason);
+            });
+
+            let teamStats;
+            if (teams[i].hasOwnProperty("stats")) {
+                teamStats = teams[i].stats;
+            } else {
+                teamStats = [team.genStatsRow(t.tid)];
+            }
+            teamStats.forEach(teamStat => {
+                teamStat.tid = t.tid;
+                if (!teamStat.hasOwnProperty("ba")) {
+                    teamStat.ba = 0;
+                }
+                tx.teamStats.add(teamStat);
+            });
+
+            // Save scoutingRank for later
+            if (i === g.userTid) {
+                scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
+            }
+        }
+
+        if (leagueFile.hasOwnProperty("trade")) {
+            for (let i = 0; i < leagueFile.trade.length; i++) {
+                tx.trade.add(leagueFile.trade[i]);
+            }
+        } else {
+            tx.trade.add({
+                rid: 0,
+                teams: [{
+                    tid: tid,
+                    pids: [],
+                    dpids: []
+                },
+                {
+                    tid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1).
+                    pids: [],
+                    dpids: []
+                }]
+            });
+        }
+
+        // Fix missing +/-, blocks against in boxscore
+        if (leagueFile.hasOwnProperty("games")) {
+            for (let i = 0; i < leagueFile.games.length; i++) {
+                if (!leagueFile.games[i].teams[0].hasOwnProperty("ba")) {
+                    leagueFile.games[i].teams[0].ba = 0;
+                    leagueFile.games[i].teams[1].ba = 0;
+                }
+                for (let j = 0; j < leagueFile.games[i].teams.length; j++) {
+                    for (let k = 0; k < leagueFile.games[i].teams[j].players.length; k++) {
+                        if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("ba")) {
+                            leagueFile.games[i].teams[j].players[k].ba = 0;
+                        }
+                        if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("pm")) {
+                            leagueFile.games[i].teams[j].players[k].pm = 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        // These object stores are blank by default
+        const toMaybeAdd = ["releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
+        for (let j = 0; j < toMaybeAdd.length; j++) {
+            if (leagueFile.hasOwnProperty(toMaybeAdd[j])) {
+                for (let i = 0; i < leagueFile[toMaybeAdd[j]].length; i++) {
+                    tx[toMaybeAdd[j]].add(leagueFile[toMaybeAdd[j]][i]);
+                }
+            }
+        }
+
+        const baseMoods = await player.genBaseMoods(tx);
+
+        if (leagueFile.hasOwnProperty("players")) {
+            // Use pre-generated players, filling in attributes as needed
+            players = leagueFile.players;
+
+            // Does the player want the rosters randomized?
+            if (randomizeRosters) {
+                // Assign the team ID of all players to the 'playerTids' array.
+                // Check tid to prevent draft prospects from being swapped with established players
+                const playerTids = players.filter(p => p.tid >= g.PLAYER.FREE_AGENT).map(p => p.tid);
+
+                // Shuffle the teams that players are assigned to.
+                random.shuffle(playerTids);
+                for (let i = 0; i < players.length; i++) {
+                    if (players[i].tid >= g.PLAYER.FREE_AGENT) {
+                        players[i].tid = playerTids.pop();
+                        if (players[i].stats && players[i].stats.length > 0) {
+                            players[i].stats[players[i].stats.length - 1].tid = players[i].tid;
+                            players[i].statsTids.push(players[i].tid);
+                        }
+                    }
+                }
+            }
+
+            players.forEach(async p => {
+                p = player.augmentPartialPlayer(p, scoutingRank);
+
+                // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
+                p.contract.amount = Math.max(10 * helpers.round(p.contract.amount / 10), g.minContract);
+
+                // Separate out stats
+                const playerStats = p.stats;
+                delete p.stats;
+
+                p = await player.updateValues(tx, p, playerStats.reverse());
+                p.pid = await tx.players.put(p);
+
+                // If no stats in League File, create blank stats rows for active players if necessary
+                if (playerStats.length === 0) {
+                    if (p.tid >= 0 && g.phase <= g.PHASE.PLAYOFFS) {
+                        // Needs pid, so must be called after put. It's okay, statsTid was already set in player.augmentPartialPlayer
+                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                    }
                 } else {
-                    // No players in league file, so generate new players
-                    profiles = ["Point", "Wing", "Big", ""];
-                    baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
-                    pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
+                    // If there are stats in the League File, add them to the database
+                    const addStatsRows = async () => {
+                        const ps = playerStats.pop();
 
-                    for (t = -3; t < teams.length; t++) {
-                        // Create multiple "teams" worth of players for the free agent pool
-                        if (t < 0) {
-                            t2 = g.PLAYER.FREE_AGENT;
-                        } else {
-                            t2 = t;
+                        // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
+                        ps.pid = p.pid;
+
+                        // Could be calculated correctly if I wasn't lazy
+                        if (!ps.hasOwnProperty("yearsWithTeam")) {
+                            ps.yearsWithTeam = 1;
                         }
 
-                        goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
-                        random.shuffle(pots);
-                        for (n = 0; n < 14; n++) {
-                            profile = profiles[random.randInt(0, profiles.length - 1)];
-                            agingYears = random.randInt(0, 13);
-                            draftYear = g.startingSeason - 1 - agingYears;
-
-                            p = player.generate(t2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
-                            p = player.develop(p, agingYears, true);
-                            if (n < 5) {
-                                p = player.bonus(p, goodNeutralBad * random.randInt(0, 20));
-                            } else {
-                                p = player.bonus(p, 0);
-                            }
-                            if (t2 === g.PLAYER.FREE_AGENT) {  // Free agents
-                                p = player.bonus(p, -15);
-                            }
-
-                            // Hack to account for player.addStatsRow being called after tx.players.put - manually assign statsTids
-                            if (p.tid >= 0) {
-                                p.statsTids = [p.tid];
-                            }
-
-                            // Update player values after ratings changes
-                            player.updateValues(tx, p, []).then(function (p) {
-                                var randomizeExp;
-
-                                // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
-                                randomizeExp = (p.tid !== g.PLAYER.FREE_AGENT);
-
-                                // Update contract based on development. Only write contract to player log if not a free agent.
-                                p = player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
-
-                                // Save to database
-                                if (p.tid === g.PLAYER.FREE_AGENT) {
-                                    player.addToFreeAgents(tx, p, null, baseMoods);
-                                } else {
-                                    tx.players.put(p).then(function (pid) {
-                                        // When adding a player, this is the only way to know the pid
-                                        p.pid = pid;
-
-                                        // Needs pid, so must be called after put. It's okay, statsTid was already set above
-                                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-                                    });
-                                }
-                            });
+                        // If needed, set missing +/-, blocks against to 0
+                        if (!ps.hasOwnProperty("ba")) {
+                            ps.ba = 0;
+                        }
+                        if (!ps.hasOwnProperty("pm")) {
+                            ps.pm = 0;
                         }
 
-                        // Initialize rebuilding/contending, when possible
-                        if (t2 >= 0) {
-                            (function (goodNeutralBad) {
-                                tx.teams.get(t2).then(function (t) {
-                                    t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
-                                    tx.teams.put(t);
-                                });
-                            }(goodNeutralBad));
+                        // Delete psid because it can cause problems due to interaction addStatsRow above
+                        delete ps.psid;
+
+                        await tx.playerStats.add(ps);
+
+                        // On to the next one
+                        if (playerStats.length > 0) {
+                            addStatsRows();
                         }
+                    };
+                    addStatsRows();
+                }
+            });
+        } else {
+            // No players in league file, so generate new players
+            const profiles = ["Point", "Wing", "Big", ""];
+            const baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
+            const pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
+
+            for (let tid = -3; tid < teams.length; tid++) {
+                // Create multiple "teams" worth of players for the free agent pool
+                const tid2 = tid < 0 ? g.PLAYER.FREE_AGENT : tid;
+
+                const goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
+                random.shuffle(pots);
+                for (let n = 0; n < 14; n++) {
+                    const profile = profiles[random.randInt(0, profiles.length - 1)];
+                    const agingYears = random.randInt(0, 13);
+                    const draftYear = g.startingSeason - 1 - agingYears;
+
+                    let p = player.generate(tid2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
+                    p = player.develop(p, agingYears, true);
+                    if (n < 5) {
+                        p = player.bonus(p, goodNeutralBad * random.randInt(0, 20));
+                    } else {
+                        p = player.bonus(p, 0);
+                    }
+                    if (tid2 === g.PLAYER.FREE_AGENT) {  // Free agents
+                        p = player.bonus(p, -15);
+                    }
+
+                    // Hack to account for player.addStatsRow being called after tx.players.put - manually assign statsTids
+                    if (p.tid >= 0) {
+                        p.statsTids = [p.tid];
+                    }
+
+                    // Update player values after ratings changes
+                    p = await player.updateValues(tx, p, []);
+
+                    // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
+                    const randomizeExp = (p.tid !== g.PLAYER.FREE_AGENT);
+
+                    // Update contract based on development. Only write contract to player log if not a free agent.
+                    p = player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
+
+                    // Save to database
+                    if (p.tid === g.PLAYER.FREE_AGENT) {
+                        player.addToFreeAgents(tx, p, null, baseMoods);
+                    } else {
+                        p.pid = await tx.players.put(p);
+
+                        // Needs pid, so must be called after put. It's okay, statsTid was already set above
+                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
                     }
                 }
 
-                return players;
-            });
-        }).then(function (players) {
-            var createUndrafted1, createUndrafted2, createUndrafted3, i;
-
-            // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
-            return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
-                // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
-                createUndrafted1 = Math.round(70 * g.numTeams / 30);
-                createUndrafted2 = Math.round(70 * g.numTeams / 30);
-                createUndrafted3 = Math.round(70 * g.numTeams / 30);
-                if (players !== undefined) {
-                    for (i = 0; i < players.length; i++) {
-                        if (players[i].tid === g.PLAYER.UNDRAFTED) {
-                            createUndrafted1 -= 1;
-                        } else if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
-                            createUndrafted2 -= 1;
-                        } else if (players[i].tid === g.PLAYER.UNDRAFTED_3) {
-                            createUndrafted3 -= 1;
-                        }
-                    }
+                // Initialize rebuilding/contending, when possible
+                if (tid2 >= 0) {
+                    const t = await tx.teams.get(tid2);
+                    t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
+                    tx.teams.put(t);
                 }
-                // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any g.PLAYER.UNDRAFTED
-                if (createUndrafted1 && (g.phase <= g.PHASE.BEFORE_DRAFT || g.phase >= g.PHASE.FREE_AGENCY)) {
-                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1);
+            }
+        }
+    });
+
+    // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
+    await g.dbl.tx(["players", "playerStats"], "readwrite", tx => {
+        // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
+        let createUndrafted1 = Math.round(70 * g.numTeams / 30);
+        let createUndrafted2 = Math.round(70 * g.numTeams / 30);
+        let createUndrafted3 = Math.round(70 * g.numTeams / 30);
+        if (players !== undefined) {
+            for (let i = 0; i < players.length; i++) {
+                if (players[i].tid === g.PLAYER.UNDRAFTED) {
+                    createUndrafted1 -= 1;
+                } else if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
+                    createUndrafted2 -= 1;
+                } else if (players[i].tid === g.PLAYER.UNDRAFTED_3) {
+                    createUndrafted3 -= 1;
                 }
-                if (createUndrafted2) {
-                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2);
-                }
-                if (createUndrafted3) {
-                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3);
-                }
-            }).then(function () {
-                var lid;
+            }
+        }
+        // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any g.PLAYER.UNDRAFTED
+        if (createUndrafted1 && (g.phase <= g.PHASE.BEFORE_DRAFT || g.phase >= g.PHASE.FREE_AGENCY)) {
+            draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1);
+        }
+        if (createUndrafted2) {
+            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2);
+        }
+        if (createUndrafted3) {
+            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3);
+        }
+    });
 
-                if (skipNewPhase) {
-                    // Game already in progress, just start it
-                    return g.lid;
-                }
+    if (skipNewPhase) {
+        // Game already in progress, just start it
+        return g.lid;
+    }
 
-                ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
-                ui.updateStatus("Idle");
+    ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
+    ui.updateStatus("Idle");
 
-                lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
+    const lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
-                helpers.bbgmPing("league");
+    helpers.bbgmPing("league");
 
-                // Auto sort rosters
-                return g.dbl.tx("players", "readwrite", function (tx) {
-                    return Promise.map(teams, function (t) {
-                        return team.rosterAutoSort(tx, t.tid);
-                    }).then(function () {
-                        return lid;
-                    });
-                });
-            });
-        });
+    // Auto sort rosters
+    return g.dbl.tx("players", "readwrite", async tx => {
+        await Promise.map(teams, t => team.rosterAutoSort(tx, t.tid));
+        return lid;
     });
 }
 
@@ -556,28 +506,12 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
  * @param {function()=} cb Optional callback.
  */
 function remove(lid) {
-    return new Promise((resolve, reject) => {
-        if (g.dbl !== undefined) {
-            g.dbl.close();
-        }
-
-        g.dbm.leagues.delete(lid);
-        const request = indexedDB.deleteDatabase(`league${lid}`);
-        request.onsuccess = () => {
-            resolve();
-        };
-        request.onfailure = event => {
-            reject(event);
-        };
-        request.onblocked = () => {
-            // Necessary because g.dbl.close() doesn't always finish in time and
-            // http://www.w3.org/TR/IndexedDB/#dfn-steps-for-deleting-a-database
-            // says it will still be deleted even if onblocked fires.
-            resolve();
-        };
-    });
+    if (g.dbl !== undefined) {
+        g.dbl.close();
+    }
+    g.dbm.leagues.delete(lid);
+    return backboard.delete(`league${lid}`);
 }
-
 
 /**
  * Export existing active league.

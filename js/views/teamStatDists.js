@@ -150,9 +150,9 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "teamStatDists",
-    get: get,
-    InitViewModel: InitViewModel,
+    get,
+    InitViewModel,
     runBefore: [updateTeams],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });

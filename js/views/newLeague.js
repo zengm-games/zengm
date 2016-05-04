@@ -72,7 +72,7 @@ function post(req) {
             }
         }
 
-        return league.create(req.params.name, tid, null, startingSeason, false);
+        return league.create(req.params.name, tid, undefined, startingSeason, false);
     }).then(function (lid) {
         ui.realtimeUpdate([], "/l/" + lid, function () {
             // Show helpful information if this is the first league
@@ -249,8 +249,8 @@ function uiFirst(vm) {
 module.exports = bbgmView.init({
     id: "newLeague",
     beforeReq: viewHelpers.beforeNonLeague,
-    InitViewModel: InitViewModel,
+    InitViewModel,
     post: post,
     runBefore: [updateNewLeague],
-    uiFirst: uiFirst
+    uiFirst
 });

@@ -128,8 +128,8 @@ function uiFirst(vm) {
 
 module.exports = bbgmView.init({
     id: "player",
-    get: get,
+    get,
     runBefore: [updatePlayer],
-    uiFirst: uiFirst
+    uiFirst
 });
 

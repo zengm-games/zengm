@@ -1,7 +1,7 @@
-var g = require('../globals');
-var ui = require('../ui');
-var league = require('../core/league');
-var bbgmView = require('../util/bbgmView');
+const g = require('../globals');
+const ui = require('../ui');
+const league = require('../core/league');
+const bbgmView = require('../util/bbgmView');
 
 function get(req) {
     return {
@@ -9,22 +9,20 @@ function get(req) {
     };
 }
 
-function post(req) {
-    var deleteOldDataEl, deleteOldDataSuccessEl, toDelete;
-
-    deleteOldDataEl = document.getElementById("delete-old-data");
+async function post(req) {
+    const deleteOldDataEl = document.getElementById("delete-old-data");
     deleteOldDataEl.disabled = true;
 
-    deleteOldDataSuccessEl = document.getElementById("delete-old-data-success");
+    const deleteOldDataSuccessEl = document.getElementById("delete-old-data-success");
     deleteOldDataSuccessEl.style.visibility = "hidden";
 
-    g.dbl.tx(["games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", function (tx) {
+    await g.dbl.tx(["games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", async tx => {
         if (req.params.hasOwnProperty("boxScores")) {
-            tx.games.clear();
+            await tx.games.clear();
         }
 
         if (req.params.hasOwnProperty("teamHistory")) {
-            tx.teamSeasons.iterate(function (teamSeason) {
+            await tx.teamSeasons.iterate(teamSeason => {
                 if (teamSeason.season < g.season) {
                     return tx.teamSeasons.delete(teamSeason.rid);
                 }
@@ -32,7 +30,7 @@ function post(req) {
         }
 
         if (req.params.hasOwnProperty("teamStats")) {
-            tx.teamStats.iterate(function (teamStats) {
+            await tx.teamStats.iterate(teamStats => {
                 if (teamStats.season < g.season) {
                     return tx.teamStats.delete(teamStats.rid);
                 }
@@ -40,67 +38,64 @@ function post(req) {
         }
 
         if (req.params.hasOwnProperty("retiredPlayers")) {
-            toDelete = [];
+            const toDelete = [];
 
-            tx.players.index('tid').iterate(g.PLAYER.RETIRED, function (p) {
+            await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
                 toDelete.push(p.pid);
                 return tx.players.delete(p.pid);
-            }).then(function () {
-                tx.playerStats.iterate(function (ps) {
-                    if (toDelete.indexOf(ps.pid) >= 0) {
-                        return tx.playerStats.delete(ps.psid);
-                    }
-                });
+            });
+            await tx.playerStats.iterate(ps => {
+                if (toDelete.indexOf(ps.pid) >= 0) {
+                    return tx.playerStats.delete(ps.psid);
+                }
             });
         } else if (req.params.hasOwnProperty("retiredPlayersUnnotable")) {
-            toDelete = [];
+            const toDelete = [];
 
-            tx.players.index('tid').iterate(g.PLAYER.RETIRED, function (p) {
+            await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
                 if (p.awards.length === 0 && p.statsTids.indexOf(g.userTid) < 0) {
                     toDelete.push(p.pid);
                     return tx.players.delete(p.pid);
                 }
-            }).then(function () {
-                tx.playerStats.iterate(function (ps) {
-                    if (toDelete.indexOf(ps.pid) >= 0) {
-                        return tx.playerStats.delete(ps.psid);
-                    }
-                });
+            });
+            await tx.playerStats.iterate(ps => {
+                if (toDelete.indexOf(ps.pid) >= 0) {
+                    return tx.playerStats.delete(ps.psid);
+                }
             });
         }
 
         if (req.params.hasOwnProperty("playerStats")) {
-            tx.players.iterate(function (p) {
+            await tx.players.iterate(p => {
                 p.ratings = [p.ratings[p.ratings.length - 1]];
                 return p;
             });
-            tx.playerStats.iterate(function (ps) {
+            await tx.playerStats.iterate(ps => {
                 if (ps.season < g.season) {
                     return tx.playerStats.delete(ps.psid);
                 }
             });
         } else if (req.params.hasOwnProperty("playerStatsUnnotable")) {
-            toDelete = [];
+            const toDelete = [];
 
-            tx.players.iterate(function (p) {
+            tx.players.iterate(p => {
                 if (p.awards.length === 0 && p.statsTids.indexOf(g.userTid) < 0) {
                     p.ratings = [p.ratings[p.ratings.length - 1]];
                     toDelete.push(p.pid);
                 }
                 return p;
-            }).then(function () {
-                tx.playerStats.iterate(function (ps) {
-                    if (ps.season < g.season && toDelete.indexOf(ps.pid) >= 0) {
-                        return tx.playerStats.delete(ps.psid);
-                    }
-                });
+            });
+            await tx.playerStats.iterate(ps => {
+                if (ps.season < g.season && toDelete.indexOf(ps.pid) >= 0) {
+                    return tx.playerStats.delete(ps.psid);
+                }
             });
         }
-    }).then(function () {
-        league.updateLastDbChange();
-        deleteOldDataEl.disabled = false;
-        deleteOldDataSuccessEl.style.visibility = "visible";
     });
+
+    league.updateLastDbChange();
+    deleteOldDataEl.disabled = false;
+    deleteOldDataSuccessEl.style.visibility = "visible";
 }
 
 function uiFirst() {
@@ -109,7 +104,7 @@ function uiFirst() {
 
 module.exports = bbgmView.init({
     id: "deleteOldData",
-    get: get,
+    get,
     post: post,
-    uiFirst: uiFirst
+    uiFirst
 });

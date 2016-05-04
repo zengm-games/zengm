@@ -59,5 +59,5 @@ function uiFirst(vm) {
 module.exports = bbgmView.init({
     id: "multiTeamMode",
     runBefore: [updateMultiTeamMode],
-    uiFirst: uiFirst
+    uiFirst
 });

@@ -1,11 +1,11 @@
-var db = require('../db');
-var g = require('../globals');
-var ui = require('../ui');
-var league = require('../core/league');
-var backboard = require('backboard');
-var Promise = require('bluebird');
-var bbgmView = require('../util/bbgmView');
-var viewHelpers = require('../util/viewHelpers');
+const db = require('../db');
+const g = require('../globals');
+const ui = require('../ui');
+const league = require('../core/league');
+const backboard = require('backboard');
+const Promise = require('bluebird');
+const bbgmView = require('../util/bbgmView');
+const viewHelpers = require('../util/viewHelpers');
 
 function get(req) {
     return {
@@ -13,35 +13,31 @@ function get(req) {
     };
 }
 
-function post(req) {
-    league.remove(parseInt(req.params.lid, 10)).then(function () {
-        ui.realtimeUpdate([], "/");
-    });
+async function post(req) {
+    await league.remove(parseInt(req.params.lid, 10));
+    ui.realtimeUpdate([], "/");
 }
 
-function updateDeleteLeague(inputs) {
-    return db.connectLeague(inputs.lid).then(function () {
-        return g.dbl.tx(["games", "players", "teamSeasons"], function (tx) {
-            return Promise.all([
+async function updateDeleteLeague(inputs) {
+    await db.connectLeague(inputs.lid);
+    try {
+        return g.dbl.tx(["games", "players", "teamSeasons"], async tx => {
+            const [numGames, numPlayers, teamSeasons, l] = await Promise.all([
                 tx.games.count(),
                 tx.players.count(),
                 tx.teamSeasons.index("tid, season").getAll(backboard.bound([0], [0, ''])),
                 g.dbm.leagues.get(inputs.lid)
-            ]).spread(function (numGames, numPlayers, teamSeasons, l) {
-                var numSeasons;
+            ]);
 
-                numSeasons = teamSeasons.length;
-
-                return {
-                    lid: inputs.lid,
-                    name: l.name,
-                    numGames: numGames,
-                    numPlayers: numPlayers,
-                    numSeasons: numSeasons
-                };
-            });
+            return {
+                lid: inputs.lid,
+                name: l.name,
+                numGames,
+                numPlayers,
+                numSeasons: teamSeasons.length
+            };
         });
-    }).catch(function () {
+    } catch (err) {
         return {
             lid: inputs.lid,
             name: null,
@@ -49,7 +45,7 @@ function updateDeleteLeague(inputs) {
             numPlayers: null,
             numSeasons: null
         };
-    });
+    }
 }
 
 function uiFirst() {
@@ -59,8 +55,8 @@ function uiFirst() {
 module.exports = bbgmView.init({
     id: "deleteLeague",
     beforeReq: viewHelpers.beforeNonLeague,
-    get: get,
+    get,
     post: post,
     runBefore: [updateDeleteLeague],
-    uiFirst: uiFirst
+    uiFirst
 });

@@ -152,8 +152,8 @@ function uiFirst() {
 
 module.exports = bbgmView.init({
     id: "exportStats",
-    InitViewModel: InitViewModel,
+    InitViewModel,
     post: post,
     runBefore: [updateExportStats],
-    uiFirst: uiFirst
+    uiFirst
 });

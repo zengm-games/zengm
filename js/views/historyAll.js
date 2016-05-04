@@ -11,9 +11,7 @@ var mapping;
 
 mapping = {
     seasons: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
@@ -139,7 +137,7 @@ function uiFirst(vm) {
 
 module.exports = bbgmView.init({
     id: "historyAll",
-    mapping: mapping,
+    mapping,
     runBefore: [updateHistory],
-    uiFirst: uiFirst
+    uiFirst
 });

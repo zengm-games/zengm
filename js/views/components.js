@@ -1,12 +1,10 @@
-var g = require('../globals');
-var ui = require('../ui');
-var $ = require('jquery');
-var ko = require('knockout');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const $ = require('jquery');
+const ko = require('knockout');
+const helpers = require('../util/helpers');
 
-var vm;
-
-vm = {
+const vm = {
     formId: ko.observable(),
     fields: ko.observable([])
 };
@@ -24,9 +22,7 @@ vm = {
  * @param {?string=} extraParam Any extra parameter to append to the URL, like /l/1/.../ATL/2014/extraParam. Default is to append nothing.
  */
 function dropdown(formId, fields, selected, updateEvents, extraParam) {
-    var fieldId, formEl, i, j, offset, options;
-
-    formEl = document.getElementById(formId);
+    const formEl = document.getElementById(formId);
 
     // If formEl can't be found, user quickly clicked away from page
     if (formEl === null) {
@@ -37,11 +33,12 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
         // Build initial values
         vm.formId(formId);
         vm.fields([]);
-        for (i = 0; i < fields.length; i++) {
-            fieldId = formId + "-" + fields[i];
+        for (let i = 0; i < fields.length; i++) {
+            const fieldId = formId + "-" + fields[i];
+            let options;
             if (fields[i] === "teams") {
                 options = [];
-                for (j = 0; j < g.numTeams; j++) {
+                for (let j = 0; j < g.numTeams; j++) {
                     options[j] = {};
                     options[j].key = g.teamAbbrevsCache[j];
                     options[j].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
@@ -51,7 +48,7 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
                     key: "all",
                     val: "All Teams"
                 }];
-                for (j = 0; j < g.numTeams; j++) {
+                for (let j = 0; j < g.numTeams; j++) {
                     options[j + 1] = {};
                     options[j + 1].key = g.teamAbbrevsCache[j];
                     options[j + 1].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
@@ -64,14 +61,14 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
                     key: "watch",
                     val: "Watch List"
                 }];
-                for (j = 0; j < g.numTeams; j++) {
+                for (let j = 0; j < g.numTeams; j++) {
                     options[j + 2] = {};
                     options[j + 2].key = g.teamAbbrevsCache[j];
                     options[j + 2].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
                 }
             } else if (fields[i] === "seasons" || fields[i] === "seasonsAndCareer" || fields[i] === "seasonsAndAll") {
                 options = helpers.getSeasons();
-                for (j = 0; j < options.length; j++) {
+                for (let j = 0; j < options.length; j++) {
                     options[j].key = options[j].season;
                     options[j].val = options[j].season + " Season";
                 }
@@ -90,8 +87,8 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
             } else if (fields[i] === "seasonsUpcoming") {
                 options = [];
                 // For upcomingFreeAgents, bump up 1 if we're past the season
-                offset = g.phase <= g.PHASE.RESIGN_PLAYERS ? 0 : 1;
-                for (j = 0 + offset; j < 5 + offset; j++) {
+                const offset = g.phase <= g.PHASE.RESIGN_PLAYERS ? 0 : 1;
+                for (let j = 0 + offset; j < 5 + offset; j++) {
                     options.push({
                         key: g.season + j,
                         val: (g.season + j) + " season"
@@ -225,7 +222,7 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
     }
 
     // See if default value changed
-    for (i = 0; i < fields.length; i++) {
+    for (let i = 0; i < fields.length; i++) {
         if (selected[i] !== vm.fields()[i].selected()) {
             vm.fields()[i].selected(selected[i]);
         }
@@ -239,7 +236,7 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
     }
 
     // Check if any field needs to be updated
-    for (i = 0; i < vm.fields().length; i++) {
+    for (let i = 0; i < vm.fields().length; i++) {
         if (vm.fields()[i].name === "seasons" || fields[i] === "seasonsAndCareer") {
             if (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) {
                 vm.fields()[i].options.push({
@@ -252,6 +249,6 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
 }
 
 module.exports = {
-    dropdown: dropdown
+    dropdown
 };
 

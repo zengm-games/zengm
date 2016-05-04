@@ -30,5 +30,5 @@ function uiFirst() {
 module.exports = bbgmView.init({
     id: "inbox",
     runBefore: [updateInbox],
-    uiFirst: uiFirst
+    uiFirst
 });

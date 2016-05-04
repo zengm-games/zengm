@@ -96,5 +96,5 @@ function uiFirst(vm) {
 module.exports = bbgmView.init({
     id: "godMode",
     runBefore: [updateGodMode],
-    uiFirst: uiFirst
+    uiFirst
 });

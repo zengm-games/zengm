@@ -23,9 +23,7 @@ function InitViewModel() {
 
 mapping = {
     players: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
@@ -71,10 +69,10 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "playerShotLocations",
-    get: get,
-    InitViewModel: InitViewModel,
-    mapping: mapping,
+    get,
+    InitViewModel,
+    mapping,
     runBefore: [updatePlayers],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });

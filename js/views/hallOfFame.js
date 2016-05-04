@@ -21,9 +21,7 @@ function InitViewModel() {
 
 mapping = {
     players: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
@@ -98,9 +96,9 @@ function uiFirst(vm) {
 
 module.exports = bbgmView.init({
     id: "hallOfFame",
-    get: get,
-    InitViewModel: InitViewModel,
-    mapping: mapping,
+    get,
+    InitViewModel,
+    mapping,
     runBefore: [updatePlayers],
-    uiFirst: uiFirst
+    uiFirst
 });

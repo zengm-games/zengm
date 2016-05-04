@@ -1,39 +1,37 @@
-var g = require('../globals');
-var ui = require('../ui');
-var Promise = require('bluebird');
-var $ = require('jquery');
-var ko = require('knockout');
-var account = require('../util/account');
-var bbgmView = require('../util/bbgmView');
-var viewHelpers = require('../util/viewHelpers');
+const g = require('../globals');
+const ui = require('../ui');
+const Promise = require('bluebird');
+const $ = require('jquery');
+const ko = require('knockout');
+const account = require('../util/account');
+const bbgmView = require('../util/bbgmView');
+const viewHelpers = require('../util/viewHelpers');
 
-var ajaxErrorMsg;
-ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
+const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
 function InitViewModel() {
     this.formError = ko.observable();
 }
 
-function updateAccountUpdateCard(inputs, updateEvents) {
+async function updateAccountUpdateCard(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("account") >= 0) {
-        return account.check().then(function () {
-            var username;
+        await account.check();
+        const username = g.vm.topMenu.username();
 
-            username = g.vm.topMenu.username();
+        if (username === null || username === "") {
+            return {
+                errorMessage: "Log in to view this page."
+            };
+        }
 
-            if (username === null || username === "") {
-                return {
-                    errorMessage: "Log in to view this page."
-                };
-            }
+        if (g.vm.topMenu.goldCancelled()) {
+            return {
+                errorMessage: "Cannot update card because your Basketball GM Gold account is cancelled."
+            };
+        }
 
-            if (g.vm.topMenu.goldCancelled()) {
-                return {
-                    errorMessage: "Cannot update card because your Basketball GM Gold account is cancelled."
-                };
-            }
-
-            return Promise.resolve($.ajax({
+        try {
+            const data = await Promise.resolve($.ajax({
                 type: "GET",
                 url: "//account.basketball-gm." + g.tld + "/gold_card_info.php",
                 data: {
@@ -43,59 +41,57 @@ function updateAccountUpdateCard(inputs, updateEvents) {
                 xhrFields: {
                     withCredentials: true
                 }
-            })).then(function (data) {
-                return {
-                    last4: data.last4,
-                    expMonth: data.expMonth,
-                    expYear: data.expYear
-                };
-            }).catch(function () {
-                return {
-                    last4: "????",
-                    expMonth: "??",
-                    expYear: "????"
-                };
-            });
-        });
+            }));
+            return {
+                last4: data.last4,
+                expMonth: data.expMonth,
+                expYear: data.expYear
+            };
+        } catch (err) {
+            return {
+                last4: "????",
+                expMonth: "??",
+                expYear: "????"
+            };
+        }
     }
 }
 
-function stripeResponseHandler(vm, status, response) {
-    var $form, token;
-
-    $form = $('#payment-form');
+async function stripeResponseHandler(vm, status, response) {
+    const $form = $('#payment-form');
 
     if (response.error) {
         vm.formError(response.error.message);
         $form.find('button').prop('disabled', false);
     } else {
-        token = response.id;
+        const token = response.id;
 
-        Promise.resolve($.ajax({
-            type: "POST",
-            url: "//account.basketball-gm." + g.tld + "/gold_card_update.php",
-            data: {
-                sport: "basketball",
-                token: token
-            },
-            dataType: "json",
-            xhrFields: {
-                withCredentials: true
-            }
-        })).then(function (data) {
+        try {
+            const data = await Promise.resolve($.ajax({
+                type: "POST",
+                url: "//account.basketball-gm." + g.tld + "/gold_card_update.php",
+                data: {
+                    sport: "basketball",
+                    token: token
+                },
+                dataType: "json",
+                xhrFields: {
+                    withCredentials: true
+                }
+            }));
             ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
-        }).catch(function (err) {
+        } catch (err) {
             console.log(err);
             vm.formError(ajaxErrorMsg);
             $form.find('button').prop('disabled', false);
-        });
+        }
     }
 }
 
 function uiFirst(vm) {
     ui.title("Update Card");
 
-    $.getScript('https://js.stripe.com/v2/', function () {
+    $.getScript('https://js.stripe.com/v2/', () => {
         window.Stripe.setPublishableKey(g.stripePublishableKey);
 
         $('#payment-form').submit(function () {
@@ -112,8 +108,8 @@ function uiFirst(vm) {
 
 module.exports = bbgmView.init({
     id: "accountUpdateCard",
-    InitViewModel: InitViewModel,
+    InitViewModel,
     beforeReq: viewHelpers.beforeNonLeague,
     runBefore: [updateAccountUpdateCard],
-    uiFirst: uiFirst
+    uiFirst
 });

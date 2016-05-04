@@ -145,29 +145,19 @@ function InitViewModel() {
 
 mapping = {
     userPicks: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     },
     userRoster: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     },
     otherPicks: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     },
     otherRoster: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     },
     teams: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
@@ -414,10 +404,10 @@ function uiFirst(vm) {
 
 module.exports = bbgmView.init({
     id: "trade",
-    get: get,
+    get,
     post: post,
-    InitViewModel: InitViewModel,
-    mapping: mapping,
+    InitViewModel,
+    mapping,
     runBefore: [updateTrade],
-    uiFirst: uiFirst
+    uiFirst
 });

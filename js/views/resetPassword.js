@@ -101,8 +101,8 @@ function uiFirst(vm) {
 
 module.exports = bbgmView.init({
     id: "resetPassword",
-    get: get,
+    get,
     beforeReq: viewHelpers.beforeNonLeague,
     runBefore: [updateToken],
-    uiFirst: uiFirst
+    uiFirst
 });

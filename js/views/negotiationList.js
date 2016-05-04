@@ -21,9 +21,7 @@ function get() {
 
 mapping = {
     players: {
-        create: function (options) {
-            return options.data;
-        }
+        create: options => options.data
     }
 };
 
@@ -101,8 +99,8 @@ function uiFirst(vm) {
 
 module.exports = bbgmView.init({
     id: "negotiationList",
-    get: get,
-    mapping: mapping,
+    get,
+    mapping,
     runBefore: [updateNegotiationList],
-    uiFirst: uiFirst
+    uiFirst
 });

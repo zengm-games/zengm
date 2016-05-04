@@ -93,9 +93,9 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "playerRatingDists",
-    get: get,
-    InitViewModel: InitViewModel,
+    get,
+    InitViewModel,
     runBefore: [updatePlayers],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });

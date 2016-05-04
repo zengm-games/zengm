@@ -45,5 +45,5 @@ function uiFirst() {
 module.exports = bbgmView.init({
     id: "lostPassword",
     beforeReq: viewHelpers.beforeNonLeague,
-    uiFirst: uiFirst
+    uiFirst
 });

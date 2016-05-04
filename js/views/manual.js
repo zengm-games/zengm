@@ -48,8 +48,8 @@ function uiEvery(updateEvents, vm) {
 module.exports = bbgmView.init({
     id: "manual",
     beforeReq: viewHelpers.beforeNonLeague,
-    get: get,
+    get,
     runBefore: [updateManual],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });

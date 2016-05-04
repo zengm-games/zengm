@@ -133,10 +133,10 @@ function uiEvery(updateEvents, vm) {
 
 module.exports = bbgmView.init({
     id: "transactions",
-    get: get,
-    InitViewModel: InitViewModel,
+    get,
+    InitViewModel,
     runBefore: [updateEventLog],
-    uiFirst: uiFirst,
-    uiEvery: uiEvery
+    uiFirst,
+    uiEvery
 });
 

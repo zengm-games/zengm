@@ -121,5 +121,5 @@ function uiFirst() {
 module.exports = bbgmView.init({
     id: "loginOrRegister",
     beforeReq: viewHelpers.beforeNonLeague,
-    uiFirst: uiFirst
+    uiFirst
 });

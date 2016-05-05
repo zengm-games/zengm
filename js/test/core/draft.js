@@ -1,12 +1,12 @@
-var assert = require('assert');
-var db = require('../../db');
-var g = require('../../globals');
-var draft = require('../../core/draft');
-var league = require('../../core/league');
-var team = require('../../core/team');
-var sampleTiebreakers = require('../fixtures/sampleTiebreakers.js');
-var _ = require('underscore');
-var Promise = require('bluebird');
+const assert = require('assert');
+const db = require('../../db');
+const g = require('../../globals');
+const draft = require('../../core/draft');
+const league = require('../../core/league');
+const team = require('../../core/team');
+const sampleTiebreakers = require('../fixtures/sampleTiebreakers.js');
+const _ = require('underscore');
+const Promise = require('bluebird');
 
 describe("core/draft", function () {
     var testDraftUntilUserOrEnd, testDraftUser, userPick1, userPick2;

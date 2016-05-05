@@ -1,8 +1,8 @@
-var g = require('../globals');
-var ui = require('../ui');
-var $ = require('jquery');
-var bbgmView = require('../util/bbgmView');
-var viewHelpers = require('../util/viewHelpers');
+const g = require('../globals');
+const ui = require('../ui');
+const $ = require('jquery');
+const bbgmView = require('../util/bbgmView');
+const viewHelpers = require('../util/viewHelpers');
 
 function uiFirst() {
     var $lostpw, ajaxErrorMsg;

@@ -1,8 +1,8 @@
-var assert = require('assert');
-var g = require('../../globals');
-var $ = require('jquery');
-var ko = require('knockout');
-var components = require('../../views/components');
+const assert = require('assert');
+const g = require('../../globals');
+const $ = require('jquery');
+const ko = require('knockout');
+const components = require('../../views/components');
 
 function testSeasons() {
     assert(document.getElementById("test-form-dropdown-seasons"));

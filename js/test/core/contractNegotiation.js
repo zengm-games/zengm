@@ -1,8 +1,8 @@
-var assert = require('assert');
-var db = require('../../db');
-var g = require('../../globals');
-var contractNegotiation = require('../../core/contractNegotiation');
-var league = require('../../core/league');
+const assert = require('assert');
+const db = require('../../db');
+const g = require('../../globals');
+const contractNegotiation = require('../../core/contractNegotiation');
+const league = require('../../core/league');
 
 describe("core/contractNegotiation", function () {
     before(function () {

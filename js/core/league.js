@@ -520,7 +520,7 @@ function remove(lid) {
  * @param {string[]} stores Array of names of objectStores to include in export
  * @return {Promise} Resolve to all the exported league data.
  */
-function exportLeague(stores) {
+async function exportLeague(stores) {
     const exportedLeague = {};
 
     // Row from leagueStore in meta db.
@@ -528,62 +528,60 @@ function exportLeague(stores) {
     // name is only used for the file name of the exported roster file.
     exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
 
-    return Promise.map(stores, store => g.dbl[store].getAll().then(contents => {
-        exportedLeague[store] = contents;
-    })).then(() => {
-        // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
-        let i, j, pid, tid;
+    await Promise.map(stores, async store => {
+        exportedLeague[store] = await g.dbl[store].getAll();
+    });
 
-        if (stores.indexOf("playerStats") >= 0) {
-            for (i = 0; i < exportedLeague.playerStats.length; i++) {
-                pid = exportedLeague.playerStats[i].pid;
-
-                for (j = 0; j < exportedLeague.players.length; j++) {
-                    if (exportedLeague.players[j].pid === pid) {
-                        if (!exportedLeague.players[j].hasOwnProperty("stats")) {
-                            exportedLeague.players[j].stats = [];
-                        }
-                        exportedLeague.players[j].stats.push(exportedLeague.playerStats[i]);
-                        break;
+    // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
+    if (stores.indexOf("playerStats") >= 0) {
+        for (let i = 0; i < exportedLeague.playerStats.length; i++) {
+            const pid = exportedLeague.playerStats[i].pid;
+            for (let j = 0; j < exportedLeague.players.length; j++) {
+                if (exportedLeague.players[j].pid === pid) {
+                    if (!exportedLeague.players[j].hasOwnProperty("stats")) {
+                        exportedLeague.players[j].stats = [];
                     }
+                    exportedLeague.players[j].stats.push(exportedLeague.playerStats[i]);
+                    break;
                 }
             }
-
-            delete exportedLeague.playerStats;
         }
 
-        if (stores.indexOf("teams") >= 0) {
-            for (i = 0; i < exportedLeague.teamSeasons.length; i++) {
-                tid = exportedLeague.teamSeasons[i].tid;
+        delete exportedLeague.playerStats;
+    }
 
-                for (j = 0; j < exportedLeague.teams.length; j++) {
-                    if (exportedLeague.teams[j].tid === tid) {
-                        if (!exportedLeague.teams[j].hasOwnProperty("seasons")) {
-                            exportedLeague.teams[j].seasons = [];
-                        }
-                        exportedLeague.teams[j].seasons.push(exportedLeague.teamSeasons[i]);
-                        break;
+    if (stores.indexOf("teams") >= 0) {
+        for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {
+            const tid = exportedLeague.teamSeasons[i].tid;
+            for (let j = 0; j < exportedLeague.teams.length; j++) {
+                if (exportedLeague.teams[j].tid === tid) {
+                    if (!exportedLeague.teams[j].hasOwnProperty("seasons")) {
+                        exportedLeague.teams[j].seasons = [];
                     }
+                    exportedLeague.teams[j].seasons.push(exportedLeague.teamSeasons[i]);
+                    break;
                 }
             }
-            for (i = 0; i < exportedLeague.teamStats.length; i++) {
-                tid = exportedLeague.teamStats[i].tid;
-
-                for (j = 0; j < exportedLeague.teams.length; j++) {
-                    if (exportedLeague.teams[j].tid === tid) {
-                        if (!exportedLeague.teams[j].hasOwnProperty("stats")) {
-                            exportedLeague.teams[j].stats = [];
-                        }
-                        exportedLeague.teams[j].stats.push(exportedLeague.teamStats[i]);
-                        break;
-                    }
-                }
-            }
-
-            delete exportedLeague.teamSeasons;
-            delete exportedLeague.teamStats;
         }
-    }).then(() => exportedLeague);
+
+        for (let i = 0; i < exportedLeague.teamStats.length; i++) {
+            const tid = exportedLeague.teamStats[i].tid;
+            for (let j = 0; j < exportedLeague.teams.length; j++) {
+                if (exportedLeague.teams[j].tid === tid) {
+                    if (!exportedLeague.teams[j].hasOwnProperty("stats")) {
+                        exportedLeague.teams[j].stats = [];
+                    }
+                    exportedLeague.teams[j].stats.push(exportedLeague.teamStats[i]);
+                    break;
+                }
+            }
+        }
+
+        delete exportedLeague.teamSeasons;
+        delete exportedLeague.teamStats;
+    }
+
+    return exportedLeague;
 }
 
 async function updateMetaNameRegion(name, region) {

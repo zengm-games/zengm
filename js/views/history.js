@@ -1,12 +1,12 @@
-var g = require('../globals');
-var ui = require('../ui');
-var player = require('../core/player');
-var team = require('../core/team');
-var Promise = require('bluebird');
-var ko = require('knockout');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
-var components = require('./components');
+const g = require('../globals');
+const ui = require('../ui');
+const player = require('../core/player');
+const team = require('../core/team');
+const Promise = require('bluebird');
+const ko = require('knockout');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
+const components = require('./components');
 
 function get(req) {
     var season;

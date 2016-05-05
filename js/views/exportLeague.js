@@ -1,30 +1,27 @@
-var g = require('../globals');
-var ui = require('../ui');
-var league = require('../core/league');
-var bbgmView = require('../util/bbgmView');
+const g = require('../globals');
+const ui = require('../ui');
+const league = require('../core/league');
+const bbgmView = require('../util/bbgmView');
 
 function genFileName(data) {
-    var fileName, i, leagueName, playoffSeries, rnd, season, series;
+    const leagueName = data.meta !== undefined ? data.meta.name : ("League " + g.lid);
 
-    leagueName = data.meta !== undefined ? data.meta.name : ("League " + g.lid);
-
-    fileName = "BBGM_" + leagueName.replace(/[^a-z0-9]/gi, '_') + "_" + g.season + "_" + g.PHASE_TEXT[g.phase].replace(/[^a-z0-9]/gi, '_');
+    let fileName = "BBGM_" + leagueName.replace(/[^a-z0-9]/gi, '_') + "_" + g.season + "_" + g.PHASE_TEXT[g.phase].replace(/[^a-z0-9]/gi, '_');
 
     if (g.phase === g.PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
-        season = data.teams[g.userTid].seasons[data.teams[g.userTid].seasons.length - 1];
+        const season = data.teams[g.userTid].seasons[data.teams[g.userTid].seasons.length - 1];
         fileName += "_" + season.won + "-" + season.lost;
     }
 
     if (g.phase === g.PHASE.PLAYOFFS && data.hasOwnProperty("playoffSeries")) {
-        console.log(data.playoffSeries);
         // Most recent series info
-        playoffSeries = data.playoffSeries[data.playoffSeries.length - 1];
-        rnd = playoffSeries.currentRound;
+        const playoffSeries = data.playoffSeries[data.playoffSeries.length - 1];
+        const rnd = playoffSeries.currentRound;
         fileName += "_Round_" + (playoffSeries.currentRound + 1);
 
         // Find the latest playoff series with the user's team in it
-        series = playoffSeries.series;
-        for (i = 0; i < series[rnd].length; i++) {
+        const series = playoffSeries.series;
+        for (let i = 0; i < series[rnd].length; i++) {
             if (series[rnd][i].home.tid === g.userTid) {
                 fileName += "_" + series[rnd][i].home.won + "-" + series[rnd][i].away.won;
             } else if (series[rnd][i].away.tid === g.userTid) {
@@ -36,14 +33,12 @@ function genFileName(data) {
     return fileName + ".json";
 }
 
-function post(req) {
-    var downloadLink, objectStores;
-
-    downloadLink = document.getElementById("download-link");
+async function post(req) {
+    const downloadLink = document.getElementById("download-link");
     downloadLink.innerHTML = "Generating...";
 
     // Get array of object stores to export
-    objectStores = req.params.objectStores.join(",").split(",");
+    const objectStores = req.params.objectStores.join(",").split(",");
 
     // Can't export player stats without players
     if (objectStores.indexOf("playerStats") >= 0 && objectStores.indexOf("players") === -1) {
@@ -51,38 +46,33 @@ function post(req) {
         return;
     }
 
-    league.exportLeague(objectStores).then(function (data) {
-        var a, blob, fileName, json, url;
+    const data = await league.exportLeague(objectStores);
 
-        json = JSON.stringify(data, undefined, 2);
-        blob = new Blob([json], {type: "application/json"});
-        url = window.URL.createObjectURL(blob);
+    const json = JSON.stringify(data, undefined, 2);
+    const blob = new Blob([json], {type: "application/json"});
+    const url = window.URL.createObjectURL(blob);
+    const fileName = genFileName(data);
 
-        fileName = genFileName(data);
+    const a = document.createElement("a");
+    a.download = fileName;
+    a.href = url;
+    a.textContent = "Download Exported League File";
+    a.dataset.noDavis = "true";
+//    a.click(); // Works in Chrome to auto-download, but not Firefox http://stackoverflow.com/a/20194533/786644
 
-        a = document.createElement("a");
-        a.download = fileName;
-        a.href = url;
-        a.textContent = "Download Exported League File";
-        a.dataset.noDavis = "true";
-//                a.click(); // Works in Chrome to auto-download, but not Firefox http://stackoverflow.com/a/20194533/786644
+    downloadLink.innerHTML = ""; // Clear "Generating..."
+    downloadLink.appendChild(a);
 
-        downloadLink.innerHTML = ""; // Clear "Generating..."
-        downloadLink.appendChild(a);
-
-        // Delete object, eventually
-        window.setTimeout(function () {
-            window.URL.revokeObjectURL(url);
-            downloadLink.innerHTML = "Download link expired."; // Remove expired link
-        }, 60 * 1000);
-    });
+    // Delete object, eventually
+    window.setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        downloadLink.innerHTML = "Download link expired."; // Remove expired link
+    }, 60 * 1000);
 }
 
 function updateExportLeague(inputs, updateEvents) {
-    var categories;
-
     if (updateEvents.indexOf("firstRun") >= 0) {
-        categories = [{
+        const categories = [{
             objectStores: "players,releasedPlayers,awards",
             name: "Players",
             desc: "All player info, ratings, and awards - but not stats!",
@@ -118,7 +108,10 @@ function updateExportLeague(inputs, updateEvents) {
             desc: '<span class="text-danger">If you\'ve played more than a few seasons, this takes up a ton of space!</span>',
             checked: false
         }];
-        return {categories: categories};
+
+        return {
+            categories
+        };
     }
 }
 

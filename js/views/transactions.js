@@ -1,9 +1,9 @@
-var g = require('../globals');
-var ui = require('../ui');
-var ko = require('knockout');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
-var components = require('./components');
+const g = require('../globals');
+const ui = require('../ui');
+const ko = require('knockout');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
+const components = require('./components');
 
 function get(req) {
     var abbrev, out, season, tid;

@@ -1,9 +1,9 @@
-var assert = require('assert');
-var db = require('../../db');
-var g = require('../../globals');
-var league = require('../../core/league');
-var _ = require('underscore');
-var testHelpers = require('../helpers');
+const assert = require('assert');
+const db = require('../../db');
+const g = require('../../globals');
+const league = require('../../core/league');
+const _ = require('underscore');
+const testHelpers = require('../helpers');
 
 describe("core/league", function () {
     before(function () {

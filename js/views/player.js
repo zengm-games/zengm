@@ -1,15 +1,15 @@
-var g = require('../globals');
-var ui = require('../ui');
-var freeAgents = require('../core/freeAgents');
-var player = require('../core/player');
-var trade = require('../core/trade');
-var faces = require('facesjs');
-var $ = require('jquery');
-var ko = require('knockout');
-var komapping = require('knockout.mapping');
-var Promise = require('bluebird');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const freeAgents = require('../core/freeAgents');
+const player = require('../core/player');
+const trade = require('../core/trade');
+const faces = require('facesjs');
+const $ = require('jquery');
+const ko = require('knockout');
+const komapping = require('knockout.mapping');
+const Promise = require('bluebird');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
 function get(req) {
     return {

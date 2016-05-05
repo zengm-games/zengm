@@ -1,13 +1,13 @@
-var g = require('../globals');
-var ui = require('../ui');
-var team = require('../core/team');
-var backboard = require('backboard');
-var Promise = require('bluebird');
-var $ = require('jquery');
-var _ = require('underscore');
-var ko = require('knockout');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const team = require('../core/team');
+const backboard = require('backboard');
+const Promise = require('bluebird');
+const $ = require('jquery');
+const _ = require('underscore');
+const ko = require('knockout');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
 var mapping;
 

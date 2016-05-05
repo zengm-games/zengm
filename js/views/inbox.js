@@ -1,6 +1,6 @@
-var g = require('../globals');
-var ui = require('../ui');
-var bbgmView = require('../util/bbgmView');
+const g = require('../globals');
+const ui = require('../ui');
+const bbgmView = require('../util/bbgmView');
 
 function updateInbox() {
     return g.dbl.messages.getAll().then(function (messages) {

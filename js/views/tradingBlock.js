@@ -1,15 +1,15 @@
-var g = require('../globals');
-var ui = require('../ui');
-var player = require('../core/player');
-var team = require('../core/team');
-var trade = require('../core/trade');
-var Promise = require('bluebird');
-var $ = require('jquery');
-var ko = require('knockout');
-var _ = require('underscore');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
-var random = require('../util/random');
+const g = require('../globals');
+const ui = require('../ui');
+const player = require('../core/player');
+const team = require('../core/team');
+const trade = require('../core/trade');
+const Promise = require('bluebird');
+const $ = require('jquery');
+const ko = require('knockout');
+const _ = require('underscore');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
+const random = require('../util/random');
 
 var mapping;
 

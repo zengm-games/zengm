@@ -1,10 +1,10 @@
-var g = require('../globals');
-var ui = require('../ui');
-var league = require('../core/league');
-var bbgmView = require('../util/bbgmView');
-var eventLog = require('../util/eventLog');
-var helpers = require('../util/helpers');
-var $ = require('jquery');
+const g = require('../globals');
+const ui = require('../ui');
+const league = require('../core/league');
+const bbgmView = require('../util/bbgmView');
+const eventLog = require('../util/eventLog');
+const helpers = require('../util/helpers');
+const $ = require('jquery');
 
 function updateGodMode(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("toggleGodMode") >= 0) {

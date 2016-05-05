@@ -1,9 +1,9 @@
-var g = require('../globals');
-var ui = require('../ui');
-var season = require('../core/season');
-var $ = require('jquery');
-var ko = require('knockout');
-var bbgmView = require('../util/bbgmView');
+const g = require('../globals');
+const ui = require('../ui');
+const season = require('../core/season');
+const $ = require('jquery');
+const ko = require('knockout');
+const bbgmView = require('../util/bbgmView');
 
 function disableButtons() {
     $("#live-games-list button").attr("disabled", "disabled");

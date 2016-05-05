@@ -1,16 +1,16 @@
-var g = require('../globals');
-var ui = require('../ui');
-var league = require('../core/league');
-var player = require('../core/player');
-var season = require('../core/season');
-var team = require('../core/team');
-var trade = require('../core/trade');
-var Promise = require('bluebird');
-var ko = require('knockout');
-var $ = require('jquery');
-var components = require('./components');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const league = require('../core/league');
+const player = require('../core/player');
+const season = require('../core/season');
+const team = require('../core/team');
+const trade = require('../core/trade');
+const Promise = require('bluebird');
+const ko = require('knockout');
+const $ = require('jquery');
+const components = require('./components');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
 var mapping;
 

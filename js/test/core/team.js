@@ -1,9 +1,9 @@
-var assert = require('assert');
-var db = require('../../db');
-var g = require('../../globals');
-var league = require('../../core/league');
-var player = require('../../core/player');
-var team = require('../../core/team');
+const assert = require('assert');
+const db = require('../../db');
+const g = require('../../globals');
+const league = require('../../core/league');
+const player = require('../../core/player');
+const team = require('../../core/team');
 
 describe("core/team", function () {
     describe("#findStarters()", function () {

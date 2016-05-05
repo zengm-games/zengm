@@ -1,9 +1,9 @@
-var assert = require('assert');
-var db = require('../../db');
-var g = require('../../globals');
-var league = require('../../core/league');
-var $ = require('jquery');
-var gameLog = require('../../views/gameLog');
+const assert = require('assert');
+const db = require('../../db');
+const g = require('../../globals');
+const league = require('../../core/league');
+const $ = require('jquery');
+const gameLog = require('../../views/gameLog');
 
 function confirmNotBuilt() {
     assert(!document.getElementById("game-log-dropdown"));

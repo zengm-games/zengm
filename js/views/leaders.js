@@ -1,13 +1,13 @@
-var g = require('../globals');
-var ui = require('../ui');
-var player = require('../core/player');
-var backboard = require('backboard');
-var Promise = require('bluebird');
-var ko = require('knockout');
-var komapping = require('knockout.mapping');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
-var components = require('./components');
+const g = require('../globals');
+const ui = require('../ui');
+const player = require('../core/player');
+const backboard = require('backboard');
+const Promise = require('bluebird');
+const ko = require('knockout');
+const komapping = require('knockout.mapping');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
+const components = require('./components');
 
 var mapping;
 

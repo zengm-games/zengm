@@ -1,13 +1,13 @@
-var g = require('../globals');
-var ui = require('../ui');
-var league = require('../core/league');
-var Promise = require('bluebird');
-var $ = require('jquery');
-var ko = require('knockout');
-var komapping = require('knockout.mapping');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
-var viewHelpers = require('../util/viewHelpers');
+const g = require('../globals');
+const ui = require('../ui');
+const league = require('../core/league');
+const Promise = require('bluebird');
+const $ = require('jquery');
+const ko = require('knockout');
+const komapping = require('knockout.mapping');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
+const viewHelpers = require('../util/viewHelpers');
 
 function InitViewModel() {
     this.invalidLeagueFile = ko.observable(false);

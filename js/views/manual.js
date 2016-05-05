@@ -1,6 +1,6 @@
-var ui = require('../ui');
-var bbgmView = require('../util/bbgmView');
-var viewHelpers = require('../util/viewHelpers');
+const ui = require('../ui');
+const bbgmView = require('../util/bbgmView');
+const viewHelpers = require('../util/viewHelpers');
 
 function templateString(page) {
     var i, output, upperNext;

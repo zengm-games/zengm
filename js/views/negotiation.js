@@ -1,12 +1,12 @@
-var g = require('../globals');
-var ui = require('../ui');
-var contractNegotiation = require('../core/contractNegotiation');
-var freeAgents = require('../core/freeAgents');
-var player = require('../core/player');
-var team = require('../core/team');
-var ko = require('knockout');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const contractNegotiation = require('../core/contractNegotiation');
+const freeAgents = require('../core/freeAgents');
+const player = require('../core/player');
+const team = require('../core/team');
+const ko = require('knockout');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
 // Show the negotiations list if there are more ongoing negotiations
 function redirectNegotiationOrRoster(cancelled) {

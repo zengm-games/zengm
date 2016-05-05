@@ -1,10 +1,10 @@
-var g = require('../globals');
-var ui = require('../ui');
-var player = require('../core/player');
-var Promise = require('bluebird');
-var _ = require('underscore');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const player = require('../core/player');
+const Promise = require('bluebird');
+const _ = require('underscore');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
 function genFileName(leagueName, season, grouping) {
     var fileName;

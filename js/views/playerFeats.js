@@ -1,10 +1,10 @@
-var g = require('../globals');
-var ui = require('../ui');
-var $ = require('jquery');
-var ko = require('knockout');
-var components = require('./components');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const $ = require('jquery');
+const ko = require('knockout');
+const components = require('./components');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
 var mapping;
 

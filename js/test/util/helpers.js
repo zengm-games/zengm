@@ -1,6 +1,6 @@
-var assert = require('assert');
-var g = require('../../globals');
-var helpers = require('../../util/helpers');
+const assert = require('assert');
+const g = require('../../globals');
+const helpers = require('../../util/helpers');
 
 describe("util/helpers", function () {
     before(function () {

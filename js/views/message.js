@@ -1,8 +1,8 @@
-var g = require('../globals');
-var ui = require('../ui');
-var league = require('../core/league');
-var ko = require('knockout');
-var bbgmView = require('../util/bbgmView');
+const g = require('../globals');
+const ui = require('../ui');
+const league = require('../core/league');
+const ko = require('knockout');
+const bbgmView = require('../util/bbgmView');
 
 function get(req) {
     return {

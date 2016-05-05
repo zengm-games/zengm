@@ -1,8 +1,8 @@
-var g = require('../globals');
-var ui = require('../ui');
-var phase = require('../core/phase');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const phase = require('../core/phase');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
 function get() {
     if (g.phase === g.PHASE.DRAFT) {

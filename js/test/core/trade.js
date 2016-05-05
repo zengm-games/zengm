@@ -1,8 +1,8 @@
-var assert = require('assert');
-var db = require('../../db');
-var g = require('../../globals');
-var league = require('../../core/league');
-var trade = require('../../core/trade');
+const assert = require('assert');
+const db = require('../../db');
+const g = require('../../globals');
+const league = require('../../core/league');
+const trade = require('../../core/trade');
 
 describe("core/trade", function () {
     var testCreateTrade;

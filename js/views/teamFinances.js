@@ -1,14 +1,14 @@
-var g = require('../globals');
-var ui = require('../ui');
-var finances = require('../core/finances');
-var team = require('../core/team');
-var backboard = require('backboard');
-var $ = require('jquery');
-var ko = require('knockout');
-var _ = require('underscore');
-var components = require('./components');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const finances = require('../core/finances');
+const team = require('../core/team');
+const backboard = require('backboard');
+const $ = require('jquery');
+const ko = require('knockout');
+const _ = require('underscore');
+const components = require('./components');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
 var mapping;
 

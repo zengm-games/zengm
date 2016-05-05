@@ -1,13 +1,13 @@
-var g = require('../globals');
-var ui = require('../ui');
-var player = require('../core/player');
-var boxPlot = require('../lib/boxPlot');
-var $ = require('jquery');
-var ko = require('knockout');
-var _ = require('underscore');
-var components = require('./components');
-var bbgmView = require('../util/bbgmView');
-var helpers = require('../util/helpers');
+const g = require('../globals');
+const ui = require('../ui');
+const player = require('../core/player');
+const boxPlot = require('../lib/boxPlot');
+const $ = require('jquery');
+const ko = require('knockout');
+const _ = require('underscore');
+const components = require('./components');
+const bbgmView = require('../util/bbgmView');
+const helpers = require('../util/helpers');
 
 function get(req) {
     return {

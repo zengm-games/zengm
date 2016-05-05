@@ -1,11 +1,11 @@
 /*eslint comma-spacing: 0, key-spacing: 0, no-unused-expressions: 0*/
-var assert = require('assert');
-var backboard = require('backboard');
-var Promise = require('bluebird');
-var db = require('../../db');
-var g = require('../../globals');
-var league = require('../../core/league');
-var account = require('../../util/account');
+const assert = require('assert');
+const backboard = require('backboard');
+const Promise = require('bluebird');
+const db = require('../../db');
+const g = require('../../globals');
+const league = require('../../core/league');
+const account = require('../../util/account');
 
 describe("util/account", function () {
     before(function () {

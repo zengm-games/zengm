@@ -1,9 +1,9 @@
-var g = require('../globals');
-var ui = require('../ui');
-var $ = require('jquery');
-var account = require('../util/account');
-var bbgmView = require('../util/bbgmView');
-var viewHelpers = require('../util/viewHelpers');
+const g = require('../globals');
+const ui = require('../ui');
+const $ = require('jquery');
+const account = require('../util/account');
+const bbgmView = require('../util/bbgmView');
+const viewHelpers = require('../util/viewHelpers');
 
 function uiFirst() {
     var $login, $register, ajaxErrorMsg;

@@ -106,7 +106,7 @@ function InitViewModel() {
 }
 
 /* This doesn't work for some reason.
-mapping = {
+const mapping = {
     gamesList: {
         update: function (options) {
             return new function () {

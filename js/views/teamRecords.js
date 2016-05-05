@@ -9,7 +9,6 @@ const helpers = require('../util/helpers');
 const components = require('./components');
 const Promise = require('bluebird');
 
-var mapping;
 
 function get(req) {
     var byType;
@@ -24,7 +23,7 @@ function InitViewModel() {
     this.seasonCount = ko.observable();
 }
 
-mapping = {
+const mapping = {
     teamRecords: {
         create: options => options.data
     }

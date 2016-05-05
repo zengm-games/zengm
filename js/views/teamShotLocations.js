@@ -8,7 +8,6 @@ const components = require('./components');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var mapping;
 
 function get(req) {
     return {
@@ -20,7 +19,7 @@ function InitViewModel() {
     this.season = ko.observable();
 }
 
-mapping = {
+const mapping = {
     teams: {
         create: options => options.data
     }

@@ -11,7 +11,6 @@ const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 const random = require('../util/random');
 
-var mapping;
 
 function getOffers(userPids, userDpids) {
     var progressBar, tids;
@@ -119,7 +118,7 @@ function post(req) {
     });
 }
 
-mapping = {
+const mapping = {
     userPicks: {
         create: options => options.data
     },

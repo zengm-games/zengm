@@ -10,7 +10,6 @@ const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 const components = require('./components');
 
-var mapping;
 
 function get(req) {
     var inputs, out;
@@ -25,7 +24,7 @@ function get(req) {
     return inputs;
 }
 
-mapping = {
+const mapping = {
     history: {
         create: options => options.data
     },

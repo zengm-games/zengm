@@ -9,7 +9,6 @@ const _ = require('underscore');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var mapping;
 
 function get() {
     if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
@@ -19,7 +18,7 @@ function get() {
     }
 }
 
-mapping = {
+const mapping = {
     players: {
         create: options => options.data
     }

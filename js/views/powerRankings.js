@@ -9,9 +9,8 @@ const ko = require('knockout');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var mapping;
 
-mapping = {
+const mapping = {
     teams: {
         create: options => options.data
     }

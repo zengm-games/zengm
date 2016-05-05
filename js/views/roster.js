@@ -12,7 +12,6 @@ const components = require('./components');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var mapping;
 
 function highlightHandles() {
     var i;
@@ -183,7 +182,7 @@ function InitViewModel() {
     }.bind(this);
 }
 
-mapping = {
+const mapping = {
     players: {
         key: function (data) {
             return ko.unwrap(data.pid);

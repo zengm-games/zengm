@@ -12,7 +12,6 @@ const _ = require('underscore');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var mapping;
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 function updateSummary(vars) {
@@ -143,7 +142,7 @@ function InitViewModel() {
     };
 }
 
-mapping = {
+const mapping = {
     userPicks: {
         create: options => options.data
     },

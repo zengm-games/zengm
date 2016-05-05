@@ -8,7 +8,6 @@ const components = require('./components');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var mapping;
 
 function get(req) {
     return {
@@ -21,7 +20,7 @@ function InitViewModel() {
     this.confs = ko.observable([]);
 }
 
-mapping = {
+const mapping = {
     confs: {
         create: function (options) {
             return new function () {

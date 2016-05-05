@@ -7,9 +7,8 @@ const team = require('../core/team');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var mapping;
 
-mapping = {
+const mapping = {
     seasons: {
         create: options => options.data
     }

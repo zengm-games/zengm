@@ -6,53 +6,53 @@ const eventLog = require('../util/eventLog');
 const helpers = require('../util/helpers');
 const $ = require('jquery');
 
-function updateGodMode(inputs, updateEvents) {
+async function updateGodMode(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("toggleGodMode") >= 0) {
         // Make sure it's current
-        return league.loadGameAttributes(null).then(function () {
-            return {
-                godMode: g.godMode,
-                injuries: [{
-                    text: 'Enabled',
-                    disabled: false
-                }, {
-                    text: 'Disabled',
-                    disabled: true
-                }],
-                disableInjuries: g.disableInjuries,
-                numGames: g.numGames,
-                quarterLength: g.quarterLength,
-                minRosterSize: g.minRosterSize,
-                salaryCap: g.salaryCap / 1000,
-                minPayroll: g.minPayroll / 1000,
-                luxuryPayroll: g.luxuryPayroll / 1000,
-                luxuryTax: g.luxuryTax,
-                minContract: g.minContract / 1000,
-                maxContract: g.maxContract / 1000
-            };
-        });
+        await league.loadGameAttributes(null);
+
+        return {
+            godMode: g.godMode,
+            injuries: [{
+                text: 'Enabled',
+                disabled: false
+            }, {
+                text: 'Disabled',
+                disabled: true
+            }],
+            disableInjuries: g.disableInjuries,
+            numGames: g.numGames,
+            quarterLength: g.quarterLength,
+            minRosterSize: g.minRosterSize,
+            salaryCap: g.salaryCap / 1000,
+            minPayroll: g.minPayroll / 1000,
+            luxuryPayroll: g.luxuryPayroll / 1000,
+            luxuryTax: g.luxuryTax,
+            minContract: g.minContract / 1000,
+            maxContract: g.maxContract / 1000
+        };
     }
 }
 
 function uiFirst(vm) {
     ui.title("God Mode");
 
-    document.getElementById("enable-god-mode").addEventListener("click", function () {
-        league.setGameAttributesComplete({godMode: true, godModeInPast: true}).then(function () {
-            league.updateLastDbChange();
-            ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
-        });
+    document.getElementById("enable-god-mode").addEventListener("click", async () => {
+        await league.setGameAttributesComplete({godMode: true, godModeInPast: true});
+
+        league.updateLastDbChange();
+        ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
     });
 
-    document.getElementById("disable-god-mode").addEventListener("click", function () {
-        league.setGameAttributesComplete({godMode: false}).then(function () {
-            league.updateLastDbChange();
-            ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
-        });
+    document.getElementById("disable-god-mode").addEventListener("click", async () => {
+        await league.setGameAttributesComplete({godMode: false});
+
+        league.updateLastDbChange();
+        ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
     });
 
-    document.getElementById("save-god-mode-options").addEventListener("click", function () {
-        var gameAttributes = {
+    document.getElementById("save-god-mode-options").addEventListener("click", async () => {
+        await league.setGameAttributesComplete({
             disableInjuries: vm.disableInjuries(),
             numGames: parseInt(vm.numGames(), 10),
             quarterLength: parseFloat(vm.quarterLength()),
@@ -63,18 +63,17 @@ function uiFirst(vm) {
             luxuryTax: parseFloat(vm.luxuryTax()),
             minContract: parseInt(vm.minContract() * 1000, 10),
             maxContract: parseInt(vm.maxContract() * 1000, 10)
-        };
-        league.setGameAttributesComplete(gameAttributes).then(function () {
-            league.updateLastDbChange();
-
-            eventLog.add(null, {
-                type: "success",
-                text: 'God Mode options successfully updated.',
-                saveToDb: false
-            });
-
-            ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
         });
+
+        league.updateLastDbChange();
+
+        eventLog.add(null, {
+            type: "success",
+            text: 'God Mode options successfully updated.',
+            saveToDb: false
+        });
+
+        ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
     });
 
     $("#help-injuries").popover({

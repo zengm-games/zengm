@@ -6,7 +6,6 @@ const components = require('./components');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var mapping;
 
 function get(req) {
     var abbrev, season;
@@ -36,7 +35,7 @@ function InitViewModel() {
     this.playoffs = ko.observable();
 }
 
-mapping = {
+const mapping = {
     feats: {
         create: options => options.data
     }

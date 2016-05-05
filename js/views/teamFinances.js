@@ -10,7 +10,6 @@ const components = require('./components');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var mapping;
 
 function disableFinanceSettings(tid) {
     $("#finances-settings input, #finances-settings button").attr("disabled", "disabled");
@@ -100,7 +99,7 @@ function InitViewModel() {
     }, this).extend({throttle: 1});
 }
 
-mapping = {
+const mapping = {
     barData: {
         create: function (options) {
             return ko.observable(options.data);

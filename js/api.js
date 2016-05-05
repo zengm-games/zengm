@@ -8,9 +8,8 @@ const season = require('./core/season');
 const $ = require('jquery');
 
 async function play(amount) {
-    let numDays;
-
     if (['day', 'week', 'month', 'throughPlayoffs', 'untilPreseason'].indexOf(amount) >= 0) {
+        let numDays;
         if (amount === "day") {
             numDays = 1;
         } else if (amount === "week") {
@@ -36,8 +35,8 @@ async function play(amount) {
     } else if (amount === "untilPlayoffs") {
         if (g.phase < g.PHASE.PLAYOFFS) {
             ui.updateStatus("Playing..."); // For quick UI updating, before game.play
-            await season.getDaysLeftSchedule();
-            game.play();
+            const numDays = await season.getDaysLeftSchedule();
+            game.play(numDays);
         }
     } else if (amount === "stop") {
         await league.setGameAttributesComplete({stopGames: true});

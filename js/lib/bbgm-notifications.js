@@ -1,29 +1,22 @@
 // Originally based on https://github.com/Srirangan/notifer.js/
 
-var Notifier, container;
-
-container = document.createElement("div");
+const container = document.createElement("div");
 container.id = "notification-container";
 container.classList.add("notification-container");
 document.body.appendChild(container);
 
-Notifier = {};
+const notify = (message, title, persistent = false, timeOut) => {
+    let timeoutRemaining = timeOut || 5000;
 
-Notifier.notify = function (message, title, persistent, timeOut) {
-    var closeLink, i, notificationElement, notificationTimeout, numToDelete, removeOnFadeOut, text, textElement, timeoutId, timeoutRemaining, timeoutStart;
-
-    persistent = persistent !== undefined ? persistent : false;
-    timeoutRemaining = timeOut || 5000;
-
-    notificationElement = document.createElement("div");
+    let notificationElement = document.createElement("div");
     notificationElement.classList.add("notification");
     notificationElement.classList.add("notification-fadein");
 
-    textElement = document.createElement("div");
+    const textElement = document.createElement("div");
 
-    text = "";
+    let text = "";
     if (title) {
-        text += "<strong>" + title + "</strong><br>";
+        text += `<strong>${title}</strong><br>`;
     }
     if (message) {
         text += message;
@@ -32,9 +25,11 @@ Notifier.notify = function (message, title, persistent, timeOut) {
     notificationElement.appendChild(textElement);
 
     if (!persistent) {
+        let timeoutId, timeoutStart;
+
         // Hide notification after timeout
-        notificationTimeout = function () {
-            timeoutId = window.setTimeout(function () {
+        const notificationTimeout = () => {
+            timeoutId = window.setTimeout(() => {
                 if (container.contains(notificationElement)) {
                     notificationElement.classList.add("notification-delete");
                 }
@@ -44,16 +39,14 @@ Notifier.notify = function (message, title, persistent, timeOut) {
         notificationTimeout();
 
         // When hovering over, don't count towards timeout
-        notificationElement.addEventListener("mouseenter", function () {
+        notificationElement.addEventListener("mouseenter", () => {
             window.clearTimeout(timeoutId);
             timeoutRemaining -= new Date() - timeoutStart;
         });
-        notificationElement.addEventListener("mouseleave", function () {
-            notificationTimeout();
-        });
+        notificationElement.addEventListener("mouseleave", notificationTimeout);
     } else {
         // Add close link to persistent ones
-        closeLink = document.createElement("button");
+        const closeLink = document.createElement("button");
         closeLink.classList.add("notification-close");
         closeLink.innerHTML = "&times;";
         notificationElement.classList.add("notification-persistent");
@@ -78,9 +71,9 @@ Notifier.notify = function (message, title, persistent, timeOut) {
     }*/
 
     // Limit displayed notifications to 5 - all the persistent ones, plus the newest ones
-    numToDelete = container.childNodes.length - 4; // 4 instead of 5 because the check happens before the new notification is shown
+    let numToDelete = container.childNodes.length - 4; // 4 instead of 5 because the check happens before the new notification is shown
     if (numToDelete > 0) {
-        for (i = 0; i <= container.childNodes.length; i++) {
+        for (let i = 0; i <= container.childNodes.length; i++) {
             if (container.childNodes[i].classList.contains("notification-delete")) {
                 // Already being deleted
                 numToDelete -= 1;
@@ -95,19 +88,19 @@ Notifier.notify = function (message, title, persistent, timeOut) {
         }
     }
 
-    removeOnFadeOut = function (event) {
+    const removeOnFadeOut = event => {
         if (event.animationName === "fadeOut") {
             container.removeChild(notificationElement);
             notificationElement = null;
         }
     };
-    notificationElement.addEventListener("webkitAnimationEnd", removeOnFadeOut, false);
-    notificationElement.addEventListener("animationend", removeOnFadeOut, false);
+    notificationElement.addEventListener("webkitAnimationEnd", removeOnFadeOut);
+    notificationElement.addEventListener("animationend", removeOnFadeOut);
 
 
     container.appendChild(notificationElement);
 };
 
 module.exports = {
-    notify: Notifier.notify
+    notify
 };

@@ -250,7 +250,7 @@ module.exports = bbgmView.init({
     id: "newLeague",
     beforeReq: viewHelpers.beforeNonLeague,
     InitViewModel,
-    post: post,
+    post,
     runBefore: [updateNewLeague],
     uiFirst
 });

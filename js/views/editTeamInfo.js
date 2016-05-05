@@ -157,7 +157,7 @@ function uiFirst() {
 
 module.exports = bbgmView.init({
     id: "editTeamInfo",
-    post: post,
+    post,
     runBefore: [updateTeamInfo],
     uiFirst
 });

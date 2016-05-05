@@ -405,7 +405,7 @@ function uiFirst(vm) {
 module.exports = bbgmView.init({
     id: "trade",
     get,
-    post: post,
+    post,
     InitViewModel,
     mapping,
     runBefore: [updateTrade],

@@ -355,7 +355,7 @@ function uiEvery(updateEvents, vm) {
 module.exports = bbgmView.init({
     id: "teamFinances",
     get,
-    post: post,
+    post,
     InitViewModel,
     mapping,
     runBefore: [updateTeamFinances],

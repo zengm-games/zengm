@@ -56,7 +56,7 @@ module.exports = bbgmView.init({
     id: "deleteLeague",
     beforeReq: viewHelpers.beforeNonLeague,
     get,
-    post: post,
+    post,
     runBefore: [updateDeleteLeague],
     uiFirst
 });

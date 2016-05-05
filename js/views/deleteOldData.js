@@ -105,6 +105,6 @@ function uiFirst() {
 module.exports = bbgmView.init({
     id: "deleteOldData",
     get,
-    post: post,
+    post,
     uiFirst
 });

@@ -121,7 +121,7 @@ function uiFirst() {
 
 module.exports = bbgmView.init({
     id: "exportLeague",
-    post: post,
+    post,
     runBefore: [updateExportLeague],
     uiFirst
 });

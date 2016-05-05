@@ -228,7 +228,7 @@ function startLiveGame(inputs, updateEvents, vm) {
 module.exports = bbgmView.init({
     id: "liveGame",
     get,
-    post: post,
+    post,
     InitViewModel,
     runBefore: [updatePlayByPlay],
     runAfter: [startLiveGame],

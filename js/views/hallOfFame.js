@@ -3,10 +3,8 @@ const ui = require('../ui');
 const player = require('../core/player');
 const $ = require('jquery');
 const ko = require('knockout');
-const _ = require('underscore');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
-
 
 function get(req) {
     return {
@@ -24,56 +22,50 @@ const mapping = {
     }
 };
 
-function updatePlayers(inputs, updateEvents) {
+async function updatePlayers(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.BEFORE_DRAFT)) {
-        return g.dbl.players.index('tid').getAll(g.PLAYER.RETIRED).then(function (players) {
-            players = players.filter(function (p) {
-                return p.hof;
-            });
-            return player.withStats(null, players, {statsSeasons: "all"});
-        }).then(function (players) {
-            var i, j;
+        let players = await g.dbl.players.index('tid').getAll(g.PLAYER.RETIRED);
+        players = players.filter(p => p.hof);
+        players = await player.withStats(null, players, {statsSeasons: "all"});
+        players = player.filter(players, {
+            attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
+            ratings: ["ovr", "pos"],
+            stats: ["season", "abbrev", "gp", "min", "trb", "ast", "pts", "per", "ewa"]
+        });
 
-            players = player.filter(players, {
-                attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
-                ratings: ["ovr", "pos"],
-                stats: ["season", "abbrev", "gp", "min", "trb", "ast", "pts", "per", "ewa"]
-            });
-
-            // This stuff isn't in player.filter because it's only used here.
-            for (i = 0; i < players.length; i++) {
-                players[i].peakOvr = 0;
-                for (j = 0; j < players[i].ratings.length; j++) {
-                    if (players[i].ratings[j].ovr > players[i].peakOvr) {
-                        players[i].peakOvr = players[i].ratings[j].ovr;
-                    }
-                }
-
-                players[i].bestStats = {
-                    gp: 0,
-                    min: 0,
-                    per: 0
-                };
-                for (j = 0; j < players[i].stats.length; j++) {
-                    if (players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per > players[i].bestStats.gp * players[i].bestStats.min * players[i].bestStats.per) {
-                        players[i].bestStats = players[i].stats[j];
-                    }
+        // This stuff isn't in player.filter because it's only used here.
+        for (let i = 0; i < players.length; i++) {
+            players[i].peakOvr = 0;
+            for (let j = 0; j < players[i].ratings.length; j++) {
+                if (players[i].ratings[j].ovr > players[i].peakOvr) {
+                    players[i].peakOvr = players[i].ratings[j].ovr;
                 }
             }
 
-            return {
-                players: players
+            players[i].bestStats = {
+                gp: 0,
+                min: 0,
+                per: 0
             };
-        });
+            for (let j = 0; j < players[i].stats.length; j++) {
+                if (players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per > players[i].bestStats.gp * players[i].bestStats.min * players[i].bestStats.per) {
+                    players[i].bestStats = players[i].stats[j];
+                }
+            }
+        }
+
+        return {
+            players
+        };
     }
 }
 
 function uiFirst(vm) {
     ui.title("Hall of Fame");
 
-    ko.computed(function () {
-        ui.datatable($("#hall-of-fame"), 2, _.map(vm.players(), function (p) {
-            var pick;
+    ko.computed(() => {
+        ui.datatable($("#hall-of-fame"), 2, vm.players().map(p => {
+            let pick;
             if (p.draft.round > 0) {
                 pick = p.draft.round + '-' + p.draft.pick;
             } else {

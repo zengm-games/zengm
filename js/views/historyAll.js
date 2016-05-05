@@ -14,112 +14,105 @@ const mapping = {
     }
 };
 
-function updateHistory(inputs, updateEvents) {
+async function updateHistory(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0) {
-        return Promise.all([
+        const [awards, teams] = await Promise.all([
             g.dbl.awards.getAll(),
             team.filter({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"]
             })
-        ]).spread(function (awards, teams) {
-            var championshipsByTid, i, seasons;
+        ]);
 
-            seasons = [];
-            for (i = 0; i < awards.length; i++) {
-                seasons[i] = {
-                    season: awards[i].season,
-                    finalsMvp: awards[i].finalsMvp,
-                    mvp: awards[i].mvp,
-                    dpoy: awards[i].dpoy,
-                    roy: awards[i].roy
-                };
-            }
-
-            teams.forEach(function (t) {
-                var found, i, j;
-
-                // t.seasons has same season entries as the "seasons" array built from awards
-                for (i = 0; i < seasons.length; i++) {
-                    // Find corresponding entries in seasons and t.seasons. Can't assume they are the same because they aren't if some data has been deleted (Improve Performance)
-                    found = false;
-                    for (j = 0; j < t.seasons.length; j++) {
-                        if (t.seasons[j].season === seasons[i].season) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        continue;
-                    }
-
-                    if (t.seasons[j].playoffRoundsWon === 4) {
-                        seasons[i].champ = {
-                            tid: t.tid,
-                            abbrev: t.abbrev,
-                            region: t.region,
-                            name: t.name,
-                            won: t.seasons[j].won,
-                            lost: t.seasons[j].lost
-                        };
-                    } else if (t.seasons[j].playoffRoundsWon === 3) {
-                        seasons[i].runnerUp = {
-                            abbrev: t.abbrev,
-                            region: t.region,
-                            name: t.name,
-                            won: t.seasons[j].won,
-                            lost: t.seasons[j].lost
-                        };
-                    }
-                }
-            });
-
-            // Count up number of championships per team
-            championshipsByTid = [];
-            for (i = 0; i < g.numTeams; i++) {
-                championshipsByTid.push(0);
-            }
-            for (i = 0; i < seasons.length; i++) {
-                if (seasons[i].champ) {
-                    championshipsByTid[seasons[i].champ.tid] += 1;
-                    seasons[i].champ.count = championshipsByTid[seasons[i].champ.tid];
-                    delete seasons[i].champ.tid;
-                }
-            }
-
+        const seasons = awards.map(a => {
             return {
-                seasons: seasons
+                season: a.season,
+                finalsMvp: a.finalsMvp,
+                mvp: a.mvp,
+                dpoy: a.dpoy,
+                roy: a.roy
             };
         });
+
+        teams.forEach(t => {
+            // t.seasons has same season entries as the "seasons" array built from awards
+            for (let i = 0; i < seasons.length; i++) {
+                // Find corresponding entries in seasons and t.seasons. Can't assume they are the same because they aren't if some data has been deleted (Improve Performance)
+                let found = false;
+                let j;
+                for (j = 0; j < t.seasons.length; j++) {
+                    if (t.seasons[j].season === seasons[i].season) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    continue;
+                }
+
+                if (t.seasons[j].playoffRoundsWon === 4) {
+                    seasons[i].champ = {
+                        tid: t.tid,
+                        abbrev: t.abbrev,
+                        region: t.region,
+                        name: t.name,
+                        won: t.seasons[j].won,
+                        lost: t.seasons[j].lost
+                    };
+                } else if (t.seasons[j].playoffRoundsWon === 3) {
+                    seasons[i].runnerUp = {
+                        abbrev: t.abbrev,
+                        region: t.region,
+                        name: t.name,
+                        won: t.seasons[j].won,
+                        lost: t.seasons[j].lost
+                    };
+                }
+            }
+        });
+
+        // Count up number of championships per team
+        const championshipsByTid = [];
+        for (let i = 0; i < g.numTeams; i++) {
+            championshipsByTid.push(0);
+        }
+        for (let i = 0; i < seasons.length; i++) {
+            if (seasons[i].champ) {
+                championshipsByTid[seasons[i].champ.tid] += 1;
+                seasons[i].champ.count = championshipsByTid[seasons[i].champ.tid];
+                delete seasons[i].champ.tid;
+            }
+        }
+
+        return {
+            seasons
+        };
     }
 }
 
 function uiFirst(vm) {
-    var awardName, teamName;
-
     ui.title("League History");
 
-    awardName = function (award, season) {
+    const awardName = (award, season) => {
         if (!award) {
             // For old seasons with no Finals MVP
             return 'N/A';
         }
 
-        return helpers.playerNameLabels(award.pid, award.name) + ' (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[award.tid], season]) + '">' + g.teamAbbrevsCache[award.tid] + '</a>)';
+        return `${helpers.playerNameLabels(award.pid, award.name)} (<a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[award.tid], season])}">${g.teamAbbrevsCache[award.tid]}</a>)`;
     };
-    teamName = function (t, season) {
+    const teamName = (t, season) => {
         if (t) {
-            return '<a href="' + helpers.leagueUrl(["roster", t.abbrev, season]) + '">' + t.region + '</a> (' + t.won + '-' + t.lost + ')';
+            return `<a href="${helpers.leagueUrl(["roster", t.abbrev, season])}">${t.region}</a> (${t.won}-${t.lost})`;
         }
 
         // This happens if there is missing data, such as from Improve Performance
         return 'N/A';
     };
 
-    ko.computed(function () {
-        ui.datatable($("#history-all"), 0, vm.seasons().map(function (s) {
-            var countText, seasonLink;
-
+    ko.computed(() => {
+        ui.datatable($("#history-all"), 0, vm.seasons().map(s => {
+            let countText, seasonLink;
             if (s.champ) {
                 seasonLink = '<a href="' + helpers.leagueUrl(["history", s.season]) + '">' + s.season + '</a>';
                 countText = ' - ' + helpers.ordinal(s.champ.count) + ' title';

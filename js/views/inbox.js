@@ -2,25 +2,23 @@ const g = require('../globals');
 const ui = require('../ui');
 const bbgmView = require('../util/bbgmView');
 
-function updateInbox() {
-    return g.dbl.messages.getAll().then(function (messages) {
-        var anyUnread, i;
+async function updateInbox() {
+    const messages = await g.dbl.messages.getAll();
 
-        messages.reverse();
+    messages.reverse();
 
-        anyUnread = false;
-        for (i = 0; i < messages.length; i++) {
-            messages[i].text = messages[i].text.replace(/<p>/g, "").replace(/<\/p>/g, " "); // Needs to be regex otherwise it's cumbersome to do global replace
-            if (!messages[i].read) {
-                anyUnread = true;
-            }
+    let anyUnread = false;
+    for (let i = 0; i < messages.length; i++) {
+        messages[i].text = messages[i].text.replace(/<p>/g, "").replace(/<\/p>/g, " "); // Needs to be regex otherwise it's cumbersome to do global replace
+        if (!messages[i].read) {
+            anyUnread = true;
         }
+    }
 
-        return {
-            anyUnread: anyUnread,
-            messages: messages
-        };
-    });
+    return {
+        anyUnread,
+        messages
+    };
 }
 
 function uiFirst() {

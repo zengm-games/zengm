@@ -7,7 +7,7 @@ babel
     then manually go over, fix:
       let/const definitions inline
       async/await
-        test, views after hallOfFame, lib (just the linted ones i wrote)
+        test, views after inbox, lib (just the linted ones i wrote)
         any other instances of .then or .catch? function (
   benchmark, for sanity
     ctrl+r

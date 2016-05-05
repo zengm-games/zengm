@@ -2,7 +2,6 @@ const g = require('../globals');
 const ui = require('../ui');
 const league = require('../core/league');
 const team = require('../core/team');
-const _ = require('underscore');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 

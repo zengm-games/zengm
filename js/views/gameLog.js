@@ -1,13 +1,12 @@
 const g = require('../globals');
 const ui = require('../ui');
-const Promise = require('bluebird');
 const $ = require('jquery');
 const ko = require('knockout');
 const components = require('./components');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var listenersAdded = false;
+let listenersAdded = false;
 
 /**
  * Generate a box score.
@@ -16,81 +15,74 @@ var listenersAdded = false;
  * @param {number} gid Integer game ID for the box score (a negative number means no box score).
  * @return {Promise.Object} Resolves to an object containing the box score data (or a blank object).
  */
-function boxScore(gid) {
-    if (gid >= 0) {
-        return g.dbl.games.get(gid).then(function (game) {
-            var i, t;
+async function boxScore(gid) {
+    if (gid < 0) {
+        return {};
+    }
 
-            // If game doesn't exist (bad gid or deleted box scores), show nothing
-            if (!game) {
-                return {};
-            }
+    const game = await g.dbl.games.get(gid);
 
-            for (i = 0; i < game.teams.length; i++) {
-                t = game.teams[i];
+    // If game doesn't exist (bad gid or deleted box scores), show nothing
+    if (!game) {
+        return {};
+    }
 
-                // Team metadata
-                t.abbrev = g.teamAbbrevsCache[t.tid];
-                t.region = g.teamRegionsCache[t.tid];
-                t.name = g.teamNamesCache[t.tid];
+    for (let i = 0; i < game.teams.length; i++) {
+        const t = game.teams[i];
 
-                // four factors
-                t.efg = 100 * (t.fg + (t.tp / 2)) / t.fga;
-                t.tovp = 100 * t.tov / (t.fga + 0.44 * t.fta + t.tov);
-                t.orbp = 100 * t.orb / (t.orb + game.teams[1 - i].drb);
-                t.ftpfga = t.ft / t.fga;
+        // Team metadata
+        t.abbrev = g.teamAbbrevsCache[t.tid];
+        t.region = g.teamRegionsCache[t.tid];
+        t.name = g.teamNamesCache[t.tid];
 
-                // Fix the total minutes calculation, which is usually fucked up for some unknown reason
-                t.min = 240 + 25 * game.overtimes;
+        // four factors
+        t.efg = 100 * (t.fg + (t.tp / 2)) / t.fga;
+        t.tovp = 100 * t.tov / (t.fga + 0.44 * t.fta + t.tov);
+        t.orbp = 100 * t.orb / (t.orb + game.teams[1 - i].drb);
+        t.ftpfga = t.ft / t.fga;
 
-                // Put injured players at the bottom, then sort by GS and roster position
-                t.players.sort(function (a, b) {
-                    // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed at the end, if they didn't play.
-                    return (b.gs * 100000 + b.min * 1000 - b.injury.gamesRemaining) - (a.gs * 100000 + a.min * 1000 - a.injury.gamesRemaining);
-                });
-            }
+        // Fix the total minutes calculation, which is usually fucked up for some unknown reason
+        t.min = 240 + 25 * game.overtimes;
 
-            // Team metadata
-            game.won.region = g.teamRegionsCache[game.won.tid];
-            game.won.name = g.teamNamesCache[game.won.tid];
-            game.won.abbrev = g.teamAbbrevsCache[game.won.tid];
-            game.lost.region = g.teamRegionsCache[game.lost.tid];
-            game.lost.name = g.teamNamesCache[game.lost.tid];
-            game.lost.abbrev = g.teamAbbrevsCache[game.lost.tid];
-
-            if (game.overtimes === 1) {
-                game.overtime = " (OT)";
-            } else if (game.overtimes > 1) {
-                game.overtime = " (" + game.overtimes + "OT)";
-            } else {
-                game.overtime = "";
-            }
-
-            // Quarter/overtime labels
-            game.qtrs = ["Q1", "Q2", "Q3", "Q4"];
-            for (i = 0; i < game.teams[1].ptsQtrs.length - 4; i++) {
-                game.qtrs.push("OT" + (i + 1));
-            }
-            game.qtrs.push("F");
-
-            return game;
+        // Put injured players at the bottom, then sort by GS and roster position
+        t.players.sort((a, b) => {
+            // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed at the end, if they didn't play.
+            return (b.gs * 100000 + b.min * 1000 - b.injury.gamesRemaining) - (a.gs * 100000 + a.min * 1000 - a.injury.gamesRemaining);
         });
     }
 
-    return Promise.resolve({});
+    // Team metadata
+    game.won.region = g.teamRegionsCache[game.won.tid];
+    game.won.name = g.teamNamesCache[game.won.tid];
+    game.won.abbrev = g.teamAbbrevsCache[game.won.tid];
+    game.lost.region = g.teamRegionsCache[game.lost.tid];
+    game.lost.name = g.teamNamesCache[game.lost.tid];
+    game.lost.abbrev = g.teamAbbrevsCache[game.lost.tid];
+
+    if (game.overtimes === 1) {
+        game.overtime = " (OT)";
+    } else if (game.overtimes > 1) {
+        game.overtime = " (" + game.overtimes + "OT)";
+    } else {
+        game.overtime = "";
+    }
+
+    // Quarter/overtime labels
+    game.qtrs = ["Q1", "Q2", "Q3", "Q4"];
+    for (let i = 0; i < game.teams[1].ptsQtrs.length - 4; i++) {
+        game.qtrs.push("OT" + (i + 1));
+    }
+    game.qtrs.push("F");
+
+    return game;
 }
 
 function get(req) {
-    var inputs, out;
-
-    inputs = {};
-
-    out = helpers.validateAbbrev(req.params.abbrev);
-    inputs.abbrev = out[1];
-    inputs.season = helpers.validateSeason(req.params.season);
-    inputs.gid = req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1;
-
-    return inputs;
+    return {
+        abbrev: helpers.validateAbbrev(req.params.abbrev)[1],
+        gid: req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1,
+        season: helpers.validateSeason(req.params.season)
+    };
 }
 
 function InitViewModel() {
@@ -120,9 +112,7 @@ mapping = {
             return new function () {
                 komapping.fromJS(options.data, {
                     games: {
-                        create: function (options) {
-                            return options.data;
-                        }
+                        create: options => options.data;
                     }
                 }, this);
             }();
@@ -131,13 +121,11 @@ mapping = {
 };*/
 
 function updatePrevNextLinks(vm) {
-    var games, i;
-
-    games = vm.gamesList.games();
+    const games = vm.gamesList.games();
     vm.boxScore.prevGid(null);
     vm.boxScore.nextGid(null);
 
-    for (i = 0; i < games.length; i++) {
+    for (let i = 0; i < games.length; i++) {
         if (games[i].gid === vm.boxScore.gid()) {
             if (i > 0) {
                 vm.boxScore.nextGid(games[i - 1].gid);
@@ -166,27 +154,25 @@ function updateTeamSeason(inputs) {
  * @memberOf views.gameLog
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
  */
-function updateBoxScore(inputs, updateEvents, vm) {
+async function updateBoxScore(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.gid !== vm.boxScore.gid()) {
-        return boxScore(inputs.gid).then(function (game) {
-            var vars;
+        const game = await boxScore(inputs.gid);
 
-            vars = {
-                boxScore: game
-            };
+        const vars = {
+            boxScore: game
+        };
 
-            // Either update the box score if we found one, or show placeholder
-            if (!game.hasOwnProperty("teams")) {
-                vars.boxScore.gid = -1;
-            } else {
-                vars.boxScore.gid = inputs.gid;
+        // Either update the box score if we found one, or show placeholder
+        if (!game.hasOwnProperty("teams")) {
+            vars.boxScore.gid = -1;
+        } else {
+            vars.boxScore.gid = inputs.gid;
 
-                // Force scroll to top, which otherwise wouldn't happen because this is an internal link
-                window.scrollTo(window.pageXOffset, 0);
-            }
+            // Force scroll to top, which otherwise wouldn't happen because this is an internal link
+            window.scrollTo(window.pageXOffset, 0);
+        }
 
-            return vars;
-        });
+        return vars;
     }
 }
 
@@ -200,52 +186,49 @@ function updateBoxScore(inputs, updateEvents, vm) {
  * @param {number} inputs.season Season for the list of games.
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */
-function updateGamesList(inputs, updateEvents, vm) {
+async function updateGamesList(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.abbrev !== vm.gamesList.abbrev() || inputs.season !== vm.gamesList.season()) {
         // Load all games in list
         vm.gamesList.loading(true);
         vm.gamesList.games([]);
-        return helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games()).then(function (games) {
-            vm.gamesList.games(games);
-            vm.gamesList.abbrev(inputs.abbrev);
-            vm.gamesList.season(inputs.season);
-            vm.gamesList.loading(false);
+        const games = await helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games());
+        vm.gamesList.games(games);
+        vm.gamesList.abbrev(inputs.abbrev);
+        vm.gamesList.season(inputs.season);
+        vm.gamesList.loading(false);
 
-            // Update prev/next links, in case box score loaded before games list
-            updatePrevNextLinks(vm);
+        // Update prev/next links, in case box score loaded before games list
+        updatePrevNextLinks(vm);
 
 /* This doesn't work for some reason.
-            return {
-                gamesList: {
-                    games: games,
-                    abbrev: inputs.abbrev,
-                    season: inputs.season,
-                    loading: false
-                }
-            };*/
-        });
+        return {
+            gamesList: {
+                games: games,
+                abbrev: inputs.abbrev,
+                season: inputs.season,
+                loading: false
+            }
+        };*/
     }
     if (updateEvents.indexOf("gameSim") >= 0 && inputs.season === g.season) {
         // Partial update of only new games
-        return helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games()).then(function (games) {
-            var i;
-            for (i = games.length - 1; i >= 0; i--) {
-                vm.gamesList.games.unshift(games[i]);
-            }
+        const games = await helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games());
+        for (let i = games.length - 1; i >= 0; i--) {
+            vm.gamesList.games.unshift(games[i]);
+        }
 
-            // Update prev/next links, in case box score loaded before games list
-            updatePrevNextLinks(vm);
-        });
+        // Update prev/next links, in case box score loaded before games list
+        updatePrevNextLinks(vm);
     }
 }
 
 function uiFirst(vm) {
-    ko.computed(function () {
+    ko.computed(() => {
         ui.title("Game Log - " + vm.season());
     }).extend({throttle: 1});
 
     // Update prev/next links whenever box score gid is changed
-    ko.computed(function () {
+    ko.computed(() => {
         vm.boxScore.gid();
         updatePrevNextLinks(vm);
     }).extend({throttle: 1});
@@ -253,8 +236,8 @@ function uiFirst(vm) {
     // Would be better if I had an "unmount" function...
     if (!listenersAdded) {
         listenersAdded = true;
-        document.addEventListener("keydown", function (e) {
-            var el;
+        document.addEventListener("keydown", e => {
+            let el;
             if (e.keyCode === 37) {
                 el = document.getElementById('game-log-prev');
             } else if (e.keyCode === 39) {
@@ -274,10 +257,8 @@ function uiEvery(updateEvents, vm) {
     // UGLY HACK for two reasons:
     // 1. Box score might be hidden if none is loaded, so in that case there is no table to make clickable
     // 2. When box scores are shown, it might happen after uiEvery is called because vm.showBoxScore is throttled
-    window.setTimeout(function () {
-        var tableEls;
-
-        tableEls = $(".box-score-team");
+    window.setTimeout(() => {
+        const tableEls = $(".box-score-team");
         if (tableEls.length > 0 && !tableEls[0].classList.contains("table-hover")) {
             ui.tableClickableRows(tableEls);
         }

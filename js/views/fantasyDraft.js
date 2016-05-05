@@ -18,9 +18,7 @@ function get() {
 }
 
 function post(req) {
-    var position;
-
-    position = req.params.position === "Random" ? "random" : parseInt(req.params.position, 10);
+    const position = req.params.position === "Random" ? "random" : parseInt(req.params.position, 10);
 
     document.getElementById("start-fantasy-draft").disabled = true;
 

@@ -6,11 +6,8 @@ const team = require('../core/team');
 const Promise = require('bluebird');
 const $ = require('jquery');
 const ko = require('knockout');
-const _ = require('underscore');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
-
-var mapping;
 
 function disableButtons() {
     $("#free-agents button").attr("disabled", "disabled");
@@ -36,51 +33,49 @@ function get() {
     }
 }
 
-mapping = {
+const mapping = {
     players: {
         create: options => options.data
     }
 };
 
-function updateFreeAgents() {
-    return Promise.all([
+async function updateFreeAgents() {
+    let [payroll, userPlayers, players] = await Promise.all([
         team.getPayroll(null, g.userTid).get(0),
         g.dbl.players.index('tid').getAll(g.userTid),
-        g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(function (players) {
+        g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(players => {
             return player.withStats(null, players, {
                 statsSeasons: [g.season, g.season - 1]
             });
         })
-    ]).spread(function (payroll, userPlayers, players) {
-        var capSpace, i;
+    ]);
 
-        capSpace = (g.salaryCap - payroll) / 1000;
-        if (capSpace < 0) {
-            capSpace = 0;
-        }
+    let capSpace = (g.salaryCap - payroll) / 1000;
+    if (capSpace < 0) {
+        capSpace = 0;
+    }
 
-        players = player.filter(players, {
-            attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch"],
-            ratings: ["ovr", "pot", "skills", "pos"],
-            stats: ["min", "pts", "trb", "ast", "per"],
-            season: g.season,
-            showNoStats: true,
-            showRookies: true,
-            fuzz: true,
-            oldStats: true
-        });
-
-        for (i = 0; i < players.length; i++) {
-            players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
-            players[i].mood = player.moodColorText(players[i]);
-        }
-
-        return {
-            capSpace: capSpace,
-            numRosterSpots: 15 - userPlayers.length,
-            players: players
-        };
+    players = player.filter(players, {
+        attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch"],
+        ratings: ["ovr", "pot", "skills", "pos"],
+        stats: ["min", "pts", "trb", "ast", "per"],
+        season: g.season,
+        showNoStats: true,
+        showRookies: true,
+        fuzz: true,
+        oldStats: true
     });
+
+    for (let i = 0; i < players.length; i++) {
+        players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
+        players[i].mood = player.moodColorText(players[i]);
+    }
+
+    return {
+        capSpace,
+        numRosterSpots: 15 - userPlayers.length,
+        players
+    };
 }
 
 function uiFirst(vm) {
@@ -92,9 +87,9 @@ function uiFirst(vm) {
         content: "<p>\"Cap space\" is the difference between your current payroll and the salary cap. You can sign a free agent to any valid contract as long as you don't go over the cap.</p>You can only exceed the salary cap to sign free agents to minimum contracts ($" + g.minContract + "k/year)."
     });
 
-    ko.computed(function () {
-        ui.datatable($("#free-agents"), 4, _.map(vm.players(), function (p) {
-            var negotiateButton;
+    ko.computed(() => {
+        ui.datatable($("#free-agents"), 4, vm.players().map(p => {
+            let negotiateButton;
             if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
                 negotiateButton = "Refuses!";
             } else {
@@ -108,17 +103,13 @@ function uiFirst(vm) {
     ui.tableClickableRows($("#free-agents"));
 
     // Form enabling/disabling
-    $("#free-agents").on("gameSimulationStart", function () {
-        disableButtons();
-    });
-    $("#free-agents").on("gameSimulationStop", function () {
-        enableButtons();
-    });
+    $("#free-agents").on("gameSimulationStart", disableButtons);
+    $("#free-agents").on("gameSimulationStop", enableButtons);
 }
 
 function uiEvery() {
     // Wait for datatable
-    setTimeout(function () {
+    setTimeout(() => {
         if (g.gamesInProgress) {
             disableButtons();
         } else {

@@ -6,16 +6,14 @@ const bbgmView = require('../util/bbgmView');
 const viewHelpers = require('../util/viewHelpers');
 
 function uiFirst() {
-    var $login, $register, ajaxErrorMsg;
-
     ui.title("Login or Register");
 
-    ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
+    const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
-    $login = $("#login");
-    $register = $("#register");
+    const $login = $("#login");
+    const $register = $("#register");
 
-    $login.on("submit", function (event) {
+    $login.on("submit", event => {
         event.preventDefault();
 
         // Reset error display
@@ -29,7 +27,7 @@ function uiFirst() {
             xhrFields: {
                 withCredentials: true
             },
-            success: function (data) {
+            success: async data => {
                 if (data.success) {
                     g.vm.topMenu.username(data.username);
                     g.vm.topMenu.email(data.email);
@@ -37,26 +35,22 @@ function uiFirst() {
                     g.vm.topMenu.goldCancelled(data.gold_cancelled);
 
                     // Check for participation achievement, if this is the first time logging in to this sport
-                    account.getAchievements().then(function (achievements) {
-                        if (achievements[0].count === 0) {
-                            account.addAchievements(["participation"]).then(function () {
-                                ui.realtimeUpdate(["account"], "/account");
-                            });
-                        } else {
-                            ui.realtimeUpdate(["account"], "/account");
-                        }
-                    });
+                    const achievements = await account.getAchievements();
+                    if (achievements[0].count === 0) {
+                        await account.addAchievements(["participation"]);
+                    }
+                    ui.realtimeUpdate(["account"], "/account");
                 } else {
                     document.getElementById("login-error").innerHTML = "Invalid username or password.";
                 }
             },
-            error: function () {
+            error: () => {
                 document.getElementById("login-error").innerHTML = ajaxErrorMsg;
             }
         });
     });
 
-    $register.on("submit", function (event) {
+    $register.on("submit", event => {
         event.preventDefault();
 
         // Reset error display
@@ -78,17 +72,14 @@ function uiFirst() {
             xhrFields: {
                 withCredentials: true
             },
-            success: function (data) {
-                var error;
-
+            success: async data => {
                 if (data.success) {
                     g.vm.topMenu.username(data.username);
 
-                    account.addAchievements(["participation"]).then(function () {
-                        ui.realtimeUpdate([], "/account");
-                    });
+                    await account.addAchievements(["participation"]);
+                    ui.realtimeUpdate([], "/account");
                 } else {
-                    for (error in data.errors) {
+                    for (let error in data.errors) {
                         if (data.errors.hasOwnProperty(error)) {
                             if (error === "username") {
                                 document.getElementById("register-username").parentNode.classList.add("has-error");
@@ -111,7 +102,7 @@ function uiFirst() {
                     }
                 }
             },
-            error: function () {
+            error: () => {
                 document.getElementById("register-error").innerHTML = ajaxErrorMsg;
             }
         });

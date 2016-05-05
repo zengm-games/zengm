@@ -32,28 +32,26 @@ function InitViewModel() {
     }, this).extend({throttle: 1});
 }
 
-function updateGamesList(inputs, updateEvents, vm) {
+async function updateGamesList(inputs, updateEvents, vm) {
     if (!vm.inProgress()) {
-        return season.getSchedule({oneDay: true}).then(function (games) {
-            var i;
+        const games = await season.getSchedule({oneDay: true});
 
-            for (i = 0; i < games.length; i++) {
-                if (games[i].awayTid === g.userTid || games[i].homeTid === g.userTid) {
-                    games[i].highlight = true;
-                } else {
-                    games[i].highlight = false;
-                }
-                games[i].awayRegion = g.teamRegionsCache[games[i].awayTid];
-                games[i].awayName = g.teamNamesCache[games[i].awayTid];
-                games[i].homeRegion = g.teamRegionsCache[games[i].homeTid];
-                games[i].homeName = g.teamNamesCache[games[i].homeTid];
+        for (let game of games) {
+            if (game.awayTid === g.userTid || game.homeTid === g.userTid) {
+                game.highlight = true;
+            } else {
+                game.highlight = false;
             }
+            game.awayRegion = g.teamRegionsCache[game.awayTid];
+            game.awayName = g.teamNamesCache[game.awayTid];
+            game.homeRegion = g.teamRegionsCache[game.homeTid];
+            game.homeName = g.teamNamesCache[game.homeTid];
+        }
 
-            return {
-                games: games,
-                boxScore: {gid: -1}
-            };
-        });
+        return {
+            games,
+            boxScore: {gid: -1}
+        };
     }
 }
 
@@ -61,20 +59,20 @@ function uiFirst(vm) {
     ui.title("Live Game Simulation");
 
     // The rest is handled in post(). This is needed to get at vm.
-    $("#live-games-list").on("click", "button", function () {
+    $("#live-games-list").on("click", "button", () => {
         vm.inProgress(true);
     });
 
-    $("#live-games-list").on("gameSimulationStart", function () {
+    $("#live-games-list").on("gameSimulationStart", () => {
         if (!vm.inProgress()) {
             vm.disableButtons(true);
             disableButtons();
         }
     });
-    $("#live-games-list").on("gameSimulationStop", function () {
+    $("#live-games-list").on("gameSimulationStop", () => {
         if (!vm.inProgress()) {
             // HACK: if this enables too early, it's bad because two identical days will be simulated
-            window.setTimeout(function () {
+            window.setTimeout(() => {
                 vm.disableButtons(false);
                 enableButtons();
             }, 1000);

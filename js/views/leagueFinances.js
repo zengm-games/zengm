@@ -3,11 +3,9 @@ const ui = require('../ui');
 const team = require('../core/team');
 const $ = require('jquery');
 const ko = require('knockout');
-const _ = require('underscore');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 const components = require('./components');
-
 
 function get(req) {
     return {
@@ -25,36 +23,35 @@ const mapping = {
     }
 };
 
-function updateLeagueFinances(inputs, updateEvents, vm) {
+async function updateLeagueFinances(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || inputs.season === g.season) {
-        return team.filter({
+        const teams = await team.filter({
             attrs: ["tid", "abbrev", "region", "name"],
             seasonAttrs: ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"],
             season: inputs.season
-        }).then(function (teams) {
-            return {
-                season: inputs.season,
-                salaryCap: g.salaryCap / 1000,
-                minPayroll: g.minPayroll / 1000,
-                luxuryPayroll: g.luxuryPayroll / 1000,
-                luxuryTax: g.luxuryTax,
-                teams: teams
-            };
         });
+
+        return {
+            season: inputs.season,
+            salaryCap: g.salaryCap / 1000,
+            minPayroll: g.minPayroll / 1000,
+            luxuryPayroll: g.luxuryPayroll / 1000,
+            luxuryTax: g.luxuryTax,
+            teams
+        };
     }
 }
 
 function uiFirst(vm) {
-    ko.computed(function () {
+    ko.computed(() => {
         ui.title("League Finances - " + vm.season());
     }).extend({throttle: 1});
 
-    ko.computed(function () {
+    ko.computed(() => {
         var season;
         season = vm.season();
-        ui.datatableSinglePage($("#league-finances"), 5, _.map(vm.teams(), function (t) {
-            var payroll;
-            payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
+        ui.datatableSinglePage($("#league-finances"), 5, vm.teams().map(t => {
+            const payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
             return ['<a href="' + helpers.leagueUrl(["team_finances", t.abbrev]) + '">' + t.region + ' ' + t.name + '</a>', helpers.numberWithCommas(helpers.round(t.att)), helpers.formatCurrency(t.revenue, "M"), helpers.formatCurrency(t.profit, "M"), helpers.formatCurrency(t.cash, "M"), helpers.formatCurrency(payroll, "M")];
         }));
     }).extend({throttle: 1});

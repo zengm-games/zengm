@@ -5,15 +5,12 @@ const bbgmView = require('../util/bbgmView');
 const viewHelpers = require('../util/viewHelpers');
 
 function uiFirst() {
-    var $lostpw, ajaxErrorMsg;
-
     ui.title("Lost Password");
 
-    ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
+    const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
-    $lostpw = $("#lostpw");
-
-    $lostpw.on("submit", function (event) {
+    const $lostpw = $("#lostpw");
+    $lostpw.on("submit", event => {
         event.preventDefault();
 
         // Reset error display
@@ -28,14 +25,14 @@ function uiFirst() {
             xhrFields: {
                 withCredentials: true
             },
-            success: function (data) {
+            success: data => {
                 if (data.success) {
                     document.getElementById("lostpw-success").innerHTML = "Check your email for further instructions.";
                 } else {
                     document.getElementById("lostpw-error").innerHTML = "Account not found.";
                 }
             },
-            error: function () {
+            error: () => {
                 document.getElementById("lostpw-error").innerHTML = ajaxErrorMsg;
             }
         });

@@ -4,42 +4,38 @@ const league = require('../core/league');
 const ko = require('knockout');
 const bbgmView = require('../util/bbgmView');
 
-function updateMultiTeamMode(inputs, updateEvents) {
+async function updateMultiTeamMode(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
         // Make sure it's current
-        return league.loadGameAttribute(null, "godMode").then(function () {
-            var i, teams;
+        await league.loadGameAttribute(null, "godMode");
 
-            teams = [];
-            for (i = 0; i < g.numTeams; i++) {
-                teams.push({
-                    tid: i,
-                    name: g.teamRegionsCache[i] + " " + g.teamNamesCache[i]
-                });
-            }
+        const teams = [];
+        for (let i = 0; i < g.numTeams; i++) {
+            teams.push({
+                tid: i,
+                name: g.teamRegionsCache[i] + " " + g.teamNamesCache[i]
+            });
+        }
 
-            return {
-                userTids: g.userTids,
-                teams: teams
-            };
-        });
+        return {
+            userTids: g.userTids,
+            teams
+        };
     }
 }
 
 function uiFirst(vm) {
     ui.title("Multi Team Mode");
 
-    ko.computed(function () {
-        var gameAttributes, newUserTids;
-
-        newUserTids = vm.userTids();
+    ko.computed(() => {
+        const newUserTids = vm.userTids();
 
         if (newUserTids.length < 1) {
             return;
         }
 
         if (JSON.stringify(newUserTids) !== JSON.stringify(g.userTids)) {
-            gameAttributes = {userTids: newUserTids};
+            const gameAttributes = {userTids: newUserTids};
             if (newUserTids.indexOf(g.userTid) < 0) {
                 gameAttributes.userTid = newUserTids[0];
             }

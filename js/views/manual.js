@@ -3,12 +3,10 @@ const bbgmView = require('../util/bbgmView');
 const viewHelpers = require('../util/viewHelpers');
 
 function templateString(page) {
-    var i, output, upperNext;
+    let output = "manual";
+    let upperNext = true;
 
-    output = "manual";
-    upperNext = true;
-
-    for (i = 0; i < page.length; i++) {
+    for (let i = 0; i < page.length; i++) {
         if (upperNext) {
             output += page.charAt(i).toUpperCase();
             upperNext = false;

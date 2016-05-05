@@ -34,7 +34,7 @@ async function play(amount) {
         }
     } else if (amount === "untilPlayoffs") {
         if (g.phase < g.PHASE.PLAYOFFS) {
-            ui.updateStatus("Playing..."); // For quick UI updating, before game.play
+            ui.updateStatus("Playing..."); // For quick UI updating, before await
             const numDays = await season.getDaysLeftSchedule();
             game.play(numDays);
         }

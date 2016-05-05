@@ -10,15 +10,14 @@ function get(req) {
     };
 }
 
-function updateMessage(inputs, updateEvents, vm) {
-    var message, readThisPageview;
-
+async function updateMessage(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.message.mid() !== inputs.mid) {
-        return g.dbl.tx("messages", "readwrite", function (tx) {
+        let message, readThisPageview;
+        await g.dbl.tx("messages", "readwrite", async tx => {
             readThisPageview = false;
 
             // If mid is null, this will open the *unread* message with the highest mid
-            return tx.messages.iterate(inputs.mid, 'prev', function (messageLocal, shortCircuit) {
+            await tx.messages.iterate(inputs.mid, 'prev', (messageLocal, shortCircuit) => {
                 message = messageLocal;
 
                 if (!message.read) {
@@ -30,21 +29,21 @@ function updateMessage(inputs, updateEvents, vm) {
                     return message;
                 }
             });
-        }).then(function () {
-            league.updateLastDbChange();
-
-            if (readThisPageview) {
-                if (g.gameOver) {
-                    ui.updateStatus("You're fired!");
-                }
-
-                return ui.updatePlayMenu(null);
-            }
-        }).then(function () {
-            return {
-                message: message
-            };
         });
+
+        league.updateLastDbChange();
+
+        if (readThisPageview) {
+            if (g.gameOver) {
+                ui.updateStatus("You're fired!");
+            }
+
+            await ui.updatePlayMenu(null);
+        }
+
+        return {
+            message
+        };
     }
 }
 

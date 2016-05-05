@@ -16,125 +16,115 @@ function InitViewModel() {
     this.upcoming = ko.observableArray([]);
 }
 
-function updateInbox(inputs, updateEvents) {
+async function updateInbox(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
-        return g.dbl.messages.getAll().then(function (messages) {
-            var i;
+        let messages = await g.dbl.messages.getAll();
 
-            messages.reverse();
+        messages.reverse();
 
-            for (i = 0; i < messages.length; i++) {
-                delete messages[i].text;
-            }
-            messages = messages.slice(0, 2);
+        for (let i = 0; i < messages.length; i++) {
+            delete messages[i].text;
+        }
+        messages = messages.slice(0, 2);
 
-            return {
-                messages: messages
-            };
-        });
+        return {
+            messages
+        };
     }
 }
 
-function updateTeam(inputs, updateEvents) {
+async function updateTeam(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-        return Promise.all([
+        const [t, latestSeason] = await Promise.all([
             g.dbl.teams.get(g.userTid),
             g.dbl.teamSeasons.index("season, tid").get([g.season, g.userTid])
-        ]).spread(function (t, latestSeason) {
-            return {
-                region: t.region,
-                name: t.name,
-                abbrev: t.abbrev,
-                won: latestSeason.won,
-                lost: latestSeason.lost,
-                cash: latestSeason.cash / 1000,  // [millions of dollars]
-                salaryCap: g.salaryCap / 1000,  // [millions of dollars]
-                season: g.season,
-                playoffRoundsWon: latestSeason.playoffRoundsWon
-            };
-        });
+        ]);
+
+        return {
+            region: t.region,
+            name: t.name,
+            abbrev: t.abbrev,
+            won: latestSeason.won,
+            lost: latestSeason.lost,
+            cash: latestSeason.cash / 1000, // [millions of dollars]
+            salaryCap: g.salaryCap / 1000, // [millions of dollars]
+            season: g.season,
+            playoffRoundsWon: latestSeason.playoffRoundsWon
+        };
     }
 }
 
-function updatePayroll(inputs, updateEvents) {
+async function updatePayroll(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
-        return team.getPayroll(null, g.userTid).get(0).then(function (payroll) {
-            return {
-                payroll: payroll / 1000 // [millions of dollars]
-            };
-        });
+        const payroll = await team.getPayroll(null, g.userTid).get(0);
+        return {
+            payroll: payroll / 1000 // [millions of dollars]
+        };
     }
 }
 
 
-function updateTeams(inputs, updateEvents) {
-    var stats, vars;
-
+async function updateTeams(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-        vars = {};
-        stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
+        const vars = {};
+        const stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
 
-        return team.filter({
+        const teams = await team.filter({
             attrs: ["tid", "cid"],
             seasonAttrs: ["won", "lost", "winp", "att", "revenue", "profit"],
             stats: stats,
             season: g.season,
             sortBy: ["winp", "-lost", "won"]
-        }).then(function (teams) {
-            var cid, i, j;
-
-            cid = _.find(teams, function (t) { return t.tid === g.userTid; }).cid;
-
-            vars.rank = 1;
-            for (i = 0; i < teams.length; i++) {
-                if (teams[i].cid === cid) {
-                    if (teams[i].tid === g.userTid) {
-                        vars.pts = teams[i].pts;
-                        vars.oppPts = teams[i].oppPts;
-                        vars.trb = teams[i].trb;
-                        vars.ast = teams[i].ast;
-
-                        vars.att = teams[i].att;
-                        vars.revenue = teams[i].revenue;
-                        vars.profit = teams[i].profit;
-                        break;
-                    } else {
-                        vars.rank += 1;
-                    }
-                }
-            }
-
-            for (i = 0; i < stats.length; i++) {
-                teams.sort(function (a, b) { return b[stats[i]] - a[stats[i]]; });
-                for (j = 0; j < teams.length; j++) {
-                    if (teams[j].tid === g.userTid) {
-                        vars[stats[i] + "Rank"] = j + 1;
-                        break;
-                    }
-                }
-            }
-            vars.oppPtsRank = 31 - vars.oppPtsRank;
-
-            return vars;
         });
+
+        const cid = _.find(teams, t => t.tid === g.userTid).cid;
+
+        vars.rank = 1;
+        for (let i = 0; i < teams.length; i++) {
+            if (teams[i].cid === cid) {
+                if (teams[i].tid === g.userTid) {
+                    vars.pts = teams[i].pts;
+                    vars.oppPts = teams[i].oppPts;
+                    vars.trb = teams[i].trb;
+                    vars.ast = teams[i].ast;
+
+                    vars.att = teams[i].att;
+                    vars.revenue = teams[i].revenue;
+                    vars.profit = teams[i].profit;
+                    break;
+                } else {
+                    vars.rank += 1;
+                }
+            }
+        }
+
+        for (let i = 0; i < stats.length; i++) {
+            teams.sort((a, b) => b[stats[i]] - a[stats[i]]);
+            for (let j = 0; j < teams.length; j++) {
+                if (teams[j].tid === g.userTid) {
+                    vars[stats[i] + "Rank"] = j + 1;
+                    break;
+                }
+            }
+        }
+        vars.oppPtsRank = 31 - vars.oppPtsRank;
+
+        return vars;
     }
 }
 
-function updateGames(inputs, updateEvents, vm) {
-    var completed, numShowCompleted;
-
+async function updateGames(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-        numShowCompleted = 4;
-        completed = [];
+        const numShowCompleted = 4;
+        const completed = [];
 
         // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
-        return g.dbl.games.index('season').iterate(g.season, "prev", function (game, shortCircuit) {
-            var i, overtime;
-
+        await g.dbl.games.index('season').iterate(g.season, "prev", (game, shortCircuit) => {
             if (completed.length >= numShowCompleted) {
                 return shortCircuit();
             }
 
+            let overtime;
             if (game.overtimes === 1) {
                 overtime = " (OT)";
             } else if (game.overtimes > 1) {
@@ -150,7 +140,7 @@ function updateGames(inputs, updateEvents, vm) {
                     overtime: overtime
                 });
 
-                i = completed.length - 1;
+                let i = completed.length - 1;
                 if (game.teams[0].tid === g.userTid) {
                     completed[i].home = true;
                     completed[i].pts = game.teams[0].pts;
@@ -169,196 +159,186 @@ function updateGames(inputs, updateEvents, vm) {
 
                 completed[i] = helpers.formatCompletedGame(completed[i]);
             }
-        }).then(function () {
-            vm.completed(completed);
         });
+
+        vm.completed(completed);
     }
 }
 
-function updateSchedule(inputs, updateEvents, vm) {
+async function updateSchedule(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-        return season.getSchedule().then(function (schedule_) {
-            var game, games, i, numShowUpcoming, row, team0, team1;
+        const schedule = await season.getSchedule();
+        const games = [];
+        const numShowUpcoming = 3;
+        for (let i = 0; i < schedule.length; i++) {
+            const game = schedule[i];
+            if (g.userTid === game.homeTid || g.userTid === game.awayTid) {
+                const team0 = {tid: game.homeTid, abbrev: g.teamAbbrevsCache[game.homeTid], region: g.teamRegionsCache[game.homeTid], name: g.teamNamesCache[game.homeTid]};
+                const team1 = {tid: game.awayTid, abbrev: g.teamAbbrevsCache[game.awayTid], region: g.teamRegionsCache[game.awayTid], name: g.teamNamesCache[game.awayTid]};
 
-            games = [];
-            numShowUpcoming = 3;
-            for (i = 0; i < schedule_.length; i++) {
-                game = schedule_[i];
-                if (g.userTid === game.homeTid || g.userTid === game.awayTid) {
-                    team0 = {tid: game.homeTid, abbrev: g.teamAbbrevsCache[game.homeTid], region: g.teamRegionsCache[game.homeTid], name: g.teamNamesCache[game.homeTid]};
-                    team1 = {tid: game.awayTid, abbrev: g.teamAbbrevsCache[game.awayTid], region: g.teamRegionsCache[game.awayTid], name: g.teamNamesCache[game.awayTid]};
-                    if (g.userTid === game.homeTid) {
-                        row = {teams: [team1, team0], vsat: "at"};
-                    } else {
-                        row = {teams: [team1, team0], vsat: "at"};
-                    }
-                    games.push(row);
+                let row;
+                if (g.userTid === game.homeTid) {
+                    row = {teams: [team1, team0], vsat: "at"};
+                } else {
+                    row = {teams: [team1, team0], vsat: "at"};
                 }
-
-                if (games.length >= numShowUpcoming) {
-                    break;
-                }
+                games.push(row);
             }
-            vm.upcoming(games);
-        });
+
+            if (games.length >= numShowUpcoming) {
+                break;
+            }
+        }
+        vm.upcoming(games);
     }
 }
 
 function updatePlayers(inputs, updateEvents) {
-    var vars;
-
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-        vars = {};
+        return g.dbl.tx(["players", "playerStats"], async tx => {
+            const vars = {};
 
-        return g.dbl.tx(["players", "playerStats"], function (tx) {
-            return tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED)).then(function (players) {
-                return player.withStats(tx, players, {statsSeasons: [g.season]});
-            }).then(function (players) {
-                var i, stats, userPlayers;
+            let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED));
+            players = await player.withStats(tx, players, {statsSeasons: [g.season]});
+            players = player.filter(players, {
+                attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch"],
+                ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
+                stats: ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"],
+                season: g.season,
+                showNoStats: true,
+                showRookies: true,
+                fuzz: true
+            });
 
-                players = player.filter(players, {
-                    attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch"],
-                    ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
-                    stats: ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"],
-                    season: g.season,
-                    showNoStats: true,
-                    showRookies: true,
-                    fuzz: true
-                });
+            // League leaders
+            vars.leagueLeaders = {};
+            const stats = ["pts", "trb", "ast"]; // Categories for leaders
+            for (let stat of stats) {
+                players.sort((a, b) => b.stats[stat] - a.stats[stat]);
+                vars.leagueLeaders[stat] = {
+                    pid: players[0].pid,
+                    name: players[0].name,
+                    abbrev: players[0].abbrev,
+                    stat: players[0].stats[stat]
+                };
+            }
 
-                // League leaders
-                vars.leagueLeaders = {};
-                stats = ["pts", "trb", "ast"]; // Categories for leaders
-                for (i = 0; i < stats.length; i++) {
-                    players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
-                    vars.leagueLeaders[stats[i]] = {
-                        pid: players[0].pid,
-                        name: players[0].name,
-                        abbrev: players[0].abbrev,
-                        stat: players[0].stats[stats[i]]
+            // Team leaders
+            const userPlayers = players.filter(p => p.tid === g.userTid);
+            vars.teamLeaders = {};
+            for (let stat of stats) {
+                if (userPlayers.length > 0) {
+                    userPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
+                    vars.teamLeaders[stat] = {
+                        pid: userPlayers[0].pid,
+                        name: userPlayers[0].name,
+                        stat: userPlayers[0].stats[stat]
+                    };
+                } else {
+                    vars.teamLeaders[stat] = {
+                        pid: 0,
+                        name: "",
+                        stat: 0
                     };
                 }
-
-                // Team leaders
-                userPlayers = _.filter(players, function (p) { return p.tid === g.userTid; });
-                vars.teamLeaders = {};
-                for (i = 0; i < stats.length; i++) {
-                    if (userPlayers.length > 0) {
-                        userPlayers.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
-                        vars.teamLeaders[stats[i]] = {
-                            pid: userPlayers[0].pid,
-                            name: userPlayers[0].name,
-                            stat: userPlayers[0].stats[stats[i]]
-                        };
-                    } else {
-                        vars.teamLeaders[stats[i]] = {
-                            pid: 0,
-                            name: "",
-                            stat: 0
-                        };
-                    }
-                }
-
-                // Roster
-                // Find starting 5
-                vars.starters = userPlayers.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; }).slice(0, 5);
-
-                return vars;
-            });
-        });
-    }
-}
-
-function updatePlayoffs(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
-        return g.dbl.playoffSeries.get(g.season).then(function (playoffSeries) {
-            var found, i, rnd, series, vars;
-
-            vars = {
-                showPlayoffSeries: false
-            };
-
-            if (playoffSeries !== undefined) {
-                series = playoffSeries.series;
-                found = false;
-
-                // Find the latest playoff series with the user's team in it
-                for (rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
-                    for (i = 0; i < series[rnd].length; i++) {
-                        if (series[rnd][i].home.tid === g.userTid || series[rnd][i].away.tid === g.userTid) {
-                            vars.series = [[series[rnd][i]]];
-                            found = true;
-                            vars.showPlayoffSeries = true;
-                            if (rnd === 0) {
-                                vars.seriesTitle = "First Round";
-                            } else if (rnd === 1) {
-                                vars.seriesTitle = "Second Round";
-                            } else if (rnd === 2) {
-                                vars.seriesTitle = "Conference Finals";
-                            } else if (rnd === 3) {
-                                vars.seriesTitle = "League Finals";
-                            }
-
-                            // Update here rather than by returning vars because returning vars doesn't guarantee order of updates, so it can cause an error when showPlayoffSeries is true before the other stuff is set (try it with the same league in two tabs). But otherwise (for normal page loads), this isn't sufficient and we need to return vars. I don't understand, but it works.
-                            if (updateEvents.indexOf("dbChange") >= 0) {
-                                komapping.fromJS({series: vars.series, seriesTitle: vars.seriesTitle}, vm);
-                            }
-                            break;
-                        }
-                    }
-                    if (found) {
-                        break;
-                    }
-                }
             }
+
+            // Roster
+            // Find starting 5
+            vars.starters = userPlayers.sort((a, b) => a.rosterOrder - b.rosterOrder).slice(0, 5);
 
             return vars;
         });
     }
 }
 
-function updateStandings(inputs, updateEvents) {
+async function updatePlayoffs(inputs, updateEvents, vm) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
+        const playoffSeries = await g.dbl.playoffSeries.get(g.season);
+
+        const vars = {
+            showPlayoffSeries: false
+        };
+
+        if (playoffSeries !== undefined) {
+            const series = playoffSeries.series;
+            let found = false;
+
+            // Find the latest playoff series with the user's team in it
+            for (let rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
+                for (let i = 0; i < series[rnd].length; i++) {
+                    if (series[rnd][i].home.tid === g.userTid || series[rnd][i].away.tid === g.userTid) {
+                        vars.series = [[series[rnd][i]]];
+                        found = true;
+                        vars.showPlayoffSeries = true;
+                        if (rnd === 0) {
+                            vars.seriesTitle = "First Round";
+                        } else if (rnd === 1) {
+                            vars.seriesTitle = "Second Round";
+                        } else if (rnd === 2) {
+                            vars.seriesTitle = "Conference Finals";
+                        } else if (rnd === 3) {
+                            vars.seriesTitle = "League Finals";
+                        }
+
+                        // Update here rather than by returning vars because returning vars doesn't guarantee order of updates, so it can cause an error when showPlayoffSeries is true before the other stuff is set (try it with the same league in two tabs). But otherwise (for normal page loads), this isn't sufficient and we need to return vars. I don't understand, but it works.
+                        if (updateEvents.indexOf("dbChange") >= 0) {
+                            komapping.fromJS({series: vars.series, seriesTitle: vars.seriesTitle}, vm);
+                        }
+                        break;
+                    }
+                }
+                if (found) {
+                    break;
+                }
+            }
+        }
+
+        return vars;
+    }
+}
+
+async function updateStandings(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
-        return team.filter({
+        const teams = await team.filter({
             attrs: ["tid", "cid", "abbrev", "region"],
             seasonAttrs: ["won", "lost", "winp"],
             season: g.season,
             sortBy: ["winp", "-lost", "won"]
-        }).then(function (teams) {
-            var cid, confTeams, i, k, l;
-
-            // Find user's conference
-            for (i = 0; i < teams.length; i++) {
-                if (teams[i].tid === g.userTid) {
-                    cid = teams[i].cid;
-                    break;
-                }
-            }
-
-            confTeams = [];
-            l = 0;
-            for (k = 0; k < teams.length; k++) {
-                if (cid === teams[k].cid) {
-                    confTeams.push(helpers.deepCopy(teams[k]));
-                    confTeams[l].rank = l + 1;
-                    if (l === 0) {
-                        confTeams[l].gb = 0;
-                    } else {
-                        confTeams[l].gb = helpers.gb(confTeams[0], confTeams[l]);
-                    }
-                    if (confTeams[l].tid === g.userTid) {
-                        confTeams[l].highlight = true;
-                    } else {
-                        confTeams[l].highlight = false;
-                    }
-                    l += 1;
-                }
-            }
-
-            return {
-                confTeams: confTeams
-            };
         });
+
+        // Find user's conference
+        let cid;
+        for (let t of teams) {
+            if (t.tid === g.userTid) {
+                cid = t.cid;
+                break;
+            }
+        }
+
+        const confTeams = [];
+        let l = 0;
+        for (let k = 0; k < teams.length; k++) {
+            if (cid === teams[k].cid) {
+                confTeams.push(helpers.deepCopy(teams[k]));
+                confTeams[l].rank = l + 1;
+                if (l === 0) {
+                    confTeams[l].gb = 0;
+                } else {
+                    confTeams[l].gb = helpers.gb(confTeams[0], confTeams[l]);
+                }
+                if (confTeams[l].tid === g.userTid) {
+                    confTeams[l].highlight = true;
+                } else {
+                    confTeams[l].highlight = false;
+                }
+                l += 1;
+            }
+        }
+
+        return {
+            confTeams
+        };
     }
 }
 

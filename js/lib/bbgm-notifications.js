@@ -50,7 +50,7 @@ const notify = (message, title, persistent = false, timeOut) => {
         closeLink.classList.add("notification-close");
         closeLink.innerHTML = "&times;";
         notificationElement.classList.add("notification-persistent");
-        closeLink.addEventListener("click", function () {
+        closeLink.addEventListener("click", () => {
             notificationElement.classList.add("notification-delete");
         });
 

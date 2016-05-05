@@ -7,7 +7,7 @@ babel
     then manually go over, fix:
       let/const definitions inline
       async/await
-        test, views after leaders, lib (just the linted ones i wrote) after bbgm-notifications
+        test, views after multiTeamMode, lib (just the linted ones i wrote) after bbgm-notifications
         any other instances of .then or .catch? function (
   benchmark, for sanity
     ctrl+r
@@ -47,12 +47,12 @@ rename Promise imports to Bluebird or BPromise
 
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 
-_.range(30) - change to numTeams
-
 can i get rid of http/https links?
   tracking prevalence in GA with "Season protocol"
   put bbgm_insecure htaccess in normal htaccess for account, play, beta, and web. then get rid of all insecure websites in webfaction and add http domains to normal websites
   tryForceHttps
+
+clean up manual
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard
 

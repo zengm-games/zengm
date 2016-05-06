@@ -18,13 +18,11 @@ function updateToken(inputs) {
 }
 
 function uiFirst(vm) {
-    var ajaxErrorMsg, token;
-
-    token = vm.token();
+    const token = vm.token();
 
     ui.title("Reset Password");
 
-    ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
+    const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
     // First, see if this is a valid token
     $.ajax({
@@ -35,13 +33,12 @@ function uiFirst(vm) {
         xhrFields: {
             withCredentials: true
         },
-        success: function (data) {
-            var $resetpw;
+        success: data => {
             if (data.success) {
                 vm.showForm(true);
 
-                $resetpw = $("#resetpw");
-                $resetpw.on("submit", function (event) {
+                const $resetpw = $("#resetpw");
+                $resetpw.on("submit", event => {
                     event.preventDefault();
 
                     // Reset error display
@@ -59,15 +56,13 @@ function uiFirst(vm) {
                         xhrFields: {
                             withCredentials: true
                         },
-                        success: function (data) {
-                            var error;
-
+                        success: data => {
                             if (data.success) {
                                 g.vm.topMenu.username(data.username);
 
                                 ui.realtimeUpdate([], "/account");
                             } else {
-                                for (error in data.errors) {
+                                for (let error in data.errors) {
                                     if (data.errors.hasOwnProperty(error)) {
                                         if (error === "password") {
                                             document.getElementById("resetpw-password").parentNode.classList.add("has-error");
@@ -84,7 +79,7 @@ function uiFirst(vm) {
                                 }
                             }
                         },
-                        error: function () {
+                        error: () => {
                             document.getElementById("resetpw-error").innerHTML = ajaxErrorMsg;
                         }
                     });
@@ -93,7 +88,7 @@ function uiFirst(vm) {
                 vm.showForm(false);
             }
         },
-        error: function () {
+        error: () => {
             document.getElementById("show-form-error").innerHTML = ajaxErrorMsg;
         }
     });

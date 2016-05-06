@@ -7,7 +7,7 @@ babel
     then manually go over, fix:
       let/const definitions inline
       async/await
-        test, views after multiTeamMode
+        test, views after teamFinances
         any other instances of .then or .catch? function (
   benchmark, for sanity
     ctrl+r
@@ -28,7 +28,7 @@ babel
     one in game.js, look into ASAP! make a test like in kneden repo
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being cancelled (resolve) and error returned (Reject)
   confirm feats still work and text is fine
-  TEST ACCOUNT STUFF!
+  TEST ACCOUNT STUFF! (reset, login, register, account, card, buy)
 
 one month gamesim benchmarks while viewing dashboard:
   original 000:01:43.710
@@ -53,6 +53,8 @@ can i get rid of http/https links?
   tryForceHttps
 
 clean up manual
+
+get rid of _?
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard
 

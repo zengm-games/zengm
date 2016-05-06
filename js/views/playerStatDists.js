@@ -5,14 +5,11 @@ const boxPlot = require('../lib/boxPlot');
 const backboard = require('backboard');
 const $ = require('jquery');
 const ko = require('knockout');
-const _ = require('underscore');
 const components = require('./components');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var nbaQuartiles;
-
-nbaQuartiles = {
+const nbaQuartiles = {
     gp: [1, 25, 52, 74, 82],
     min: [0, 11.4857142857, 20.3759398496, 28.6286673736, 41.359375],
     fg: [0, 1.2676056338, 2.6043478261, 4.2253994954, 10.1052631579],
@@ -45,51 +42,44 @@ function InitViewModel() {
     this.season = ko.observable();
 }
 
-function updatePlayers(inputs, updateEvents, vm) {
+async function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
-        return g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED)).then(function (players) {
-            return player.withStats(null, players, {statsSeasons: [inputs.season]});
-        }).then(function (players) {
-            var statsAll;
+        let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED));
+        players = await player.withStats(null, players, {statsSeasons: [inputs.season]});
+        players = player.filter(players, {
+            ratings: ["skills"],
+            stats: ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"],
+            season: inputs.season
+        });
 
-            players = player.filter(players, {
-                ratings: ["skills"],
-                stats: ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"],
-                season: inputs.season
-            });
-
-            statsAll = _.reduce(players, function (memo, player) {
-                var stat;
-                for (stat in player.stats) {
-                    if (player.stats.hasOwnProperty(stat)) {
-                        if (memo.hasOwnProperty(stat)) {
-                            memo[stat].push(player.stats[stat]);
-                        } else {
-                            memo[stat] = [player.stats[stat]];
-                        }
+        const statsAll = players.reduce((memo, player) => {
+            for (let stat in player.stats) {
+                if (player.stats.hasOwnProperty(stat)) {
+                    if (memo.hasOwnProperty(stat)) {
+                        memo[stat].push(player.stats[stat]);
+                    } else {
+                        memo[stat] = [player.stats[stat]];
                     }
                 }
-                return memo;
-            }, {});
+            }
+            return memo;
+        }, {});
 
-            return {
-                season: inputs.season,
-                statsAll: statsAll
-            };
-        });
+        return {
+            season: inputs.season,
+            statsAll
+        };
     }
 }
 
 function uiFirst(vm) {
-    var stat, tbody;
-
-    ko.computed(function () {
+    ko.computed(() => {
         ui.title("Player Stat Distributions - " + vm.season());
     }).extend({throttle: 1});
 
-    tbody = $("#player-stat-dists tbody");
+    const tbody = $("#player-stat-dists tbody");
 
-    for (stat in vm.statsAll) {
+    for (let stat in vm.statsAll) {
         if (vm.statsAll.hasOwnProperty(stat)) {
             tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + stat + '</td><td width="100%"><div id="' + stat + 'BoxPlot"></div></td></tr>');
             if (nbaQuartiles.hasOwnProperty(stat)) {
@@ -98,11 +88,9 @@ function uiFirst(vm) {
         }
     }
 
-    ko.computed(function () {
-        var scale, stat;
-
+    ko.computed(() => {
         // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
-        scale = {
+        const scale = {
             gp: [0, g.numGames],
             gs: [0, g.numGames],
             min: [0, 50],
@@ -127,7 +115,7 @@ function uiFirst(vm) {
             per: [0, 35]
         };
 
-        for (stat in vm.statsAll) {
+        for (let stat in vm.statsAll) {
             if (vm.statsAll.hasOwnProperty(stat)) {
                 boxPlot.create({
                     data: vm.statsAll[stat](),

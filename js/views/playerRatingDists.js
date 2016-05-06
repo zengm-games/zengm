@@ -4,7 +4,6 @@ const player = require('../core/player');
 const boxPlot = require('../lib/boxPlot');
 const $ = require('jquery');
 const ko = require('knockout');
-const _ = require('underscore');
 const components = require('./components');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
@@ -19,63 +18,56 @@ function InitViewModel() {
     this.season = ko.observable();
 }
 
-function updatePlayers(inputs, updateEvents, vm) {
+async function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
-        return g.dbl.players.getAll().then(function (players) {
-            return player.withStats(null, players, {statsSeasons: [inputs.season]});
-        }).then(function (players) {
-            var ratingsAll;
+        let players = await g.dbl.players.getAll();
+        players = await player.withStats(null, players, {statsSeasons: [inputs.season]});
 
-            players = player.filter(players, {
-                ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
-                season: inputs.season,
-                showNoStats: true,
-                showRookies: true,
-                fuzz: true
-            });
+        players = player.filter(players, {
+            ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
+            season: inputs.season,
+            showNoStats: true,
+            showRookies: true,
+            fuzz: true
+        });
 
-            ratingsAll = _.reduce(players, function (memo, player) {
-                var rating;
-                for (rating in player.ratings) {
-                    if (player.ratings.hasOwnProperty(rating)) {
-                        if (memo.hasOwnProperty(rating)) {
-                            memo[rating].push(player.ratings[rating]);
-                        } else {
-                            memo[rating] = [player.ratings[rating]];
-                        }
+        const ratingsAll = players.reduce((memo, player) => {
+            var rating;
+            for (rating in player.ratings) {
+                if (player.ratings.hasOwnProperty(rating)) {
+                    if (memo.hasOwnProperty(rating)) {
+                        memo[rating].push(player.ratings[rating]);
+                    } else {
+                        memo[rating] = [player.ratings[rating]];
                     }
                 }
-                return memo;
-            }, {});
+            }
+            return memo;
+        }, {});
 
-            return {
-                season: inputs.season,
-                ratingsAll: ratingsAll
-            };
-        });
+        return {
+            season: inputs.season,
+            ratingsAll
+        };
     }
 }
 
 function uiFirst(vm) {
-    var rating, tbody;
-
-    ko.computed(function () {
+    ko.computed(() => {
         ui.title("Player Rating Distributions - " + vm.season());
     }).extend({throttle: 1});
 
 
-    tbody = $("#player-rating-dists tbody");
+    const tbody = $("#player-rating-dists tbody");
 
-    for (rating in vm.ratingsAll) {
+    for (let rating in vm.ratingsAll) {
         if (vm.ratingsAll.hasOwnProperty(rating)) {
             tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + rating + '</td><td width="100%"><div id="' + rating + 'BoxPlot"></div></td></tr>');
         }
     }
 
-    ko.computed(function () {
-        var rating;
-
-        for (rating in vm.ratingsAll) {
+    ko.computed(() => {
+        for (let rating in vm.ratingsAll) {
             if (vm.ratingsAll.hasOwnProperty(rating)) {
                 boxPlot.create({
                     data: vm.ratingsAll[rating](),

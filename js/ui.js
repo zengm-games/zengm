@@ -49,7 +49,7 @@ function init() {
     ko.applyBindings(g.vm.multiTeam, document.getElementById("multi-team-menu"));
 
     // This is messy, but it interacts with the binding in templateHelpers
-    $('#multi-team-menu').on('change', '#multi-team-select', () => {
+    $('#multi-team-menu').on('change', '#multi-team-select', function () {
         helpers.updateMultiTeam(parseInt(this.options[this.selectedIndex].value, 10));
     });
 

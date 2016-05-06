@@ -5,10 +5,8 @@ const player = require('../core/player');
 const Promise = require('bluebird');
 const $ = require('jquery');
 const ko = require('knockout');
-const _ = require('underscore');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
-
 
 function get() {
     if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
@@ -24,9 +22,9 @@ const mapping = {
     }
 };
 
-function updateNegotiationList() {
+async function updateNegotiationList() {
     // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
-    return Promise.all([
+    let [negotiations, players] = await Promise.all([
         g.dbl.negotiations.getAll(),
         g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(function (players) {
             return player.withStats(null, players, {
@@ -34,55 +32,47 @@ function updateNegotiationList() {
                 statsTid: g.userTid
             });
         })
-    ]).spread(function (negotiations, players) {
-        var i, j, negotiationPids;
+    ]);
 
-        // For Multi Team Mode, might have other team's negotiations going on
-        negotiations = negotiations.filter(function (negotiation) {
-            return negotiation.tid === g.userTid;
-        });
+    // For Multi Team Mode, might have other team's negotiations going on
+    negotiations = negotiations.filter(negotiation => negotiation.tid === g.userTid);
+    const negotiationPids = negotiations.map(negotiation => negotiation.pid);
 
-        negotiationPids = _.pluck(negotiations, "pid");
+    players = players.filter(p => negotiationPids.indexOf(p.pid) >= 0);
+    players = player.filter(players, {
+        attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],
+        ratings: ["ovr", "pot", "skills", "pos"],
+        stats: ["min", "pts", "trb", "ast", "per"],
+        season: g.season,
+        tid: g.userTid,
+        showNoStats: true,
+        fuzz: true
+    });
 
-        players = players.filter(function (p) {
-            return negotiationPids.indexOf(p.pid) >= 0;
-        });
-
-        players = player.filter(players, {
-            attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],
-            ratings: ["ovr", "pot", "skills", "pos"],
-            stats: ["min", "pts", "trb", "ast", "per"],
-            season: g.season,
-            tid: g.userTid,
-            showNoStats: true,
-            fuzz: true
-        });
-
-        for (i = 0; i < players.length; i++) {
-            for (j = 0; j < negotiations.length; j++) {
-                if (players[i].pid === negotiations[j].pid) {
-                    players[i].contract = {};
-                    players[i].contract.amount = negotiations[j].player.amount / 1000;
-                    players[i].contract.exp = g.season + negotiations[j].player.years;
-                    break;
-                }
+    for (let i = 0; i < players.length; i++) {
+        for (let j = 0; j < negotiations.length; j++) {
+            if (players[i].pid === negotiations[j].pid) {
+                players[i].contract = {};
+                players[i].contract.amount = negotiations[j].player.amount / 1000;
+                players[i].contract.exp = g.season + negotiations[j].player.years;
+                break;
             }
-
-            players[i].mood = player.moodColorText(players[i]);
         }
 
-        return {
-            players: players
-        };
-    });
+        players[i].mood = player.moodColorText(players[i]);
+    }
+
+    return {
+        players
+    };
 }
 
 function uiFirst(vm) {
     ui.title("Re-sign Players");
 
     ko.computed(function () {
-        ui.datatable($("#negotiation-list"), 4, _.map(vm.players(), function (p) {
-            var negotiateButton;
+        ui.datatable($("#negotiation-list"), 4, vm.players().map(p => {
+            let negotiateButton;
             if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
                 negotiateButton = "Refuses!";
             } else {

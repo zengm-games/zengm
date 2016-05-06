@@ -14,9 +14,7 @@ const helpers = require('../util/helpers');
 
 
 function highlightHandles() {
-    var i;
-
-    i = 1;
+    let i = 1;
     $("#roster tbody").children().each(function () {
         var tr;
 
@@ -38,50 +36,40 @@ function highlightHandles() {
     });
 }
 
-function doReorder(sortedPids) {
-    return g.dbl.tx("players", "readwrite", function (tx) {
-        var i, updateRosterOrder;
-
-        updateRosterOrder = function (pid, rosterOrder) {
-            return tx.players.get(pid).then(function (p) {
-                p.rosterOrder = rosterOrder;
-                return tx.players.put(p);
-            });
-        };
-
+async function doReorder(sortedPids) {
+    await g.dbl.tx("players", "readwrite", async tx => {
         // Update rosterOrder
-        for (i = 0; i < sortedPids.length; i++) {
-            updateRosterOrder(sortedPids[i], i);
+        for (let i = 0; i < sortedPids.length; i++) {
+            const p = await tx.players.get(sortedPids[i]);
+            p.rosterOrder = i;
+            await tx.players.put(p);
         }
-    }).then(function () {
+    });
+
+    league.updateLastDbChange();
+}
+
+function doRelease(pid, justDrafted) {
+    return g.dbl.tx(["players", "releasedPlayers", "teamSeasons"], "readwrite", async tx => {
+        const numPlayersOnRoster = await tx.players.index('tid').count(g.userTid);
+        if (numPlayersOnRoster <= 5) {
+            return "You must keep at least 5 players on your roster.";
+        }
+
+        const p = await tx.players.get(pid);
+
+        // Don't let the user update CPU-controlled rosters
+        if (p.tid !== g.userTid) {
+            return "You aren't allowed to do this.";
+        }
+
+        await player.release(tx, p, justDrafted);
         league.updateLastDbChange();
     });
 }
 
-function doRelease(pid, justDrafted) {
-    return g.dbl.tx(["players", "releasedPlayers", "teamSeasons"], "readwrite", function (tx) {
-        return tx.players.index('tid').count(g.userTid).then(function (numPlayersOnRoster) {
-            if (numPlayersOnRoster <= 5) {
-                return "You must keep at least 5 players on your roster.";
-            }
-
-            return tx.players.get(pid).then(function (p) {
-                // Don't let the user update CPU-controlled rosters
-                if (p.tid === g.userTid) {
-                    player.release(tx, p, justDrafted);
-                    return league.updateLastDbChange();
-                }
-
-                return "You aren't allowed to do this.";
-            });
-        });
-    });
-}
-
 function editableChanged(editable) {
-    var rosterTbody;
-
-    rosterTbody = $("#roster tbody");
+    const rosterTbody = $("#roster tbody");
 
     if (!rosterTbody.is(":ui-sortable")) {
         // The first time editableChanged is called, set up sorting, but disable it by default
@@ -117,8 +105,6 @@ function editableChanged(editable) {
 }
 
 function get(req) {
-    var inputs, out;
-
     // Fix broken links
     if (req.params.abbrev === "FA") {
         return {
@@ -126,11 +112,8 @@ function get(req) {
         };
     }
 
-    inputs = {};
-
-    out = helpers.validateAbbrev(req.params.abbrev);
-    inputs.tid = out[0];
-    inputs.abbrev = out[1];
+    const inputs = {};
+    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(req.params.abbrev);
     inputs.season = helpers.validateSeason(req.params.season);
 
     return inputs;
@@ -184,17 +167,13 @@ function InitViewModel() {
 
 const mapping = {
     players: {
-        key: function (data) {
-            return ko.unwrap(data.pid);
-        }
+        key: data => ko.unwrap(data.pid)
     }
 };
 
 function updateRoster(inputs, updateEvents, vm) {
-    var vars;
-
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season()) {
-        vars = {
+        const vars = {
             abbrev: inputs.abbrev,
             season: inputs.season,
             editable: inputs.season === g.season && inputs.tid === g.userTid,
@@ -209,116 +188,102 @@ function updateRoster(inputs, updateEvents, vm) {
             ]
         };
 
-        return g.dbl.tx(["players", "playerStats", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], function (tx) {
-            return team.filter({
+        return g.dbl.tx(["players", "playerStats", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], async tx => {
+            vars.team = await team.filter({
                 season: inputs.season,
                 tid: inputs.tid,
                 attrs: ["tid", "region", "name", "strategy", "imgURL"],
                 seasonAttrs: ["profit", "won", "lost", "playoffRoundsWon"],
                 ot: tx
-            }).then(function (t) {
-                var attrs, playersPromise, ratings, stats;
+            });
 
-                vars.team = t;
+            const attrs = ["pid", "tid", "draft", "name", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier", "watch", "gamesUntilTradable"];  // tid and draft are used for checking if a player can be released without paying his salary
+            const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
+            const stats = ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"];
 
-                attrs = ["pid", "tid", "draft", "name", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier", "watch", "gamesUntilTradable"];  // tid and draft are used for checking if a player can be released without paying his salary
-                ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
-                stats = ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"];
-
-                if (inputs.season === g.season) {
-                    playersPromise = tx.players.index('tid').getAll(inputs.tid).then(function (players) {
+            if (inputs.season === g.season) {
+                // Show players currently on the roster
+                let [schedule, players, payroll] = await Promise.all([
+                    season.getSchedule({ot: tx}),
+                    tx.players.index('tid').getAll(inputs.tid).then(function (players) {
                         return player.withStats(tx, players, {
                             statsSeasons: [inputs.season],
                             statsTid: inputs.tid
                         });
-                    });
+                    }),
+                    team.getPayroll(tx, inputs.tid).get(0)
+                ]);
 
-                    // Show players currently on the roster
-                    return Promise.all([
-                        season.getSchedule({ot: tx}),
-                        playersPromise,
-                        team.getPayroll(tx, inputs.tid).get(0)
-                    ]).spread(function (schedule, players, payroll) {
-                        var i, numGamesRemaining;
-
-                        // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
-                        numGamesRemaining = 0;
-                        for (i = 0; i < schedule.length; i++) {
-                            if (inputs.tid === schedule[i].homeTid || inputs.tid === schedule[i].awayTid) {
-                                numGamesRemaining += 1;
-                            }
-                        }
-
-                        players = player.filter(players, {
-                            attrs: attrs,
-                            ratings: ratings,
-                            stats: stats,
-                            season: inputs.season,
-                            tid: inputs.tid,
-                            showNoStats: true,
-                            showRookies: true,
-                            fuzz: true,
-                            numGamesRemaining: numGamesRemaining
-                        });
-                        players.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; });
-
-                        // Add untradable property
-                        players = trade.filterUntradable(players);
-
-                        for (i = 0; i < players.length; i++) {
-                            // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
-                            if (inputs.tid === g.userTid && (g.phase !== g.PHASE.PLAYOFFS || players.length > 15) && !g.gameOver) {
-                                players[i].canRelease = true;
-                            } else {
-                                players[i].canRelease = false;
-                            }
-
-                            // Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
-                            players[i].ptModifier = String(players[i].ptModifier);
-                        }
-
-                        vars.players = players;
-
-                        vars.payroll = payroll / 1000;
-
-                        return vars;
-                    });
+                // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
+                let numGamesRemaining = 0;
+                for (let i = 0; i < schedule.length; i++) {
+                    if (inputs.tid === schedule[i].homeTid || inputs.tid === schedule[i].awayTid) {
+                        numGamesRemaining += 1;
+                    }
                 }
 
-                // Show all players with stats for the given team and year
-                // Needs all seasons because of YWT!
-                return tx.players.index('statsTids').getAll(inputs.tid).then(function (players) {
-                    return player.withStats(tx, players, {
-                        statsSeasons: "all",
-                        statsTid: inputs.tid
-                    });
-                }).then(function (players) {
-                    var i;
+                players = player.filter(players, {
+                    attrs: attrs,
+                    ratings: ratings,
+                    stats: stats,
+                    season: inputs.season,
+                    tid: inputs.tid,
+                    showNoStats: true,
+                    showRookies: true,
+                    fuzz: true,
+                    numGamesRemaining: numGamesRemaining
+                });
+                players.sort((a, b) => a.rosterOrder - b.rosterOrder);
 
-                    players = player.filter(players, {
-                        attrs: attrs,
-                        ratings: ratings,
-                        stats: stats,
-                        season: inputs.season,
-                        tid: inputs.tid,
-                        fuzz: true
-                    });
-                    players.sort(function (a, b) { return b.stats.gp * b.stats.min - a.stats.gp * a.stats.min; });
+                // Add untradable property
+                players = trade.filterUntradable(players);
 
-                    // This is not immediately needed, because players from past seasons don't have the "Trade For" button displayed. However, if an old season is loaded first and then a new season is switched to, Knockout will try to display the Trade For button before all the player objects are updated to include it. I think it might be the komapping.fromJS part from bbgmView not applying everything at exactly the same time.
-                    players = trade.filterUntradable(players);
-
-                    for (i = 0; i < players.length; i++) {
-                        players[i].age = players[i].age - (g.season - inputs.season);
+                for (let i = 0; i < players.length; i++) {
+                    // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
+                    if (inputs.tid === g.userTid && (g.phase !== g.PHASE.PLAYOFFS || players.length > 15) && !g.gameOver) {
+                        players[i].canRelease = true;
+                    } else {
                         players[i].canRelease = false;
                     }
 
-                    vars.players = players;
-                    vars.payroll = null;
+                    // Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
+                    players[i].ptModifier = String(players[i].ptModifier);
+                }
 
-                    return vars;
+                vars.players = players;
+                vars.payroll = payroll / 1000;
+            } else {
+                // Show all players with stats for the given team and year
+                // Needs all seasons because of YWT!
+                let players = tx.players.index('statsTids').getAll(inputs.tid);
+                players = await player.withStats(tx, players, {
+                    statsSeasons: "all",
+                    statsTid: inputs.tid
                 });
-            });
+
+                players = player.filter(players, {
+                    attrs: attrs,
+                    ratings: ratings,
+                    stats: stats,
+                    season: inputs.season,
+                    tid: inputs.tid,
+                    fuzz: true
+                });
+                players.sort((a, b) => b.stats.gp * b.stats.min - a.stats.gp * a.stats.min);
+
+                // This is not immediately needed, because players from past seasons don't have the "Trade For" button displayed. However, if an old season is loaded first and then a new season is switched to, Knockout will try to display the Trade For button before all the player objects are updated to include it. I think it might be the komapping.fromJS part from bbgmView not applying everything at exactly the same time.
+                players = trade.filterUntradable(players);
+
+                for (let i = 0; i < players.length; i++) {
+                    players[i].age = players[i].age - (g.season - inputs.season);
+                    players[i].canRelease = false;
+                }
+
+                vars.players = players;
+                vars.payroll = null;
+            }
+
+            return vars;
         });
     }
 }
@@ -326,11 +291,11 @@ function updateRoster(inputs, updateEvents, vm) {
 function uiFirst(vm) {
     // Release and Buy Out buttons, which will only appear if the roster is editable
     // Trade For button is handled by POST
-    $("#roster").on("click", "button", function () {
-        var i, justDrafted, pid, players, releaseMessage;
+    $("#roster").on("click", "button", async function () {
+        const pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
+        const players = vm.players();
 
-        pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
-        players = vm.players();
+        let i;
         for (i = 0; i < players.length; i++) {
             if (players[i].pid() === pid) {
                 break;
@@ -339,41 +304,39 @@ function uiFirst(vm) {
 
         if (this.dataset.action === "release") {
             // If a player was just drafted by his current team and the regular season hasn't started, then he can be released without paying anything
-            justDrafted = players[i].tid() === players[i].draft.tid() && ((players[i].draft.year() === g.season && g.phase >= g.PHASE.DRAFT) || (players[i].draft.year() === g.season - 1 && g.phase < g.PHASE.REGULAR_SEASON));
+            const justDrafted = players[i].tid() === players[i].draft.tid() && ((players[i].draft.year() === g.season && g.phase >= g.PHASE.DRAFT) || (players[i].draft.year() === g.season - 1 && g.phase < g.PHASE.REGULAR_SEASON));
+            let releaseMessage;
             if (justDrafted) {
-                releaseMessage = "Are you sure you want to release " + players[i].name() + "?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.";
+                releaseMessage = `Are you sure you want to release ${players[i].name()}?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
             } else {
-                releaseMessage = "Are you sure you want to release " + players[i].name() + "?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in " + players[i].contract.exp() + ".";
+                releaseMessage = `Are you sure you want to release ${players[i].name()}?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${players[i].contract.exp()}.`;
             }
             if (window.confirm(releaseMessage)) {
-                doRelease(pid, justDrafted).then(function (error) {
-                    if (error) {
-                        window.alert("Error: " + error);
-                    } else {
-                        ui.realtimeUpdate(["playerMovement"]);
-                    }
-                });
+                const error = await doRelease(pid, justDrafted);
+                if (error) {
+                    window.alert("Error: " + error);
+                } else {
+                    ui.realtimeUpdate(["playerMovement"]);
+                }
             }
         }
     });
 
-    $("#roster-auto-sort").click(function () {
+    $("#roster-auto-sort").click(async () => {
         vm.players([]); // This is a hack to force a UI update because the jQuery UI sortable roster reordering does not update the view model, which can cause the view model to think the roster is sorted correctly when it really isn't. (Example: load the roster, auto sort, reload, drag reorder it, auto sort -> the auto sort doesn't update the UI.) Fixing this issue would fix flickering.
 
-        g.dbl.tx("players", "readwrite", function (tx) {
-            return team.rosterAutoSort(tx, g.userTid);
-        }).then(function () {
-            // Explicitly make sure writing is done for rosterAutoSort
-            league.updateLastDbChange();
-            ui.realtimeUpdate(["playerMovement"]);
-        });
+        // Explicitly make sure writing is done before rosterAutoSort
+        await g.dbl.tx("players", "readwrite", tx => team.rosterAutoSort(tx, g.userTid));
+
+        league.updateLastDbChange();
+        ui.realtimeUpdate(["playerMovement"]);
     });
 
-    ko.computed(function () {
+    ko.computed(() => {
         ui.title(vm.team.region() + " " + vm.team.name() + " " + "Roster - " + vm.season());
     }).extend({throttle: 1});
 
-    ko.computed(function () {
+    ko.computed(() => {
         vm.players(); // Ensure this runs when vm.players changes.
         if (vm.editable()) {
             highlightHandles();
@@ -381,9 +344,8 @@ function uiFirst(vm) {
         editableChanged(vm.editable());
     }).extend({throttle: 1});
 
-    ko.computed(function () {
-        var picture;
-        picture = document.getElementById("picture");
+    ko.computed(() => {
+        const picture = document.getElementById("picture");
 
         // If imgURL is not an empty string, use it for team logo on roster page
         if (vm.team.imgURL()) {
@@ -410,8 +372,6 @@ function uiFirst(vm) {
     });
 
     $("#roster").on("change", "select", function () {
-        var backgroundColor, color;
-
         // Update select color
 
         // NEVER UPDATE AI TEAMS
@@ -423,6 +383,7 @@ function uiFirst(vm) {
         // These don't work in Firefox, so do it manually
 //            backgroundColor = $('option:selected', this).css('background-color');
 //            color = $('option:selected', this).css('color');
+        let backgroundColor, color;
         if (this.value === "1") {
             backgroundColor = "#ccc";
             color = "#000";

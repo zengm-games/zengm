@@ -8,10 +8,8 @@ const components = require('./components');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-
 function get(req) {
-    var abbrev;
-
+    let abbrev;
     if (g.teamAbbrevsCache.indexOf(req.params.abbrev) >= 0) {
         abbrev = req.params.abbrev;
     } else if (req.params.abbrev && req.params.abbrev === 'watch') {
@@ -21,7 +19,7 @@ function get(req) {
     }
 
     return {
-        abbrev: abbrev,
+        abbrev,
         season: req.params.season === "career" ? null : helpers.validateSeason(req.params.season),
         statType: req.params.statType !== undefined ? req.params.statType : "per_game",
         playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season"
@@ -41,111 +39,99 @@ const mapping = {
     }
 };
 
-function updatePlayers(inputs, updateEvents, vm) {
+async function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
-        return g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED)).then(function (players) {
-            return player.withStats(null, players, {
-                statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
-                statsPlayoffs: inputs.playoffs === "playoffs"
-            });
-        }).then(function (players) {
-            var gp, i, tid;
-
-            tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
-            if (tid < 0) { tid = null; } // Show all teams
-
-            if (!tid && inputs.abbrev === "watch") {
-                players = players.filter(function (p) {
-                    return p.watch && typeof p.watch !== "function";
-                });
-            }
-
-            players = player.filter(players, {
-                attrs: ["pid", "name", "age", "injury", "tid", "hof", "watch"],
-                ratings: ["skills", "pos"],
-                stats: ["abbrev", "tid", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm", "per", "ewa"],
-                season: inputs.season, // If null, then show career stats!
-                tid: tid,
-                totals: inputs.statType === "totals",
-                per36: inputs.statType === "per_36",
-                playoffs: inputs.playoffs === "playoffs"
-            });
-
-            // Find max gp to use for filtering
-            gp = 0;
-            for (i = 0; i < players.length; i++) {
-                if (players[i].stats.gp > gp) {
-                    gp = players[i].stats.gp;
-                }
-            }
-            // Special case for career totals - use g.numGames games, unless this is the first season
-            if (!inputs.season) {
-                if (g.season > g.startingSeason) {
-                    gp = g.numGames;
-                }
-            }
-
-            // Only keep players with more than 5 mpg
-            if (inputs.abbrev !== "watch") {
-                players = players.filter(function (p) {
-                    var min;
-
-                    // Minutes played
-                    if (inputs.statType === "totals") {
-                        if (inputs.season) {
-                            min = p.stats.min;
-                        } else {
-                            min = p.careerStats.min;
-                        }
-                    } else {
-                        if (inputs.season) {
-                            min = p.stats.gp * p.stats.min;
-                        } else {
-                            min = p.careerStats.gp * p.careerStats.min;
-                        }
-                    }
-
-                    if (min > gp * 5) {
-                        return true;
-                    }
-                });
-            }
-
-            return {
-                players: players,
-                abbrev: inputs.abbrev,
-                season: inputs.season,
-                statType: inputs.statType,
-                playoffs: inputs.playoffs
-            };
+        let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED));
+        players = await player.withStats(null, players, {
+            statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
+            statsPlayoffs: inputs.playoffs === "playoffs"
         });
+
+        let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
+        if (tid < 0) { tid = null; } // Show all teams
+
+        if (!tid && inputs.abbrev === "watch") {
+            players = players.filter(p => p.watch && typeof p.watch !== "function");
+        }
+
+        players = player.filter(players, {
+            attrs: ["pid", "name", "age", "injury", "tid", "hof", "watch"],
+            ratings: ["skills", "pos"],
+            stats: ["abbrev", "tid", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm", "per", "ewa"],
+            season: inputs.season, // If null, then show career stats!
+            tid: tid,
+            totals: inputs.statType === "totals",
+            per36: inputs.statType === "per_36",
+            playoffs: inputs.playoffs === "playoffs"
+        });
+
+        // Find max gp to use for filtering
+        let gp = 0;
+        for (let i = 0; i < players.length; i++) {
+            if (players[i].stats.gp > gp) {
+                gp = players[i].stats.gp;
+            }
+        }
+        // Special case for career totals - use g.numGames games, unless this is the first season
+        if (!inputs.season) {
+            if (g.season > g.startingSeason) {
+                gp = g.numGames;
+            }
+        }
+
+        // Only keep players with more than 5 mpg
+        if (inputs.abbrev !== "watch") {
+            players = players.filter(function (p) {
+                // Minutes played
+                let min;
+                if (inputs.statType === "totals") {
+                    if (inputs.season) {
+                        min = p.stats.min;
+                    } else {
+                        min = p.careerStats.min;
+                    }
+                } else {
+                    if (inputs.season) {
+                        min = p.stats.gp * p.stats.min;
+                    } else {
+                        min = p.careerStats.gp * p.careerStats.min;
+                    }
+                }
+
+                if (min > gp * 5) {
+                    return true;
+                }
+            });
+        }
+
+        return {
+            players,
+            abbrev: inputs.abbrev,
+            season: inputs.season,
+            statType: inputs.statType,
+            playoffs: inputs.playoffs
+        };
     }
 }
 
 function uiFirst(vm) {
-    ko.computed(function () {
-        var label;
-
-        label = vm.season() !== null ? vm.season() : "Career Totals";
+    ko.computed(() => {
+        const label = vm.season() !== null ? vm.season() : "Career Totals";
         ui.title("Player Stats - " + label);
     }).extend({throttle: 1});
 
-    ko.computed(function () {
-        var abbrev, d, i, p, players, pos, rows, season, tid;
-
-        season = vm.season();
+    ko.computed(() => {
+        const season = vm.season();
 
         // Number of decimals for many stats
-        if (vm.statType() === "totals") {
-            d = 0;
-        } else {
-            d = 1;
-        }
+        const d = vm.statType() === "totals" ? 0 : 1;
 
-        rows = [];
-        players = vm.players();
-        for (i = 0; i < vm.players().length; i++) {
-            p = players[i];
+        const rows = [];
+        const players = vm.players();
+        for (let i = 0; i < vm.players().length; i++) {
+            const p = players[i];
+
+            let pos;
             if (p.ratings.constructor === Array) {
                 pos = p.ratings[p.ratings.length - 1].pos;
             } else if (p.ratings.pos) {
@@ -155,6 +141,7 @@ function uiFirst(vm) {
             }
 
             // HACKS to show right stats, info
+            let abbrev, tid;
             if (season === null) {
                 p.stats = p.careerStats;
                 abbrev = helpers.getAbbrev(p.tid);
@@ -177,7 +164,7 @@ function uiFirst(vm) {
         }
 
         ui.datatable($("#player-stats"), 2, rows, {
-            rowCallback: function (row, data) {
+            rowCallback: (row, data) => {
                 // Highlight HOF players
                 if (data[data.length - 2]) {
                     row.classList.add("danger");
@@ -206,4 +193,3 @@ module.exports = bbgmView.init({
     uiFirst,
     uiEvery
 });
-

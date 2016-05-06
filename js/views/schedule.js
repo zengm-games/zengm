@@ -6,16 +6,9 @@ const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 const components = require('./components');
 
-
 function get(req) {
-    var inputs, out;
-
-    inputs = {};
-
-    out = helpers.validateAbbrev(req.params.abbrev);
-    inputs.tid = out[0];
-    inputs.abbrev = out[1];
-
+    const inputs = {};
+    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(req.params.abbrev);
     return inputs;
 }
 
@@ -34,61 +27,55 @@ const mapping = {
     }
 };
 
-function updateUpcoming(inputs, updateEvents, vm) {
+async function updateUpcoming(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
-        return season.getSchedule().then(function (schedule_) {
-            var game, games, i, row, team0, team1;
+        const schedule = await season.getSchedule();
+        const games = [];
+        for (let i = 0; i < schedule.length; i++) {
+            const game = schedule[i];
+            if (inputs.tid === game.homeTid || inputs.tid === game.awayTid) {
+                const team0 = {tid: game.homeTid, abbrev: g.teamAbbrevsCache[game.homeTid], region: g.teamRegionsCache[game.homeTid], name: g.teamNamesCache[game.homeTid]};
+                const team1 = {tid: game.awayTid, abbrev: g.teamAbbrevsCache[game.awayTid], region: g.teamRegionsCache[game.awayTid], name: g.teamNamesCache[game.awayTid]};
 
-            games = [];
-            for (i = 0; i < schedule_.length; i++) {
-                game = schedule_[i];
-                if (inputs.tid === game.homeTid || inputs.tid === game.awayTid) {
-                    team0 = {tid: game.homeTid, abbrev: g.teamAbbrevsCache[game.homeTid], region: g.teamRegionsCache[game.homeTid], name: g.teamNamesCache[game.homeTid]};
-                    team1 = {tid: game.awayTid, abbrev: g.teamAbbrevsCache[game.awayTid], region: g.teamRegionsCache[game.awayTid], name: g.teamNamesCache[game.awayTid]};
-                    if (inputs.tid === game.homeTid) {
-                        row = {teams: [team1, team0], vsat: "at"};
-                    } else {
-                        row = {teams: [team1, team0], vsat: "at"};
-                    }
-                    games.push(row);
+                let row;
+                if (inputs.tid === game.homeTid) {
+                    row = {teams: [team1, team0], vsat: "at"};
+                } else {
+                    row = {teams: [team1, team0], vsat: "at"};
                 }
+                games.push(row);
             }
+        }
 
-            return {
-                abbrev: inputs.abbrev,
-                season: g.season,
-                upcoming: games
-            };
-        });
+        return {
+            abbrev: inputs.abbrev,
+            season: g.season,
+            upcoming: games
+        };
     }
 }
 
 // Based on views.gameLog.updateGamesList
-function updateCompleted(inputs, updateEvents, vm) {
+async function updateCompleted(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.abbrev !== vm.abbrev()) {
         // Load all games in list
         vm.completed.loading(true);
         vm.completed.games([]);
-        return helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games()).then(function (games) {
-            var i;
+        const games = await helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games());
+        for (let i = 0; i < games.length; i++) {
+            games[i] = helpers.formatCompletedGame(games[i]);
+        }
 
-            for (i = 0; i < games.length; i++) {
-                games[i] = helpers.formatCompletedGame(games[i]);
-            }
-
-            vm.completed.games(games);
-            vm.completed.loading(false);
-        });
+        vm.completed.games(games);
+        vm.completed.loading(false);
     }
     if (updateEvents.indexOf("gameSim") >= 0) {
         // Partial update of only new games
-        return helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games()).then(function (games) {
-            var i;
-            for (i = games.length - 1; i >= 0; i--) {
-                games[i] = helpers.formatCompletedGame(games[i]);
-                vm.completed.games.unshift(games[i]);
-            }
-        });
+        const games = await helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games());
+        for (let i = games.length - 1; i >= 0; i--) {
+            games[i] = helpers.formatCompletedGame(games[i]);
+            vm.completed.games.unshift(games[i]);
+        }
     }
 }
 

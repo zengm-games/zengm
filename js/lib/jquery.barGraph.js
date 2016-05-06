@@ -52,17 +52,15 @@
 (function ($) {
     // Default scale for bar chart. This finds the max and min values in the data, adds 10% in each direction so you don't end up with tiny slivers, and then expands the upper/lower lims to 0 if 0 wasn't already in the range.
     function defaultYlim(data, stacked) {
-        var i, j, max, min, x;
-
-        min = Infinity;
-        max = -Infinity;
+        let min = Infinity;
+        let max = -Infinity;
 
         // If stacked, add up all the components
-        x = [];
+        let x = [];
         if (stacked) {
-            for (i = 0; i < data[0].length; i++) {
+            for (let i = 0; i < data[0].length; i++) {
                 x[i] = 0;
-                for (j = 0; j < data.length; j++) {
+                for (let j = 0; j < data.length; j++) {
                     x[i] += data[j][i];
                 }
             }
@@ -70,7 +68,7 @@
             x = data;
         }
 
-        for (i = 0; i < x.length; i++) {
+        for (let i = 0; i < x.length; i++) {
             if (x[i] < min) {
                 min = x[i];
             }
@@ -100,18 +98,14 @@
     }
 
     function setWidths(container, data, gap) {
-        var numBars;
-
-        numBars = container.data("numBars");
+        const numBars = container.data("numBars");
         container
             .children()
             .each(function () {
-                var bar, num, width;
-
-                bar = $(this);
-                num = bar.data("num");  // Index of the bar (0 for first, 1 for next, etc.). All bars have a value here.
+                const bar = $(this);
+                const num = bar.data("num");  // Index of the bar (0 for first, 1 for next, etc.). All bars have a value here.
                 if (num >= 0) {
-                    width = (container.width() + gap) / numBars; // Width factoring in N-1 gaps
+                    const width = (container.width() + gap) / numBars; // Width factoring in N-1 gaps
 
                     bar.css({
                         left: num * width,
@@ -131,19 +125,11 @@
         return (val - ylim[0]) / (ylim[1] - ylim[0]) * 100;
     }
 
-    $.barGraph = function (container, data, ylim, labels, dataTooltipFn) {
-        var bottom, cssClass, gap, height, i, j, offsets, scaled, stacked, titleStart;
-
-        dataTooltipFn = dataTooltipFn !== undefined ? dataTooltipFn : function (val) { return val; };
-
-        gap = 2;  // Gap between bars, in pixels
+    $.barGraph = (container, data, ylim, labels, dataTooltipFn = val => val) => {
+        const gap = 2;  // Gap between bars, in pixels
 
         // Stacked plot or not?
-        if (data[0].hasOwnProperty("length")) {
-            stacked = true;
-        } else {
-            stacked = false;
-        }
+        const stacked = data[0].hasOwnProperty("length");
 
         // ylim specified or not?
         if (ylim === undefined) {
@@ -157,13 +143,13 @@
             });
 
         // Convert heights to percentages
-        scaled = [];
-        for (i = 0; i < data.length; i++) {
+        const scaled = [];
+        for (let i = 0; i < data.length; i++) {
             if (!stacked) {
                 scaled[i] = scale(data[i], ylim);
             } else {
                 scaled[i] = [];
-                for (j = 0; j < data[i].length; j++) {
+                for (let j = 0; j < data[i].length; j++) {
                     scaled[i][j] = scale(data[i][j], ylim);
                 }
             }
@@ -172,13 +158,14 @@
         // Draw bars
         if (!stacked) {
             // Not stacked
-            for (i = 0; i < data.length; i++) {
+            for (let i = 0; i < data.length; i++) {
                 if (data[i] !== null && data[i] !== undefined) {
-                    titleStart = "";
+                    let titleStart = "";
                     if (labels !== undefined) {
                         titleStart = labels[i] + ": ";
                     }
                     // Fix for negative values
+                    let bottom, cssClass, height;
                     if (data[i] >= 0) {
                         bottom = scale(0, ylim);
                         height = scaled[i] - scale(0, ylim);
@@ -188,7 +175,7 @@
                         height = scale(0, ylim) - scaled[i];
                         cssClass = "bar-graph-3";
                     }
-                    $("<div></div>", {"class": cssClass})
+                    $("<div></div>", {class: cssClass})
                         .data("num", i)
                         .css({
                             position: "absolute",
@@ -203,16 +190,16 @@
             }
         } else {
             // Stacked
-            offsets = [];
-            for (j = 0; j < data.length; j++) {
-                for (i = 0; i < data[j].length; i++) {
+            const offsets = [];
+            for (let j = 0; j < data.length; j++) {
+                for (let i = 0; i < data[j].length; i++) {
                     if (j === 0) {
                         offsets[i] = 0;
                     } else {
                         offsets[i] += scaled[j - 1][i];
                     }
                     if (data[j][i] !== null && data[j][i] !== undefined) {
-                        titleStart = "";
+                        let titleStart = "";
                         if (labels !== undefined) {
                             titleStart = labels[0][i] + " " + labels[1][j] + ": ";
                         }
@@ -234,6 +221,6 @@
 
         // Calculate widths and have them update whenever the container changes size
         setWidths(container, data, gap);
-        $(window).resize(function () { setWidths(container, data, gap); });
+        $(window).resize(() => setWidths(container, data, gap));
     };
 }(jQuery));

@@ -12,27 +12,25 @@
      *     2-2
      *     ...
      */
-    $.fn.dataTableExt.aTypes.unshift(function (sData) {
-        var Char, bDash, bDigitAfterDash, bDigitBeforeDash, i, sValidChars;
+    $.fn.dataTableExt.aTypes.unshift(sData => {
+        let bDash = false;
+        let bDigitBeforeDash = false;
+        let bDigitAfterDash = false;
+        const sValidChars = "0123456789-";
 
-        bDash = false;
-        bDigitBeforeDash = false;
-        bDigitAfterDash = false;
-        sValidChars = "0123456789-";
-
-        for (i = 0; i < sData.length; i++) {
-            Char = sData.charAt(i);
-            if (sValidChars.indexOf(Char) === -1) {
+        for (let i = 0; i < sData.length; i++) {
+            const char = sData.charAt(i);
+            if (sValidChars.indexOf(char) === -1) {
                 return null;
             }
 
             // Need a digit after dash
-            if (Char !== "-" && !bDash) {
+            if (char !== "-" && !bDash) {
                 bDigitBeforeDash = true;
             }
 
             /* Only allowed one dash place... */
-            if (Char === "-") {
+            if (char === "-") {
                 if (bDash) {
                     return null;
                 }
@@ -40,7 +38,7 @@
             }
 
             // Need a digit after dash
-            if (Char !== "-" && bDash) {
+            if (char !== "-" && bDash) {
                 bDigitAfterDash = true;
             }
         }
@@ -51,11 +49,9 @@
 
         return null;
     });
-    $.fn.dataTableExt.oSort["numeric-dash-asc"] = function (a, b) {
-        var x, y;
-
-        x = a.split("-");
-        y = b.split("-");
+    $.fn.dataTableExt.oSort["numeric-dash-asc"] = (a, b) => {
+        const x = a.split("-");
+        const y = b.split("-");
 
         if (x.length !== 2 || y.length !== 2) {
             return 0;
@@ -80,11 +76,9 @@
         }
         return 0;
     };
-    $.fn.dataTableExt.oSort["numeric-dash-desc"] = function (a, b) {
-        var x, y;
-
-        x = a.split("-");
-        y = b.split("-");
+    $.fn.dataTableExt.oSort["numeric-dash-desc"] = (a, b) => {
+        const x = a.split("-");
+        const y = b.split("-");
 
         if (x.length !== 2 || y.length !== 2) {
             return 0;
@@ -122,44 +116,38 @@
      *     $2.6M
      *     ...
      */
-    $.fn.dataTableExt.aTypes.unshift(
-        function (sData) {
-            var Char, bM, bSomething, i, iDollarSign, sValidChars;
-
-            iDollarSign = sData.indexOf("$");
-            if (iDollarSign < 0) {
-                return null;
-            }
-
-            bSomething = false;
-            bM = false;
-            sValidChars = "0123456789-.M";
-
-            for (i = iDollarSign + 1; i < sData.length; i++) {
-                Char = sData.charAt(i);
-                if (sValidChars.indexOf(Char) === -1) {
-                    return null;
-                }
-                bSomething = true;  // Didn't return, so something is there
-
-                if (Char === "M") {
-                    bM = true;
-                    break;
-                }
-            }
-
-            if (bSomething && bM) {
-                return "money";
-            }
-
+    $.fn.dataTableExt.aTypes.unshift(sData => {
+        const iDollarSign = sData.indexOf("$");
+        if (iDollarSign < 0) {
             return null;
         }
-    );
-    $.fn.dataTableExt.oSort["money-asc"] = function (a, b) {
-        var x, y;
 
-        x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
-        y = parseFloat(b.substring(b.indexOf("$") + 1, b.indexOf("M")));
+        let bSomething = false;
+        let bM = false;
+        const sValidChars = "0123456789-.M";
+
+        for (let i = iDollarSign + 1; i < sData.length; i++) {
+            const char = sData.charAt(i);
+            if (sValidChars.indexOf(char) === -1) {
+                return null;
+            }
+            bSomething = true;  // Didn't return, so something is there
+
+            if (char === "M") {
+                bM = true;
+                break;
+            }
+        }
+
+        if (bSomething && bM) {
+            return "money";
+        }
+
+        return null;
+    });
+    $.fn.dataTableExt.oSort["money-asc"] = (a, b) => {
+        const x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
+        const y = parseFloat(b.substring(b.indexOf("$") + 1, b.indexOf("M")));
 
         // Fix for negative signs before the dollar sign
         if (a[a.indexOf("$") - 1] === "-") { x = -x; }
@@ -173,11 +161,9 @@
         }
         return 0;
     };
-    $.fn.dataTableExt.oSort["money-desc"] = function (a, b) {
-        var x, y;
-
-        x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
-        y = parseFloat(b.substring(b.indexOf("$") + 1, b.indexOf("M")));
+    $.fn.dataTableExt.oSort["money-desc"] = (a, b) => {
+        const x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
+        const y = parseFloat(b.substring(b.indexOf("$") + 1, b.indexOf("M")));
 
         // Fix for negative signs before the dollar sign
         if (a[a.indexOf("$") - 1] === "-") { x = -x; }
@@ -201,7 +187,7 @@
      *     ...
      * Other content (like "skills" span) is allowed to appear after the name
      */
-    $.fn.dataTableExt.aTypes.unshift(function (sData) {
+    $.fn.dataTableExt.aTypes.unshift(sData => {
         // This is kind of messy... the first condition is to match anything that looks like a name. The second is to catch a series of Three Capitalized Words that occur inside an HTML tag, as in a list of team names ("New York Knights").
         if (sData.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/) && !sData.match(/>[A-Z][a-z]+ [A-Z][A-Z|a-z]+ [A-Z][a-z]+/)) {
             return "name";
@@ -209,11 +195,9 @@
 
         return null;
     });
-    $.fn.dataTableExt.oSort["name-asc"] = function (a, b) {
-        var x, y;
-
-        x = a.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
-        y = b.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
+    $.fn.dataTableExt.oSort["name-asc"] = (a, b) => {
+        const x = a.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
+        const y = b.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
 
         if (x[1] > y[1]) {
             return 1;
@@ -229,11 +213,9 @@
         }
         return 0;
     };
-    $.fn.dataTableExt.oSort["name-desc"] = function (a, b) {
-        var x, y;
-
-        x = a.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
-        y = b.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
+    $.fn.dataTableExt.oSort["name-desc"] = (a, b) => {
+        const x = a.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
+        const y = b.match(/[A-Z][a-z]+ [A-Z][A-Z|a-z]+/)[0].split(' ');
 
         if (x[1] > y[1]) {
             return -1;

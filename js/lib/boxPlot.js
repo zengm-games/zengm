@@ -18,7 +18,7 @@ function quartile(data, quart) {
 
 function calculateValues(data) {
     // Sort in ascending order
-    data.sort(function (a, b) { return a - b; });
+    data.sort((a, b) => a - b);
 
     // Quartiles, min, max
     return {
@@ -64,8 +64,6 @@ function round(value, precision) {
  *     labels: boolean for whether to show numeric labels (default true)
  */
 function create(plot) {
-    var containerDiv, lowerBoxDiv, lowerLabel, lowerWhiskerDiv, maxScaleDiv, maxScaleLabel, medianLabel, midLineDiv, minScaleDiv, minScaleLabel, q1Label, q3Label, upperBoxDiv, upperLabel, upperWhiskerDiv, val, x;
-
     if (!plot.hasOwnProperty("color")) {
         plot.color = "#000000";
     }
@@ -74,6 +72,7 @@ function create(plot) {
     }
 
     // Either calculate quartiles or use the ones passed directly
+    let val;
     if (plot.hasOwnProperty("data")) {
         val = calculateValues(plot.data);
     } else {
@@ -87,7 +86,7 @@ function create(plot) {
     }
 
     // Scale the markers on the plot to be relative to the size of the canvas. All these values are percentages.
-    x = {
+    const x = {
         min: scaleValue(val.min, plot.scale),
         q1: scaleValue(val.q1, plot.scale),
         median: scaleValue(val.median, plot.scale),
@@ -97,13 +96,13 @@ function create(plot) {
 
 
     // Lines/boxes
-    containerDiv = document.getElementById(plot.container);
+    const containerDiv = document.getElementById(plot.container);
     containerDiv.style.height = "64px";
     containerDiv.style.paddingBottom = "30px";
     containerDiv.style.position = "relative";
     containerDiv.innerHTML = "";
 
-    midLineDiv = document.createElement("div");
+    const midLineDiv = document.createElement("div");
     boxPlotElementStyle(midLineDiv, plot.color);
     midLineDiv.style.height = "10px";
     midLineDiv.style.width = "100%";
@@ -111,35 +110,35 @@ function create(plot) {
     midLineDiv.style.borderBottom = "1px solid " + plot.color;
     containerDiv.appendChild(midLineDiv);
 
-    upperBoxDiv = document.createElement("div");
+    const upperBoxDiv = document.createElement("div");
     boxPlotElementStyle(upperBoxDiv, plot.color);
     upperBoxDiv.style.right = x.q3 + "%";
     upperBoxDiv.style.width = (x.median - x.q3) + "%";
     containerDiv.appendChild(upperBoxDiv);
 
-    lowerBoxDiv = document.createElement("div");
+    const lowerBoxDiv = document.createElement("div");
     boxPlotElementStyle(lowerBoxDiv, plot.color);
     lowerBoxDiv.style.right = x.median + "%";
     lowerBoxDiv.style.width = x.q1 - x.median + "%";
     containerDiv.appendChild(lowerBoxDiv);
 
-    lowerWhiskerDiv = document.createElement("div");
+    const lowerWhiskerDiv = document.createElement("div");
     boxPlotElementStyle(lowerWhiskerDiv, plot.color);
     lowerWhiskerDiv.style.right = x.min + "%";
     containerDiv.appendChild(lowerWhiskerDiv);
 
-    upperWhiskerDiv = document.createElement("div");
+    const upperWhiskerDiv = document.createElement("div");
     boxPlotElementStyle(upperWhiskerDiv, plot.color);
     upperWhiskerDiv.style.right = x.max + "%";
     containerDiv.appendChild(upperWhiskerDiv);
 
-    minScaleDiv = document.createElement("div");
+    const minScaleDiv = document.createElement("div");
     boxPlotElementStyle(minScaleDiv, plot.color);
     minScaleDiv.style.left = 0;
     minScaleDiv.style.borderRight = 0;
     containerDiv.appendChild(minScaleDiv);
 
-    maxScaleDiv = document.createElement("div");
+    const maxScaleDiv = document.createElement("div");
     boxPlotElementStyle(maxScaleDiv, plot.color);
     maxScaleDiv.style.right = 0;
     maxScaleDiv.style.borderLeft = 0;
@@ -147,14 +146,14 @@ function create(plot) {
 
     // Labels
     if (plot.labels) {
-        minScaleLabel = document.createElement("div");
+        const minScaleLabel = document.createElement("div");
         minScaleLabel.innerHTML = plot.scale[0];
         minScaleLabel.style.position = "absolute";
         minScaleLabel.style.left = 0;
         minScaleLabel.style.top = "43px";
         containerDiv.appendChild(minScaleLabel);
 
-        lowerLabel = document.createElement("div");
+        const lowerLabel = document.createElement("div");
         lowerLabel.innerHTML = round(val.min);
         lowerLabel.style.position = "absolute";
         lowerLabel.style.right = x.min + "%";
@@ -162,7 +161,7 @@ function create(plot) {
         lowerLabel.style.marginRight = "-0.6em";
         containerDiv.appendChild(lowerLabel);
 
-        q1Label = document.createElement("div");
+        const q1Label = document.createElement("div");
         q1Label.innerHTML = round(val.q1);
         q1Label.style.position = "absolute";
         q1Label.style.right = x.q1 + "%";
@@ -170,7 +169,7 @@ function create(plot) {
         q1Label.style.marginRight = "-0.6em";
         containerDiv.appendChild(q1Label);
 
-        medianLabel = document.createElement("div");
+        const medianLabel = document.createElement("div");
         medianLabel.innerHTML = round(val.median);
         medianLabel.style.position = "absolute";
         medianLabel.style.right = x.median + "%";
@@ -178,7 +177,7 @@ function create(plot) {
         medianLabel.style.marginRight = "-0.6em";
         containerDiv.appendChild(medianLabel);
 
-        q3Label = document.createElement("div");
+        const q3Label = document.createElement("div");
         q3Label.innerHTML = round(val.q3);
         q3Label.style.position = "absolute";
         q3Label.style.right = x.q3 + "%";
@@ -186,7 +185,7 @@ function create(plot) {
         q3Label.style.marginRight = "-0.6em";
         containerDiv.appendChild(q3Label);
 
-        upperLabel = document.createElement("div");
+        const upperLabel = document.createElement("div");
         upperLabel.innerHTML = round(val.max);
         upperLabel.style.position = "absolute";
         upperLabel.style.right = x.max + "%";
@@ -194,7 +193,7 @@ function create(plot) {
         upperLabel.style.marginRight = "-0.6em";
         containerDiv.appendChild(upperLabel);
 
-        maxScaleLabel = document.createElement("div");
+        const maxScaleLabel = document.createElement("div");
         maxScaleLabel.innerHTML = plot.scale[1];
         maxScaleLabel.style.position = "absolute";
         maxScaleLabel.style.right = 0;
@@ -204,5 +203,5 @@ function create(plot) {
 }
 
 module.exports = {
-    create: create
+    create
 };

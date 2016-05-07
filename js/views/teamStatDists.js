@@ -4,14 +4,11 @@ const team = require('../core/team');
 const boxPlot = require('../lib/boxPlot');
 const $ = require('jquery');
 const ko = require('knockout');
-const _ = require('underscore');
 const components = require('./components');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-var nbaStatsAll;
-
-nbaStatsAll = {
+const nbaStatsAll = {
     won: [50, 42, 43, 40, 55, 61, 36, 58, 57, 17, 57, 46, 37, 39, 24, 52, 22, 41, 32, 62, 23, 30, 56, 48, 19, 44, 46, 24, 34, 35],
     lost: [32, 40, 39, 42, 27, 21, 46, 24, 25, 65, 25, 36, 45, 43, 58, 30, 60, 41, 50, 20, 59, 52, 26, 34, 63, 38, 36, 58, 48, 47],
     fg: [38.4, 38.3, 38.7, 39.3, 37.4, 38.4, 39.6, 37, 38.1, 37.7, 37.4, 39, 36.6, 37.4, 38.2, 36, 38.3, 38.1, 36.8, 37.1, 37.2, 37.3, 36.9, 36, 35.2, 36.2, 35.9, 35.6, 35, 34.3],
@@ -45,60 +42,52 @@ function InitViewModel() {
     this.season = ko.observable();
 }
 
-function updateTeams(inputs, updateEvents, vm) {
+async function updateTeams(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
-        return team.filter({
+        const teams = await team.filter({
             seasonAttrs: ["won", "lost"],
             stats: ["fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"],
             season: inputs.season
-        }).then(function (teams) {
-            var statsAll;
+        });
 
-            statsAll = _.reduce(teams, function (memo, team) {
-                var stat;
-                for (stat in team) {
-                    if (team.hasOwnProperty(stat)) {
-                        if (memo.hasOwnProperty(stat)) {
-                            memo[stat].push(team[stat]);
-                        } else {
-                            memo[stat] = [team[stat]];
-                        }
+        const statsAll = teams.reduce((memo, team) => {
+            for (let stat in team) {
+                if (team.hasOwnProperty(stat)) {
+                    if (memo.hasOwnProperty(stat)) {
+                        memo[stat].push(team[stat]);
+                    } else {
+                        memo[stat] = [team[stat]];
                     }
                 }
-                return memo;
-            }, {});
+            }
+            return memo;
+        }, {});
 
-            return {
-                season: inputs.season,
-                statsAll: statsAll
-            };
-        });
+        return {
+            season: inputs.season,
+            statsAll
+        };
     }
 }
 
 function uiFirst(vm) {
-    var stat, tbody;
-
-    ko.computed(function () {
+    ko.computed(() => {
         ui.title("Team Stat Distributions - " + vm.season());
     }).extend({throttle: 1});
 
-    tbody = $("#team-stat-dists tbody");
-
-    for (stat in vm.statsAll) {
+    const tbody = $("#team-stat-dists tbody");
+    for (let stat in vm.statsAll) {
         if (vm.statsAll.hasOwnProperty(stat)) {
-            tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + stat + '</td><td width="100%"><div id="' + stat + 'BoxPlot"></div></td></tr>');
+            tbody.append(`<tr><td style="text-align: right; padding-right: 1em;">${stat}</td><td width="100%"><div id="${stat}BoxPlot"></div></td></tr>`);
             if (nbaStatsAll.hasOwnProperty(stat)) {
-                tbody.append('<tr><td></td><td width="100%"><div id="' + stat + 'BoxPlotNba" style="margin-top: -26px"></div></td></tr>');
+                tbody.append(`<tr><td></td><td width="100%"><div id="${stat}BoxPlotNba" style="margin-top: -26px"></div></td></tr>`);
             }
         }
     }
 
-    ko.computed(function () {
-        var scale, stat;
-
+    ko.computed(() => {
         // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
-        scale = {
+        const scale = {
             won: [0, 82],
             lost: [0, 82],
             fg: [30, 70],
@@ -122,7 +111,7 @@ function uiFirst(vm) {
             oppPts: [80, 130]
         };
 
-        for (stat in vm.statsAll) {
+        for (let stat in vm.statsAll) {
             if (vm.statsAll.hasOwnProperty(stat)) {
                 boxPlot.create({
                     data: vm.statsAll[stat](),

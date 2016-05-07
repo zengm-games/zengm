@@ -9,12 +9,9 @@ const helpers = require('../util/helpers');
 const components = require('./components');
 const Promise = require('bluebird');
 
-
 function get(req) {
-    var byType;
-    byType = req.params.byType || "team";
     return {
-        byType: byType
+        byType: req.params.byType || "team"
     };
 }
 
@@ -30,20 +27,18 @@ const mapping = {
 };
 
 function getTeamLink(t) {
-    return '<a href="' + helpers.leagueUrl(["team_history", t.abbrev]) + '">' + t.region + ' ' + t.name + '</a>';
+    return `<a href="${helpers.leagueUrl(["team_history", t.abbrev])}">${t.region} ${t.name}</a>`;
 }
 
 function getTeamRecord(t, awards) {
-    var championships, finals, i, lastChampionship, lastPlayoffAppearance, playoffAppearances, totalLost, totalWP, totalWon;
-
-    totalWon = 0;
-    totalLost = 0;
-    playoffAppearances = 0;
-    championships = 0;
-    finals = 0;
-    lastPlayoffAppearance = "-";
-    lastChampionship = "-";
-    for (i = 0; i < t.seasons.length; i++) {
+    let totalWon = 0;
+    let totalLost = 0;
+    let playoffAppearances = 0;
+    let championships = 0;
+    let finals = 0;
+    let lastPlayoffAppearance = "-";
+    let lastChampionship = "-";
+    for (let i = 0; i < t.seasons.length; i++) {
         totalWon += t.seasons[i].won;
         totalLost += t.seasons[i].lost;
         if (t.seasons[i].playoffRoundsWon >= 0) {
@@ -59,8 +54,7 @@ function getTeamRecord(t, awards) {
         }
     }
 
-
-    totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon + totalLost), 3) : "0.000";
+    let totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon + totalLost), 3) : "0.000";
 
     return {
         team: getTeamLink(t),
@@ -87,9 +81,8 @@ function getTeamRecord(t, awards) {
 }
 
 function tallyAwards(awards) {
-    var teams = [];
-    _.map(_.range(g.numTeams), function () {
-        teams.push({
+    const teams = _.range(g.numTeams).map(() => {
+        return {
             mvp: 0,
             dpoy: 0,
             smoy: 0,
@@ -101,11 +94,10 @@ function tallyAwards(awards) {
             allRookie: 0,
             bestRecord: 0,
             bestRecordConf: 0
-        });
+        };
     });
 
-    _.map(awards, function (a) {
-        var i;
+    awards.forEach(a => {
         teams[a.mvp.tid].mvp++;
         teams[a.dpoy.tid].dpoy++;
         teams[a.smoy.tid].smoy++;
@@ -121,19 +113,19 @@ function tallyAwards(awards) {
             teams[a.brw.tid].bestRecord++;
         }
 
-        for (i = 0; i < a.allRookie.length; i++) {
+        for (let i = 0; i < a.allRookie.length; i++) {
             teams[a.allRookie[i].tid].allRookie++;
         }
 
-        for (i = 0; i < a.allLeague.length; i++) {
-            _.map(a.allLeague[i].players, function (p) {
+        for (let i = 0; i < a.allLeague.length; i++) {
+            a.allLeague[i].players.forEach(p => {
                 teams[p.tid].allLeague[i]++;
                 teams[p.tid].allLeagueTotal++;
             });
         }
 
-        for (i = 0; i < a.allDefensive.length; i++) {
-            _.map(a.allDefensive[i].players, function (p) {
+        for (let i = 0; i < a.allDefensive.length; i++) {
+            a.allDefensive[i].players.forEach(p => {
                 teams[p.tid].allDefense[i]++;
                 teams[p.tid].allDefenseTotal++;
             });
@@ -144,21 +136,18 @@ function tallyAwards(awards) {
 }
 
 function sumRecordsFor(group, id, name, records) {
-    var except = ['lastChampionship', 'lastPlayoffAppearance', 'team', 'cid', 'did', 'winp'],
-        keys = _.keys(records[0]),
-        out = {},
-        v,
-        xRecords = _.filter(records, function (t) {
-            return t[group] === id;
-        });
+    const except = ['lastChampionship', 'lastPlayoffAppearance', 'team', 'cid', 'did', 'winp'];
+    const keys = Object.keys(records[0]);
+    const out = {};
 
-    _.map(keys, function (k) {
+    const xRecords = records.filter(r => r[group] === id);
+
+    keys.forEach(k => {
+        let v;
         if (except.indexOf(k) >= 0) {
             v = "-";
         } else {
-            v = _.reduce(xRecords, function (a, b) {
-                return a + Number(b[k]);
-            }, 0);
+            v = xRecords.reduce((a, b) => a + Number(b[k]), 0);
         }
         out[k] = v.toString();
     });
@@ -168,66 +157,54 @@ function sumRecordsFor(group, id, name, records) {
     return out;
 }
 
-function updateTeamRecords(inputs, updateEvents, vm) {
+async function updateTeamRecords(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.byType !== vm.byType()) {
-        return Promise.all([
+        const [teams, awards] = await Promise.all([
             team.filter({
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"]
             }),
             g.dbl.awards.getAll()
-        ]).spread(function (teams, awards) {
-            var awardsPerTeam, confRecords, display, displayName, divRecords, i, seasonCount, teamRecords;
+        ]);
 
-            awardsPerTeam = tallyAwards(awards);
-            teamRecords = [];
-            for (i = 0; i < teams.length; i++) {
-                teamRecords.push(getTeamRecord(teams[i], awardsPerTeam));
-            }
-            seasonCount = _.pluck(teamRecords, 'championships').reduce(function (a, b) {
-                return Number(a) + Number(b);
-            });
+        const awardsPerTeam = tallyAwards(awards);
+        const teamRecords = [];
+        for (let i = 0; i < teams.length; i++) {
+            teamRecords.push(getTeamRecord(teams[i], awardsPerTeam));
+        }
+        const seasonCount = teamRecords.map(tr => tr.championships).reduce((a, b) => Number(a) + Number(b));
 
-            if (inputs.byType === "team") {
-                display = teamRecords;
-                displayName = "Team";
-            } else if (inputs.byType === "conf") {
-                confRecords = [];
-                for (i = 0; i < g.confs.length; i++) {
-                    confRecords.push(sumRecordsFor('cid', g.confs[i].cid, g.confs[i].name, teamRecords));
-                }
-                display = confRecords;
-                displayName = "Conference";
-            } else {
-                divRecords = [];
-                for (i = 0; i < g.divs.length; i++) {
-                    divRecords.push(sumRecordsFor('did', g.divs[i].did, g.divs[i].name, teamRecords));
-                }
-                display = divRecords;
-                displayName = "Division";
-            }
+        let display, displayName;
+        if (inputs.byType === "team") {
+            display = teamRecords;
+            displayName = "Team";
+        } else if (inputs.byType === "conf") {
+            display = g.confs.map(conf => sumRecordsFor('cid', conf.cid, conf.name, teamRecords));
+            displayName = "Conference";
+        } else {
+            display = g.divs.map(div => sumRecordsFor('did', div.did, div.name, teamRecords));
+            displayName = "Division";
+        }
 
-            return {
-                teamRecords: display,
-                displayName: displayName,
-                seasonCount: seasonCount,
-                byType: inputs.byType
-            };
-        });
+        return {
+            teamRecords: display,
+            displayName,
+            seasonCount,
+            byType: inputs.byType
+        };
     }
 }
 
 function uiFirst(vm) {
-    ko.computed(function () {
+    ko.computed(() => {
         ui.title("Team Records");
     }).extend({
         throttle: 1
     });
 
-    ko.computed(function () {
-        ui.datatableSinglePage($("#team-records"), 0, _.map(vm.teamRecords(), function (t) {
-            var out = [t.team, t.won, t.lost, t.winp, t.playoffAppearances, t.lastPlayoffAppearance, t.finals, t.championships, t.lastChampionship, t.mvp, t.dpoy, t.smoy, t.roy, t.bestRecord, t.bestRecordConf, t.allRookie, t.allLeague, t.allDefense];
-            return out;
+    ko.computed(() => {
+        ui.datatableSinglePage($("#team-records"), 0, vm.teamRecords().map(t => {
+            return [t.team, t.won, t.lost, t.winp, t.playoffAppearances, t.lastPlayoffAppearance, t.finals, t.championships, t.lastChampionship, t.mvp, t.dpoy, t.smoy, t.roy, t.bestRecord, t.bestRecordConf, t.allRookie, t.allLeague, t.allDefense];
         }));
     }).extend({
         throttle: 1

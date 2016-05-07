@@ -5,22 +5,15 @@ const backboard = require('backboard');
 const Promise = require('bluebird');
 const $ = require('jquery');
 const ko = require('knockout');
-const _ = require('underscore');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 const components = require('./components');
 
 
 function get(req) {
-    var inputs, out;
-
-    inputs = {};
-
+    const inputs = {};
     inputs.show = req.params.show !== undefined ? req.params.show : "10";
-    out = helpers.validateAbbrev(req.params.abbrev);
-    inputs.tid = out[0];
-    inputs.abbrev = out[1];
-
+    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(req.params.abbrev);
     return inputs;
 }
 
@@ -33,9 +26,9 @@ const mapping = {
     }
 };
 
-function updateTeamHistory(inputs, updateEvents, vm) {
+async function updateTeamHistory(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
-        return Promise.all([
+        let [teamSeasons, players] = await Promise.all([
             g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([inputs.tid], [inputs.tid, ''])),
             g.dbl.players.index('statsTids').getAll(inputs.tid).then(function (players) {
                 return player.withStats(null, players, {
@@ -43,95 +36,91 @@ function updateTeamHistory(inputs, updateEvents, vm) {
                     statsTid: inputs.tid
                 });
             })
-        ]).spread(function (teamSeasons, players) {
-            var bestRecord, championships, history, i, j, playoffAppearances, totalLost, totalWon, worstRecord;
+        ]);
 
-            bestRecord = null;
-            worstRecord = null;
+        let bestRecord = null;
+        let worstRecord = null;
 
-            history = [];
-            totalWon = 0;
-            totalLost = 0;
-            playoffAppearances = 0;
-            championships = 0;
-            for (i = 0; i < teamSeasons.length; i++) {
-                history.push({
-                    season: teamSeasons[i].season,
-                    won: teamSeasons[i].won,
-                    lost: teamSeasons[i].lost,
-                    playoffRoundsWon: teamSeasons[i].playoffRoundsWon
-                });
-                totalWon += teamSeasons[i].won;
-                totalLost += teamSeasons[i].lost;
-                if (teamSeasons[i].playoffRoundsWon >= 0) {
-                    playoffAppearances += 1;
-                }
-                if (teamSeasons[i].playoffRoundsWon === 4) {
-                    championships += 1;
-                }
-
-                if (bestRecord === null || bestRecord.won < history[history.length - 1].won) {
-                    bestRecord = history[history.length - 1];
-                }
-                if (worstRecord === null || worstRecord.lost < history[history.length - 1].lost) {
-                    worstRecord = history[history.length - 1];
-                }
-            }
-            history.reverse(); // Show most recent season first
-
-
-
-            players = player.filter(players, {
-                attrs: ["pid", "name", "injury", "tid", "hof", "watch"],
-                ratings: ["pos"],
-                stats: ["season", "abbrev", "gp", "min", "pts", "trb", "ast", "per", "ewa"],
-                tid: inputs.tid
+        const history = [];
+        let totalWon = 0;
+        let totalLost = 0;
+        let playoffAppearances = 0;
+        let championships = 0;
+        for (let i = 0; i < teamSeasons.length; i++) {
+            history.push({
+                season: teamSeasons[i].season,
+                won: teamSeasons[i].won,
+                lost: teamSeasons[i].lost,
+                playoffRoundsWon: teamSeasons[i].playoffRoundsWon
             });
-
-            for (i = 0; i < players.length; i++) {
-                players[i].stats.reverse();
-
-                for (j = 0; j < players[i].stats.length; j++) {
-                    if (players[i].stats[j].abbrev === g.teamAbbrevsCache[inputs.tid]) {
-                        players[i].lastYr = players[i].stats[j].season + ' ';
-                        break;
-                    }
-                }
-
-                players[i].pos = players[i].ratings[players[i].ratings.length - 1].pos;
-
-                delete players[i].ratings;
-                delete players[i].stats;
+            totalWon += teamSeasons[i].won;
+            totalLost += teamSeasons[i].lost;
+            if (teamSeasons[i].playoffRoundsWon >= 0) {
+                playoffAppearances += 1;
+            }
+            if (teamSeasons[i].playoffRoundsWon === 4) {
+                championships += 1;
             }
 
-            return {
-                abbrev: inputs.abbrev,
-                history: history,
-                players: players,
-                team: {
-                    name: g.teamNamesCache[inputs.tid],
-                    region: g.teamRegionsCache[inputs.tid],
-                    tid: inputs.tid
-                },
-                totalWon: totalWon,
-                totalLost: totalLost,
-                playoffAppearances: playoffAppearances,
-                championships: championships,
-                bestRecord: bestRecord,
-                worstRecord: worstRecord
-            };
+            if (bestRecord === null || bestRecord.won < history[history.length - 1].won) {
+                bestRecord = history[history.length - 1];
+            }
+            if (worstRecord === null || worstRecord.lost < history[history.length - 1].lost) {
+                worstRecord = history[history.length - 1];
+            }
+        }
+        history.reverse(); // Show most recent season first
+
+        players = player.filter(players, {
+            attrs: ["pid", "name", "injury", "tid", "hof", "watch"],
+            ratings: ["pos"],
+            stats: ["season", "abbrev", "gp", "min", "pts", "trb", "ast", "per", "ewa"],
+            tid: inputs.tid
         });
+
+        for (let i = 0; i < players.length; i++) {
+            players[i].stats.reverse();
+
+            for (let j = 0; j < players[i].stats.length; j++) {
+                if (players[i].stats[j].abbrev === g.teamAbbrevsCache[inputs.tid]) {
+                    players[i].lastYr = players[i].stats[j].season + ' ';
+                    break;
+                }
+            }
+
+            players[i].pos = players[i].ratings[players[i].ratings.length - 1].pos;
+
+            delete players[i].ratings;
+            delete players[i].stats;
+        }
+
+        return {
+            abbrev: inputs.abbrev,
+            history,
+            players,
+            team: {
+                name: g.teamNamesCache[inputs.tid],
+                region: g.teamRegionsCache[inputs.tid],
+                tid: inputs.tid
+            },
+            totalWon,
+            totalLost,
+            playoffAppearances,
+            championships,
+            bestRecord,
+            worstRecord
+        };
     }
 }
 
 function uiFirst(vm) {
     ui.title("Team History");
 
-    ko.computed(function () {
-        ui.datatable($("#team-history-players"), 2, _.map(vm.players(), function (p) {
+    ko.computed(() => {
+        ui.datatable($("#team-history-players"), 2, vm.players().map(p => {
             return [helpers.playerNameLabels(p.pid, p.name, p.injury, [], p.watch), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.lastYr, p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== vm.team.tid(), p.tid === vm.team.tid()];
         }), {
-            rowCallback: function (row, data) {
+            rowCallback: (row, data) => {
                 // Highlight active players
                 if (data[data.length - 1]) {
                     row.classList.add("success"); // On this team

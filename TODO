@@ -7,7 +7,7 @@ babel
     then manually go over, fix:
       let/const definitions inline
       async/await
-        test, views after tradingBlock
+        test, views after transactions
         any other instances of .then or .catch? function (
   benchmark, for sanity
     ctrl+r

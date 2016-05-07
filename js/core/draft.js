@@ -499,7 +499,7 @@ async function selectPlayer(pick, pid) {
         const draftName = g.phase === g.PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
         eventLog.add(null, {
             type: "draft",
-            text: `${pick.pick}${(pick.round - 1) * 30}The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season])}">${g.teamNamesCache[pick.tid]}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> with the ${helpers.ordinal(pick.pick + (pick.round - 1) * 30)} pick in the <a href="${helpers.leagueUrl(["draft_summary", g.season])}">${draftName}</a>.`,
+            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season])}">${g.teamNamesCache[pick.tid]}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> with the ${helpers.ordinal(pick.pick + (pick.round - 1) * 30)} pick in the <a href="${helpers.leagueUrl(["draft_summary", g.season])}">${draftName}</a>.`,
             showNotification: false,
             pids: [p.pid],
             tids: [p.tid]

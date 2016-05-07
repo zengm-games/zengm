@@ -4,20 +4,20 @@ const g = require('../../globals');
 const league = require('../../core/league');
 const finances = require('../../core/finances');
 
-describe("core/finances", function () {
-    before(function () {
-        return db.connectMeta().then(function () {
+describe("core/finances", () => {
+    before(() => {
+        return db.connectMeta().then(() => {
             return league.create("Test", 0, undefined, 2013, false);
         });
     });
-    after(function () {
+    after(() => {
         return league.remove(g.lid);
     });
 
-    describe("#assessPayrollMinLuxury()", function () {
-        it("should store payroll and appropriately assess luxury and minimum payroll taxes for each team", function () {
+    describe("#assessPayrollMinLuxury()", () => {
+        it("should store payroll and appropriately assess luxury and minimum payroll taxes for each team", () => {
             return g.dbl.tx(["players", "releasedPlayers", "teamSeasons"], "readwrite", function (tx) {
-                return finances.assessPayrollMinLuxury(tx).then(function () {
+                return finances.assessPayrollMinLuxury(tx).then(() => {
                     return tx.teamSeasons.getAll().then(function (teamSeasons) {
                         var i;
 

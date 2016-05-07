@@ -8,15 +8,15 @@ const sampleTiebreakers = require('../fixtures/sampleTiebreakers.js');
 const _ = require('underscore');
 const Promise = require('bluebird');
 
-describe("core/draft", function () {
+describe("core/draft", () => {
     var testDraftUntilUserOrEnd, testDraftUser, userPick1, userPick2;
 
-    before(function () {
-        return db.connectMeta().then(function () {
+    before(() => {
+        return db.connectMeta().then(() => {
             return league.create("Test", 15, undefined, 2015, false);
         });
     });
-    after(function () {
+    after(() => {
         return league.remove(g.lid);
     });
 
@@ -43,7 +43,7 @@ describe("core/draft", function () {
             assert.equal(pick.tid, g.userTid);
 
             return g.dbl.players.index('tid').get(g.PLAYER.UNDRAFTED).then(function (p) {
-                return draft.selectPlayer(pick, p.pid).then(function () {
+                return draft.selectPlayer(pick, p.pid).then(() => {
                     return g.dbl.players.get(p.pid).then(function (p2) {
                         assert.equal(p2.tid, g.userTid);
                         return draft.setOrder(null, draftOrder);
@@ -53,11 +53,11 @@ describe("core/draft", function () {
         });
     };
 
-    describe("#genPlayers()", function () {
-        it("should generate 70 players for the draft", function () {
+    describe("#genPlayers()", () => {
+        it("should generate 70 players for the draft", () => {
             return g.dbl.tx(["players", "teams", "teamSeasons"], "readwrite", function (tx) {
                 return draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, null);
-            }).then(function () {
+            }).then(() => {
                 return g.dbl.players.index('draft.year').count(g.season).then(function (numPlayers) {
                     assert.equal(numPlayers, 140); // 70 from original league, 70 from this
                 });
@@ -65,15 +65,15 @@ describe("core/draft", function () {
         });
     });
 
-    describe("#genOrder()", function () {
+    describe("#genOrder()", () => {
         var draftResults, i;
 
-        before(function () {
+        before(() => {
             return g.dbl.tx(["teams", "teamSeasons"], "readwrite", function (tx) {
                 // Load static data
                 return tx.teamSeasons.iterate(function (teamSeason) {
                     tx.teamSeasons.delete(teamSeason.rid);
-                }).then(function () {
+                }).then(() => {
                     return tx.teams.iterate(function (t) {
                         var st, teamSeasons;
 
@@ -85,7 +85,7 @@ describe("core/draft", function () {
                         return Promise.each(teamSeasons, function (teamSeason) {
                             teamSeason.tid = t.tid;
                             return tx.teamSeasons.put(teamSeason);
-                        }).then(function () {
+                        }).then(() => {
                             return st;
                         });
                     });
@@ -93,10 +93,10 @@ describe("core/draft", function () {
             });
         });
 
-        it("should schedule 60 draft picks", function () {
+        it("should schedule 60 draft picks", () => {
             return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons", "players"], "readwrite", function (tx) {
                 // Load static data
-                return draft.genOrder(tx).then(function () {
+                return draft.genOrder(tx).then(() => {
                     return draft.getOrder(tx);
                 }).then(function (draftOrder) {
                     assert.equal(draftOrder.length, 60);
@@ -107,7 +107,7 @@ describe("core/draft", function () {
             });
         });
 
-        it("should give the 3 teams with the lowest win percentage picks not lower than 6", function () {
+        it("should give the 3 teams with the lowest win percentage picks not lower than 6", () => {
             var tids = [16, 28, 21]; // teams with lowest winp
             for (i = 0; i < tids.length; i++) {
                 assert(draftResults.indexOf(tids[i]) >= 0);
@@ -116,7 +116,7 @@ describe("core/draft", function () {
             }
         });
 
-        it("should give lottery team with better record than playoff teams a pick based on actual record for round 2", function () {
+        it("should give lottery team with better record than playoff teams a pick based on actual record for round 2", () => {
             var pofteams = [23, 10, 18, 24, 14];
 
             // good record lottery team
@@ -131,7 +131,7 @@ describe("core/draft", function () {
             }
         });
 
-        it("should give reverse round 2 order for teams with the same record", function () {
+        it("should give reverse round 2 order for teams with the same record", () => {
             var j, r1picks, r2picks, sameRec, tids;
             sameRec = [
                 [3, 15, 25],
@@ -160,8 +160,8 @@ describe("core/draft", function () {
         });
     });
 
-    describe("#updateChances()", function () {
-        it("should distribute combinations to teams with the same record", function () {
+    describe("#updateChances()", () => {
+        it("should distribute combinations to teams with the same record", () => {
             return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons"], "readwrite", function (tx) {
                 return team.filter({
                     ot: tx,
@@ -209,20 +209,20 @@ describe("core/draft", function () {
         });
     });
 
-    describe("#selectPlayer() and #untilUserOrEnd()", function () {
-        it("should draft players before the user's team first round pick", function () {
+    describe("#selectPlayer() and #untilUserOrEnd()", () => {
+        it("should draft players before the user's team first round pick", () => {
             return testDraftUntilUserOrEnd(userPick1 - 1, userPick1 - 1);
         });
-        it("should then allow the user to draft in the first round", function () {
+        it("should then allow the user to draft in the first round", () => {
             return testDraftUser(1);
         });
-        it("when called again after the user drafts, should draft players before the user's second round pick comes up", function () {
+        it("when called again after the user drafts, should draft players before the user's second round pick comes up", () => {
             return testDraftUntilUserOrEnd(userPick2 - userPick1 - 1, userPick2 - 1);
         });
-        it("should then allow the user to draft in the second round", function () {
+        it("should then allow the user to draft in the second round", () => {
             return testDraftUser(2);
         });
-        it("when called again after the user drafts, should draft more players to finish the draft", function () {
+        it("when called again after the user drafts, should draft more players to finish the draft", () => {
             var after = 60 - userPick2;
             return testDraftUntilUserOrEnd(after, userPick2 + after);
         });

@@ -6,12 +6,12 @@ const testHelpers = require('../helpers');
 
 var defaultTeams = helpers.getTeamsDefault();
 
-describe("core/season", function () {
-    describe("#newSchedule()", function () {
-        it("should schedule 1230 games (82 each for 30 teams)", function () {
+describe("core/season", () => {
+    describe("#newSchedule()", () => {
+        it("should schedule 1230 games (82 each for 30 teams)", () => {
             assert.equal(season.newSchedule(defaultTeams).length, 1230);
         });
-        it("should schedule 41 home games and 41 away games for each team", function () {
+        it("should schedule 41 home games and 41 away games for each team", () => {
             var away, home, i, tids;
 
             tids = season.newSchedule(defaultTeams);
@@ -29,7 +29,7 @@ describe("core/season", function () {
                 assert.equal(away[i], 41);
             }
         });
-        it("should schedule each team one home game against every team in the other conference", function () {
+        it("should schedule each team one home game against every team in the other conference", () => {
             var home, i, teams, tids;
 
             tids = season.newSchedule(defaultTeams);
@@ -52,7 +52,7 @@ describe("core/season", function () {
                 assert.equal(testHelpers.numInArrayEqualTo(home[i], 1), 15);
             }
         });
-        it("should schedule each team two home games against every team in the same division", function () {
+        it("should schedule each team two home games against every team in the same division", () => {
             var home, i, teams, tids;
 
             tids = season.newSchedule(defaultTeams);
@@ -75,7 +75,7 @@ describe("core/season", function () {
                 assert.equal(testHelpers.numInArrayEqualTo(home[i], 2), 4);
             }
         });
-        it("should schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)", function () {
+        it("should schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)", () => {
             var home, i, teams, tids;
 
             tids = season.newSchedule(defaultTeams);

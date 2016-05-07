@@ -5,23 +5,23 @@ const league = require('../../core/league');
 const _ = require('underscore');
 const testHelpers = require('../helpers');
 
-describe("core/league", function () {
-    before(function () {
-        return db.connectMeta().then(function () {
+describe("core/league", () => {
+    before(() => {
+        return db.connectMeta().then(() => {
             return league.create("Test", 0, undefined, 2013, false);
         });
     });
     // After not needed because last test removes DB
 
-    describe("#create()", function () {
-        it("should add entry in meta leagues object store", function () {
+    describe("#create()", () => {
+        it("should add entry in meta leagues object store", () => {
             return g.dbm.leagues.get(g.lid).then(function (l) {
                 assert.equal(l.name, "Test");
                 assert.equal(l.tid, 0);
                 assert.equal(l.phaseText, g.startingSeason + " preseason");
             });
         });
-        it("should create all necessary object stores", function () {
+        it("should create all necessary object stores", () => {
             assert.equal(g.dbl.objectStoreNames.length, 18);
             assert.equal(g.dbl.objectStoreNames.contains("awards"), true);
             assert.equal(g.dbl.objectStoreNames.contains("events"), true);
@@ -41,7 +41,7 @@ describe("core/league", function () {
             assert.equal(g.dbl.objectStoreNames.contains("teamStats"), true);
             assert.equal(g.dbl.objectStoreNames.contains("trade"), true);
         });
-        it("should initialize gameAttributes object store", function () {
+        it("should initialize gameAttributes object store", () => {
             return g.dbl.gameAttributes.getAll().then(function (gameAttributes) {
                 var count, gTest, key;
 
@@ -70,14 +70,14 @@ describe("core/league", function () {
                 assert.equal(count, 28);
             });
         });
-        it("should initialize draftOrder object store", function () {
+        it("should initialize draftOrder object store", () => {
             return g.dbl.draftOrder.getAll().then(function (draftOrder) {
                 assert.equal(draftOrder.length, 1);
                 assert.equal(draftOrder[0].rid, 1);
                 assert.equal(draftOrder[0].draftOrder.length, 0);
             });
         });
-        it("should initialize teams object store", function () {
+        it("should initialize teams object store", () => {
             return g.dbl.teams.getAll().then(function (teams) {
                 var cids, dids, i;
 
@@ -98,32 +98,32 @@ describe("core/league", function () {
                 }
             });
         });
-        it("should initialize teamSeasons object store", function () {
+        it("should initialize teamSeasons object store", () => {
             return g.dbl.teamSeasons.getAll().then(function (teamSeasons) {
                 assert.equal(teamSeasons.length, g.numTeams);
             });
         });
-        it("should initialize teamStats object store", function () {
+        it("should initialize teamStats object store", () => {
             return g.dbl.teamStats.getAll().then(function (teamStats) {
                 assert.equal(teamStats.length, g.numTeams);
             });
         });
-        it("should initialize trade object store", function () {
+        it("should initialize trade object store", () => {
             return g.dbl.trade.getAll().then(function (tr) {
                 assert.equal(tr.length, 1);
                 assert.equal(tr[0].rid, 0);
                 assert.equal(tr[0].teams.length, 2);
             });
         });
-        it("should initialize players object store", function () {
+        it("should initialize players object store", () => {
             return g.dbl.players.getAll().then(function (players) {
                 assert.equal(players.length, 33 * 14 + 70 * 3);
             });
         });
     });
 
-    describe("#remove()", function () {
-        it("should remove league database", function () {
+    describe("#remove()", () => {
+        it("should remove league database", () => {
             return league.remove(g.lid);
         });
     });

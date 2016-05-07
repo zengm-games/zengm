@@ -4,24 +4,19 @@ const g = require('../../globals');
 const contractNegotiation = require('../../core/contractNegotiation');
 const league = require('../../core/league');
 
-describe("core/contractNegotiation", function () {
-    before(function () {
-        return db.connectMeta().then(function () {
-            return league.create("Test", 14, undefined, 2013, false);
-        });
+describe("core/contractNegotiation", () => {
+    before(async () => {
+        await db.connectMeta();
+        await league.create("Test", 14, undefined, 2013, false);
     });
-    after(function () {
-        return league.remove(g.lid);
-    });
-    afterEach(function () {
+    after(() => league.remove(g.lid));
+    afterEach(() => {
         // Set to a trade with team 1 and no players;
-        return g.dbl.tx(['gameAttributes', 'messages', 'negotiations'], 'readwrite', function (tx) {
-            return contractNegotiation.cancelAll(tx);
-        });
+        return g.dbl.tx(['gameAttributes', 'messages', 'negotiations'], 'readwrite', tx => contractNegotiation.cancelAll(tx));
     });
 
-    describe("#create()", function () {
-        it("should start a negotiation with a free agent", function () {
+    describe("#create()", () => {
+        it("should start a negotiation with a free agent", () => {
             return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", function (tx) {
                 return contractNegotiation.create(tx, 7, false).then(function (error) {
                     assert.equal((typeof error), "undefined");
@@ -33,7 +28,7 @@ describe("core/contractNegotiation", function () {
                 });
             });
         });
-        it("should fail to start a negotiation with anyone but a free agent", function () {
+        it("should fail to start a negotiation with anyone but a free agent", () => {
             return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", function (tx) {
                 return contractNegotiation.create(tx, 70, false).then(function (error) {
                     assert(error.indexOf("is not a free agent.") >= 0);
@@ -44,7 +39,7 @@ describe("core/contractNegotiation", function () {
                 });
             });
         });
-        it("should only allow one concurrent negotiation if resigning is false", function () {
+        it("should only allow one concurrent negotiation if resigning is false", () => {
             return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", function (tx) {
                 return contractNegotiation.create(tx, 7, false).then(function (error) {
                     assert.equal((typeof error), "undefined");
@@ -53,11 +48,11 @@ describe("core/contractNegotiation", function () {
                         assert.equal(negotiations.length, 1);
                         assert.equal(negotiations[0].pid, 7);
                     });
-                }).then(function () {
+                }).then(() => {
                     return contractNegotiation.create(tx, 8, false).then(function (error) {
                         assert.equal(error, "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
                     });
-                }).then(function () {
+                }).then(() => {
                     return tx.negotiations.getAll().then(function (negotiations) {
                         assert.equal(negotiations.length, 1);
                         assert.equal(negotiations[0].pid, 7);
@@ -65,7 +60,7 @@ describe("core/contractNegotiation", function () {
                 });
             });
         });
-        it("should allow multiple concurrent negotiations if resigning is true", function () {
+        it("should allow multiple concurrent negotiations if resigning is true", () => {
             return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", function (tx) {
                 return contractNegotiation.create(tx, 7, true).then(function (error) {
                     assert.equal((typeof error), "undefined");
@@ -74,11 +69,11 @@ describe("core/contractNegotiation", function () {
                         assert.equal(negotiations.length, 1);
                         assert.equal(negotiations[0].pid, 7);
                     });
-                }).then(function () {
+                }).then(() => {
                     return contractNegotiation.create(tx, 8, true).then(function (error) {
                         assert.equal((typeof error), "undefined");
                     });
-                }).then(function () {
+                }).then(() => {
                     return tx.negotiations.getAll().then(function (negotiations) {
                         assert.equal(negotiations.length, 2);
                         assert.equal(negotiations[0].pid, 7);
@@ -88,29 +83,29 @@ describe("core/contractNegotiation", function () {
             });
         });
         // The use of txs here might cause race conditions
-        it("should not allow a negotiation to start if there are already 15 players on the user's roster, unless resigning is true", function () {
+        it("should not allow a negotiation to start if there are already 15 players on the user's roster, unless resigning is true", () => {
             return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", function (tx) {
                 return tx.players.get(7).then(function (p) {
                     p.tid = g.userTid;
                     return tx.players.put(p);
-                }).then(function () {
+                }).then(() => {
                     return contractNegotiation.create(tx, 8, false).then(function (error) {
                         assert.equal(error, "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.");
                     });
-                }).then(function () {
+                }).then(() => {
                     return tx.negotiations.getAll().then(function (negotiations) {
                         assert.equal(negotiations.length, 0);
                     });
-                }).then(function () {
+                }).then(() => {
                     return contractNegotiation.create(tx, 8, true).then(function (error) {
                         assert.equal((typeof error), "undefined");
                     });
-                }).then(function () {
+                }).then(() => {
                     return tx.negotiations.getAll().then(function (negotiations) {
                         assert.equal(negotiations.length, 1);
                         assert.equal(negotiations[0].pid, 8);
                     });
-                }).then(function () {
+                }).then(() => {
                     return tx.players.get(7).then(function (p) {
                         p.tid = g.PLAYER.FREE_AGENT;
                         return tx.players.put(p);
@@ -120,8 +115,8 @@ describe("core/contractNegotiation", function () {
         });
     });
 
-    describe("#accept()", function () {
-        it("should not allow signing non-minimum contracts that cause team to exceed the salary cap", function () {
+    describe("#accept()", () => {
+        it("should not allow signing non-minimum contracts that cause team to exceed the salary cap", () => {
             return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", function (tx) {
                 return contractNegotiation.create(tx, 8, false).then(function (error) {
                     assert.equal((typeof error), "undefined");
@@ -132,7 +127,7 @@ describe("core/contractNegotiation", function () {
                         return tx.negotiations.put(negotiation);
                     });
                 });
-            }).then(function () {
+            }).then(() => {
                 return contractNegotiation.accept(8, 60000, 2017).then(function (error) {
                     assert.equal(error, "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");
                 });

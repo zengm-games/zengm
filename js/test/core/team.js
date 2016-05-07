@@ -5,9 +5,9 @@ const league = require('../../core/league');
 const player = require('../../core/player');
 const team = require('../../core/team');
 
-describe("core/team", function () {
-    describe("#findStarters()", function () {
-        it("should handle easy roster sorts", function () {
+describe("core/team", () => {
+    describe("#findStarters()", () => {
+        it("should handle easy roster sorts", () => {
             var starters;
 
             starters = team.findStarters(["PG", "SG", "SF", "PF", "C", "G", "F", "FC", "PF", "PG"]);
@@ -22,7 +22,7 @@ describe("core/team", function () {
             starters = team.findStarters(["F", "SG", "SF", "PF", "G", "G", "F", "FC", "PF", "PG"]);
             assert.deepEqual(starters, [0, 1, 2, 3, 4]);
         });
-        it("should put two Gs in starting lineup", function () {
+        it("should put two Gs in starting lineup", () => {
             var starters;
 
             starters = team.findStarters(["PG", "F", "SF", "PF", "C", "G", "F", "FC", "PF", "PG"]);
@@ -37,7 +37,7 @@ describe("core/team", function () {
             starters = team.findStarters(["F", "PF", "SF", "C", "C", "F", "FC", "PF", "PG", "G"]);
             assert.deepEqual(starters, [0, 1, 2, 8, 9]);
         });
-        it("should put two Fs (or one F and one C) in starting lineup", function () {
+        it("should put two Fs (or one F and one C) in starting lineup", () => {
             var starters;
 
             starters = team.findStarters(["PG", "SG", "G", "PF", "G", "G", "F", "FC", "PF", "PG"]);
@@ -49,7 +49,7 @@ describe("core/team", function () {
             starters = team.findStarters(["PG", "SG", "SG", "PG", "C", "G", "F", "FC", "PF", "PG"]);
             assert.deepEqual(starters, [0, 1, 2, 4, 6]);
         });
-        it("should never put two pure Cs in starting lineup", function () {
+        it("should never put two pure Cs in starting lineup", () => {
             var starters;
 
             starters = team.findStarters(["PG", "SG", "G", "C", "C", "G", "F", "FC", "PF", "PG"]);
@@ -59,18 +59,18 @@ describe("core/team", function () {
             assert.deepEqual(starters, [0, 1, 2, 3, 4]);
         });
     });
-    describe("#filter()", function () {
-        before(function () {
-            return db.connectMeta().then(function () {
+    describe("#filter()", () => {
+        before(() => {
+            return db.connectMeta().then(() => {
                 return league.create("Test", 0, undefined, 2013, false);
-            }).then(function () {
+            }).then(() => {
                 return g.dbl.teamStats.index('season, tid').get([g.season, 4]).then(function (teamStats) {
                     teamStats.gp = 10;
                     teamStats.fg = 50;
                     teamStats.fga = 100;
 
                     return g.dbl.teamStats.put(teamStats);
-                }).then(function () {
+                }).then(() => {
                     var teamStats = team.genStatsRow(4, true);
                     teamStats.gp = 4;
                     teamStats.fg = 12;
@@ -80,11 +80,11 @@ describe("core/team", function () {
                 });
             });
         });
-        after(function () {
+        after(() => {
             return league.remove(g.lid);
         });
 
-        it("should return requested info if tid/season match", function () {
+        it("should return requested info if tid/season match", () => {
             return team.filter({
                 attrs: ["tid", "abbrev"],
                 seasonAttrs: ["season", "won", "payroll"],
@@ -104,7 +104,7 @@ describe("core/team", function () {
                 assert.equal(t.hasOwnProperty("stats"), false);
             });
         });
-        it("should return an array if no team ID is specified", function () {
+        it("should return an array if no team ID is specified", () => {
             return team.filter({
                 attrs: ["tid", "abbrev"],
                 seasonAttrs: ["season", "won"],
@@ -123,7 +123,7 @@ describe("core/team", function () {
                 assert.equal(teams[4].hasOwnProperty("stats"), false);
             });
         });
-        it("should return requested info if tid/season match, even when no attrs requested", function () {
+        it("should return requested info if tid/season match, even when no attrs requested", () => {
             return team.filter({
                 seasonAttrs: ["season", "won"],
                 stats: ["gp", "fg", "fgp"],
@@ -138,7 +138,7 @@ describe("core/team", function () {
                 assert.equal(Object.keys(t).length, 5);
             });
         });
-        it("should return requested info if tid/season match, even when no seasonAttrs requested", function () {
+        it("should return requested info if tid/season match, even when no seasonAttrs requested", () => {
             return team.filter({
                 attrs: ["tid", "abbrev"],
                 stats: ["gp", "fg", "fgp"],
@@ -153,7 +153,7 @@ describe("core/team", function () {
                 assert.equal(Object.keys(t).length, 5);
             });
         });
-        it("should return requested info if tid/season match, even when no stats requested", function () {
+        it("should return requested info if tid/season match, even when no stats requested", () => {
             return team.filter({
                 attrs: ["tid", "abbrev"],
                 seasonAttrs: ["season", "won"],
@@ -167,7 +167,7 @@ describe("core/team", function () {
                 assert.equal(Object.keys(t).length, 4);
             });
         });
-        it("should return season totals is options.totals is true", function () {
+        it("should return season totals is options.totals is true", () => {
             return team.filter({
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
@@ -180,7 +180,7 @@ describe("core/team", function () {
                 assert.equal(t.fgp, 50);
             });
         });
-        it("should return playoff stats if options.playoffs is true", function () {
+        it("should return playoff stats if options.playoffs is true", () => {
             return team.filter({
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
@@ -193,7 +193,7 @@ describe("core/team", function () {
                 assert.equal(t.fgp, 10);
             });
         });
-        it("should use supplied IndexedDB transaction", function () {
+        it("should use supplied IndexedDB transaction", () => {
             return g.dbl.tx(["players", "releasedPlayers", "teams", "teamSeasons"], function (tx) {
                 return team.filter({
                     attrs: ["tid", "abbrev"],
@@ -213,7 +213,7 @@ describe("core/team", function () {
                 });
             });
         });
-        it("should return stats in an array if no season is specified", function () {
+        it("should return stats in an array if no season is specified", () => {
             return team.filter({
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
@@ -227,13 +227,13 @@ describe("core/team", function () {
         });
     });
 
-    describe("#checkRosterSizes()", function () {
-        before(function () {
-            return db.connectMeta().then(function () {
+    describe("#checkRosterSizes()", () => {
+        before(() => {
+            return db.connectMeta().then(() => {
                 return league.create("Test", 0, undefined, 2013, false);
             });
         });
-        after(function () {
+        after(() => {
             return league.remove(g.lid);
         });
 
@@ -266,25 +266,25 @@ describe("core/team", function () {
             });
         }
 
-        it("should add players to AI team under roster limit without returning error message", function () {
-            return removeTen(5).then(function () {
+        it("should add players to AI team under roster limit without returning error message", () => {
+            return removeTen(5).then(() => {
                 // Confirm roster size under limit
                 return g.dbl.players.index('tid').count(5).then(function (numPlayers) {
                     assert.equal(numPlayers, 4);
                 });
-            }).then(function () {
+            }).then(() => {
                 return team.checkRosterSizes().then(function (userTeamSizeError) {
                     assert.equal(userTeamSizeError, null);
                 });
-            }).then(function () {
+            }).then(() => {
                 // Confirm players added up to limit
                 return g.dbl.players.index('tid').count(5).then(function (numPlayers) {
                     assert.equal(numPlayers, g.minRosterSize);
                 });
             });
         });
-        it("should remove players to AI team over roster limit without returning error message", function () {
-            return addTen(8).then(function () {
+        it("should remove players to AI team over roster limit without returning error message", () => {
+            return addTen(8).then(() => {
                 // Confirm roster size over limit
                 return g.dbl.players.index('tid').count(8).then(function (numPlayers) {
                     assert.equal(numPlayers, 24);
@@ -297,8 +297,8 @@ describe("core/team", function () {
                 });
             });
         });
-        it("should return error message when user team is under roster limit", function () {
-            return removeTen(g.userTid).then(function () {
+        it("should return error message when user team is under roster limit", () => {
+            return removeTen(g.userTid).then(() => {
                 // Confirm roster size under limit
                 return g.dbl.players.index('tid').count(g.userTid).then(function (numPlayers) {
                     assert.equal(numPlayers, 4);
@@ -313,10 +313,10 @@ describe("core/team", function () {
                 });
             });
         });
-        it("should return error message when user team is over roster limit", function () {
-            return addTen(g.userTid).then(function () {
+        it("should return error message when user team is over roster limit", () => {
+            return addTen(g.userTid).then(() => {
                 return addTen(g.userTid);
-            }).then(function () {
+            }).then(() => {
                 // Confirm roster size over limit
                 return g.dbl.players.index('tid').count(g.userTid).then(function (numPlayers) {
                     assert.equal(numPlayers, 24);

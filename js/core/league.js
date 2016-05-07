@@ -47,7 +47,7 @@ const defaultGameAttributes = {
 function merge(x, y) {
     for (let i = 0; i < x.length; i++) {
         // Fill in default values as needed
-        for (let prop in y[i]) {
+        for (const prop in y[i]) {
             if (y[i].hasOwnProperty(prop) && !x[i].hasOwnProperty(prop)) {
                 x[i][prop] = y[i][prop];
             }
@@ -67,7 +67,7 @@ function merge(x, y) {
  */
 async function setGameAttributes(tx, gameAttributes) {
     const toUpdate = [];
-    for (let key in gameAttributes) {
+    for (const key in gameAttributes) {
         if (gameAttributes.hasOwnProperty(key)) {
             if (g[key] !== gameAttributes[key]) {
                 toUpdate.push(key);

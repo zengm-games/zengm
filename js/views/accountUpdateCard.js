@@ -95,8 +95,7 @@ function uiFirst(vm) {
         window.Stripe.setPublishableKey(g.stripePublishableKey);
 
         $('#payment-form').submit(function () {
-            var $form = $(this);
-
+            const $form = $(this);
             $form.find('button').prop('disabled', true);
 
             window.Stripe.card.createToken($form, stripeResponseHandler.bind(null, vm));

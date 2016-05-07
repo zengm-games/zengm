@@ -1088,7 +1088,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
             }
 //console.log([playerValue, contractValue]);
 
-            let value = playerValue + 0.5 * contractValue;
+            const value = playerValue + 0.5 * contractValue;
 
             if (value === 0) {
                 return memo;

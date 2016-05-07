@@ -170,7 +170,7 @@ async function connectLeague(lid) {
 async function reset() {
     // localStorage, which is just use for table sorting currently
     const debug = localStorage.debug; // Save debug setting and restore later
-    for (let key in localStorage) {
+    for (const key in localStorage) {
         if (localStorage.hasOwnProperty(key)) {
             localStorage.removeItem(key);
         }

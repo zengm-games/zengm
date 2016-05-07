@@ -36,7 +36,7 @@ async function updateGamesList(inputs, updateEvents, vm) {
     if (!vm.inProgress()) {
         const games = await season.getSchedule({oneDay: true});
 
-        for (let game of games) {
+        for (const game of games) {
             if (game.awayTid === g.userTid || game.homeTid === g.userTid) {
                 game.highlight = true;
             } else {

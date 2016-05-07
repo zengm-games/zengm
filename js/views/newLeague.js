@@ -24,7 +24,7 @@ function removeUnneededTeamProps(teams) {
 
     for (let i = 0; i < teams.length; i++) {
         // Remove unneeded properties
-        for (let prop in teams[i]) {
+        for (const prop in teams[i]) {
             if (teams[i].hasOwnProperty(prop)) {
                 if (propsToKeep.indexOf(prop) === -1) {
                     delete teams[i][prop];
@@ -160,7 +160,6 @@ function uiFirst(vm) {
     updateShowUploadForm();
 
     // Handle custom roster teams
-    let fileEl;
     const setTeams = newTeams => {
         if (newTeams !== undefined) {
             for (let i = 0; i < newTeams.length; i++) {
@@ -188,7 +187,7 @@ function uiFirst(vm) {
 
         updatePopText();
     };
-    const useCustomTeams = () => {
+    const useCustomTeams = fileEl => {
         if (fileEl.files.length) {
             vm.invalidLeagueFile(false);
 
@@ -222,13 +221,13 @@ function uiFirst(vm) {
             };
         }
     };
-    fileEl = document.getElementById("custom-rosters-file");
+    const fileEl = document.getElementById("custom-rosters-file");
     fileEl.addEventListener("change", useCustomTeams);
     // Handle switch away from custom roster teams
     const newLeagueRostersEl = document.getElementById("new-league-rosters");
     newLeagueRostersEl.addEventListener("change", function () {
         if (this.value === "custom-rosters") {
-            useCustomTeams();
+            useCustomTeams(fileEl);
         } else {
             setTeams(helpers.getTeamsDefault());
         }

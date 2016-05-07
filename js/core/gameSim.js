@@ -76,7 +76,7 @@ class GameSim {
             }
 
             for (let p = 0; p < this.team[t].player.length; p++) {
-                for (let r in this.team[t].player[p].compositeRating) {
+                for (const r in this.team[t].player[p].compositeRating) {
                     if (this.team[t].player[p].compositeRating.hasOwnProperty(r)) {
                         this.team[t].player[p].compositeRating[r] *= factor;
                     }

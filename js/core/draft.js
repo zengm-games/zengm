@@ -190,9 +190,9 @@ function updateChances(chances, teams, isFinal) {
                 val -= (tc + val - chances.length);
                 // Do not exceed 14, as the chances are only for lottery teams.
             }
-            let total = chances.slice(tc, tc + val).reduce((a, b) => a + b);
+            const total = chances.slice(tc, tc + val).reduce((a, b) => a + b);
             let remainder = (isFinal) ? total % val : 0;
-            let newVal = (total - remainder) / val;
+            const newVal = (total - remainder) / val;
 
             let i, j;
             for (i = tc, j = tc + val; i < j; i++) {
@@ -274,7 +274,7 @@ async function genOrder(tx) {
     // Pick first three picks based on chances
     const firstThree = [];
     while (firstThree.length < 3) {
-        let draw = random.randInt(1, 1000);
+        const draw = random.randInt(1, 1000);
         let i;
         for (i = 0; i < chances.length; i++) {
             if (chances[i] > draw) {
@@ -299,7 +299,7 @@ async function genOrder(tx) {
     // Reorganize this to an array indexed on originalTid and round
     const draftPicksIndexed = [];
     for (let i = 0; i < draftPicks.length; i++) {
-        let tid = draftPicks[i].originalTid;
+        const tid = draftPicks[i].originalTid;
         // Initialize to an array
         if (draftPicksIndexed.length < tid || draftPicksIndexed[tid] === undefined) {
             draftPicksIndexed[tid] = [];
@@ -315,7 +315,7 @@ async function genOrder(tx) {
 
     // First round - lottery winners
     for (let i = 0; i < firstThree.length; i++) {
-        let tid = draftPicksIndexed[teams[firstThree[i]].tid][1].tid;
+        const tid = draftPicksIndexed[teams[firstThree[i]].tid][1].tid;
         draftOrder.push({
             round: 1,
             pick: i + 1,
@@ -330,7 +330,7 @@ async function genOrder(tx) {
     let pick = 4;
     for (let i = 0; i < teams.length; i++) {
         if (firstThree.indexOf(i) < 0) {
-            let tid = draftPicksIndexed[teams[i].tid][1].tid;
+            const tid = draftPicksIndexed[teams[i].tid][1].tid;
             draftOrder.push({
                 round: 1,
                 pick,
@@ -354,7 +354,7 @@ async function genOrder(tx) {
 
     // Second round
     for (let i = 0; i < teams.length; i++) {
-        let tid = draftPicksIndexed[teams[i].tid][2].tid;
+        const tid = draftPicksIndexed[teams[i].tid][2].tid;
         draftOrder.push({
             round: 2,
             pick: i + 1,

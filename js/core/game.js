@@ -226,14 +226,12 @@ function writeTeamStats(tx, results) {
 
 function writePlayerStats(tx, results) {
     return Promise.map(results.team, t => Promise.map(t.player, p => {
-        let promises;
-
         // Only need to write stats if player got minutes
         if (p.stat.min === 0) {
             return;
         }
 
-        promises = [];
+        const promises = [];
 
         promises.push(player.checkStatisticalFeat(tx, p.id, t.id, p, results));
 
@@ -577,7 +575,7 @@ async function loadTeams(tx) {
             p.ovr = rating.ovr;
 
             // These use the same formulas as the skill definitions in player.skills!
-            for (let k in g.compositeWeights) {
+            for (const k in g.compositeWeights) {
                 if (g.compositeWeights.hasOwnProperty(k)) {
                     p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
                 }
@@ -605,7 +603,7 @@ async function loadTeams(tx) {
 
         // Initialize team composite rating object
         t.compositeRating = {};
-        for (let rating in p.compositeRating) {
+        for (const rating in p.compositeRating) {
             if (p.compositeRating.hasOwnProperty(rating)) {
                 t.compositeRating[rating] = 0;
             }
@@ -752,12 +750,10 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
 
     // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
     const cbSimGames = async (schedule, teams) => {
-        let doPlayByPlay, gs, i, results;
-
-        results = [];
-        for (i = 0; i < schedule.length; i++) {
-            doPlayByPlay = gidPlayByPlay === schedule[i].gid;
-            gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid], doPlayByPlay);
+        const results = [];
+        for (let i = 0; i < schedule.length; i++) {
+            const doPlayByPlay = gidPlayByPlay === schedule[i].gid;
+            const gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid], doPlayByPlay);
             results.push(gs.run());
         }
         await cbSaveResults(results);

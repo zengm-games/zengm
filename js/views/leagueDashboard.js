@@ -140,7 +140,7 @@ async function updateGames(inputs, updateEvents, vm) {
                     overtime: overtime
                 });
 
-                let i = completed.length - 1;
+                const i = completed.length - 1;
                 if (game.teams[0].tid === g.userTid) {
                     completed[i].home = true;
                     completed[i].pts = game.teams[0].pts;
@@ -213,7 +213,7 @@ function updatePlayers(inputs, updateEvents) {
             // League leaders
             vars.leagueLeaders = {};
             const stats = ["pts", "trb", "ast"]; // Categories for leaders
-            for (let stat of stats) {
+            for (const stat of stats) {
                 players.sort((a, b) => b.stats[stat] - a.stats[stat]);
                 vars.leagueLeaders[stat] = {
                     pid: players[0].pid,
@@ -226,7 +226,7 @@ function updatePlayers(inputs, updateEvents) {
             // Team leaders
             const userPlayers = players.filter(p => p.tid === g.userTid);
             vars.teamLeaders = {};
-            for (let stat of stats) {
+            for (const stat of stats) {
                 if (userPlayers.length > 0) {
                     userPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
                     vars.teamLeaders[stat] = {
@@ -309,7 +309,7 @@ async function updateStandings(inputs, updateEvents) {
 
         // Find user's conference
         let cid;
-        for (let t of teams) {
+        for (const t of teams) {
             if (t.tid === g.userTid) {
                 cid = t.cid;
                 break;

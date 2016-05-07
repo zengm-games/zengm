@@ -102,8 +102,6 @@ require('./api');
     await db.connectMeta();
 
     const app = new Davis(function () {
-        let tryForceHttps;
-
         this.configure(function () {
             this.generateRequestOnPageLoad = true;
             this.handleRouteNotFound = true;
@@ -132,7 +130,7 @@ require('./api');
         });
 
         // Redirect a route to https URL always, unless the URL doesn't include basketball-gm (e.g. localhost)
-        tryForceHttps = view => req => {
+        const tryForceHttps = view => req => {
             if (window.location.protocol === "http:" && window.location.hostname.indexOf("basketball-gm.com") >= 0) {
                 window.location.replace(`https://${window.location.hostname}${req.fullPath}`);
             } else {

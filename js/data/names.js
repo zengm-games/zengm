@@ -1,10 +1,8 @@
-var g = require('../globals');
-
-var first, last;
+const g = require('../globals');
 
 // http://www.census.gov/genealogy/www/data/1990surnames/names_files.html
 // Name, Cumulative Frequency
-first = [
+const first = [
     ["James", 3.318],
     ["John", 6.589],
     ["Robert", 9.732],
@@ -1228,7 +1226,7 @@ first = [
 
 // http://www.census.gov/genealogy/www/data/1990surnames/names_files.html
 // Name, Cumulative Frequency
-last = [
+const last = [
     ["Smith", 1.006],
     ["Johnson", 1.816],
     ["Williams", 2.515],
@@ -20071,7 +20069,7 @@ last = [
 ];
 
 module.exports = {
-    load: function () {
+    load: () => {
         return {
             first: (g.names && g.names.first) ? g.names.first : first,
             last: (g.names && g.names.last) ? g.names.last : last

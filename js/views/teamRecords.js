@@ -54,7 +54,7 @@ function getTeamRecord(t, awards) {
         }
     }
 
-    let totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon + totalLost), 3) : "0.000";
+    const totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon + totalLost), 3) : "0.000";
 
     return {
         team: getTeamLink(t),

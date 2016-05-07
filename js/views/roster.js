@@ -16,9 +16,7 @@ const helpers = require('../util/helpers');
 function highlightHandles() {
     let i = 1;
     $("#roster tbody").children().each(function () {
-        var tr;
-
-        tr = $(this);
+        const tr = $(this);
         if (i <= 5) {
             // Because of CSS specificity issues, hard code color
             //tr.find("td:first").removeClass("btn-info").addClass("btn-primary");
@@ -83,10 +81,8 @@ function editableChanged(editable) {
             },
             cursor: "move",
             update: function () {
-                var i, sortedPids;
-
-                sortedPids = $(this).sortable("toArray", {attribute: "data-pid"});
-                for (i = 0; i < sortedPids.length; i++) {
+                const sortedPids = $(this).sortable("toArray", {attribute: "data-pid"});
+                for (let i = 0; i < sortedPids.length; i++) {
                     sortedPids[i] = parseInt(sortedPids[i], 10);
                 }
 
@@ -141,9 +137,7 @@ function InitViewModel() {
         return g.season === this.season();
     }, this);
 
-    this.ptChange = function (p) {
-        var pid, ptModifier;
-
+    this.ptChange = async p => {
         // NEVER UPDATE AI TEAMS
         // This shouldn't be necessary, but sometimes it gets triggered
         if (this.team.tid() !== g.userTid) {
@@ -151,18 +145,15 @@ function InitViewModel() {
         }
 
         // Update ptModifier in database
-        pid = p.pid();
-        ptModifier = parseFloat(p.ptModifier());
-        g.dbl.players.get(pid).then(function (p) {
-            if (p.ptModifier !== ptModifier) {
-                p.ptModifier = ptModifier;
-
-                g.dbl.players.put(p).then(function () {
-                    league.updateLastDbChange();
-                });
-            }
-        });
-    }.bind(this);
+        const pid = p.pid();
+        const ptModifier = parseFloat(p.ptModifier());
+        const p2 = await g.dbl.players.get(pid);
+        if (p2.ptModifier !== ptModifier) {
+            p2.ptModifier = ptModifier;
+            await g.dbl.players.put(p2);
+            league.updateLastDbChange();
+        }
+    };
 }
 
 const mapping = {

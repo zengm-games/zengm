@@ -104,7 +104,6 @@ async function post(req) {
 async function updateNegotiation(inputs) {
     // Call getAll so it works on null key
     const negotiations = await g.dbl.negotiations.getAll(inputs.pid);
-    var negotiation;
 
     if (negotiations.length === 0) {
         return {
@@ -112,7 +111,7 @@ async function updateNegotiation(inputs) {
         };
     }
 
-    negotiation = negotiations[0];
+    const negotiation = negotiations[0];
     negotiation.player.expiration = negotiation.player.years + g.season;
     // Adjust to account for in-season signings
     if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {

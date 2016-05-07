@@ -15,7 +15,6 @@ babel
     gamesim
   merge with master
   eslint
-    no var
     use some consensus rules http://blog.javascripting.com/2015/09/07/fine-tuning-airbnbs-eslint-config/
     no x:x in obj definitions
   how to make async/await fast
@@ -23,9 +22,7 @@ babel
       http://stackoverflow.com/questions/36775097/babel-plugin-transform-async-to-module-method-without-regenerator
     https://babeljs.io/docs/plugins/transform-async-to-generator/ - try this with global Bluebird
     typescript
-  errors on draft until user or end
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being cancelled (resolve) and error returned (Reject)
-  confirm feats still work and text is fine
   TEST ACCOUNT STUFF! (reset, login, register, account, card, buy)
 
 one month gamesim benchmarks while viewing dashboard:

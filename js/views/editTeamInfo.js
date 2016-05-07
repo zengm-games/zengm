@@ -63,11 +63,9 @@ function uiFirst() {
 
     const fileEl = document.getElementById("custom-teams");
     fileEl.addEventListener("change", () => {
-        var file, reader;
+        const file = fileEl.files[0];
 
-        file = fileEl.files[0];
-
-        reader = new window.FileReader();
+        const reader = new window.FileReader();
         reader.readAsText(file);
         reader.onload = async event => {
             const rosters = JSON.parse(event.target.result);

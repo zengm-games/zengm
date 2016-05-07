@@ -33,7 +33,7 @@ async function assessPayrollMinLuxury(tx) {
         return teamSeason;
     });
 
-    let payteams = payrolls.filter(x => x <= g.salaryCap);
+    const payteams = payrolls.filter(x => x <= g.salaryCap);
     if (payteams.length > 0 && collectedTax > 0) {
         const distribute = (collectedTax * 0.5) / payteams.length;
         return await tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
@@ -70,9 +70,8 @@ async function updateRanks(tx, types) {
     const sortFn = (a, b) => b.amount - a.amount;
 
     const getByItem = byTeam => {
-        let byItem, item;
-        byItem = {};
-        for (item in byTeam[0]) {
+        const byItem = {};
+        for (const item in byTeam[0]) {
             if (byTeam[0].hasOwnProperty(item)) {
                 byItem[item] = _.pluck(byTeam, item);
                 byItem[item].sort(sortFn);

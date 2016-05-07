@@ -46,8 +46,7 @@ function uiFirst(vm) {
     }).extend({throttle: 1});
 
     ko.computed(() => {
-        var season;
-        season = vm.season();
+        const season = vm.season();
         ui.datatableSinglePage($("#team-stats"), 2, vm.teams().map(t => {
             return [`<a href="${helpers.leagueUrl(["roster", t.abbrev, season])}">${t.abbrev}</a>`, String(t.gp), String(t.won), String(t.lost), helpers.round(t.fg, 1), helpers.round(t.fga, 1), helpers.round(t.fgp, 1), helpers.round(t.tp, 1), helpers.round(t.tpa, 1), helpers.round(t.tpp, 1), helpers.round(t.ft, 1), helpers.round(t.fta, 1), helpers.round(t.ftp, 1), helpers.round(t.orb, 1), helpers.round(t.drb, 1), helpers.round(t.trb, 1), helpers.round(t.ast, 1), helpers.round(t.tov, 1), helpers.round(t.stl, 1), helpers.round(t.blk, 1), helpers.round(t.ba, 1), helpers.round(t.pf, 1), helpers.round(t.pts, 1), helpers.round(t.oppPts, 1), helpers.round(t.diff, 1)];
         }), {

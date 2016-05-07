@@ -119,7 +119,7 @@ async function updatePlayers(teams) {
 
     await g.dbl.tx(["draftPicks", "players"], async tx => {
         // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
-        let promises = [];
+        const promises = [];
         teams.forEach(t => {
             // Check players
             promises.push(tx.players.index('tid').getAll(t.tid).then(players => {
@@ -413,7 +413,6 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
     let added = 0;
 
     // Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
-    let testTrade;
     const tryAddAsset = async () => {
         const assets = [];
 
@@ -529,7 +528,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
     };
 
     // See if the AI team likes the current trade. If not, try adding something to it.
-    testTrade = async () => {
+    async function testTrade() {
         const dv = await team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached);
 
         if (dv > 0 && initialSign === -1) {
@@ -545,7 +544,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
         }
 
         return tryAddAsset();
-    };
+    }
 
     const dv = await team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached);
     if (dv > 0) {

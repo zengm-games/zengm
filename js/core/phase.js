@@ -416,13 +416,12 @@ async function newPhaseDraft(tx) {
 
     // Kill off old retired players (done here since not much else happens in this phase change, so making it a little slower is fine)
     await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
-        let probDeath;
         if (p.hasOwnProperty("diedYear") && p.diedYear) {
             return;
         }
 
         // Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
-        probDeath = 0.0001165111 * Math.exp(0.0761889274 * (g.season - p.born.year));
+        const probDeath = 0.0001165111 * Math.exp(0.0761889274 * (g.season - p.born.year));
 
         if (Math.random() < probDeath) {
             p.diedYear = g.season;

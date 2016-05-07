@@ -32,8 +32,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
         });
 
         const ratingsAll = players.reduce((memo, player) => {
-            var rating;
-            for (rating in player.ratings) {
+            for (const rating in player.ratings) {
                 if (player.ratings.hasOwnProperty(rating)) {
                     if (memo.hasOwnProperty(rating)) {
                         memo[rating].push(player.ratings[rating]);
@@ -60,14 +59,14 @@ function uiFirst(vm) {
 
     const tbody = $("#player-rating-dists tbody");
 
-    for (let rating in vm.ratingsAll) {
+    for (const rating in vm.ratingsAll) {
         if (vm.ratingsAll.hasOwnProperty(rating)) {
             tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + rating + '</td><td width="100%"><div id="' + rating + 'BoxPlot"></div></td></tr>');
         }
     }
 
     ko.computed(() => {
-        for (let rating in vm.ratingsAll) {
+        for (const rating in vm.ratingsAll) {
             if (vm.ratingsAll.hasOwnProperty(rating)) {
                 boxPlot.create({
                     data: vm.ratingsAll[rating](),

@@ -62,7 +62,7 @@ function uiFirst(vm) {
 
                                 ui.realtimeUpdate([], "/account");
                             } else {
-                                for (let error in data.errors) {
+                                for (const error in data.errors) {
                                     if (data.errors.hasOwnProperty(error)) {
                                         if (error === "password") {
                                             document.getElementById("resetpw-password").parentNode.classList.add("has-error");

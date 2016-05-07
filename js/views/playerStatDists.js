@@ -53,7 +53,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
         });
 
         const statsAll = players.reduce((memo, player) => {
-            for (let stat in player.stats) {
+            for (const stat in player.stats) {
                 if (player.stats.hasOwnProperty(stat)) {
                     if (memo.hasOwnProperty(stat)) {
                         memo[stat].push(player.stats[stat]);
@@ -79,7 +79,7 @@ function uiFirst(vm) {
 
     const tbody = $("#player-stat-dists tbody");
 
-    for (let stat in vm.statsAll) {
+    for (const stat in vm.statsAll) {
         if (vm.statsAll.hasOwnProperty(stat)) {
             tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + stat + '</td><td width="100%"><div id="' + stat + 'BoxPlot"></div></td></tr>');
             if (nbaQuartiles.hasOwnProperty(stat)) {
@@ -115,7 +115,7 @@ function uiFirst(vm) {
             per: [0, 35]
         };
 
-        for (let stat in vm.statsAll) {
+        for (const stat in vm.statsAll) {
             if (vm.statsAll.hasOwnProperty(stat)) {
                 boxPlot.create({
                     data: vm.statsAll[stat](),

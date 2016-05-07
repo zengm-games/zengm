@@ -247,7 +247,7 @@ function deepCopy(obj) {
     if (obj.constructor === RegExp) { return obj; }
 
     const retVal = new obj.constructor();
-    for (let key in obj) {
+    for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
             retVal[key] = deepCopy(obj[key]);
         }
@@ -349,7 +349,7 @@ function errorNotify(errorText) {
  * @memberOf util.helpers
  */
 function resetG() {
-    for (let key in g) {
+    for (const key in g) {
         if (g.hasOwnProperty(key) && g.notInDb.indexOf(key) < 0) {
             delete g[key];
         }
@@ -715,7 +715,7 @@ function checkNaNs() {
         foundNaN = foundNaN !== undefined ? foundNaN : false;
         replace = replace !== undefined ? replace : false;
 
-        for (let prop in obj) {
+        for (const prop in obj) {
             if (obj.hasOwnProperty(prop)) {
                 if (typeof obj[prop] === "object" && obj[prop] !== null) {
                     foundNaN = checkObject(obj[prop], foundNaN, replace);

@@ -121,7 +121,7 @@ ko.bindingHandlers.attrLeagueUrl = {
         const args = valueAccessor();
         const toAttr = {};
 
-        for (let attr in args) {
+        for (const attr in args) {
             if (args.hasOwnProperty(attr)) {
                 let options;
                 if (attr === "action") {
@@ -215,7 +215,7 @@ ko.bindingHandlers.gameScore = {
     update: (element, valueAccessor) => {
         const arg = valueAccessor();
         const newArg = {}; // To prevent unwrapping the underlying observable
-        for (let stat in arg) {
+        for (const stat in arg) {
             if (arg.hasOwnProperty(stat)) {
                 newArg[stat] = ko.unwrap(arg[stat]);
             }

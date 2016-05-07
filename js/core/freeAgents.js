@@ -42,7 +42,7 @@ async function autoSign(tx) {
         const tids = _.range(g.numTeams);
         random.shuffle(tids);
 
-        for (let tid of tids) {
+        for (const tid of tids) {
             // Skip the user's team
             if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
                 continue;

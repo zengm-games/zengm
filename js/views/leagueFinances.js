@@ -48,8 +48,7 @@ function uiFirst(vm) {
     }).extend({throttle: 1});
 
     ko.computed(() => {
-        var season;
-        season = vm.season();
+        const season = vm.season();
         ui.datatableSinglePage($("#league-finances"), 5, vm.teams().map(t => {
             const payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
             return ['<a href="' + helpers.leagueUrl(["team_finances", t.abbrev]) + '">' + t.region + ' ' + t.name + '</a>', helpers.numberWithCommas(helpers.round(t.att)), helpers.formatCurrency(t.revenue, "M"), helpers.formatCurrency(t.profit, "M"), helpers.formatCurrency(t.cash, "M"), helpers.formatCurrency(payroll, "M")];

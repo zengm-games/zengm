@@ -79,7 +79,7 @@ function uiFirst() {
                     await account.addAchievements(["participation"]);
                     ui.realtimeUpdate([], "/account");
                 } else {
-                    for (let error in data.errors) {
+                    for (const error in data.errors) {
                         if (data.errors.hasOwnProperty(error)) {
                             if (error === "username") {
                                 document.getElementById("register-username").parentNode.classList.add("has-error");

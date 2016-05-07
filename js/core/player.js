@@ -758,7 +758,7 @@ function name() {
 function addRatingsRow(p, scoutingRank) {
     const newRatings = {};
     const r = p.ratings.length - 1; // Most recent ratings
-    for (let key in p.ratings[r]) {
+    for (const key in p.ratings[r]) {
         if (p.ratings[r].hasOwnProperty(key)) {
             newRatings[key] = p.ratings[r][key];
         }
@@ -1080,7 +1080,7 @@ function filter(p, options) {
             } else if (options.attrs[i] === "awardsGrouped") {
                 fp.awardsGrouped = [];
                 const awardsGroupedTemp = _.groupBy(p.awards, award => award.type);
-                for (let award in awardsGroupedTemp) {
+                for (const award in awardsGroupedTemp) {
                     if (awardsGroupedTemp.hasOwnProperty(award)) {
                         fp.awardsGrouped.push({
                             type: award,
@@ -1257,7 +1257,7 @@ function filter(p, options) {
                 if (ps.r.length > 0) {
                     // Aggregate annual stats and ignore other things
                     const ignoredKeys = ["age", "playoffs", "season", "tid"];
-                    for (let key of Object.keys(ps.r[0])) {
+                    for (const key of Object.keys(ps.r[0])) {
                         if (ignoredKeys.indexOf(key) < 0) {
                             ps.cr[key] = _.reduce(_.pluck(ps.r, key), (memo, num) => memo + num, 0);
                             if (options.playoffs) {

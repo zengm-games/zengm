@@ -36,7 +36,6 @@ async function updateUpcomingFreeAgents(inputs) {
     let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(0));
     players = players.filter(p => p.contract.exp === inputs.season);
     players = await player.withStats(null, players, {statsSeasons: [g.season]});
-    var i;
 
     // Done before filter so full player object can be passed to player.genContract.
     for (let i = 0; i < players.length; i++) {

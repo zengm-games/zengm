@@ -45,7 +45,7 @@ async function post(req) {
         const t = await tx.teams.get(g.userTid);
 
         const budget = req.params.budget;
-        for (let key in budget) {
+        for (const key in budget) {
             if (budget.hasOwnProperty(key)) {
                 if (key === "ticketPrice") {
                     // Already in [dollars]

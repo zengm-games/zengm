@@ -5,7 +5,6 @@ const draft = require('../../core/draft');
 const league = require('../../core/league');
 const team = require('../../core/team');
 const sampleTiebreakers = require('../fixtures/sampleTiebreakers.js');
-const _ = require('underscore');
 const Promise = require('bluebird');
 
 describe("core/draft", () => {
@@ -50,50 +49,43 @@ describe("core/draft", () => {
     });
 
     describe("#genOrder()", () => {
-        var draftResults, i;
-
         before(() => {
-            return g.dbl.tx(["teams", "teamSeasons"], "readwrite", function (tx) {
+            return g.dbl.tx(["teams", "teamSeasons"], "readwrite", async tx => {
                 // Load static data
-                return tx.teamSeasons.iterate(function (teamSeason) {
-                    tx.teamSeasons.delete(teamSeason.rid);
-                }).then(() => {
-                    return tx.teams.iterate(function (t) {
-                        var st, teamSeasons;
+                await tx.teamSeasons.iterate(teamSeason => tx.teamSeasons.delete(teamSeason.rid));
+                await tx.teams.iterate(async t => {
+                    const st = sampleTiebreakers.teams[t.tid];
+                    const teamSeasons = st.seasons;
+                    delete st.seasons;
+                    delete st.stats;
 
-                        st = sampleTiebreakers.teams[t.tid];
-                        teamSeasons = st.seasons;
-                        delete st.seasons;
-                        delete st.stats;
-
-                        return Promise.each(teamSeasons, function (teamSeason) {
-                            teamSeason.tid = t.tid;
-                            return tx.teamSeasons.put(teamSeason);
-                        }).then(() => {
-                            return st;
-                        });
+                    await Promise.each(teamSeasons, teamSeason => {
+                        teamSeason.tid = t.tid;
+                        return tx.teamSeasons.put(teamSeason);
                     });
+
+                    return st;
                 });
             });
         });
 
+        let draftResults;
         it("should schedule 60 draft picks", () => {
-            return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons", "players"], "readwrite", function (tx) {
+            return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons", "players"], "readwrite", async tx => {
                 // Load static data
-                return draft.genOrder(tx).then(() => {
-                    return draft.getOrder(tx);
-                }).then(function (draftOrder) {
-                    assert.equal(draftOrder.length, 60);
-                    draftResults = _.pluck(draftOrder, "originalTid");
-                    userPick1 = draftResults.indexOf(g.userTid) + 1;
-                    userPick2 = draftResults.lastIndexOf(g.userTid) + 1;
-                });
+                await draft.genOrder(tx);
+                const draftOrder = await draft.getOrder(tx);
+                assert.equal(draftOrder.length, 60);
+
+                draftResults = draftOrder.map(d => d.originalTid);
+                userPick1 = draftResults.indexOf(g.userTid) + 1;
+                userPick2 = draftResults.lastIndexOf(g.userTid) + 1;
             });
         });
 
         it("should give the 3 teams with the lowest win percentage picks not lower than 6", () => {
-            var tids = [16, 28, 21]; // teams with lowest winp
-            for (i = 0; i < tids.length; i++) {
+            const tids = [16, 28, 21]; // teams with lowest winp
+            for (let i = 0; i < tids.length; i++) {
                 assert(draftResults.indexOf(tids[i]) >= 0);
                 assert(draftResults.indexOf(tids[i]) <= i + 3);
                 assert.equal(draftResults.lastIndexOf(tids[i]), 30 + i);
@@ -101,7 +93,7 @@ describe("core/draft", () => {
         });
 
         it("should give lottery team with better record than playoff teams a pick based on actual record for round 2", () => {
-            var pofteams = [23, 10, 18, 24, 14];
+            const pofteams = [23, 10, 18, 24, 14];
 
             // good record lottery team
             assert(draftResults.indexOf(17) >= 0);
@@ -109,35 +101,34 @@ describe("core/draft", () => {
             assert.equal(draftResults.lastIndexOf(17), 48);
 
             // bad record playoff team
-            for (i = 0; i < pofteams.length; i++) {
+            for (let i = 0; i < pofteams.length; i++) {
                 assert(draftResults.indexOf(pofteams[i]) > draftResults.indexOf(17));
                 assert(draftResults.lastIndexOf(pofteams[i]) < draftResults.lastIndexOf(17));
             }
         });
 
         it("should give reverse round 2 order for teams with the same record", () => {
-            var j, r1picks, r2picks, sameRec, tids;
-            sameRec = [
+            const sameRec = [
                 [3, 15, 25],
                 [10, 18],
                 [13, 26]
             ];
-            for (i = 0; i < sameRec.length; i++) {
-                tids = sameRec[i];
-                r1picks = [];
-                r2picks = [];
-                for (j = 0; j < 30; j++) {
+            for (let i = 0; i < sameRec.length; i++) {
+                const tids = sameRec[i];
+                const r1picks = [];
+                const r2picks = [];
+                for (let j = 0; j < 30; j++) {
                     if (tids.indexOf(draftResults[j]) > -1) {
                         r1picks.push(draftResults[j]);
                     }
                 }
-                for (j = 59; j > 29; j--) {
+                for (let j = 59; j > 29; j--) {
                     if (tids.indexOf(draftResults[j]) > -1) {
                         r2picks.push(draftResults[j]);
                     }
                 }
                 assert.equal(r1picks.length, r2picks.length);
-                for (j = 0; j < r1picks.length; j++) {
+                for (let j = 0; j < r1picks.length; j++) {
                     assert.equal(r1picks[j], r2picks[j]);
                 }
             }
@@ -146,49 +137,47 @@ describe("core/draft", () => {
 
     describe("#updateChances()", () => {
         it("should distribute combinations to teams with the same record", () => {
-            return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons"], "readwrite", function (tx) {
-                return team.filter({
+            return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons"], "readwrite", async tx => {
+                const teams = await team.filter({
                     ot: tx,
                     attrs: ["tid", "cid"],
                     seasonAttrs: ["winp", "playoffRoundsWon"],
                     season: g.season
-                }).then(function (teams) {
-                    var chances, i, j, maxIdx, sameRec, tids, value;
-                    chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
-                    // index instead of tid
-                    sameRec = [
-                        [6, 7, 8],
-                        [10, 11, 12]
-                    ];
-                    draft.lotterySort(teams);
-                    draft.updateChances(chances, teams, false);
-                    for (i = 0; i < sameRec.length; i++) {
-                        tids = sameRec[i];
-                        value = 0;
-                        for (j = 0; j < tids.length; j++) {
-                            if (value === 0) {
-                                value = chances[tids[j]];
-                            } else {
-                                assert.equal(value, chances[tids[j]]);
-                            }
-                        }
-                    }
-
-                    // test if isFinal is true
-                    draft.updateChances(chances, teams, true);
-                    for (i = 0; i < sameRec.length; i++) {
-                        tids = sameRec[i];
-                        value = 0;
-                        maxIdx = -1;
-                        for (j = tids.length - 1; j >= 0; j--) {
-                            if (value <= chances[tids[j]]) {
-                                value = chances[tids[j]];
-                                maxIdx = j;
-                            }
-                        }
-                        assert.equal(maxIdx, 0);
-                    }
                 });
+                const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
+                // index instead of tid
+                const sameRec = [
+                    [6, 7, 8],
+                    [10, 11, 12]
+                ];
+                draft.lotterySort(teams);
+                draft.updateChances(chances, teams, false);
+                for (let i = 0; i < sameRec.length; i++) {
+                    const tids = sameRec[i];
+                    let value = 0;
+                    for (let j = 0; j < tids.length; j++) {
+                        if (value === 0) {
+                            value = chances[tids[j]];
+                        } else {
+                            assert.equal(value, chances[tids[j]]);
+                        }
+                    }
+                }
+
+                // test if isFinal is true
+                draft.updateChances(chances, teams, true);
+                for (let i = 0; i < sameRec.length; i++) {
+                    const tids = sameRec[i];
+                    let value = 0;
+                    let maxIdx = -1;
+                    for (let j = tids.length - 1; j >= 0; j--) {
+                        if (value <= chances[tids[j]]) {
+                            value = chances[tids[j]];
+                            maxIdx = j;
+                        }
+                    }
+                    assert.equal(maxIdx, 0);
+                }
             });
         });
     });
@@ -207,7 +196,7 @@ describe("core/draft", () => {
             return testDraftUser(2);
         });
         it("when called again after the user drafts, should draft more players to finish the draft", () => {
-            var after = 60 - userPick2;
+            const after = 60 - userPick2;
             return testDraftUntilUserOrEnd(after, userPick2 + after);
         });
     });

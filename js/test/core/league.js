@@ -6,20 +6,18 @@ const _ = require('underscore');
 const testHelpers = require('../helpers');
 
 describe("core/league", () => {
-    before(() => {
-        return db.connectMeta().then(() => {
-            return league.create("Test", 0, undefined, 2013, false);
-        });
+    before(async () => {
+        await db.connectMeta();
+        await league.create("Test", 0, undefined, 2013, false);
     });
     // After not needed because last test removes DB
 
     describe("#create()", () => {
-        it("should add entry in meta leagues object store", () => {
-            return g.dbm.leagues.get(g.lid).then(function (l) {
-                assert.equal(l.name, "Test");
-                assert.equal(l.tid, 0);
-                assert.equal(l.phaseText, g.startingSeason + " preseason");
-            });
+        it("should add entry in meta leagues object store", async () => {
+            const l = await g.dbm.leagues.get(g.lid);
+            assert.equal(l.name, "Test");
+            assert.equal(l.tid, 0);
+            assert.equal(l.phaseText, g.startingSeason + " preseason");
         });
         it("should create all necessary object stores", () => {
             assert.equal(g.dbl.objectStoreNames.length, 18);

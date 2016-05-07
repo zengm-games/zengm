@@ -4,7 +4,7 @@ babel
     https://github.com/mishoo/UglifyJS2/tree/harmony
     how can i gracefully show an error message in browsers without generators?
   ES2015 + async/await
-    update test/core after contractNegotiation, test/fixtures
+    update test/core after finances, test/fixtures
     any other instances of .then or .catch? function (
   benchmark, for sanity
     ctrl+r

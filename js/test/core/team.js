@@ -8,9 +8,7 @@ const team = require('../../core/team');
 describe("core/team", () => {
     describe("#findStarters()", () => {
         it("should handle easy roster sorts", () => {
-            var starters;
-
-            starters = team.findStarters(["PG", "SG", "SF", "PF", "C", "G", "F", "FC", "PF", "PG"]);
+            let starters = team.findStarters(["PG", "SG", "SF", "PF", "C", "G", "F", "FC", "PF", "PG"]);
             assert.deepEqual(starters, [0, 1, 2, 3, 4]);
 
             starters = team.findStarters(["PG", "SG", "G", "PF", "C", "G", "F", "FC", "PF", "PG"]);
@@ -23,9 +21,7 @@ describe("core/team", () => {
             assert.deepEqual(starters, [0, 1, 2, 3, 4]);
         });
         it("should put two Gs in starting lineup", () => {
-            var starters;
-
-            starters = team.findStarters(["PG", "F", "SF", "PF", "C", "G", "F", "FC", "PF", "PG"]);
+            let starters = team.findStarters(["PG", "F", "SF", "PF", "C", "G", "F", "FC", "PF", "PG"]);
             assert.deepEqual(starters, [0, 1, 2, 3, 5]);
 
             starters = team.findStarters(["F", "PF", "G", "PF", "C", "G", "F", "FC", "PF", "PG"]);
@@ -38,9 +34,7 @@ describe("core/team", () => {
             assert.deepEqual(starters, [0, 1, 2, 8, 9]);
         });
         it("should put two Fs (or one F and one C) in starting lineup", () => {
-            var starters;
-
-            starters = team.findStarters(["PG", "SG", "G", "PF", "G", "G", "F", "FC", "PF", "PG"]);
+            let starters = team.findStarters(["PG", "SG", "G", "PF", "G", "G", "F", "FC", "PF", "PG"]);
             assert.deepEqual(starters, [0, 1, 2, 3, 6]);
 
             starters = team.findStarters(["PG", "SG", "SG", "PG", "G", "G", "F", "FC", "PF", "PG"]);
@@ -50,9 +44,7 @@ describe("core/team", () => {
             assert.deepEqual(starters, [0, 1, 2, 4, 6]);
         });
         it("should never put two pure Cs in starting lineup", () => {
-            var starters;
-
-            starters = team.findStarters(["PG", "SG", "G", "C", "C", "G", "F", "FC", "PF", "PG"]);
+            let starters = team.findStarters(["PG", "SG", "G", "C", "C", "G", "F", "FC", "PF", "PG"]);
             assert.deepEqual(starters, [0, 1, 2, 3, 6]);
 
             starters = team.findStarters(["PG", "SG", "G", "C", "FC", "G", "F", "FC", "PF", "PG"]);
@@ -60,29 +52,23 @@ describe("core/team", () => {
         });
     });
     describe("#filter()", () => {
-        before(() => {
-            return db.connectMeta().then(() => {
-                return league.create("Test", 0, undefined, 2013, false);
-            }).then(() => {
-                return g.dbl.teamStats.index('season, tid').get([g.season, 4]).then(function (teamStats) {
-                    teamStats.gp = 10;
-                    teamStats.fg = 50;
-                    teamStats.fga = 100;
+        before(async () => {
+            await db.connectMeta();
+            await league.create("Test", 0, undefined, 2013, false);
 
-                    return g.dbl.teamStats.put(teamStats);
-                }).then(() => {
-                    var teamStats = team.genStatsRow(4, true);
-                    teamStats.gp = 4;
-                    teamStats.fg = 12;
-                    teamStats.fga = 120;
+            let teamStats = await g.dbl.teamStats.index('season, tid').get([g.season, 4]);
+            teamStats.gp = 10;
+            teamStats.fg = 50;
+            teamStats.fga = 100;
+            await g.dbl.teamStats.put(teamStats);
 
-                    return g.dbl.teamStats.put(teamStats);
-                });
-            });
+            teamStats = team.genStatsRow(4, true);
+            teamStats.gp = 4;
+            teamStats.fg = 12;
+            teamStats.fga = 120;
+            await g.dbl.teamStats.put(teamStats);
         });
-        after(() => {
-            return league.remove(g.lid);
-        });
+        after(() => league.remove(g.lid));
 
         it("should return requested info if tid/season match", () => {
             return team.filter({

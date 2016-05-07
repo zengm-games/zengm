@@ -2,7 +2,6 @@ const assert = require('assert');
 const db = require('../../db');
 const g = require('../../globals');
 const league = require('../../core/league');
-const _ = require('underscore');
 const testHelpers = require('../helpers');
 
 describe("core/league", () => {
@@ -39,90 +38,78 @@ describe("core/league", () => {
             assert.equal(g.dbl.objectStoreNames.contains("teamStats"), true);
             assert.equal(g.dbl.objectStoreNames.contains("trade"), true);
         });
-        it("should initialize gameAttributes object store", () => {
-            return g.dbl.gameAttributes.getAll().then(function (gameAttributes) {
-                var count, gTest, key;
+        it("should initialize gameAttributes object store", async () => {
+            const gameAttributes = await g.dbl.gameAttributes.getAll();
+            const gTest = gameAttributes.reduce((obj, row) => { obj[row.key] = row.value; return obj; }, {});
 
-                gTest = gameAttributes.reduce(function (obj, row) { obj[row.key] = row.value; return obj; }, {});
+            assert.equal(gTest.gamesInProgress, false);
+            assert.equal(typeof gTest.lastDbChange, "number");
+            assert.equal(gTest.leagueName, "Test");
+            assert.equal(gTest.phase, 0);
+            assert.equal(gTest.phaseText, gTest.startingSeason + " preseason");
+            assert.equal(gTest.season, gTest.startingSeason);
+            assert.equal(gTest.statusText, "Idle");
+            assert.equal(gTest.stopGames, false);
+            assert.equal(gTest.userTid, 0);
+            assert.equal(gTest.gameOver, false);
+            assert.equal(gTest.daysLeft, 0);
+            assert.equal(gTest.showFirstOwnerMessage, true);
 
-                assert.equal(gTest.gamesInProgress, false);
-                assert.equal(typeof gTest.lastDbChange, "number");
-                assert.equal(gTest.leagueName, "Test");
-                assert.equal(gTest.phase, 0);
-                assert.equal(gTest.phaseText, gTest.startingSeason + " preseason");
-                assert.equal(gTest.season, gTest.startingSeason);
-                assert.equal(gTest.statusText, "Idle");
-                assert.equal(gTest.stopGames, false);
-                assert.equal(gTest.userTid, 0);
-                assert.equal(gTest.gameOver, false);
-                assert.equal(gTest.daysLeft, 0);
-                assert.equal(gTest.showFirstOwnerMessage, true);
-
-                count = 0;
-                for (key in gTest) {
-                    if (gTest.hasOwnProperty(key)) {
-                        count += 1;
-                    }
+            let count = 0;
+            for (const key in gTest) {
+                if (gTest.hasOwnProperty(key)) {
+                    count += 1;
                 }
+            }
 
-                assert.equal(count, 28);
-            });
+            assert.equal(count, 28);
         });
-        it("should initialize draftOrder object store", () => {
-            return g.dbl.draftOrder.getAll().then(function (draftOrder) {
-                assert.equal(draftOrder.length, 1);
-                assert.equal(draftOrder[0].rid, 1);
-                assert.equal(draftOrder[0].draftOrder.length, 0);
-            });
+        it("should initialize draftOrder object store", async () => {
+            const draftOrder = await g.dbl.draftOrder.getAll();
+            assert.equal(draftOrder.length, 1);
+            assert.equal(draftOrder[0].rid, 1);
+            assert.equal(draftOrder[0].draftOrder.length, 0);
         });
-        it("should initialize teams object store", () => {
-            return g.dbl.teams.getAll().then(function (teams) {
-                var cids, dids, i;
+        it("should initialize teams object store", async () => {
+            const teams = await g.dbl.teams.getAll();
 
-                cids = _.pluck(teams, "cid");
-                dids = _.pluck(teams, "did");
+            const cids = teams.map(t => t.cid);
+            const dids = teams.map(t => t.did);
 
-                assert.equal(teams.length, g.numTeams);
-                for (i = 0; i < 2; i++) {
-                    assert.equal(testHelpers.numInArrayEqualTo(cids, i), 15);
-                }
-                for (i = 0; i < 6; i++) {
-                    assert.equal(testHelpers.numInArrayEqualTo(dids, i), 5);
-                }
-                for (i = 0; i < g.numTeams; i++) {
-                    assert.equal(typeof teams[i].name, "string");
-                    assert.equal(typeof teams[i].region, "string");
-                    assert.equal(typeof teams[i].tid, "number");
-                }
-            });
+            assert.equal(teams.length, g.numTeams);
+            for (let i = 0; i < 2; i++) {
+                assert.equal(testHelpers.numInArrayEqualTo(cids, i), 15);
+            }
+            for (let i = 0; i < 6; i++) {
+                assert.equal(testHelpers.numInArrayEqualTo(dids, i), 5);
+            }
+            for (let i = 0; i < g.numTeams; i++) {
+                assert.equal(typeof teams[i].name, "string");
+                assert.equal(typeof teams[i].region, "string");
+                assert.equal(typeof teams[i].tid, "number");
+            }
         });
-        it("should initialize teamSeasons object store", () => {
-            return g.dbl.teamSeasons.getAll().then(function (teamSeasons) {
-                assert.equal(teamSeasons.length, g.numTeams);
-            });
+        it("should initialize teamSeasons object store", async () => {
+            const teamSeasons = await g.dbl.teamSeasons.getAll();
+            assert.equal(teamSeasons.length, g.numTeams);
         });
-        it("should initialize teamStats object store", () => {
-            return g.dbl.teamStats.getAll().then(function (teamStats) {
-                assert.equal(teamStats.length, g.numTeams);
-            });
+        it("should initialize teamStats object store", async () => {
+            const teamStats = await g.dbl.teamStats.getAll();
+            assert.equal(teamStats.length, g.numTeams);
         });
-        it("should initialize trade object store", () => {
-            return g.dbl.trade.getAll().then(function (tr) {
-                assert.equal(tr.length, 1);
-                assert.equal(tr[0].rid, 0);
-                assert.equal(tr[0].teams.length, 2);
-            });
+        it("should initialize trade object store", async () => {
+            const tr = await g.dbl.trade.getAll();
+            assert.equal(tr.length, 1);
+            assert.equal(tr[0].rid, 0);
+            assert.equal(tr[0].teams.length, 2);
         });
-        it("should initialize players object store", () => {
-            return g.dbl.players.getAll().then(function (players) {
-                assert.equal(players.length, 33 * 14 + 70 * 3);
-            });
+        it("should initialize players object store", async () => {
+            const players = await g.dbl.players.getAll();
+            assert.equal(players.length, 33 * 14 + 70 * 3);
         });
     });
 
     describe("#remove()", () => {
-        it("should remove league database", () => {
-            return league.remove(g.lid);
-        });
+        it("should remove league database", () => league.remove(g.lid));
     });
 });

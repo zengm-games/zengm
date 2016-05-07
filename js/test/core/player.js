@@ -6,15 +6,13 @@ const _ = require('underscore');
 const helpers = require('../../util/helpers');
 
 // Synchronous version of player.addStatsRow which does not require IndexedDB
-function addStatsRow(p, playoffs) {
-    playoffs = playoffs !== undefined ? playoffs : false;
-
-    p.stats.push({season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0});
+const addStatsRow = (p, playoffs = false) => {
+    p.stats.push({season: g.season, tid: p.tid, playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, pf: 0, pts: 0, per: 0, ewa: 0});
     p.statsTids.push(p.tid);
     p.statsTids = _.uniq(p.statsTids);
 
     return p;
-}
+};
 
 // Default values needed
 g.teamAbbrevsCache = _.pluck(helpers.getTeamsDefault(), "abbrev");
@@ -25,9 +23,7 @@ describe("core/player", () => {
     describe("#generate()", () => {
         it.skip("should add stats row only for players generated on teams, not free agents or undrafted players", () => {
 // Needs DB to check since stats are not in player object anymore
-            var p;
-
-            p = player.generate(-2, 19, "", 25, 55, 2012, false, 15.5);
+            let p = player.generate(-2, 19, "", 25, 55, 2012, false, 15.5);
             assert.equal(p.stats.length, 0);
 
             p = player.generate(-1, 19, "", 25, 55, 2012, false, 15.5);
@@ -43,11 +39,9 @@ describe("core/player", () => {
 
     describe("#madeHof()", () => {
         it("should correctly assign players to the Hall of Fame", () => {
-            var p, playerStats;
-
             // Like player from http://www.reddit.com/r/BasketballGM/comments/222k8b/so_a_10x_dpoy_apparently_doesnt_have_what_it/
-            p = player.generate(0, 19, "", 25, 55, 2012, false, 15.5);
-            playerStats = [{
+            const p = player.generate(0, 19, "", 25, 55, 2012, false, 15.5);
+            const playerStats = [{
                 min: 1 * 2.6,
                 per: 18.7,
                 ewa: 0
@@ -118,8 +112,7 @@ describe("core/player", () => {
     });
 
     describe("#filter()", () => {
-        var p;
-
+        let p;
         before(() => {
             g.season = 2011;
             p = player.generate(g.PLAYER.UNDRAFTED, 19, "", 50, 60, 2011, false, 28);
@@ -151,9 +144,7 @@ describe("core/player", () => {
         });
 
         it("should return requested info if tid/season match", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            const pf = player.filter(p, {
                 attrs: ["tid", "awards"],
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
@@ -178,9 +169,7 @@ describe("core/player", () => {
             assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
         });
         it("should return requested info if tid/season match for an array of player objects", () => {
-            var i, pf;
-
-            pf = player.filter([p, p], {
+            const pf = player.filter([p, p], {
                 attrs: ["tid", "awards"],
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
@@ -188,7 +177,7 @@ describe("core/player", () => {
                 season: 2012
             });
 
-            for (i = 0; i < 2; i++) {
+            for (let i = 0; i < 2; i++) {
                 assert.equal(pf[i].tid, 4);
                 assert.equal(pf[i].awards.length, 0);
                 assert.equal(pf[i].ratings.season, 2012);
@@ -207,9 +196,7 @@ describe("core/player", () => {
             }
         });
         it("should return requested info if tid/season match, even when no attrs requested", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            const pf = player.filter(p, {
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
                 tid: 4,
@@ -231,9 +218,7 @@ describe("core/player", () => {
             assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
         });
         it("should return requested info if tid/season match, even when no ratings requested", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            const pf = player.filter(p, {
                 attrs: ["tid", "awards"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
                 tid: 4,
@@ -255,9 +240,7 @@ describe("core/player", () => {
             assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
         });
         it("should return requested info if tid/season match, even when no stats requested", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            const pf = player.filter(p, {
                 attrs: ["tid", "awards"],
                 ratings: ["season", "ovr"],
                 tid: 4,
@@ -276,9 +259,7 @@ describe("core/player", () => {
             assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
         });
         it("should return undefined if tid does not match any on record", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            const pf = player.filter(p, {
                 attrs: ["tid", "awards"],
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
@@ -289,9 +270,7 @@ describe("core/player", () => {
             assert.equal((typeof pf), "undefined");
         });
         it("should return undefined if season does not match any on record", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            const pf = player.filter(p, {
                 attrs: ["tid", "awards"],
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
@@ -302,9 +281,7 @@ describe("core/player", () => {
             assert.equal((typeof pf), "undefined");
         });
         it("should return season totals is options.totals is true, and per-game averages otherwise", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            let pf = player.filter(p, {
                 stats: ["gp", "fg"],
                 tid: 4,
                 season: 2012,
@@ -322,9 +299,7 @@ describe("core/player", () => {
             assert.equal(pf.stats.fg, 4);
         });
         it("should return stats and statsPlayoffs if options.playoffs is true", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            const pf = player.filter(p, {
                 stats: ["gp", "fg"],
                 tid: 4,
                 season: 2012,
@@ -336,9 +311,7 @@ describe("core/player", () => {
             assert.equal(pf.statsPlayoffs.fg, 10);
         });
         it("should not return undefined with options.showNoStats even if tid does not match any on record", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            const pf = player.filter(p, {
                 stats: ["gp", "fg"],
                 tid: 5,
                 season: 2012,
@@ -347,9 +320,7 @@ describe("core/player", () => {
             assert.equal((typeof pf), "object");
         });
         it("should return undefined with options.showNoStats if season does not match any on record", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            const pf = player.filter(p, {
                 stats: ["gp", "fg"],
                 tid: 4,
                 season: 2015,
@@ -358,10 +329,8 @@ describe("core/player", () => {
             assert.equal((typeof pf), "undefined");
         });
         it("should not return undefined with options.showRookies if the player was drafted this season", () => {
-            var pf;
-
             g.season = 2011;
-            pf = player.filter(p, {
+            let pf = player.filter(p, {
                 stats: ["gp", "fg"],
                 tid: 5,
                 season: 2011,
@@ -381,9 +350,7 @@ describe("core/player", () => {
             g.season = 2012;
         });
         it("should fuzz ratings if options.fuzz is true", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            let pf = player.filter(p, {
                 ratings: ["ovr"],
                 tid: 4,
                 season: 2012,
@@ -401,11 +368,8 @@ describe("core/player", () => {
             assert.equal(pf.ratings.ovr, Math.round(p.ratings[1].ovr + p.ratings[1].fuzz));
         });
         it("should return stats from previous season if options.oldStats is true and current season has no stats record", () => {
-            var pf;
-
             g.season = 2013;
-
-            pf = player.filter(p, {
+            let pf = player.filter(p, {
                 stats: ["gp", "fg"],
                 tid: 0,
                 season: 2013,
@@ -415,7 +379,6 @@ describe("core/player", () => {
             assert.equal(pf.stats.fg, 7);
 
             g.season = 2014;
-
             pf = player.filter(p, {
                 stats: ["gp", "fg"],
                 tid: 0,
@@ -436,11 +399,9 @@ describe("core/player", () => {
             g.season = 2012;
         });
         it("should adjust cashOwed by options.numGamesRemaining", () => {
-            var pf;
+            g.season = 2012;
 
-//                g.season = 2012; // Already set above
-
-            pf = player.filter(p, {
+            let pf = player.filter(p, {
                 attrs: ["cashOwed"],
                 tid: 4,
                 season: 2012,
@@ -465,9 +426,7 @@ describe("core/player", () => {
             assert.equal(pf.cashOwed, p.contract.amount / 1000);
         });
         it("should return stats and ratings from all seasons and teams if no season or team is specified", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            const pf = player.filter(p, {
                 attrs: ["tid", "awards"],
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg"],
@@ -494,9 +453,7 @@ describe("core/player", () => {
             assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
         });
         it("should return stats and ratings from all seasons with a specific team if no season is specified but a team is", () => {
-            var pf;
-
-            pf = player.filter(p, {
+            const pf = player.filter(p, {
                 attrs: ["tid", "awards"],
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg"],

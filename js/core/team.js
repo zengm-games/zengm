@@ -118,7 +118,7 @@ function genStatsRow(tid, playoffs = false) {
     return {
         tid,
         season: g.season,
-        playoffs: playoffs,
+        playoffs,
         gp: 0,
         min: 0,
         fg: 0,
@@ -192,7 +192,7 @@ function generate(tm) {
                 rank: tm.hasOwnProperty("budget") ? tm.budget.facilities.rank : tm.popRank
             }
         },
-        strategy: strategy
+        strategy
     };
 }
 
@@ -842,7 +842,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                         }
 
                         add.push({
-                            value: value,
+                            value,
                             skills: [],
                             contract: {
                                 amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
@@ -884,7 +884,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                         }
 
                         remove.push({
-                            value: value,
+                            value,
                             skills: [],
                             contract: {
                                 amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
@@ -916,7 +916,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
             seasonAttrs: ["pop"],
             stats: ["gp"],
             season: g.season,
-            tid: tid,
+            tid,
             ot: tx
         });
 

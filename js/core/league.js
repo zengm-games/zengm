@@ -267,7 +267,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
             tx.trade.add({
                 rid: 0,
                 teams: [{
-                    tid: tid,
+                    tid,
                     pids: [],
                     dpids: []
                 },

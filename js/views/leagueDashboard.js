@@ -72,7 +72,7 @@ async function updateTeams(inputs, updateEvents) {
         const teams = await team.filter({
             attrs: ["tid", "cid"],
             seasonAttrs: ["won", "lost", "winp", "att", "revenue", "profit"],
-            stats: stats,
+            stats,
             season: g.season,
             sortBy: ["winp", "-lost", "won"]
         });
@@ -137,7 +137,7 @@ async function updateGames(inputs, updateEvents, vm) {
             if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
                 completed.push({
                     gid: game.gid,
-                    overtime: overtime
+                    overtime
                 });
 
                 const i = completed.length - 1;

@@ -74,7 +74,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
         });
 
         return {
-            feats: feats,
+            feats,
             abbrev: inputs.abbrev,
             season: inputs.season,
             playoffs: inputs.playoffs

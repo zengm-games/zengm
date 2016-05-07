@@ -98,14 +98,14 @@ async function post(req) {
     } else if (req.params.propose !== undefined) {
         // Propose trade
         const message = await trade.propose(req.params.hasOwnProperty("force-trade")).get(1);
-        ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
+        ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message});
     } else if (req.params.ask !== undefined) {
         // What would make this deal work?
         const askButtonEl = document.getElementById("ask-button");
         askButtonEl.textContent = "Waiting for answer...";
         askButtonEl.disabled = true;
         const message = await trade.makeItWorkTrade();
-        ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message: message});
+        ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message});
         askButtonEl.textContent = "What would make this deal work?";
         askButtonEl.disabled = false;
     } else if (pid !== null) {
@@ -160,9 +160,9 @@ async function updateTrade(inputs) {
     const stats = ["min", "pts", "trb", "ast", "per"];
 
     userRoster = player.filter(userRoster, {
-        attrs: attrs,
-        ratings: ratings,
-        stats: stats,
+        attrs,
+        ratings,
+        stats,
         season: g.season,
         tid: g.userTid,
         showNoStats: true,
@@ -200,9 +200,9 @@ async function updateTrade(inputs) {
     ]);
 
     otherRoster = player.filter(otherRoster, {
-        attrs: attrs,
-        ratings: ratings,
-        stats: stats,
+        attrs,
+        ratings,
+        stats,
         season: g.season,
         tid: otherTid,
         showNoStats: true,
@@ -226,13 +226,13 @@ async function updateTrade(inputs) {
     let vars = {
         salaryCap: g.salaryCap / 1000,
         userDpids: teams[0].dpids,
-        userPicks: userPicks,
+        userPicks,
         userPids: teams[0].pids,
-        userRoster: userRoster,
+        userRoster,
         otherDpids: teams[1].dpids,
-        otherPicks: otherPicks,
+        otherPicks,
         otherPids: teams[1].pids,
-        otherRoster: otherRoster,
+        otherRoster,
         message: inputs.message,
         strategy: t.strategy,
         won: t.won,

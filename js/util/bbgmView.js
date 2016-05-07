@@ -16,7 +16,7 @@ function display(args, updateEvents) {
 
     if (containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading === args.id) {
         ui.update({
-            container: container,
+            container,
             template: args.id
         });
         ko.applyBindings(vm, containerEl);

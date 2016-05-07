@@ -149,6 +149,7 @@
         "generator-star": 0,
 
         "no-var": "error",
+        "object-shorthand": ["error", "always"],
         "prefer-const": ["error", {"destructuring": "all"}]
    }
 }

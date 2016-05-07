@@ -72,7 +72,7 @@ async function stripeResponseHandler(vm, status, response) {
                 url: "//account.basketball-gm." + g.tld + "/gold_card_update.php",
                 data: {
                     sport: "basketball",
-                    token: token
+                    token
                 },
                 dataType: "json",
                 xhrFields: {

@@ -134,7 +134,7 @@ function check() {
 
         eventLog.add(null, {
             type: "changes",
-            text: text,
+            text,
             saveToDb: false
         });
 

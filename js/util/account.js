@@ -102,7 +102,7 @@ async function addAchievements(achievements, silent = false) {
         const data = await Promise.resolve($.ajax({
             type: "POST",
             url: "//account.basketball-gm." + g.tld + "/add_achievements.php",
-            data: {achievements: achievements, sport: g.sport},
+            data: {achievements, sport: g.sport},
             dataType: "json",
             xhrFields: {
                 withCredentials: true
@@ -396,8 +396,8 @@ checkAchievement.sleeper_pick = async (saveAchievement = true) => {
 };
 
 module.exports = {
-    check: check,
-    getAchievements: getAchievements,
-    addAchievements: addAchievements,
-    checkAchievement: checkAchievement
+    check,
+    getAchievements,
+    addAchievements,
+    checkAchievement
 };

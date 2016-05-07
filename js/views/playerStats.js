@@ -59,7 +59,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
             ratings: ["skills", "pos"],
             stats: ["abbrev", "tid", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm", "per", "ewa"],
             season: inputs.season, // If null, then show career stats!
-            tid: tid,
+            tid,
             totals: inputs.statType === "totals",
             per36: inputs.statType === "per_36",
             playoffs: inputs.playoffs === "playoffs"

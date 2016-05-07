@@ -37,7 +37,7 @@ async function getOffers(userPids, userDpids) {
             pids: userPids,
             dpids: userDpids
         }, {
-            tid: tid,
+            tid,
             pids: [],
             dpids: []
         }];
@@ -97,9 +97,9 @@ async function post(req) {
             }
         }, 500);
     }, {
-        userPids: userPids,
-        userDpids: userDpids,
-        offers: offers
+        userPids,
+        userDpids,
+        offers
     });
 }
 

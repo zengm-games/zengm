@@ -79,6 +79,6 @@ function show() {
 }
 
 module.exports = {
-    show: show,
-    showModal: showModal
+    show,
+    showModal
 };

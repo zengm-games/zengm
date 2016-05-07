@@ -18,7 +18,7 @@ function get(req) {
     }
 
     return {
-        abbrev: abbrev,
+        abbrev,
         season: helpers.validateSeason(req.params.season)
     };
 }

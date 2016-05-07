@@ -22,7 +22,7 @@ function InitViewModel() {
 
 const mapping = {
     categories: {
-        create: function (options) {
+        create(options) {
             return new function () {
                 komapping.fromJS(options.data, {
                     data: {

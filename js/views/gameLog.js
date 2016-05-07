@@ -108,7 +108,7 @@ function InitViewModel() {
 /* This doesn't work for some reason.
 const mapping = {
     gamesList: {
-        update: function (options) {
+        update(options) {
             return new function () {
                 komapping.fromJS(options.data, {
                     games: {

@@ -103,7 +103,7 @@ function getSeasons(selectedSeason, ignoredSeason) {
     const seasons = [];
     for (let season = g.startingSeason; season <= g.season; season++) {
         if (season !== ignoredSeason) {
-            seasons.push({season: season, selected: selectedSeason === season});
+            seasons.push({season, selected: selectedSeason === season});
         }
     }
     return seasons;
@@ -649,9 +649,9 @@ async function gameLogList(abbrev, season, gid, loadedGames) {
         if (game.teams[0].tid === tid || game.teams[1].tid === tid) {
             games.push({
                 gid: game.gid,
-                tid: tid,
+                tid,
                 selected: game.gid === gid,
-                overtime: overtime
+                overtime
             });
 
             const i = games.length - 1;

@@ -65,14 +65,14 @@ function InitViewModel() {
     const ratingKeys = ["pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
     ratingKeys.forEach(function (ratingKey) {
         this.ratings[ratingKey] = ko.computed({
-            read: function () {
+            read() {
                 // Critical: this will always call p.ratings() so it knows to update after player is loaded
                 if (this.p.ratings().length > 0) {
                     return this.p.ratings()[this.p.ratings().length - 1][ratingKey]();
                 }
                 return 0;
             },
-            write: function (value) {
+            write(value) {
                 let rating = helpers.bound(parseInt(value, 10), 0, 100);
                 if (isNaN(rating)) { rating = 0; }
                 this.p.ratings()[this.p.ratings().length - 1][ratingKey](rating);
@@ -83,10 +83,10 @@ function InitViewModel() {
 
     // Set born.year based on age input
     this.age = ko.computed({
-        read: function () {
+        read() {
             return g.season - this.p.born.year();
         },
-        write: function (value) {
+        write(value) {
             let age = parseInt(value, 10);
             if (age !== age) { age = 25; } // NaN check
             this.p.born.year(g.season - age);
@@ -96,14 +96,14 @@ function InitViewModel() {
 
     // Set position for latest season
     this.pos = ko.computed({
-        read: function () {
+        read() {
             // Critical: this will always call p.ratings() so it knows to update after player is loaded
             if (this.p.ratings().length > 0) {
                 return this.p.ratings()[this.p.ratings().length - 1].pos();
             }
             return 'F';
         },
-        write: function (value) {
+        write(value) {
             this.p.ratings()[this.p.ratings().length - 1].pos(value);
         },
         owner: this
@@ -112,10 +112,10 @@ function InitViewModel() {
     // Contract stuff
     this.contract = {
         amount: ko.computed({
-            read: function () {
+            read() {
                 return this.p.contract.amount() / 1000;
             },
-            write: function (value) {
+            write(value) {
                 // Allow any value, even above or below normal limits, but round to $10k
                 let amount = helpers.round(100 * parseFloat(value)) * 10;
                 if (isNaN(amount)) { amount = g.minContract; }
@@ -124,10 +124,10 @@ function InitViewModel() {
             owner: this
         }),
         exp: ko.computed({
-            read: function () {
+            read() {
                 return this.p.contract.exp();
             },
-            write: function (value) {
+            write(value) {
                 let season = parseInt(value, 10);
                 if (isNaN(season)) { season = g.season; }
 
@@ -150,19 +150,19 @@ function InitViewModel() {
     // Injury stuff
     this.injury = {
         type: ko.computed({
-            read: function () {
+            read() {
                 return this.p.injury.type();
             },
-            write: function (value) {
+            write(value) {
                 this.p.injury.type(value);
             },
             owner: this
         }),
         gamesRemaining: ko.computed({
-            read: function () {
+            read() {
                 return this.p.injury.gamesRemaining();
             },
-            write: function (value) {
+            write(value) {
                 let gamesRemaining = parseInt(value, 10);
                 if (isNaN(gamesRemaining)) { gamesRemaining = 0; }
 

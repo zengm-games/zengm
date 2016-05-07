@@ -3,20 +3,13 @@ babel
     https://github.com/mishoo/UglifyJS2/issues/448
     https://github.com/mishoo/UglifyJS2/tree/harmony
     how can i gracefully show an error message in browsers without generators?
-  convert with http://lebab.io/
-    then manually go over, fix:
-      let/const definitions inline
-      async/await
-        update test folder
-        any other instances of .then or .catch? function (
+  ES2015 + async/await
+    update test/core, test/fixtures, test/util
+    any other instances of .then or .catch? function (
   benchmark, for sanity
     ctrl+r
     new league
     gamesim
-  merge with master
-  eslint
-    use some consensus rules http://blog.javascripting.com/2015/09/07/fine-tuning-airbnbs-eslint-config/
-    no x:x in obj definitions
   how to make async/await fast
     why do i need regenerator? don't ff and chrome support generators?
       http://stackoverflow.com/questions/36775097/babel-plugin-transform-async-to-module-method-without-regenerator
@@ -24,6 +17,7 @@ babel
     typescript
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being cancelled (resolve) and error returned (Reject)
   TEST ACCOUNT STUFF! (reset, login, register, account, card, buy)
+  broken in firefox in 059e55ddc61c26027cf8ba7716861602bf902db3 because of https://bugzilla.mozilla.org/show_bug.cgi?id=449811
 
 one month gamesim benchmarks while viewing dashboard:
   original 000:01:43.710

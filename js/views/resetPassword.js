@@ -28,7 +28,7 @@ function uiFirst(vm) {
     $.ajax({
         type: "POST",
         url: "//account.basketball-gm." + g.tld + "/reset_password.php",
-        data: {action: "check_token", token: token, sport: g.sport},
+        data: {action: "check_token", token, sport: g.sport},
         dataType: "json",
         xhrFields: {
             withCredentials: true

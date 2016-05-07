@@ -73,7 +73,7 @@ function uiFirst(vm) {
             }
             return ['<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>', p.ratings[p.ratings.length - 1].pos, String(p.draft.year), String(p.retiredYear), pick, String(p.peakOvr), String(p.bestStats.season), '<a href="' + helpers.leagueUrl(["roster", p.bestStats.abbrev, p.bestStats.season]) + '">' + p.bestStats.abbrev + '</a>', String(p.bestStats.gp), helpers.round(p.bestStats.min, 1), helpers.round(p.bestStats.pts, 1), helpers.round(p.bestStats.trb, 1), helpers.round(p.bestStats.ast, 1), helpers.round(p.bestStats.per, 1), String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.statsTids.indexOf(g.userTid) >= 0];
         }), {
-            rowCallback: function (row, data) {
+            rowCallback(row, data) {
                 // Highlight players from the user's team
                 if (data[data.length - 1]) {
                     row.classList.add("info");

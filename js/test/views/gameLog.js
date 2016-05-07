@@ -18,27 +18,22 @@ function confirmBuilt() {
 }
 
 function addFakeGame(tx, gid) {
-    var game, j, k;
-
-    game = {
-        gid: gid,
+    const game = {
+        gid,
         season: g.season,
-        teams: [
-            {
-                pts: 100,
-                tid: 0,
-                players: []
-            },
-            {
-                pts: 105,
-                tid: 4,
-                players: []
-            }
-        ],
+        teams: [{
+            pts: 100,
+            tid: 0,
+            players: []
+        }, {
+            pts: 105,
+            tid: 4,
+            players: []
+        }],
         overtimes: 0
     };
-    for (j = 0; j < 2; j++) {
-        for (k = 0; k < 7; k++) {
+    for (let j = 0; j < 2; j++) {
+        for (let k = 0; k < 7; k++) {
             game.teams[j].players.push({
                 gs: 0,
                 min: 40,
@@ -46,49 +41,46 @@ function addFakeGame(tx, gid) {
             });
         }
     }
-    tx.games.add(game);
+    return tx.games.add(game);
 }
 
-describe("views/gameLog", function () {
-    before(function () {
+describe("views/gameLog", () => {
+    before(async () => {
         $("body").append('<div id="testsWrapper" style="visibility: hidden;"><div id="league_content"></div></div>');
-        return db.connectMeta().then(function () {
-            return league.create("Test", 0, undefined, 2013, false);
-        }).then(function () {
-            return g.dbl.tx("games", "readwrite", function (tx) {
-                var i;
-                for (i = 0; i < 10; i++) {
-                    addFakeGame(tx, i);
-                }
-            });
+        await db.connectMeta();
+        await league.create("Test", 0, undefined, 2013, false);
+        await g.dbl.tx("games", "readwrite", async tx => {
+            for (let i = 0; i < 10; i++) {
+                await addFakeGame(tx, i);
+            }
         });
     });
-    after(function () {
+    after(() => {
         $("#testsWrapper").remove();
         return league.remove(g.lid);
     });
-    afterEach(function () {
+    afterEach(() => {
         document.getElementById("league_content").dataset.idLoaded = "";
         document.getElementById("league_content").innerHTML = "";
     });
 
-    describe("#update()", function () {
-        it("should load complete UI if gameLog is not already loaded", function (done) {
+    describe("#update()", () => {
+        it("should load complete UI if gameLog is not already loaded", done => {
             confirmNotBuilt();
-            gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], function () {
+            gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], () => {
                 confirmBuilt();
                 done();
             });
         });
-        it("should load and update nothing if gameLog is already loaded with same parameters", function (done) {
+        it("should load and update nothing if gameLog is already loaded with same parameters", done => {
             confirmNotBuilt();
-            gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], function () {
+            gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], () => {
                 confirmBuilt();
 
                 document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                 document.getElementById("box-score").innerHTML = "fuck";
                 document.getElementById("game-log-list").innerHTML = "cunt";
-                gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], function () {
+                gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], () => {
                     assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
                     assert.equal(document.getElementById("box-score").innerHTML, "fuck");
                     assert.equal(document.getElementById("game-log-list").innerHTML, "cunt");
@@ -97,15 +89,15 @@ describe("views/gameLog", function () {
             });
         });
         // These tests broke when moving to Knockout for the box score
-        /*it("should load only a new box score if everything is the same except the game ID", function (done) {
+        /*it("should load only a new box score if everything is the same except the game ID", done => {
             confirmNotBuilt();
-            gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], function () {
+            gameLog.update({abbrev: "CHI", season: g.season, gid: -1}, [], () => {
                 confirmBuilt();
 
                 document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                 document.getElementById("box-score").innerHTML = "fuck";
                 document.getElementById("game-log-list").innerHTML = "cunt";
-                gameLog.update({abbrev: "CHI", season: g.season, gid: 5}, [], function () {
+                gameLog.update({abbrev: "CHI", season: g.season, gid: 5}, [], () => {
                     assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
                     assert.notEqual(document.getElementById("box-score").innerHTML, "fuck");
                     assert.equal(document.getElementById("game-log-list").innerHTML, "cunt");
@@ -113,15 +105,15 @@ describe("views/gameLog", function () {
                 });
             });
         });
-        it("should load only a new game log list if everything is the same except the team", function (done) {
+        it("should load only a new game log list if everything is the same except the team", done => {
             confirmNotBuilt();
-            gameLog.update({abbrev: "CHI", season: g.season, gid: 3}, [], function () {
+            gameLog.update({abbrev: "CHI", season: g.season, gid: 3}, [], () => {
                 confirmBuilt();
 
                 document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                 document.getElementById("box-score").innerHTML = "fuck";
                 assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 11);
-                gameLog.update({abbrev: "BOS", season: g.season, gid: 3}, [], function () {
+                gameLog.update({abbrev: "BOS", season: g.season, gid: 3}, [], () => {
                     assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
                     assert.equal(document.getElementById("box-score").innerHTML, "fuck");
                     assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 1);
@@ -129,15 +121,15 @@ describe("views/gameLog", function () {
                 });
             });
         });
-        it("should load only a new game log list if everything is the same except the season", function (done) {
+        it("should load only a new game log list if everything is the same except the season", done => {
             confirmNotBuilt();
-            gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, [], function () {
+            gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, [], () => {
                 confirmBuilt();
 
                 document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                 document.getElementById("box-score").innerHTML = "fuck";
                 assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 11);
-                gameLog.update({abbrev: "ATL", season: g.season + 1, gid: 3}, [], function () {
+                gameLog.update({abbrev: "ATL", season: g.season + 1, gid: 3}, [], () => {
                     assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
                     assert.equal(document.getElementById("box-score").innerHTML, "fuck");
                     assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 1);
@@ -145,16 +137,16 @@ describe("views/gameLog", function () {
                 });
             });
         });
-        it("should load only a new game log list and box score if game ID, team, and season all change", function (done) {
+        it("should load only a new game log list and box score if game ID, team, and season all change", done => {
             confirmNotBuilt();
-            gameLog.update({abbrev: "ATL", season: g.season, gid: -1}, [], function () {
+            gameLog.update({abbrev: "ATL", season: g.season, gid: -1}, [], () => {
                 confirmBuilt();
 
                 document.getElementById("game-log-dropdown-seasons").dataset.dummy = "shit";
                 document.getElementById("box-score").innerHTML = "fuck";
 
                 assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 11);
-                gameLog.update({abbrev: "BOS", season: g.season + 1, gid: 3}, [], function () {
+                gameLog.update({abbrev: "BOS", season: g.season + 1, gid: 3}, [], () => {
                     assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
                     assert.notEqual(document.getElementById("box-score").innerHTML, "fuck");
                     assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 1);
@@ -162,9 +154,9 @@ describe("views/gameLog", function () {
                 });
             });
         });
-        it("should update only game log list in response to gameSim updateEvent, if all other parameters are the same", function (done) {
+        it("should update only game log list in response to gameSim updateEvent, if all other parameters are the same", done => {
             confirmNotBuilt();
-            gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, [], function () {
+            gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, [], () => {
                 var child, i, tx;
 
                 confirmBuilt();
@@ -183,8 +175,8 @@ describe("views/gameLog", function () {
                     for (i = 10; i < 20; i++) {
                         addFakeGame(tx, i);
                     }
-                }).then(function () {
-                        gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, ["gameSim"], function () {
+                }).then(() => {
+                        gameLog.update({abbrev: "ATL", season: g.season, gid: 3}, ["gameSim"], () => {
                         assert.equal(document.getElementById("game-log-dropdown-seasons").dataset.dummy, "shit");
                         assert.equal(document.getElementById("box-score").innerHTML, "fuck");
                         assert.equal(document.getElementById("game-log-list").querySelectorAll("tbody tr").length, 20);

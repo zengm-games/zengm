@@ -17,10 +17,10 @@ async function genPicks(tx, season) {
     for (let tid = 0; tid < g.numTeams; tid++) {
         for (let round = 1; round <= 2; round++) {
             promises.push(tx.draftPicks.add({
-                tid: tid,
+                tid,
                 originalTid: tid,
-                round: round,
-                season: season
+                round,
+                season
             }));
         }
     }

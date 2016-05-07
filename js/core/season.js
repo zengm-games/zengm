@@ -48,7 +48,7 @@ async function updateOwnerMood(tx) {
         if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
         if (ownerMood.money > 1) { ownerMood.money = 1; }
 
-        await require('../core/league').setGameAttributes(tx, {ownerMood: ownerMood});
+        await require('../core/league').setGameAttributes(tx, {ownerMood});
     }
 
     return deltas;
@@ -189,7 +189,7 @@ async function awards(tx) {
             type = "Third Team All-League";
         }
         _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
+        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type});
     }
 
     // Defensive Player of the Year
@@ -211,7 +211,7 @@ async function awards(tx) {
             type = "Third Team All-Defensive";
         }
         _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: type});
+        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type});
     }
 
     // Finals MVP - most WS in playoffs
@@ -259,7 +259,7 @@ async function awards(tx) {
         }
         eventLog.add(null, {
             type: "award",
-            text: text,
+            text,
             showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",
             pids: [p.pid],
             tids: [p.tid]

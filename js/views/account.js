@@ -44,7 +44,7 @@ async function updateAchievements(inputs, updateEvents) {
         const achievements = await account.getAchievements();
 
         return {
-            achievements: achievements
+            achievements
         };
     }
 }
@@ -91,7 +91,7 @@ function handleStripeButton() {
                 name: 'Basketball GM Gold',
                 description: '',
                 amount: 500,
-                email: email,
+                email,
                 allowRememberMe: false,
                 panelLabel: "Subscribe for $5/month"
             });

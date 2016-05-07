@@ -43,7 +43,7 @@ async function create(teams) {
     await g.dbl.tx("trade", "readwrite", tx => {
         return tx.trade.put({
             rid: 0,
-            teams: teams
+            teams
         });
     });
 
@@ -170,7 +170,7 @@ async function updatePlayers(teams) {
         if (updated) {
             await tx.trade.put({
                 rid: 0,
-                teams: teams
+                teams
             });
         }
     });
@@ -378,7 +378,7 @@ async function propose(forceTrade) {
                 text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season]) + '">' + g.teamNamesCache[tids[0]] + '</a> traded ' + formatAssetsEventLog(s.teams[0]) + ' to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season]) + '">' + g.teamNamesCache[tids[1]] + '</a> for ' + formatAssetsEventLog(s.teams[1]) + '.',
                 showNotification: false,
                 pids: pids[0].concat(pids[1]),
-                tids: tids
+                tids
             });
         }
     });
@@ -636,7 +636,7 @@ async function makeItWorkTrade() {
     if (updated) {
         await g.dbl.tx("trade", "readwrite", tx => tx.trade.put({
             rid: 0,
-            teams: teams
+            teams
         }));
     }
 

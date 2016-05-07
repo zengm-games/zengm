@@ -786,7 +786,41 @@ function addRatingsRow(p, scoutingRank) {
 function addStatsRow(ot, p, playoffs = false) {
     const dbOrTx = ot !== null ? ot : g.dbl;
 
-    const statsRow = {pid: p.pid, season: g.season, tid: p.tid, playoffs: playoffs, gp: 0, gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, pm: 0, orb: 0, drb: 0, trb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, per: 0, ewa: 0, yearsWithTeam: 1};
+    const statsRow = {
+        pid: p.pid,
+        season: g.season,
+        tid: p.tid,
+        playoffs,
+        gp: 0,
+        gs: 0,
+        min: 0,
+        fg: 0,
+        fga: 0,
+        fgAtRim: 0,
+        fgaAtRim: 0,
+        fgLowPost: 0,
+        fgaLowPost: 0,
+        fgMidRange: 0,
+        fgaMidRange: 0,
+        tp: 0,
+        tpa: 0,
+        ft: 0,
+        fta: 0,
+        pm: 0,
+        orb: 0,
+        drb: 0,
+        trb: 0,
+        ast: 0,
+        tov: 0,
+        stl: 0,
+        blk: 0,
+        ba: 0,
+        pf: 0,
+        pts: 0,
+        per: 0,
+        ewa: 0,
+        yearsWithTeam: 1
+    };
 
     p.statsTids.push(p.tid);
     p.statsTids = _.uniq(p.statsTids);
@@ -906,7 +940,7 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
         year: draftYear,
         teamName: null,
         teamRegion: null,
-        pot: pot,
+        pot,
         ovr: p.ratings[0].ovr,
         skills: p.ratings[0].skills
     };
@@ -1847,7 +1881,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
     const logFeat = text => {
         eventLog.add(tx, {
             type: "playerFeat",
-            text: text,
+            text,
             showNotification: tid === g.userTid,
             pids: [pid],
             tids: [tid]
@@ -1937,16 +1971,16 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
         logFeat(featText);
 
         tx.playerFeats.add({
-            pid: pid,
+            pid,
             name: p.name,
             pos: p.pos,
             season: g.season,
-            tid: tid,
+            tid,
             oppTid: results.team[j].id,
             playoffs: g.phase === g.PHASE.PLAYOFFS,
             gid: results.gid,
             stats: p.stat,
-            won: won,
+            won,
             score: results.team[i].stat.pts + "-" + results.team[j].stat.pts,
             overtimes: results.overtimes
         });

@@ -9,59 +9,43 @@ const _ = require('underscore');
 const Promise = require('bluebird');
 
 describe("core/draft", () => {
-    var testDraftUntilUserOrEnd, testDraftUser, userPick1, userPick2;
-
-    before(() => {
-        return db.connectMeta().then(() => {
-            return league.create("Test", 15, undefined, 2015, false);
-        });
+    before(async () => {
+        await db.connectMeta();
+        await league.create("Test", 15, undefined, 2015, false);
     });
-    after(() => {
-        return league.remove(g.lid);
-    });
+    after(() => league.remove(g.lid));
 
-    testDraftUntilUserOrEnd = function (numNow, numTotal) {
-        return draft.untilUserOrEnd().then(function (pids) {
-            assert.equal(pids.length, numNow);
-            return g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED).then(function (players) {
-                assert.equal(players.length, 140 - numTotal);
-            });
-        });
+    const testDraftUntilUserOrEnd = async (numNow, numTotal) => {
+        const pids = await draft.untilUserOrEnd();
+        assert.equal(pids.length, numNow);
+        const players = await g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED);
+        assert.equal(players.length, 140 - numTotal);
     };
 
-    testDraftUser = function (round) {
-        return draft.getOrder().then(function (draftOrder) {
-            var pick;
+    let userPick1, userPick2;
+    const testDraftUser = async round => {
+        const draftOrder = await draft.getOrder();
+        const pick = draftOrder.shift();
+        assert.equal(pick.round, round);
+        if (round === 1) {
+            assert.equal(pick.pick, userPick1);
+        } else {
+            assert.equal(pick.pick, userPick2 - 30);
+        }
+        assert.equal(pick.tid, g.userTid);
 
-            pick = draftOrder.shift();
-            assert.equal(pick.round, round);
-            if (round === 1) {
-                assert.equal(pick.pick, userPick1);
-            } else {
-                assert.equal(pick.pick, userPick2 - 30);
-            }
-            assert.equal(pick.tid, g.userTid);
-
-            return g.dbl.players.index('tid').get(g.PLAYER.UNDRAFTED).then(function (p) {
-                return draft.selectPlayer(pick, p.pid).then(() => {
-                    return g.dbl.players.get(p.pid).then(function (p2) {
-                        assert.equal(p2.tid, g.userTid);
-                        return draft.setOrder(null, draftOrder);
-                    });
-                });
-            });
-        });
+        const p = await g.dbl.players.index('tid').get(g.PLAYER.UNDRAFTED);
+        await draft.selectPlayer(pick, p.pid);
+        const p2 = await g.dbl.players.get(p.pid);
+        assert.equal(p2.tid, g.userTid);
+        await draft.setOrder(null, draftOrder);
     };
 
     describe("#genPlayers()", () => {
-        it("should generate 70 players for the draft", () => {
-            return g.dbl.tx(["players", "teams", "teamSeasons"], "readwrite", function (tx) {
-                return draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, null);
-            }).then(() => {
-                return g.dbl.players.index('draft.year').count(g.season).then(function (numPlayers) {
-                    assert.equal(numPlayers, 140); // 70 from original league, 70 from this
-                });
-            });
+        it("should generate 70 players for the draft", async () => {
+            await g.dbl.tx(["players", "teams", "teamSeasons"], "readwrite", tx => draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, null));
+            const numPlayers = await g.dbl.players.index('draft.year').count(g.season);
+            assert.equal(numPlayers, 140); // 70 from original league, 70 from this
         });
     });
 

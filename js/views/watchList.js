@@ -9,7 +9,6 @@ const components = require('./components');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
-
 function get(req) {
     return {
         statType: req.params.statType !== undefined ? req.params.statType : "per_game",
@@ -28,82 +27,69 @@ const mapping = {
     }
 };
 
-function updatePlayers(inputs, updateEvents, vm) {
+async function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("clearWatchList") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
-        return g.dbl.players.getAll().then(function (players) {
-            players = players.filter(function (p) {
-                return p.watch && typeof p.watch !== "function"; // In Firefox, objects have a "watch" function
-            });
-            return player.withStats(null, players, {
-                statsSeasons: [g.season, g.season - 1], // For oldStats
-                statsPlayoffs: inputs.playoffs === "playoffs"
-            });
-        }).then(function (players) {
-            var i;
-
-            players = player.filter(players, {
-                attrs: ["pid", "name", "age", "injury", "tid", "abbrev", "watch", "contract", "freeAgentMood", "draft"],
-                ratings: ["ovr", "pot", "skills", "pos"],
-                stats: ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"],
-                season: g.season,
-                totals: inputs.statType === "totals",
-                per36: inputs.statType === "per_36",
-                playoffs: inputs.playoffs === "playoffs",
-                fuzz: true,
-                showNoStats: true,
-                showRookies: true,
-                showRetired: true,
-                oldStats: true
-            });
-
-            // Add mood to free agent contracts
-            for (i = 0; i < players.length; i++) {
-                if (players[i].tid === g.PLAYER.FREE_AGENT) {
-                    players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
-                }
-            }
-
-            return {
-                players: players,
-                statType: inputs.statType,
-                playoffs: inputs.playoffs
-            };
+        let players = await g.dbl.players.getAll();
+        players = players.filter(p => p.watch && typeof p.watch !== "function"); // In Firefox, objects have a "watch" function
+        players = await player.withStats(null, players, {
+            statsSeasons: [g.season, g.season - 1], // For oldStats
+            statsPlayoffs: inputs.playoffs === "playoffs"
         });
+        players = player.filter(players, {
+            attrs: ["pid", "name", "age", "injury", "tid", "abbrev", "watch", "contract", "freeAgentMood", "draft"],
+            ratings: ["ovr", "pot", "skills", "pos"],
+            stats: ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"],
+            season: g.season,
+            totals: inputs.statType === "totals",
+            per36: inputs.statType === "per_36",
+            playoffs: inputs.playoffs === "playoffs",
+            fuzz: true,
+            showNoStats: true,
+            showRookies: true,
+            showRetired: true,
+            oldStats: true
+        });
+
+        // Add mood to free agent contracts
+        for (let i = 0; i < players.length; i++) {
+            if (players[i].tid === g.PLAYER.FREE_AGENT) {
+                players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
+            }
+        }
+
+        return {
+            players,
+            playoffs: inputs.playoffs,
+            statType: inputs.statType
+        };
     }
 }
 
 function uiFirst(vm) {
-    var clearWatchListEl;
-
     ui.title("Watch List");
 
-    ko.computed(function () {
-        var contract, d, i, p, players, rows;
-
+    ko.computed(() => {
         // Number of decimals for many stats
-        if (vm.statType() === "totals") {
-            d = 0;
-        } else {
-            d = 1;
-        }
+        const d = vm.statType() === "totals" ? 0 : 1;
 
-        rows = [];
-        players = vm.players();
-        for (i = 0; i < vm.players().length; i++) {
-            p = players[i];
+        const rows = [];
+        const players = vm.players();
+        for (let i = 0; i < vm.players().length; i++) {
+            const p = players[i];
 
             // HACKS to show right stats, info
             if (vm.playoffs() === "playoffs") {
                 p.stats = p.statsPlayoffs;
 
                 // If no playoff stats, blank them
-                ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"].forEach(function (category) {
+                ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"].forEach(category => {
                     if (p.stats[category] === undefined) {
                         p.stats[category] = 0;
                     }
                 });
             }
 
+            let contract;
             if (p.tid === g.PLAYER.RETIRED) {
                 contract = "Retired";
             } else if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3) {
@@ -120,22 +106,22 @@ function uiFirst(vm) {
 
     ui.tableClickableRows($("#watch-list"));
 
-    clearWatchListEl = document.getElementById("clear-watch-list");
-    clearWatchListEl.addEventListener("click", function () {
+    const clearWatchListEl = document.getElementById("clear-watch-list");
+    clearWatchListEl.addEventListener("click", async () => {
         clearWatchListEl.disabled = true;
 
-        g.dbl.tx("players", "readwrite", function (tx) {
-            return tx.players.iterate(function (p) {
+        await g.dbl.tx("players", "readwrite", tx => {
+            return tx.players.iterate(p => {
                 if (p.watch) {
                     p.watch = false;
                     return p;
                 }
             });
-        }).then(function () {
-            league.updateLastDbChange();
-            ui.realtimeUpdate(["clearWatchList"]);
-            clearWatchListEl.disabled = false;
         });
+
+        league.updateLastDbChange();
+        ui.realtimeUpdate(["clearWatchList"]);
+        clearWatchListEl.disabled = false;
     });
 }
 

@@ -571,27 +571,24 @@ async function untilUserOrEnd() {
 
     // This will actually draft "untilUserOrEnd"
     const autoSelectPlayer = async () => {
-        let result; // Needed for Kneden, early returns are flaky
         if (draftOrder.length > 0) {
             const pick = draftOrder.shift();
 
             if (g.userTids.indexOf(pick.tid) >= 0 && g.autoPlaySeasons === 0) {
                 draftOrder.unshift(pick);
-                result = await afterDoneAuto(draftOrder, pids);
-            } else {
-                const selection = Math.floor(Math.abs(random.gauss(0, 2))); // 0=best prospect, 1=next best prospect, etc.
-                const pid = playersAll[selection].pid;
-                await selectPlayer(pick, pid);
-                pids.push(pid);
-                playersAll.splice(selection, 1); // Delete from the list of undrafted players
-
-                result = await autoSelectPlayer();
+                return afterDoneAuto(draftOrder, pids);
             }
-        } else {
-            result = await afterDoneAuto(draftOrder, pids);
+
+            const selection = Math.floor(Math.abs(random.gauss(0, 2))); // 0=best prospect, 1=next best prospect, etc.
+            const pid = playersAll[selection].pid;
+            await selectPlayer(pick, pid);
+            pids.push(pid);
+            playersAll.splice(selection, 1); // Delete from the list of undrafted players
+
+            return autoSelectPlayer();
         }
 
-        return result;
+        return afterDoneAuto(draftOrder, pids);
     };
 
     return autoSelectPlayer();

@@ -7,7 +7,7 @@ babel
     then manually go over, fix:
       let/const definitions inline
       async/await
-        test, views after transactions
+        update test folder
         any other instances of .then or .catch? function (
   benchmark, for sanity
     ctrl+r
@@ -24,8 +24,6 @@ babel
     https://babeljs.io/docs/plugins/transform-async-to-generator/ - try this with global Bluebird
     typescript
   errors on draft until user or end
-  ctrl+F Kneden for bugs
-    one in game.js, look into ASAP! make a test like in kneden repo
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being cancelled (resolve) and error returned (Reject)
   confirm feats still work and text is fine
   TEST ACCOUNT STUFF! (reset, login, register, account, card, buy)

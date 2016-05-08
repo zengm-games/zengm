@@ -82,7 +82,7 @@ async function addAchievements(achievements, silent = false) {
             if (allAchievements[i].slug === slug) {
                 eventLog.add(null, {
                     type: "achievement",
-                    text: '"' + allAchievements[i].name + '" achievement awarded! <a href="/account">View all achievements.</a>'
+                    text: `"${allAchievements[i].name}" achievement awarded! <a href="/account">View all achievements.</a>`
                 });
                 break;
             }
@@ -101,7 +101,7 @@ async function addAchievements(achievements, silent = false) {
     try {
         const data = await Promise.resolve($.ajax({
             type: "POST",
-            url: "//account.basketball-gm." + g.tld + "/add_achievements.php",
+            url: `//account.basketball-gm.${g.tld}/add_achievements.php`,
             data: {achievements, sport: g.sport},
             dataType: "json",
             xhrFields: {
@@ -123,8 +123,8 @@ async function check() {
     try {
         const data = await Promise.resolve($.ajax({
             type: "GET",
-            url: "//account.basketball-gm." + g.tld + "/user_info.php",
-            data: "sport=" + g.sport,
+            url: `//account.basketball-gm.${g.tld}/user_info.php`,
+            data: `sport=${g.sport}`,
             dataType: "json",
             xhrFields: {
                 withCredentials: true
@@ -179,7 +179,7 @@ async function getAchievements() {
         const achievementsRemote = await Promise.resolve($.ajax({
             type: "GET",
             url: `//account.basketball-gm.${g.tld}/get_achievements.php`,
-            data: "sport=" + g.sport,
+            data: `sport=${g.sport}`,
             dataType: "json",
             xhrFields: {
                 withCredentials: true

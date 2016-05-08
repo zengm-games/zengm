@@ -1,3 +1,6 @@
+// Disable template string rule because brfs can't handle them
+/* eslint prefer-template: "off" */
+
 const fs = require('fs');
 
 module.exports = {

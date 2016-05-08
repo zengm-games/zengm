@@ -39,16 +39,16 @@ ko.bindingHandlers.matchup = {
         if (series && series.home.tid) {
             if (series.home.tid() === g.userTid) { source += '<span class="bg-info">'; }
             if (series.home.hasOwnProperty("won") && series.home.won() === 4) { source += '<strong>'; }
-            source += series.home.seed() + '. <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[series.home.tid()], season]) + '">' + g.teamRegionsCache[series.home.tid()] + '</a>';
-            if (series.home.hasOwnProperty("won")) { source += ' ' + series.home.won(); }
+            source += `${series.home.seed()}. <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[series.home.tid()], season])}">${g.teamRegionsCache[series.home.tid()]}</a>`;
+            if (series.home.hasOwnProperty("won")) { source += ` ${series.home.won()}`; }
             if (series.home.hasOwnProperty("won") && series.home.won() === 4) { source += '</strong>'; }
             if (series.home.tid() === g.userTid) { source += '</span>'; }
             source += '<br>';
 
             if (series.away.tid() === g.userTid) { source += '<span class="bg-info">'; }
             if (series.home.hasOwnProperty("won") && series.away.won() === 4) { source += '<strong>'; }
-            source += series.away.seed() + '. <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[series.away.tid()], season]) + '">' + g.teamRegionsCache[series.away.tid()] + '</a>';
-            if (series.away.hasOwnProperty("won")) { source += ' ' + series.away.won(); }
+            source += `${series.away.seed()}. <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[series.away.tid()], season])}">${g.teamRegionsCache[series.away.tid()]}</a>`;
+            if (series.away.hasOwnProperty("won")) { source += ` ${series.away.won()}`; }
             if (series.home.hasOwnProperty("won") && series.away.won() === 4) { source += '</strong>'; }
             if (series.away.tid() === g.userTid) { source += '</span>'; }
         }
@@ -70,7 +70,7 @@ ko.bindingHandlers.newWindow = {
 
         return ko.bindingHandlers.html.update(element, () => {
             // Window name is set to the current time, so each window has a unique name and thus a new window is always opened
-            return '<a href="javascript:(function () { window.open(\'' + url + '?w=popup\', Date.now(), \'height=600,width=800,scrollbars=yes\'); }())" class="new_window" title="Move To New Window" data-no-davis="true"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA0AAAANABeWPPlAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFOSURBVDiNlZS9isJAFIU/F6s0m0VYYiOrhVukWQsbK4t9CDtbexGs8xY+ghY+QRBsbKcTAjZaqKyGXX2Bs00S1AwBD1yYOXPvmXvv/CAJSQAuoGetzAPCMKRSqTzSOURRRK/Xo1wqldyEewXwfR/P8zLHIAhYr9fZ3BjDeDym1WoBUAZ+i3ZaLBYsl8s7zhiTCbwk3DfwaROYz+fsdjs6nU7GOY6TjVOBGPixCbiuy2g0YrVa0Ww2c+svlpg7DAYDptMp3W6XyWRi9RHwRXKMh8NBKYbDoQC1221dr1dtNhv1+33NZjMZY9KjtAsEQSBAvu/rfD7rEYUC2+1WjuOo0Whov9/ngm8FchcJoFarEYYhnudRrVYLe5QTOJ1OANTrdQCOx6M1MI5jexOftdsMLsBbYb7wDkTAR+KflWC9hRakr+wi6e+2hGfNTb+Bf9965Lxmndc1AAAAAElFTkSuQmCC" height="16" width="16"></a>';
+            return `<a href="javascript:(function () { window.open('${url}?w=popup', Date.now(), 'height=600,width=800,scrollbars=yes'); }())" class="new_window" title="Move To New Window" data-no-davis="true"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA0AAAANABeWPPlAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFOSURBVDiNlZS9isJAFIU/F6s0m0VYYiOrhVukWQsbK4t9CDtbexGs8xY+ghY+QRBsbKcTAjZaqKyGXX2Bs00S1AwBD1yYOXPvmXvv/CAJSQAuoGetzAPCMKRSqTzSOURRRK/Xo1wqldyEewXwfR/P8zLHIAhYr9fZ3BjDeDym1WoBUAZ+i3ZaLBYsl8s7zhiTCbwk3DfwaROYz+fsdjs6nU7GOY6TjVOBGPixCbiuy2g0YrVa0Ww2c+svlpg7DAYDptMp3W6XyWRi9RHwRXKMh8NBKYbDoQC1221dr1dtNhv1+33NZjMZY9KjtAsEQSBAvu/rfD7rEYUC2+1WjuOo0Whov9/ngm8FchcJoFarEYYhnudRrVYLe5QTOJ1OANTrdQCOx6M1MI5jexOftdsMLsBbYb7wDkTAR+KflWC9hRakr+wi6e+2hGfNTb+Bf9965Lxmndc1AAAAAElFTkSuQmCC" height="16" width="16"></a>`;
         });
     }
 };
@@ -186,11 +186,11 @@ ko.bindingHandlers.recordAndPlayoffs = {
 
         let output = '';
         if (option !== "noSeason") {
-            output += '<a href="' + helpers.leagueUrl(["roster", abbrev, season]) + '">' + season + '</a>: ';
+            output += `<a href="${helpers.leagueUrl(["roster", abbrev, season])}">${season}</a>: `;
         }
-        output += '<a href="' + helpers.leagueUrl(["standings", season]) + '">' + won + '-' + lost + '</a>';
+        output += `<a href="${helpers.leagueUrl(["standings", season])}">${won}-${lost}</a>`;
         if (extraText) {
-            output += ', <a href="' + helpers.leagueUrl(["playoffs", season]) + '">' + extraText + '</a>';
+            output += `, <a href="${helpers.leagueUrl(["playoffs", season])}">${extraText}</a>`;
         }
 
         return ko.bindingHandlers.html.update(element, () => output);

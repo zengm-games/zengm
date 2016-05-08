@@ -34,14 +34,14 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
         vm.formId(formId);
         vm.fields([]);
         for (let i = 0; i < fields.length; i++) {
-            const fieldId = formId + "-" + fields[i];
+            const fieldId = `${formId}-${fields[i]}`;
             let options;
             if (fields[i] === "teams") {
                 options = [];
                 for (let j = 0; j < g.numTeams; j++) {
                     options[j] = {};
                     options[j].key = g.teamAbbrevsCache[j];
-                    options[j].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
+                    options[j].val = `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`;
                 }
             } else if (fields[i] === "teamsAndAll") {
                 options = [{
@@ -51,7 +51,7 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
                 for (let j = 0; j < g.numTeams; j++) {
                     options[j + 1] = {};
                     options[j + 1].key = g.teamAbbrevsCache[j];
-                    options[j + 1].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
+                    options[j + 1].val = `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`;
                 }
             } else if (fields[i] === "teamsAndAllWatch") {
                 options = [{
@@ -64,13 +64,13 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
                 for (let j = 0; j < g.numTeams; j++) {
                     options[j + 2] = {};
                     options[j + 2].key = g.teamAbbrevsCache[j];
-                    options[j + 2].val = g.teamRegionsCache[j] + " " + g.teamNamesCache[j];
+                    options[j + 2].val = `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`;
                 }
             } else if (fields[i] === "seasons" || fields[i] === "seasonsAndCareer" || fields[i] === "seasonsAndAll") {
                 options = helpers.getSeasons();
                 for (let j = 0; j < options.length; j++) {
                     options[j].key = options[j].season;
-                    options[j].val = options[j].season + " Season";
+                    options[j].val = `${options[j].season} Season`;
                 }
                 if (fields[i] === "seasonsAndCareer") {
                     options.unshift({
@@ -91,7 +91,7 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
                 for (let j = 0 + offset; j < 5 + offset; j++) {
                     options.push({
                         key: g.season + j,
-                        val: (g.season + j) + " season"
+                        val: `${g.season + j} season`
                     });
                 }
             } else if (fields[i] === "playoffs") {
@@ -211,13 +211,13 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
         ko.applyBindings(vm, formEl);
 
         if (fields.length === 1) {
-            ui.dropdown($("#" + formId + "-" + fields[0]));
+            ui.dropdown($(`#${formId}-${fields[0]}`));
         } else if (fields.length === 2) {
-            ui.dropdown($("#" + formId + "-" + fields[0]), $("#" + formId + "-" + fields[1]));
+            ui.dropdown($(`#${formId}-${fields[0]}`), $(`#${formId}-${fields[1]}`));
         } else if (fields.length === 3) {
-            ui.dropdown($("#" + formId + "-" + fields[0]), $("#" + formId + "-" + fields[1]), $("#" + formId + "-" + fields[2]));
+            ui.dropdown($(`#${formId}-${fields[0]}`), $(`#${formId}-${fields[1]}`), $(`#${formId}-${fields[2]}`));
         } else if (fields.length === 4) {
-            ui.dropdown($("#" + formId + "-" + fields[0]), $("#" + formId + "-" + fields[1]), $("#" + formId + "-" + fields[2]), $("#" + formId + "-" + fields[3]));
+            ui.dropdown($(`#${formId}-${fields[0]}`), $(`#${formId}-${fields[1]}`), $(`#${formId}-${fields[2]}`), $(`#${formId}-${fields[3]}`));
         }
     }
 
@@ -240,7 +240,7 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
         if (vm.fields()[i].name === "seasons" || fields[i] === "seasonsAndCareer") {
             if (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) {
                 vm.fields()[i].options.push({
-                    val: g.season + " season",
+                    val: `${g.season} season`,
                     key: g.season
                 });
             }

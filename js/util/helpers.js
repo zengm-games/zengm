@@ -397,7 +397,7 @@ function skillsBlock(skills) {
     let skillsHtml = '';
     if (skills !== undefined) {
         for (let i = 0; i < skills.length; i++) {
-            skillsHtml += '<span class="skill" title="' + tooltips[skills[i]] + '">' + skills[i] + '</span>';
+            skillsHtml += `<span class="skill" title="${tooltips[skills[i]]}">${skills[i]}</span>`;
         }
     }
 
@@ -418,10 +418,10 @@ function leagueUrl(components, options = {}, lid = g.lid) {
         lid = ko.unwrap(lid);
     }
 
-    let url = "/l/" + lid;
+    let url = `/l/${lid}`;
     for (let i = 0; i < components.length; i++) {
         if (components[i] !== undefined) {
-            url += "/" + ko.unwrap(components[i]);
+            url += `/${ko.unwrap(components[i])}`;
         }
     }
     if (!options.noQueryString) {
@@ -433,10 +433,10 @@ function leagueUrl(components, options = {}, lid = g.lid) {
 
 function watchBlock(pid, watch) {
     if (watch) {
-        return '<span class="glyphicon glyphicon-flag watch watch-active" title="Remove from Watch List" data-pid="' + pid + '"></span>';
+        return `<span class="glyphicon glyphicon-flag watch watch-active" title="Remove from Watch List" data-pid="${pid}"></span>`;
     }
 
-    return '<span class="glyphicon glyphicon-flag watch" title="Add to Watch List" data-pid="' + pid + '"></span>';
+    return `<span class="glyphicon glyphicon-flag watch" title="Add to Watch List" data-pid="${pid}"></span>`;
 }
 
 /**
@@ -451,14 +451,14 @@ function watchBlock(pid, watch) {
  * @return {string} String of HTML-formatted skill labels, ready for output.
  */
 function playerNameLabels(pid, name, injury, skills, watch) {
-    let html = '<a href="' + leagueUrl(["player", pid]) + '">' + name + '</a>';
+    let html = `<a href="${leagueUrl(["player", pid])}">${name}</a>`;
 
     if (injury !== undefined) {
         if (injury.gamesRemaining > 0) {
-            html += '<span class="label label-danger label-injury" title="' + injury.type + ' (out ' + injury.gamesRemaining + ' more games)">' + injury.gamesRemaining + '</span>';
+            html += `<span class="label label-danger label-injury" title="${injury.type} (out ${injury.gamesRemaining} more games)">${injury.gamesRemaining}</span>`;
         } else if (injury.gamesRemaining === -1) {
             // This is used in box scores, where it would be confusing to display "out X more games" in old box scores
-            html += '<span class="label label-danger label-injury" title="' + injury.type + '">&nbsp;</span>';
+            html += `<span class="label label-danger label-injury" title="${injury.type}">&nbsp;</span>`;
         }
     }
 
@@ -521,9 +521,9 @@ function formatCurrency(amount, append, precision) {
     precision = typeof precision === "number" || typeof precision === "string" ? precision : 2;
 
     if (amount < 0) {
-        return "-$" + round(Math.abs(amount), precision) + append;
+        return `-$${round(Math.abs(amount), precision)}${append}`;
     }
-    return "$" + round(amount, precision) + append;
+    return `$${round(amount, precision)}${append}`;
 }
 
 /**
@@ -574,16 +574,16 @@ function draftAbbrev(tid, originalTid, season) {
     const originalAbbrev = g.teamAbbrevsCache[originalTid];
 
     if (abbrev === originalAbbrev) {
-        return '<a href="' + leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a>';
+        return `<a href="${leagueUrl(["roster", abbrev, season])}">${abbrev}</a>`;
     }
 
-    return '<a href="' + leagueUrl(["roster", abbrev, season]) + '">' + abbrev + '</a> (from <a href="' + leagueUrl(["roster", originalAbbrev, season]) + '">' + originalAbbrev + '</a>)';
+    return `<a href="${leagueUrl(["roster", abbrev, season])}">${abbrev}</a> (from <a href="${leagueUrl(["roster", originalAbbrev, season])}">${originalAbbrev}</a>)`;
 }
 
 function pickDesc(pick) {
-    let desc = pick.season + " " + (pick.round === 1 ? "first" : "second") + " round pick";
+    let desc = `${pick.season} ${pick.round === 1 ? "first" : "second"} round pick`;
     if (pick.tid !== pick.originalTid) {
-        desc += " (from " + g.teamAbbrevsCache[pick.originalTid] + ")";
+        desc += ` (from ${g.teamAbbrevsCache[pick.originalTid]})`;
     }
 
     return desc;
@@ -695,9 +695,9 @@ function formatCompletedGame(game) {
         output.teams = [team0, team1];
     }
     if (game.won) {
-        output.score = team0.pts + "-" + team1.pts;
+        output.score = `${team0.pts}-${team1.pts}`;
     } else {
-        output.score = team1.pts + "-" + team0.pts;
+        output.score = `${team1.pts}-${team0.pts}`;
     }
 
     return output;
@@ -826,7 +826,7 @@ function plusMinus(arg, d) {
 
 // Used to fix links in the event log, which will be wrong if a league is exported and then imported
 function correctLinkLid(event) {
-    event.text = event.text.replace(/\/l\/\d+\//g, '/l/' + g.lid + '/');
+    event.text = event.text.replace(/\/l\/\d+\//g, `/l/${g.lid}/`);
 }
 
 function overtimeCounter(n) {
@@ -839,7 +839,7 @@ function overtimeCounter(n) {
         case 6: return "sextuple";
         case 7: return "septuple";
         case 8: return "octuple";
-        default: return "a " + n + "th";
+        default: return `a ${ordinal(n)}`;
     }
 }
 

@@ -70,164 +70,151 @@ describe("core/team", () => {
         });
         after(() => league.remove(g.lid));
 
-        it("should return requested info if tid/season match", () => {
-            return team.filter({
+        it("should return requested info if tid/season match", async () => {
+            const t = await team.filter({
                 attrs: ["tid", "abbrev"],
                 seasonAttrs: ["season", "won", "payroll"],
                 stats: ["gp", "fg", "fgp"],
                 tid: 4,
                 season: g.season
-            }).then(function (t) {
-                assert.equal(t.tid, 4);
-                assert.equal(t.abbrev, "CIN");
-                assert.equal(t.season, g.season);
-                assert.equal(t.won, 0);
-                assert(t.payroll > 0);
-                assert.equal(t.gp, 10);
-                assert.equal(t.fg, 5);
-                assert.equal(t.fgp, 50);
-                assert.equal(Object.keys(t).length, 8);
-                assert.equal(t.hasOwnProperty("stats"), false);
             });
+            assert.equal(t.tid, 4);
+            assert.equal(t.abbrev, "CIN");
+            assert.equal(t.season, g.season);
+            assert.equal(t.won, 0);
+            assert(t.payroll > 0);
+            assert.equal(t.gp, 10);
+            assert.equal(t.fg, 5);
+            assert.equal(t.fgp, 50);
+            assert.equal(Object.keys(t).length, 8);
+            assert.equal(t.hasOwnProperty("stats"), false);
         });
-        it("should return an array if no team ID is specified", () => {
-            return team.filter({
+        it("should return an array if no team ID is specified", async () => {
+            const teams = await team.filter({
                 attrs: ["tid", "abbrev"],
                 seasonAttrs: ["season", "won"],
                 stats: ["gp", "fg", "fgp"],
                 season: g.season
-            }).then(function (teams) {
-                assert.equal(teams.length, g.numTeams);
-                assert.equal(teams[4].tid, 4);
-                assert.equal(teams[4].abbrev, "CIN");
-                assert.equal(teams[4].season, g.season);
-                assert.equal(teams[4].won, 0);
-                assert.equal(teams[4].gp, 10);
-                assert.equal(teams[4].fg, 5);
-                assert.equal(teams[4].fgp, 50);
-                assert.equal(Object.keys(teams[4]).length, 7);
-                assert.equal(teams[4].hasOwnProperty("stats"), false);
             });
+            assert.equal(teams.length, g.numTeams);
+            assert.equal(teams[4].tid, 4);
+            assert.equal(teams[4].abbrev, "CIN");
+            assert.equal(teams[4].season, g.season);
+            assert.equal(teams[4].won, 0);
+            assert.equal(teams[4].gp, 10);
+            assert.equal(teams[4].fg, 5);
+            assert.equal(teams[4].fgp, 50);
+            assert.equal(Object.keys(teams[4]).length, 7);
+            assert.equal(teams[4].hasOwnProperty("stats"), false);
         });
-        it("should return requested info if tid/season match, even when no attrs requested", () => {
-            return team.filter({
+        it("should return requested info if tid/season match, even when no attrs requested", async () => {
+            const t = await team.filter({
                 seasonAttrs: ["season", "won"],
                 stats: ["gp", "fg", "fgp"],
                 tid: 4,
                 season: g.season
-            }).then(function (t) {
-                assert.equal(t.season, g.season);
-                assert.equal(t.won, 0);
-                assert.equal(t.gp, 10);
-                assert.equal(t.fg, 5);
-                assert.equal(t.fgp, 50);
-                assert.equal(Object.keys(t).length, 5);
             });
+            assert.equal(t.season, g.season);
+            assert.equal(t.won, 0);
+            assert.equal(t.gp, 10);
+            assert.equal(t.fg, 5);
+            assert.equal(t.fgp, 50);
+            assert.equal(Object.keys(t).length, 5);
         });
-        it("should return requested info if tid/season match, even when no seasonAttrs requested", () => {
-            return team.filter({
+        it("should return requested info if tid/season match, even when no seasonAttrs requested", async () => {
+            const t = await team.filter({
                 attrs: ["tid", "abbrev"],
                 stats: ["gp", "fg", "fgp"],
                 tid: 4,
                 season: g.season
-            }).then(function (t) {
-                assert.equal(t.tid, 4);
-                assert.equal(t.abbrev, "CIN");
-                assert.equal(t.gp, 10);
-                assert.equal(t.fg, 5);
-                assert.equal(t.fgp, 50);
-                assert.equal(Object.keys(t).length, 5);
             });
+            assert.equal(t.tid, 4);
+            assert.equal(t.abbrev, "CIN");
+            assert.equal(t.gp, 10);
+            assert.equal(t.fg, 5);
+            assert.equal(t.fgp, 50);
+            assert.equal(Object.keys(t).length, 5);
         });
-        it("should return requested info if tid/season match, even when no stats requested", () => {
-            return team.filter({
+        it("should return requested info if tid/season match, even when no stats requested", async () => {
+            const t = await team.filter({
                 attrs: ["tid", "abbrev"],
                 seasonAttrs: ["season", "won"],
                 tid: 4,
                 season: g.season
-            }).then(function (t) {
-                assert.equal(t.tid, 4);
-                assert.equal(t.abbrev, "CIN");
-                assert.equal(t.season, g.season);
-                assert.equal(t.won, 0);
-                assert.equal(Object.keys(t).length, 4);
             });
+            assert.equal(t.tid, 4);
+            assert.equal(t.abbrev, "CIN");
+            assert.equal(t.season, g.season);
+            assert.equal(t.won, 0);
+            assert.equal(Object.keys(t).length, 4);
         });
-        it("should return season totals is options.totals is true", () => {
-            return team.filter({
+        it("should return season totals is options.totals is true", async () => {
+            const t = await team.filter({
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
                 season: g.season,
                 totals: true
-            }).then(function (t) {
-                assert.equal(t.gp, 10);
-                assert.equal(t.fg, 50);
-                assert.equal(t.fga, 100);
-                assert.equal(t.fgp, 50);
             });
+            assert.equal(t.gp, 10);
+            assert.equal(t.fg, 50);
+            assert.equal(t.fga, 100);
+            assert.equal(t.fgp, 50);
         });
-        it("should return playoff stats if options.playoffs is true", () => {
-            return team.filter({
+        it("should return playoff stats if options.playoffs is true", async () => {
+            const t = await team.filter({
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
                 season: g.season,
                 playoffs: true
-            }).then(function (t) {
-                assert.equal(t.gp, 4);
-                assert.equal(t.fg, 3);
-                assert.equal(t.fga, 30);
-                assert.equal(t.fgp, 10);
             });
+            assert.equal(t.gp, 4);
+            assert.equal(t.fg, 3);
+            assert.equal(t.fga, 30);
+            assert.equal(t.fgp, 10);
         });
-        it("should use supplied IndexedDB transaction", () => {
-            return g.dbl.tx(["players", "releasedPlayers", "teams", "teamSeasons"], function (tx) {
-                return team.filter({
+        it("should use supplied IndexedDB transaction", async () => {
+            return g.dbl.tx(["players", "releasedPlayers", "teams", "teamSeasons"], async tx => {
+                const t = await team.filter({
                     attrs: ["tid", "abbrev"],
                     seasonAttrs: ["season", "won"],
                     tid: 4,
                     season: g.season,
                     ot: tx
-                }).then(function (t) {
-                    assert.equal(t.tid, 4);
-                    assert.equal(t.abbrev, "CIN");
-                    assert.equal(t.season, g.season);
-                    assert.equal(t.won, 0);
-                    assert.equal(Object.keys(t).length, 4);
-
-                    // If another transaction was used inside team.filter besides tx, this will cause an error because the transaction will no longer be active
-                    return tx.players.get(0);
                 });
+                assert.equal(t.tid, 4);
+                assert.equal(t.abbrev, "CIN");
+                assert.equal(t.season, g.season);
+                assert.equal(t.won, 0);
+                assert.equal(Object.keys(t).length, 4);
+
+                // If another transaction was used inside team.filter besides tx, this will cause an error because the transaction will no longer be active
+                return tx.players.get(0);
             });
         });
-        it("should return stats in an array if no season is specified", () => {
-            return team.filter({
+        it("should return stats in an array if no season is specified", async () => {
+            const t = await team.filter({
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
                 playoffs: true
-            }).then(function (t) {
-                assert.equal(t.stats[0].gp, 4);
-                assert.equal(t.stats[0].fg, 3);
-                assert.equal(t.stats[0].fga, 30);
-                assert.equal(t.stats[0].fgp, 10);
             });
+            assert.equal(t.stats[0].gp, 4);
+            assert.equal(t.stats[0].fg, 3);
+            assert.equal(t.stats[0].fga, 30);
+            assert.equal(t.stats[0].fgp, 10);
         });
     });
 
     describe("#checkRosterSizes()", () => {
-        before(() => {
-            return db.connectMeta().then(() => {
-                return league.create("Test", 0, undefined, 2013, false);
-            });
+        before(async () => {
+            await db.connectMeta();
+            await league.create("Test", 0, undefined, 2013, false);
         });
-        after(() => {
-            return league.remove(g.lid);
-        });
+        after(() => league.remove(g.lid));
 
-        function addTen(tid) {
-            return g.dbl.tx("players", "readwrite", function (tx) {
-                var i = 0;
-
-                return tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, function (p, shortCircuit) {
+        const addTen = (tid) => {
+            return g.dbl.tx("players", "readwrite", async tx => {
+                let i = 0;
+                await tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, (p, shortCircuit) => {
                     if (i >= 10) {
                         return shortCircuit();
                     }
@@ -236,13 +223,12 @@ describe("core/team", () => {
                     return p;
                 });
             });
-        }
+        };
 
-        function removeTen(tid) {
-            return g.dbl.tx(["players", "releasedPlayers", "teams", "teamSeasons"], "readwrite", function (tx) {
-                var i = 0;
-
-                return tx.players.index('tid').iterate(tid, function (p, shortCircuit) {
+        const removeTen = (tid) => {
+            return g.dbl.tx(["players", "releasedPlayers", "teams", "teamSeasons"], "readwrite", async tx => {
+                let i = 0;
+                await tx.players.index('tid').iterate(tid, function (p, shortCircuit) {
                     if (i >= 10) {
                         return shortCircuit();
                     }
@@ -250,72 +236,64 @@ describe("core/team", () => {
                     return player.release(tx, p, false);
                 });
             });
-        }
+        };
 
-        it("should add players to AI team under roster limit without returning error message", () => {
-            return removeTen(5).then(() => {
-                // Confirm roster size under limit
-                return g.dbl.players.index('tid').count(5).then(function (numPlayers) {
-                    assert.equal(numPlayers, 4);
-                });
-            }).then(() => {
-                return team.checkRosterSizes().then(function (userTeamSizeError) {
-                    assert.equal(userTeamSizeError, null);
-                });
-            }).then(() => {
-                // Confirm players added up to limit
-                return g.dbl.players.index('tid').count(5).then(function (numPlayers) {
-                    assert.equal(numPlayers, g.minRosterSize);
-                });
-            });
+        it("should add players to AI team under roster limit without returning error message", async () => {
+            await removeTen(5);
+
+            // Confirm roster size under limit
+            let numPlayers = await g.dbl.players.index('tid').count(5);
+            assert.equal(numPlayers, 4);
+            const userTeamSizeError = await team.checkRosterSizes();
+            assert.equal(userTeamSizeError, null);
+
+            // Confirm players added up to limit
+            numPlayers = await g.dbl.players.index('tid').count(5);
+            assert.equal(numPlayers, g.minRosterSize);
         });
-        it("should remove players to AI team over roster limit without returning error message", () => {
-            return addTen(8).then(() => {
-                // Confirm roster size over limit
-                return g.dbl.players.index('tid').count(8).then(function (numPlayers) {
-                    assert.equal(numPlayers, 24);
-                });
-            }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
-                // Confirm no error message and roster size pruned to limit
-                assert.equal(userTeamSizeError, null);
-                return g.dbl.players.index('tid').count(8).then(function (numPlayers) {
-                    assert.equal(numPlayers, 15);
-                });
-            });
+        it("should remove players to AI team over roster limit without returning error message", async () => {
+            await addTen(8);
+
+            // Confirm roster size over limit
+            let numPlayers = await g.dbl.players.index('tid').count(8);
+            assert.equal(numPlayers, 24);
+
+            // Confirm no error message and roster size pruned to limit
+            const userTeamSizeError = await team.checkRosterSizes();
+            assert.equal(userTeamSizeError, null);
+            numPlayers = await g.dbl.players.index('tid').count(8);
+            assert.equal(numPlayers, 15);
         });
-        it("should return error message when user team is under roster limit", () => {
-            return removeTen(g.userTid).then(() => {
-                // Confirm roster size under limit
-                return g.dbl.players.index('tid').count(g.userTid).then(function (numPlayers) {
-                    assert.equal(numPlayers, 4);
-                });
-            }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
+        it("should return error message when user team is under roster limit", async () => {
+            await removeTen(g.userTid);
+
+            // Confirm roster size under limit
+            let numPlayers = await g.dbl.players.index('tid').count(g.userTid);
+            assert.equal(numPlayers, 4);
+
                 // Confirm roster size errora nd no auto-signing of players
-                assert.equal(typeof userTeamSizeError, "string");
-                assert(userTeamSizeError.indexOf("less") >= 0);
-                assert(userTeamSizeError.indexOf("minimum") >= 0);
-                return g.dbl.players.index('tid').count(g.userTid).then(function (numPlayers) {
-                    assert.equal(numPlayers, 4);
-                });
-            });
+            const userTeamSizeError = await team.checkRosterSizes();
+            assert.equal(typeof userTeamSizeError, "string");
+            assert(userTeamSizeError.indexOf("less") >= 0);
+            assert(userTeamSizeError.indexOf("minimum") >= 0);
+            numPlayers = await g.dbl.players.index('tid').count(g.userTid);
+            assert.equal(numPlayers, 4);
         });
-        it("should return error message when user team is over roster limit", () => {
-            return addTen(g.userTid).then(() => {
-                return addTen(g.userTid);
-            }).then(() => {
-                // Confirm roster size over limit
-                return g.dbl.players.index('tid').count(g.userTid).then(function (numPlayers) {
-                    assert.equal(numPlayers, 24);
-                });
-            }).then(team.checkRosterSizes).then(function (userTeamSizeError) {
-                // Confirm roster size error and no auto-release of players
-                assert.equal(typeof userTeamSizeError, "string");
-                assert(userTeamSizeError.indexOf("more") >= 0);
-                assert(userTeamSizeError.indexOf("maximum") >= 0);
-                return g.dbl.players.index('tid').count(g.userTid).then(function (numPlayers) {
-                    assert.equal(numPlayers, 24);
-                });
-            });
+        it("should return error message when user team is over roster limit", async () => {
+            await addTen(g.userTid);
+            await addTen(g.userTid);
+
+            // Confirm roster size over limit
+            let numPlayers = await g.dbl.players.index('tid').count(g.userTid);
+            assert.equal(numPlayers, 24);
+
+            // Confirm roster size error and no auto-release of players
+            const userTeamSizeError = await team.checkRosterSizes();
+            assert.equal(typeof userTeamSizeError, "string");
+            assert(userTeamSizeError.indexOf("more") >= 0);
+            assert(userTeamSizeError.indexOf("maximum") >= 0);
+            numPlayers = await g.dbl.players.index('tid').count(g.userTid);
+            assert.equal(numPlayers, 24);
         });
     });
 });

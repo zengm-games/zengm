@@ -224,14 +224,12 @@ async function awards(tx) {
     }
 
     // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
-    let champPlayers = await tx.players.index('tid').getAll(champTid).then(function (players) {
-        return player.withStats(tx, players, {
-            statsSeasons: [g.season],
-            statsTid: champTid,
-            statsPlayoffs: true
-        });
+    let champPlayers = await tx.players.index('tid').getAll(champTid);
+    champPlayers = await player.withStats(tx, champPlayers, {
+        statsSeasons: [g.season],
+        statsTid: champTid,
+        statsPlayoffs: true
     });
-
     champPlayers = player.filter(champPlayers, { // Only the champions, only playoff stats
         attrs: ["pid", "name", "tid", "abbrev"],
         stats: ["pts", "trb", "ast", "ewa"],

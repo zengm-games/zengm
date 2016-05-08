@@ -30,7 +30,7 @@ async function updateTeamHistory(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
         let [teamSeasons, players] = await Promise.all([
             g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([inputs.tid], [inputs.tid, ''])),
-            g.dbl.players.index('statsTids').getAll(inputs.tid).then(function (players) {
+            g.dbl.players.index('statsTids').getAll(inputs.tid).then(players =>
                 return player.withStats(null, players, {
                     statsSeasons: "all",
                     statsTid: inputs.tid

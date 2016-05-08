@@ -276,15 +276,15 @@ function uiFirst(vm) {
         ui.title("Edit Player");
     }
 
-    document.getElementById("randomize-face").addEventListener("click", function () {
+    document.getElementById("randomize-face").addEventListener("click", () => {
         vm.p.face(komapping.fromJS(generateFace()));
     });
 
     // Since there are two eyes and the updated observable is the first one, update the second in parallel
-    ko.computed(function () {
+    ko.computed(() => {
         vm.p.face().eyes()[1].id(vm.p.face().eyes()[0].id());
     }).extend({throttle: 1});
-    ko.computed(function () {
+    ko.computed(() => {
         vm.p.face().eyes()[1].angle(vm.p.face().eyes()[0].angle());
     }).extend({throttle: 1});
 

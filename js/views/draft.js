@@ -107,7 +107,7 @@ async function updateDraft() {
         })
     ]);
 
-    undrafted.sort(function (a, b) { return b.valueFuzz - a.valueFuzz; });
+    undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
     undrafted = player.filter(undrafted, {
         attrs: ["pid", "name", "age", "injury", "contract", "watch"],
         ratings: ["ovr", "pot", "skills", "pos"],
@@ -164,7 +164,7 @@ function uiFirst() {
     ui.title("Draft");
 
     const startDraft = $("#start-draft");
-    startDraft.click(function () {
+    startDraft.click(() => {
         $(startDraft.parent()).hide();
         draftUntilUserOrEnd();
     });
@@ -176,10 +176,10 @@ function uiFirst() {
         draftUntilUserOrEnd();
     });
 
-    $("#view-drafted").click(function () {
+    $("#view-drafted").click(() => {
         $("body, html").animate({scrollLeft: $(document).outerWidth() - $(window).width()}, 250);
     });
-    $("#view-undrafted").click(function () {
+    $("#view-undrafted").click(() => {
         $("body, html").animate({scrollLeft: 0}, 250);
     });
 

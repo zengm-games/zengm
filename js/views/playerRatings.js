@@ -45,9 +45,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
         if (tid < 0) { tid = null; } // Show all teams
 
         if (!tid && inputs.abbrev === "watch") {
-            players = players.filter(function (p) {
-                return p.watch && typeof p.watch !== "function";
-            });
+            players = players.filter(p => p.watch && typeof p.watch !== "function");
         }
 
         players = player.filter(players, {
@@ -65,7 +63,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
         // For other seasons, use the stats abbrev for filtering
         if (g.season === inputs.season) {
             if (tid !== null) {
-                players = players.filter(function (p) { return p.abbrev === inputs.abbrev; });
+                players = players.filter(p => p.abbrev === inputs.abbrev);
             }
 
             for (let i = 0; i < players.length; i++) {
@@ -73,7 +71,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
             }
         } else {
             if (tid !== null) {
-                players = players.filter(function (p) { return p.stats.abbrev === inputs.abbrev; });
+                players = players.filter(p => p.stats.abbrev === inputs.abbrev);
             }
         }
 

@@ -20,7 +20,7 @@ const bundler = browserify('js/app.js', {
     }
 });*/
 
-bundler.bundle(function (err, src, map) {
+bundler.bundle((err, src, map) => {
     if (err) {
         throw err;
     }

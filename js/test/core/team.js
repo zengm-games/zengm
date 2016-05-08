@@ -228,7 +228,7 @@ describe("core/team", () => {
         const removeTen = (tid) => {
             return g.dbl.tx(["players", "releasedPlayers", "teams", "teamSeasons"], "readwrite", async tx => {
                 let i = 0;
-                await tx.players.index('tid').iterate(tid, function (p, shortCircuit) {
+                await tx.players.index('tid').iterate(tid, (p, shortCircuit) => {
                     if (i >= 10) {
                         return shortCircuit();
                     }

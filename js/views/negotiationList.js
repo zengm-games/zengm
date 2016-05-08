@@ -26,7 +26,7 @@ async function updateNegotiationList() {
     // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
     let [negotiations, players] = await Promise.all([
         g.dbl.negotiations.getAll(),
-        g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(function (players) {
+        g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(players => {
             return player.withStats(null, players, {
                 statsSeasons: [g.season],
                 statsTid: g.userTid
@@ -70,7 +70,7 @@ async function updateNegotiationList() {
 function uiFirst(vm) {
     ui.title("Re-sign Players");
 
-    ko.computed(function () {
+    ko.computed(() => {
         ui.datatable($("#negotiation-list"), 4, vm.players().map(p => {
             let negotiateButton;
             if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {

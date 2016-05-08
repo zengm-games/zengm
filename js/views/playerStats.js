@@ -81,7 +81,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
 
         // Only keep players with more than 5 mpg
         if (inputs.abbrev !== "watch") {
-            players = players.filter(function (p) {
+            players = players.filter(p => {
                 // Minutes played
                 let min;
                 if (inputs.statType === "totals") {

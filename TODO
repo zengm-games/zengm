@@ -15,9 +15,6 @@ babel
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being cancelled (resolve) and error returned (Reject)
   TEST ACCOUNT STUFF! (reset, login, register, account, card, buy)
   broken in firefox in 059e55ddc61c26027cf8ba7716861602bf902db3 because of https://bugzilla.mozilla.org/show_bug.cgi?id=449811
-  new eslint rules to try
-    http://eslint.org/docs/rules/arrow-parens
-    http://eslint.org/docs/rules/prefer-arrow-callback
 
 one month gamesim benchmarks while viewing dashboard:
   original 000:01:43.710
@@ -80,12 +77,9 @@ deploy script, so version number updates don't keep getting committed for index.
 
 go through old saved posts on reddit, update to new syntax
 
-why bluebird newer versions fail? starts with 2.9.28
-  probably https://github.com/petkaantonov/bluebird/commit/4ed7945c224c63b3c82e40b7f3d7b93b85f0b3b4
-
-babel
-  var -> let/const
-  reset "one-var" to 2 in .eslintrc
+eslint
+  "arrow-parens": ["error", "as-needed"],
+    doesn't seem to actually work as the documentation says... try again later
 
 CURRENT
 -------

@@ -33,11 +33,7 @@ async function updateEventLog(inputs, updateEvents, vm) {
             events.reverse(); // Newest first
 
             // Filter by team
-            events = events.filter(function (event) {
-                if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
-                    return true;
-                }
-            });
+            events = events.filter(event => event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0);
 
             events.forEach(helpers.correctLinkLid);
 

@@ -33,7 +33,7 @@
             obj.animate({bottom: '-3px'}, 300).addClass('open');
         };
 
-        settings.tabHandle.click(function () {
+        settings.tabHandle.click(() => {
             if (obj.hasClass('open')) {
                 slideIn();
             } else {

@@ -129,7 +129,7 @@ async function regressRatingsPer() {
     };
 
     function ColumnVector(ary) {
-        return new Matrix(ary.map(function (v) { return [v]; }));
+        return new Matrix(ary.map(v => [v]));
     }
     ColumnVector.prototype = Matrix.prototype;
 

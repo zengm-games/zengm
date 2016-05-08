@@ -48,7 +48,7 @@ async function updateMessage(inputs, updateEvents, vm) {
 }
 
 function uiFirst(vm) {
-    ko.computed(function () {
+    ko.computed(() => {
         ui.title(`Message From ${vm.message.from()}`);
     }).extend({throttle: 1});
 }

@@ -42,7 +42,7 @@ async function updatePowerRankings(inputs, updateEvents) {
         // Sort and weight the values - doesn't matter how good your 12th man is
         const weights = [2, 1.5, 1.25, 1.1, 1, 0.9, 0.8, 0.7, 0.6, 0.4, 0.2, 0.1];
         for (let i = 0; i < playerValuesByTid.length; i++) {
-            playerValuesByTid[i].sort(function (a, b) { return b - a; });
+            playerValuesByTid[i].sort((a, b) => b - a);
 
             for (let j = 0; j < playerValuesByTid[i].length; j++) {
                 if (j < weights.length) {
@@ -91,7 +91,7 @@ async function updatePowerRankings(inputs, updateEvents) {
 function uiFirst(vm) {
     ui.title("Power Rankings");
 
-    ko.computed(function () {
+    ko.computed(() => {
         ui.datatableSinglePage($("#power-rankings"), 0, vm.teams().map(t => {
             const performanceRank = t.gp > 0 ? String(t.performanceRank) : "-";
             return [String(t.overallRank), performanceRank, String(t.talentRank), `<a href="${helpers.leagueUrl(["roster", t.abbrev])}">${t.region} ${t.name}</a>`, String(t.won), String(t.lost), t.lastTen, helpers.round(t.diff, 1), t.tid === g.userTid];

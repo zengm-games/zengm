@@ -38,7 +38,7 @@ function boxPlotElementStyle(div, color) {
     div.style.background = "#fff";
     div.style.position = "absolute";
     div.style.top = "22px";
-    div.style.border = "thin solid " + color;
+    div.style.border = `thin solid ${color}`;
     div.style.width = "0px";
     div.style.height = "20px";
 }
@@ -107,29 +107,29 @@ function create(plot) {
     midLineDiv.style.height = "10px";
     midLineDiv.style.width = "100%";
     midLineDiv.style.border = "none";
-    midLineDiv.style.borderBottom = "1px solid " + plot.color;
+    midLineDiv.style.borderBottom = `1px solid ${plot.color}`;
     containerDiv.appendChild(midLineDiv);
 
     const upperBoxDiv = document.createElement("div");
     boxPlotElementStyle(upperBoxDiv, plot.color);
-    upperBoxDiv.style.right = x.q3 + "%";
-    upperBoxDiv.style.width = (x.median - x.q3) + "%";
+    upperBoxDiv.style.right = `${x.q3}%`;
+    upperBoxDiv.style.width = `${x.median - x.q3}%`;
     containerDiv.appendChild(upperBoxDiv);
 
     const lowerBoxDiv = document.createElement("div");
     boxPlotElementStyle(lowerBoxDiv, plot.color);
-    lowerBoxDiv.style.right = x.median + "%";
-    lowerBoxDiv.style.width = x.q1 - x.median + "%";
+    lowerBoxDiv.style.right = `${x.median}%`;
+    lowerBoxDiv.style.width = `${x.q1 - x.median}%`;
     containerDiv.appendChild(lowerBoxDiv);
 
     const lowerWhiskerDiv = document.createElement("div");
     boxPlotElementStyle(lowerWhiskerDiv, plot.color);
-    lowerWhiskerDiv.style.right = x.min + "%";
+    lowerWhiskerDiv.style.right = `${x.min}%`;
     containerDiv.appendChild(lowerWhiskerDiv);
 
     const upperWhiskerDiv = document.createElement("div");
     boxPlotElementStyle(upperWhiskerDiv, plot.color);
-    upperWhiskerDiv.style.right = x.max + "%";
+    upperWhiskerDiv.style.right = `${x.max}%`;
     containerDiv.appendChild(upperWhiskerDiv);
 
     const minScaleDiv = document.createElement("div");
@@ -156,7 +156,7 @@ function create(plot) {
         const lowerLabel = document.createElement("div");
         lowerLabel.innerHTML = round(val.min);
         lowerLabel.style.position = "absolute";
-        lowerLabel.style.right = x.min + "%";
+        lowerLabel.style.right = `${x.min}%`;
         lowerLabel.style.top = "3px";
         lowerLabel.style.marginRight = "-0.6em";
         containerDiv.appendChild(lowerLabel);
@@ -164,7 +164,7 @@ function create(plot) {
         const q1Label = document.createElement("div");
         q1Label.innerHTML = round(val.q1);
         q1Label.style.position = "absolute";
-        q1Label.style.right = x.q1 + "%";
+        q1Label.style.right = `${x.q1}%`;
         q1Label.style.top = "43px";
         q1Label.style.marginRight = "-0.6em";
         containerDiv.appendChild(q1Label);
@@ -172,7 +172,7 @@ function create(plot) {
         const medianLabel = document.createElement("div");
         medianLabel.innerHTML = round(val.median);
         medianLabel.style.position = "absolute";
-        medianLabel.style.right = x.median + "%";
+        medianLabel.style.right = `${x.median}%`;
         medianLabel.style.top = "3px";
         medianLabel.style.marginRight = "-0.6em";
         containerDiv.appendChild(medianLabel);
@@ -180,7 +180,7 @@ function create(plot) {
         const q3Label = document.createElement("div");
         q3Label.innerHTML = round(val.q3);
         q3Label.style.position = "absolute";
-        q3Label.style.right = x.q3 + "%";
+        q3Label.style.right = `${x.q3}%`;
         q3Label.style.top = "43px";
         q3Label.style.marginRight = "-0.6em";
         containerDiv.appendChild(q3Label);
@@ -188,7 +188,7 @@ function create(plot) {
         const upperLabel = document.createElement("div");
         upperLabel.innerHTML = round(val.max);
         upperLabel.style.position = "absolute";
-        upperLabel.style.right = x.max + "%";
+        upperLabel.style.right = `${x.max}%`;
         upperLabel.style.top = "3px";
         upperLabel.style.marginRight = "-0.6em";
         containerDiv.appendChild(upperLabel);

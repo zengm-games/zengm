@@ -248,11 +248,11 @@ async function awards(tx) {
     // Notifications for awards for user's players
     for (let i = 0; i < awardsByPlayer.length; i++) {
         const p = awardsByPlayer[i];
-        let text = '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamAbbrevsCache[p.tid] + '</a>) ';
+        let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> (<a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamAbbrevsCache[p.tid]}</a>) `;
         if (p.type.indexOf("Team") >= 0) {
-            text += 'made the ' + p.type + '.';
+            text += `made the ${p.type}.`;
         } else {
-            text += 'won the ' + p.type + ' award.';
+            text += `won the ${p.type} award.`;
         }
         eventLog.add(null, {
             type: "award",
@@ -466,7 +466,7 @@ function newScheduleCrappy() {
             if (tries > 10000) {
                 console.log(tids, tids.length);
                 console.log(numRemaining.length);
-                throw new Error('Failed to generate schedule with ' + g.numTeams + ' teams and ' + g.numGames + ' games.');
+                throw new Error(`Failed to generate schedule with ${g.numTeams} teams and ${g.numGames} games.`);
             }
         }
 

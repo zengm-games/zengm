@@ -13,20 +13,20 @@
         settings.tabHandle.css({position: 'absolute'});
         obj.css({position: 'absolute'});
 
-        const containerHeight = parseInt(obj.outerHeight(), 10) + 'px';
-        const tabHeight = parseInt(settings.tabHandle.outerHeight(), 10) + 'px';
+        const containerHeight = `${parseInt(obj.outerHeight(), 10)}px`;
+        const tabHeight = `${parseInt(settings.tabHandle.outerHeight(), 10)}px`;
 
         // Set calculated css
         obj.css({right: settings.rightPos});
         settings.tabHandle.css({right: 0});
-        obj.css({bottom: '-' + containerHeight, position: 'fixed'});
-        settings.tabHandle.css({top: '-' + tabHeight});
+        obj.css({bottom: `-${containerHeight}`, position: 'fixed'});
+        settings.tabHandle.css({top: `-${tabHeight}`});
 
         // Functions for animation events
         settings.tabHandle.click(event => event.stopPropagation());
 
         const slideIn = () => {
-            obj.animate({bottom: '-' + containerHeight}, 300).removeClass('open');
+            obj.animate({bottom: `-${containerHeight}`}, 300).removeClass('open');
         };
 
         const slideOut = () => {

@@ -473,14 +473,14 @@ function filter(options) {
             } else if (seasonAttrs[j] === "lastTen") {
                 const lastTenWon = tsa.lastTen.reduce((memo, num) => memo + num, 0);
                 const lastTenLost = tsa.lastTen.length - lastTenWon;
-                ft.lastTen = lastTenWon + "-" + lastTenLost;
+                ft.lastTen = `${lastTenWon}-${lastTenLost}`;
             } else if (seasonAttrs[j] === "streak") {  // For standings
                 if (tsa.streak === 0) {
                     ft.streak = "None";
                 } else if (tsa.streak > 0) {
-                    ft.streak = "Won " + tsa.streak;
+                    ft.streak = `Won ${tsa.streak}`;
                 } else if (tsa.streak < 0) {
-                    ft.streak = "Lost " + Math.abs(tsa.streak);
+                    ft.streak = `Lost ${Math.abs(tsa.streak)}`;
                 }
             } else {
                 ft[seasonAttrs[j]] = tsa[seasonAttrs[j]];
@@ -1250,7 +1250,7 @@ function checkRosterSizes() {
                     } else {
                         userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${g.teamNamesCache[tid]} have `;
                     }
-                    userTeamSizeError += 'more than the maximum number of players (15). You must remove players (by <a href="' + helpers.leagueUrl(["roster"]) + '">releasing them from your roster</a> or through <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.';
+                    userTeamSizeError += `more than the maximum number of players (15). You must remove players (by <a href="${helpers.leagueUrl(["roster"])}">releasing them from your roster</a> or through <a href="${helpers.leagueUrl(["trade"])}">trades</a>) before continuing.`;
                 } else {
                     // Automatically drop lowest value players until we reach 15
                     players.sort((a, b) => a.value - b.value); // Lowest first
@@ -1267,7 +1267,7 @@ function checkRosterSizes() {
                     } else {
                         userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${g.teamNamesCache[tid]} have `;
                     }
-                    userTeamSizeError += 'less than the minimum number of players (' + g.minRosterSize + '). You must add players (through <a href="' + helpers.leagueUrl(["free_agents"]) + '">free agency</a> or <a href="' + helpers.leagueUrl(["trade"]) + '">trades</a>) before continuing.<br><br>Reminder: you can always sign free agents to ' + helpers.formatCurrency(g.minContract / 1000, "M", 1) + '/yr contracts, even if you\'re over the cap!';
+                    userTeamSizeError += `less than the minimum number of players (${g.minRosterSize}). You must add players (through <a href="${helpers.leagueUrl(["free_agents"])}">free agency</a> or <a href="${helpers.leagueUrl(["trade"])}">trades</a>) before continuing.<br><br>Reminder: you can always sign free agents to ${helpers.formatCurrency(g.minContract / 1000, "M", 1)}/yr contracts, even if you're over the cap!`;
                 } else {
                     // Auto-add players
                     const promises = [];
@@ -1281,7 +1281,7 @@ function checkRosterSizes() {
 
                         eventLog.add(null, {
                             type: "freeAgent",
-                            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                             showNotification: false,
                             pids: [p.pid],
                             tids: [p.tid]

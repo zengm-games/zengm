@@ -79,7 +79,7 @@ function filterUntradable(players) {
         } else if (players[i].gamesUntilTradable > 0) {
             // Can't trade players who recently were signed or traded
             players[i].untradable = true;
-            players[i].untradableMsg = "Cannot trade recently-acquired player for " + players[i].gamesUntilTradable + " more games";
+            players[i].untradableMsg = `Cannot trade recently-acquired player for ${players[i].gamesUntilTradable} more games`;
         } else {
             players[i].untradable = false;
             players[i].untradableMsg = "";
@@ -220,7 +220,9 @@ function summary(teams) {
                 s.teams[i].picks = [];
                 for (let j = 0; j < picks.length; j++) {
                     if (dpids[i].indexOf(picks[j].dpid) >= 0) {
-                        s.teams[i].picks.push({desc: picks[j].season + " " + (picks[j].round === 1 ? "1st" : "2nd") + " round pick (" + g.teamAbbrevsCache[picks[j].originalTid] + ")"});
+                        s.teams[i].picks.push({
+                            desc: `${picks[j].season} ${picks[j].round === 1 ? "1st" : "2nd"} round pick (${g.teamAbbrevsCache[picks[j].originalTid]})`
+                        });
                     }
                 }
             }));
@@ -375,7 +377,7 @@ async function propose(forceTrade) {
 
             eventLog.add(null, {
                 type: "trade",
-                text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season]) + '">' + g.teamNamesCache[tids[0]] + '</a> traded ' + formatAssetsEventLog(s.teams[0]) + ' to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season]) + '">' + g.teamNamesCache[tids[1]] + '</a> for ' + formatAssetsEventLog(s.teams[1]) + '.',
+                text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(s.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(s.teams[1])}.`,
                 showNotification: false,
                 pids: pids[0].concat(pids[1]),
                 tids

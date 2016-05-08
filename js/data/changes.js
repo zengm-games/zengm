@@ -120,10 +120,10 @@ function check() {
             if (i > 0) {
                 text += "<br>";
             }
-            text += "<strong>" + unread[i].date + "</strong>: " + unread[i].msg;
+            text += `<strong>${unread[i].date}</strong>: ${unread[i].msg}`;
             if (i >= 2 && (unread.length - i - 1) > 0) {
                 linked = true;
-                text += '<br><a href="/changes">...and ' + (unread.length - i - 1) + ' more changes.</a>';
+                text += `<br><a href="/changes">...and ${unread.length - i - 1} more changes.</a>`;
                 break;
             }
         }

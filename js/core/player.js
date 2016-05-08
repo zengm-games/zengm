@@ -604,7 +604,7 @@ async function release(tx, p, justDrafted) {
 
     eventLog.add(null, {
         type: "release",
-        text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> released <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>.',
+        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>.`,
         showNotification: false,
         pids: [p.pid],
         tids: [p.tid]
@@ -1726,7 +1726,7 @@ function retire(tx, p, playerStats, retiredNotification) {
     if (retiredNotification) {
         eventLog.add(tx, {
             type: "retired",
-            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>  retired.',
+            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>  retired.`,
             showNotification: p.tid === g.userTid,
             pids: [p.pid],
             tids: [p.tid]
@@ -1742,7 +1742,7 @@ function retire(tx, p, playerStats, retiredNotification) {
         p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
         eventLog.add(tx, {
             type: "hallOfFame",
-            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> was inducted into the <a href="' + helpers.leagueUrl(["hall_of_fame"]) + '">Hall of Fame</a>.',
+            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> was inducted into the <a href="${helpers.leagueUrl(["hall_of_fame"])}">Hall of Fame</a>.`,
             showNotification: p.statsTids.indexOf(g.userTid) >= 0,
             pids: [p.pid],
             tids: p.statsTids
@@ -1954,7 +1954,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 
         const featTextArr = Object.keys(statArr).map(stat => `${statArr[stat]} ${stat}`);
 
-        let featText = '<a href="' + helpers.leagueUrl(["player", pid]) + '">' + p.name + '</a> had <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid]) + '">';
+        let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${p.name}</a> had <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid])}">`;
         for (let k = 0; k < featTextArr.length; k++) {
             if (featTextArr.length > 1 && k === featTextArr.length - 1) {
                 featText += " and ";
@@ -1966,7 +1966,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
                 featText += ", ";
             }
         }
-        featText += '</a> in ' + (results.team[i].stat.pts.toString().charAt(0) === '8' ? 'an ' : 'a ') + results.team[i].stat.pts + "-" + results.team[j].stat.pts + (won ? ' win over the ' : ' loss to the ') + g.teamNamesCache[results.team[j].id] + '.';
+        featText += `</a> in ${results.team[i].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a'} ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${won ? 'win over the' : 'loss to the'} ${g.teamNamesCache[results.team[j].id]}.`;
 
         logFeat(featText);
 
@@ -1981,7 +1981,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
             gid: results.gid,
             stats: p.stat,
             won,
-            score: results.team[i].stat.pts + "-" + results.team[j].stat.pts,
+            score: `${results.team[i].stat.pts}-${results.team[j].stat.pts}`,
             overtimes: results.overtimes
         });
     }
@@ -2031,7 +2031,7 @@ async function killOne() {
 
         await eventLog.add(tx, {
             type: "tragedy",
-            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ' + reason + '.',
+            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> ${reason}.`,
             showNotification: tid === g.userTid,
             pids: [p.pid],
             tids: [tid],

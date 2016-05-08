@@ -162,7 +162,7 @@
                 if (data[i] !== null && data[i] !== undefined) {
                     let titleStart = "";
                     if (labels !== undefined) {
-                        titleStart = labels[i] + ": ";
+                        titleStart = `${labels[i]}: `;
                     }
                     // Fix for negative values
                     let bottom, cssClass, height;
@@ -179,8 +179,8 @@
                         .data("num", i)
                         .css({
                             position: "absolute",
-                            bottom: bottom + "%",
-                            height: height + "%"
+                            bottom: `${bottom}%`,
+                            height: `${height}%`
                         })
                         .tooltip({
                             title: titleStart + dataTooltipFn(data[i])
@@ -201,14 +201,14 @@
                     if (data[j][i] !== null && data[j][i] !== undefined) {
                         let titleStart = "";
                         if (labels !== undefined) {
-                            titleStart = labels[0][i] + " " + labels[1][j] + ": ";
+                            titleStart = `${labels[0][i]} ${labels[1][j]}: `;
                         }
-                        $("<div></div>", {"class": "bar-graph-" + (j + 1)})
+                        $("<div></div>", {"class": `bar-graph-${j + 1}`})
                             .data("num", i)
                             .css({
                                 position: "absolute",
-                                bottom: offsets[i] + "%",
-                                height: scaled[j][i] + "%"
+                                bottom: `${offsets[i]}%`,
+                                height: `${scaled[j][i]}%`
                             })
                             .tooltip({
                                 title: titleStart + dataTooltipFn(data[j][i])

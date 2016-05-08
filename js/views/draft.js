@@ -11,7 +11,7 @@ function updateDraftTables(pids) {
     for (let i = 0; i < pids.length; i++) {
         const draftedPlayer = [];
         // Find row in undrafted players table, get metadata, delete row
-        const undraftedTds = $("#undrafted-" + pids[i] + " td");
+        const undraftedTds = $(`#undrafted-${pids[i]} td`);
         const jMax = g.phase === g.PHASE.FANTASY_DRAFT ? 8 : 5;
         for (let j = 0; j < jMax; j++) {
             draftedPlayer[j] = undraftedTds[j].innerHTML;
@@ -21,7 +21,7 @@ function updateDraftTables(pids) {
         const draftedRows = $("#drafted tbody tr");
         for (let j = 0; j < draftedRows.length; j++) {
             if (draftedRows[j].children[3].innerHTML.length === 0) {
-                $("#undrafted-" + pids[i]).remove();
+                $(`#undrafted-${pids[i]}`).remove();
                 draftedRows[j].children[2].innerHTML = draftedPlayer[0];
                 draftedRows[j].children[3].innerHTML = draftedPlayer[1];
                 draftedRows[j].children[4].innerHTML = draftedPlayer[2];

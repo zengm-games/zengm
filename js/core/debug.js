@@ -175,7 +175,7 @@ async function regressRatingsPer() {
 
     const ratingLabels = ["hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
     for (let i = 0; i < ratingLabels.length; i++) {
-        console.log(ratingLabels[i] + ": " + c.mtx[i][0] * 100);
+        console.log(`${ratingLabels[i]}: ${c.mtx[i][0] * 100}`);
     }
 }
 
@@ -252,7 +252,7 @@ function averageCareerArc(baseOvr, basePot, ratingToSave) {
 
     console.log("ovr:"); console.log(averageOvr);
     console.log("pot:"); console.log(averagePot);
-    if (ratingToSave) { console.log(ratingToSave + ":"); console.log(averageRat); }
+    if (ratingToSave) { console.log(`${ratingToSave}:`); console.log(averageRat); }
 }
 
 module.exports = {

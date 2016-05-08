@@ -26,7 +26,7 @@ async function addSeason(season, tid) {
         const pa = playersAll[i];
 
         // Abbrevaite first name to prevent overflows
-        pa.name = pa.name.split(" ")[0].substr(0, 1) + ". " + pa.name.split(" ")[1];
+        pa.name = `${pa.name.split(" ")[0].substr(0, 1)}. ${pa.name.split(" ")[1]}`;
 
         // Attributes
         const p = {pid: pa.pid, name: pa.name, age: pa.age, watch: pa.watch, valueFuzz: pa.valueFuzz};
@@ -180,7 +180,7 @@ function uiFirst(vm) {
     ko.computed(() => {
         const seasons = vm.seasons();
         for (let i = 0; i < seasons.length; i++) {
-            ui.datatableSinglePage($("#draft-scouting-" + i), 4, seasons[i].players.map(p => {
+            ui.datatableSinglePage($(`#draft-scouting-${i}`), 4, seasons[i].players.map(p => {
                 return [String(p.rank), helpers.playerNameLabels(p.pid, p.name, undefined, p.skills, p.watch), p.pos, String(p.age), String(p.ovr), String(p.pot)];
             }));
         }

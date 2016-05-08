@@ -484,7 +484,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
         return g.lid;
     }
 
-    ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
+    ui.updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
     ui.updateStatus("Idle");
 
     const lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID

@@ -90,13 +90,13 @@ async function updateDraftSummary(inputs) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title(vm.season() + " Draft Summary");
+        ui.title(`${vm.season()} Draft Summary`);
     }).extend({throttle: 1});
 
     ko.computed(() => {
         const season = vm.season();
         ui.datatableSinglePage($("#draft-results"), 0, vm.players().map(p => {
-            return [p.draft.round + '-' + p.draft.pick, `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`, p.pos, helpers.draftAbbrev(p.draft.tid, p.draft.originalTid, season), String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), '<span class="skills-alone">' + helpers.skillsBlock(p.draft.skills) + '</span>', '<a href="' + helpers.leagueUrl(["roster", p.currentAbbrev]) + '">' + p.currentAbbrev + '</a>', String(p.currentAge), String(p.currentOvr), String(p.currentPot), '<span class="skills-alone">' + helpers.skillsBlock(p.currentSkills) + '</span>', helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1)];
+            return [`${p.draft.round}-${p.draft.pick}`, `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`, p.pos, helpers.draftAbbrev(p.draft.tid, p.draft.originalTid, season), String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), `<span class="skills-alone">${helpers.skillsBlock(p.draft.skills)}</span>`, `<a href="${helpers.leagueUrl(["roster", p.currentAbbrev])}">${p.currentAbbrev}</a>`, String(p.currentAge), String(p.currentOvr), String(p.currentPot), `<span class="skills-alone">${helpers.skillsBlock(p.currentSkills)}</span>`, helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1)];
         }));
     }).extend({throttle: 1});
 

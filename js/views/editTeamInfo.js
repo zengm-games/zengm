@@ -78,27 +78,27 @@ function uiFirst() {
             }
             for (let i = 0; i < newTeams.length; i++) {
                 if (i !== newTeams[i].tid) {
-                    console.log("ROSTER ERROR: Wrong tid, team " + i);
+                    console.log(`ROSTER ERROR: Wrong tid, team ${i}`);
                     return;
                 }
                 if (newTeams[i].cid < 0 || newTeams[i].cid > 1) {
-                    console.log("ROSTER ERROR: Invalid cid, team " + i);
+                    console.log(`ROSTER ERROR: Invalid cid, team ${i}`);
                     return;
                 }
                 if (newTeams[i].did < 0 || newTeams[i].did > 5) {
-                    console.log("ROSTER ERROR: Invalid did, team " + i);
+                    console.log(`ROSTER ERROR: Invalid did, team ${i}`);
                     return;
                 }
                 if (typeof newTeams[i].region !== "string") {
-                    console.log("ROSTER ERROR: Invalid region, team " + i);
+                    console.log(`ROSTER ERROR: Invalid region, team ${i}`);
                     return;
                 }
                 if (typeof newTeams[i].name !== "string") {
-                    console.log("ROSTER ERROR: Invalid name, team " + i);
+                    console.log(`ROSTER ERROR: Invalid name, team ${i}`);
                     return;
                 }
                 if (typeof newTeams[i].abbrev !== "string") {
-                    console.log("ROSTER ERROR: Invalid abbrev, team " + i);
+                    console.log(`ROSTER ERROR: Invalid abbrev, team ${i}`);
                     return;
                 }
 
@@ -108,7 +108,7 @@ function uiFirst() {
                 }
 
                 if (typeof newTeams[i].pop !== "number") {
-                    console.log("ROSTER ERROR: Invalid pop, team " + i);
+                    console.log(`ROSTER ERROR: Invalid pop, team ${i}`);
                     return;
                 }
             }

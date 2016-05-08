@@ -16,7 +16,7 @@ describe("core/league", () => {
             const l = await g.dbm.leagues.get(g.lid);
             assert.equal(l.name, "Test");
             assert.equal(l.tid, 0);
-            assert.equal(l.phaseText, g.startingSeason + " preseason");
+            assert.equal(l.phaseText, `${g.startingSeason} preseason`);
         });
         it("should create all necessary object stores", () => {
             assert.equal(g.dbl.objectStoreNames.length, 18);
@@ -46,7 +46,7 @@ describe("core/league", () => {
             assert.equal(typeof gTest.lastDbChange, "number");
             assert.equal(gTest.leagueName, "Test");
             assert.equal(gTest.phase, 0);
-            assert.equal(gTest.phaseText, gTest.startingSeason + " preseason");
+            assert.equal(gTest.phaseText, `${gTest.startingSeason} preseason`);
             assert.equal(gTest.season, gTest.startingSeason);
             assert.equal(gTest.statusText, "Idle");
             assert.equal(gTest.stopGames, false);

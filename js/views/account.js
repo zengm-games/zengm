@@ -65,7 +65,7 @@ function handleStripeButton() {
                 try {
                     const data = await Promise.resolve($.ajax({
                         type: "POST",
-                        url: "//account.basketball-gm." + g.tld + "/gold_start.php",
+                        url: `//account.basketball-gm.${g.tld}/gold_start.php`,
                         data: {
                             sport: "basketball",
                             token: token.id
@@ -110,7 +110,7 @@ function handleCancelLink() {
             try {
                 const data = await Promise.resolve($.ajax({
                     type: "POST",
-                    url: "//account.basketball-gm." + g.tld + "/gold_cancel.php",
+                    url: `//account.basketball-gm.${g.tld}/gold_cancel.php`,
                     data: {
                         sport: "basketball"
                     },
@@ -142,8 +142,8 @@ function uiFirst() {
 
         $.ajax({
             type: "POST",
-            url: "//account.basketball-gm." + g.tld + "/logout.php",
-            data: "sport=" + g.sport,
+            url: `//account.basketball-gm.${g.tld}/logout.php`,
+            data: `sport=${g.sport}`,
             xhrFields: {
                 withCredentials: true
             },

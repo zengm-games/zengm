@@ -20,11 +20,11 @@ async function updateDashboard() {
     let otherUrl;
     if (window.location.protocol === "http:") {
         if (leagues.length === 0 && window.location.hostname.indexOf("basketball-gm") >= 0) {
-            window.location.replace("https://" + window.location.hostname + "/");
+            window.location.replace(`https://${window.location.hostname}/`);
         }
-        otherUrl = "https://" + window.location.hostname + "/";
+        otherUrl = `https://${window.location.hostname}/`;
     } else {
-        otherUrl = "http://" + window.location.hostname + "/";
+        otherUrl = `http://${window.location.hostname}/`;
     }
 
     return {

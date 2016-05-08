@@ -24,7 +24,7 @@ function generateFace() {
 function get(req) {
     if (!g.godMode) {
         return {
-            errorMessage: 'You can\'t customize players unless you enable <a href="' + helpers.leagueUrl(["god_mode"]) + '">God Mode</a>.'
+            errorMessage: `You can't customize players unless you enable <a href="${helpers.leagueUrl(["god_mode"])}">God Mode</a>.`
         };
     }
 
@@ -192,7 +192,7 @@ async function updateCustomizePlayer(inputs, updateEvents) {
         const seasonOffset = g.phase < g.PHASE.FREE_AGENCY ? 0 : 1;
 
         for (let i = 0; i < teams.length; i++) {
-            teams[i].text = teams[i].region + " " + teams[i].name;
+            teams[i].text = `${teams[i].region} ${teams[i].name}`;
         }
         teams.unshift({
             tid: g.PLAYER.RETIRED,
@@ -200,15 +200,15 @@ async function updateCustomizePlayer(inputs, updateEvents) {
         });
         teams.unshift({
             tid: g.PLAYER.UNDRAFTED_3,
-            text: (g.season + seasonOffset + 2) + " Draft Prospect"
+            text: `${g.season + seasonOffset + 2} Draft Prospect`
         });
         teams.unshift({
             tid: g.PLAYER.UNDRAFTED_2,
-            text: (g.season + seasonOffset + 1) + " Draft Prospect"
+            text: `${g.season + seasonOffset + 1} Draft Prospect`
         });
         teams.unshift({
             tid: g.PLAYER.UNDRAFTED,
-            text: (g.season + seasonOffset) + " Draft Prospect"
+            text: `${g.season + seasonOffset} Draft Prospect`
         });
         teams.unshift({
             tid: g.PLAYER.FREE_AGENT,

@@ -33,7 +33,7 @@ async function updateAccountUpdateCard(inputs, updateEvents) {
         try {
             const data = await Promise.resolve($.ajax({
                 type: "GET",
-                url: "//account.basketball-gm." + g.tld + "/gold_card_info.php",
+                url: `//account.basketball-gm.${g.tld}/gold_card_info.php`,
                 data: {
                     sport: "basketball"
                 },
@@ -69,7 +69,7 @@ async function stripeResponseHandler(vm, status, response) {
         try {
             const data = await Promise.resolve($.ajax({
                 type: "POST",
-                url: "//account.basketball-gm." + g.tld + "/gold_card_update.php",
+                url: `//account.basketball-gm.${g.tld}/gold_card_update.php`,
                 data: {
                     sport: "basketball",
                     token

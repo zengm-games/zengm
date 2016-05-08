@@ -205,10 +205,10 @@ async function generate(tx, deltas) {
         }
 
         if (ownerMoodSum > -1) {
-            m = "<p>" + random.choice(intro).replace("{{activity}}", activity1) + "</p>" +
-                "<p>" + random.choice(wins[indWins]) + " " + random.choice(playoffs[indPlayoffs]) + "</p>" +
-                "<p>" + random.choice(money[indMoney]) + "</p>" +
-                "<p>" + random.choice(ovr[indOvr]).replace("{{activity}}", activity2) + "</p>";
+            m = `<p>${random.choice(intro).replace("{{activity}}", activity1)}</p>
+                 <p>${random.choice(wins[indWins])} ${random.choice(playoffs[indPlayoffs])}</p>
+                 <p>${random.choice(money[indMoney])}</p>
+                 <p>${random.choice(ovr[indOvr]).replace("{{activity}}", activity2)}</p>`;
         } else if (g.season < g.gracePeriodEnd || g.godMode) {
             if (deltas.wins < 0 && deltas.playoffs < 0 && deltas.money < 0) {
                 m = "<p>What the hell did you do to my franchise?! I'd fire you, but I can't find anyone who wants to clean up your mess.</p>";
@@ -229,7 +229,7 @@ async function generate(tx, deltas) {
             } else {
                 m = "<p>You're fired.</p>";
             }
-            m += '<p>I hear a few other teams are looking for a new GM. <a href="' + helpers.leagueUrl(["new_team"]) + '">Take a look.</a> Please, go run one of those teams into the ground.</p>';
+            m += `<p>I hear a few other teams are looking for a new GM. <a href="${helpers.leagueUrl(["new_team"])}">Take a look.</a> Please, go run one of those teams into the ground.</p>`;
         }
     }
 

@@ -410,8 +410,6 @@ function getPayrolls(tx) {
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
 function filter(options) {
-    if (arguments[1] !== undefined) { throw new Error("No cb should be here"); }
-
     options = options !== undefined ? options : {};
     options.season = options.season !== undefined ? options.season : null;
     options.tid = options.tid !== undefined ? options.tid : null;

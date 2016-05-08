@@ -146,8 +146,8 @@
         return null;
     });
     $.fn.dataTableExt.oSort["money-asc"] = (a, b) => {
-        const x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
-        const y = parseFloat(b.substring(b.indexOf("$") + 1, b.indexOf("M")));
+        let x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
+        let y = parseFloat(b.substring(b.indexOf("$") + 1, b.indexOf("M")));
 
         // Fix for negative signs before the dollar sign
         if (a[a.indexOf("$") - 1] === "-") { x = -x; }
@@ -162,8 +162,8 @@
         return 0;
     };
     $.fn.dataTableExt.oSort["money-desc"] = (a, b) => {
-        const x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
-        const y = parseFloat(b.substring(b.indexOf("$") + 1, b.indexOf("M")));
+        let x = parseFloat(a.substring(a.indexOf("$") + 1, a.indexOf("M")));
+        let y = parseFloat(b.substring(b.indexOf("$") + 1, b.indexOf("M")));
 
         // Fix for negative signs before the dollar sign
         if (a[a.indexOf("$") - 1] === "-") { x = -x; }

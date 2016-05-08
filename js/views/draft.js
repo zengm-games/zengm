@@ -169,12 +169,11 @@ function uiFirst() {
         draftUntilUserOrEnd();
     });
 
-    $("#undrafted").on("click", "button", function () {
+    $("#undrafted").on("click", "button", async function () {
         $("#undrafted button").attr("disabled", "disabled");
-        draftUser(parseInt(this.getAttribute("data-player-id"), 10)).then(function (pid) {
-            updateDraftTables([pid]);
-            draftUntilUserOrEnd();
-        });
+        const pid = await draftUser(parseInt(this.getAttribute("data-player-id"), 10));
+        updateDraftTables([pid]);
+        draftUntilUserOrEnd();
     });
 
     $("#view-drafted").click(function () {

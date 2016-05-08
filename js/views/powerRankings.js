@@ -96,7 +96,7 @@ function uiFirst(vm) {
             const performanceRank = t.gp > 0 ? String(t.performanceRank) : "-";
             return [String(t.overallRank), performanceRank, String(t.talentRank), '<a href="' + helpers.leagueUrl(["roster", t.abbrev]) + '">' + t.region + ' ' + t.name + '</a>', String(t.won), String(t.lost), t.lastTen, helpers.round(t.diff, 1), t.tid === g.userTid];
         }), {
-            rowCallback: (row, data) => {
+            rowCallback(row, data) {
                 // Show point differential in green or red for positive or negative
                 if (data[data.length - 2] > 0) {
                     row.childNodes[row.childNodes.length - 1].classList.add("text-success");

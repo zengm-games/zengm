@@ -115,10 +115,9 @@ async function awards(tx) {
     // Sort teams by tid so it can be easily used in awards formulas
     teams.sort((a, b) => a.tid - b.tid);
 
-    let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(players => {
-        return player.withStats(tx, players, {
-            statsSeasons: [g.season]
-        });
+    let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT));
+    players = await player.withStats(tx, players, {
+        statsSeasons: [g.season]
     });
 
     players = player.filter(players, {

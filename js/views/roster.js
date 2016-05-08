@@ -80,13 +80,14 @@ function editableChanged(editable) {
                 return ui;
             },
             cursor: "move",
-            update() {
+            async update() {
                 const sortedPids = $(this).sortable("toArray", {attribute: "data-pid"});
                 for (let i = 0; i < sortedPids.length; i++) {
                     sortedPids[i] = parseInt(sortedPids[i], 10);
                 }
 
-                doReorder(sortedPids).then(highlightHandles);
+                await doReorder(sortedPids);
+                highlightHandles();
             },
             handle: ".roster-handle",
             disabled: true

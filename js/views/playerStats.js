@@ -164,7 +164,7 @@ function uiFirst(vm) {
         }
 
         ui.datatable($("#player-stats"), 2, rows, {
-            rowCallback: (row, data) => {
+            rowCallback(row, data) {
                 // Highlight HOF players
                 if (data[data.length - 2]) {
                     row.classList.add("danger");

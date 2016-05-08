@@ -3,8 +3,6 @@ babel
     https://github.com/mishoo/UglifyJS2/issues/448
     https://github.com/mishoo/UglifyJS2/tree/harmony
     how can i gracefully show an error message in browsers without generators?
-  ES2015 + async/await
-    any other instances of .then or .catch? function (
   benchmark, for sanity
     ctrl+r
     new league

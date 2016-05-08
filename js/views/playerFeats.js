@@ -93,7 +93,7 @@ function uiFirst(vm) {
         });
 
         ui.datatable($("#player-feats"), 23, rows, {
-            rowCallback: (row, data) => {
+            rowCallback(row, data) {
                 // Highlight user's team
                 if (data[data.length - 1]) {
                     row.classList.add("info");

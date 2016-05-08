@@ -30,7 +30,7 @@ async function updateTeamHistory(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
         let [teamSeasons, players] = await Promise.all([
             g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([inputs.tid], [inputs.tid, ''])),
-            g.dbl.players.index('statsTids').getAll(inputs.tid).then(players =>
+            g.dbl.players.index('statsTids').getAll(inputs.tid).then(players => {
                 return player.withStats(null, players, {
                     statsSeasons: "all",
                     statsTid: inputs.tid
@@ -120,7 +120,7 @@ function uiFirst(vm) {
         ui.datatable($("#team-history-players"), 2, vm.players().map(p => {
             return [helpers.playerNameLabels(p.pid, p.name, p.injury, [], p.watch), p.pos, String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.lastYr, p.hof, p.tid > g.PLAYER.RETIRED && p.tid !== vm.team.tid(), p.tid === vm.team.tid()];
         }), {
-            rowCallback: (row, data) => {
+            rowCallback(row, data) {
                 // Highlight active players
                 if (data[data.length - 1]) {
                     row.classList.add("success"); // On this team

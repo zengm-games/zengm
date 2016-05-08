@@ -75,9 +75,8 @@ async function post(req) {
     const pid = parseInt(req.params.pid, 10);
 
     if (req.params.hasOwnProperty("cancel")) {
-        contractNegotiation.cancel(pid).then(function () {
-            redirectNegotiationOrRoster(true);
-        });
+        await contractNegotiation.cancel(pid);
+        redirectNegotiationOrRoster(true);
     } else if (req.params.hasOwnProperty("accept") && req.params.hasOwnProperty("amount") && req.params.hasOwnProperty("exp")) {
         const error = await contractNegotiation.accept(pid, parseInt(req.params.amount * 1000, 10), parseInt(req.params.exp, 10));
         if (error !== undefined && error) {

@@ -7,9 +7,9 @@ const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
 function genFileName(leagueName, season, grouping) {
-    const fileName = "BBGM_" + leagueName.replace(/[^a-z0-9]/gi, '_') + "_" + season + "_" + (season === "all" ? "seasons" : "season") + (grouping === "averages" ? "_Average_Stats" : "_Game_Stats");
+    const fileName = `BBGM_${leagueName.replace(/[^a-z0-9]/gi, '_')}_${season}_${season === "all" ? "seasons" : "season"}_${grouping === "averages" ? "Average_Stats" : "Game_Stats"}`;
 
-    return fileName + ".csv";
+    return `${fileName}.csv`;
 }
 
 // playerAveragesCSV(2015) - just 2015 stats
@@ -32,7 +32,7 @@ async function playerAveragesCSV(season) {
             stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm", "per", "ewa"],
             season: s
         }).forEach(p => {
-            output += [p.pid, p.name, p.ratings.pos, p.age, p.stats.abbrev, s, p.stats.gp, p.stats.gs, p.stats.min, p.stats.fg, p.stats.fga, p.stats.fgp, p.stats.tp, p.stats.tpa, p.stats.tpp, p.stats.ft, p.stats.fta, p.stats.ftp, p.stats.orb, p.stats.drb, p.stats.trb, p.stats.ast, p.stats.tov, p.stats.stl, p.stats.blk, p.stats.ba, p.stats.pf, p.stats.pts, p.stats.pm, p.stats.per, p.stats.ewa].join(",") + "\n";
+            output += `${[p.pid, p.name, p.ratings.pos, p.age, p.stats.abbrev, s, p.stats.gp, p.stats.gs, p.stats.min, p.stats.fg, p.stats.fga, p.stats.fgp, p.stats.tp, p.stats.tpa, p.stats.tpp, p.stats.ft, p.stats.fta, p.stats.ftp, p.stats.orb, p.stats.drb, p.stats.trb, p.stats.ast, p.stats.tov, p.stats.stl, p.stats.blk, p.stats.ba, p.stats.pf, p.stats.pts, p.stats.pm, p.stats.per, p.stats.ewa].join(",")}\n`;
         });
     });
 
@@ -58,7 +58,7 @@ async function playerGamesCSV(season) {
             const t = teams[i][j];
             const t2 = teams[i][j === 0 ? 1 : 0];
             t.players.forEach(p => {
-                output += [p.pid, p.name, p.pos, g.teamAbbrevsCache[t.tid], g.teamAbbrevsCache[t2.tid], `${t.pts}-${t2.pts}`, t.pts > t2.pts ? "W" : "L", seasons[i], games[i].playoffs, p.min, p.fg, p.fga, p.fgp, p.tp, p.tpa, p.tpp, p.ft, p.fta, p.ftp, p.orb, p.drb, p.trb, p.ast, p.tov, p.stl, p.blk, p.ba, p.pf, p.pts, p.pm].join(",") + "\n";
+                output += `${[p.pid, p.name, p.pos, g.teamAbbrevsCache[t.tid], g.teamAbbrevsCache[t2.tid], `${t.pts}-${t2.pts}`, t.pts > t2.pts ? "W" : "L", seasons[i], games[i].playoffs, p.min, p.fg, p.fga, p.fgp, p.tp, p.tpa, p.tpp, p.ft, p.fta, p.ftp, p.orb, p.drb, p.trb, p.ast, p.tov, p.stl, p.blk, p.ba, p.pf, p.pts, p.pm].join(",")}\n`;
             });
         }
     }
@@ -124,7 +124,7 @@ function updateExportStats(inputs, updateEvents) {
         for (let j = 0; j < seasons.length; j++) {
             options.push({
                 key: seasons[j].season,
-                val: seasons[j].season + " season"
+                val: `${seasons[j].season} season`
             });
         }
         return {

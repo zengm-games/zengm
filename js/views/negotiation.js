@@ -163,7 +163,7 @@ async function updateNegotiation(inputs) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title("Contract Negotiation - " + vm.player.name());
+        ui.title(`Contract Negotiation - ${vm.player.name()}`);
     }).extend({throttle: 1});
 }
 

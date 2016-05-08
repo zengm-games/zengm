@@ -157,11 +157,13 @@
         "no-new-symbol": "error",
         "no-this-before-super": "error",
         "no-useless-computed-key": "error",
+        "no-useless-concat": "error",
         "no-useless-constructor": "error",
         "no-var": "error",
         "object-shorthand": ["error", "always"],
         "prefer-const": ["error", {"destructuring": "all"}],
         "prefer-spread": "error",
+        "prefer-template": "error",
         "template-curly-spacing": "error",
         "yield-star-spacing": "error"
    }

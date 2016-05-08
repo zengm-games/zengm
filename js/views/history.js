@@ -95,7 +95,7 @@ async function updateHistory(inputs, updateEvents, vm) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title("Season Summary - " + vm.season());
+        ui.title(`Season Summary - ${vm.season()}`);
     }).extend({throttle: 1});
 }
 

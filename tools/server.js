@@ -11,7 +11,7 @@ const showStatic = (req, res) => {
     res.sendFile(req.url.substr(1), options);
 };
 const showStaticWithHtml = (req, res) => {
-    res.sendFile(req.url.substr(1) + ".html", options);
+    res.sendFile(`${req.url.substr(1)}.html`, options);
 };
 const showIndex = (req, res) => {
     res.sendFile("index.html", options);
@@ -38,5 +38,5 @@ app.get("/*", showIndex);
 const server = app.listen(3000, () => {
     const address = server.address();
 
-    console.log("View Basketball GM at http://%s:%s", address.address, address.port);
+    console.log(`View Basketball GM at http://${address.address}:${address.port}`);
 });

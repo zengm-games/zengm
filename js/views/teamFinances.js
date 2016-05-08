@@ -208,12 +208,12 @@ async function updateTeamFinances(inputs, updateEvents, vm) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title(vm.team.region() + " " + vm.team.name() + " Finances");
+        ui.title(`${vm.team.region()} ${vm.team.name()} Finances`);
     }).extend({throttle: 1});
 
     $("#help-payroll-limits").popover({
         title: "Payroll Limits",
-        content: "The salary cap is a soft cap, meaning that you can exceed it to re-sign your own players or to sign free agents to minimum contracts ($" + g.minContract + "k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to " + g.luxuryTax + " times the difference at the end of the season."
+        content: `The salary cap is a soft cap, meaning that you can exceed it to re-sign your own players or to sign free agents to minimum contracts ($" + g.minContract + "k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to ${g.luxuryTax} times the difference at the end of the season.`
     });
 
     $("#help-hype").popover({
@@ -274,7 +274,7 @@ function uiFirst(vm) {
 
         $.barGraph($("#bar-graph-won"), barData.won, [0, g.numGames], barSeasons);
         $.barGraph($("#bar-graph-hype"), barData.hype, [0, 1], barSeasons, val => helpers.round(val, 2));
-        $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, val => helpers.round(val, 1) + "M");
+        $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, val => `${helpers.round(val, 1)}M`);
         $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons, val => helpers.numberWithCommas(helpers.round(val)));
 
         $.barGraph(

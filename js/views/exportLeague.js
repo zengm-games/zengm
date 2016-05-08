@@ -4,33 +4,33 @@ const league = require('../core/league');
 const bbgmView = require('../util/bbgmView');
 
 function genFileName(data) {
-    const leagueName = data.meta !== undefined ? data.meta.name : ("League " + g.lid);
+    const leagueName = data.meta !== undefined ? data.meta.name : `League ${g.lid}`;
 
-    let fileName = "BBGM_" + leagueName.replace(/[^a-z0-9]/gi, '_') + "_" + g.season + "_" + g.PHASE_TEXT[g.phase].replace(/[^a-z0-9]/gi, '_');
+    let fileName = `BBGM_${leagueName.replace(/[^a-z0-9]/gi, '_')}_${g.season}_${g.PHASE_TEXT[g.phase].replace(/[^a-z0-9]/gi, '_')}`;
 
     if (g.phase === g.PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
         const season = data.teams[g.userTid].seasons[data.teams[g.userTid].seasons.length - 1];
-        fileName += "_" + season.won + "-" + season.lost;
+        fileName += `_${season.won}-${season.lost}`;
     }
 
     if (g.phase === g.PHASE.PLAYOFFS && data.hasOwnProperty("playoffSeries")) {
         // Most recent series info
         const playoffSeries = data.playoffSeries[data.playoffSeries.length - 1];
         const rnd = playoffSeries.currentRound;
-        fileName += "_Round_" + (playoffSeries.currentRound + 1);
+        fileName += `_Round_${playoffSeries.currentRound + 1}`;
 
         // Find the latest playoff series with the user's team in it
         const series = playoffSeries.series;
         for (let i = 0; i < series[rnd].length; i++) {
             if (series[rnd][i].home.tid === g.userTid) {
-                fileName += "_" + series[rnd][i].home.won + "-" + series[rnd][i].away.won;
+                fileName += `_${series[rnd][i].home.won}-${series[rnd][i].away.won}`;
             } else if (series[rnd][i].away.tid === g.userTid) {
-                fileName += "_" + series[rnd][i].away.won + "-" + series[rnd][i].home.won;
+                fileName += `_${series[rnd][i].away.won}-${series[rnd][i].home.won}`;
             }
         }
     }
 
-    return fileName + ".json";
+    return `${fileName}.json`;
 }
 
 async function post(req) {

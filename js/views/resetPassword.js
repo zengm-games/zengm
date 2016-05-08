@@ -27,7 +27,7 @@ function uiFirst(vm) {
     // First, see if this is a valid token
     $.ajax({
         type: "POST",
-        url: "//account.basketball-gm." + g.tld + "/reset_password.php",
+        url: `//account.basketball-gm.${g.tld}/reset_password.php`,
         data: {action: "check_token", token, sport: g.sport},
         dataType: "json",
         xhrFields: {
@@ -50,8 +50,8 @@ function uiFirst(vm) {
 
                     $.ajax({
                         type: "POST",
-                        url: "//account.basketball-gm." + g.tld + "/reset_password.php",
-                        data: $resetpw.serialize() + "&sport=" + g.sport,
+                        url: `//account.basketball-gm.${g.tld}/reset_password.php`,
+                        data: `${$resetpw.serialize()}&sport=${g.sport}`,
                         dataType: "json",
                         xhrFields: {
                             withCredentials: true

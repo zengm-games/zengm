@@ -306,7 +306,7 @@ function uiFirst(vm) {
             if (window.confirm(releaseMessage)) {
                 const error = await doRelease(pid, justDrafted);
                 if (error) {
-                    window.alert("Error: " + error);
+                    window.alert(`Error: ${error}`);
                 } else {
                     ui.realtimeUpdate(["playerMovement"]);
                 }
@@ -325,7 +325,7 @@ function uiFirst(vm) {
     });
 
     ko.computed(() => {
-        ui.title(vm.team.region() + " " + vm.team.name() + " " + "Roster - " + vm.season());
+        ui.title(`${vm.team.region()} ${vm.team.name()} Roster - ${vm.season()}`);
     }).extend({throttle: 1});
 
     ko.computed(() => {
@@ -342,7 +342,7 @@ function uiFirst(vm) {
         // If imgURL is not an empty string, use it for team logo on roster page
         if (vm.team.imgURL()) {
             picture.style.display = "inline";
-            picture.style.backgroundImage = "url('" + vm.team.imgURL() + "')";
+            picture.style.backgroundImage = `url('${vm.team.imgURL()}')`;
         }
     }).extend({throttle: 1});
 
@@ -360,7 +360,7 @@ function uiFirst(vm) {
     $("#help-roster-release").popover({
         title: "Release Player",
         html: true,
-        content: "<p>To free up a roster spot, you can release a player from your team. You will still have to pay his salary (and have it count against the salary cap) until his contract expires (you can view your released players' contracts in your <a href=\"" + helpers.leagueUrl(["team_finances"]) + "\">Team Finances</a>).</p>However, if you just drafted a player and the regular season has not started yet, his contract is not guaranteed and you can release him for free."
+        content: `<p>To free up a roster spot, you can release a player from your team. You will still have to pay his salary (and have it count against the salary cap) until his contract expires (you can view your released players' contracts in your <a href="${helpers.leagueUrl(["team_finances"])}">Team Finances</a>).</p>However, if you just drafted a player and the regular season has not started yet, his contract is not guaranteed and you can release him for free.`
     });
 
     $("#roster").on("change", "select", function () {

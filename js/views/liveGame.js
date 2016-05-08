@@ -106,9 +106,9 @@ function uiFirst() {
 
     // Keep height of plays list equal to window
     const playByPlayList = document.getElementById("playByPlayList");
-    playByPlayList.style.height = (window.innerHeight - 114) + "px";
+    playByPlayList.style.height = `${window.innerHeight - 114}px`;
     window.addEventListener("resize", () => {
-        playByPlayList.style.height = (window.innerHeight - 114) + "px";
+        playByPlayList.style.height = `${window.innerHeight - 114}px`;
     });
 }
 
@@ -125,14 +125,14 @@ function startLiveGame(inputs, updateEvents, vm) {
 
                 if (e.type === "text") {
                     if (e.t === 0 || e.t === 1) {
-                        text = e.time + " - " + vm.boxScore.teams()[e.t].abbrev() + " - " + e.text;
+                        text = `${e.time} - ${vm.boxScore.teams()[e.t].abbrev()} - ${e.text}`;
                     } else {
                         text = e.text;
                     }
 
                     // Show score after scoring plays
                     if (text.indexOf("made") >= 0) {
-                        text += " (" + vm.boxScore.teams()[0].pts() + "-" + vm.boxScore.teams()[1].pts() + ")";
+                        text += ` (${vm.boxScore.teams()[0].pts()}-${vm.boxScore.teams()[1].pts()})`;
                     }
 
                     vm.boxScore.time(e.time);
@@ -161,11 +161,11 @@ function startLiveGame(inputs, updateEvents, vm) {
                                 if (overtimes === 1) {
                                     vm.boxScore.overtime(" (OT)");
                                 } else if (overtimes > 1) {
-                                    vm.boxScore.overtime(" (" + overtimes + "OT)");
+                                    vm.boxScore.overtime(` (${overtimes}OT)`);
                                 }
-                                vm.boxScore.quarter(helpers.ordinal(overtimes) + " overtime");
+                                vm.boxScore.quarter(`${helpers.ordinal(overtimes)} overtime`);
                             } else {
-                                vm.boxScore.quarter(helpers.ordinal(ptsQtrs.length) + " quarter");
+                                vm.boxScore.quarter(`${helpers.ordinal(ptsQtrs.length)} quarter`);
                             }
                         }
                         ptsQtrs[e.qtr] += e.amt;

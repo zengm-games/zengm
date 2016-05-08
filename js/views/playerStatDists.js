@@ -74,16 +74,16 @@ async function updatePlayers(inputs, updateEvents, vm) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title("Player Stat Distributions - " + vm.season());
+        ui.title(`Player Stat Distributions - ${vm.season()}`);
     }).extend({throttle: 1});
 
     const tbody = $("#player-stat-dists tbody");
 
     for (const stat in vm.statsAll) {
         if (vm.statsAll.hasOwnProperty(stat)) {
-            tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + stat + '</td><td width="100%"><div id="' + stat + 'BoxPlot"></div></td></tr>');
+            tbody.append(`<tr><td style="text-align: right; padding-right: 1em;">${stat}</td><td width="100%"><div id="${stat}BoxPlot"></div></td></tr>`);
             if (nbaQuartiles.hasOwnProperty(stat)) {
-                tbody.append('<tr><td></td><td width="100%"><div id="' + stat + 'BoxPlotNba" style="margin-top: -26px"></div></td></tr>');
+                tbody.append(`<tr><td></td><td width="100%"><div id="${stat}BoxPlotNba" style="margin-top: -26px"></div></td></tr>`);
             }
         }
     }
@@ -120,14 +120,14 @@ function uiFirst(vm) {
                 boxPlot.create({
                     data: vm.statsAll[stat](),
                     scale: scale[stat],
-                    container: stat + "BoxPlot"
+                    container: `${stat}BoxPlot`
                 });
 
                 if (nbaQuartiles.hasOwnProperty(stat)) {
                     boxPlot.create({
                         quartiles: nbaQuartiles[stat],
                         scale: scale[stat],
-                        container: stat + "BoxPlotNba",
+                        container: `${stat}BoxPlotNba`,
                         color: "#0088cc",
                         labels: false
                     });

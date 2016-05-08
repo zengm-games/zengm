@@ -19,8 +19,8 @@ function uiFirst() {
 
         $.ajax({
             type: "POST",
-            url: "//account.basketball-gm." + g.tld + "/lost_password.php",
-            data: $lostpw.serialize() + "&sport=" + g.sport,
+            url: `//account.basketball-gm.${g.tld}/lost_password.php`,
+            data: `${$lostpw.serialize()}&sport=${g.sport}`,
             dataType: "json",
             xhrFields: {
                 withCredentials: true

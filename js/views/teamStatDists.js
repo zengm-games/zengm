@@ -72,7 +72,7 @@ async function updateTeams(inputs, updateEvents, vm) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title("Team Stat Distributions - " + vm.season());
+        ui.title(`Team Stat Distributions - ${vm.season()}`);
     }).extend({throttle: 1});
 
     const tbody = $("#team-stat-dists tbody");
@@ -116,14 +116,14 @@ function uiFirst(vm) {
                 boxPlot.create({
                     data: vm.statsAll[stat](),
                     scale: scale[stat],
-                    container: stat + "BoxPlot"
+                    container: `${stat}BoxPlot`
                 });
 
                 if (nbaStatsAll.hasOwnProperty(stat)) {
                     boxPlot.create({
                         data: nbaStatsAll[stat],
                         scale: scale[stat],
-                        container: stat + "BoxPlotNba",
+                        container: `${stat}BoxPlotNba`,
                         color: "#0088cc",
                         labels: false
                     });

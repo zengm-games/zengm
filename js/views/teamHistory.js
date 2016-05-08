@@ -83,7 +83,7 @@ async function updateTeamHistory(inputs, updateEvents, vm) {
 
             for (let j = 0; j < players[i].stats.length; j++) {
                 if (players[i].stats[j].abbrev === g.teamAbbrevsCache[inputs.tid]) {
-                    players[i].lastYr = players[i].stats[j].season + ' ';
+                    players[i].lastYr = players[i].stats[j].season.toString();
                     break;
                 }
             }

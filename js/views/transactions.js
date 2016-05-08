@@ -106,7 +106,7 @@ async function updateEventLog(inputs, updateEvents, vm) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title("Transactions - " + vm.season());
+        ui.title(`Transactions - ${vm.season()}`);
     }).extend({
         throttle: 1
     });

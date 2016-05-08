@@ -640,7 +640,7 @@ async function gameLogList(abbrev, season, gid, loadedGames) {
         if (game.overtimes === 1) {
             overtime = " (OT)";
         } else if (game.overtimes > 1) {
-            overtime = " (" + game.overtimes + "OT)";
+            overtime = ` (${game.overtimes}OT)`;
         } else {
             overtime = "";
         }

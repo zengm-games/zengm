@@ -133,7 +133,7 @@ async function updateLeaders(inputs, updateEvents, vm) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title("League Leaders - " + vm.season());
+        ui.title(`League Leaders - ${vm.season()}`);
     }).extend({throttle: 1});
 }
 

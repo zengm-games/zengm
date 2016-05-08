@@ -53,7 +53,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title("Player Rating Distributions - " + vm.season());
+        ui.title(`Player Rating Distributions - ${vm.season()}`);
     }).extend({throttle: 1});
 
 
@@ -61,7 +61,7 @@ function uiFirst(vm) {
 
     for (const rating in vm.ratingsAll) {
         if (vm.ratingsAll.hasOwnProperty(rating)) {
-            tbody.append('<tr><td style="text-align: right; padding-right: 1em;">' + rating + '</td><td width="100%"><div id="' + rating + 'BoxPlot"></div></td></tr>');
+            tbody.append(`<tr><td style="text-align: right; padding-right: 1em;">${rating}</td><td width="100%"><div id="${rating}BoxPlot"></div></td></tr>`);
         }
     }
 
@@ -71,7 +71,7 @@ function uiFirst(vm) {
                 boxPlot.create({
                     data: vm.ratingsAll[rating](),
                     scale: [0, 100],
-                    container: rating + "BoxPlot"
+                    container: `${rating}BoxPlot`
                 });
             }
         }

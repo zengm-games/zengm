@@ -245,7 +245,7 @@ async function updateTrade(inputs) {
     // Always run this, for multi team mode
     vars.teams = helpers.getTeams(otherTid);
     vars.teams.splice(g.userTid, 1); // Can't trade with yourself
-    vars.userTeamName = g.teamRegionsCache[g.userTid] + " " + g.teamNamesCache[g.userTid];
+    vars.userTeamName = `${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[g.userTid]}`;
 
     // If the season is over, can't trade players whose contracts are expired
     if (g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
@@ -339,7 +339,7 @@ function uiFirst(vm) {
             const disabled = p.untradable ? ' disabled = "disabled"' : '';
             const checkbox = `<input name="${userOrOther}-pids" type="checkbox" value="${p.pid}" title="${p.untradableMsg}"${selected}${disabled}>`;
 
-            return [checkbox, helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.ratings.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+            return [checkbox, helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.ratings.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), `${helpers.formatCurrency(p.contract.amount, "M")} thru ${p.contract.exp}`, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
         });
     };
 

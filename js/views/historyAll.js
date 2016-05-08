@@ -114,8 +114,8 @@ function uiFirst(vm) {
         ui.datatable($("#history-all"), 0, vm.seasons().map(s => {
             let countText, seasonLink;
             if (s.champ) {
-                seasonLink = '<a href="' + helpers.leagueUrl(["history", s.season]) + '">' + s.season + '</a>';
-                countText = ' - ' + helpers.ordinal(s.champ.count) + ' title';
+                seasonLink = `<a href="${helpers.leagueUrl(["history", s.season])}">${s.season}</a>`;
+                countText = ` - ${helpers.ordinal(s.champ.count)} title`;
             } else {
                 // This happens if there is missing data, such as from Improve Performance
                 seasonLink = String(s.season);

@@ -109,7 +109,7 @@ async function updateStandings(inputs, updateEvents, vm) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title("Standings - " + vm.season());
+        ui.title(`Standings - ${vm.season()}`);
     }).extend({throttle: 1});
 
     ui.tableClickableRows($(".standings-division"));

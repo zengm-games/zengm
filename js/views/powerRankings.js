@@ -94,7 +94,7 @@ function uiFirst(vm) {
     ko.computed(function () {
         ui.datatableSinglePage($("#power-rankings"), 0, vm.teams().map(t => {
             const performanceRank = t.gp > 0 ? String(t.performanceRank) : "-";
-            return [String(t.overallRank), performanceRank, String(t.talentRank), '<a href="' + helpers.leagueUrl(["roster", t.abbrev]) + '">' + t.region + ' ' + t.name + '</a>', String(t.won), String(t.lost), t.lastTen, helpers.round(t.diff, 1), t.tid === g.userTid];
+            return [String(t.overallRank), performanceRank, String(t.talentRank), `<a href="${helpers.leagueUrl(["roster", t.abbrev])}">${t.region} ${t.name}</a>`, String(t.won), String(t.lost), t.lastTen, helpers.round(t.diff, 1), t.tid === g.userTid];
         }), {
             rowCallback(row, data) {
                 // Show point differential in green or red for positive or negative

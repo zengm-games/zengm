@@ -62,7 +62,7 @@ async function boxScore(gid) {
     if (game.overtimes === 1) {
         game.overtime = " (OT)";
     } else if (game.overtimes > 1) {
-        game.overtime = " (" + game.overtimes + "OT)";
+        game.overtime = ` (${game.overtimes}OT)`;
     } else {
         game.overtime = "";
     }
@@ -70,7 +70,7 @@ async function boxScore(gid) {
     // Quarter/overtime labels
     game.qtrs = ["Q1", "Q2", "Q3", "Q4"];
     for (let i = 0; i < game.teams[1].ptsQtrs.length - 4; i++) {
-        game.qtrs.push("OT" + (i + 1));
+        game.qtrs.push(`OT${i + 1}`);
     }
     game.qtrs.push("F");
 
@@ -224,7 +224,7 @@ async function updateGamesList(inputs, updateEvents, vm) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title("Game Log - " + vm.season());
+        ui.title(`Game Log - ${vm.season()}`);
     }).extend({throttle: 1});
 
     // Update prev/next links whenever box score gid is changed

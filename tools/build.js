@@ -18,23 +18,23 @@ function setTimestamps() {
 
     const d = new Date();
     const date = d.toISOString().split('T')[0].replace(/-/g, '.');
-    const rev = date + '.' + (d.getMinutes() + 60 * d.getHours());
+    const rev = `${date}.${d.getMinutes() + 60 * d.getHours()}`;
 
     replace({
         regex: "LAST UPDATED:.*",
-        replacement: "LAST UPDATED: " + d.toString(),
+        replacement: `LAST UPDATED: ${d.toString()}`,
         paths: ["bbgm.appcache"],
         silent: true
     });
     replace({
         regex: "<!--rev-->.*</p>",
-        replacement: "<!--rev-->" + rev + "</p>",
+        replacement: `<!--rev-->${rev}</p>`,
         paths: ["index.html"],
         silent: true
     });
     replace({
         regex: 'Bugsnag\\.appVersion = ".*"',
-        replacement: 'Bugsnag.appVersion = "' + rev + '"',
+        replacement: `Bugsnag.appVersion = "${rev}"`,
         paths: ["index.html"],
         silent: true
     });

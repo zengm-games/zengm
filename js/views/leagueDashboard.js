@@ -102,7 +102,7 @@ async function updateTeams(inputs, updateEvents) {
             teams.sort((a, b) => b[stats[i]] - a[stats[i]]);
             for (let j = 0; j < teams.length; j++) {
                 if (teams[j].tid === g.userTid) {
-                    vars[stats[i] + "Rank"] = j + 1;
+                    vars[`${stats[i]}Rank`] = j + 1;
                     break;
                 }
             }
@@ -128,7 +128,7 @@ async function updateGames(inputs, updateEvents, vm) {
             if (game.overtimes === 1) {
                 overtime = " (OT)";
             } else if (game.overtimes > 1) {
-                overtime = " (" + game.overtimes + "OT)";
+                overtime = ` (${game.overtimes}OT)`;
             } else {
                 overtime = "";
             }

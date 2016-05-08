@@ -42,7 +42,7 @@ async function updateTeams(inputs, updateEvents, vm) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title("Team Stats - " + vm.season());
+        ui.title(`Team Stats - ${vm.season()}`);
     }).extend({throttle: 1});
 
     ko.computed(() => {

@@ -48,7 +48,7 @@ async function getOffers(userPids, userDpids) {
 
             // Update progress bar
             done += 1;
-            progressBar.style.width = Math.round(10 + 90 * done / numTeams) + "%";
+            progressBar.style.width = `${Math.round(10 + 90 * done / numTeams)}%`;
 
             if (found) {
                 const summary = await trade.summary(teams);
@@ -233,7 +233,7 @@ function uiFirst(vm) {
             const disabled = p.untradable ? ' disabled = "disabled"' : '';
             const checkbox = `<input name="pids[]" type="checkbox" value="${p.pid}" title="${p.untradableMsg}"${selected}${disabled}>`;
 
-            return [checkbox, helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.ratings.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.formatCurrency(p.contract.amount, "M") + ' thru ' + p.contract.exp, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
+            return [checkbox, helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.ratings.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), `${helpers.formatCurrency(p.contract.amount, "M")} thru ${p.contract.exp}`, helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1)];
         });
     };
 

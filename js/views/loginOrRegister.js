@@ -21,8 +21,8 @@ function uiFirst() {
 
         $.ajax({
             type: "POST",
-            url: "//account.basketball-gm." + g.tld + "/login.php",
-            data: $login.serialize() + "&sport=" + g.sport,
+            url: `//account.basketball-gm.${g.tld}/login.php`,
+            data: `${$login.serialize()}&sport=${g.sport}`,
             dataType: "json",
             xhrFields: {
                 withCredentials: true
@@ -66,8 +66,8 @@ function uiFirst() {
 
         $.ajax({
             type: "POST",
-            url: "//account.basketball-gm." + g.tld + "/register.php",
-            data: $register.serialize() + "&sport=" + g.sport,
+            url: `//account.basketball-gm.${g.tld}/register.php`,
+            data: `${$register.serialize()}&sport=${g.sport}`,
             dataType: "json",
             xhrFields: {
                 withCredentials: true

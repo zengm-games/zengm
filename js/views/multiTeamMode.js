@@ -13,7 +13,7 @@ async function updateMultiTeamMode(inputs, updateEvents) {
         for (let i = 0; i < g.numTeams; i++) {
             teams.push({
                 tid: i,
-                name: g.teamRegionsCache[i] + " " + g.teamNamesCache[i]
+                name: `${g.teamRegionsCache[i]} ${g.teamNamesCache[i]}`
             });
         }
 

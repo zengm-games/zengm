@@ -18,7 +18,6 @@ babel
   new eslint rules to try
     http://eslint.org/docs/rules/arrow-parens
     http://eslint.org/docs/rules/prefer-arrow-callback
-    http://eslint.org/docs/rules/prefer-template
 
 one month gamesim benchmarks while viewing dashboard:
   original 000:01:43.710

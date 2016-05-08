@@ -103,7 +103,7 @@ async function updateNewLeague() {
     });
 
     return {
-        name: "League " + newLid,
+        name: `League ${newLid}`,
         teams,
         lastSelectedTid: parseInt(localStorage.lastSelectedTid, 10)
     };
@@ -132,7 +132,7 @@ function uiFirst(vm) {
                 difficulty = "very hard";
             }
 
-            document.getElementById("pop-text").innerHTML = "Region population: " + team.pop() + " million, #" + team.popRank() + " leaguewide<br>Difficulty: " + difficulty;
+            document.getElementById("pop-text").innerHTML = `Region population: ${team.pop()} million, #${team.popRank()} leaguewide<br>Difficulty: ${difficulty}`;
         } else {
             document.getElementById("pop-text").innerHTML = "Region population: ?<br>Difficulty: ?";
         }

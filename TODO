@@ -1,7 +1,12 @@
 babel
   minify es6, or compile babel es2015 without regenerator
     https://github.com/mishoo/UglifyJS2/issues/448
-    https://github.com/mishoo/UglifyJS2/tree/harmony
+    can't get minifyify or uglifyify, to work, ao use uglify directly
+      figure out what options to pass to preserve source maps
+      babel plugins needed
+        babel-plugin-transform-es2015-shorthand-properties
+        const/let -> var for firefox
+      git+https://git@github.com/mishoo/UglifyJS2.git#e36e07fa77859bcd461234856c06c95cee0cfffe
     how can i gracefully show an error message in browsers without generators?
   benchmark, for sanity
     ctrl+r

@@ -19,7 +19,13 @@ babel
     typescript
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being cancelled (resolve) and error returned (Reject)
   TEST ACCOUNT STUFF! (reset, login, register, account, card, buy)
-  broken in firefox in 059e55ddc61c26027cf8ba7716861602bf902db3 because of https://bugzilla.mozilla.org/show_bug.cgi?id=449811
+  remove babel transforms
+    transform-es2015-block-scoping
+      needed for firefox https://bugzilla.mozilla.org/show_bug.cgi?id=449811
+    transform-es2015-shorthand-properties
+      needed for current version of UglifyJS harmony branch
+    transform-async-to-generator
+      needed until there is better native support for promises and indexeddb interaction
 
 one month gamesim benchmarks while viewing dashboard:
   original 000:01:43.710

@@ -14,10 +14,11 @@
   },
   "scripts": {
     "start": "node tools/server.js",
-    "build": "npm run build-js && node tools/build.js",
+    "build": "npm run build-js && npm run minify-js && node tools/build.js",
     "test": "node_modules/karma/bin/karma start",
     "lint": "node_modules/.bin/eslint js/** tools/**",
     "build-js": "node tools/build-js.js",
+    "minify-js": "node tools/minify-js.js",
     "watch-js": "watchify -d js/app.js -o gen/app.js",
     "build-cordova": "echo 'probably broken since browserify switch'",
     "build-test": "browserify js/test/app.js -o gen/app-test.js",
@@ -40,12 +41,14 @@
   "devDependencies": {
     "babel-eslint": "6.0.4",
     "babel-plugin-transform-async-to-generator": "6.8.0",
+    "babel-plugin-transform-es2015-shorthand-properties": "6.8.0",
     "babelify": "7.3.0",
     "brfs": "1.4.3",
     "browserify": "13.0.0",
     "browserify-shim": "3.8.12",
     "clean-css": "2.2.23",
     "eslint": "2.9.0",
+    "exorcist": "^0.4.0",
     "express": "4.13.4",
     "fs-extra": "0.30.0",
     "karma": "0.13.22",
@@ -54,9 +57,9 @@
     "karma-firefox-launcher": "0.1.7",
     "karma-mocha": "1.0.1",
     "karma-mocha-reporter": "2.0.2",
-    "minifyify": "7.3.3",
     "mocha": "2.4.5",
     "replace": "0.3.0",
+    "uglify-js": "git+https://git@github.com/mishoo/UglifyJS2.git#e36e07fa77859bcd461234856c06c95cee0cfffe",
     "watchify": "3.7.0"
   },
   "browser": {
@@ -150,6 +153,7 @@
   },
   "babel": {
     "plugins": [
+      "transform-es2015-shorthand-properties",
       "transform-async-to-generator"
     ],
     "ignore": [

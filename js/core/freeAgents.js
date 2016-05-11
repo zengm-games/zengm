@@ -113,8 +113,6 @@ async function autoSign(tx) {
 async function decreaseDemands() {
     await g.dbl.tx("players", "readwrite", async tx => {
         await tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, p => {
-            let i;
-
             // Decrease free agent demands
             p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
             if (p.contract.amount < g.minContract) {
@@ -131,7 +129,7 @@ async function decreaseDemands() {
             }
 
             // Free agents' resistance to signing decays after every regular season game
-            for (i = 0; i < p.freeAgentMood.length; i++) {
+            for (let i = 0; i < p.freeAgentMood.length; i++) {
                 p.freeAgentMood[i] -= 0.075;
                 if (p.freeAgentMood[i] < 0) {
                     p.freeAgentMood[i] = 0;

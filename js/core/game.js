@@ -29,15 +29,7 @@ function writeTeamStats(tx, results) {
         ]);
 
         const teamSeason = teamSeasons[teamSeasons.length - 1];
-
-        let teamStats;
-        for (let i = 0; i < teamStatsArray.length; i++) {
-            if (teamStatsArray[i].playoffs === (g.phase === g.PHASE.PLAYOFFS)) {
-                teamStats = teamStatsArray[i];
-                break;
-            }
-        }
-
+        const teamStats = teamStatsArray.find(ts => ts.playoffs === (g.phase === g.PHASE.PLAYOFFS));
         const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
 
         // Attendance - base calculation now, which is used for other revenue estimates
@@ -558,14 +550,7 @@ async function loadTeams(tx) {
                 p.ptModifier = 1;
             }
 
-            let rating;
-            for (let j = 0; j < players[i].ratings.length; j++) {
-                if (players[i].ratings[j].season === g.season) {
-                    rating = players[i].ratings[j];
-                    break;
-                }
-            }
-
+            const rating = players[i].ratings.find(r => r.season === g.season);
             if (rating === undefined) {
                 throw new Error(`Player with no ratings for this season: ${players[i].name} (ID: ${players[i].pid})`);
             }

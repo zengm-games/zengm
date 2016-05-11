@@ -275,12 +275,7 @@ async function genOrder(tx) {
     const firstThree = [];
     while (firstThree.length < 3) {
         const draw = random.randInt(1, 1000);
-        let i;
-        for (i = 0; i < chances.length; i++) {
-            if (chances[i] > draw) {
-                break;
-            }
-        }
+        const i = chances.findIndex(chance => chance > draw);
         if (firstThree.indexOf(i) < 0) {
             // If one lottery winner, select after other tied teams;
             teams[i].randVal -= 30;

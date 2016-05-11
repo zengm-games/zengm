@@ -163,22 +163,15 @@ async function awards(tx) {
     awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
     awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
 
-    // Sixth Man of the Year - same sort as MVP
-    let i;
-    for (i = 0; i < players.length; i++) {
-        // Must have come off the bench in most games
-        if (players[i].stats.gs === 0 || players[i].stats.gp / players[i].stats.gs > 2) {
-            break;
-        }
-    }
-    p = players[i];
+    // Sixth Man of the Year - same sort as MVP, must have come off the bench in most games
+    p = players.find(p => p.stats.gs === 0 || p.stats.gp / p.stats.gs > 2);
     awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
     awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
 
     // All League Team - same sort as MVP
     awards.allLeague = [{title: "First Team", players: []}];
     let type = "First Team All-League";
-    for (i = 0; i < 15; i++) {
+    for (let i = 0; i < 15; i++) {
         const p = players[i];
         if (i === 5) {
             awards.allLeague.push({title: "Second Team", players: []});
@@ -214,13 +207,7 @@ async function awards(tx) {
     }
 
     // Finals MVP - most WS in playoffs
-    let champTid;
-    for (i = 0; i < teams.length; i++) {
-        if (teams[i].playoffRoundsWon === 4) {
-            champTid = teams[i].tid;
-            break;
-        }
-    }
+    const champTid = teams.find(t => t.playoffRoundsWon === 4).tid;
 
     // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
     let champPlayers = await tx.players.index('tid').getAll(champTid);

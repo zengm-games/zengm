@@ -717,8 +717,6 @@ function genRatings(profile, baseRating, pot, season, scoutingRank, tid) {
 }
 
 function name() {
-    let i;
-
     if (!playerNames) {
         // This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
         playerNames = names.load();
@@ -726,21 +724,12 @@ function name() {
 
     // First name
     const fnRand = random.uniform(0, playerNames.first[playerNames.first.length - 1][1]);
-    for (i = 0; i < playerNames.first.length; i++) {
-        if (playerNames.first[i][1] >= fnRand) {
-            break;
-        }
-    }
-    const fn = playerNames.first[i][0];
+    const fn = playerNames.first.find(row => row[1] >= fnRand)[0];
+
 
     // Last name
     const lnRand = random.uniform(0, playerNames.last[playerNames.last.length - 1][1]);
-    for (i = 0; i < playerNames.last.length; i++) {
-        if (playerNames.last[i][1] >= lnRand) {
-            break;
-        }
-    }
-    const ln = playerNames.last[i][0];
+    const ln = playerNames.last.find(row => row[1] >= lnRand)[0];
 
     return `${fn} ${ln}`;
 }
@@ -978,12 +967,8 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
  */
 function injury(healthRank) {
     const rand = random.uniform(0, 10882);
-    let i;
-    for (i = 0; i < injuries.cumSum.length; i++) {
-        if (injuries.cumSum[i] >= rand) {
-            break;
-        }
-    }
+    const i = injuries.cumSum.findIndex(cs => cs >= rand);
+
     return {
         type: injuries.types[i],
         gamesRemaining: Math.round((0.7 * (healthRank - 1) / (g.numTeams - 1) + 0.65) * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])

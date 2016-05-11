@@ -319,17 +319,13 @@ async function newPhaseBeforeDraft(tx) {
     });
 
     // Give award to all players on the championship team
-    let tid;
-    for (let i = 0; i < teams.length; i++) {
-        if (teams[i].playoffRoundsWon === 4) {
-            tid = teams[i].tid;
-            break;
-        }
+    const tid = teams.find(t => t.playoffRoundsWon === 4).tid;
+    if (tid !== undefined) {
+        await tx.players.index('tid').iterate(tid, p => {
+            p.awards.push({season: g.season, type: "Won Championship"});
+            return p;
+        });
     }
-    await tx.players.index('tid').iterate(tid, p => {
-        p.awards.push({season: g.season, type: "Won Championship"});
-        return p;
-    });
 
     // Do annual tasks for each player, like checking for retirement
 

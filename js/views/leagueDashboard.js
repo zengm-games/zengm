@@ -7,7 +7,6 @@ const backboard = require('backboard');
 const Promise = require('bluebird');
 const ko = require('knockout');
 const komapping = require('knockout.mapping');
-const _ = require('underscore');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
@@ -77,7 +76,7 @@ async function updateTeams(inputs, updateEvents) {
             sortBy: ["winp", "-lost", "won"]
         });
 
-        const cid = _.find(teams, t => t.tid === g.userTid).cid;
+        const cid = teams.find(t => t.tid === g.userTid).cid;
 
         vars.rank = 1;
         for (let i = 0; i < teams.length; i++) {

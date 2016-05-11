@@ -286,22 +286,16 @@ function uiFirst(vm) {
     $("#roster").on("click", "button", async function () {
         const pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
         const players = vm.players();
-
-        let i;
-        for (i = 0; i < players.length; i++) {
-            if (players[i].pid() === pid) {
-                break;
-            }
-        }
+        const p = players.find(p => p.pid() === pid);
 
         if (this.dataset.action === "release") {
             // If a player was just drafted by his current team and the regular season hasn't started, then he can be released without paying anything
-            const justDrafted = players[i].tid() === players[i].draft.tid() && ((players[i].draft.year() === g.season && g.phase >= g.PHASE.DRAFT) || (players[i].draft.year() === g.season - 1 && g.phase < g.PHASE.REGULAR_SEASON));
+            const justDrafted = p.tid() === p.draft.tid() && ((p.draft.year() === g.season && g.phase >= g.PHASE.DRAFT) || (p.draft.year() === g.season - 1 && g.phase < g.PHASE.REGULAR_SEASON));
             let releaseMessage;
             if (justDrafted) {
-                releaseMessage = `Are you sure you want to release ${players[i].name()}?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
+                releaseMessage = `Are you sure you want to release ${p.name()}?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
             } else {
-                releaseMessage = `Are you sure you want to release ${players[i].name()}?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${players[i].contract.exp()}.`;
+                releaseMessage = `Are you sure you want to release ${p.name()}?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${p.contract.exp()}.`;
             }
             if (window.confirm(releaseMessage)) {
                 const error = await doRelease(pid, justDrafted);

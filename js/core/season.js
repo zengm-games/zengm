@@ -318,7 +318,9 @@ async function setSchedule(tx, tids) {
 
     await tx.schedule.clear();
 
-    await Promise.each(newSchedule, matchup => tx.schedule.add(matchup));
+    for (const matchup of newSchedule) {
+        await tx.schedule.add(matchup);
+    }
 }
 
 /**

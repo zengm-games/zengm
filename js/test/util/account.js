@@ -1,7 +1,6 @@
 /*eslint comma-spacing: 0, key-spacing: 0, no-unused-expressions: 0*/
 const assert = require('assert');
 const backboard = require('backboard');
-const Promise = require('bluebird');
 const db = require('../../db');
 const g = require('../../globals');
 const league = require('../../core/league');
@@ -113,13 +112,13 @@ describe("util/account", () => {
     });
 
     function addExtraSeasons(tid, lastSeason, extraSeasons) {
-        return g.dbl.tx("teamSeasons", "readwrite", tx => {
-            return Promise.each(extraSeasons, extraSeason => {
+        return g.dbl.tx("teamSeasons", "readwrite", async tx => {
+            for (const extraSeason of extraSeasons) {
                 lastSeason += 1;
                 extraSeason.tid = tid;
                 extraSeason.season = lastSeason;
-                return tx.teamSeasons.add(extraSeason);
-            });
+                await tx.teamSeasons.add(extraSeason);
+            }
         });
     }
 

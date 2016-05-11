@@ -90,11 +90,11 @@ async function addAchievements(achievements, silent = false) {
     };
 
     const addToIndexedDB = achievements => {
-        return g.dbm.tx("achievements", "readwrite", tx => {
-            return Promise.each(achievements, async achievement => {
+        return g.dbm.tx("achievements", "readwrite", async tx => {
+            for (const achievement of achievements) {
                 await tx.achievements.add({slug: achievement});
                 notify(achievement);
-            });
+            }
         });
     };
 

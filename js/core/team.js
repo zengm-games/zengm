@@ -321,7 +321,7 @@ async function getContracts(tx, tid) {
     // Then, get any released players still owed money
     const releasedPlayers = await tx.releasedPlayers.index('tid').getAll(tid);
 
-    await Promise.each(releasedPlayers, async releasedPlayer => {
+    for (const releasedPlayer of releasedPlayers) {
         const p = await tx.players.get(releasedPlayer.pid);
         if (p !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
             contracts.push({
@@ -343,7 +343,7 @@ async function getContracts(tx, tid) {
                 released: true
             });
         }
-    });
+    }
 
     return contracts;
 }

@@ -135,17 +135,17 @@ function migrateLeague(upgradeDB, lid) {
             teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false});
 
             await upgradeDB.teams.iterate(async t => {
-                await Promise.each(t.stats, async teamStats => {
+                for (const teamStats of t.stats) {
                     teamStats.tid = t.tid;
                     if (!teamStats.hasOwnProperty("ba")) {
                         teamStats.ba = 0;
                     }
                     await upgradeDB.teamStats.add(teamStats);
-                });
-                await Promise.each(t.seasons, async teamSeason => {
+                }
+                for (const teamSeason of t.seasons) {
                     teamSeason.tid = t.tid;
                     await upgradeDB.teamSeasons.add(teamSeason);
-                });
+                }
                 delete t.stats;
                 delete t.seasons;
                 return t;
@@ -186,7 +186,9 @@ async function reset() {
     }
 
     const league = require('./core/league');
-    await Promise.map(leagues, l => league.remove(l.lid));
+    for (const l of leagues) {
+        await league.remove(l.lid);
+    }
 
     // Delete any current meta database
     console.log("Deleting any current meta database...");

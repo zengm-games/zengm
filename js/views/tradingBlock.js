@@ -31,7 +31,7 @@ async function getOffers(userPids, userDpids) {
     let done = 0;
 
     const offers = [];
-    await Promise.each(tids, async tid => {
+    for (const tid of tids) {
         let teams = [{
             tid: g.userTid,
             pids: userPids,
@@ -56,7 +56,7 @@ async function getOffers(userPids, userDpids) {
                 offers.push(teams[1]);
             }
         }
-    });
+    }
 
     return offers;
 }

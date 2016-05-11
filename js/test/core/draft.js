@@ -5,7 +5,6 @@ const draft = require('../../core/draft');
 const league = require('../../core/league');
 const team = require('../../core/team');
 const sampleTiebreakers = require('../fixtures/sampleTiebreakers.js');
-const Promise = require('bluebird');
 
 describe("core/draft", () => {
     before(async () => {
@@ -59,10 +58,10 @@ describe("core/draft", () => {
                     delete st.seasons;
                     delete st.stats;
 
-                    await Promise.each(teamSeasons, teamSeason => {
+                    for (const teamSeason of teamSeasons) {
                         teamSeason.tid = t.tid;
-                        return tx.teamSeasons.put(teamSeason);
-                    });
+                        await tx.teamSeasons.put(teamSeason);
+                    }
 
                     return st;
                 });

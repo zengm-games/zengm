@@ -29,7 +29,7 @@ async function autoSign(tx) {
             tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT)
         ]);
 
-        const strategies = _.pluck(teams, "strategy");
+        const strategies = teams.map(t => t.strategy);
 
         // List of free agents, sorted by value
         players.sort((a, b) => b.value - a.value);

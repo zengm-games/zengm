@@ -155,9 +155,9 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
         season: startingSeason,
         startingSeason,
         leagueName: name,
-        teamAbbrevsCache: _.pluck(teams, "abbrev"),
-        teamRegionsCache: _.pluck(teams, "region"),
-        teamNamesCache: _.pluck(teams, "name"),
+        teamAbbrevsCache: teams.map(t => t.abbrev),
+        teamRegionsCache: teams.map(t => t.region),
+        teamNamesCache: teams.map(t => t.name),
         gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
         numTeams: teams.length // Will be 30 if the user doesn't supply custom rosters
     });

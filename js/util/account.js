@@ -382,7 +382,7 @@ checkAchievement.sleeper_pick = async (saveAchievement = true) => {
     }
 
     const awards = await g.dbl.awards.get(g.season);
-    if (awards.roy.tid === g.userTid) {
+    if (awards && awards.roy && awards.roy.tid === g.userTid) {
         const p = await g.dbl.players.get(awards.roy.pid);
         if (p.tid === g.userTid && p.draft.tid === g.userTid && p.draft.year === g.season - 1 && (p.draft.round > 1 || p.draft.pick >= 15)) {
             if (saveAchievement) {

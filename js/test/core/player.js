@@ -15,7 +15,7 @@ const addStatsRow = (p, playoffs = false) => {
 };
 
 // Default values needed
-g.teamAbbrevsCache = _.pluck(helpers.getTeamsDefault(), "abbrev");
+g.teamAbbrevsCache = helpers.getTeamsDefault().map(t => t.abbrev);
 g.numTeams = 30;
 g.userTids = [0];
 

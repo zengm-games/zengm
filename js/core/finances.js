@@ -1,5 +1,4 @@
 const g = require('../globals');
-const _ = require('underscore');
 const backboard = require('backboard');
 const Promise = require('bluebird');
 
@@ -73,7 +72,7 @@ async function updateRanks(tx, types) {
         const byItem = {};
         for (const item in byTeam[0]) {
             if (byTeam[0].hasOwnProperty(item)) {
-                byItem[item] = _.pluck(byTeam, item);
+                byItem[item] = byTeam.map(x => x[item]);
                 byItem[item].sort(sortFn);
             }
         }
@@ -105,21 +104,15 @@ async function updateRanks(tx, types) {
 
     let budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, revenuesByItem, revenuesByTeam;
     if (types.indexOf("budget") >= 0) {
-        budgetsByTeam = _.pluck(teams, "budget");
+        budgetsByTeam = teams.map(t => t.budget);
         budgetsByItem = getByItem(budgetsByTeam);
     }
     if (types.indexOf("expenses") >= 0) {
-        expensesByTeam = [];
-        for (let i = 0; i < teams.length; i++) {
-            expensesByTeam[i] = teamSeasons[i].expenses;
-        }
+        expensesByTeam = teamSeasons.map(ts => ts.expenses);
         expensesByItem = getByItem(expensesByTeam);
     }
     if (types.indexOf("revenues") >= 0) {
-        revenuesByTeam = [];
-        for (let i = 0; i < teams.length; i++) {
-            revenuesByTeam[i] = teamSeasons[i].revenues;
-        }
+        revenuesByTeam = teamSeasons.map(ts => ts.revenues);
         revenuesByItem = getByItem(revenuesByTeam);
     }
 

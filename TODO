@@ -24,6 +24,7 @@ BENCHMARKS
     in case 1, why is dashboard so slow in 2015?
     in case 1, why is player stats so slow in 2019
       not slow for 2015 in case 2!
+      more directly benchmark player.withStats in isolation
   case 1
     tests
       2015 on dashboard

@@ -41,76 +41,78 @@ const mapping = {
 
 async function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
-        let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED));
-        players = await player.withStats(null, players, {
-            statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
-            statsPlayoffs: inputs.playoffs === "playoffs"
-        });
-
-        let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
-        if (tid < 0) { tid = null; } // Show all teams
-
-        if (!tid && inputs.abbrev === "watch") {
-            players = players.filter(p => p.watch && typeof p.watch !== "function");
-        }
-
-        players = player.filter(players, {
-            attrs: ["pid", "name", "age", "injury", "tid", "hof", "watch"],
-            ratings: ["skills", "pos"],
-            stats: ["abbrev", "tid", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm", "per", "ewa"],
-            season: inputs.season, // If null, then show career stats!
-            tid,
-            totals: inputs.statType === "totals",
-            per36: inputs.statType === "per_36",
-            playoffs: inputs.playoffs === "playoffs"
-        });
-
-        // Find max gp to use for filtering
-        let gp = 0;
-        for (let i = 0; i < players.length; i++) {
-            if (players[i].stats.gp > gp) {
-                gp = players[i].stats.gp;
-            }
-        }
-        // Special case for career totals - use g.numGames games, unless this is the first season
-        if (!inputs.season) {
-            if (g.season > g.startingSeason) {
-                gp = g.numGames;
-            }
-        }
-
-        // Only keep players with more than 5 mpg
-        if (inputs.abbrev !== "watch") {
-            players = players.filter(p => {
-                // Minutes played
-                let min;
-                if (inputs.statType === "totals") {
-                    if (inputs.season) {
-                        min = p.stats.min;
-                    } else {
-                        min = p.careerStats.min;
-                    }
-                } else {
-                    if (inputs.season) {
-                        min = p.stats.gp * p.stats.min;
-                    } else {
-                        min = p.careerStats.gp * p.careerStats.min;
-                    }
-                }
-
-                if (min > gp * 5) {
-                    return true;
-                }
+        return g.dbl.tx(["players", "playerStats"], async tx => {
+            let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED));
+            players = await player.withStats(tx, players, {
+                statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
+                statsPlayoffs: inputs.playoffs === "playoffs"
             });
-        }
 
-        return {
-            players,
-            abbrev: inputs.abbrev,
-            season: inputs.season,
-            statType: inputs.statType,
-            playoffs: inputs.playoffs
-        };
+            let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
+            if (tid < 0) { tid = null; } // Show all teams
+
+            if (!tid && inputs.abbrev === "watch") {
+                players = players.filter(p => p.watch && typeof p.watch !== "function");
+            }
+
+            players = player.filter(players, {
+                attrs: ["pid", "name", "age", "injury", "tid", "hof", "watch"],
+                ratings: ["skills", "pos"],
+                stats: ["abbrev", "tid", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm", "per", "ewa"],
+                season: inputs.season, // If null, then show career stats!
+                tid,
+                totals: inputs.statType === "totals",
+                per36: inputs.statType === "per_36",
+                playoffs: inputs.playoffs === "playoffs"
+            });
+
+            // Find max gp to use for filtering
+            let gp = 0;
+            for (let i = 0; i < players.length; i++) {
+                if (players[i].stats.gp > gp) {
+                    gp = players[i].stats.gp;
+                }
+            }
+            // Special case for career totals - use g.numGames games, unless this is the first season
+            if (!inputs.season) {
+                if (g.season > g.startingSeason) {
+                    gp = g.numGames;
+                }
+            }
+
+            // Only keep players with more than 5 mpg
+            if (inputs.abbrev !== "watch") {
+                players = players.filter(p => {
+                    // Minutes played
+                    let min;
+                    if (inputs.statType === "totals") {
+                        if (inputs.season) {
+                            min = p.stats.min;
+                        } else {
+                            min = p.careerStats.min;
+                        }
+                    } else {
+                        if (inputs.season) {
+                            min = p.stats.gp * p.stats.min;
+                        } else {
+                            min = p.careerStats.gp * p.careerStats.min;
+                        }
+                    }
+
+                    if (min > gp * 5) {
+                        return true;
+                    }
+                });
+            }
+
+            return {
+                players,
+                abbrev: inputs.abbrev,
+                season: inputs.season,
+                statType: inputs.statType,
+                playoffs: inputs.playoffs
+            };
+        });
     }
 }
 

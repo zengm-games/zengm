@@ -2030,7 +2030,7 @@ function withStats(tx, players, options) {
     options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
     options.filter = options.filter !== undefined ? options.filter : null;
 
-    return helpers.maybeReuseTx(["players", "playerStats"], "readonly", tx, tx => {
+    return helpers.maybeReuseTx("playerStats", "readonly", tx, tx => {
         if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
             // No stats needed! Yay!
             return players;

@@ -1,14 +1,4 @@
 babel
-  minify es2015, or compile babel es2015 except generators
-    https://github.com/mishoo/UglifyJS2/issues/448
-    just doesn't work yet, even with all es2015 compiled except generators - not uglifyify, not minifyify, not plain uglifyjs
-    is it that bad? confirm gz is on.. in that case it should only be like 800kb vs 500kb
-      https isn't! possible to rectify? not on webfaction.. could move elsewhere! probably easier to do that than to do it piecemeal
-        write build script that copies all files to build folder, gzips, and deploys
-        can i use s3? need way to do redirects
-        something else? ask for suggestions
-        https://community.webfaction.com/questions/13483/can-you-point-a-subdomain-to-an-external-server-non-webfaction
-        https://kickassd.com/
   how can i gracefully show an error message in browsers without generators?
   benchmark, for sanity
     ctrl+r
@@ -29,20 +19,49 @@ babel
     all others
       http://stackoverflow.com/a/36824024/786644
 
-one month gamesim benchmarks while viewing dashboard:
-  original 000:01:43.710
-  original, no devtools 000:01:19.311
+BENCHMARKS
+  QUESTIONS
+    in case 1, why is dashboard so slow in 2015?
+    in case 1, why is player stats so slow in 2019
+      not slow for 2015 in case 2!
+  case 1
+    tests
+      2015 on dashboard
+      2016 on message
+      2017 on standings
+      2018 on another team's roster
+      2019 on player stats
+    original
+      L 000:03:21.765
+      L 000:03:07.645
+      L 000:03:23.814
+      L 000:03:29.677
+      L 000:04:28.301
+    babel
+      L 000:04:17.357
+      L 000:03:10.725
+      L 000:03:28.077
+      L 000:03:37.156
+      L 000:08:41.419
+  case 2
+    tests
+      2015 week 1 on player stats
+      rest of season on player stats
+    original
+      L 000:00:17.437
+      L 000:03:14.909
+    babel
+      T 000:00:17.687
+      L 000:03:20.909
 
-  babel, no async/await 000:01:42.766
-  babel, no async/await, no devtools
 
-  babel, async/await 000:01:53.206
-  babel, async/await, no devtools 000:01:25.527
-
-  babel, kneden, no devtools 000:01:46.893
-  babel, kneden, no devtools 000:01:17.430
+minify es2015, even just generators
+  https://github.com/mishoo/UglifyJS2/issues/448
+  just doesn't work yet, even with all es2015 compiled except generators - not uglifyify, not minifyify, not plain uglifyjs
 
 rename Promise imports to Bluebird or BPromise
+
+reset db should show progress visibly
 
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 

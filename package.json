@@ -15,8 +15,8 @@
   "scripts": {
     "start": "node tools/server.js",
     "build": "npm run build-js && node tools/build.js",
-    "test": "node_modules/karma/bin/karma start",
-    "lint": "node_modules/.bin/eslint js/** tools/**",
+    "test": "karma start",
+    "lint": "eslint js/** tools/**",
     "build-js": "node tools/build-js.js",
     "minify-js": "node tools/minify-js.js",
     "watch-js": "watchify -d js/app.js -o gen/app.js",

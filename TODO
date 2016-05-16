@@ -25,6 +25,8 @@ BENCHMARKS
     in case 1, why is player stats so slow in 2019
       not slow for 2015 in case 2!
       more directly benchmark player.withStats in isolation
+        doesn't seem to be the problem
+    does it help if i remove g.dbl calls and replace w/ transactions?
   case 1
     tests
       2015 on dashboard

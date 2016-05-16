@@ -2047,7 +2047,7 @@ function withStats(tx, players, options) {
                 key = backboard.bound([p.pid, options.statsSeasons[0]], [p.pid, options.statsSeasons[0], '']);
             } else if (options.statsSeasons.length > 1) {
                 // Restrict to range between seasons
-                key = backboard.bound([p.pid, Math.min.apply(null, options.statsSeasons)], [p.pid, Math.max.apply(null, options.statsSeasons), '']);
+                key = backboard.bound([p.pid, Math.min(...options.statsSeasons)], [p.pid, Math.max(...options.statsSeasons), '']);
             }
 
             const playerStats = await tx.playerStats.index('pid, season, tid').getAll(key);

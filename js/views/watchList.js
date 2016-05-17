@@ -1,10 +1,5 @@
-/**
- * @name views.watchList
- * @namespace List of players to watch.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var freeAgents = require('../core/freeAgents');
@@ -40,12 +35,14 @@ mapping = {
 
 function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("clearWatchList") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
-        return dao.players.getAll({
-            statsSeasons: [g.season, g.season - 1], // For oldStats
-            statsPlayoffs: inputs.playoffs === "playoffs",
-            filter: function (p) {
+        return g.dbl.players.getAll().then(function (players) {
+            players = players.filter(function (p) {
                 return p.watch && typeof p.watch !== "function"; // In Firefox, objects have a "watch" function
-            }
+            });
+            return player.withStats(null, players, {
+                statsSeasons: [g.season, g.season - 1], // For oldStats
+                statsPlayoffs: inputs.playoffs === "playoffs"
+            });
         }).then(function (players) {
             var i;
 
@@ -130,21 +127,16 @@ function uiFirst(vm) {
 
     clearWatchListEl = document.getElementById("clear-watch-list");
     clearWatchListEl.addEventListener("click", function () {
-        var tx;
-
         clearWatchListEl.disabled = true;
 
-        tx = dao.tx("players", "readwrite");
-        dao.players.iterate({
-            ot: tx,
-            callback: function (p) {
+        g.dbl.tx("players", "readwrite", function (tx) {
+            return tx.players.iterate(function (p) {
                 if (p.watch) {
                     p.watch = false;
                     return p;
                 }
-            }
-        });
-        tx.complete().then(function () {
+            });
+        }).then(function () {
             league.updateLastDbChange();
             ui.realtimeUpdate(["clearWatchList"]);
             clearWatchListEl.disabled = false;

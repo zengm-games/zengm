@@ -19,6 +19,9 @@
       <!-- ko if: !player.draft.round() -->
         Undrafted: <span data-bind="text: player.draft.year"></span><br>
       <!-- /ko -->
+      <!-- ko if: player.college && player.college() !== "" -->
+        College: <span data-bind="text: player.college"></span><br>
+      <!-- /ko -->
       <!-- ko if: showContract -->
         <span data-bind="visible: freeAgent">Asking for</span><span data-bind="visible: !freeAgent()">Contract</span>: <span data-bind="currency: [player.contract.amount, 'M']"></span>/yr thru <span data-bind="text: player.contract.exp"></span><br>
       <!-- /ko -->

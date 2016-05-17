@@ -75,7 +75,7 @@ describe("core/trade", function () {
                     assert.equal(JSON.stringify(teams[1].pids), JSON.stringify(otherPidsTest));
                     return trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: 4, pids: [], dpids: []}]);
                 }).then(function () {
-                    trade.get(function (teams) {
+                    return trade.get().then(function (teams) {
                         assert.equal(JSON.stringify(teams[0].pids), JSON.stringify(userPidsTest));
                         assert.equal(JSON.stringify(teams[1].pids), JSON.stringify([]));
                     });

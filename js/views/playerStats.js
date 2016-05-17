@@ -1,13 +1,9 @@
-/**
- * @name views.playerStats
- * @namespace Player stats table.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
+var backboard = require('backboard');
 var $ = require('jquery');
 var ko = require('knockout');
 var components = require('./components');
@@ -52,11 +48,11 @@ mapping = {
 
 function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
-        return dao.players.getAll({
-            index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
-            statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
-            statsPlayoffs: inputs.playoffs === "playoffs"
+        return g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED)).then(function (players) {
+            return player.withStats(null, players, {
+                statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
+                statsPlayoffs: inputs.playoffs === "playoffs"
+            });
         }).then(function (players) {
             var gp, i, tid;
 
@@ -64,7 +60,7 @@ function updatePlayers(inputs, updateEvents, vm) {
             if (tid < 0) { tid = null; } // Show all teams
 
             if (!tid && inputs.abbrev === "watch") {
-                players = players.filter(function(p) {
+                players = players.filter(function (p) {
                     return p.watch && typeof p.watch !== "function";
                 });
             }

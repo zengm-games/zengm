@@ -1,6 +1,5 @@
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var contractNegotiation = require('../core/contractNegotiation');
@@ -13,7 +12,7 @@ var helpers = require('../util/helpers');
 
 // Show the negotiations list if there are more ongoing negotiations
 function redirectNegotiationOrRoster(cancelled) {
-    dao.negotiations.getAll().then(function (negotiations) {
+    g.dbl.negotiations.getAll().then(function (negotiations) {
         if (negotiations.length > 0) {
             ui.realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
         } else if (cancelled) {
@@ -99,19 +98,17 @@ function post(req) {
         });
     } else if (req.params.hasOwnProperty("new")) {
         // If there is no active negotiation with this pid, create it
-        dao.negotiations.get({key: pid}).then(function (negotiation) {
-            var tx;
+        g.dbl.negotiations.get(pid).then(function (negotiation) {
             if (!negotiation) {
-                tx = dao.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite");
-                contractNegotiation.create(tx, pid, false).then(function (error) {
-                    tx.complete().then(function () {
-                        if (error !== undefined && error) {
-                            helpers.errorNotify(error);
-                            ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
-                        } else {
-                            ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
-                        }
-                    });
+                g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", function (tx) {
+                    return contractNegotiation.create(tx, pid, false);
+                }).then(function (error) {
+                    if (error !== undefined && error) {
+                        helpers.errorNotify(error);
+                        ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
+                    } else {
+                        ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
+                    }
                 });
             } else {
                 ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
@@ -122,7 +119,7 @@ function post(req) {
 
 function updateNegotiation(inputs) {
     // Call getAll so it works on null key
-    return dao.negotiations.getAll({key: inputs.pid}).then(function (negotiations) {
+    return g.dbl.negotiations.getAll(inputs.pid).then(function (negotiations) {
         var negotiation;
 
         if (negotiations.length === 0) {
@@ -140,9 +137,7 @@ function updateNegotiation(inputs) {
         }
 
         // Can't flatten more because of the return errorMessage above
-        return dao.players.get({
-            key: negotiation.pid
-        }).then(function (p) {
+        return g.dbl.players.get(negotiation.pid).then(function (p) {
             p = player.filter(p, {
                 attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
                 ratings: ["ovr", "pot"],

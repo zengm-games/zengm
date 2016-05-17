@@ -1,4 +1,14 @@
+bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
+
+can i get rid of http/https links?
+  tracking prevalence in GA with "Season protocol"
+  put bbgm_insecure htaccess in normal htaccess for account, play, beta, and web. then get rid of all insecure websites in webfaction and add http domains to normal websites
+
+on new league, when play to regular season, message appears in inbox but does not show up on dashboard
+
 god mode option for playoff rounds https://www.reddit.com/r/BasketballGM/comments/44hdzs/new_options_in_god_mode/czrxv2w?context=3
+
+high 2nd round picks should be more likely to succeed
 
 substitutions fucked up in long games https://www.reddit.com/r/BasketballGM/comments/44nv0s/100000_minute_quarters/
 
@@ -240,30 +250,10 @@ github
 THE FLATTENING
 --------------
 
-clean up
-  replace getObjectStore with tx_
-  throw error in inappropriate/unknown input param (like "pid")
-  throw error if tx passed to dao.tx is something besides transaction/null/undefined
-  dao.players.getAll -> player.getAllWithStats
-    the stats stuff could be put in some other function to be called after getAll
-      this would allow the elimination of the "filter" option, which now is applied between getAll and adding stats
-  hide g.dbl and g.dbm inside dao so i can't stupidly use them by mistake
-  what about creating, migrating, and deleting databases? and objectStoreNames?
-  don't use "ot" anywhere - it's all transactions so call it tx
-  don't start transaction from nothing in utility function, and don't use oncomplete. always specify transaction if atomicity is needed. use this to put phase changes all in one transaction
-  extract it as a library named "baseline"
-  improve API
-    instead of dao.os.whatever({ot: aaa}) why not do tx.os.whatever()?
-      see promises_super_tx branch
-      or could be dao.tx().then(function (tx) {}) and resolve that promise oncomplete? but how to pass value to then?
-  IDBCursor used in helpers.js
-
 API design
   player.filter and team.filter should be renamed, otherwise it's confusing
     player.fitler -> player.process
     team.filter -> team.getAndProcess
-
-rewrite old upgrading code? eventually, leave it there for now
 
 after fully abstracting IndexedDB, could i improve performance by running it locally in node and using another database?
   same with mobile on phonegap
@@ -289,7 +279,7 @@ deleteOldData
 
 player.updateValues.getStats doesn't really make sense. Should get all from past 2 seasons, sort by PSID, and take stats up to 2000 minutes
 
-more normalization? team stats, team seasons, player ratings
+more database normalization? player ratings
 
 PHASE TWO: store retired players in a different object store
 
@@ -391,10 +381,6 @@ if playoffSeries already exists, don't try to create again http://www.reddit.com
 when uploading league file, no need to read whole thing in just to show teams menu. only need to read up to teams. but how?
 simulate in multiple tabs -> NaN
 should be impossible to have a player average 0 assists in big minutes
-Commissioner Mode - make multi-player stuff easy
-  don't auto sort AI lineups
-  draft stuff that is already implemented
-  something for free agents
 "My Career" page with GM stats across teams http://www.reddit.com/r/BasketballGM/comments/2gc4sf/gm_page/
 +/- http://www.reddit.com/r/BasketballGM/comments/2cpdxg/both_individual_and_5man_units/
 total control mode
@@ -768,6 +754,7 @@ god mode
     playoff round length
   edit player
     edit diedYear (or null if blank)
+    edit college
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?
@@ -781,8 +768,6 @@ export/import roster
     no base64? Firefox can't handle #
   error handling if blank or invalid file is supplied
   easily edit in excel?
-move most db functions into core.whatever. db should just be about initializing/upgrading
-  get rid of "db" module dependence
 core.freeAgents should be core.freeAgent or core.freeAgency?
 after last resigning negotiation, switch to next phase?
 draft lottery
@@ -1045,6 +1030,5 @@ AI teams release/buy out players to sign a better free agent
 
 ---
 
-Potential Translators
-- brazilian: henrique.andrade@ufrj.br
-- chinese: rendu2mai@163.com
+i18n
+- http://i18next.com/docs/

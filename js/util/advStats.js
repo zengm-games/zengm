@@ -1,13 +1,9 @@
-/**
- * @name util.advStats
- * @namespace Advanced stats (PER, WS, etc) that require some nontrivial calculations and thus are calculated and cached once each day.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var player = require('../core/player');
 var team = require('../core/team');
+var backboard = require('backboard');
 var _ = require('underscore');
 
 /**
@@ -63,14 +59,14 @@ function calculatePER() {
 
         // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
         // Active players have tid >= 0
-        return dao.players.getAll({
-            index: "tid",
-            key: IDBKeyRange.lowerBound(0),
-            statsSeasons: [g.season],
-            statsPlayoffs: g.PHASE.PLAYOFFS === g.phase
+        return g.dbl.players.index('tid').getAll(backboard.lowerBound(0)).then(function (players) {
+            return player.withStats(null, players, {
+                statsSeasons: [g.season],
+                statsPlayoffs: g.PHASE.PLAYOFFS === g.phase
+            });
         // Can't drop this then to another level because of the short circuit return above
         }).then(function (players) {
-            var EWA, PER, aPER, drbp, factor, i, minFactor, mins, tid, tx, uPER, vop;
+            var EWA, PER, aPER, drbp, factor, i, minFactor, mins, tid, uPER, vop;
 
             players = player.filter(players, {
                 attrs: ["pid", "tid"],
@@ -167,29 +163,24 @@ function calculatePER() {
             }());
 
             // Save to database
-            tx = dao.tx("playerStats", "readwrite");
-            for (i = 0; i < players.length; i++) {
-                if (players[i].active) {
-                    (function (i) {
-                        dao.playerStats.iterate({
-                            ot: tx,
-                            index: "pid, season, tid",
-                            key: [players[i].pid, g.season, players[i].tid],
-                            direction: "prev",
-                            callback: function (ps, shortCircuit) {
-                                // Since index is not on playoffs, manually check
-                                if (ps.playoffs === (g.phase === g.PHASE.PLAYOFFS)) {
-                                    shortCircuit();
-                                    ps.per = PER[i];
-                                    ps.ewa = EWA[i];
-                                    return ps;
-                                }
-                            }
-                        });
-                    }(i));
+            return g.dbl.tx("playerStats", "readwrite", function (tx) {
+                for (i = 0; i < players.length; i++) {
+                    if (players[i].active) {
+                        (function (i) {
+                            tx.playerStats.index("pid, season, tid")
+                                .iterate([players[i].pid, g.season, players[i].tid], "prev", function (ps, shortCircuit) {
+                                    // Since index is not on playoffs, manually check
+                                    if (ps.playoffs === (g.phase === g.PHASE.PLAYOFFS)) {
+                                        shortCircuit();
+                                        ps.per = PER[i];
+                                        ps.ewa = EWA[i];
+                                        return ps;
+                                    }
+                                });
+                        }(i));
+                    }
                 }
-            }
-            return tx.complete();
+            });
         });
     });
 }

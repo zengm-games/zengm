@@ -1,13 +1,9 @@
-/**
- * @name views.trade
- * @namespace Trade.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
+var team = require('../core/team');
 var trade = require('../core/trade');
 var Promise = require('bluebird');
 var Davis = require('../lib/davis');
@@ -25,18 +21,15 @@ function updateSummary(vars) {
     return trade.getOtherTid().then(function (otherTid) {
         var teams;
 
-        teams = [
-            {
-                tid: g.userTid,
-                pids: vars.userPids,
-                dpids: vars.userDpids
-            },
-            {
-                tid: otherTid,
-                pids: vars.otherPids,
-                dpids: vars.otherDpids
-            }
-        ];
+        teams = [{
+            tid: g.userTid,
+            pids: vars.userPids,
+            dpids: vars.userDpids
+        }, {
+            tid: otherTid,
+            pids: vars.otherPids,
+            dpids: vars.otherDpids
+        }];
         return trade.summary(teams).then(function (summary) {
             var i;
 
@@ -185,15 +178,10 @@ function updateTrade(inputs) {
 
     return Promise.all([
         validateSavedPids(),
-        dao.players.getAll({
-            index: "tid",
-            key: g.userTid,
-            statsSeasons: [g.season]
+        g.dbl.players.index('tid').getAll(g.userTid).then(function (players) {
+            return player.withStats(null, players, {statsSeasons: [g.season]});
         }),
-        dao.draftPicks.getAll({
-            index: "tid",
-            key: g.userTid
-        })
+        g.dbl.draftPicks.index('tid').getAll(g.userTid)
     ]).spread(function (teams, userRoster, userPicks) {
         var attrs, i, ratings, stats;
 
@@ -229,16 +217,16 @@ function updateTrade(inputs) {
 
         // Need to do this after knowing otherTid
         return Promise.all([
-            dao.players.getAll({
-                index: "tid",
-                key: otherTid,
-                statsSeasons: [g.season]
+            g.dbl.players.index('tid').getAll(otherTid).then(function (players) {
+                return player.withStats(null, players, {statsSeasons: [g.season]});
             }),
-            dao.draftPicks.getAll({
-                index: "tid",
-                key: otherTid
-            }),
-            dao.teams.get({key: otherTid})
+            g.dbl.draftPicks.index('tid').getAll(otherTid),
+            team.filter({
+                tid: otherTid,
+                season: g.season,
+                attrs: ["strategy"],
+                seasonAttrs: ["won", "lost"]
+            })
         ]).spread(function (otherRoster, otherPicks, t) {
             var i;
 
@@ -278,8 +266,8 @@ function updateTrade(inputs) {
                 otherRoster: otherRoster,
                 message: inputs.message,
                 strategy: t.strategy,
-                won: t.seasons[t.seasons.length - 1].won,
-                lost: t.seasons[t.seasons.length - 1].lost,
+                won: t.won,
+                lost: t.lost,
                 godMode: g.godMode,
                 forceTrade: false
             };

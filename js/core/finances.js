@@ -4,9 +4,10 @@
  */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var _ = require('underscore');
+var backboard = require('backboard');
+var Promise = require('bluebird');
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -17,34 +18,26 @@ var _ = require('underscore');
  */
 function assessPayrollMinLuxury(tx) {
     var amount, collectedTax, distribute;
-    tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite", tx);
     collectedTax = 0;
 
     return require('./team').getPayrolls(tx).then(function (payrolls) {
         // Update teams object store
-        return dao.teams.iterate({
-            ot: tx,
-            callback: function (t) {
-                var s;
+        return tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), function (teamSeason) {
+            // Store payroll
+            teamSeason.payrollEndOfSeason = payrolls[teamSeason.tid];
 
-                s = t.seasons.length - 1; // Relevant row is the last one
-
-                // Store payroll
-                t.seasons[s].payrollEndOfSeason = payrolls[t.tid];
-
-                // Assess minimum payroll tax and luxury tax
-                if (payrolls[t.tid] < g.minPayroll) {
-                    t.seasons[s].expenses.minTax.amount = g.minPayroll - payrolls[t.tid];
-                    t.seasons[s].cash -= t.seasons[s].expenses.minTax.amount;
-                } else if (payrolls[t.tid] > g.luxuryPayroll) {
-                    amount = g.luxuryTax * (payrolls[t.tid] - g.luxuryPayroll);
-                    collectedTax += amount;
-                    t.seasons[s].expenses.luxuryTax.amount = amount;
-                    t.seasons[s].cash -= t.seasons[s].expenses.luxuryTax.amount;
-                }
-
-                return t;
+            // Assess minimum payroll tax and luxury tax
+            if (payrolls[teamSeason.tid] < g.minPayroll) {
+                teamSeason.expenses.minTax.amount = g.minPayroll - payrolls[teamSeason.tid];
+                teamSeason.cash -= teamSeason.expenses.minTax.amount;
+            } else if (payrolls[teamSeason.tid] > g.luxuryPayroll) {
+                amount = g.luxuryTax * (payrolls[teamSeason.tid] - g.luxuryPayroll);
+                collectedTax += amount;
+                teamSeason.expenses.luxuryTax.amount = amount;
+                teamSeason.cash -= teamSeason.expenses.luxuryTax.amount;
             }
+
+            return teamSeason;
         }).then(function () {
             var payteams;
             payteams = payrolls.filter(function (x) {
@@ -52,26 +45,20 @@ function assessPayrollMinLuxury(tx) {
             });
             if (payteams.length > 0 && collectedTax > 0) {
                 distribute = (collectedTax * 0.5) / payteams.length;
-                return dao.teams.iterate({
-                    ot: tx,
-                    callback: function (t) {
-                        var s;
-                        s = t.seasons.length - 1;
-
-                        if (payrolls[t.tid] <= g.salaryCap) {
-                            t.seasons[s].revenues.luxuryTaxShare = {
-                                amount: distribute,
-                                rank: 15.5
-                            };
-                            t.seasons[s].cash += distribute;
-                        } else {
-                            t.seasons[s].revenues.luxuryTaxShare = {
-                                amount: 0,
-                                rank: 15.5
-                            };
-                        }
-                        return t;
+                return tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), function (teamSeason) {
+                    if (payrolls[teamSeason.tid] <= g.salaryCap) {
+                        teamSeason.revenues.luxuryTaxShare = {
+                            amount: distribute,
+                            rank: 15.5
+                        };
+                        teamSeason.cash += distribute;
+                    } else {
+                        teamSeason.revenues.luxuryTaxShare = {
+                            amount: 0,
+                            rank: 15.5
+                        };
                     }
+                    return teamSeason;
                 });
             }
         });
@@ -86,12 +73,12 @@ function assessPayrollMinLuxury(tx) {
  * Revenue and expenses ranks should be updated any time any revenue or expense occurs - so basically, after every game.
  *
  * @memberOf core.finances
- * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on teams, readwrite; if null is passed, then a new transaction will be used.
+ * @param {IDBTransaction} ot An IndexedDB transaction on teams, readwrite.
  * @param {Array.<string>} type The types of ranks to update - some combination of "budget", "expenses", and "revenues"
  * @param {Promise}
  */
-function updateRanks(ot, types) {
-    var getByItem, sortFn, updateObj;
+function updateRanks(tx, types) {
+    var getByItem, sortFn, teamSeasonsPromise, updateObj;
 
     sortFn = function (a, b) {
         return b.amount - a.amount;
@@ -123,46 +110,55 @@ function updateRanks(ot, types) {
         }
     };
 
-    return dao.teams.getAll({
-        ot: ot
-    }).then(function (teams) {
-        var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam, s;
+    if (types.indexOf("expenses") >= 0 || types.indexOf("revenues") >= 0) {
+        teamSeasonsPromise = tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, '']));
+    } else {
+        teamSeasonsPromise = Promise.resolve();
+    }
+
+    return Promise.all([
+        tx.teams.getAll(),
+        teamSeasonsPromise
+    ]).spread(function (teams, teamSeasons) {
+        var budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, i, revenuesByItem, revenuesByTeam;
 
         if (types.indexOf("budget") >= 0) {
             budgetsByTeam = _.pluck(teams, "budget");
             budgetsByItem = getByItem(budgetsByTeam);
         }
         if (types.indexOf("expenses") >= 0) {
-            s = teams[0].seasons.length - 1;
             expensesByTeam = [];
             for (i = 0; i < teams.length; i++) {
-                expensesByTeam[i] = teams[i].seasons[s].expenses;
+                expensesByTeam[i] = teamSeasons[i].expenses;
             }
             expensesByItem = getByItem(expensesByTeam);
         }
         if (types.indexOf("revenues") >= 0) {
-            s = teams[0].seasons.length - 1;
             revenuesByTeam = [];
             for (i = 0; i < teams.length; i++) {
-                revenuesByTeam[i] = teams[i].seasons[s].revenues;
+                revenuesByTeam[i] = teamSeasons[i].revenues;
             }
             revenuesByItem = getByItem(revenuesByTeam);
         }
 
-        return dao.teams.iterate({
-            ot: ot,
-            callback: function (t) {
-                if (types.indexOf("budget") >= 0) {
-                    updateObj(t.budget, budgetsByItem);
-                }
-                if (types.indexOf("expenses") >= 0) {
-                    updateObj(t.seasons[s].expenses, expensesByItem);
-                }
-                if (types.indexOf("revenues") >= 0) {
-                    updateObj(t.seasons[s].revenues, revenuesByItem);
-                }
+        return tx.teams.iterate(function (t) {
+            if (types.indexOf("budget") >= 0) {
+                updateObj(t.budget, budgetsByItem);
+            }
 
-                return t;
+            if (types.indexOf("revenues") >= 0) {
+                updateObj(teamSeasons[t.tid].expenses, expensesByItem);
+            }
+            if (types.indexOf("expenses") >= 0) {
+                updateObj(teamSeasons[t.tid].revenues, revenuesByItem);
+            }
+
+            return t;
+        }).then(function () {
+            if (types.indexOf("revenues") >= 0 || types.indexOf("expenses") >= 0) {
+                return Promise.map(teamSeasons, function (teamSeason) {
+                    return tx.teamSeasons.put(teamSeason);
+                });
             }
         });
     });
@@ -179,19 +175,23 @@ function updateRanks(ot, types) {
  * @param {string} item Item inside the category
  * @return {number} Rank, from 1 to g.numTeams (default 30)
  */
-function getRankLastThree(t, category, item) {
+function getRankLastThree(teamSeasons, category, item) {
     var s;
 
-    s = t.seasons.length - 1; // Most recent season index
+    s = teamSeasons.length - 1; // Most recent season index
     if (s > 1) {
         // Use three seasons if possible
-        return (t.seasons[s][category][item].rank + t.seasons[s - 1][category][item].rank + t.seasons[s - 2][category][item].rank) / 3;
+        return (teamSeasons[s][category][item].rank + teamSeasons[s - 1][category][item].rank + teamSeasons[s - 2][category][item].rank) / 3;
     }
     if (s > 0) {
         // Use two seasons if possible
-        return (t.seasons[s][category][item].rank + t.seasons[s - 1][category][item].rank + 15.5) / 3;
+        return (teamSeasons[s][category][item].rank + teamSeasons[s - 1][category][item].rank + 15.5) / 3;
     }
-    return (t.seasons[s][category][item].rank + 15.5 + 15.5) / 3;
+    if (s === 0) {
+        return (teamSeasons[s][category][item].rank + 15.5 + 15.5) / 3;
+    }
+
+    return 15.5;
 }
 
 module.exports = {

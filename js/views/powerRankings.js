@@ -1,13 +1,9 @@
-/**
- * @name views.powerRankings
- * @namespace Power Rankings based on player ratings, stats, team performance
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var team = require('../core/team');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var $ = require('jquery');
 var _ = require('underscore');
@@ -34,10 +30,7 @@ function updatePowerRankings(inputs, updateEvents) {
                 stats: ["gp", "pts", "oppPts", "diff"],
                 season: g.season
             }),
-            dao.players.getAll({
-                index: "tid",
-                key: IDBKeyRange.lowerBound(0)
-            })
+            g.dbl.players.index('tid').getAll(backboard.lowerBound(0))
         ]).spread(function (teams, players) {
             var i, j, overallRankMetric, playerValuesByTid, weights;
 

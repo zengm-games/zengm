@@ -1,14 +1,10 @@
-/**
- * @name core.player
- * @namespace Functions operating on player objects, parts of player objects, or arrays of player objects.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var finances = require('./finances');
 var injuries = require('../data/injuries');
 var names = require('../data/names');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var faces = require('facesjs');
 var _ = require('underscore');
@@ -521,41 +517,36 @@ function bonus(p, amount) {
  *
  * This base mood is then modulated for an individual player in addToFreeAgents.
  *
- * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on teams; if null is passed, then a new transaction will be used.
+ * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on teamSeasons; if null is passed, then a new transaction will be used.
  * @return {Promise} Array of base moods, one for each team.
  */
 function genBaseMoods(ot) {
-    return dao.teams.getAll({ot: ot}).then(function (teams) {
-        var baseMoods, i, s;
+    var dbOrTx = ot !== null ? ot : g.dbl;
+    return dbOrTx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, ''])).map(function (teamSeason) {
+        var baseMood;
 
-        baseMoods = [];
-
-        s = teams[0].seasons.length - 1;  // Most recent season index
-
-        for (i = 0; i < teams.length; i++) {
-            // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
-            if (teams[i].seasons[s].playoffRoundsWon === 4 && Math.random() < 0.99) {
-                baseMoods[i] = -0.25; // Should guarantee no refusing to re-sign
-            } else {
-                baseMoods[i] = 0;
-
-                // Hype
-                baseMoods[i] += 0.5 * (1 - teams[i].seasons[s].hype);
-
-                // Facilities
-                baseMoods[i] += 0.1 * (finances.getRankLastThree(teams[i], "expenses", "facilities") - 1) / (g.numTeams - 1);
-
-                // Population
-                baseMoods[i] += 0.2 * (1 - teams[i].seasons[s].pop / 10);
-
-                // Randomness
-                baseMoods[i] += random.uniform(-0.2, 0.2);
-
-                baseMoods[i] = helpers.bound(baseMoods[i], 0, 1);
-            }
+        // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
+        if (teamSeason.playoffRoundsWon === 4 && Math.random() < 0.99) {
+            return -0.25; // Should guarantee no refusing to re-sign
         }
 
-        return baseMoods;
+        baseMood = 0;
+
+        // Hype
+        baseMood += 0.5 * (1 - teamSeason.hype);
+
+        // Facilities - fuck it, just use most recent rank
+        baseMood += 0.1 * (finances.getRankLastThree([teamSeason], "expenses", "facilities") - 1) / (g.numTeams - 1);
+
+        // Population
+        baseMood += 0.2 * (1 - teamSeason.pop / 10);
+
+        // Randomness
+        baseMood += random.uniform(-0.2, 0.2);
+
+        baseMood = helpers.bound(baseMood, 0, 1);
+
+        return baseMood;
     });
 }
 
@@ -574,6 +565,7 @@ function genBaseMoods(ot) {
  */
 function addToFreeAgents(ot, p, phase, baseMoods) {
     var pr;
+    var dbOrTx = ot !== null ? ot : g.dbl;
 
     phase = phase !== null ? phase : g.phase;
 
@@ -604,7 +596,7 @@ function addToFreeAgents(ot, p, phase, baseMoods) {
     p.ptModifier = 1; // Reset
 
     // The put doesn't always work in Chrome. No idea why.
-    return dao.players.put({ot: ot, value: p}).then(function () {
+    return dbOrTx.players.put(p).then(function () {
         return; // No output
     });
 }
@@ -615,7 +607,7 @@ function addToFreeAgents(ot, p, phase, baseMoods) {
  * This keeps track of what the player's current team owes him, and then calls player.addToFreeAgents.
  *
  * @memberOf core.player
- * @param {IDBTransaction} tx An IndexedDB transaction on players, releasedPlayers, and teams, readwrite.
+ * @param {IDBTransaction} tx An IndexedDB transaction on players, releasedPlayers, and teamSeasons, readwrite.
  * @param {Object} p Player object.
  * @param {boolean} justDrafted True if the player was just drafted by his current team and the regular season hasn't started yet. False otherwise. If True, then the player can be released without paying his salary.
  * @return {Promise}
@@ -624,13 +616,10 @@ function release(tx, p, justDrafted) {
     // Keep track of player salary even when he's off the team, but make an exception for players who were just drafted
     // Was the player just drafted?
     if (!justDrafted) {
-        dao.releasedPlayers.add({
-            ot: tx,
-            value: {
-                pid: p.pid,
-                tid: p.tid,
-                contract: p.contract
-            }
+        tx.releasedPlayers.add({
+            pid: p.pid,
+            tid: p.tid,
+            contract: p.contract
         });
     } else {
         // Clear player salary log if just drafted, because this won't be paid.
@@ -826,6 +815,7 @@ function addRatingsRow(p, scoutingRank) {
  */
 function addStatsRow(ot, p, playoffs) {
     var ps, statsRow, stopOnSeason;
+    var dbOrTx = ot !== null ? ot : g.dbl;
 
     playoffs = playoffs !== undefined ? playoffs : false;
 
@@ -845,12 +835,8 @@ function addStatsRow(ot, p, playoffs) {
             // can stop storing stats when it's totally safe.
             stopOnSeason = 0;
 
-            return dao.playerStats.iterate({
-                ot: ot,
-                index: "pid, season, tid",
-                key: IDBKeyRange.bound([p.pid, 0], [p.pid, g.season + 1]),
-                direction: "prev",
-                callback: function (psTemp, shortCircuit) {
+            return dbOrTx.playerStats.index('pid, season, tid')
+                .iterate(backboard.bound([p.pid, 0], [p.pid, g.season + 1]), 'prev', function (psTemp, shortCircuit) {
                     // Skip playoff stats
                     if (psTemp.playoffs) {
                         return;
@@ -868,8 +854,7 @@ function addStatsRow(ot, p, playoffs) {
                         // Store stats
                         ps.push(psTemp);
                     }
-                }
-            });
+                });
         }
     }).then(function () {
         var i;
@@ -894,7 +879,7 @@ function addStatsRow(ot, p, playoffs) {
             }
         }
 
-        dao.playerStats.add({ot: ot, value: statsRow});
+        dbOrTx.playerStats.add(statsRow);
     });
 
     return p;
@@ -1709,6 +1694,7 @@ function value(p, ps, options) {
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
 function updateValues(ot, p, ps) {
+    var dbOrTx = ot !== null ? ot : g.dbl;
     return Promise.try(function () {
         var season;
 
@@ -1729,12 +1715,8 @@ function updateValues(ot, p, ps) {
 
             // Start at season and look backwards until we hit
             // This will not work totally right if a player played for multiple teams in a season. It should be ordered by psid, instead it's ordered by tid because of the index used
-            return dao.playerStats.iterate({
-                ot: ot,
-                index: "pid, season, tid",
-                key: IDBKeyRange.bound([p.pid, 0], [p.pid, season + 1]),
-                direction: "prev",
-                callback: function (psTemp, shortCircuit) {
+            return dbOrTx.playerStats.index('pid, season, tid')
+                .iterate(backboard.bound([p.pid, 0], [p.pid, season + 1]), 'prev', function (psTemp, shortCircuit) {
                     // Skip playoff stats
                     if (psTemp.playoffs) {
                         return;
@@ -1747,8 +1729,7 @@ function updateValues(ot, p, ps) {
                     if (ps.length === 1 && ps[0].min < 2000) {
                         shortCircuit();
                     }
-                }
-            });
+                });
         }
     }).then(function () {
         p.value = value(p, ps);
@@ -2047,12 +2028,12 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
             overtimes: results.overtimes
         };
 
-        dao.playerFeats.add({ot: tx, value: feat});
+        tx.playerFeats.add(feat);
     }
 }
 
 function killOne() {
-    var p, reason, tid, tx;
+    var p, reason, tid;
 
     reason = random.choice([
         "died from a drug overdose",
@@ -2078,42 +2059,87 @@ function killOne() {
     // Pick random team
     tid = random.randInt(0, g.numTeams - 1);
 
-    tx = dao.tx(["events", "playerStats", "players"], "readwrite");
+    return g.dbl.tx(["events", "playerStats", "players"], "readwrite", function (tx) {
+        return tx.players.index('tid').getAll(tid).then(function (players) {
+            // Pick a random player on that team
+            p = random.choice(players);
 
-    return dao.players.getAll({
-        ot: tx,
-        index: "tid",
-        key: tid
-    }).then(function (players) {
-        // Pick a random player on that team
-        p = random.choice(players);
+            // Get player stats, used for HOF calculation
+            return tx.playerStats.getAll({
+                index: "pid, season, tid",
+                key: backboard.bound([p.pid], [p.pid, ''])
+            });
+        }).then(function (playerStats) {
+            p = retire(tx, p, playerStats, false);
 
-        // Get player stats, used for HOF calculation
-        return dao.playerStats.getAll({
-            ot: tx,
-            index: "pid, season, tid",
-            key: IDBKeyRange.bound([p.pid], [p.pid, ''])
+            p.diedYear = g.season;
+
+            return tx.players.put(p);
+        }).then(function () {
+            eventLog.add(tx, {
+                type: "tragedy",
+                text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ' + reason + '.',
+                showNotification: tid === g.userTid,
+                pids: [p.pid],
+                tids: [tid],
+                persistent: true
+            });
         });
-    }).then(function (playerStats) {
-        p = retire(tx, p, playerStats, false);
+    });
+}
 
-        p.diedYear = g.season;
+function withStats(tx, players, options) {
+    options.statsPlayoffs = options.statsPlayoffs !== undefined ? options.statsPlayoffs : false;
+    options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
+    options.filter = options.filter !== undefined ? options.filter : null;
 
-        return dao.players.put({
-            ot: tx,
-            value: p
+    return helpers.maybeReuseTx(["players", "playerStats"], "readonly", tx, function (tx) {
+        if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
+            // No stats needed! Yay!
+            return players;
+        }
+
+        // Get stats
+        return Promise.map(players, function (p) {
+            var key;
+
+            if (options.statsSeasons === "all") {
+                // All seasons
+                key = backboard.bound([p.pid], [p.pid, '']);
+            } else if (options.statsSeasons.length === 1) {
+                // Restrict to one season
+                key = backboard.bound([p.pid, options.statsSeasons[0]], [p.pid, options.statsSeasons[0], '']);
+            } else if (options.statsSeasons.length > 1) {
+                // Restrict to range between seasons
+                key = backboard.bound([p.pid, Math.min.apply(null, options.statsSeasons)], [p.pid, Math.max.apply(null, options.statsSeasons), '']);
+            }
+
+            return tx.playerStats.index('pid, season, tid').getAll(key).then(function (playerStats) {
+                // Due to indexes not necessarily handling all cases, still need to filter
+                p.stats = playerStats.filter(function (ps) {
+                    // statsSeasons is defined, but this season isn't in it
+                    if (options.statsSeasons !== "all" && options.statsSeasons.indexOf(ps.season) < 0) {
+                        return false;
+                    }
+
+                    // If options.statsPlayoffs is false, don't include playoffs. Otherwise, include both
+                    if (!options.statsPlayoffs && options.statsPlayoffs !== ps.playoffs) {
+                        return false;
+                    }
+
+                    if (options.statsTid !== null && options.statsTid !== ps.tid) {
+                        return false;
+                    }
+
+                    return true;
+                }).sort(function (a, b) {
+                    // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
+                    return a.psid - b.psid;
+                });
+            }).then(function () {
+                return p;
+            });
         });
-    }).then(function () {
-        eventLog.add(tx, {
-            type: "tragedy",
-            text: '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> ' + reason + '.',
-            showNotification: tid === g.userTid,
-            pids: [p.pid],
-            tids: [tid],
-            persistent: true
-        });
-
-        return tx.complete();
     });
 }
 
@@ -2141,6 +2167,7 @@ module.exports = {
     moodColorText: moodColorText,
     augmentPartialPlayer: augmentPartialPlayer,
     checkStatisticalFeat: checkStatisticalFeat,
-    killOne: killOne
+    killOne: killOne,
+    withStats: withStats
 };
 

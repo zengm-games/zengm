@@ -1,15 +1,12 @@
-/**
- * @name views.leagueDashboard
- * @namespace League dashboard, displaying several bits of information about the league/team.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
 var season = require('../core/season');
 var team = require('../core/team');
+var backboard = require('backboard');
+var Promise = require('bluebird');
 var ko = require('knockout');
 var komapping = require('knockout.mapping');
 var _ = require('underscore');
@@ -23,7 +20,7 @@ function InitViewModel() {
 
 function updateInbox(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
-        return dao.messages.getAll().then(function (messages) {
+        return g.dbl.messages.getAll().then(function (messages) {
             var i;
 
             messages.reverse();
@@ -42,11 +39,10 @@ function updateInbox(inputs, updateEvents) {
 
 function updateTeam(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
-        return dao.teams.get({key: g.userTid}).then(function (t) {
-            var latestSeason;
-
-            latestSeason = t.seasons[t.seasons.length - 1];
-
+        return Promise.all([
+            g.dbl.teams.get(g.userTid),
+            g.dbl.teamSeasons.index("season, tid").get([g.season, g.userTid])
+        ]).spread(function (t, latestSeason) {
             return {
                 region: t.region,
                 name: t.name,
@@ -134,51 +130,46 @@ function updateGames(inputs, updateEvents, vm) {
         completed = [];
 
         // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
-        return dao.games.iterate({
-            index: "season",
-            key: g.season,
-            direction: "prev",
-            callback: function (game, shortCircuit) {
-                var i, overtime;
+        return g.dbl.games.index('season').iterate(g.season, "prev", function (game, shortCircuit) {
+            var i, overtime;
 
-                if (completed.length >= numShowCompleted) {
-                    return shortCircuit();
+            if (completed.length >= numShowCompleted) {
+                return shortCircuit();
+            }
+
+            if (game.overtimes === 1) {
+                overtime = " (OT)";
+            } else if (game.overtimes > 1) {
+                overtime = " (" + game.overtimes + "OT)";
+            } else {
+                overtime = "";
+            }
+
+            // Check tid
+            if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
+                completed.push({
+                    gid: game.gid,
+                    overtime: overtime
+                });
+
+                i = completed.length - 1;
+                if (game.teams[0].tid === g.userTid) {
+                    completed[i].home = true;
+                    completed[i].pts = game.teams[0].pts;
+                    completed[i].oppPts = game.teams[1].pts;
+                    completed[i].oppTid = game.teams[1].tid;
+                    completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
+                    completed[i].won = game.teams[0].pts > game.teams[1].pts;
+                } else if (game.teams[1].tid === g.userTid) {
+                    completed[i].home = false;
+                    completed[i].pts = game.teams[1].pts;
+                    completed[i].oppPts = game.teams[0].pts;
+                    completed[i].oppTid = game.teams[0].tid;
+                    completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
+                    completed[i].won = game.teams[1].pts > game.teams[0].pts;
                 }
 
-                if (game.overtimes === 1) {
-                    overtime = " (OT)";
-                } else if (game.overtimes > 1) {
-                    overtime = " (" + game.overtimes + "OT)";
-                } else {
-                    overtime = "";
-                }
-
-                // Check tid
-                if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
-                    completed.push({
-                        gid: game.gid,
-                        overtime: overtime
-                    });
-
-                    i = completed.length - 1;
-                    if (game.teams[0].tid === g.userTid) {
-                        completed[i].home = true;
-                        completed[i].pts = game.teams[0].pts;
-                        completed[i].oppPts = game.teams[1].pts;
-                        completed[i].oppTid = game.teams[1].tid;
-                        completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
-                        completed[i].won = game.teams[0].pts > game.teams[1].pts;
-                    } else if (game.teams[1].tid === g.userTid) {
-                        completed[i].home = false;
-                        completed[i].pts = game.teams[1].pts;
-                        completed[i].oppPts = game.teams[0].pts;
-                        completed[i].oppTid = game.teams[0].tid;
-                        completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
-                        completed[i].won = game.teams[1].pts > game.teams[0].pts;
-                    }
-
-                    completed[i] = helpers.formatCompletedGame(completed[i]);
-                }
+                completed[i] = helpers.formatCompletedGame(completed[i]);
             }
         }).then(function () {
             vm.completed(completed);
@@ -221,68 +212,68 @@ function updatePlayers(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
         vars = {};
 
-        return dao.players.getAll({
-            index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.UNDRAFTED),
-            statsSeasons: [g.season]
-        }).then(function (players) {
-            var i, stats, userPlayers;
+        return g.dbl.tx(["players", "playerStats"], function (tx) {
+            return tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED)).then(function (players) {
+                return player.withStats(tx, players, {statsSeasons: [g.season]});
+            }).then(function (players) {
+                var i, stats, userPlayers;
 
-            players = player.filter(players, {
-                attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch"],
-                ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
-                stats: ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"],
-                season: g.season,
-                showNoStats: true,
-                showRookies: true,
-                fuzz: true
-            });
+                players = player.filter(players, {
+                    attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch"],
+                    ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
+                    stats: ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"],
+                    season: g.season,
+                    showNoStats: true,
+                    showRookies: true,
+                    fuzz: true
+                });
 
-            // League leaders
-            vars.leagueLeaders = {};
-            stats = ["pts", "trb", "ast"]; // Categories for leaders
-            for (i = 0; i < stats.length; i++) {
-                players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
-                vars.leagueLeaders[stats[i]] = {
-                    pid: players[0].pid,
-                    name: players[0].name,
-                    abbrev: players[0].abbrev,
-                    stat: players[0].stats[stats[i]]
-                };
-            }
-
-            // Team leaders
-            userPlayers = _.filter(players, function (p) { return p.tid === g.userTid; });
-            vars.teamLeaders = {};
-            for (i = 0; i < stats.length; i++) {
-                if (userPlayers.length > 0) {
-                    userPlayers.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
-                    vars.teamLeaders[stats[i]] = {
-                        pid: userPlayers[0].pid,
-                        name: userPlayers[0].name,
-                        stat: userPlayers[0].stats[stats[i]]
-                    };
-                } else {
-                    vars.teamLeaders[stats[i]] = {
-                        pid: 0,
-                        name: "",
-                        stat: 0
+                // League leaders
+                vars.leagueLeaders = {};
+                stats = ["pts", "trb", "ast"]; // Categories for leaders
+                for (i = 0; i < stats.length; i++) {
+                    players.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
+                    vars.leagueLeaders[stats[i]] = {
+                        pid: players[0].pid,
+                        name: players[0].name,
+                        abbrev: players[0].abbrev,
+                        stat: players[0].stats[stats[i]]
                     };
                 }
-            }
 
-            // Roster
-            // Find starting 5
-            vars.starters = userPlayers.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; }).slice(0, 5);
+                // Team leaders
+                userPlayers = _.filter(players, function (p) { return p.tid === g.userTid; });
+                vars.teamLeaders = {};
+                for (i = 0; i < stats.length; i++) {
+                    if (userPlayers.length > 0) {
+                        userPlayers.sort(function (a, b) { return b.stats[stats[i]] - a.stats[stats[i]]; });
+                        vars.teamLeaders[stats[i]] = {
+                            pid: userPlayers[0].pid,
+                            name: userPlayers[0].name,
+                            stat: userPlayers[0].stats[stats[i]]
+                        };
+                    } else {
+                        vars.teamLeaders[stats[i]] = {
+                            pid: 0,
+                            name: "",
+                            stat: 0
+                        };
+                    }
+                }
 
-            return vars;
+                // Roster
+                // Find starting 5
+                vars.starters = userPlayers.sort(function (a, b) { return a.rosterOrder - b.rosterOrder; }).slice(0, 5);
+
+                return vars;
+            });
         });
     }
 }
 
 function updatePlayoffs(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
-        return dao.playoffSeries.get({key: g.season}).then(function (playoffSeries) {
+        return g.dbl.playoffSeries.get(g.season).then(function (playoffSeries) {
             var found, i, rnd, series, vars;
 
             vars = {

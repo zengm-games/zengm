@@ -1,10 +1,5 @@
-/**
- * @name core.trade
- * @namespace Trades between the user's team and other teams.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var league = require('./league');
 var player = require('./player');
@@ -21,7 +16,8 @@ var helpers = require('../util/helpers');
  * @param {Promise.<Array.<Object>>} Resolves to an array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
  */
 function get(ot) {
-    return dao.trade.get({ot: ot, key: 0}).then(function (tr) {
+    var dbOrTx = ot || g.dbl;
+    return dbOrTx.trade.get(0).then(function (tr) {
         return tr.teams;
     });
 }
@@ -44,22 +40,17 @@ function create(teams) {
         // Make sure tid is set
         return Promise.try(function () {
             if (teams[1].tid === undefined || teams[1].tid === null) {
-                return dao.players.get({key: teams[1].pids[0]}).then(function (p) {
+                return g.dbl.players.get(teams[1].pids[0]).then(function (p) {
                     teams[1].tid = p.tid;
                 });
             }
         }).then(function () {
-            var tx;
-
-            tx = dao.tx("trade", "readwrite");
-            dao.trade.put({
-                ot: tx,
-                value: {
+            return g.dbl.tx("trade", "readwrite", function (tx) {
+                return tx.trade.put({
                     rid: 0,
                     teams: teams
-                }
-            });
-            return tx.complete().then(function () {
+                });
+            }).then(function () {
                 league.updateLastDbChange();
             });
         });
@@ -131,94 +122,86 @@ function isUntradable(player) {
  * @return {Promise.<Array.<Object>>} Resolves to an array taht's the same as the input, but with invalid entries removed.
  */
 function updatePlayers(teams) {
-    var promises, tx;
+    var promises;
 
     // This is just for debugging
     team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(function (dv) {
         console.log(dv);
     });
 
-    tx = dao.tx(["draftPicks", "players"]);
+    return g.dbl.tx(["draftPicks", "players"], function (tx) {
+        // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
+        promises = [];
+        teams.forEach(function (t) {
+            // Check players
+            promises.push(tx.players.index('tid').getAll(t.tid).then(function (players) {
+                var j, pidsGood;
 
-    // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
-    promises = [];
-    teams.forEach(function (t) {
-        // Check players
-        promises.push(dao.players.getAll({
-            ot: tx,
-            index: "tid",
-            key: t.tid
-        }).then(function (players) {
-            var j, pidsGood;
-
-            pidsGood = [];
-            for (j = 0; j < players.length; j++) {
-                // Also, make sure player is not untradable
-                if (t.pids.indexOf(players[j].pid) >= 0 && !isUntradable(players[j])) {
-                    pidsGood.push(players[j].pid);
-                }
-            }
-            t.pids = pidsGood;
-        }));
-
-        // Check draft picks
-        promises.push(dao.draftPicks.getAll({
-            ot: tx,
-            index: "tid",
-            key: t.tid
-        }).then(function (dps) {
-            var dpidsGood, j;
-
-            dpidsGood = [];
-            for (j = 0; j < dps.length; j++) {
-                if (t.dpids.indexOf(dps[j].dpid) >= 0) {
-                    dpidsGood.push(dps[j].dpid);
-                }
-            }
-            t.dpids = dpidsGood;
-        }));
-    });
-
-    return Promise.all(promises).then(function () {
-        var tx, updated;
-
-        updated = false; // Has the trade actually changed?
-
-        tx = dao.tx("trade", "readwrite");
-        get(tx).then(function (oldTeams) {
-            var i;
-
-            for (i = 0; i < 2; i++) {
-                if (teams[i].tid !== oldTeams[i].tid) {
-                    updated = true;
-                    break;
-                }
-                if (teams[i].pids.toString() !== oldTeams[i].pids.toString()) {
-                    updated = true;
-                    break;
-                }
-                if (teams[i].dpids.toString() !== oldTeams[i].dpids.toString()) {
-                    updated = true;
-                    break;
-                }
-            }
-
-            if (updated) {
-                dao.trade.put({
-                    ot: tx,
-                    value: {
-                        rid: 0,
-                        teams: teams
+                pidsGood = [];
+                for (j = 0; j < players.length; j++) {
+                    // Also, make sure player is not untradable
+                    if (t.pids.indexOf(players[j].pid) >= 0 && !isUntradable(players[j])) {
+                        pidsGood.push(players[j].pid);
                     }
-                });
-            }
+                }
+                t.pids = pidsGood;
+            }));
+
+            // Check draft picks
+            promises.push(tx.draftPicks.index('tid').getAll(t.tid).then(function (dps) {
+                var dpidsGood, j;
+
+                dpidsGood = [];
+                for (j = 0; j < dps.length; j++) {
+                    if (t.dpids.indexOf(dps[j].dpid) >= 0) {
+                        dpidsGood.push(dps[j].dpid);
+                    }
+                }
+                t.dpids = dpidsGood;
+            }));
         });
 
-        return tx.complete().then(function () {
-            if (updated) {
-                league.updateLastDbChange();
-            }
+        return Promise.all(promises).then(function () {
+            var updated;
+
+            updated = false; // Has the trade actually changed?
+
+            return g.dbl.tx("trade", "readwrite", function (tx) {
+                return get(tx).then(function (oldTeams) {
+                    var i;
+
+                    for (i = 0; i < 2; i++) {
+                        if (teams[i].tid !== oldTeams[i].tid) {
+                            updated = true;
+                            break;
+                        }
+                        if (teams[i].pids.toString() !== oldTeams[i].pids.toString()) {
+                            updated = true;
+                            break;
+                        }
+                        if (teams[i].dpids.toString() !== oldTeams[i].dpids.toString()) {
+                            updated = true;
+                            break;
+                        }
+                    }
+
+                    if (updated) {
+                        return tx.trade.put({
+                            rid: 0,
+                            teams: teams
+                        }).then(function () {
+                            return updated;
+                        });
+                    }
+
+                    return updated;
+                });
+            });
         });
+    }).then(function (updated) {
+        if (updated) {
+            league.updateLastDbChange();
+        }
     }).then(function () {
         return teams;
     });
@@ -233,7 +216,7 @@ function updatePlayers(teams) {
  * @return {Promise.Object} Resolves to an object contianing the trade summary.
  */
 function summary(teams) {
-    var dpids, i, pids, players, promises, s, tids, tx;
+    var dpids, i, pids, players, promises, s, tids;
 
     tids = [teams[0].tid, teams[1].tid];
     pids = [teams[0].pids, teams[1].pids];
@@ -244,87 +227,79 @@ function summary(teams) {
         s.teams.push({trade: [], total: 0, payrollAfterTrade: 0, name: ""});
     }
 
-    tx = dao.tx(["draftPicks", "players", "releasedPlayers"]);
+    return g.dbl.tx(["draftPicks", "players", "releasedPlayers"], function (tx) {
+        // Calculate properties of the trade
+        players = [[], []];
+        promises = [];
+        [0, 1].forEach(function (i) {
+            promises.push(tx.players.index('tid').getAll(tids[i]).then(function (playersTemp) {
+                players[i] = player.filter(playersTemp, {
+                    attrs: ["pid", "name", "contract"],
+                    season: g.season,
+                    tid: tids[i],
+                    showRookies: true
+                });
+                s.teams[i].trade = players[i].filter(function (player) { return pids[i].indexOf(player.pid) >= 0; });
+                s.teams[i].total = s.teams[i].trade.reduce(function (memo, player) { return memo + player.contract.amount; }, 0);
+            }));
 
-    // Calculate properties of the trade
-    players = [[], []];
-    promises = [];
-    [0, 1].forEach(function (i) {
-        promises.push(dao.players.getAll({
-            ot: tx,
-            index: "tid",
-            key: tids[i]
-        }).then(function (playersTemp) {
-            players[i] = player.filter(playersTemp, {
-                attrs: ["pid", "name", "contract"],
-                season: g.season,
-                tid: tids[i],
-                showRookies: true
-            });
-            s.teams[i].trade = players[i].filter(function (player) { return pids[i].indexOf(player.pid) >= 0; });
-            s.teams[i].total = s.teams[i].trade.reduce(function (memo, player) { return memo + player.contract.amount; }, 0);
-        }));
+            promises.push(tx.draftPicks.index('tid').getAll(tids[i]).then(function (picks) {
+                var j;
 
-        promises.push(dao.draftPicks.getAll({
-            ot: tx,
-            index: "tid",
-            key: tids[i]
-        }).then(function (picks) {
-            var j;
-
-            s.teams[i].picks = [];
-            for (j = 0; j < picks.length; j++) {
-                if (dpids[i].indexOf(picks[j].dpid) >= 0) {
-                    s.teams[i].picks.push({desc: picks[j].season + " " + (picks[j].round === 1 ? "1st" : "2nd") + " round pick (" + g.teamAbbrevsCache[picks[j].originalTid] + ")"});
+                s.teams[i].picks = [];
+                for (j = 0; j < picks.length; j++) {
+                    if (dpids[i].indexOf(picks[j].dpid) >= 0) {
+                        s.teams[i].picks.push({desc: picks[j].season + " " + (picks[j].round === 1 ? "1st" : "2nd") + " round pick (" + g.teamAbbrevsCache[picks[j].originalTid] + ")"});
+                    }
                 }
-            }
-        }));
-    });
+            }));
+        });
 
-    return Promise.all(promises).then(function () {
-        var overCap, ratios;
+        return Promise.all(promises).then(function () {
+            var overCap, ratios;
 
-        // Test if any warnings need to be displayed
-        overCap = [false, false];
-        ratios = [0, 0];
-        return Promise.map([0, 1], function (j) {
-            var k;
-            if (j === 0) {
-                k = 1;
-            } else if (j === 1) {
-                k = 0;
-            }
-
-            s.teams[j].name = g.teamRegionsCache[tids[j]] + " " + g.teamNamesCache[tids[j]];
-
-            if (s.teams[j].total > 0) {
-                ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
-            } else if (s.teams[k].total > 0) {
-                ratios[j] = Infinity;
-            } else {
-                ratios[j] = 100;
-            }
-
-            return team.getPayroll(tx, tids[j]).get(0).then(function (payroll) {
-                s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
-                if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
-                    overCap[j] = true;
+            // Test if any warnings need to be displayed
+            overCap = [false, false];
+            ratios = [0, 0];
+            return Promise.map([0, 1], function (j) {
+                var k;
+                if (j === 0) {
+                    k = 1;
+                } else if (j === 1) {
+                    k = 0;
                 }
-            });
-        }).then(function () {
-            var j;
 
-            if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
-                // Which team is at fault?;
-                if (ratios[0] > 125) {
-                    j = 0;
+                s.teams[j].name = g.teamRegionsCache[tids[j]] + " " + g.teamNamesCache[tids[j]];
+
+                if (s.teams[j].total > 0) {
+                    ratios[j] = Math.floor((100 * s.teams[k].total) / s.teams[j].total);
+                } else if (s.teams[k].total > 0) {
+                    ratios[j] = Infinity;
                 } else {
-                    j = 1;
+                    ratios[j] = 100;
                 }
-                s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
-            }
 
-            return s;
+                return team.getPayroll(tx, tids[j]).get(0).then(function (payroll) {
+                    s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
+                    if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
+                        overCap[j] = true;
+                    }
+                });
+            }).then(function () {
+                var j;
+
+                if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
+                    // Which team is at fault?;
+                    if (ratios[0] > 125) {
+                        j = 0;
+                    } else {
+                        j = 1;
+                    }
+                    s.warning = "The " + s.teams[j].name + " are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is " + ratios[j] + "%.";
+                }
+
+                return s;
+            });
         });
     });
 }
@@ -337,20 +312,18 @@ function summary(teams) {
  * @return {Promise}
  */
 function clear() {
-    var tx;
+    return g.dbl.tx("trade", "readwrite", function (tx) {
+        return tx.trade.get(0).then(function (tr) {
+            var i;
 
-    tx = dao.tx("trade", "readwrite");
-    dao.trade.get({ot: tx, key: 0}).then(function (tr) {
-        var i;
+            for (i = 0; i < tr.teams.length; i++) {
+                tr.teams[i].pids = [];
+                tr.teams[i].dpids = [];
+            }
 
-        for (i = 0; i < tr.teams.length; i++) {
-            tr.teams[i].pids = [];
-            tr.teams[i].dpids = [];
-        }
-
-        dao.trade.put({ot: tx, value: tr});
-    });
-    return tx.complete().then(function () {
+            return tx.trade.put(tr);
+        });
+    }).then(function () {
         league.updateLastDbChange();
     });
 }
@@ -391,98 +364,92 @@ function propose(forceTrade) {
             outcome = "rejected"; // Default
 
             return team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(function (dv) {
-                var formatAssetsEventLog, tx;
+                var formatAssetsEventLog;
 
-                tx = dao.tx(["draftPicks", "players", "playerStats"], "readwrite");
+                return g.dbl.tx(["draftPicks", "players", "playerStats"], "readwrite", function (tx) {
+                    if (dv > 0 || forceTrade) {
+                        // Trade players
+                        outcome = "accepted";
+                        [0, 1].forEach(function (j) {
+                            var k;
 
-                if (dv > 0 || forceTrade) {
-                    // Trade players
-                    outcome = "accepted";
-                    [0, 1].forEach(function (j) {
-                        var k;
+                            if (j === 0) {
+                                k = 1;
+                            } else if (j === 1) {
+                                k = 0;
+                            }
 
-                        if (j === 0) {
-                            k = 1;
-                        } else if (j === 1) {
-                            k = 0;
-                        }
+                            pids[j].forEach(function (pid) {
+                                tx.players.get(pid).then(function (p) {
+                                    p.tid = tids[k];
+                                    // Don't make traded players untradable
+                                    //p.gamesUntilTradable = 15;
+                                    p.ptModifier = 1; // Reset
+                                    if (g.phase <= g.PHASE.PLAYOFFS) {
+                                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                                    }
+                                    return tx.players.put(p);
+                                });
+                            });
 
-                        pids[j].forEach(function (pid) {
-                            dao.players.get({
-                                ot: tx,
-                                key: pid
-                            }).then(function (p) {
-                                p.tid = tids[k];
-                                // Don't make traded players untradable
-                                //p.gamesUntilTradable = 15;
-                                p.ptModifier = 1; // Reset
-                                if (g.phase <= g.PHASE.PLAYOFFS) {
-                                    p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-                                }
-                                dao.players.put({ot: tx, value: p});
+                            dpids[j].forEach(function (dpid) {
+                                tx.draftPicks.get(dpid).then(function (dp) {
+                                    dp.tid = tids[k];
+                                    dp.abbrev = g.teamAbbrevsCache[tids[k]];
+                                    return tx.draftPicks.put(dp);
+                                });
                             });
                         });
 
-                        dpids[j].forEach(function (dpid) {
-                            dao.draftPicks.get({
-                                ot: tx,
-                                key: dpid
-                            }).then(function (dp) {
-                                dp.tid = tids[k];
-                                dp.abbrev = g.teamAbbrevsCache[tids[k]];
-                                dao.draftPicks.put({ot: tx, value: dp});
+                        // Log event
+                        formatAssetsEventLog = function (t) {
+                            var i, strings, text;
+
+                            strings = [];
+
+                            t.trade.forEach(function (p) {
+                                strings.push('<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>');
                             });
-                        });
-                    });
+                            t.picks.forEach(function (dp) {
+                                strings.push('a ' + dp.desc);
+                            });
 
-                    // Log event
-                    formatAssetsEventLog = function (t) {
-                        var i, strings, text;
-
-                        strings = [];
-
-                        t.trade.forEach(function (p) {
-                            strings.push('<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a>');
-                        });
-                        t.picks.forEach(function (dp) {
-                            strings.push('a ' + dp.desc);
-                        });
-
-                        if (strings.length === 0) {
-                            text = "nothing";
-                        } else if (strings.length === 1) {
-                            text = strings[0];
-                        } else if (strings.length === 2) {
-                            text = strings[0] + " and " + strings[1];
-                        } else {
-                            text = strings[0];
-                            for (i = 1; i < strings.length; i++) {
-                                if (i === strings.length - 1) {
-                                    text += ", and " + strings[i];
-                                } else {
-                                    text += ", " + strings[i];
+                            if (strings.length === 0) {
+                                text = "nothing";
+                            } else if (strings.length === 1) {
+                                text = strings[0];
+                            } else if (strings.length === 2) {
+                                text = strings[0] + " and " + strings[1];
+                            } else {
+                                text = strings[0];
+                                for (i = 1; i < strings.length; i++) {
+                                    if (i === strings.length - 1) {
+                                        text += ", and " + strings[i];
+                                    } else {
+                                        text += ", " + strings[i];
+                                    }
                                 }
                             }
-                        }
 
-                        return text;
-                    };
+                            return text;
+                        };
 
-                    eventLog.add(null, {
-                        type: "trade",
-                        text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season]) + '">' + g.teamNamesCache[tids[0]] + '</a> traded ' + formatAssetsEventLog(s.teams[0]) + ' to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season]) + '">' + g.teamNamesCache[tids[1]] + '</a> for ' + formatAssetsEventLog(s.teams[1]) + '.',
-                        showNotification: false,
-                        pids: pids[0].concat(pids[1]),
-                        tids: tids
-                    });
-                }
-
-                return tx.complete().then(function () {
+                        eventLog.add(null, {
+                            type: "trade",
+                            text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season]) + '">' + g.teamNamesCache[tids[0]] + '</a> traded ' + formatAssetsEventLog(s.teams[0]) + ' to the <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season]) + '">' + g.teamNamesCache[tids[1]] + '</a> for ' + formatAssetsEventLog(s.teams[1]) + '.',
+                            showNotification: false,
+                            pids: pids[0].concat(pids[1]),
+                            tids: tids
+                        });
+                    }
+                }).then(function () {
                     if (outcome === "accepted") {
                         return clear().then(function () { // This includes dbChange
                             // Auto-sort CPU team roster
                             if (g.userTids.indexOf(tids[1]) < 0) {
-                                return team.rosterAutoSort(null, tids[1]);
+                                return g.dbl.tx("players", "readwrite", function (tx) {
+                                    return team.rosterAutoSort(tx, tids[1]);
+                                });
                             }
                         }).then(function () {
                             return [true, 'Trade accepted! "Nice doing business with you!"'];
@@ -514,19 +481,14 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
 
     // Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
     tryAddAsset = function () {
-        var assets, tx;
+        var assets;
 
         assets = [];
 
-        tx = dao.tx(["draftPicks", "players"]);
-
-        if (!holdUserConstant) {
-            // Get all players not in userPids
-            dao.players.iterate({
-                ot: tx,
-                index: "tid",
-                key: teams[0].tid,
-                callback: function (p) {
+        return g.dbl.tx(["draftPicks", "players"], function (tx) {
+            if (!holdUserConstant) {
+                // Get all players not in userPids
+                tx.players.index('tid').iterate(teams[0].tid, function (p) {
                     if (teams[0].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                         assets.push({
                             type: "player",
@@ -534,16 +496,11 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
                             tid: teams[0].tid
                         });
                     }
-                }
-            });
-        }
+                });
+            }
 
-        // Get all players not in otherPids
-        dao.players.iterate({
-            ot: tx,
-            index: "tid",
-            key: teams[1].tid,
-            callback: function (p) {
+            // Get all players not in otherPids
+            tx.players.index('tid').iterate(teams[1].tid, function (p) {
                 if (teams[1].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                     assets.push({
                         type: "player",
@@ -551,16 +508,11 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
                         tid: teams[1].tid
                     });
                 }
-            }
-        });
+            });
 
-        if (!holdUserConstant) {
-            // Get all draft picks not in userDpids
-            dao.draftPicks.iterate({
-                ot: tx,
-                index: "tid",
-                key: teams[0].tid,
-                callback: function (dp) {
+            if (!holdUserConstant) {
+                // Get all draft picks not in userDpids
+                tx.draftPicks.index('tid').iterate(teams[0].tid, function (dp) {
                     if (teams[0].dpids.indexOf(dp.dpid) < 0) {
                         assets.push({
                             type: "draftPick",
@@ -568,16 +520,11 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
                             tid: teams[0].tid
                         });
                     }
-                }
-            });
-        }
+                });
+            }
 
-        // Get all draft picks not in otherDpids
-        dao.draftPicks.iterate({
-            ot: tx,
-            index: "tid",
-            key: teams[1].tid,
-            callback: function (dp) {
+            // Get all draft picks not in otherDpids
+            tx.draftPicks.index('tid').iterate(teams[1].tid, function (dp) {
                 if (teams[1].dpids.indexOf(dp.dpid) < 0) {
                     assets.push({
                         type: "draftPick",
@@ -585,10 +532,8 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
                         tid: teams[1].tid
                     });
                 }
-            }
-        });
-
-        return tx.complete().then(function () {
+            });
+        }).then(function () {
             var otherDpids, otherPids, userDpids, userPids;
 
             // If we've already added 5 assets or there are no more to try, stop
@@ -697,7 +642,9 @@ function makeItWork(teams, holdUserConstant, estValuesCached) {
  * @return {Promise.Object} Resolves to estimated draft pick values.
  */
 function getPickValues(ot) {
-    var estValues, i, promises;
+    var dbOrTx, estValues, i, promises;
+
+    dbOrTx = ot || g.dbl;
 
     estValues = {
         default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37] // This is basically arbitrary
@@ -706,11 +653,7 @@ function getPickValues(ot) {
     // Look up to 4 season in the future, but depending on whether this is before or after the draft, the first or last will be empty/incomplete
     promises = [];
     for (i = g.season; i < g.season + 4; i++) {
-        promises.push(dao.players.getAll({
-            ot: ot,
-            index: "draft.year",
-            key: i
-        }).then(function (players) {
+        promises.push(dbOrTx.players.index('draft.year').getAll(i).then(function (players) {
             if (players.length > 0) {
                 for (i = 0; i < players.length; i++) {
                     players[i].value += 4; // +4 is to generally make picks more valued
@@ -766,18 +709,13 @@ function makeItWorkTrade() {
                 }
 
                 return Promise.try(function () {
-                    var tx;
-
                     if (updated) {
-                        tx = dao.tx("trade", "readwrite");
-                        dao.trade.put({
-                            ot: tx,
-                            value: {
+                        return g.dbl.tx("trade", "readwrite", function (tx) {
+                            return tx.trade.put({
                                 rid: 0,
                                 teams: teams
-                            }
+                            });
                         });
-                        return tx.complete();
                     }
                 }).then(function () {
                     if (s.warning) {

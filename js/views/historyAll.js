@@ -1,15 +1,11 @@
-/**
- * @name views.historyAll
- * @namespace Single table summary of all past seasons, leaguewide.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var Promise = require('bluebird');
 var $ = require('jquery');
 var ko = require('knockout');
+var team = require('../core/team');
 var bbgmView = require('../util/bbgmView');
 var helpers = require('../util/helpers');
 
@@ -26,8 +22,11 @@ mapping = {
 function updateHistory(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0) {
         return Promise.all([
-            dao.awards.getAll(),
-            dao.teams.getAll()
+            g.dbl.awards.getAll(),
+            team.filter({
+                attrs: ["tid", "abbrev", "region", "name"],
+                seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"]
+            })
         ]).spread(function (awards, teams) {
             var championshipsByTid, i, seasons;
 

@@ -1,7 +1,3 @@
-/**
- * @name views.fantasyDraft
- * @namespace Fantasy draft confirmation.
- */
 'use strict';
 
 var g = require('../globals');

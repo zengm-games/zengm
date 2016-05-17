@@ -1,14 +1,10 @@
-/**
- * @name core.season
- * @namespace Somewhat of a hodgepodge. Basically, this is for anything related to a single season that doesn't deserve to be broken out into its own file. Changing phases of the season is in core.phase.
- */
 /*eslint no-use-before-define: 0*/
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var player = require('./player');
 var team = require('./team');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var _ = require('underscore');
 var eventLog = require('../util/eventLog');
@@ -88,7 +84,7 @@ function awards(tx) {
         pids = _.uniq(_.pluck(awardsByPlayer, "pid"));
 
         return Promise.map(pids, function (pid) {
-            return dao.players.get({ot: tx, key: pid}).then(function (p) {
+            return tx.players.get(pid).then(function (p) {
                 var i;
 
                 for (i = 0; i < awardsByPlayer.length; i++) {
@@ -97,9 +93,9 @@ function awards(tx) {
                     }
                 }
 
-                return dao.players.put({ot: tx, value: p});
+                return tx.players.put(p);
             });
-        }, {concurrency: Infinity});
+        });
     };
 
     // Get teams for won/loss record for awards, as well as finding the teams with the best records
@@ -131,11 +127,10 @@ function awards(tx) {
         // Sort teams by tid so it can be easily used in awards formulas
         teams.sort(function (a, b) { return a.tid - b.tid; });
 
-        return [teams, dao.players.getAll({
-            ot: tx,
-            index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.FREE_AGENT), // Any non-retired player can win an award
-            statsSeasons: [g.season]
+        return [teams, tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)).then(function (players) {
+            return player.withStats(tx, players, {
+                statsSeasons: [g.season]
+            });
         })];
     }).spread(function (teams, players) {
         var champTid, i, p, rookies, type;
@@ -240,13 +235,12 @@ function awards(tx) {
             }
         }
         // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
-        return [champTid, dao.players.getAll({
-            ot: tx,
-            index: "tid",
-            key: champTid,
-            statsSeasons: [g.season],
-            statsTid: champTid,
-            statsPlayoffs: true
+        return [champTid, tx.players.index('tid').getAll(champTid).then(function (players) {
+            return player.withStats(tx, players, {
+                statsSeasons: [g.season],
+                statsTid: champTid,
+                statsPlayoffs: true
+            });
         })];
     }).spread(function (champTid, players) {
         var p;
@@ -263,7 +257,7 @@ function awards(tx) {
         awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
         awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
 
-        return dao.awards.put({ot: tx, value: awards}).then(function () {
+        return tx.awards.put(awards).then(function () {
             return saveAwardsByPlayer(awardsByPlayer);
         }).then(function () {
             var i, p, text;
@@ -305,33 +299,35 @@ function getSchedule(options) {
     options.ot = options.ot !== undefined ? options.ot : null;
     options.oneDay = options.oneDay !== undefined ? options.oneDay : false;
 
-    return dao.schedule.getAll({ot: options.ot}).then(function (schedule) {
-        var i, tids;
+    return helpers.maybeReuseTx(["schedule"], "readonly", options.ot, function (tx) {
+        return tx.schedule.getAll().then(function (schedule) {
+            var i, tids;
 
-        if (options.oneDay) {
-            schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
+            if (options.oneDay) {
+                schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
 
-            // Only take the games up until right before a team plays for the second time that day
-            tids = [];
-            for (i = 0; i < schedule.length; i++) {
-                if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
-                    tids.push(schedule[i].homeTid);
-                    tids.push(schedule[i].awayTid);
-                } else {
-                    break;
+                // Only take the games up until right before a team plays for the second time that day
+                tids = [];
+                for (i = 0; i < schedule.length; i++) {
+                    if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
+                        tids.push(schedule[i].homeTid);
+                        tids.push(schedule[i].awayTid);
+                    } else {
+                        break;
+                    }
                 }
+                schedule = schedule.slice(0, i);
             }
-            schedule = schedule.slice(0, i);
-        }
 
-        return schedule;
+            return schedule;
+        });
     });
 }
 
 /**
  * Save the schedule to the database, overwriting what's currently there.
  *
- * @param {(IDBTransaction|null)} options.ot An IndexedDB transaction on schedule readwrite; if null is passed, then a new transaction will be used.
+ * @param {(IDBTransaction)} tx An IndexedDB transaction on schedule readwrite.
  * @param {Array} tids A list of lists, each containing the team IDs of the home and
         away teams, respectively, for every game in the season, respectively.
  * @return {Promise}
@@ -347,11 +343,9 @@ function setSchedule(tx, tids) {
         });
     }
 
-    tx = dao.tx("schedule", "readwrite", tx);
-
-    return dao.schedule.clear({ot: tx}).then(function () {
+    return tx.schedule.clear().then(function () {
         return Promise.each(newSchedule, function (matchup) {
-            return dao.schedule.add({ot: tx, value: matchup});
+            return tx.schedule.add(matchup);
         });
     });
 }
@@ -580,19 +574,13 @@ function newSchedule(teams) {
  * Create a single day's schedule for an in-progress playoffs.
  *
  * @memberOf core.season
- * @param {(IDBTransaction|null)} tx An IndexedDB transaction on playoffSeries, schedule, and teams, readwrite.
+ * @param {(IDBTransaction)} tx An IndexedDB transaction on playoffSeries, schedule, and teamSeasons, readwrite.
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
 function newSchedulePlayoffsDay(tx) {
     var playoffSeries, rnd, series, tids;
 
-    tx = dao.tx(["playoffSeries", "schedule", "teams"], "readwrite", tx);
-
-    // This is a little tricky. We're returning this promise, but within the "then"s we're returning tx.complete() for the same transaction. Probably should be refactored.
-    return dao.playoffSeries.get({
-        ot: tx,
-        key: g.season
-    }).then(function (playoffSeriesLocal) {
+    return tx.playoffSeries.get(g.season).then(function (playoffSeriesLocal) {
         var i, numGames;
 
         playoffSeries = playoffSeriesLocal;
@@ -631,22 +619,14 @@ function newSchedulePlayoffsDay(tx) {
             } else if (series[rnd][0].away.won === 4) {
                 key = series[rnd][0].away.tid;
             }
-            return dao.teams.iterate({
-                ot: tx,
-                key: key,
-                callback: function (t) {
-                    var s;
-
-                    s = t.seasons.length - 1;
-
-                    t.seasons[s].playoffRoundsWon = 4;
-                    t.seasons[s].hype += 0.05;
-                    if (t.seasons[s].hype > 1) {
-                        t.seasons[s].hype = 1;
-                    }
-
-                    return t;
+            return tx.teamSeasons.index("season, tid").iterate([g.season, key], function (teamSeason) {
+                teamSeason.playoffRoundsWon = 4;
+                teamSeason.hype += 0.05;
+                if (teamSeason.hype > 1) {
+                    teamSeason.hype = 1;
                 }
+
+                return teamSeason;
             }).then(function () {
                 // Playoffs are over! Return true!
                 return true;
@@ -687,25 +667,19 @@ function newSchedulePlayoffsDay(tx) {
         }
 
         playoffSeries.currentRound += 1;
-        return dao.playoffSeries.put({ot: tx, value: playoffSeries}).then(function () {
+        return tx.playoffSeries.put(playoffSeries).then(function () {
             // Update hype for winning a series
             return Promise.map(tidsWon, function (tid) {
-                return dao.teams.get({
-                    ot: tx,
-                    key: tid
-                }).then(function (t) {
-                    var s;
-
-                    s = t.seasons.length - 1;
-                    t.seasons[s].playoffRoundsWon = playoffSeries.currentRound;
-                    t.seasons[s].hype += 0.05;
-                    if (t.seasons[s].hype > 1) {
-                        t.seasons[s].hype = 1;
+                return tx.teamSeasons.index("season, tid").get([g.season, tid]).then(function (teamSeason) {
+                    teamSeason.playoffRoundsWon = playoffSeries.currentRound;
+                    teamSeason.hype += 0.05;
+                    if (teamSeason.hype > 1) {
+                        teamSeason.hype = 1;
                     }
 
-                    return dao.teams.put({ot: tx, value: t});
+                    return tx.teamSeasons.put(teamSeason);
                 });
-            }, {concurrency: Infinity});
+            });
         }).then(function () {
             // Next time, the schedule for the first day of the next round will be set
             return newSchedulePlayoffsDay(tx);

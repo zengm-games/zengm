@@ -1,10 +1,5 @@
-/**
- * @name views.deleteOldData
- * @namespace Delete old league data.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var league = require('../core/league');
@@ -17,7 +12,7 @@ function get(req) {
 }
 
 function post(req) {
-    var deleteOldDataEl, deleteOldDataSuccessEl, toDelete, tx;
+    var deleteOldDataEl, deleteOldDataSuccessEl, toDelete;
 
     deleteOldDataEl = document.getElementById("delete-old-data");
     deleteOldDataEl.disabled = true;
@@ -25,114 +20,85 @@ function post(req) {
     deleteOldDataSuccessEl = document.getElementById("delete-old-data-success");
     deleteOldDataSuccessEl.style.visibility = "hidden";
 
-    tx = dao.tx(["games", "teams", "players", "playerStats"], "readwrite");
+    g.dbl.tx(["games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", function (tx) {
+        if (req.params.hasOwnProperty("boxScores")) {
+            tx.games.clear();
+        }
 
-    if (req.params.hasOwnProperty("boxScores")) {
-        dao.games.clear({ot: tx});
-    }
-
-    if (req.params.hasOwnProperty("teamStats") || req.params.hasOwnProperty("teamHistory")) {
-        dao.teams.iterate({
-            ot: tx,
-            callback: function (t) {
-                if (req.params.hasOwnProperty("teamStats")) {
-                    t.stats = [t.stats[t.stats.length - 1]];
-                }
-                if (req.params.hasOwnProperty("teamHistory")) {
-                    t.seasons = [t.seasons[t.seasons.length - 1]];
-                }
-                return t;
-            }
-        });
-    }
-
-    if (req.params.hasOwnProperty("retiredPlayers")) {
-        toDelete = [];
-
-        dao.players.iterate({
-            ot: tx,
-            index: "tid",
-            key: g.PLAYER.RETIRED,
-            callback: function (p) {
-                toDelete.push(p.pid);
-                return dao.players.delete({ot: tx, key: p.pid});
-            }
-        }).then(function () {
-            dao.playerStats.iterate({
-                ot: tx,
-                callback: function (ps) {
-                    if (toDelete.indexOf(ps.pid) >= 0) {
-                        return dao.playerStats.delete({ot: tx, key: ps.psid});
-                    }
+        if (req.params.hasOwnProperty("teamHistory")) {
+            tx.teamSeasons.iterate(function (teamSeason) {
+                if (teamSeason.season < g.season) {
+                    return tx.teamSeasons.delete(teamSeason.rid);
                 }
             });
-        });
-    } else if (req.params.hasOwnProperty("retiredPlayersUnnotable")) {
-        toDelete = [];
+        }
 
-        dao.players.iterate({
-            ot: tx,
-            index: "tid",
-            key: g.PLAYER.RETIRED,
-            callback: function (p) {
+        if (req.params.hasOwnProperty("teamStats")) {
+            tx.teamStats.iterate(function (teamStats) {
+                if (teamStats.season < g.season) {
+                    return tx.teamStats.delete(teamStats.rid);
+                }
+            });
+        }
+
+        if (req.params.hasOwnProperty("retiredPlayers")) {
+            toDelete = [];
+
+            tx.players.index('tid').iterate(g.PLAYER.RETIRED, function (p) {
+                toDelete.push(p.pid);
+                return tx.players.delete(p.pid);
+            }).then(function () {
+                tx.playerStats.iterate(function (ps) {
+                    if (toDelete.indexOf(ps.pid) >= 0) {
+                        return tx.playerStats.delete(ps.psid);
+                    }
+                });
+            });
+        } else if (req.params.hasOwnProperty("retiredPlayersUnnotable")) {
+            toDelete = [];
+
+            tx.players.index('tid').iterate(g.PLAYER.RETIRED, function (p) {
                 if (p.awards.length === 0 && p.statsTids.indexOf(g.userTid) < 0) {
                     toDelete.push(p.pid);
-                    return dao.players.delete({ot: tx, key: p.pid});
+                    return tx.players.delete(p.pid);
                 }
-            }
-        }).then(function () {
-            dao.playerStats.iterate({
-                ot: tx,
-                callback: function (ps) {
+            }).then(function () {
+                tx.playerStats.iterate(function (ps) {
                     if (toDelete.indexOf(ps.pid) >= 0) {
-                        return dao.playerStats.delete({ot: tx, key: ps.psid});
+                        return tx.playerStats.delete(ps.psid);
                     }
-                }
+                });
             });
-        });
-    }
+        }
 
-    if (req.params.hasOwnProperty("playerStats")) {
-        dao.players.iterate({
-            ot: tx,
-            callback: function (p) {
+        if (req.params.hasOwnProperty("playerStats")) {
+            tx.players.iterate(function (p) {
                 p.ratings = [p.ratings[p.ratings.length - 1]];
                 return p;
-            }
-        });
-        dao.playerStats.iterate({
-            ot: tx,
-            callback: function (ps) {
+            });
+            tx.playerStats.iterate(function (ps) {
                 if (ps.season < g.season) {
-                    return dao.playerStats.delete({ot: tx, key: ps.psid});
+                    return tx.playerStats.delete(ps.psid);
                 }
-            }
-        });
-    } else if (req.params.hasOwnProperty("playerStatsUnnotable")) {
-        toDelete = [];
+            });
+        } else if (req.params.hasOwnProperty("playerStatsUnnotable")) {
+            toDelete = [];
 
-        dao.players.iterate({
-            ot: tx,
-            callback: function (p) {
+            tx.players.iterate(function (p) {
                 if (p.awards.length === 0 && p.statsTids.indexOf(g.userTid) < 0) {
                     p.ratings = [p.ratings[p.ratings.length - 1]];
                     toDelete.push(p.pid);
                 }
                 return p;
-            }
-        }).then(function () {
-            dao.playerStats.iterate({
-                ot: tx,
-                callback: function (ps) {
+            }).then(function () {
+                tx.playerStats.iterate(function (ps) {
                     if (ps.season < g.season && toDelete.indexOf(ps.pid) >= 0) {
-                        return dao.playerStats.delete({ot: tx, key: ps.psid});
+                        return tx.playerStats.delete(ps.psid);
                     }
-                }
+                });
             });
-        });
-    }
-
-    tx.complete().then(function () {
+        }
+    }).then(function () {
         league.updateLastDbChange();
         deleteOldDataEl.disabled = false;
         deleteOldDataSuccessEl.style.visibility = "visible";

@@ -1,10 +1,5 @@
-/**
- * @name core.freeAgents
- * @namespace Functions related to free agents that didn't make sense to put anywhere else.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('./player');
@@ -25,98 +20,90 @@ var random = require('../util/random');
  * @return {Promise}
  */
 function autoSign(tx) {
-    tx = dao.tx(["players", "playerStats", "releasedPlayers", "teams"], "readwrite", tx);
+    return helpers.maybeReuseTx(["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"], "readwrite", tx, function (tx) {
+        return Promise.all([
+            team.filter({
+                ot: tx,
+                attrs: ["strategy"],
+                season: g.season
+            }),
+            tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT)
+        ]).spread(function (teams, players) {
+            var i, strategies, tids;
 
-    return Promise.all([
-        team.filter({
-            ot: tx,
-            attrs: ["strategy"],
-            season: g.season
-        }),
-        dao.players.getAll({
-            ot: tx,
-            index: "tid",
-            key: g.PLAYER.FREE_AGENT
-        })
-    ]).spread(function (teams, players) {
-        var i, strategies, tids;
+            strategies = _.pluck(teams, "strategy");
 
-        strategies = _.pluck(teams, "strategy");
+            // List of free agents, sorted by value
+            players.sort(function (a, b) { return b.value - a.value; });
 
-        // List of free agents, sorted by value
-        players.sort(function (a, b) { return b.value - a.value; });
-
-        if (players.length === 0) {
-            return;
-        }
-
-        // Randomly order teams
-        tids = [];
-        for (i = 0; i < g.numTeams; i++) {
-            tids.push(i);
-        }
-        random.shuffle(tids);
-
-        return Promise.each(tids, function(tid) {
-            // Skip the user's team
-            if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
+            if (players.length === 0) {
                 return;
             }
 
-            // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
-            if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
-                return;
+            // Randomly order teams
+            tids = [];
+            for (i = 0; i < g.numTeams; i++) {
+                tids.push(i);
             }
+            random.shuffle(tids);
 
-            // Skip rebuilding teams sometimes
-            if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
-                return;
-            }
+            return Promise.each(tids, function (tid) {
+                // Skip the user's team
+                if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
+                    return;
+                }
 
-/*                    // Randomly don't try to sign some players this day
-            while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
-                players.shift();
-            }*/
+                // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
+                if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
+                    return;
+                }
 
-            return Promise.all([
-                dao.players.count({
-                    ot: tx,
-                    index: "tid",
-                    key: tid
-                }),
-                team.getPayroll(tx, tid).get(0)
-            ]).spread(function (numPlayersOnRoster, payroll) {
-                var i, p;
+                // Skip rebuilding teams sometimes
+                if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
+                    return;
+                }
 
-                if (numPlayersOnRoster < 15) {
-                    for (i = 0; i < players.length; i++) {
-                        // Don't sign minimum contract players to fill out the roster
-                        if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
-                            p = players[i];
-                            p.tid = tid;
-                            if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                                p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+/*                        // Randomly don't try to sign some players this day
+                while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
+                    players.shift();
+                }*/
+
+                return Promise.all([
+                    tx.players.index('tid').count(tid),
+                    team.getPayroll(tx, tid).get(0)
+                ]).spread(function (numPlayersOnRoster, payroll) {
+                    var i, p;
+
+                    if (numPlayersOnRoster < 15) {
+                        for (i = 0; i < players.length; i++) {
+                            // Don't sign minimum contract players to fill out the roster
+                            if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
+                                p = players[i];
+                                p.tid = tid;
+                                if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                                    p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                                }
+                                p = player.setContract(p, p.contract, true);
+                                p.gamesUntilTradable = 15;
+
+                                eventLog.add(null, {
+                                    type: "freeAgent",
+                                    text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
+                                    showNotification: false,
+                                    pids: [p.pid],
+                                    tids: [p.tid]
+                                });
+
+                                players.splice(i, 1); // Remove from list of free agents
+
+                                // If we found one, stop looking for this team
+                                return tx.players.put(p).then(function () {
+                                    return team.rosterAutoSort(tx, tid);
+                                });
                             }
-                            p = player.setContract(p, p.contract, true);
-                            p.gamesUntilTradable = 15;
-
-                            eventLog.add(null, {
-                                type: "freeAgent",
-                                text: 'The <a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamNamesCache[p.tid] + '</a> signed <a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> for ' + helpers.formatCurrency(p.contract.amount / 1000, "M") + '/year through ' + p.contract.exp + '.',
-                                showNotification: false,
-                                pids: [p.pid],
-                                tids: [p.tid]
-                            });
-
-                            players.splice(i, 1); // Remove from list of free agents
-
-                            // If we found one, stop looking for this team
-                            return dao.players.put({ot: tx, value: p}).then(function () {
-                                return team.rosterAutoSort(tx, tid);
-                            });
                         }
                     }
-                }
+                });
             });
         });
     });
@@ -131,15 +118,8 @@ function autoSign(tx) {
  * @return {Promise}
  */
 function decreaseDemands() {
-    var tx;
-
-    tx = dao.tx("players", "readwrite");
-
-    dao.players.iterate({
-        ot: tx,
-        index: "tid",
-        key: g.PLAYER.FREE_AGENT,
-        callback: function (p) {
+    return g.dbl.tx("players", "readwrite", function (tx) {
+        return tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, function (p) {
             var i;
 
             // Decrease free agent demands
@@ -173,10 +153,8 @@ function decreaseDemands() {
             }
 
             return p;
-        }
+        });
     });
-
-    return tx.complete();
 }
 
 /**

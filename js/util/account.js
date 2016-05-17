@@ -1,13 +1,9 @@
-/**
- * @name util.account
- * @namespace Functions for accessing account crap.
- */
 /*eslint camelcase: 0*/
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var team = require('../core/team');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var $ = require('jquery');
 var _ = require('underscore');
@@ -105,20 +101,16 @@ function addAchievements(achievements, silent) {
     };
 
     addToIndexedDB = function (achievements) {
-        var i, tx;
+        return g.dbm.tx("achievements", "readwrite", function (tx) {
+            var i;
 
-        tx = dao.tx("achievements", "readwrite");
-        for (i = 0; i < achievements.length; i++) {
-            dao.achievements.add({
-                ot: tx,
-                value: {
+            for (i = 0; i < achievements.length; i++) {
+                tx.achievements.add({
                     slug: achievements[i]
-                }
-            });
-            notify(achievements[i]);
-        }
-
-        return tx.complete();
+                });
+                notify(achievements[i]);
+            }
+        });
     };
 
     return Promise.resolve($.ajax({
@@ -154,8 +146,6 @@ function check() {
             withCredentials: true
         }
     })).then(function (data) {
-        var tx;
-
         // Save username for display
         g.vm.topMenu.username(data.username);
         g.vm.topMenu.email(data.email);
@@ -164,16 +154,17 @@ function check() {
 
         // If user is logged in, upload any locally saved achievements
         if (data.username !== "") {
-            tx = dao.tx("achievements", "readwrite");
-            return dao.achievements.getAll({ot: tx}).then(function (achievements) {
-                achievements = _.pluck(achievements, "slug");
+            return g.dbm.tx("achievements", "readwrite", function (tx) {
+                return tx.achievements.getAll().then(function (achievements) {
+                    achievements = _.pluck(achievements, "slug");
 
-                // If any exist, delete and upload
-                if (achievements.length > 0) {
-                    dao.achievements.clear({ot: tx});
-                    // If this fails to save remotely, will be added to IDB again
-                    return addAchievements(achievements, true);
-                }
+                    // If any exist, delete and upload
+                    if (achievements.length > 0) {
+                        tx.achievements.clear();
+                        // If this fails to save remotely, will be added to IDB again
+                        return addAchievements(achievements, true);
+                    }
+                });
             });
         }
     }).catch(function () {});
@@ -184,7 +175,7 @@ function getAchievements() {
 
     achievements = allAchievements.slice();
 
-    return dao.achievements.getAll().then(function (achievementsLocal) {
+    return g.dbm.achievements.getAll().then(function (achievementsLocal) {
         var i, j;
 
         // Initialize counts
@@ -238,7 +229,7 @@ checkAchievement.fo_fo_fo = function (saveAchievement) {
         return Promise.resolve(false);
     }
 
-    return dao.playoffSeries.get({key: g.season}).then(function (playoffSeries) {
+    return g.dbl.playoffSeries.get(g.season).then(function (playoffSeries) {
         var found, i, round, series;
 
         series = playoffSeries.series;
@@ -326,19 +317,19 @@ function checkDynasty(titles, years, slug, saveAchievement) {
         return Promise.resolve(false);
     }
 
-    return dao.teams.get({key: g.userTid}).then(function (t) {
+    return g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid], [g.userTid, ''])).then(function (teamSeasons) {
         var i, titlesFound;
 
         titlesFound = 0;
         // Look over past years
         for (i = 0; i < years; i++) {
             // Don't overshoot
-            if (t.seasons.length - 1 - i < 0) {
+            if (teamSeasons.length - 1 - i < 0) {
                 break;
             }
 
             // Won title?
-            if (t.seasons[t.seasons.length - 1 - i].playoffRoundsWon === 4) {
+            if (teamSeasons[teamSeasons.length - 1 - i].playoffRoundsWon === 4) {
                 titlesFound += 1;
             }
         }
@@ -416,7 +407,7 @@ checkAchievement.hardware_store = function (saveAchievement) {
         return Promise.resolve(false);
     }
 
-    return dao.awards.get({key: g.season}).then(function (awards) {
+    return g.dbl.awards.get(g.season).then(function (awards) {
         if (awards.mvp.tid === g.userTid && awards.dpoy.tid === g.userTid && awards.smoy.tid === g.userTid && awards.roy.tid === g.userTid && awards.finalsMvp.tid === g.userTid) {
             if (saveAchievement) {
                 addAchievements(["hardware_store"]);
@@ -458,9 +449,9 @@ checkAchievement.sleeper_pick = function (saveAchievement) {
         return Promise.resolve(false);
     }
 
-    return dao.awards.get({key: g.season}).then(function (awards) {
+    return g.dbl.awards.get(g.season).then(function (awards) {
         if (awards.roy.tid === g.userTid) {
-            return dao.players.get({key: awards.roy.pid}).then(function (p) {
+            return g.dbl.players.get(awards.roy.pid).then(function (p) {
                 if (p.tid === g.userTid && p.draft.tid === g.userTid && p.draft.year === g.season - 1 && (p.draft.round > 1 || p.draft.pick >= 15)) {
                     if (saveAchievement) {
                         addAchievements(["sleeper_pick"]);

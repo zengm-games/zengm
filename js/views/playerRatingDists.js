@@ -1,10 +1,5 @@
-/**
- * @name views.playerRatingDists
- * @namespace Player rating distributions.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
@@ -28,8 +23,8 @@ function InitViewModel() {
 
 function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
-        return dao.players.getAll({
-            statsSeasons: [inputs.season]
+        return g.dbl.players.getAll().then(function (players) {
+            return player.withStats(null, players, {statsSeasons: [inputs.season]});
         }).then(function (players) {
             var ratingsAll;
 

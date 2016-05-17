@@ -1,10 +1,5 @@
-/**
- * @name util.helpers
- * @namespace Various utility functions that don't have anywhere else to go.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ko = require('knockout');
 var eventLog = require('./eventLog');
@@ -403,9 +398,10 @@ function resetG() {
 function bbgmPing(type) {
     if (g.enableLogging) {
         if (type === "league") {
-            _gaq.push(["_trackEvent", "BBGM", "New league", g.lid.toString()]);
+            window._gaq.push(["_trackEvent", "BBGM", "New league", g.lid.toString()]); //eslint-disable-line no-underscore-dangle
         } else if (type === "season" && g.autoPlaySeasons === 0) {
-            _gaq.push(["_trackEvent", "BBGM", "Completed season", g.season.toString()]);
+            window._gaq.push(["_trackEvent", "BBGM", "Completed season", g.season.toString()]); //eslint-disable-line no-underscore-dangle
+            window._gaq.push(["_trackEvent", "BBGM", "Season protocol", window.location.protocol]); //eslint-disable-line no-underscore-dangle
         }
     }
 }
@@ -677,50 +673,45 @@ function gameLogList(abbrev, season, gid, loadedGames) {
     games = [];
 
     // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
-    return dao.games.iterate({
-        index: "season",
-        key: season,
-        direction: "prev",
-        callback: function (game, shortCircuit) {
-            var i, overtime;
+    return g.dbl.games.index('season').iterate(season, "prev", function (game, shortCircuit) {
+        var i, overtime;
 
-            if (game.gid <= maxGid) {
-                return shortCircuit();
-            }
+        if (game.gid <= maxGid) {
+            return shortCircuit();
+        }
 
-            if (game.overtimes === 1) {
-                overtime = " (OT)";
-            } else if (game.overtimes > 1) {
-                overtime = " (" + game.overtimes + "OT)";
-            } else {
-                overtime = "";
-            }
+        if (game.overtimes === 1) {
+            overtime = " (OT)";
+        } else if (game.overtimes > 1) {
+            overtime = " (" + game.overtimes + "OT)";
+        } else {
+            overtime = "";
+        }
 
-            // Check tid
-            if (game.teams[0].tid === tid || game.teams[1].tid === tid) {
-                games.push({
-                    gid: game.gid,
-                    tid: tid,
-                    selected: game.gid === gid,
-                    overtime: overtime
-                });
+        // Check tid
+        if (game.teams[0].tid === tid || game.teams[1].tid === tid) {
+            games.push({
+                gid: game.gid,
+                tid: tid,
+                selected: game.gid === gid,
+                overtime: overtime
+            });
 
-                i = games.length - 1;
-                if (game.teams[0].tid === tid) {
-                    games[i].home = true;
-                    games[i].pts = game.teams[0].pts;
-                    games[i].oppPts = game.teams[1].pts;
-                    games[i].oppTid = game.teams[1].tid;
-                    games[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
-                    games[i].won = game.teams[0].pts > game.teams[1].pts;
-                } else if (game.teams[1].tid === tid) {
-                    games[i].home = false;
-                    games[i].pts = game.teams[1].pts;
-                    games[i].oppPts = game.teams[0].pts;
-                    games[i].oppTid = game.teams[0].tid;
-                    games[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
-                    games[i].won = game.teams[1].pts > game.teams[0].pts;
-                }
+            i = games.length - 1;
+            if (game.teams[0].tid === tid) {
+                games[i].home = true;
+                games[i].pts = game.teams[0].pts;
+                games[i].oppPts = game.teams[1].pts;
+                games[i].oppTid = game.teams[1].tid;
+                games[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
+                games[i].won = game.teams[0].pts > game.teams[1].pts;
+            } else if (game.teams[1].tid === tid) {
+                games[i].home = false;
+                games[i].pts = game.teams[1].pts;
+                games[i].oppPts = game.teams[0].pts;
+                games[i].oppTid = game.teams[0].tid;
+                games[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
+                games[i].won = game.teams[1].pts > game.teams[0].pts;
             }
         }
     }).then(function () {
@@ -905,6 +896,14 @@ function overtimeCounter(n) {
     }
 }
 
+function maybeReuseTx(storeNames, mode, tx, cb) {
+    if (tx !== undefined && tx !== null) {
+        return cb(tx);
+    }
+
+    return g.dbl.tx(storeNames, mode, cb);
+}
+
 module.exports = {
     validateAbbrev: validateAbbrev,
     getAbbrev: getAbbrev,
@@ -939,6 +938,7 @@ module.exports = {
     updateMultiTeam: updateMultiTeam,
     plusMinus: plusMinus,
     correctLinkLid: correctLinkLid,
-    overtimeCounter: overtimeCounter
+    overtimeCounter: overtimeCounter,
+    maybeReuseTx: maybeReuseTx
 };
 

@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var dao = require('../dao');
 var db = require('../db');
 var g = require('../globals');
 var ui = require('../ui');
@@ -76,8 +75,6 @@ function merge(x, y) {
 function setGameAttributes(tx, gameAttributes) {
     var key, toUpdate;
 
-    tx = dao.tx("gameAttributes", "readwrite", tx);
-
     toUpdate = [];
     for (key in gameAttributes) {
         if (gameAttributes.hasOwnProperty(key)) {
@@ -88,12 +85,9 @@ function setGameAttributes(tx, gameAttributes) {
     }
 
     return Promise.map(toUpdate, function (key) {
-        return dao.gameAttributes.put({
-            ot: tx,
-            value: {
-                key: key,
-                value: gameAttributes[key]
-            }
+        return tx.gameAttributes.put({
+            key: key,
+            value: gameAttributes[key]
         }).then(function () {
             g[key] = gameAttributes[key];
 
@@ -110,22 +104,20 @@ function setGameAttributes(tx, gameAttributes) {
                 }
             }
         });
-    }, {concurrency: Infinity});
+    });
 }
 
 // Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
 function setGameAttributesComplete(gameAttributes) {
-    var tx;
-
-    tx = dao.tx("gameAttributes", "readwrite");
-    setGameAttributes(tx, gameAttributes);
-    return tx.complete();
+    return g.dbl.tx("gameAttributes", "readwrite", function (tx) {
+        return setGameAttributes(tx, gameAttributes);
+    });
 }
 
 // Call this after doing DB stuff so other tabs know there is new data.
 // Runs in its own transaction, shouldn't be waited for because this only influences other tabs
 function updateLastDbChange() {
-    setGameAttributes(null, {lastDbChange: Date.now()});
+    setGameAttributesComplete({lastDbChange: Date.now()});
 }
 
 /**
@@ -168,14 +160,12 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
     }
 
     // Record in meta db
-    return dao.leagues.add({
-        value: {
-            name: name,
-            tid: tid,
-            phaseText: phaseText,
-            teamName: teams[tid].name,
-            teamRegion: teams[tid].region
-        }
+    return g.dbm.leagues.add({
+        name: name,
+        tid: tid,
+        phaseText: phaseText,
+        teamName: teams[tid].name,
+        teamRegion: teams[tid].region
     }).then(function (lid) {
         g.lid = lid;
 
@@ -221,78 +211,84 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
         // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
         helpers.resetG();
 
-        return setGameAttributes(null, gameAttributes);
+        return setGameAttributesComplete(gameAttributes);
     }).then(function () {
-        var i, j, k, round, scoutingRank, t, toMaybeAdd, tx;
+        var i, j, k, round, scoutingRank, t, teamSeasons, teamStats, toMaybeAdd;
 
-        // Probably is fastest to use this transaction for everything done to create a new league
-        tx = dao.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"], "readwrite");
-
-        // Draft picks for the first 4 years, as those are the ones can be traded initially
-        if (leagueFile.hasOwnProperty("draftPicks")) {
-            for (i = 0; i < leagueFile.draftPicks.length; i++) {
-                dao.draftPicks.add({ot: tx, value: leagueFile.draftPicks[i]});
-            }
-        } else {
-            for (i = 0; i < 4; i++) {
-                for (t = 0; t < g.numTeams; t++) {
-                    for (round = 1; round <= 2; round++) {
-                        dao.draftPicks.add({
-                            ot: tx,
-                            value: {
+        return g.dbl.tx(["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"], "readwrite", function (tx) {
+            // Draft picks for the first 4 years, as those are the ones can be traded initially
+            if (leagueFile.hasOwnProperty("draftPicks")) {
+                for (i = 0; i < leagueFile.draftPicks.length; i++) {
+                    tx.draftPicks.add(leagueFile.draftPicks[i]);
+                }
+            } else {
+                for (i = 0; i < 4; i++) {
+                    for (t = 0; t < g.numTeams; t++) {
+                        for (round = 1; round <= 2; round++) {
+                            tx.draftPicks.add({
                                 tid: t,
                                 originalTid: t,
                                 round: round,
                                 season: g.startingSeason + i
-                            }
-                        });
+                            });
+                        }
                     }
                 }
             }
-        }
 
-        // Initialize draft order object store for later use
-        if (leagueFile.hasOwnProperty("draftOrder")) {
-            for (i = 0; i < leagueFile.draftOrder.length; i++) {
-                dao.draftOrder.add({ot: tx, value: leagueFile.draftOrder[i]});
-            }
-        } else {
-            dao.draftOrder.add({
-                ot: tx,
-                value: {
+            // Initialize draft order object store for later use
+            if (leagueFile.hasOwnProperty("draftOrder")) {
+                for (i = 0; i < leagueFile.draftOrder.length; i++) {
+                    tx.draftOrder.add(leagueFile.draftOrder[i]);
+                }
+            } else {
+                tx.draftOrder.add({
                     rid: 1,
                     draftOrder: []
+                });
+            }
+
+            // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
+            for (i = 0; i < g.numTeams; i++) {
+                t = team.generate(teams[i]);
+                tx.teams.add(t);
+
+                if (teams[i].hasOwnProperty("seasons")) {
+                    teamSeasons = teams[i].seasons;
+                } else {
+                    teamSeasons = [team.genSeasonRow(t.tid)];
+                    teamSeasons[0].pop = teams[i].pop;
                 }
-            });
-        }
+                teamSeasons.forEach(function (teamSeason) {
+                    teamSeason.tid = t.tid;
+                    tx.teamSeasons.add(teamSeason);
+                });
 
-        // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
-        for (i = 0; i < g.numTeams; i++) {
-            t = team.generate(teams[i]);
+                if (teams[i].hasOwnProperty("stats")) {
+                    teamStats = teams[i].stats;
+                } else {
+                    teamStats = [team.genStatsRow(t.tid)];
+                }
+                teamStats.forEach(function (teamStat) {
+                    teamStat.tid = t.tid;
+                    if (!teamStat.hasOwnProperty("ba")) {
+                        teamStat.ba = 0;
+                    }
+                    tx.teamStats.add(teamStat);
+                });
 
-            // If needed for imported league files, set missing blocks against to 0
-            for (j = 0; j < t.stats.length; j++) {
-                if (!t.stats[j].hasOwnProperty("ba")) {
-                    t.stats[j].ba = 0;
+                // Save scoutingRank for later
+                if (i === g.userTid) {
+                    scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
                 }
             }
 
-            dao.teams.add({ot: tx, value: t});
-
-            // Save scoutingRank for later
-            if (i === g.userTid) {
-                scoutingRank = finances.getRankLastThree(t, "expenses", "scouting");
-            }
-        }
-
-        if (leagueFile.hasOwnProperty("trade")) {
-            for (i = 0; i < leagueFile.trade.length; i++) {
-                dao.trade.add({ot: tx, value: leagueFile.trade[i]});
-            }
-        } else {
-            dao.trade.add({
-                ot: tx,
-                value: {
+            if (leagueFile.hasOwnProperty("trade")) {
+                for (i = 0; i < leagueFile.trade.length; i++) {
+                    tx.trade.add(leagueFile.trade[i]);
+                }
+            } else {
+                tx.trade.add({
                     rid: 0,
                     teams: [
                         {
@@ -306,405 +302,400 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                             dpids: []
                         }
                     ]
-                }
-            });
-        }
-
-        // Fix missing +/-, blocks against in boxscore
-        if (leagueFile.hasOwnProperty("games")) {
-            for (i = 0; i < leagueFile.games.length; i++) {
-                if (!leagueFile.games[i].teams[0].hasOwnProperty("ba")) {
-                    leagueFile.games[i].teams[0].ba = 0;
-                    leagueFile.games[i].teams[1].ba = 0;
-                }
-                for (j = 0; j < leagueFile.games[i].teams.length; j++) {
-                    for (k = 0; k < leagueFile.games[i].teams[j].players.length; k++) {
-                        if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("ba")) {
-                            leagueFile.games[i].teams[j].players[k].ba = 0;
-                        }
-                        if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("pm")) {
-                            leagueFile.games[i].teams[j].players[k].pm = 0;
-                        }
-                    }
-                }
-            }
-        }
-
-        // These object stores are blank by default
-        toMaybeAdd = ["releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
-        for (j = 0; j < toMaybeAdd.length; j++) {
-            if (leagueFile.hasOwnProperty(toMaybeAdd[j])) {
-                for (i = 0; i < leagueFile[toMaybeAdd[j]].length; i++) {
-                    dao[toMaybeAdd[j]].add({
-                        ot: tx,
-                        value: leagueFile[toMaybeAdd[j]][i]
-                    });
-                }
-            }
-        }
-
-        return player.genBaseMoods(tx).then(function (baseMoods) {
-            var agingYears, baseRatings, draftYear, goodNeutralBad, i, n, p, playerTids, players, pots, profile, profiles, t, t2;
-
-            // Either add players from league file or generate them
-
-            if (leagueFile.hasOwnProperty("players")) {
-                // Use pre-generated players, filling in attributes as needed
-                players = leagueFile.players;
-
-                // Does the player want the rosters randomized?
-                if (randomizeRosters) {
-                    // Assign the team ID of all players to the 'playerTids' array.
-                    // Check tid to prevent draft prospects from being swapped with established players
-                    playerTids = _.pluck(players.filter(function (p) { return p.tid >= g.PLAYER.FREE_AGENT; }), "tid");
-
-                    // Shuffle the teams that players are assigned to.
-                    random.shuffle(playerTids);
-                    for (i = 0; i < players.length; i++) {
-                        if (players[i].tid >= g.PLAYER.FREE_AGENT) {
-                            players[i].tid = playerTids.pop();
-                            if (players[i].stats && players[i].stats.length > 0) {
-                                players[i].stats[players[i].stats.length - 1].tid = players[i].tid;
-                                players[i].statsTids.push(players[i].tid);
-                            }
-                        }
-                    }
-                }
-
-                players.forEach(function (p) {
-                    var playerStats;
-
-                    p = player.augmentPartialPlayer(p, scoutingRank);
-
-                    // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
-                    p.contract.amount = Math.max(10 * helpers.round(p.contract.amount / 10), g.minContract);
-
-                    // Separate out stats
-                    playerStats = p.stats;
-                    delete p.stats;
-
-                    player.updateValues(tx, p, playerStats.reverse()).then(function (p) {
-                        dao.players.put({ot: tx, value: p}).then(function (pid) {
-                            var addStatsRows;
-
-                            // When adding a player, this is the only way to know the pid
-                            p.pid = pid;
-
-                            // If no stats in League File, create blank stats rows for active players if necessary
-                            if (playerStats.length === 0) {
-                                if (p.tid >= 0 && g.phase <= g.PHASE.PLAYOFFS) {
-                                    // Needs pid, so must be called after put. It's okay, statsTid was already set in player.augmentPartialPlayer
-                                    p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-                                }
-                            } else {
-                                // If there are stats in the League File, add them to the database
-                                addStatsRows = function () {
-                                    var ps;
-
-                                    ps = playerStats.pop();
-
-                                    // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
-                                    ps.pid = p.pid;
-
-                                    // Could be calculated correctly if I wasn't lazy
-                                    if (!ps.hasOwnProperty("yearsWithTeam")) {
-                                        ps.yearsWithTeam = 1;
-                                    }
-
-                                    // If needed, set missing +/-, blocks against to 0
-                                    if (!ps.hasOwnProperty("ba")) {
-                                        ps.ba = 0;
-                                    }
-                                    if (!ps.hasOwnProperty("pm")) {
-                                        ps.pm = 0;
-                                    }
-
-                                    // Delete psid because it can cause problems due to interaction addStatsRow above
-                                    delete ps.psid;
-
-                                    dao.playerStats.add({ot: tx, value: ps}).then(function () {
-                                        // On to the next one
-                                        if (playerStats.length > 0) {
-                                            addStatsRows();
-                                        }
-                                    });
-                                };
-                                addStatsRows();
-                            }
-                        });
-                    });
                 });
-            } else {
-                // No players in league file, so generate new players
-                profiles = ["Point", "Wing", "Big", ""];
-                baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
-                pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
+            }
 
-                for (t = -3; t < teams.length; t++) {
-                    // Create multiple "teams" worth of players for the free agent pool
-                    if (t < 0) {
-                        t2 = g.PLAYER.FREE_AGENT;
-                    } else {
-                        t2 = t;
+            // Fix missing +/-, blocks against in boxscore
+            if (leagueFile.hasOwnProperty("games")) {
+                for (i = 0; i < leagueFile.games.length; i++) {
+                    if (!leagueFile.games[i].teams[0].hasOwnProperty("ba")) {
+                        leagueFile.games[i].teams[0].ba = 0;
+                        leagueFile.games[i].teams[1].ba = 0;
                     }
-
-                    goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
-                    random.shuffle(pots);
-                    for (n = 0; n < 14; n++) {
-                        profile = profiles[random.randInt(0, profiles.length - 1)];
-                        agingYears = random.randInt(0, 13);
-                        draftYear = g.startingSeason - 1 - agingYears;
-
-                        p = player.generate(t2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
-                        p = player.develop(p, agingYears, true);
-                        if (n < 5) {
-                            p = player.bonus(p, goodNeutralBad * random.randInt(0, 20));
-                        } else {
-                            p = player.bonus(p, 0);
-                        }
-                        if (t2 === g.PLAYER.FREE_AGENT) {  // Free agents
-                            p = player.bonus(p, -15);
-                        }
-
-                        // Hack to account for player.addStatsRow being called after dao.players.put - manually assign statsTids
-                        if (p.tid >= 0) {
-                            p.statsTids = [p.tid];
-                        }
-
-                        // Update player values after ratings changes
-                        player.updateValues(tx, p, []).then(function (p) {
-                            var randomizeExp;
-
-                            // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
-                            randomizeExp = (p.tid !== g.PLAYER.FREE_AGENT);
-
-                            // Update contract based on development. Only write contract to player log if not a free agent.
-                            p = player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
-
-                            // Save to database
-                            if (p.tid === g.PLAYER.FREE_AGENT) {
-                                player.addToFreeAgents(tx, p, null, baseMoods);
-                            } else {
-                                dao.players.put({ot: tx, value: p}).then(function (pid) {
-                                    // When adding a player, this is the only way to know the pid
-                                    p.pid = pid;
-
-                                    // Needs pid, so must be called after put. It's okay, statsTid was already set above
-                                    p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
-                                });
+                    for (j = 0; j < leagueFile.games[i].teams.length; j++) {
+                        for (k = 0; k < leagueFile.games[i].teams[j].players.length; k++) {
+                            if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("ba")) {
+                                leagueFile.games[i].teams[j].players[k].ba = 0;
                             }
-                        });
-                    }
-
-                    // Initialize rebuilding/contending, when possible
-                    if (t2 >= 0) {
-                        (function (goodNeutralBad) {
-                            dao.teams.get({ot: tx, key: t2}).then(function (t) {
-                                t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
-                                dao.teams.put({ot: tx, value: t});
-                            });
-                        }(goodNeutralBad));
+                            if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("pm")) {
+                                leagueFile.games[i].teams[j].players[k].pm = 0;
+                            }
+                        }
                     }
                 }
             }
 
-            return tx.complete().then(function () {
+            // These object stores are blank by default
+            toMaybeAdd = ["releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
+            for (j = 0; j < toMaybeAdd.length; j++) {
+                if (leagueFile.hasOwnProperty(toMaybeAdd[j])) {
+                    for (i = 0; i < leagueFile[toMaybeAdd[j]].length; i++) {
+                        tx[toMaybeAdd[j]].add(leagueFile[toMaybeAdd[j]][i]);
+                    }
+                }
+            }
+
+            return player.genBaseMoods(tx).then(function (baseMoods) {
+                var agingYears, baseRatings, draftYear, goodNeutralBad, i, n, p, playerTids, players, pots, profile, profiles, t, t2;
+
+                // Either add players from league file or generate them
+
+                if (leagueFile.hasOwnProperty("players")) {
+                    // Use pre-generated players, filling in attributes as needed
+                    players = leagueFile.players;
+
+                    // Does the player want the rosters randomized?
+                    if (randomizeRosters) {
+                        // Assign the team ID of all players to the 'playerTids' array.
+                        // Check tid to prevent draft prospects from being swapped with established players
+                        playerTids = _.pluck(players.filter(function (p) { return p.tid >= g.PLAYER.FREE_AGENT; }), "tid");
+
+                        // Shuffle the teams that players are assigned to.
+                        random.shuffle(playerTids);
+                        for (i = 0; i < players.length; i++) {
+                            if (players[i].tid >= g.PLAYER.FREE_AGENT) {
+                                players[i].tid = playerTids.pop();
+                                if (players[i].stats && players[i].stats.length > 0) {
+                                    players[i].stats[players[i].stats.length - 1].tid = players[i].tid;
+                                    players[i].statsTids.push(players[i].tid);
+                                }
+                            }
+                        }
+                    }
+
+                    players.forEach(function (p) {
+                        var playerStats;
+
+                        p = player.augmentPartialPlayer(p, scoutingRank);
+
+                        // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
+                        p.contract.amount = Math.max(10 * helpers.round(p.contract.amount / 10), g.minContract);
+
+                        // Separate out stats
+                        playerStats = p.stats;
+                        delete p.stats;
+
+                        player.updateValues(tx, p, playerStats.reverse()).then(function (p) {
+                            tx.players.put(p).then(function (pid) {
+                                var addStatsRows;
+
+                                // When adding a player, this is the only way to know the pid
+                                p.pid = pid;
+
+                                // If no stats in League File, create blank stats rows for active players if necessary
+                                if (playerStats.length === 0) {
+                                    if (p.tid >= 0 && g.phase <= g.PHASE.PLAYOFFS) {
+                                        // Needs pid, so must be called after put. It's okay, statsTid was already set in player.augmentPartialPlayer
+                                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                                    }
+                                } else {
+                                    // If there are stats in the League File, add them to the database
+                                    addStatsRows = function () {
+                                        var ps;
+
+                                        ps = playerStats.pop();
+
+                                        // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
+                                        ps.pid = p.pid;
+
+                                        // Could be calculated correctly if I wasn't lazy
+                                        if (!ps.hasOwnProperty("yearsWithTeam")) {
+                                            ps.yearsWithTeam = 1;
+                                        }
+
+                                        // If needed, set missing +/-, blocks against to 0
+                                        if (!ps.hasOwnProperty("ba")) {
+                                            ps.ba = 0;
+                                        }
+                                        if (!ps.hasOwnProperty("pm")) {
+                                            ps.pm = 0;
+                                        }
+
+                                        // Delete psid because it can cause problems due to interaction addStatsRow above
+                                        delete ps.psid;
+
+                                        tx.playerStats.add(ps).then(function () {
+                                            // On to the next one
+                                            if (playerStats.length > 0) {
+                                                addStatsRows();
+                                            }
+                                        });
+                                    };
+                                    addStatsRows();
+                                }
+                            });
+                        });
+                    });
+                } else {
+                    // No players in league file, so generate new players
+                    profiles = ["Point", "Wing", "Big", ""];
+                    baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
+                    pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
+
+                    for (t = -3; t < teams.length; t++) {
+                        // Create multiple "teams" worth of players for the free agent pool
+                        if (t < 0) {
+                            t2 = g.PLAYER.FREE_AGENT;
+                        } else {
+                            t2 = t;
+                        }
+
+                        goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
+                        random.shuffle(pots);
+                        for (n = 0; n < 14; n++) {
+                            profile = profiles[random.randInt(0, profiles.length - 1)];
+                            agingYears = random.randInt(0, 13);
+                            draftYear = g.startingSeason - 1 - agingYears;
+
+                            p = player.generate(t2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
+                            p = player.develop(p, agingYears, true);
+                            if (n < 5) {
+                                p = player.bonus(p, goodNeutralBad * random.randInt(0, 20));
+                            } else {
+                                p = player.bonus(p, 0);
+                            }
+                            if (t2 === g.PLAYER.FREE_AGENT) {  // Free agents
+                                p = player.bonus(p, -15);
+                            }
+
+                            // Hack to account for player.addStatsRow being called after tx.players.put - manually assign statsTids
+                            if (p.tid >= 0) {
+                                p.statsTids = [p.tid];
+                            }
+
+                            // Update player values after ratings changes
+                            player.updateValues(tx, p, []).then(function (p) {
+                                var randomizeExp;
+
+                                // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
+                                randomizeExp = (p.tid !== g.PLAYER.FREE_AGENT);
+
+                                // Update contract based on development. Only write contract to player log if not a free agent.
+                                p = player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
+
+                                // Save to database
+                                if (p.tid === g.PLAYER.FREE_AGENT) {
+                                    player.addToFreeAgents(tx, p, null, baseMoods);
+                                } else {
+                                    tx.players.put(p).then(function (pid) {
+                                        // When adding a player, this is the only way to know the pid
+                                        p.pid = pid;
+
+                                        // Needs pid, so must be called after put. It's okay, statsTid was already set above
+                                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                                    });
+                                }
+                            });
+                        }
+
+                        // Initialize rebuilding/contending, when possible
+                        if (t2 >= 0) {
+                            (function (goodNeutralBad) {
+                                tx.teams.get(t2).then(function (t) {
+                                    t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
+                                    tx.teams.put(t);
+                                });
+                            }(goodNeutralBad));
+                        }
+                    }
+                }
+
                 return players;
             });
         }).then(function (players) {
-            var createUndrafted1, createUndrafted2, createUndrafted3, i, tx;
+            var createUndrafted1, createUndrafted2, createUndrafted3, i;
 
             // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
-            tx = dao.tx(["players", "playerStats"], "readwrite");
-
-            // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
-            createUndrafted1 = Math.round(70 * g.numTeams / 30);
-            createUndrafted2 = Math.round(70 * g.numTeams / 30);
-            createUndrafted3 = Math.round(70 * g.numTeams / 30);
-            if (players !== undefined) {
-                for (i = 0; i < players.length; i++) {
-                    if (players[i].tid === g.PLAYER.UNDRAFTED) {
-                        createUndrafted1 -= 1;
-                    } else if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
-                        createUndrafted2 -= 1;
-                    } else if (players[i].tid === g.PLAYER.UNDRAFTED_3) {
-                        createUndrafted3 -= 1;
+            return g.dbl.tx(["players", "playerStats"], "readwrite", function (tx) {
+                // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
+                createUndrafted1 = Math.round(70 * g.numTeams / 30);
+                createUndrafted2 = Math.round(70 * g.numTeams / 30);
+                createUndrafted3 = Math.round(70 * g.numTeams / 30);
+                if (players !== undefined) {
+                    for (i = 0; i < players.length; i++) {
+                        if (players[i].tid === g.PLAYER.UNDRAFTED) {
+                            createUndrafted1 -= 1;
+                        } else if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
+                            createUndrafted2 -= 1;
+                        } else if (players[i].tid === g.PLAYER.UNDRAFTED_3) {
+                            createUndrafted3 -= 1;
+                        }
                     }
                 }
-            }
-            // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any g.PLAYER.UNDRAFTED
-            if (createUndrafted1 && (g.phase <= g.PHASE.BEFORE_DRAFT || g.phase >= g.PHASE.FREE_AGENCY)) {
-                draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1);
-            }
-            if (createUndrafted2) {
-                draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2);
-            }
-            if (createUndrafted3) {
-                draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3);
-            }
+                // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any g.PLAYER.UNDRAFTED
+                if (createUndrafted1 && (g.phase <= g.PHASE.BEFORE_DRAFT || g.phase >= g.PHASE.FREE_AGENCY)) {
+                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1);
+                }
+                if (createUndrafted2) {
+                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2);
+                }
+                if (createUndrafted3) {
+                    draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3);
+                }
 
-            // Donald Trump Easter Egg
-            if (Math.random() < 0.01) {
-                dao.players.put({ot: tx, value: {
-                    tid: -2,
-                    statsTids: [],
-                    rosterOrder: 666,
-                    ratings: [
-                        {
-                            hgt: 30,
-                            stre: 100,
-                            spd: 90,
-                            jmp: 90,
-                            endu: 90,
-                            ins: 90,
-                            dnk: 90,
-                            ft: 90,
-                            fg: 90,
-                            tp: 90,
-                            blk: 100,
-                            stl: 100,
-                            drb: 90,
-                            pss: 0,
-                            reb: 90,
-                            season: startingSeason,
-                            ovr: 75,
+                // Donald Trump Easter Egg
+                if (Math.random() < 0.01) {
+                    tx.players.put({
+                        tid: -2,
+                        statsTids: [],
+                        rosterOrder: 666,
+                        ratings: [
+                            {
+                                hgt: 30,
+                                stre: 100,
+                                spd: 90,
+                                jmp: 90,
+                                endu: 90,
+                                ins: 90,
+                                dnk: 90,
+                                ft: 90,
+                                fg: 90,
+                                tp: 90,
+                                blk: 100,
+                                stl: 100,
+                                drb: 90,
+                                pss: 0,
+                                reb: 90,
+                                season: startingSeason,
+                                ovr: 75,
+                                pot: 75,
+                                fuzz: 0,
+                                skills: ["Dp"],
+                                pos: "G"
+                            }
+                        ],
+                        weight: 198,
+                        hgt: 75,
+                        born: {
+                            year: 1946,
+                            loc: "Queens, NY"
+                        },
+                        name: "Donald Trump",
+                        college: "",
+                        imgURL: "//play.basketball-gm.com/img/trump.jpg",
+                        awards: [],
+                        freeAgentMood: [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            0
+                        ],
+                        yearsFreeAgent: 0,
+                        retiredYear: null,
+                        draft: {
+                            round: 0,
+                            pick: 0,
+                            tid: -1,
+                            originalTid: -1,
+                            year: startingSeason,
+                            teamName: null,
+                            teamRegion: null,
                             pot: 75,
-                            fuzz: 0,
-                            skills: ["Dp"],
-                            pos: "G"
+                            ovr: 75,
+                            skills: ["Dp"]
+                        },
+                        face: {
+                            head: {
+                                id: 0
+                            },
+                            eyebrows: [
+                                {
+                                    id: 0,
+                                    lr: "l",
+                                    cx: 135,
+                                    cy: 250
+                                },
+                                {
+                                    id: 0,
+                                    lr: "r",
+                                    cx: 265,
+                                    cy: 250
+                                }
+                            ],
+                            eyes: [
+                                {
+                                    id: 3,
+                                    lr: "l",
+                                    cx: 135,
+                                    cy: 280,
+                                    angle: -2.53978886641562
+                                },
+                                {
+                                    id: 3,
+                                    lr: "r",
+                                    cx: 265,
+                                    cy: 280,
+                                    angle: -2.53978886641562
+                                }
+                            ],
+                            nose: {
+                                id: 1,
+                                lr: "l",
+                                cx: 200,
+                                cy: 330,
+                                size: 0.46898400504142046,
+                                flip: true
+                            },
+                            mouth: {
+                                id: 3,
+                                cx: 200,
+                                cy: 400
+                            },
+                            hair: {
+                                id: 0
+                            },
+                            fatness: 0.07551302784122527,
+                            color: "#a67358"
+                        },
+                        injury: {
+                            type: "Healthy",
+                            gamesRemaining: 0
+                        },
+                        ptModifier: 1,
+                        hof: false,
+                        watch: false,
+                        gamesUntilTradable: 0,
+                        value: 85.32267878968268,
+                        valueNoPot: 79,
+                        valueFuzz: 86.69999999999999,
+                        valueNoPotFuzz: 81,
+                        valueWithContract: 85.32267878968268,
+                        salaries: [],
+                        contract: {
+                            amount: 500,
+                            exp: startingSeason + 1
                         }
-                    ],
-                    weight: 198,
-                    hgt: 75,
-                    born: {
-                        year: 1946,
-                        loc: "Queens, NY"
-                    },
-                    name: "Donald Trump",
-                    college: "",
-                    imgURL: "//play.basketball-gm.com/img/trump.jpg",
-                    awards: [],
-                    freeAgentMood: [
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                    ],
-                    yearsFreeAgent: 0,
-                    retiredYear: null,
-                    draft: {
-                        round: 0,
-                        pick: 0,
-                        tid: -1,
-                        originalTid: -1,
-                        year: startingSeason,
-                        teamName: null,
-                        teamRegion: null,
-                        pot: 75,
-                        ovr: 75,
-                        skills: ["Dp"]
-                    },
-                    face: {
-                        head: {
-                            id: 0
-                        },
-                        eyebrows: [
-                            {
-                                id: 0,
-                                lr: "l",
-                                cx: 135,
-                                cy: 250
-                            },
-                            {
-                                id: 0,
-                                lr: "r",
-                                cx: 265,
-                                cy: 250
-                            }
-                        ],
-                        eyes: [
-                            {
-                                id: 3,
-                                lr: "l",
-                                cx: 135,
-                                cy: 280,
-                                angle: -2.53978886641562
-                            },
-                            {
-                                id: 3,
-                                lr: "r",
-                                cx: 265,
-                                cy: 280,
-                                angle: -2.53978886641562
-                            }
-                        ],
-                        nose: {
-                            id: 1,
-                            lr: "l",
-                            cx: 200,
-                            cy: 330,
-                            size: 0.46898400504142046,
-                            flip: true
-                        },
-                        mouth: {
-                            id: 3,
-                            cx: 200,
-                            cy: 400
-                        },
-                        hair: {
-                            id: 0
-                        },
-                        fatness: 0.07551302784122527,
-                        color: "#a67358"
-                    },
-                    injury: {
-                        type: "Healthy",
-                        gamesRemaining: 0
-                    },
-                    ptModifier: 1,
-                    hof: false,
-                    watch: false,
-                    gamesUntilTradable: 0,
-                    value: 85.32267878968268,
-                    valueNoPot: 79,
-                    valueFuzz: 86.69999999999999,
-                    valueNoPotFuzz: 81,
-                    valueWithContract: 85.32267878968268,
-                    salaries: [],
-                    contract: {
-                        amount: 500,
-                        exp: startingSeason + 1
-                    }
-                }});
-            }
+                    });
+                }
+            }).then(function () {
+                var lid;
 
-            return tx.complete().then(function () {
                 if (skipNewPhase) {
                     // Game already in progress, just start it
                     return g.lid;
@@ -713,16 +704,17 @@ function create(name, tid, leagueFile, startingSeason, randomizeRosters) {
                 ui.updatePhase(g.season + " " + g.PHASE_TEXT[g.phase]);
                 ui.updateStatus("Idle");
 
-                var lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
+                lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
                 helpers.bbgmPing("league");
 
                 // Auto sort rosters
-                var tx = dao.tx("players", "readwrite");
-                return Promise.map(teams, function (t) {
-                    return team.rosterAutoSort(tx, t.tid);
-                }, {concurrency: Infinity}).then(function () {
-                    return lid;
+                return g.dbl.tx("players", "readwrite", function (tx) {
+                    return Promise.map(teams, function (t) {
+                        return team.rosterAutoSort(tx, t.tid);
+                    }).then(function () {
+                        return lid;
+                    });
                 });
             });
         });
@@ -744,7 +736,7 @@ function remove(lid) {
             g.dbl.close();
         }
 
-        dao.leagues.delete({key: lid});
+        g.dbm.leagues.delete(lid);
         request = indexedDB.deleteDatabase("league" + lid);
         request.onsuccess = function () {
             resolve();
@@ -780,26 +772,23 @@ function exportLeague(stores) {
     exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
 
     return Promise.map(stores, function (store) {
-        return dao[store].getAll().then(function (contents) {
+        return g.dbl[store].getAll().then(function (contents) {
             exportedLeague[store] = contents;
         });
-    }, {concurrency: Infinity}).then(function () {
+    }).then(function () {
         // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
-        var i, j, pid;
+        var i, j, pid, tid;
 
         if (stores.indexOf("playerStats") >= 0) {
             for (i = 0; i < exportedLeague.playerStats.length; i++) {
                 pid = exportedLeague.playerStats[i].pid;
 
-                // Find player corresponding with that stats row
                 for (j = 0; j < exportedLeague.players.length; j++) {
                     if (exportedLeague.players[j].pid === pid) {
                         if (!exportedLeague.players[j].hasOwnProperty("stats")) {
                             exportedLeague.players[j].stats = [];
                         }
-
                         exportedLeague.players[j].stats.push(exportedLeague.playerStats[i]);
-
                         break;
                     }
                 }
@@ -807,16 +796,48 @@ function exportLeague(stores) {
 
             delete exportedLeague.playerStats;
         }
+
+        if (stores.indexOf("teams") >= 0) {
+            for (i = 0; i < exportedLeague.teamSeasons.length; i++) {
+                tid = exportedLeague.teamSeasons[i].tid;
+
+                for (j = 0; j < exportedLeague.teams.length; j++) {
+                    if (exportedLeague.teams[j].tid === tid) {
+                        if (!exportedLeague.teams[j].hasOwnProperty("seasons")) {
+                            exportedLeague.teams[j].seasons = [];
+                        }
+                        exportedLeague.teams[j].seasons.push(exportedLeague.teamSeasons[i]);
+                        break;
+                    }
+                }
+            }
+            for (i = 0; i < exportedLeague.teamStats.length; i++) {
+                tid = exportedLeague.teamStats[i].tid;
+
+                for (j = 0; j < exportedLeague.teams.length; j++) {
+                    if (exportedLeague.teams[j].tid === tid) {
+                        if (!exportedLeague.teams[j].hasOwnProperty("stats")) {
+                            exportedLeague.teams[j].stats = [];
+                        }
+                        exportedLeague.teams[j].stats.push(exportedLeague.teamStats[i]);
+                        break;
+                    }
+                }
+            }
+
+            delete exportedLeague.teamSeasons;
+            delete exportedLeague.teamStats;
+        }
     }).then(function () {
         return exportedLeague;
     });
 }
 
 function updateMetaNameRegion(name, region) {
-    return dao.leagues.get({key: g.lid}).then(function (l) {
+    return g.dbm.leagues.get(g.lid).then(function (l) {
         l.teamName = name;
         l.teamRegion = region;
-        return dao.leagues.put({value: l});
+        return g.dbm.leagues.put(l);
     });
 }
 
@@ -828,7 +849,8 @@ function updateMetaNameRegion(name, region) {
  * @return {Promise}
  */
 function loadGameAttribute(ot, key) {
-    return dao.gameAttributes.get({ot: ot, key: key}).then(function (gameAttribute) {
+    var dbOrTx = ot !== null ? ot : g.dbl;
+    return dbOrTx.gameAttributes.get(key).then(function (gameAttribute) {
         if (gameAttribute === undefined) {
             throw new Error("Unknown game attribute: " + key);
         }
@@ -857,7 +879,9 @@ function loadGameAttribute(ot, key) {
  * @return {Promise}
  */
 function loadGameAttributes(ot) {
-    return dao.gameAttributes.getAll({ot: ot}).then(function (gameAttributes) {
+    var dbOrTx = ot !== null ? ot : g.dbl;
+
+    return dbOrTx.gameAttributes.getAll().then(function (gameAttributes) {
         var i;
 
         for (i = 0; i < gameAttributes.length; i++) {

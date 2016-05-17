@@ -1,13 +1,9 @@
-/**
- * @name views.leaders
- * @namespace League stat leaders.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
+var backboard = require('backboard');
 var Promise = require('bluebird');
 var ko = require('knockout');
 var komapping = require('knockout.mapping');
@@ -51,29 +47,21 @@ function updateLeaders(inputs, updateEvents, vm) {
     // Respond to watchList in case players are listed twice in different categories
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
         return Promise.all([
-            dao.teams.getAll(),
-            dao.players.getAll({
-                statsSeasons: [inputs.season]
+            g.dbl.teamSeasons.index("season, tid").getAll(backboard.bound([inputs.season], [inputs.season, ''])),
+            g.dbl.players.getAll().then(function (players) {
+                return player.withStats(null, players, {statsSeasons: [inputs.season]});
             })
-        ]).spread(function (teams, players) {
+        ]).spread(function (teamSeasons, players) {
             var categories, factor, gps, i, j, k, leader, pass, playerValue, stats, userAbbrev;
 
             // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
-            gps = [];
-            for (i = 0; i < teams.length; i++) {
-                for (j = 0; j < teams[i].seasons.length; j++) {
-                    if (teams[i].seasons[j].season === inputs.season) {
-                        gps[i] = teams[i].seasons[j].gp;
-
-                        // Don't count playoff games
-                        if (gps[i] > g.numGames) {
-                            gps[i] = g.numGames;
-                        }
-
-                        break;
-                    }
+            gps = teamSeasons.map(function (teamSeason) {
+                // Don't count playoff games
+                if (teamSeason.gp > g.numGames) {
+                    return g.numGames;
                 }
-            }
+                return teamSeason.gp;
+            });
 
             players = player.filter(players, {
                 attrs: ["pid", "name", "injury", "watch"],

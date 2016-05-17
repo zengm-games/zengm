@@ -1,10 +1,5 @@
-/**
- * @name views.player
- * @namespace View a single message.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var freeAgents = require('../core/freeAgents');
@@ -27,20 +22,20 @@ function get(req) {
 function updatePlayer(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
         return Promise.all([
-            dao.players.get({
-                key: inputs.pid,
-                statsSeasons: "all",
-                statsPlayoffs: true
+            g.dbl.players.get(inputs.pid).then(function (p) {
+                return player.withStats(null, [p], {
+                    statsSeasons: "all",
+                    statsPlayoffs: true
+                }).then(function (players) {
+                    return players[0];
+                });
             }),
-            dao.events.getAll({
-                index: "pids",
-                key: inputs.pid
-            })
+            g.dbl.events.index('pids').getAll(inputs.pid)
         ]).spread(function (p, events) {
             var feats;
 
             p = player.filter(p, {
-                attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "age", "hgtFt", "hgtIn", "weight", "born", "diedYear", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch", "gamesUntilTradable"],
+                attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "age", "hgtFt", "hgtIn", "weight", "born", "diedYear", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch", "gamesUntilTradable", "college"],
                 ratings: ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills", "pos"],
                 stats: ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "pm", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "per", "ewa"],
                 playoffs: true,
@@ -110,8 +105,10 @@ function uiFirst(vm) {
 
         // Manually clear picture, since we're not using Knockout for this
         pic = document.getElementById("picture");
-        while (pic.firstChild) {
-            pic.removeChild(pic.firstChild);
+        if (pic) {
+            while (pic.firstChild) {
+                pic.removeChild(pic.firstChild);
+            }
         }
 
         // If playerImgURL is not an empty string, use it instead of the generated face
@@ -120,7 +117,9 @@ function uiFirst(vm) {
             img.src = vm.player.imgURL();
             img.style.maxHeight = "100%";
             img.style.maxWidth = "100%";
-            pic.appendChild(img);
+            if (pic) {
+                pic.appendChild(img);
+            }
         } else {
             faces.display("picture", komapping.toJS(vm.player.face));
         }

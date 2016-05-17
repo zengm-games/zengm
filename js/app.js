@@ -1,14 +1,21 @@
 'use strict';
 
-var db = require('./db');
-var views = require('./views');
-var ui = require('./ui');
-var changes = require('./data/changes');
-var Davis = require('./lib/davis');
-var account = require('./util/account');
-var helpers = require('./util/helpers');
+var Davis, Promise, account, changes, db, helpers, ui, views;
 
-var Promise = require('bluebird');
+// Sadly only in debug mode, due to weird interactions with Bugsnag
+if (localStorage.debug === 'debug') {
+    require('source-map-support').install();
+}
+
+db = require('./db');
+views = require('./views');
+ui = require('./ui');
+changes = require('./data/changes');
+Davis = require('./lib/davis');
+account = require('./util/account');
+helpers = require('./util/helpers');
+
+Promise = require('bluebird');
 Promise.config({warnings: false});
 
 // Make sure I never accidentally use native promises, because that could fuck with error handling
@@ -37,25 +44,23 @@ require('./api');
 (function () {
     var errorMsg;
 
-    // If we're in debug mode, make debug functions available
-    if (localStorage.debug === "debug") {
-        window.bbgm = {
-            debug: require('./core/debug'),
-            dao: require('./dao'),
-            g: require('./globals'),
-            contractNegotiation: require('./core/contractNegotiation'),
-            draft: require('./core/draft'),
-            finances: require('./core/finances'),
-            freeAgents: require('./core/freeAgents'),
-            game: require('./core/game'),
-            gameSim: require('./core/gameSim'),
-            phase: require('./core/phase'),
-            player: require('./core/player'),
-            season: require('./core/season'),
-            team: require('./core/team'),
-            trade: require('./core/trade')
-        };
-    }
+    window.bbgm = {
+        debug: require('./core/debug'),
+        g: require('./globals'),
+        contractNegotiation: require('./core/contractNegotiation'),
+        draft: require('./core/draft'),
+        eventLog: require('./util/eventLog'),
+        finances: require('./core/finances'),
+        freeAgents: require('./core/freeAgents'),
+        game: require('./core/game'),
+        gameSim: require('./core/gameSim'),
+        league: require('./core/league'),
+        phase: require('./core/phase'),
+        player: require('./core/player'),
+        season: require('./core/season'),
+        team: require('./core/team'),
+        trade: require('./core/trade')
+    };
 
     ui.init();
 
@@ -137,7 +142,7 @@ require('./api');
             // Redirect a route to https URL always, unless the URL doesn't include basketball-gm (e.g. localhost)
             tryForceHttps = function (view) {
                 return function (req) {
-                    if (window.location.protocol === "http:" && window.location.hostname.indexOf("basketball-gm") >= 0) {
+                    if (window.location.protocol === "http:" && window.location.hostname.indexOf("basketball-gm.com") >= 0) {
                         window.location.replace("https://" + window.location.hostname + req.fullPath);
                     } else {
                         view(req);

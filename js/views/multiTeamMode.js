@@ -49,7 +49,7 @@ function uiFirst(vm) {
             if (newUserTids.indexOf(g.userTid) < 0) {
                 gameAttributes.userTid = newUserTids[0];
             }
-            league.setGameAttributes(null, gameAttributes);
+            league.setGameAttributesComplete(gameAttributes);
 
             if (newUserTids.length === 1) {
                 league.updateMetaNameRegion(g.teamNamesCache[newUserTids[0]], g.teamRegionsCache[newUserTids[0]]);

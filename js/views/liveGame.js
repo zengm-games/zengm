@@ -1,10 +1,5 @@
-/**
- * @name views.live
- * @namespace Live play-by-play game simulation.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var game = require('../core/game');
@@ -53,7 +48,7 @@ function InitViewModel() {
 
 function updatePlayByPlay(inputs, updateEvents, vm) {
     if (inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
-        return dao.games.get({key: inputs.gidPlayByPlay}).then(function (boxScore) {
+        return g.dbl.games.get(inputs.gidPlayByPlay).then(function (boxScore) {
             var i, j, resetStats, s;
 
             // Stats to set to 0

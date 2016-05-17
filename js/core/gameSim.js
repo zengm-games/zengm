@@ -1,7 +1,3 @@
-/**
- * @name core.gameSim
- * @namespace Individual game simulation.
- */
 'use strict';
 
 var helpers = require('../util/helpers');
@@ -149,10 +145,10 @@ GameSim.prototype.run = function () {
     }
 
     out = {
-            gid: this.id,
-            overtimes: this.overtimes,
-            team: this.team,
-            clutchPlays: this.clutchPlays
+        gid: this.id,
+        overtimes: this.overtimes,
+        team: this.team,
+        clutchPlays: this.clutchPlays
     };
 
     if (this.playByPlay !== undefined) {
@@ -190,7 +186,7 @@ GameSim.prototype.simRegulation = function () {
     }
 };
 
-GameSim.prototype.simOvertime = function() {
+GameSim.prototype.simOvertime = function () {
     this.t = Math.ceil(0.4 * g.quarterLength); // 5 minutes by default, but scales
     this.lastScoringPlay = [];
     this.overtimes += 1;
@@ -204,7 +200,7 @@ GameSim.prototype.simOvertime = function() {
     }
 };
 
-GameSim.prototype.simPossession = function() {
+GameSim.prototype.simPossession = function () {
     var outcome, possessionTime, substitutions;
 
     // Clock
@@ -816,7 +812,7 @@ GameSim.prototype.probAst = function () {
     return 0.6 * (2 + this.team[this.o].compositeRating.passing) / (2 + this.team[this.d].compositeRating.defense);
 };
 
-GameSim.prototype.checkGameTyingShot = function() {
+GameSim.prototype.checkGameTyingShot = function () {
     var eventText, i, play, player, prevPlay, shotType, team;
     if (this.lastScoringPlay.length === 0) { return; }
 
@@ -881,8 +877,8 @@ GameSim.prototype.checkGameTyingShot = function() {
 };
 
 
-GameSim.prototype.checkGameWinner = function() {
-    var eventText, i, loser, margin, play, player, prevPlay, pts, team, shotType, winner;
+GameSim.prototype.checkGameWinner = function () {
+    var eventText, i, loser, margin, play, player, prevPlay, pts, shotType, team, winner;
 
     if (this.lastScoringPlay.length === 0) { return; }
 
@@ -943,7 +939,7 @@ GameSim.prototype.checkGameWinner = function() {
                 eventText += (play.type === "ft" ? ' with no time on the clock' : ' at the buzzer');
             }
             eventText += ' in ' + (this.team[winner].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a')
-                + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[team.id], g.season, this.id]) + '">' 
+                + ' <a href="' + helpers.leagueUrl(["game_log", g.teamAbbrevsCache[team.id], g.season, this.id]) + '">'
                 + this.team[winner].stat.pts + '-' + this.team[loser].stat.pts + '</a>'
                 + ' win over the ' + g.teamNamesCache[this.team[loser].id] + '.';
 
@@ -959,7 +955,7 @@ GameSim.prototype.checkGameWinner = function() {
     }
 };
 
-GameSim.prototype.recordLastScore = function(teamnum, playernum, type, time) {
+GameSim.prototype.recordLastScore = function (teamnum, playernum, type, time) {
     var currPlay, lastPlay;
 
     // only record plays in the fourth quarter or overtime...

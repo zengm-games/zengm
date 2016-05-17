@@ -1,13 +1,9 @@
-/**
- * @name views.playerShotLocations
- * @namespace Player shot locations table.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
+var backboard = require('backboard');
 var $ = require('jquery');
 var ko = require('knockout');
 var _ = require('underscore');
@@ -37,10 +33,8 @@ mapping = {
 
 function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== vm.season()) {
-        return dao.players.getAll({
-            index: "tid",
-            key: IDBKeyRange.lowerBound(g.PLAYER.RETIRED),
-            statsSeasons: [inputs.season]
+        return g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED)).then(function (players) {
+            return player.withStats(null, players, {statsSeasons: [inputs.season]});
         }).then(function (players) {
             players = player.filter(players, {
                 attrs: ["pid", "name", "age", "injury", "watch"],

@@ -1,13 +1,9 @@
-/**
- * @name views.upcomingFreeAgents
- * @namespace List of upcoming free agents.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
+var backboard = require('backboard');
 var $ = require('jquery');
 var ko = require('knockout');
 var _ = require('underscore');
@@ -46,13 +42,11 @@ mapping = {
 };
 
 function updateUpcomingFreeAgents(inputs) {
-    return dao.players.getAll({
-        index: "tid",
-        key: IDBKeyRange.lowerBound(0),
-        statsSeasons: [g.season],
-        filter: function (p) {
+    return g.dbl.players.index('tid').getAll(backboard.lowerBound(0)).then(function (players) {
+        players = players.filter(function (p) {
             return p.contract.exp === inputs.season;
-        }
+        });
+        return player.withStats(null, players, {statsSeasons: [g.season]});
     }).then(function (players) {
         var i;
 

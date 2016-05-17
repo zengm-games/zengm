@@ -1,15 +1,11 @@
-/**
- * @name views.inbox
- * @namespace Inbox.
- */
 'use strict';
 
-var dao = require('../dao');
+var g = require('../globals');
 var ui = require('../ui');
 var bbgmView = require('../util/bbgmView');
 
 function updateInbox() {
-    return dao.messages.getAll().then(function (messages) {
+    return g.dbl.messages.getAll().then(function (messages) {
         var anyUnread, i;
 
         messages.reverse();

@@ -1,7 +1,6 @@
 'use strict';
 
 var assert = require('assert');
-var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
 var league = require('../../core/league');
@@ -18,14 +17,14 @@ describe("core/league", function () {
 
     describe("#create()", function () {
         it("should add entry in meta leagues object store", function () {
-            return dao.leagues.get({key: g.lid}).then(function (l) {
+            return g.dbm.leagues.get(g.lid).then(function (l) {
                 assert.equal(l.name, "Test");
                 assert.equal(l.tid, 0);
                 assert.equal(l.phaseText, g.startingSeason + " preseason");
             });
         });
         it("should create all necessary object stores", function () {
-            assert.equal(g.dbl.objectStoreNames.length, 16);
+            assert.equal(g.dbl.objectStoreNames.length, 18);
             assert.equal(g.dbl.objectStoreNames.contains("awards"), true);
             assert.equal(g.dbl.objectStoreNames.contains("events"), true);
             assert.equal(g.dbl.objectStoreNames.contains("draftOrder"), true);
@@ -40,10 +39,12 @@ describe("core/league", function () {
             assert.equal(g.dbl.objectStoreNames.contains("releasedPlayers"), true);
             assert.equal(g.dbl.objectStoreNames.contains("schedule"), true);
             assert.equal(g.dbl.objectStoreNames.contains("teams"), true);
+            assert.equal(g.dbl.objectStoreNames.contains("teamSeasons"), true);
+            assert.equal(g.dbl.objectStoreNames.contains("teamStats"), true);
             assert.equal(g.dbl.objectStoreNames.contains("trade"), true);
         });
         it("should initialize gameAttributes object store", function () {
-            return dao.gameAttributes.getAll().then(function (gameAttributes) {
+            return g.dbl.gameAttributes.getAll().then(function (gameAttributes) {
                 var count, gTest, key;
 
                 gTest = gameAttributes.reduce(function (obj, row) { obj[row.key] = row.value; return obj; }, {});
@@ -72,14 +73,14 @@ describe("core/league", function () {
             });
         });
         it("should initialize draftOrder object store", function () {
-            return dao.draftOrder.getAll().then(function (draftOrder) {
+            return g.dbl.draftOrder.getAll().then(function (draftOrder) {
                 assert.equal(draftOrder.length, 1);
                 assert.equal(draftOrder[0].rid, 1);
                 assert.equal(draftOrder[0].draftOrder.length, 0);
             });
         });
         it("should initialize teams object store", function () {
-            return dao.teams.getAll().then(function (teams) {
+            return g.dbl.teams.getAll().then(function (teams) {
                 var cids, dids, i;
 
                 cids = _.pluck(teams, "cid");
@@ -96,20 +97,28 @@ describe("core/league", function () {
                     assert.equal(typeof teams[i].name, "string");
                     assert.equal(typeof teams[i].region, "string");
                     assert.equal(typeof teams[i].tid, "number");
-                    assert.equal(teams[i].seasons.length, 1);
-                    assert.equal(teams[i].stats.length, 1);
                 }
             });
         });
+        it("should initialize teamSeasons object store", function () {
+            return g.dbl.teamSeasons.getAll().then(function (teamSeasons) {
+                assert.equal(teamSeasons.length, g.numTeams);
+            });
+        });
+        it("should initialize teamStats object store", function () {
+            return g.dbl.teamStats.getAll().then(function (teamStats) {
+                assert.equal(teamStats.length, g.numTeams);
+            });
+        });
         it("should initialize trade object store", function () {
-            return dao.trade.getAll().then(function (tr) {
+            return g.dbl.trade.getAll().then(function (tr) {
                 assert.equal(tr.length, 1);
                 assert.equal(tr[0].rid, 0);
                 assert.equal(tr[0].teams.length, 2);
             });
         });
         it("should initialize players object store", function () {
-            return dao.players.getAll().then(function (players) {
+            return g.dbl.players.getAll().then(function (players) {
                 assert.equal(players.length, 33 * 14 + 70 * 3);
             });
         });

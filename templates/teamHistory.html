@@ -10,7 +10,9 @@
     <p>
       Record: <span data-bind="text: totalWon"></span>-<span data-bind="text: totalLost"></span><br>
       Playoff Appearances: <span data-bind="text: playoffAppearances"></span><br>
-      Championships: <span data-bind="text: championships"></span>
+      Championships: <span data-bind="text: championships"></span><br>
+      Best Record: <span data-bind="recordAndPlayoffs: [$root.abbrev, bestRecord.season, bestRecord.won, bestRecord.lost]"></span><br>
+      Worst Record: <span data-bind="recordAndPlayoffs: [$root.abbrev, worstRecord.season, worstRecord.won, worstRecord.lost]"></span>
     </p>
 
     <h2>Seasons</h2>

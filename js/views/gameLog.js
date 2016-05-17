@@ -1,10 +1,5 @@
-/**
- * @name views.gameLog
- * @namespace Game log and box score viewing for all seasons and teams.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var Promise = require('bluebird');
@@ -13,6 +8,8 @@ var ko = require('knockout');
 var components = require('./components');
 var bbgmView = require('../util/bbgmView');
 var helpers = require('../util/helpers');
+
+var listenersAdded = false;
 
 /**
  * Generate a box score.
@@ -23,7 +20,7 @@ var helpers = require('../util/helpers');
  */
 function boxScore(gid) {
     if (gid >= 0) {
-        return dao.games.get({key: gid}).then(function (game) {
+        return g.dbl.games.get(gid).then(function (game) {
             var i, t;
 
             // If game doesn't exist (bad gid or deleted box scores), show nothing
@@ -244,7 +241,6 @@ function updateGamesList(inputs, updateEvents, vm) {
     }
 }
 
-var listenersAdded = false;
 function uiFirst(vm) {
     ko.computed(function () {
         ui.title("Game Log - " + vm.season());

@@ -1,10 +1,5 @@
-/**
- * @name views.history
- * @namespace Summaries of past seasons, leaguewide.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
@@ -42,11 +37,11 @@ function get(req) {
 function updateHistory(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.season() !== inputs.season) {
         return Promise.all([
-            dao.awards.get({key: inputs.season}),
-            dao.players.getAll({
-                index: "retiredYear",
-                key: inputs.season,
-                statsSeasons: [inputs.season]
+            g.dbl.awards.get(inputs.season),
+            g.dbl.players.index('retiredYear').getAll(inputs.season).then(function (players) {
+                return player.withStats(null, players, {
+                    statsSeasons: [inputs.season]
+                });
             }),
             team.filter({
                 attrs: ["tid", "abbrev", "region", "name"],

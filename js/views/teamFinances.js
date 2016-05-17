@@ -1,14 +1,10 @@
-/**
- * @name views.teamFinances
- * @namespace Team finances.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var finances = require('../core/finances');
 var team = require('../core/team');
+var backboard = require('backboard');
 var $ = require('jquery');
 var ko = require('knockout');
 var _ = require('underscore');
@@ -53,34 +49,33 @@ function get(req) {
 }
 
 function post(req) {
-    var tx;
-
     $("#finances-settings button").attr("disabled", "disabled").html("Saving...");
 
-    tx = dao.tx("teams", "readwrite");
-    dao.teams.get({ot: tx, key: g.userTid}).then(function (t) {
-        var budget, key;
+    g.dbl.tx(["teams", "teamSeasons"], "readwrite", function (tx) {
+        return tx.teams.get(g.userTid).then(function (t) {
+            var budget, key;
 
-        budget = req.params.budget;
+            budget = req.params.budget;
 
-        for (key in budget) {
-            if (budget.hasOwnProperty(key)) {
-                if (key === "ticketPrice") {
-                    // Already in [dollars]
-                    budget[key] = parseFloat(helpers.round(budget[key], 2));
-                } else {
-                    // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
-                    budget[key] = helpers.round(budget[key] * 100) * 10;
-                }
-                if (budget[key] === budget[key]) { // NaN check
-                    t.budget[key].amount = budget[key];
+            for (key in budget) {
+                if (budget.hasOwnProperty(key)) {
+                    if (key === "ticketPrice") {
+                        // Already in [dollars]
+                        budget[key] = parseFloat(helpers.round(budget[key], 2));
+                    } else {
+                        // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
+                        budget[key] = helpers.round(budget[key] * 100) * 10;
+                    }
+                    if (budget[key] === budget[key]) { // NaN check
+                        t.budget[key].amount = budget[key];
+                    }
                 }
             }
-        }
 
-        return dao.teams.put({ot: tx, value: t});
-    }).then(function () {
-        return finances.updateRanks(tx, ["budget"]);
+            return tx.teams.put(t);
+        }).then(function () {
+            return finances.updateRanks(tx, ["budget"]);
+        });
     }).then(function () {
         ui.realtimeUpdate(["teamFinances"]);
     });
@@ -165,15 +160,15 @@ function updateTeamFinances(inputs, updateEvents, vm) {
             vars.contractTotals = contractTotals;
             vars.salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
-            return dao.teams.get({key: inputs.tid}).then(function (t) {
+            return g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([inputs.tid], [inputs.tid, ''])).then(function (teamSeasons) {
                 var barData, barSeasons, i, keys, tempData;
 
-                t.seasons.reverse(); // Most recent season first
+                teamSeasons.reverse(); // Most recent season first
 
                 // Add in luxuryTaxShare if it's missing
-                for (i = 0; i < t.seasons.length; i++) {
-                    if (!t.seasons[i].revenues.hasOwnProperty("luxuryTaxShare")) {
-                        t.seasons[i].revenues.luxuryTaxShare = {
+                for (i = 0; i < teamSeasons.length; i++) {
+                    if (!teamSeasons[i].revenues.hasOwnProperty("luxuryTaxShare")) {
+                        teamSeasons[i].revenues.luxuryTaxShare = {
                             amount: 0,
                             rank: 15
                         };
@@ -183,12 +178,12 @@ function updateTeamFinances(inputs, updateEvents, vm) {
                 keys = ["won", "hype", "pop", "att", "cash", "revenues", "expenses"];
                 barData = {};
                 for (i = 0; i < keys.length; i++) {
-                    if (typeof t.seasons[0][keys[i]] !== "object") {
-                        barData[keys[i]] = helpers.nullPad(_.pluck(t.seasons, keys[i]), showInt);
+                    if (typeof teamSeasons[0][keys[i]] !== "object") {
+                        barData[keys[i]] = helpers.nullPad(_.pluck(teamSeasons, keys[i]), showInt);
                     } else {
                         // Handle an object in the database
                         barData[keys[i]] = {};
-                        tempData = _.pluck(t.seasons, keys[i]);
+                        tempData = _.pluck(teamSeasons, keys[i]);
                         _.each(tempData[0], function (value, key) {
                             barData[keys[i]][key] = helpers.nullPad(_.pluck(_.pluck(tempData, key), "amount"), showInt);
                         });
@@ -197,10 +192,10 @@ function updateTeamFinances(inputs, updateEvents, vm) {
 
                 // Process some values
                 barData.att = _.map(barData.att, function (num, i) {
-                    if (t.seasons[i] !== undefined) {
-                        if (!t.seasons[i].hasOwnProperty("gpHome")) { t.seasons[i].gpHome = Math.round(t.seasons[i].gp / 2); } // See also game.js and team.js
-                        if (t.seasons[i].gpHome > 0) {
-                            return num / t.seasons[i].gpHome; // per game
+                    if (teamSeasons[i] !== undefined) {
+                        if (!teamSeasons[i].hasOwnProperty("gpHome")) { teamSeasons[i].gpHome = Math.round(teamSeasons[i].gp / 2); } // See also game.js and team.js
+                        if (teamSeasons[i].gpHome > 0) {
+                            return num / teamSeasons[i].gpHome; // per game
                         }
                         return 0;
                     }

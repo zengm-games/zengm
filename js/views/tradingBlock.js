@@ -1,10 +1,5 @@
-/**
- * @name views.tradingBlock
- * @namespace Trading block.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var player = require('../core/player');
@@ -142,16 +137,13 @@ mapping = {
 function updateUserRoster(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
         return Promise.all([
-            dao.players.getAll({
-                index: "tid",
-                key: g.userTid,
-                statsSeasons: [g.season],
-                statsTid: g.userTid
+            g.dbl.players.index('tid').getAll(g.userTid).then(function (players) {
+                return player.withStats(null, players, {
+                    statsSeasons: [g.season],
+                    statsTid: g.userTid
+                });
             }),
-            dao.draftPicks.getAll({
-                index: "tid",
-                key: g.userTid
-            })
+            g.dbl.draftPicks.index('tid').getAll(g.userTid)
         ]).spread(function (userRoster, userPicks) {
             var i;
 
@@ -189,7 +181,7 @@ function updateUserRoster(inputs, updateEvents) {
 }
 
 function updateOffers(inputs, updateEvents) {
-    var offers, tx;
+    var offers;
 
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0) {
         offers = [];
@@ -200,84 +192,79 @@ function updateOffers(inputs, updateEvents) {
             };
         }
 
-        tx = dao.tx(["players", "playerStats", "draftPicks", "teams"]);
+        return g.dbl.tx(["players", "playerStats", "draftPicks", "teams", "teamSeasons"], function (tx) {
+            return team.filter({
+                attrs: ["abbrev", "region", "name", "strategy"],
+                seasonAttrs: ["won", "lost"],
+                season: g.season,
+                ot: tx
+            }).then(function (teams) {
+                var i, promises;
 
-        return team.filter({
-            attrs: ["abbrev", "region", "name", "strategy"],
-            seasonAttrs: ["won", "lost"],
-            season: g.season,
-            ot: tx
-        }).then(function (teams) {
-            var i, promises;
+                promises = [];
 
-            promises = [];
+                // Take the pids and dpids in each offer and get the info needed to display the offer
+                for (i = 0; i < inputs.offers.length; i++) {
+                    (function (i) {
+                        var tid;
 
-            // Take the pids and dpids in each offer and get the info needed to display the offer
-            for (i = 0; i < inputs.offers.length; i++) {
-                (function (i) {
-                    var tid;
+                        tid = inputs.offers[i].tid;
 
-                    tid = inputs.offers[i].tid;
-
-                    offers[i] = {
-                        tid: tid,
-                        abbrev: teams[tid].abbrev,
-                        region: teams[tid].region,
-                        name: teams[tid].name,
-                        strategy: teams[tid].strategy,
-                        won: teams[tid].won,
-                        lost: teams[tid].lost,
-                        pids: inputs.offers[i].pids,
-                        dpids: inputs.offers[i].dpids,
-                        warning: inputs.offers[i].warning
-                    };
-
-                    promises.push(dao.players.getAll({
-                        ot: tx,
-                        index: "tid",
-                        key: tid,
-                        statsSeasons: [g.season],
-                        statsTid: tid,
-                        filter: function (p) {
-                            return inputs.offers[i].pids.indexOf(p.pid) >= 0;
-                        }
-                    }).then(function (players) {
-                        offers[i].players = player.filter(players, {
-                            attrs: ["pid", "name", "age", "contract", "injury", "watch"],
-                            ratings: ["ovr", "pot", "skills", "pos"],
-                            stats: ["min", "pts", "trb", "ast", "per"],
-                            season: g.season,
+                        offers[i] = {
                             tid: tid,
-                            showNoStats: true,
-                            showRookies: true,
-                            fuzz: true
-                        });
-                    }));
+                            abbrev: teams[tid].abbrev,
+                            region: teams[tid].region,
+                            name: teams[tid].name,
+                            strategy: teams[tid].strategy,
+                            won: teams[tid].won,
+                            lost: teams[tid].lost,
+                            pids: inputs.offers[i].pids,
+                            dpids: inputs.offers[i].dpids,
+                            warning: inputs.offers[i].warning
+                        };
 
-                    promises.push(dao.draftPicks.getAll({
-                        ot: tx,
-                        index: "tid",
-                        key: tid
-                    }).then(function (picks) {
-                        var j;
+                        promises.push(tx.players.index('tid').getAll(tid).then(function (players) {
+                            players = players.filter(function (p) {
+                                return inputs.offers[i].pids.indexOf(p.pid) >= 0;
+                            });
+                            return player.withStats(tx, players, {
+                                statsSeasons: [g.season],
+                                statsTid: tid
+                            });
+                        }).then(function (players) {
+                            offers[i].players = player.filter(players, {
+                                attrs: ["pid", "name", "age", "contract", "injury", "watch"],
+                                ratings: ["ovr", "pot", "skills", "pos"],
+                                stats: ["min", "pts", "trb", "ast", "per"],
+                                season: g.season,
+                                tid: tid,
+                                showNoStats: true,
+                                showRookies: true,
+                                fuzz: true
+                            });
+                        }));
 
-                        picks = picks.filter(function (dp) { return inputs.offers[i].dpids.indexOf(dp.dpid) >= 0; });
-                        for (j = 0; j < picks.length; j++) {
-                            picks[j].desc = helpers.pickDesc(picks[j]);
-                        }
+                        promises.push(tx.draftPicks.index('tid').getAll(tid).then(function (picks) {
+                            var j;
 
-                        offers[i].picks = picks;
-                    }));
-                }(i));
-            }
+                            picks = picks.filter(function (dp) { return inputs.offers[i].dpids.indexOf(dp.dpid) >= 0; });
+                            for (j = 0; j < picks.length; j++) {
+                                picks[j].desc = helpers.pickDesc(picks[j]);
+                            }
 
-            return Promise.all(promises);
-        }).then(function () {
-            random.shuffle(offers);
+                            offers[i].picks = picks;
+                        }));
+                    }(i));
+                }
 
-            return {
-                offers: offers
-            };
+                return Promise.all(promises);
+            }).then(function () {
+                random.shuffle(offers);
+
+                return {
+                    offers: offers
+                };
+            });
         });
     }
 }

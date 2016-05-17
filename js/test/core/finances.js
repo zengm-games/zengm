@@ -1,7 +1,6 @@
 'use strict';
 
 var assert = require('assert');
-var dao = require('../../dao');
 var db = require('../../db');
 var g = require('../../globals');
 var league = require('../../core/league');
@@ -19,26 +18,29 @@ describe("core/finances", function () {
 
     describe("#assessPayrollMinLuxury()", function () {
         it("should store payroll and appropriately assess luxury and minimum payroll taxes for each team", function () {
-            var tx = dao.tx(["players", "releasedPlayers", "teams"], "readwrite", tx);
-            return finances.assessPayrollMinLuxury(tx).then(function () {
-                return dao.teams.getAll({ot: tx}).then(function (teams) {
-                    var i;
+            return g.dbl.tx(["players", "releasedPlayers", "teamSeasons"], "readwrite", function (tx) {
+                return finances.assessPayrollMinLuxury(tx).then(function () {
+                    return tx.teamSeasons.getAll().then(function (teamSeasons) {
+                        var i;
 
-                    for (i = 0; i < g.numTeams; i++) {
-                        assert(teams[i].seasons[0].payrollEndOfSeason > 0);
+                        assert.equal(teamSeasons.length, g.numTeams);
 
-                        if (teams[i].seasons[0].payrollEndOfSeason > g.luxuryPayroll) {
-                            assert.equal(teams[i].seasons[0].expenses.luxuryTax.amount, g.luxuryTax * (teams[i].seasons[0].payrollEndOfSeason - g.luxuryPayroll));
-                        } else {
-                            assert.equal(teams[i].seasons[0].expenses.luxuryTax.amount, 0);
+                        for (i = 0; i < g.numTeams; i++) {
+                            assert(teamSeasons[i].payrollEndOfSeason > 0);
+
+                            if (teamSeasons[i].payrollEndOfSeason > g.luxuryPayroll) {
+                                assert.equal(teamSeasons[i].expenses.luxuryTax.amount, g.luxuryTax * (teamSeasons[i].payrollEndOfSeason - g.luxuryPayroll));
+                            } else {
+                                assert.equal(teamSeasons[i].expenses.luxuryTax.amount, 0);
+                            }
+
+                            if (teamSeasons[i].payrollEndOfSeason < g.minPayroll) {
+                                assert.equal(teamSeasons[i].expenses.minTax.amount, g.minPayroll - teamSeasons[i].payrollEndOfSeason);
+                            } else {
+                                assert.equal(teamSeasons[i].expenses.minTax.amount, 0);
+                            }
                         }
-
-                        if (teams[i].seasons[0].payrollEndOfSeason < g.minPayroll) {
-                            assert.equal(teams[i].seasons[0].expenses.minTax.amount, g.minPayroll - teams[i].seasons[0].payrollEndOfSeason);
-                        } else {
-                            assert.equal(teams[i].seasons[0].expenses.minTax.amount, 0);
-                        }
-                    }
+                    });
                 });
             });
         });

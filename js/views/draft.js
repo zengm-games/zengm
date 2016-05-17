@@ -1,10 +1,5 @@
-/**
- * @name views.playoffs
- * @namespace Show current or archived playoffs, or projected matchups for an in-progress season.
- */
 'use strict';
 
-var dao = require('../dao');
 var g = require('../globals');
 var ui = require('../ui');
 var draft = require('../core/draft');
@@ -54,11 +49,9 @@ function draftUser(pid) {
         pick = draftOrder.shift();
         if (g.userTids.indexOf(pick.tid) >= 0) {
             return draft.selectPlayer(pick, pid).then(function () {
-                var tx;
-
-                tx = dao.tx("draftOrder", "readwrite");
-                draft.setOrder(tx, draftOrder);
-                return tx.complete().then(function () {
+                return g.dbl.tx("draftOrder", "readwrite", function (tx) {
+                    draft.setOrder(tx, draftOrder);
+                }).then(function () {
                     return pid;
                 });
             });
@@ -101,42 +94,32 @@ function get() {
 function updateDraft() {
     // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
     // This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
-    var tx = dao.tx("players", "readwrite");
-    dao.players.get({
-        ot: tx,
-        index: "tid",
-        key: g.PLAYER.UNDRAFTED
-    }).then(function (p) {
-        var season;
+    return g.dbl.tx("players", "readwrite", function (tx) {
+        return tx.players.index('tid').get(g.PLAYER.UNDRAFTED).then(function (p) {
+            var season;
 
-        season = p.ratings[0].season;
-        if (season !== g.season && g.phase === g.PHASE.DRAFT) {
-            console.log("FIXING FUCKED UP DRAFT CLASS");
-            console.log(season);
-            dao.players.iterate({
-                ot: tx,
-                index: "tid",
-                key: g.PLAYER.UNDRAFTED,
-                callback: function (p) {
+            season = p.ratings[0].season;
+            if (season !== g.season && g.phase === g.PHASE.DRAFT) {
+                console.log("FIXING FUCKED UP DRAFT CLASS");
+                console.log(season);
+                tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, function (p) {
                     p.ratings[0].season = g.season;
                     p.draft.year = g.season;
                     return p;
-                }
-            });
-        }
-    });
-
-    return tx.complete().then(function () {
+                });
+            }
+        });
+    }).then(function () {
         return Promise.all([
-            dao.players.getAll({
-                index: "tid",
-                key: g.PLAYER.UNDRAFTED,
-                statsSeasons: [g.season]
+            g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED).then(function (players) {
+                return player.withStats(null, players, {
+                    statsSeasons: [g.season]
+                });
             }),
-            dao.players.getAll({
-                index: "draft.year",
-                key: g.season,
-                statsSeasons: [g.season]
+            g.dbl.players.index('draft.year').getAll(g.season).then(function (players) {
+                return player.withStats(null, players, {
+                    statsSeasons: [g.season]
+                });
             })
         ]);
     }).spread(function (undrafted, players) {

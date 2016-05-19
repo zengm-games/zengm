@@ -896,6 +896,39 @@ function overtimeCounter(n) {
     }
 }
 
+function yearRanges(arr) {
+    var i, runArr, tempArr;
+
+    if (arr.length <= 1) {
+        return arr;
+    }
+
+    runArr = [];
+    tempArr = [[arr[0]]];
+
+    for (i = 1; i < arr.length; i++) {
+        if (arr[i] - arr[i - 1] > 1) {
+            tempArr.push([]);
+        }
+        tempArr[tempArr.length - 1].push(arr[i]);
+    }
+
+    for (i = 0; i < tempArr.length; i++) {
+        // runs of up to 2 consecutive years are displayed individually
+        if (tempArr[i].length <= 2) {
+            runArr.push(tempArr[i][0]);
+            if (tempArr[i].length === 2) {
+                runArr.push(tempArr[i][1]);
+            }
+        } else {
+            // runs of 3 or more are displayed as a range
+            runArr.push(tempArr[i][0] + "-" + tempArr[i][tempArr[i].length - 1]);
+        }
+    }
+
+    return runArr;
+}
+
 function maybeReuseTx(storeNames, mode, tx, cb) {
     if (tx !== undefined && tx !== null) {
         return cb(tx);
@@ -939,6 +972,7 @@ module.exports = {
     plusMinus: plusMinus,
     correctLinkLid: correctLinkLid,
     overtimeCounter: overtimeCounter,
+    yearRanges: yearRanges,
     maybeReuseTx: maybeReuseTx
 };
 

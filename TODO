@@ -27,6 +27,8 @@ BENCHMARKS
       more directly benchmark player.withStats in isolation
         doesn't seem to be the problem
     does it help if i remove g.dbl calls and replace w/ transactions?
+    i should test again with regenerator, just to be sure...
+    https://gist.github.com/inexorabletash/704e9688f99ac12dd336 for player.withStats?
   case 1
     tests
       2015 on dashboard
@@ -76,6 +78,8 @@ can i get rid of http/https links?
 rosters over 30 teams https://www.reddit.com/r/BasketballGM/comments/4g9lzu/beta_nba_dleague_roster/d2l82yn
 
 /home/jdscheff/Documents/BBGM Names
+
+shuffle shouldn't create so many good free agents, bias good players to be on teams
 
 clean up manual
 

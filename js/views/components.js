@@ -173,6 +173,21 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
                 }, {
                     val: "All-Defensive",
                     key: "all_def"
+                }, {
+                    val: "League Scoring Leader",
+                    key: "ppg_leader"
+                }, {
+                    val: "League Rebounding Leader",
+                    key: "rpg_leader"
+                }, {
+                    val: "League Assists Leader",
+                    key: "apg_leader"
+                }, {
+                    val: "League Steals Leader",
+                    key: "spg_leader"
+                }, {
+                    val: "League Blocks Leader",
+                    key: "bpg_leader"
                 }];
             } else if (fields[i] === "eventType") {
                 options = [{

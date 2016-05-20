@@ -126,6 +126,26 @@ async function awards(tx) {
         season: g.season
     });
 
+    // League leaders - points, rebounds, assists, steals, blocks
+    const factor = (g.numGames / 82) * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
+    const categories = [
+        {name: "League Scoring Leader", stat: "pts", minValue: 1400},
+        {name: "League Rebounding Leader", stat: "trb", minValue: 800},
+        {name: "League Assists Leader", stat: "ast", minValue: 400},
+        {name: "League Steals Leader", stat: "stl", minValue: 125},
+        {name: "League Blocks Leader", stat: "blk", minValue: 100}
+    ];
+    for (const cat of categories) {
+        players.sort((a, b) => b.stats[cat.stat] - a.stats[cat.stat]);
+        for (let j = 0; j < players.length; j++) {
+            p = players[j];
+            if (p.stats[cat.stat] * p.stats.gp >= cat.minValue * factor || p.stats.gp >= 70 * factor) {
+                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: cat.name});
+                break;
+            }
+        }
+    }
+
     // Add team games won to players
     for (let i = 0; i < players.length; i++) {
         // Special handling for players who were cut mid-season
@@ -238,6 +258,8 @@ async function awards(tx) {
         let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> (<a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamAbbrevsCache[p.tid]}</a>) `;
         if (p.type.indexOf("Team") >= 0) {
             text += `made the ${p.type}.`;
+        } else if (p.type.indexOf("Leader") >= 0) {
+            text += `led the league in ${p.type.replace("League ", "").replace(" Leader", "").toLowerCase()}.`;
         } else {
             text += `won the ${p.type} award.`;
         }

@@ -1104,7 +1104,7 @@ function filter(p, options) {
                         fp.awardsGrouped.push({
                             type: award,
                             count: awardsGroupedTemp[award].length,
-                            seasons: _.pluck(awardsGroupedTemp[award], "season")
+                            seasons: helpers.yearRanges(_.pluck(awardsGroupedTemp[award], "season"))
                         });
                     }
                 }

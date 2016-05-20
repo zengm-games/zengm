@@ -68,6 +68,21 @@ const optionsTmp = [{
 }, {
     val: "All-Defensive",
     key: "all_def"
+}, {
+    val: "League Scoring Leader",
+    key: "ppg_leader"
+}, {
+    val: "League Rebounding Leader",
+    key: "rpg_leader"
+}, {
+    val: "League Assists Leader",
+    key: "apg_leader"
+}, {
+    val: "League Steals Leader",
+    key: "spg_leader"
+}, {
+    val: "League Blocks Leader",
+    key: "bpg_leader"
 }];
 
 const awardOptions = {};
@@ -104,7 +119,7 @@ function getPlayerAwards(p, awardType) {
 
     const formatYear = year => {
         return Object.keys(year).map(k => {
-            const years = year[k].map(y => y.season).join(', ');
+            const years = helpers.yearRanges(year[k].map(y => y.season)).join(', ');
             return `${k} <small>(${years})</small>`;
         }).join(', ');
     };

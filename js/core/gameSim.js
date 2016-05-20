@@ -940,6 +940,7 @@ class GameSim {
                 this.recordStat(this.o, p, "pts");
                 this.recordPlay("ft", this.o, [this.team[this.o].player[p].name]);
                 outcome = "fg";
+                this.recordLastScore(this.o, p, "ft", this.t);
             } else {
                 this.recordPlay("missFt", this.o, [this.team[this.o].player[p].name]);
                 outcome = null;

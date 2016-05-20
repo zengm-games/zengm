@@ -370,7 +370,7 @@ function bbgmPing(type) {
             window._gaq.push(["_trackEvent", "BBGM", "New league", g.lid.toString()]); //eslint-disable-line no-underscore-dangle
         } else if (type === "season" && g.autoPlaySeasons === 0) {
             window._gaq.push(["_trackEvent", "BBGM", "Completed season", g.season.toString()]); //eslint-disable-line no-underscore-dangle
-            window._gaq.push(["_trackEvent", "BBGM", "Season protocol", window.location.protocol]); //eslint-disable-line no-underscore-dangle
+            window._gaq.push(["_trackEvent", "BBGM", "Season protocol", window.location.origin]); //eslint-disable-line no-underscore-dangle
         }
     }
 }
@@ -843,6 +843,37 @@ function overtimeCounter(n) {
     }
 }
 
+function yearRanges(arr) {
+    if (arr.length <= 1) {
+        return arr;
+    }
+
+    const runArr = [];
+    const tempArr = [[arr[0]]];
+
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] - arr[i - 1] > 1) {
+            tempArr.push([]);
+        }
+        tempArr[tempArr.length - 1].push(arr[i]);
+    }
+
+    for (let i = 0; i < tempArr.length; i++) {
+        // runs of up to 2 consecutive years are displayed individually
+        if (tempArr[i].length <= 2) {
+            runArr.push(tempArr[i][0]);
+            if (tempArr[i].length === 2) {
+                runArr.push(tempArr[i][1]);
+            }
+        } else {
+            // runs of 3 or more are displayed as a range
+            runArr.push(`${tempArr[i][0]}-${tempArr[i][tempArr[i].length - 1]}`);
+        }
+    }
+
+    return runArr;
+}
+
 function maybeReuseTx(storeNames, mode, tx, cb) {
     if (tx !== undefined && tx !== null) {
         return cb(tx);
@@ -886,5 +917,6 @@ module.exports = {
     plusMinus,
     correctLinkLid,
     overtimeCounter,
+    yearRanges,
     maybeReuseTx
 };

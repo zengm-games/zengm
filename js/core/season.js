@@ -133,13 +133,33 @@ function awards(tx) {
             });
         })];
     }).spread(function (teams, players) {
-        var champTid, i, p, rookies, type;
+        var categories, champTid, factor, i, j, p, rookies, type;
 
         players = player.filter(players, {
             attrs: ["pid", "name", "tid", "abbrev", "draft"],
             stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
             season: g.season
         });
+
+        // League leaders - points, rebounds, assists, steals, blocks
+        factor = (g.numGames / 82) * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
+        categories = [];
+        categories.push({name: "League Scoring Leader", stat: "pts", minValue: 1400});
+        categories.push({name: "League Rebounding Leader", stat: "trb", minValue: 800});
+        categories.push({name: "League Assists Leader", stat: "ast", minValue: 400});
+        categories.push({name: "League Steals Leader", stat: "stl", minValue: 125});
+        categories.push({name: "League Blocks Leader", stat: "blk", minValue: 100});
+
+        for (i = 0; i < categories.length; i++) {
+            players.sort(function (a, b) { return b.stats[categories[i].stat] - a.stats[categories[i].stat] });
+            for (j = 0; j < players.length; j++) {
+                p = players[j];
+                if (p.stats[categories[i].stat] * p.stats.gp >= categories[i].minValue * factor || p.stats.gp >= 70 * factor) {
+                    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: categories[i].name});
+                    break;
+                }
+            }
+        }
 
         // Add team games won to players
         for (i = 0; i < players.length; i++) {
@@ -271,6 +291,8 @@ function awards(tx) {
                 text = '<a href="' + helpers.leagueUrl(["player", p.pid]) + '">' + p.name + '</a> (<a href="' + helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season]) + '">' + g.teamAbbrevsCache[p.tid] + '</a>) ';
                 if (p.type.indexOf("Team") >= 0) {
                     text += 'made the ' + p.type + '.';
+                } else if (p.type.indexOf("Leader") >= 0) {
+                    text += "led the league in " + p.type.replace("League ", "").replace(" Leader", "").toLowerCase() + ".";
                 } else {
                     text += 'won the ' + p.type + ' award.';
                 }

@@ -151,7 +151,7 @@ function awards(tx) {
         categories.push({name: "League Blocks Leader", stat: "blk", minValue: 100});
 
         for (i = 0; i < categories.length; i++) {
-            players.sort(function (a, b) { return b.stats[categories[i].stat] - a.stats[categories[i].stat] });
+            players.sort(function (a, b) { return b.stats[categories[i].stat] - a.stats[categories[i].stat]; });
             for (j = 0; j < players.length; j++) {
                 p = players[j];
                 if (p.stats[categories[i].stat] * p.stats.gp >= categories[i].minValue * factor || p.stats.gp >= 70 * factor) {

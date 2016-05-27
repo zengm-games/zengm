@@ -1,16 +1,7 @@
 babel
   how can i gracefully show an error message in browsers without generators?
-  benchmark, for sanity
-    ctrl+r
-    new league
-    gamesim
-  how to make async/await fast
-    why do i need regenerator? don't ff and chrome support generators?
-      http://stackoverflow.com/questions/36775097/babel-plugin-transform-async-to-module-method-without-regenerator
-    https://babeljs.io/docs/plugins/transform-async-to-generator/ - try this with global Bluebird
-    typescript
-  investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being cancelled (resolve) and error returned (Reject)
-  TEST ACCOUNT STUFF! (reset, login, register, account, card, buy)
+cancelled (resolve) and error returned (Reject)
+  after live, test that account emails (lost pw, and register) work
   required babel transforms
     transform-es2015-block-scoping
       needed for firefox https://bugzilla.mozilla.org/show_bug.cgi?id=449811
@@ -19,46 +10,12 @@ babel
     all others
       http://stackoverflow.com/a/36824024/786644
 
-BENCHMARKS
-  QUESTIONS
-    in case 1, why is dashboard so slow in 2015?
-    in case 1, why is player stats so slow in 2019
-      not slow for 2015 in case 2!
-      more directly benchmark player.withStats in isolation
-        doesn't seem to be the problem
-    does it help if i remove g.dbl calls and replace w/ transactions?
-    i should test again with regenerator, just to be sure...
-    https://gist.github.com/inexorabletash/704e9688f99ac12dd336 for player.withStats?
-  case 1
-    tests
-      2015 on dashboard
-      2016 on message
-      2017 on standings
-      2018 on another team's roster
-      2019 on player stats
-    original
-      L 000:03:21.765
-      L 000:03:07.645
-      L 000:03:23.814
-      L 000:03:29.677
-      L 000:04:28.301
-    babel
-      L 000:04:17.357
-      L 000:03:10.725
-      L 000:03:28.077
-      L 000:03:37.156
-      L 000:08:41.419
-  case 2
-    tests
-      2015 week 1 on player stats
-      rest of season on player stats
-    original
-      L 000:00:17.437
-      L 000:03:14.909
-    babel
-      T 000:00:17.687
-      L 000:03:20.909
+backboard
+  investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being 
+  player.withStats native support
 
+same cursor trick as player.withStats for getting all teams playing today
+  benchmark
 
 minify es2015, even just generators
   https://github.com/mishoo/UglifyJS2/issues/448

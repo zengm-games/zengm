@@ -2025,57 +2025,104 @@ async function killOne() {
     });
 }
 
-function withStats(tx, players, options) {
+async function withStats(tx, players, options) {
     options.statsPlayoffs = options.statsPlayoffs !== undefined ? options.statsPlayoffs : false;
     options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
     options.filter = options.filter !== undefined ? options.filter : null;
 
-    return helpers.maybeReuseTx("playerStats", "readonly", tx, tx => {
-        if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
-            // No stats needed! Yay!
-            return players;
-        }
+    if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
+        // No stats needed! Yay!
+        return players;
+    }
 
-        // Get stats
-        return Promise.map(players, async p => {
-            let key;
-            if (options.statsSeasons === "all") {
-                // All seasons
-                key = backboard.bound([p.pid], [p.pid, '']);
-            } else if (options.statsSeasons.length === 1) {
-                // Restrict to one season
-                key = backboard.bound([p.pid, options.statsSeasons[0]], [p.pid, options.statsSeasons[0], '']);
-            } else if (options.statsSeasons.length > 1) {
-                // Restrict to range between seasons
-                key = backboard.bound([p.pid, Math.min(...options.statsSeasons)], [p.pid, Math.max(...options.statsSeasons), '']);
-            }
+    players = await Promise.all(players);
+    players = players.sort((a, b) => a.pid - b.pid);
 
-            const playerStats = await tx.playerStats.index('pid, season, tid').getAll(key);
+    const pidsToIdx = {};
+    const pids = players.map((p, i) => {
+        p.stats = [];
+        pidsToIdx[p.pid] = i;
 
-            // Due to indexes not necessarily handling all cases, still need to filter
-            p.stats = playerStats.filter(ps => {
-                // statsSeasons is defined, but this season isn't in it
-                if (options.statsSeasons !== "all" && options.statsSeasons.indexOf(ps.season) < 0) {
-                    return false;
+        return p.pid;
+    });
+
+    let seasonsRange;
+    if (options.statsSeasons === "all") {
+        // All seasons
+        seasonsRange = [0, Infinity];
+    } else if (options.statsSeasons.length === 1) {
+        // Restrict to one season
+        seasonsRange = [options.statsSeasons[0], options.statsSeasons[0]];
+    } else if (options.statsSeasons.length > 1) {
+        // Restrict to range between seasons
+        seasonsRange = [Math.min(...options.statsSeasons), Math.max(...options.statsSeasons)];
+    }
+    const range = backboard.bound([Math.min(...pids)], [Math.max(...pids), '']);
+
+    return helpers.maybeReuseTx("playerStats", "readonly", tx, async tx => {
+        const index = tx.playerStats.index('pid, season, tid')._rawIndex; // eslint-disable-line no-underscore-dangle
+
+        await new Promise((resolve, reject) => {
+            const request = index.openCursor(range);
+            request.onerror = e => reject(e.target.error);
+            request.onsuccess = e => {
+                const cursor = e.target.result;
+                if (!cursor) {
+                    resolve();
+                    return;
                 }
 
-                // If options.statsPlayoffs is false, don't include playoffs. Otherwise, include both
-                if (!options.statsPlayoffs && options.statsPlayoffs !== ps.playoffs) {
-                    return false;
+                const [pid, season] = cursor.key;
+                if (!pidsToIdx.hasOwnProperty(pid)) {
+                    // Skip to next player if we don't care about this player
+                    const newPid = pids.find(x => x > pid);
+                    if (newPid === undefined) {
+                        resolve();
+                    } else {
+                        cursor.continue([newPid, seasonsRange[0]]);
+                    }
+                    return;
                 }
+                const i = pidsToIdx[pid];
 
-                if (options.statsTid !== null && options.statsTid !== ps.tid) {
-                    return false;
+                if (season >= seasonsRange[0] && season <= seasonsRange[1]) {
+                    const ps = cursor.value;
+
+                    let save = true;
+                    if (options.statsSeasons !== "all" && !options.statsSeasons.includes(ps.season)) {
+                        // statsSeasons is defined, but this season isn't in it
+                        save = false;
+                    } else if (!options.statsPlayoffs && options.statsPlayoffs !== ps.playoffs) {
+                        // If options.statsPlayoffs is false, don't include playoffs. Otherwise, include both
+                        save = false;
+                    } else if (options.statsTid !== null && options.statsTid !== ps.tid) {
+                        save = false;
+                    }
+
+                    if (save) {
+                        players[i].stats.push(ps);
+                    }
+
+                    // Could immediately skip to next player if we've hit seasonsRange[1], although playoffs complicates it... be careful!
+                    cursor.continue();
+                } else if (season < seasonsRange[0]) {
+                    cursor.continue([pid, seasonsRange[0]]);
+                } else if (season > seasonsRange[1]) {
+                    if (i < pids.length - 1) {
+                        cursor.continue([pids[i + 1], seasonsRange[0]]);
+                    } else {
+                        resolve();
+                    }
                 }
+            };
+        });
 
-                return true;
-            });
-
+        for (const p of players) {
             // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
             p.stats.sort((a, b) => a.psid - b.psid);
+        }
 
-            return p;
-        });
+        return players;
     });
 }
 

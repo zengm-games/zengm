@@ -1,6 +1,5 @@
 babel
   how can i gracefully show an error message in browsers without generators?
-cancelled (resolve) and error returned (Reject)
   after live, test that account emails (lost pw, and register) work
   required babel transforms
     transform-es2015-block-scoping
@@ -14,16 +13,11 @@ backboard
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being 
   player.withStats native support
 
-same cursor trick as player.withStats for getting all teams playing today
-  benchmark
-
 minify es2015, even just generators
   https://github.com/mishoo/UglifyJS2/issues/448
   just doesn't work yet, even with all es2015 compiled except generators - not uglifyify, not minifyify, not plain uglifyjs
 
 rename Promise imports to Bluebird or BPromise
-
-reset db should show progress visibly
 
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 
@@ -39,8 +33,6 @@ rosters over 30 teams https://www.reddit.com/r/BasketballGM/comments/4g9lzu/beta
 shuffle shouldn't create so many good free agents, bias good players to be on teams
 
 clean up manual
-
-get rid of _?
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard
 

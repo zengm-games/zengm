@@ -188,7 +188,7 @@ function uiFirst(vm) {
         updatePopText();
     };
     const useCustomTeams = fileEl => {
-        if (fileEl.files.length) {
+        if (fileEl.files && fileEl.files.length) {
             vm.invalidLeagueFile(false);
 
             const file = fileEl.files[0];
@@ -222,7 +222,7 @@ function uiFirst(vm) {
         }
     };
     const fileEl = document.getElementById("custom-rosters-file");
-    fileEl.addEventListener("change", useCustomTeams);
+    fileEl.addEventListener("change", fileEl => useCustomTeams(fileEl));
     // Handle switch away from custom roster teams
     const newLeagueRostersEl = document.getElementById("new-league-rosters");
     newLeagueRostersEl.addEventListener("change", function () {

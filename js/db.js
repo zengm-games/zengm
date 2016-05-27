@@ -186,9 +186,7 @@ async function reset() {
     }
 
     const league = require('./core/league');
-    for (const l of leagues) {
-        await league.remove(l.lid);
-    }
+    await Promise.all(leagues.map(l => league.remove(l.lid)));
 
     // Delete any current meta database
     console.log("Deleting any current meta database...");

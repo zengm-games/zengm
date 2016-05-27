@@ -24,7 +24,7 @@ async function updateDashboard() {
         }
         otherUrl = `https://${window.location.hostname}/`;
     } else {
-        otherUrl = `http://${window.location.hostname}/`;
+        otherUrl = null;
     }
 
     return {

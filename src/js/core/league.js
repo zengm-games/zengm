@@ -319,16 +319,16 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
             if (randomizeRosters) {
                 // Assign the team ID of all players to the 'playerTids' array.
                 // Check tid to prevent draft prospects from being swapped with established players
-                const playerTids = players.filter(p => p.tid >= g.PLAYER.FREE_AGENT).map(p => p.tid);
+                const playerTids = players.filter(p => p.tid > g.PLAYER.FREE_AGENT).map(p => p.tid);
 
                 // Shuffle the teams that players are assigned to.
                 random.shuffle(playerTids);
-                for (let i = 0; i < players.length; i++) {
-                    if (players[i].tid >= g.PLAYER.FREE_AGENT) {
-                        players[i].tid = playerTids.pop();
-                        if (players[i].stats && players[i].stats.length > 0) {
-                            players[i].stats[players[i].stats.length - 1].tid = players[i].tid;
-                            players[i].statsTids.push(players[i].tid);
+                for (const p of players) {
+                    if (p.tid > g.PLAYER.FREE_AGENT) {
+                        p.tid = playerTids.pop();
+                        if (p.stats && p.stats.length > 0) {
+                            p.stats[p.stats.length - 1].tid = p.tid;
+                            p.statsTids.push(p.tid);
                         }
                     }
                 }

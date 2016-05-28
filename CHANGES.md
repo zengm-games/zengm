@@ -2,7 +2,15 @@ Don't read much into the release dates. Changes are pushed live as often as
 possible, regardless of whether I make an official release with a new version
 number or not.
 
-# 3.5.0 (???)
+# 3.6.0 (???)
+
+## Gameplay and UI
+
+## Techincal details
+
+- Incorporated Babel into build pipeline, most notably enabling async/await
+
+# 3.5.0 (2016-05-27)
 
 ## Gameplay and UI
 

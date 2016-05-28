@@ -50,6 +50,7 @@ const setTimestamps = () => {
     const d = new Date();
     const date = d.toISOString().split('T')[0].replace(/-/g, '.');
     const rev = `${date}.${d.getMinutes() + 60 * d.getHours()}`;
+    console.log(`rev ${rev}`);
 
     replace({
         regex: "TIMESTAMP_GOES_HERE",

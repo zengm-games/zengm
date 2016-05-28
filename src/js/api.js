@@ -8,7 +8,7 @@ const season = require('./core/season');
 const $ = require('jquery');
 
 async function play(amount) {
-    if (['day', 'week', 'month', 'throughPlayoffs', 'untilPreseason'].indexOf(amount) >= 0) {
+    if (['day', 'week', 'month', 'untilPreseason'].includes(amount)) {
         let numDays;
         if (amount === "day") {
             numDays = 1;
@@ -16,8 +16,6 @@ async function play(amount) {
             numDays = 7;
         } else if (amount === "month") {
             numDays = 30;
-        } else if (amount === "throughPlayoffs") {
-            numDays = 100;  // There aren't 100 days in the playoffs, so 100 will cover all the games and the sim stops when the playoffs end
         } else if (amount === "untilPreseason") {
             numDays = g.daysLeft;
         }
@@ -31,6 +29,21 @@ async function play(amount) {
                 numDays = g.daysLeft;
             }
             freeAgents.play(numDays);
+        }
+    } else if (amount === "throughPlayoffs") {
+        if (g.phase === g.PHASE.PLAYOFFS) {
+            ui.updateStatus("Playing..."); // For quick UI updating, before await
+            const playoffSeries = await g.dbl.playoffSeries.get(g.season);
+
+            // Max 7 days per round that hasn't started yet
+            const numDaysFutureRounds = (3 - playoffSeries.currentRound) * 7;
+
+            // All current series are in sync, so just check one and see how many games are left
+            const series = playoffSeries.series[playoffSeries.currentRound][0];
+            const numDaysThisSeries = 7 - series.home.won - series.away.won;
+
+            const numDays = numDaysFutureRounds + numDaysThisSeries;
+            game.play(numDays);
         }
     } else if (amount === "untilPlayoffs") {
         if (g.phase < g.PHASE.PLAYOFFS) {

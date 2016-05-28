@@ -81,8 +81,8 @@ and point your browser to <http://localhost:3000/>.
 #### 2. Apache
 
 The mod_rewrite rules in `.htaccess` can be used to make Apache run Basketball
-GM. Everything should work if you just have a domain/subdomain point at this
-folder with mod_rewrite enabled. That's how it's done on basketball-gm.com.
+GM. Everything should work if you point it at the `build` folder with
+mod_rewrite enabled. That's how it's done on basketball-gm.com.
 
 ### Step 4 - Testing
 

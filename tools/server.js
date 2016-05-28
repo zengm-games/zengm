@@ -31,8 +31,4 @@ app.get("/img/*", showStatic);
 app.get("/*", showIndex);
 
 const port = 3000;
-const server = app.listen(3000, () => {
-    const address = server.address();
-
-    console.log(`View Basketball GM at http://localhost:${port}`);
-});
+app.listen(3000, () => console.log(`View Basketball GM at http://localhost:${port}`));

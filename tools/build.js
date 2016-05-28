@@ -2,7 +2,6 @@ const fs = require("fs");
 const CleanCSS = require('clean-css');
 const replace = require("replace");
 const fse = require('fs-extra');
-const execSync = require('child_process').execSync;
 
 const reset = () => {
     fse.removeSync('build');

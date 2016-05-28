@@ -1,34 +1,58 @@
-const express = require("express");
+const fs = require('fs');
+const http = require("http");
 const path = require("path");
 
-const app = express();
+const port = 3000;
 
-const options = {
-    root: path.join(__dirname, "../build")
+const mimeTypes = {
+    '.css': 'text/css',
+    '.js': 'text/javascript',
+    '.map': 'application/json',
+    '.html': 'text/html',
+    '.woff': 'application/font-woff'
+};
+const sendFile = (res, filename) => {
+    const ext = path.extname(filename);
+    if (mimeTypes.hasOwnProperty(ext)) {
+        res.writeHead(200, {'Content-Type': mimeTypes[ext]});
+    } else {
+        console.log(`Unknown mime type for extension ${ext}`);
+    }
+
+    fs.createReadStream(path.join(__dirname, "../build", filename))
+        .pipe(res);
 };
 
 const showStatic = (req, res) => {
-    res.sendFile(req.url.substr(1), options);
+    sendFile(res, req.url.substr(1));
 };
 const showStaticWithHtml = (req, res) => {
-    res.sendFile(`${req.url.substr(1)}.html`, options);
+    sendFile(res, `${req.url.substr(1)}.html`);
 };
 const showIndex = (req, res) => {
-    res.sendFile("index.html", options);
+    sendFile(res, "index.html");
 };
 
-app.get("/export_3.3", showStaticWithHtml);
-app.get("/manifest_hack", showStaticWithHtml);
-app.get("/test*", showStaticWithHtml);
-app.get("/test_case*", showStaticWithHtml);
+const startsWith = (url, prefixes) => {
+    for (const prefix of prefixes) {
+        if (url.indexOf(prefix) === 0) {
+            return true;
+        }
+    }
+    return false;
+};
 
-app.get("/css/*", showStatic);
-app.get("/fonts/*", showStatic);
-app.get("/gen/*", showStatic);
-app.get("/ico/*", showStatic);
-app.get("/img/*", showStatic);
+const server = http.createServer((req, res) => {
+    const prefixesStaticWithHtml = ['/export_3.3', '/manifest_hack', '/test', '/test_case'];
+    const prefixesStatic = ['/css/', '/fonts/', '/gen/', '/ico/', '/img/'];
 
-app.get("/*", showIndex);
+    if (startsWith(req.url, prefixesStaticWithHtml)) {
+        showStaticWithHtml(req, res);
+    } else if (startsWith(req.url, prefixesStatic)) {
+        showStatic(req, res);
+    } else {
+        showIndex(req, res);
+    }
+});
 
-const port = 3000;
-app.listen(3000, () => console.log(`View Basketball GM at http://localhost:${port}`));
+server.listen(port, 'localhost', () => console.log(`View Basketball GM at http://localhost:${port}`));

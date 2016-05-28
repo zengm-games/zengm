@@ -34,7 +34,14 @@ const minifyCss = () => {
                  fs.readFileSync("src/css/bbgm.css") +
                  fs.readFileSync("src/css/bbgm-notifications.css") +
                  fs.readFileSync("src/css/DT_bootstrap.css");
-    fs.writeFileSync("build/gen/bbgm.css", (new CleanCSS()).minify(source));
+    const result = (new CleanCSS()).minify(source);
+    if (result.errors.length > 0) {
+        console.log('clean-css errors', result.errors);
+    }
+    if (result.warnings.length > 0) {
+        console.log('clean-css warnings', result.warnings);
+    }
+    fs.writeFileSync("build/gen/bbgm.css", result.styles);
 };
 
 const setTimestamps = () => {

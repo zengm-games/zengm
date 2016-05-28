@@ -592,9 +592,16 @@
       "resolved": "https://registry.npmjs.org/cipher-base/-/cipher-base-1.0.2.tgz"
     },
     "clean-css": {
-      "version": "2.2.23",
-      "from": "clean-css@2.2.23",
-      "resolved": "https://registry.npmjs.org/clean-css/-/clean-css-2.2.23.tgz"
+      "version": "3.4.13",
+      "from": "clean-css@3.4.13",
+      "resolved": "https://registry.npmjs.org/clean-css/-/clean-css-3.4.13.tgz",
+      "dependencies": {
+        "source-map": {
+          "version": "0.4.4",
+          "from": "source-map@>=0.4.0 <0.5.0",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.4.4.tgz"
+        }
+      }
     },
     "cli-cursor": {
       "version": "1.0.2",
@@ -634,9 +641,9 @@
       }
     },
     "commander": {
-      "version": "2.2.0",
-      "from": "commander@>=2.2.0 <2.3.0",
-      "resolved": "https://registry.npmjs.org/commander/-/commander-2.2.0.tgz"
+      "version": "2.8.1",
+      "from": "commander@>=2.8.0 <2.9.0",
+      "resolved": "https://registry.npmjs.org/commander/-/commander-2.8.1.tgz"
     },
     "component-bind": {
       "version": "1.0.0",
@@ -1352,6 +1359,11 @@
       "version": "4.1.4",
       "from": "graceful-fs@>=4.1.2 <5.0.0",
       "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.1.4.tgz"
+    },
+    "graceful-readlink": {
+      "version": "1.0.1",
+      "from": "graceful-readlink@>=1.0.0",
+      "resolved": "https://registry.npmjs.org/graceful-readlink/-/graceful-readlink-1.0.1.tgz"
     },
     "growl": {
       "version": "1.9.2",

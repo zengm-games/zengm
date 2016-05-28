@@ -28,7 +28,7 @@ const mapping = {
 };
 
 async function updateUpcoming(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== vm.abbrev()) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0 || inputs.abbrev !== vm.abbrev()) {
         const schedule = await season.getSchedule();
         const games = [];
         for (let i = 0; i < schedule.length; i++) {

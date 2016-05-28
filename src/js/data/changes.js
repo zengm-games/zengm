@@ -102,6 +102,9 @@ const all = [{
 }, {
     date: "2016-02-06",
     msg: 'Lots of new options in God Mode - change the salary cap, the length of games, the number of games in a season, disable injuries, etc.'
+}, {
+    date: "2016-05-28",
+    msg: 'The Edit Team Info feature is now only available in God Mode.'
 }];
 
 function check() {

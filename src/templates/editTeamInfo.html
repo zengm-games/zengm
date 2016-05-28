@@ -12,35 +12,47 @@
 
 <h2>Manual Editing</h2>
 
-<div class="row" style="margin-top: -9px">
-  <div class="col-xs-3">
-    <h3>Abbrev</h3>
+<div class="row hidden-xs" style="font-weight: bold; margin-bottom: 0.5em">
+  <div class="col-sm-2">
+    <br>Region
   </div>
-  <div class="col-xs-3">
-    <h3>Region</h3>
+  <div class="col-sm-2">
+    <br>Name
   </div>
-  <div class="col-xs-3">
-    <h3>Name</h3>
+  <div class="col-sm-2 col-md-1">
+    <br>Abbrev
   </div>
-  <div class="col-xs-3">
-    <h4>Population<br>(in millions)</h4>
+  <div class="col-sm-2">
+    Population<br>(millions)
+  </div>
+  <div class="col-sm-4 col-md-5">
+    <br>Logo URL
   </div>
 </div>
 
 <form method="POST" data-bind="attrLeagueUrl: {action: ['edit_team_info']}">
   <div class="row" data-bind="foreach: teams">
-    <div class="col-xs-3 form-group">
-      <input type="text" class="form-control" name="abbrev[]" data-bind="attr: {value: abbrev}">
+    <div class="col-xs-6 col-sm-2 form-group">
+      <label class="visible-xs" data-bind="attr: {for: 'region' + $index()}">Region</label>
+      <input type="text" class="form-control" name="region[]" data-bind="attr: {value: region, id: 'region' + $index()}">
     </div>
-    <div class="col-xs-3 form-group">
-      <input type="text" class="form-control" name="region[]" data-bind="attr: {value: region}">
+    <div class="col-xs-6 col-sm-2 form-group">
+      <label class="visible-xs" data-bind="attr: {for: 'name' + $index()}">Name</label>
+      <input type="text" class="form-control" name="name[]" data-bind="attr: {value: name, id: 'name' + $index()}">
     </div>
-    <div class="col-xs-3 form-group">
-      <input type="text" class="form-control" name="name[]" data-bind="attr: {value: name}">
+    <div class="col-xs-6 col-sm-2 col-md-1 form-group">
+      <label class="visible-xs" data-bind="attr: {for: 'abbrev' + $index()}">Abbrev</label>
+      <input type="text" class="form-control" name="abbrev[]" data-bind="attr: {value: abbrev, id: 'abbrev' + $index()}">
     </div>
-    <div class="col-xs-3 form-group">
-      <input type="text" class="form-control" name="pop[]" data-bind="attr: {value: pop}">
+    <div class="col-xs-6 col-sm-2 form-group">
+      <label class="visible-xs" data-bind="attr: {for: 'pop' + $index()}">Population (millions)</label>
+      <input type="text" class="form-control" name="pop[]" data-bind="attr: {value: pop, id: 'pop' + $index()}">
     </div>
+    <div class="col-sm-4 col-md-5 form-group">
+      <label class="visible-xs" data-bind="attr: {for: 'imgURL' + $index()}">Logo URL</label>
+      <input type="text" class="form-control" name="imgURL[]" data-bind="attr: {value: imgURL, id: 'imgURL' + $index()}">
+    </div>
+    <hr class="visible-xs">
   </div>
   <center>
     <button type="submit" class="btn btn-primary" id="edit-team-info">Update Team Info</button>

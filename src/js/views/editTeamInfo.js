@@ -23,6 +23,7 @@ async function post(req) {
             t.abbrev = req.params.abbrev[t.tid];
             t.region = req.params.region[t.tid];
             t.name = req.params.name[t.tid];
+            t.imgURL = req.params.imgURL[t.tid];
 
             if (t.tid === g.userTid) {
                 userName = t.name;
@@ -52,7 +53,7 @@ async function post(req) {
 
 async function updateTeamInfo() {
     const teams = await team.filter({
-        attrs: ["tid", "abbrev", "region", "name"],
+        attrs: ["tid", "abbrev", "region", "name", "imgURL"],
         seasonAttrs: ["pop"],
         season: g.season
     });

@@ -5,6 +5,14 @@ const team = require('../core/team');
 const bbgmView = require('../util/bbgmView');
 const helpers = require('../util/helpers');
 
+function get() {
+    if (!g.godMode) {
+        return {
+            errorMessage: `You can't edit teams unless you enable <a href="${helpers.leagueUrl(["god_mode"])}">God Mode</a>.`
+        };
+    }
+}
+
 async function post(req) {
     const button = document.getElementById("edit-team-info");
     button.disabled = true;
@@ -154,6 +162,7 @@ function uiFirst() {
 
 module.exports = bbgmView.init({
     id: "editTeamInfo",
+    get,
     post,
     runBefore: [updateTeamInfo],
     uiFirst

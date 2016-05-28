@@ -14,15 +14,15 @@
   },
   "scripts": {
     "start": "node tools/server.js",
-    "build": "npm run build-js && node tools/build.js",
+    "build": "node tools/build.js && npm run build-js",
     "test": "karma start",
-    "lint": "eslint js/** tools/**",
+    "lint": "eslint src/js/** tools/**",
     "build-js": "node tools/build-js.js",
     "minify-js": "node tools/minify-js.js",
-    "watch-js": "watchify -d js/app.js -o gen/app.js",
-    "build-cordova": "echo 'probably broken since browserify switch'",
-    "build-test": "browserify js/test/app.js -o gen/app-test.js",
-    "watch-test": "watchify js/test/app.js -o gen/app-test.js"
+    "watch-js": "watchify -d src/js/app.js -o build/gen/app.js",
+    "copy-mocha": "cp node_modules/mocha/mocha.css build/gen/mocha.css && cp node_modules/mocha/mocha.js build/gen/mocha.js",
+    "build-test": "npm run copy-mocha && browserify -d src/js/test/app.js -o build/gen/app-test.js",
+    "watch-test": "npm run copy-mocha && watchify -d src/js/test/app.js -o build/gen/app-test.js"
   },
   "dependencies": {
     "backboard": "1.0.4",
@@ -62,18 +62,18 @@
     "watchify": "3.7.0"
   },
   "browser": {
-    "lib/bootstrap-affix": "./js/lib/bootstrap-affix.js",
-    "lib/bootstrap-alert": "./js/lib/bootstrap-alert.js",
-    "lib/bootstrap-collapse": "./js/lib/bootstrap-collapse.js",
-    "lib/bootstrap-dropdown": "./js/lib/bootstrap-dropdown.js",
-    "lib/bootstrap-modal": "./js/lib/bootstrap-modal.js",
-    "lib/bootstrap-popover": "./js/lib/bootstrap-popover.js",
-    "lib/bootstrap-tooltip": "./js/lib/bootstrap-tooltip.js",
-    "lib/bootstrap-transition": "./js/lib/bootstrap-transition.js",
-    "lib/jquery.barGraph": "./js/lib/jquery.barGraph.js",
-    "lib/jquery.dataTables": "./js/lib/jquery.dataTables.js",
-    "lib/jquery.dataTables.bbgmSorting": "./js/lib/jquery.dataTables.bbgmSorting.js",
-    "lib/jquery.dataTables.bootstrap": "./js/lib/jquery.dataTables.bootstrap.js"
+    "lib/bootstrap-affix": "./src/js/lib/bootstrap-affix.js",
+    "lib/bootstrap-alert": "./src/js/lib/bootstrap-alert.js",
+    "lib/bootstrap-collapse": "./src/js/lib/bootstrap-collapse.js",
+    "lib/bootstrap-dropdown": "./src/js/lib/bootstrap-dropdown.js",
+    "lib/bootstrap-modal": "./src/js/lib/bootstrap-modal.js",
+    "lib/bootstrap-popover": "./src/js/lib/bootstrap-popover.js",
+    "lib/bootstrap-tooltip": "./src/js/lib/bootstrap-tooltip.js",
+    "lib/bootstrap-transition": "./src/js/lib/bootstrap-transition.js",
+    "lib/jquery.barGraph": "./src/js/lib/jquery.barGraph.js",
+    "lib/jquery.dataTables": "./src/js/lib/jquery.dataTables.js",
+    "lib/jquery.dataTables.bbgmSorting": "./src/js/lib/jquery.dataTables.bbgmSorting.js",
+    "lib/jquery.dataTables.bootstrap": "./src/js/lib/jquery.dataTables.bootstrap.js"
   },
   "browserify-shim": {
     "lib/bootstrap-affix": {

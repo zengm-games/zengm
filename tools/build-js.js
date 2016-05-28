@@ -6,7 +6,7 @@ const fs = require('fs');
 const browserify = require('browserify');
 const exorcist = require('exorcist');
 
-const bundler = browserify('js/app.js', {debug: true});
+const bundler = browserify('src/js/app.js', {debug: true});
 
 // Disabled until it supports ES2015 out of the box (waiting on new UglifyJS relase, mostly)
 /*bundler.plugin('minifyify', {
@@ -31,5 +31,5 @@ bundler.bundle((err, src, map) => {
 
 bundler
     .bundle()
-    .pipe(exorcist('gen/app.js.map'))
-    .pipe(fs.createWriteStream('gen/app.js', 'utf8'));
+    .pipe(exorcist('build/gen/app.js.map'))
+    .pipe(fs.createWriteStream('build/gen/app.js', 'utf8'));

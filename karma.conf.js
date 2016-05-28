@@ -4,12 +4,12 @@ module.exports = function (config) {
 
         frameworks: ['mocha', 'browserify'],
 
-        files: ['js/test/app.js'],
+        files: ['src/js/test/app.js'],
 
         exclude: [],
 
         preprocessors: {
-            'js/**/*.js': ['browserify']
+            'src/js/**/*.js': ['browserify']
         },
 
         reporters: ['mocha'],

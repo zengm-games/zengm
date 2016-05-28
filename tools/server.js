@@ -4,7 +4,7 @@ const path = require("path");
 const app = express();
 
 const options = {
-    root: path.join(__dirname, "..")
+    root: path.join(__dirname, "../build")
 };
 
 const showStatic = (req, res) => {
@@ -23,20 +23,16 @@ app.get("/test*", showStaticWithHtml);
 app.get("/test_case*", showStaticWithHtml);
 
 app.get("/css/*", showStatic);
-app.get("/data/*", showStatic);
-app.get("/docs/*", showStatic);
 app.get("/fonts/*", showStatic);
 app.get("/gen/*", showStatic);
 app.get("/ico/*", showStatic);
 app.get("/img/*", showStatic);
-app.get("/js/*", showStatic);
-app.get("/node_modules/*", showStatic);
-app.get("/templates/*", showStatic);
 
 app.get("/*", showIndex);
 
+const port = 3000;
 const server = app.listen(3000, () => {
     const address = server.address();
 
-    console.log(`View Basketball GM at http://${address.address}:${address.port}`);
+    console.log(`View Basketball GM at http://localhost:${port}`);
 });

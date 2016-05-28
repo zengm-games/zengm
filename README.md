@@ -62,27 +62,15 @@ However during development, you probably would rather do
 which will constantly look for changes in your JS files and recompile. Then for
 CSS files, if you go to Tools > Debug Mode (inside the game), it will use the
 raw uncompiled CSS files so you don't need to keep compiling them after each
-change. Debug Mode also creates a global variable `window.bbgm` which gives you
-access to many of the internal functions of Basketball GM.
+change.
 
 ### Step 3 - Running
 
 To run the game locally, you need some way of running a web server to display
-the content. There are currently three ways to do it. It doesn't matter which
+the content. There are currently two ways to do it. It doesn't matter which
 you use as long as you can get it to run on your computer.
 
-#### 1. Mongoose - Easiest on Windows
-
-Run the included `mongoose-tiny-4.1.exe` and point your browser to
-<http://localhost:8080/>.
-
-That's it.
-
-If that doesn't work, try right clicking on the Mongoose icon in your
-notification area and poke around in there. You can also see if there is a newer
-version of Mongoose available <http://cesanta.com/downloads.html>.
-
-#### 2. Express - Also quite easy
+#### 1. Express (easiest)
 
 Run
 
@@ -90,7 +78,7 @@ Run
 
 and point your browser to <http://localhost:3000/>.
 
-#### 3. Apache
+#### 2. Apache
 
 The mod_rewrite rules in `.htaccess` can be used to make Apache run Basketball
 GM. Everything should work if you just have a domain/subdomain point at this
@@ -109,7 +97,7 @@ Coverage is not great. They can be run from the command line in Karma with
     npm test
 
 or manually within a web browser by running `npm run build-test` (or
-`npm run watch-test`) and going to <http://localhost:8080/test>.
+`npm run watch-test`) and going to <http://localhost:3000/test>.
 
 ### Code Overview
 
@@ -126,8 +114,11 @@ that, my best guidance is to copy from an existing page and use that as a
 starting point.
 
 For database access, I wrote a very thin Promises-based wrapper around IndexedDB
-which can be found in `js/dao.js`. Understanding how IndexedDB works is critical
-in any non-trivial work on Basketball GM.
+called [Backboard](https://github.com/dumbmatter/backboard). Understanding how
+IndexedDB works is critical in any non-trivial work on Basketball GM.
+
+Also, there is a global variable `window.bbgm` which gives you access to many of
+the internal functions of Basketball GM from within your browser.
 
 ### Documentation
 
@@ -146,8 +137,6 @@ a pull request.
 It's also probably a good idea to create an [issue on
 GitHub](https://github.com/dumbmatter/basketball-gm/issues) before you start
 working on something to keep me in the loop.
-
-
 
 ## Less Important Development Info
 
@@ -182,8 +171,6 @@ For instance, "defensive rebounds" is "drb".
 
 The game runs equally well within a web browser and within Cordova (Android
 4.4+). The codebase is designed to handle both situations (the main difference
-is absolute vs relative paths, governed by window.inCordova in index.html). To
-collect the files needed for Cordova, run `npm run build-cordova` and look in
-the cordova folder.
+is absolute vs relative paths, governed by window.inCordova in index.html).
 
 Warning: This hasn't been tested in a while and is probably broken by now.

@@ -917,7 +917,7 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
 
     p.awards = [];
 
-    p.freeAgentMood = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    p.freeAgentMood = Array(g.numTeams).fill(0);
     p.yearsFreeAgent = 0;
     p.retiredYear = null;
 

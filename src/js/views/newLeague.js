@@ -222,7 +222,7 @@ function uiFirst(vm) {
         }
     };
     const fileEl = document.getElementById("custom-rosters-file");
-    fileEl.addEventListener("change", fileEl => useCustomTeams(fileEl));
+    fileEl.addEventListener("change", () => setTimeout(() => useCustomTeams(fileEl), 100));
     // Handle switch away from custom roster teams
     const newLeagueRostersEl = document.getElementById("new-league-rosters");
     newLeagueRostersEl.addEventListener("change", function () {

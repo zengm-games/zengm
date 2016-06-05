@@ -6,6 +6,8 @@ number or not.
 
 ## Gameplay and UI
 
+- Default teams now have logos
+
 ## Techincal details
 
 - Incorporated Babel into build pipeline, most notably enabling async/await

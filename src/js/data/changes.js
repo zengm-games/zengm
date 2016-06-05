@@ -105,6 +105,9 @@ const all = [{
 }, {
     date: "2016-05-28",
     msg: 'The Edit Team Info feature is now only available in God Mode.'
+}, {
+    date: "2016-06-04",
+    msg: 'The default teams now have logos.'
 }];
 
 function check() {

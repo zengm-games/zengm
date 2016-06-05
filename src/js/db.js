@@ -3,6 +3,7 @@ const g = require('./globals');
 const Promise = require('bluebird');
 const Davis = require('./lib/davis');
 const eventLog = require('./util/eventLog');
+const helpers = require('./util/helpers');
 
 const migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="https://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
 
@@ -152,10 +153,40 @@ function migrateLeague(upgradeDB, lid) {
             });
         })());
     }
+    if (upgradeDB.oldVersion <= 17) {
+        // Use new default team logos, unless teams have been edited
+        ((async () => {
+            const teamsDefault = helpers.getTeamsDefault();
+            const [teamAbbrevsCache, teamNamesCache, teamRegionsCache] = await Promise.all([
+                upgradeDB.gameAttributes.get('teamAbbrevsCache').then(ga => JSON.stringify(ga.value)),
+                upgradeDB.gameAttributes.get('teamNamesCache').then(ga => JSON.stringify(ga.value)),
+                upgradeDB.gameAttributes.get('teamRegionsCache').then(ga => JSON.stringify(ga.value))
+            ]);
+
+console.log('Checking equality');
+            if (JSON.stringify(teamsDefault.map(t => t.abbrev)) !== teamAbbrevsCache) {
+                return;
+            }
+            if (JSON.stringify(teamsDefault.map(t => t.name)) !== teamNamesCache) {
+                return;
+            }
+            if (JSON.stringify(teamsDefault.map(t => t.region)) !== teamRegionsCache) {
+                return;
+            }
+console.log('Pass!');
+
+            await upgradeDB.teams.iterate(async t => {
+                if (!t.imgURL) {
+                    t.imgURL = teamsDefault[t.tid].imgURL;
+                }
+                return t;
+            });
+        })());
+    }
 }
 
 async function connectLeague(lid) {
-    const db = await Backboard.open(`league${lid}`, 17, upgradeDB => {
+    const db = await Backboard.open(`league${lid}`, 18, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

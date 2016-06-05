@@ -229,6 +229,10 @@ function getTeamsDefault() {
         {tid: 29, cid: 0, did: 2, region: "Washington", name: "Monuments", abbrev: "WAS", pop: 4.2}
     ];
 
+    for (const t of teams) {
+        t.imgURL = `/img/logos/${t.abbrev}.png`;
+    }
+
     teams = addPopRank(teams);
 
     return teams;

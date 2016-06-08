@@ -604,7 +604,7 @@ async function release(tx, p, justDrafted) {
 
     eventLog.add(null, {
         type: "release",
-        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>.`,
+        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a>.`,
         showNotification: false,
         pids: [p.pid],
         tids: [p.tid]
@@ -728,15 +728,16 @@ function name() {
 
     // First name
     const fnRand = random.uniform(0, playerNames.first[country][playerNames.first[country].length - 1][1]);
-    const fn = playerNames.first[country].find(row => row[1] >= fnRand)[0];
+    const firstName = playerNames.first[country].find(row => row[1] >= fnRand)[0];
 
     // Last name
     const lnRand = random.uniform(0, playerNames.last[country][playerNames.last[country].length - 1][1]);
-    const ln = playerNames.last[country].find(row => row[1] >= lnRand)[0];
+    const lastName = playerNames.last[country].find(row => row[1] >= lnRand)[0];
 
     return {
         country,
-        name: `${fn} ${ln}`
+        firstName,
+        lastName
     };
 }
 
@@ -916,7 +917,8 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
         loc: nameInfo.country
     };
 
-    p.name = nameInfo.name;
+    p.firstName = nameInfo.firstName;
+    p.lastName = nameInfo.lastName;
     p.college = "";
     p.imgURL = ""; // Custom rosters can define player image URLs to be used rather than vector faces
 
@@ -1718,7 +1720,7 @@ function retire(tx, p, playerStats, retiredNotification) {
     if (retiredNotification) {
         eventLog.add(tx, {
             type: "retired",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>  retired.`,
+            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> retired.`,
             showNotification: p.tid === g.userTid,
             pids: [p.pid],
             tids: [p.tid]
@@ -1734,7 +1736,7 @@ function retire(tx, p, playerStats, retiredNotification) {
         p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
         eventLog.add(tx, {
             type: "hallOfFame",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> was inducted into the <a href="${helpers.leagueUrl(["hall_of_fame"])}">Hall of Fame</a>.`,
+            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> was inducted into the <a href="${helpers.leagueUrl(["hall_of_fame"])}">Hall of Fame</a>.`,
             showNotification: p.statsTids.indexOf(g.userTid) >= 0,
             pids: [p.pid],
             tids: p.statsTids
@@ -1946,7 +1948,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 
         const featTextArr = Object.keys(statArr).map(stat => `${statArr[stat]} ${stat}`);
 
-        let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${p.name}</a> had <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid])}">`;
+        let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${p.firstName} ${p.lastName}</a> had <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid])}">`;
         for (let k = 0; k < featTextArr.length; k++) {
             if (featTextArr.length > 1 && k === featTextArr.length - 1) {
                 featText += " and ";
@@ -1964,7 +1966,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 
         tx.playerFeats.add({
             pid,
-            name: p.name,
+            name: p.firstName + " " + p.lastName,
             pos: p.pos,
             season: g.season,
             tid,
@@ -2021,7 +2023,7 @@ async function killOne() {
 
         await eventLog.add(tx, {
             type: "tragedy",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> ${reason}.`,
+            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> ${reason}.`,
             showNotification: tid === g.userTid,
             pids: [p.pid],
             tids: [tid],

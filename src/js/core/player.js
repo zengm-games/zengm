@@ -724,14 +724,14 @@ function name() {
 
     // First name
     const fnRand = random.uniform(0, playerNames.first[playerNames.first.length - 1][1]);
-    const fn = playerNames.first.find(row => row[1] >= fnRand)[0];
+    const firstName = playerNames.first.find(row => row[1] >= fnRand)[0];
 
 
     // Last name
     const lnRand = random.uniform(0, playerNames.last[playerNames.last.length - 1][1]);
-    const ln = playerNames.last.find(row => row[1] >= lnRand)[0];
+    const lastName = playerNames.last.find(row => row[1] >= lnRand)[0];
 
-    return { firstName : fn, lastName : ln }
+    return {firstName, lastName};
 }
 
 /**
@@ -912,9 +912,9 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
     };
 
     const randomName = name(nationality);
-    p.firstName = randomName['firstName']
-    p.lastName = randomName['lastName']
-    p.name = p.firstName + " " + p.lastName
+    p.firstName = randomName.firstName;
+    p.lastName = randomName.lastName;
+    p.name = `${p.firstName} ${p.lastName}`;
     p.college = "";
     p.imgURL = ""; // Custom rosters can define player image URLs to be used rather than vector faces
 
@@ -1960,7 +1960,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 
         tx.playerFeats.add({
             pid,
-            name: p.firstName + " " + p.lastName,
+            name: p.name,
             pos: p.pos,
             season: g.season,
             tid,

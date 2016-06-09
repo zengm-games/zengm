@@ -1115,7 +1115,7 @@ function filter(p, options) {
                         });
                     }
                 }
-            } else if (options.attrs[i] == "name") {
+            } else if (options.attrs[i] === "name") {
                 fp.name = `${p.firstName} ${p.lastName}`;
             } else {
                 fp[options.attrs[i]] = p[options.attrs[i]];

@@ -64,7 +64,7 @@ async function updateEventLog(inputs, updateEvents, vm) {
             }
 
             if (inputs.eventType === "all") {
-                events = events.filter(event => event.type === 'reSigned' || event.type === 'released' || event.type === 'trade' || event.type === 'freeAgent' || event.type === 'draft');
+                events = events.filter(event => event.type === 'reSigned' || event.type === 'release' || event.type === 'trade' || event.type === 'freeAgent' || event.type === 'draft');
             } else {
                 events = events.filter(event => event.type === inputs.eventType);
             }

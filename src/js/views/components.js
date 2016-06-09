@@ -195,7 +195,7 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
                     key: "reSigned"
                 }, {
                     val: "Released",
-                    key: "released"
+                    key: "release"
                 }, {
                     val: "Trades",
                     key: "trade"

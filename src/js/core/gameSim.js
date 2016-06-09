@@ -310,7 +310,7 @@ class GameSim {
 
                         // It's only a "substitution" if it's not the starting lineup
                         if (this.startersRecorded) {
-                            this.recordPlay("sub", t, [this.team[t].player[b].name, this.team[t].player[p].name]);
+                            this.recordPlay("sub", t, [`${this.team[t].player[b].firstName} ${this.team[t].player[b].lastName}`, `${this.team[t].player[p].firstName} ${this.team[t].plyer[p].lastName}`]);
                         }
                         break;
                     }
@@ -478,7 +478,7 @@ class GameSim {
                     if (Math.random() < 0.000125) {
                         this.team[t].player[p].injured = true;
                         newInjury = true;
-                        this.recordPlay("injury", t, [this.team[t].player[p].name]);
+                        this.recordPlay("injury", t, [`${this.team[t].player[p].firstName} ${this.team[t].player[p].lastName}]);
                     }
                 }
             }
@@ -530,7 +530,7 @@ class GameSim {
             return this.doStl(p); // "stl"
         }
 
-        this.recordPlay("tov", this.o, [this.team[this.o].player[p].name]);
+        this.recordPlay("tov", this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
 
         return "tov";
     }
@@ -554,7 +554,7 @@ class GameSim {
         const ratios = this.ratingArray("stealing", this.d);
         const p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "stl");
-        this.recordPlay("stl", this.d, [this.team[this.d].player[p].name, this.team[this.o].player[pStoleFrom].name]);
+        this.recordPlay("stl", this.d, [`${this.team[this.d].player[p].firstName} ${this.team[this.d].player[p].lastName}`, `${this.team[this.o].player[pStoleFrom].firstName} ${this.team[this.o].player[pStoleFrom].lastName}`]);
 
         return "stl";
     }
@@ -642,16 +642,16 @@ class GameSim {
         this.recordStat(this.o, p, "fga");
         if (type === "atRim") {
             this.recordStat(this.o, p, "fgaAtRim");
-            this.recordPlay("missAtRim", this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay("missAtRim", this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         } else if (type === "lowPost") {
             this.recordStat(this.o, p, "fgaLowPost");
-            this.recordPlay("missLowPost", this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay("missLowPost", this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         } else if (type === "midRange") {
             this.recordStat(this.o, p, "fgaMidRange");
-            this.recordPlay("missMidRange", this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay("missMidRange", this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         } else if (type === "threePointer") {
             this.recordStat(this.o, p, "tpa");
-            this.recordPlay("missTp", this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay("missTp", this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         }
         return this.doReb(); // orb or drb
     }
@@ -691,13 +691,13 @@ class GameSim {
 
 
         if (type === "atRim") {
-            this.recordPlay("blkAtRim", this.d, [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+            this.recordPlay("blkAtRim", this.d, [`${this.team[this.d].player[p2].firstName} ${this.team[this.d].player[p2].lastName}`, `${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         } else if (type === "lowPost") {
-            this.recordPlay("blkLowPost", this.d, [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+            this.recordPlay("blkLowPost", this.d, [`${this.team[this.d].player[p2].firstName} ${this.team[this.d].player[p2].lastName}`, `${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         } else if (type === "midRange") {
-            this.recordPlay("blkMidRange", this.d, [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+            this.recordPlay("blkMidRange", this.d, [`${this.team[this.d].player[p2].firstName} ${this.team[this.d].player[p2].lastName}`, `${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         } else if (type === "threePointer") {
-            this.recordPlay("blkTp", this.d, [this.team[this.d].player[p2].name, this.team[this.o].player[p].name]);
+            this.recordPlay("blkTp", this.d, [`${this.team[this.d].player[p2].firstName} ${this.team[this.d].player[p2].lastName}`, `${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         }
 
         return this.doReb(); // orb or drb
@@ -721,27 +721,27 @@ class GameSim {
         if (type === "atRim") {
             this.recordStat(this.o, p, "fgaAtRim");
             this.recordStat(this.o, p, "fgAtRim");
-            this.recordPlay(`fgAtRim${andOne ? "AndOne" : ""}`, this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay(`fgAtRim${andOne ? "AndOne" : ""}`, this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         } else if (type === "lowPost") {
             this.recordStat(this.o, p, "fgaLowPost");
             this.recordStat(this.o, p, "fgLowPost");
-            this.recordPlay(`fgLowPost${andOne ? "AndOne" : ""}`, this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay(`fgLowPost${andOne ? "AndOne" : ""}`, this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         } else if (type === "midRange") {
             this.recordStat(this.o, p, "fgaMidRange");
             this.recordStat(this.o, p, "fgMidRange");
-            this.recordPlay(`fgMidRange${andOne ? "AndOne" : ""}`, this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay(`fgMidRange${andOne ? "AndOne" : ""}`, this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         } else if (type === "threePointer") {
             this.recordStat(this.o, p, "pts"); // Extra point for 3's
             this.recordStat(this.o, p, "tpa");
             this.recordStat(this.o, p, "tp");
-            this.recordPlay(`tp${andOne ? "AndOne" : ""}`, this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay(`tp${andOne ? "AndOne" : ""}`, this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
         }
         this.recordLastScore(this.o, p, type, this.t);
 
         if (passer >= 0) {
             const p2 = this.playersOnCourt[this.o][passer];
             this.recordStat(this.o, p2, "ast");
-            this.recordPlay("ast", this.o, [this.team[this.o].player[p2].name]);
+            this.recordPlay("ast", this.o, [`${this.team[this.o].player[p2].firstName} ${this.team[this.o].player[p2].lastName}`]);
         }
 
         if (andOne) {
@@ -806,7 +806,7 @@ class GameSim {
         const team = this.team[play.team];
         const player = this.team[play.team].player[play.player];
 
-        let eventText = `<a href="${helpers.leagueUrl(["player", player.id])}">${player.name}</a> made ${shotType}`;
+        let eventText = `<a href="${helpers.leagueUrl(["player", player.id])}">${player.firstName} ${player.lastName}</a> made ${shotType}`;
         if (play.time > 0) {
             eventText += ` with ${play.time} seconds remaining`;
         } else {
@@ -877,7 +877,7 @@ class GameSim {
                 const team = this.team[play.team];
                 const player = this.team[play.team].player[play.player];
 
-                let eventText = `<a href="${helpers.leagueUrl(["player", player.id])}">${player.name}</a> made the game-winning ${shotType}`;
+                let eventText = `<a href="${helpers.leagueUrl(["player", player.id])}">${player.firstName} ${player.lastName}</a> made the game-winning ${shotType}`;
                 if (play.time > 0) {
                     eventText += ` with ${play.time} seconds remaining`;
                 } else {
@@ -938,11 +938,11 @@ class GameSim {
             if (Math.random() < this.team[this.o].player[p].compositeRating.shootingFT * 0.3 + 0.6) { // Between 60% and 90%
                 this.recordStat(this.o, p, "ft");
                 this.recordStat(this.o, p, "pts");
-                this.recordPlay("ft", this.o, [this.team[this.o].player[p].name]);
+                this.recordPlay("ft", this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
                 outcome = "fg";
                 this.recordLastScore(this.o, p, "ft", this.t);
             } else {
-                this.recordPlay("missFt", this.o, [this.team[this.o].player[p].name]);
+                this.recordPlay("missFt", this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
                 outcome = null;
             }
         }
@@ -963,10 +963,10 @@ class GameSim {
         const ratios = this.ratingArray("fouling", t);
         const p = this.playersOnCourt[t][this.pickPlayer(ratios)];
         this.recordStat(this.d, p, "pf");
-        this.recordPlay("pf", this.d, [this.team[this.d].player[p].name]);
+        this.recordPlay("pf", this.d, [`${this.team[this.d].player[p].firstName} ${this.team[this.d].player[p].lastName}`]);
         // Foul out
         if (this.team[this.d].player[p].stat.pf >= 6) {
-            this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]);
+            this.recordPlay("foulOut", this.d, [`${this.team[this.d].player[p].firstName} ${this.team[this.d].player[p].lastName}`]);
             // Force substitutions now
             this.updatePlayersOnCourt();
             this.updateSynergy();
@@ -991,7 +991,7 @@ class GameSim {
             ratios = this.ratingArray("rebounding", this.d);
             p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
             this.recordStat(this.d, p, "drb");
-            this.recordPlay("drb", this.d, [this.team[this.d].player[p].name]);
+            this.recordPlay("drb", this.d, [`${this.team[this.d].player[p].firstName} ${this.team[this.d].player[p].lastName}`]);
 
             return "drb";
         }
@@ -999,7 +999,7 @@ class GameSim {
         ratios = this.ratingArray("rebounding", this.o);
         p = this.playersOnCourt[this.o][this.pickPlayer(ratios)];
         this.recordStat(this.o, p, "orb");
-        this.recordPlay("orb", this.o, [this.team[this.o].player[p].name]);
+        this.recordPlay("orb", this.o, [`${this.team[this.o].player[p].firstName} ${this.team[this.o].player[p].lastName}`]);
 
         return "orb";
     }

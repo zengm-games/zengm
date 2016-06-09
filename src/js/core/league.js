@@ -342,7 +342,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
                 }
                 if ("firstName" in p && "lastName" in p && !("name" in p)) {
                     // combine first and last to create name field
-                    p.name = p.firstName + " " + p.lastName;
+                    p.name = `${p.firstName} ${p.lastName}`;
                 }
 
                 p = player.augmentPartialPlayer(p, scoutingRank);

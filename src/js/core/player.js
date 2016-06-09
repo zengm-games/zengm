@@ -1964,7 +1964,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 
         tx.playerFeats.add({
             pid,
-            name: p.firstName + " " + p.lastName,
+            name: p.name,
             pos: p.pos,
             season: g.season,
             tid,

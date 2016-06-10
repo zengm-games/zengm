@@ -543,7 +543,7 @@ async function loadTeams(tx) {
         let p;
         for (let i = 0; i < players.length; i++) {
             const pos = players[i].ratings[players[i].ratings.length - 1].pos;
-            p = {id: players[i].pid, name: players[i].name, pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
+            p = {id: players[i].pid, name: `${players[i].firstName} ${players[i].lastName}`, pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
 
             // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
             if (t.id !== g.userTid) {

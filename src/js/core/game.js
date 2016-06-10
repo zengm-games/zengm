@@ -329,7 +329,7 @@ async function writeGameStats(tx, results, att) {
         keys.unshift("gs"); // Also record starters, in addition to other stats
         keys.push("pm");
         for (let p = 0; p < results.team[t].player.length; p++) {
-            gameStats.teams[t].players[p] = {name: `${results.team[t].player[p].firstName} ${results.team[t].player[p].lastName}`, pos: results.team[t].player[p].pos};
+            gameStats.teams[t].players[p] = {name: results.team[t].player[p].name, pos: results.team[t].player[p].pos};
             for (let i = 0; i < keys.length; i++) {
                 gameStats.teams[t].players[p][keys[i]] = results.team[t].player[p].stat[keys[i]];
             }

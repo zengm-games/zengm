@@ -163,7 +163,7 @@ function migrateLeague(upgradeDB, lid) {
                 upgradeDB.gameAttributes.get('teamRegionsCache').then(ga => JSON.stringify(ga.value))
             ]);
 
-console.log('Checking equality');
+            console.log('Checking equality');
             if (JSON.stringify(teamsDefault.map(t => t.abbrev)) !== teamAbbrevsCache) {
                 return;
             }
@@ -173,7 +173,7 @@ console.log('Checking equality');
             if (JSON.stringify(teamsDefault.map(t => t.region)) !== teamRegionsCache) {
                 return;
             }
-console.log('Pass!');
+            console.log('Pass!');
 
             await upgradeDB.teams.iterate(async t => {
                 if (!t.imgURL) {

@@ -181,6 +181,20 @@ function migrateLeague(upgradeDB, lid) {
             });
         })());
     }
+    if (upgradeDB.oldVersion <= 18) {
+        // Split old single string p.name into two names
+        ((async () => {
+            await upgradeDB.players.iterate(async p => {
+                if (p.name) {
+                    const bothNames = p.name.split(" ");
+                    p.firstName = bothNames[0];
+                    p.lastName = bothNames[1];
+                    delete p.name;
+                }
+                return p;
+            });
+        })());
+    }
 }
 
 async function connectLeague(lid) {

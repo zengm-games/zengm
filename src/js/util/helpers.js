@@ -448,14 +448,15 @@ function watchBlock(pid, watch) {
  *
  * @memberOf util.helpers
  * @param {number} pid Player ID number.
- * @param {string} name Player name.
+ * @param {string} firstName Player's first name
+ * @param {string} lastName Player's last name
  * @param {object=} object Injury object (properties: type and gamesRemaining).
  * @param {Array.<string>=} skills Array of skill labels, like "R" for "Rebounder", etc. See: core.player.skills.
  * @param {Array.<string>=} skills True: player is on watch list. False: player is not on watch list. Undefined: not sure, so don't show watch icon.
  * @return {string} String of HTML-formatted skill labels, ready for output.
  */
-function playerNameLabels(pid, name, injury, skills, watch) {
-    let html = `<a href="${leagueUrl(["player", pid])}">${name}</a>`;
+function playerNameLabels(pid, firstName, lastName, injury, skills, watch) {
+    let html = `<a href="${leagueUrl(["player", pid])}">${firstName} ${lastName}</a>`;
 
     if (injury !== undefined) {
         if (injury.gamesRemaining > 0) {

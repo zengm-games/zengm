@@ -722,16 +722,22 @@ function name() {
         playerNames = names.load();
     }
 
-    // First name
-    const fnRand = random.uniform(0, playerNames.first[playerNames.first.length - 1][1]);
-    const fn = playerNames.first.find(row => row[1] >= fnRand)[0];
+    // Country
+    const cRand = random.uniform(0, playerNames.countries[playerNames.countries.length - 1][1]);
+    const country = playerNames.countries.find(row => row[1] >= cRand)[0];
 
+    // First name
+    const fnRand = random.uniform(0, playerNames.first[country][playerNames.first[country].length - 1][1]);
+    const fn = playerNames.first[country].find(row => row[1] >= fnRand)[0];
 
     // Last name
-    const lnRand = random.uniform(0, playerNames.last[playerNames.last.length - 1][1]);
-    const ln = playerNames.last.find(row => row[1] >= lnRand)[0];
+    const lnRand = random.uniform(0, playerNames.last[country][playerNames.last[country].length - 1][1]);
+    const ln = playerNames.last[country].find(row => row[1] >= lnRand)[0];
 
-    return `${fn} ${ln}`;
+    return {
+        country,
+        name: `${fn} ${ln}`
+    };
 }
 
 /**
@@ -904,14 +910,13 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
         p.hgt += 3;
     }
 
-    // Randomly choose nationality
-    const nationality = 'USA';
+    const nameInfo = name();   
     p.born = {
         year: g.season - age,
-        loc: nationality
+        loc: nameInfo.country
     };
 
-    p.name = name(nationality);
+    p.name = nameInfo.name;
     p.college = "";
     p.imgURL = ""; // Custom rosters can define player image URLs to be used rather than vector faces
 

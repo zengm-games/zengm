@@ -1,3 +1,9 @@
+international names
+  update documentation and presidents_names.json
+  changes
+  accurate faces (race)
+  in player ratings table, show country abbrevs not full names
+
 babel
   how can i gracefully show an error message in browsers without generators?
   after live, test that account emails (lost pw, and register) work
@@ -17,16 +23,12 @@ minify es2015, even just generators
   https://github.com/mishoo/UglifyJS2/issues/448
   just doesn't work yet, even with all es2015 compiled except generators - not uglifyify, not minifyify, not plain uglifyjs
 
-rename Promise imports to Bluebird or BPromise
-
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 
 can i get rid of http/https links?
   tracking prevalence in GA with "Season protocol" - don't proceed further until that goes to 0!
   put bbgm_insecure htaccess in normal htaccess for account, play, beta, and web. then get rid of all insecure websites in webfaction and add http domains to normal websites
   tryForceHttps
-
-/home/jdscheff/Documents/BBGM Names
 
 new achievement for winning as 8 seed https://www.reddit.com/r/BasketballGM/comments/4l2arh/new_achievement_suggestion/
 
@@ -69,6 +71,8 @@ eslint
 
 CURRENT
 -------
+
+old draft picks should be purged https://www.reddit.com/r/BasketballGM/comments/4nfesy/guys_staying_past_their_deadline_bugs/d43wbpc?context=3
 
 Add 'Free Agents' to 'Teams' dropdown menu on 'Player Ratings' page. https://www.reddit.com/r/BasketballGM/comments/3t4kl6/suggestion_add_free_agents_to_teams_dropdown_menu/
 
@@ -393,8 +397,6 @@ CURRENT
 percentages for FG, FT, 3pt below box score like Yahoo
 game log for individual player
   in each box score, include an array of players in the game. index on that.
-foreign player names
-  draftexpress? emailed them, if no reply, maybe scrape
 great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_questions_and_feedback_feel_free_to_add/
 create a player during the playoffs and his stats row won't show up until the next season. basic problem seems to be that no playoff stats are returned if htere are no regular season stats
 a 0 day injury doesn't show up in box score, so it looks like player was just benched http://www.reddit.com/message/messages/2pfuyr
@@ -893,9 +895,6 @@ draftOrder should just be in globals, not a real table
 shot charts showing hot spots (red/yellow/green) based on shot location data
 most improved player
 If you are simulating through the whole season and execute a trade while simulating, it will continue simulating even if you are over the roster limit. http://www.reddit.com/r/BasketballGM/comments/1xch01/trades_after_season/cfamo73
-players from different countries/nationalities
-  how to pick names?
-  http://www.reddit.com/message/messages/2rdpk8
 IE10 support
   davisjs for knockoutjs links in IE10
     elem.host comes up blank in originChecks
@@ -906,6 +905,7 @@ Web workers
   don't seem to actually help performance. maybe help responsiveness
   benchmark?
   would it be worth it to parallelize advstats?
+  would it be worth it if the worker was reading and writing to the database, instead of sending information back and forth?
 boxplots for shot location stats, plus comparison to NBA data
 import/export stuff
   online "locker" that you can sync saved games to

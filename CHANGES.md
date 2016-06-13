@@ -7,6 +7,7 @@ number or not.
 ## Gameplay and UI
 
 - Default teams now have logos
+- International players from 85 countries, and better names for American players
 
 ## Techincal details
 

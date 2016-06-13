@@ -108,6 +108,9 @@ const all = [{
 }, {
     date: "2016-06-04",
     msg: 'The default teams now have logos.'
+}, {
+    date: "2016-06-13",
+    msg: "International players are here! And American players have more realistic names. Gameplay hasn't changed at all, this is purely cosmetic at this point."
 }];
 
 function check() {

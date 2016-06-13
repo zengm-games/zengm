@@ -910,7 +910,7 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
         p.hgt += 3;
     }
 
-    const nameInfo = name();   
+    const nameInfo = name();
     p.born = {
         year: g.season - age,
         loc: nameInfo.country

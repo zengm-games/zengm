@@ -455,8 +455,8 @@ function watchBlock(pid, watch) {
  * @param {Array.<string>=} skills True: player is on watch list. False: player is not on watch list. Undefined: not sure, so don't show watch icon.
  * @return {string} String of HTML-formatted skill labels, ready for output.
  */
-function playerNameLabels(pid, firstName, lastName, injury, skills, watch) {
-    let html = `<a href="${leagueUrl(["player", pid])}">${firstName} ${lastName}</a>`;
+function playerNameLabels(pid, name, injury, skills, watch) {
+    let html = `<a href="${leagueUrl(["player", pid])}">${name}</a>`;
 
     if (injury !== undefined) {
         if (injury.gamesRemaining > 0) {

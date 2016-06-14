@@ -189,7 +189,7 @@ function updateRoster(inputs, updateEvents, vm) {
                 ot: tx
             });
 
-            const attrs = ["pid", "tid", "draft", "firstName", "lastName", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier", "watch", "gamesUntilTradable"];  // tid and draft are used for checking if a player can be released without paying his salary
+            const attrs = ["pid", "tid", "draft", "name", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier", "watch", "gamesUntilTradable"];  // tid and draft are used for checking if a player can be released without paying his salary
             const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
             const stats = ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"];
 

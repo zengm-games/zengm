@@ -308,7 +308,8 @@ async function getContracts(tx, tid) {
     const contracts = players.map(p => {
         return {
             pid: p.pid,
-            name: p.name,
+            firstName: p.firstName,
+            lastName: p.lastName,
             skills: p.ratings[p.ratings.length - 1].skills,
             injury: p.injury,
             watch: p.watch !== undefined ? p.watch : false, // undefined check is for old leagues, can delete eventually
@@ -326,7 +327,8 @@ async function getContracts(tx, tid) {
         if (p !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
             contracts.push({
                 pid: releasedPlayer.pid,
-                name: p.name,
+                firstName: p.firstName,
+                lastName: p.lastName,
                 skills: p.ratings[p.ratings.length - 1].skills,
                 injury: p.injury,
                 amount: releasedPlayer.contract.amount,
@@ -336,7 +338,8 @@ async function getContracts(tx, tid) {
         } else {
             contracts.push({
                 pid: releasedPlayer.pid,
-                name: "Deleted Player",
+                firstName: "Deleted",
+                lastName: "Player",
                 skills: [],
                 amount: releasedPlayer.contract.amount,
                 exp: releasedPlayer.contract.exp,
@@ -1281,7 +1284,7 @@ function checkRosterSizes() {
 
                         eventLog.add(null, {
                             type: "freeAgent",
-                            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                             showNotification: false,
                             pids: [p.pid],
                             tids: [p.tid]

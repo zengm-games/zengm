@@ -351,7 +351,7 @@ async function propose(forceTrade) {
             const formatAssetsEventLog = t => {
                 const strings = [];
 
-                t.trade.forEach(p => strings.push(`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`));
+                t.trade.forEach(p => strings.push(`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a>`));
                 t.picks.forEach(dp => strings.push(`a ${dp.desc}`));
 
                 let text;

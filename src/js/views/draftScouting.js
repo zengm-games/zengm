@@ -181,7 +181,7 @@ function uiFirst(vm) {
         const seasons = vm.seasons();
         for (let i = 0; i < seasons.length; i++) {
             ui.datatableSinglePage($(`#draft-scouting-${i}`), 4, seasons[i].players.map(p => {
-                return [String(p.rank), helpers.playerNameLabels(p.pid, p.name, undefined, p.skills, p.watch), p.pos, String(p.age), String(p.ovr), String(p.pot)];
+                return [String(p.rank), helpers.playerNameLabels(p.pid, p.firstName, p.lastName, undefined, p.skills, p.watch), p.pos, String(p.age), String(p.ovr), String(p.pot)];
             }));
         }
     }).extend({throttle: 1});

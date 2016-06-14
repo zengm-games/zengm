@@ -238,7 +238,7 @@ function uiFirst(vm) {
 
     ko.computed(() => {
         ui.datatableSinglePage($("#player-salaries"), 1, vm.contracts().map(p => {
-            const output = [helpers.playerNameLabels(p.pid, p.name, p.injury, p.skills, p.watch)];
+            const output = [helpers.playerNameLabels(p.pid, p.firstName, p.lastName, p.injury, p.skills, p.watch)];
             if (p.released) {
                 output[0] = `<i>${output[0]}</i>`;
             }

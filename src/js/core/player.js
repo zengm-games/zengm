@@ -1966,7 +1966,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 
         tx.playerFeats.add({
             pid,
-            name: p.name,
+            name: `${p.firstName} ${p.lastName}`,
             pos: p.pos,
             season: g.season,
             tid,
@@ -2154,7 +2154,8 @@ module.exports = {
     //value,
     updateValues,
     retire,
-    name,
+    firstName,
+    lastName,
     contractSeasonsRemaining,
     moodColorText,
     augmentPartialPlayer,

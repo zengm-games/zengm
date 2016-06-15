@@ -18,6 +18,11 @@
  */
 
 var Davis = require('./davis');
+var postscribe = require('postscribe');
+
+
+const bannerAdTop = document.getElementById('banner-ad-top');
+const bannerAdBottom = document.getElementById('banner-ad-bottom');
 
 Davis.googleAnalytics = function () {
 
@@ -51,6 +56,15 @@ Davis.googleAnalytics = function () {
      */
     track: function () {
       if (_gaq) _gaq.push(['_trackPageview', this.path])
+
+      if (bannerAdTop) {
+        bannerAdTop.innerHTML = '';
+        postscribe(bannerAdTop, '<script src="https://tag.contextweb.com/TagPublish/getjs.aspx?action=VIEWAD&cwrun=200&cwadformat=728X90&cwpid=558539&cwwidth=728&cwheight=90&cwpnet=1&cwtagid=448749"></script>');
+      }
+      if (bannerAdBottom) {
+        bannerAdBottom.innerHTML = '';
+        postscribe(bannerAdBottom, '<script src="https://tag.contextweb.com/TagPublish/getjs.aspx?action=VIEWAD&cwrun=200&cwadformat=728X90&cwpid=558539&cwwidth=728&cwheight=90&cwpnet=1&cwtagid=448752"></script>');
+      }
     }
   })
 }

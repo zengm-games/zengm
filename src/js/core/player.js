@@ -917,8 +917,15 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
         loc: nameInfo.country
     };
 
+<<<<<<< HEAD
     p.firstName = nameInfo.firstName;
     p.lastName = nameInfo.lastName;
+=======
+    const randomName = name(nationality);
+    p.firstName = randomName.firstName;
+    p.lastName = randomName.lastName;
+    p.name = `${p.firstName} ${p.lastName}`;
+>>>>>>> 3f9c76ce6259dcf6edfb2e768ab5aa423d7d9c58
     p.college = "";
     p.imgURL = ""; // Custom rosters can define player image URLs to be used rather than vector faces
 
@@ -1948,7 +1955,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 
         const featTextArr = Object.keys(statArr).map(stat => `${statArr[stat]} ${stat}`);
 
-        let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${p.name}</a> had <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid])}">`;
+        let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${p.firstName} ${p.lastName}</a> had <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid])}">`;
         for (let k = 0; k < featTextArr.length; k++) {
             if (featTextArr.length > 1 && k === featTextArr.length - 1) {
                 featText += " and ";

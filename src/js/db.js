@@ -198,7 +198,7 @@ function migrateLeague(upgradeDB, lid) {
 }
 
 async function connectLeague(lid) {
-    const db = await Backboard.open(`league${lid}`, 18, upgradeDB => {
+    const db = await Backboard.open(`league${lid}`, 19, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

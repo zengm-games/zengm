@@ -2006,7 +2006,7 @@ async function killOne() {
         "was lost at sea and is presumed dead",
         "won an all-expenses paid trip to Lake Laogai",
         "was run over by a car",
-        "was run over by a car, and then was run over by a second car. Police believe only the first was intentional",
+        "was run over by a car, and then was run over by a second car. Police believe only the first was intentional"
     ]);
 
     // Pick random team

@@ -1833,6 +1833,12 @@ function augmentPartialPlayer(p, scoutingRank) {
         p.ratings[0].pot = p.ratings[0].ovr;
     }
 
+    if (p.hasOwnProperty("name") && !(p.hasOwnProperty("firstName")) && !(p.hasOwnProperty("lastName"))) {
+        // parse and split names from roster file
+        p.firstName = p.name.split(" ")[0];
+        p.lastName = p.name.split(" ").slice(1, p.name.split(" ").length).join(" ");
+    }
+
     // Fix always-missing info
     if (p.tid === g.PLAYER.UNDRAFTED_2) {
         p.ratings[0].season = g.startingSeason + 1;

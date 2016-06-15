@@ -335,16 +335,6 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
             }
 
             players.forEach(async p => {
-                if ("name" in p && !("firstName" in p) && !("lastName" in p)) {
-                    // parse and split names from roster file
-                    p.firstName = p.name.split(" ")[0];
-                    p.lastName = p.name.split(" ").slice(1, p.name.split(" ").length).join(" ");
-                }
-                if ("firstName" in p && "lastName" in p && !("name" in p)) {
-                    // combine first and last to create name field
-                    p.name = `${p.firstName} ${p.lastName}`;
-                }
-
                 p = player.augmentPartialPlayer(p, scoutingRank);
 
                 // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.

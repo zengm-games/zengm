@@ -2009,10 +2009,7 @@ async function killOne() {
         let p = random.choice(players);
 
         // Get player stats, used for HOF calculation
-        const playerStats = await tx.playerStats.getAll({
-            index: "pid, season, tid",
-            key: backboard.bound([p.pid], [p.pid, ''])
-        });
+        const playerStats = await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, '']));
 
         p = retire(tx, p, playerStats, false);
         p.diedYear = g.season;

@@ -1948,7 +1948,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 
         const featTextArr = Object.keys(statArr).map(stat => `${statArr[stat]} ${stat}`);
 
-        let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${p.firstName} ${p.lastName}</a> had <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid])}">`;
+        let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${p.name}</a> had <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid])}">`;
         for (let k = 0; k < featTextArr.length; k++) {
             if (featTextArr.length > 1 && k === featTextArr.length - 1) {
                 featText += " and ";
@@ -1966,7 +1966,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
 
         tx.playerFeats.add({
             pid,
-            name: `${p.firstName} ${p.lastName}`,
+            name: p.name,
             pos: p.pos,
             season: g.season,
             tid,

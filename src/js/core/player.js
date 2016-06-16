@@ -2004,7 +2004,6 @@ async function killOne() {
         `was killed by ${random.choice(["Miss Scarlet", "Professor Plum", "Mrs. Peacock", "Reverend Green", "Colonel Mustard", "Mrs. White"])}, in the ${random.choice(["kitchen", "ballroom", "conservatory", "dining room", "cellar", "billiard room", "library", "lounge", "hall", "study"])}, with the ${random.choice(["candlestick", "dagger", "lead pipe", "revolver", "rope", "spanner"])}`,
         "suffered a heart attack in the team training facility and died",
         "was lost at sea and is presumed dead",
-        "won an all-expenses paid trip to Lake Laogai",
         "was run over by a car",
         "was run over by a car, and then was run over by a second car. Police believe only the first was intentional"
     ]);

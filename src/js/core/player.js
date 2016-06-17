@@ -1997,7 +1997,15 @@ async function killOne() {
         "laughed himself to death while watching Modern Family",
         "died of exertion while trying to set the record for largerst number of sex partners in one day",
         "rode his Segway off a cliff",
-        "fell into the gorilla pit at the zoo and was dismembered as the staff decided not to shoot the gorilla"
+        "fell into the gorilla pit at the zoo and was dismembered as the staff decided not to shoot the gorilla",
+        "was found in a hotel room with a belt around his neck and his hand around his dick",
+        "was pursued by a bear, and mauled", // poor Antigonus
+        "was smothered by a throng of ravenous, autograph-seeking fans after exiting the team plane",
+        `was killed by ${random.choice(["Miss Scarlet", "Professor Plum", "Mrs. Peacock", "Reverend Green", "Colonel Mustard", "Mrs. White"])}, in the ${random.choice(["kitchen", "ballroom", "conservatory", "dining room", "cellar", "billiard room", "library", "lounge", "hall", "study"])}, with the ${random.choice(["candlestick", "dagger", "lead pipe", "revolver", "rope", "spanner"])}`,
+        "suffered a heart attack in the team training facility and died",
+        "was lost at sea and is presumed dead",
+        "was run over by a car",
+        "was run over by a car, and then was run over by a second car. Police believe only the first was intentional"
     ]);
 
     // Pick random team

@@ -113,7 +113,7 @@ async function updateStandings(inputs, updateEvents, vm) {
 
         // Fix playoffsRank if conferences don't matter
         if (!playoffsByConference) {
-            for (let i = 0; i < numPlayoffTeams; i++) {
+            for (let i = 0; i < teams.length; i++) {
                 const t = teams[i];
                 const div = confs[t.cid].divs.find(div => t.did === div.did);
                 const t2 = div.teams.find(t2 => t.tid === t2.tid);

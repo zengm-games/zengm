@@ -175,79 +175,16 @@ async function newPhasePlayoffs(tx) {
         teams[i].won = 0;
     }
 
-    let series, tidPlayoffs;
-    if (!localStorage.top16playoffs) {
-        // Default: top 8 teams in each conference
-        tidPlayoffs = [];
-        series = [[], [], [], []];  // First round, second round, third round, fourth round
-        for (let cid = 0; cid < 2; cid++) {
-            const teamsConf = [];
-            for (let i = 0; i < teams.length; i++) {
-                if (teams[i].cid === cid) {
-                    if (teamsConf.length < 8) {
-                        teamsConf.push(teams[i]);
-                        tidPlayoffs.push(teams[i].tid);
-                    }
-                }
-            }
-            series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
-            series[0][cid * 4].home.seed = 1;
-            series[0][cid * 4].away.seed = 8;
-            series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
-            series[0][1 + cid * 4].home.seed = 4;
-            series[0][1 + cid * 4].away.seed = 5;
-            series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
-            series[0][2 + cid * 4].home.seed = 3;
-            series[0][2 + cid * 4].away.seed = 6;
-            series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
-            series[0][3 + cid * 4].home.seed = 2;
-            series[0][3 + cid * 4].away.seed = 7;
-        }
-    } else {
-        // Alternative (localStorage.top16playoffs): top 16 teams overall
-        tidPlayoffs = [];
-        series = [[], [], [], []];  // First round, second round, third round, fourth round
-        const teamsConf = [];
-        for (let i = 0; i < teams.length; i++) {
-            if (teamsConf.length < 16) {
-                teamsConf.push(teams[i]);
-                tidPlayoffs.push(teams[i].tid);
-            }
-        }
-        series[0][0] = {home: teamsConf[0], away: teamsConf[15]};
-        series[0][0].home.seed = 1;
-        series[0][0].away.seed = 16;
-        series[0][1] = {home: teamsConf[7], away: teamsConf[8]};
-        series[0][1].home.seed = 8;
-        series[0][1].away.seed = 9;
-        series[0][2] = {home: teamsConf[3], away: teamsConf[12]};
-        series[0][2].home.seed = 4;
-        series[0][2].away.seed = 13;
-        series[0][3] = {home: teamsConf[4], away: teamsConf[11]};
-        series[0][3].home.seed = 5;
-        series[0][3].away.seed = 12;
-        series[0][4] = {home: teamsConf[1], away: teamsConf[14]};
-        series[0][4].home.seed = 2;
-        series[0][4].away.seed = 15;
-        series[0][5] = {home: teamsConf[6], away: teamsConf[9]};
-        series[0][5].home.seed = 7;
-        series[0][5].away.seed = 10;
-        series[0][6] = {home: teamsConf[2], away: teamsConf[13]};
-        series[0][6].home.seed = 3;
-        series[0][6].away.seed = 14;
-        series[0][7] = {home: teamsConf[5], away: teamsConf[10]};
-        series[0][7].home.seed = 6;
-        series[0][7].away.seed = 11;
-    }
+    const {series, tidPlayoffs} = season.genPlayoffSeries(teams);
 
-    tidPlayoffs.forEach(tid => {
+    for (const tid of tidPlayoffs) {
         eventLog.add(null, {
             type: "playoffs",
             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season])}">${g.teamNamesCache[tid]}</a> made the <a href="${helpers.leagueUrl(["playoffs", g.season])}">playoffs</a>.`,
             showNotification: tid === g.userTid,
             tids: [tid],
         });
-    });
+    }
 
     await Promise.all([
         tx.playoffSeries.put({

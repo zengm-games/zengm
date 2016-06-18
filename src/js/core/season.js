@@ -688,6 +688,59 @@ async function getDaysLeftSchedule() {
     return numDays;
 }
 
+function genPlayoffSeries(teams) {
+    // Playoffs are split into two branches by conference only if there are exactly 2 conferences and the special secret option top16playoffs is not set
+    const playoffsByConference = g.confs.length === 2 && !localStorage.top16playoffs;
+
+    const tidPlayoffs = [];
+    const numPlayoffTeams = Math.pow(2, g.numPlayoffRounds);
+    const series = _.range(g.numPlayoffRounds).map(() => []);
+    if (playoffsByConference) {
+        // Default: top 50% of teams in each of the two conferences
+        for (let cid = 0; cid < g.confs.length; cid++) {
+            const teamsConf = [];
+            for (let i = 0; i < teams.length; i++) {
+                if (teams[i].cid === cid) {
+                    teamsConf.push(teams[i]);
+                    tidPlayoffs.push(teams[i].tid);
+                    if (teamsConf.length >= numPlayoffTeams / 2) {
+                        break;
+                    }
+                }
+            }
+            series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
+            series[0][cid * 4].home.seed = 1;
+            series[0][cid * 4].away.seed = 8;
+            series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
+            series[0][1 + cid * 4].home.seed = 4;
+            series[0][1 + cid * 4].away.seed = 5;
+            series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
+            series[0][2 + cid * 4].home.seed = 3;
+            series[0][2 + cid * 4].away.seed = 6;
+            series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
+            series[0][3 + cid * 4].home.seed = 2;
+            series[0][3 + cid * 4].away.seed = 7;
+        }
+    } else {
+        // Alternative: top 50% of teams overall
+        const teamsConf = [];
+        for (let i = 0; i < teams.length; i++) {
+            teamsConf.push(teams[i]);
+            tidPlayoffs.push(teams[i].tid);
+            if (teamsConf.length >= numPlayoffTeams) {
+                break;
+            }
+        }
+        for (let i = 0; i < numPlayoffTeams / 2; i++) {
+            series[0][i] = {home: teamsConf[i], away: teamsConf[numPlayoffTeams - 1 - i]};
+            series[0][i].home.seed = i + 1;
+            series[0][i].away.seed = numPlayoffTeams - i;
+        }
+    }
+
+    return {series, tidPlayoffs};
+}
+
 module.exports = {
     awards,
     updateOwnerMood,
@@ -696,4 +749,5 @@ module.exports = {
     newSchedule,
     newSchedulePlayoffsDay,
     getDaysLeftSchedule,
+    genPlayoffSeries,
 };

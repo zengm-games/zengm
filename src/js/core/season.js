@@ -227,7 +227,7 @@ async function awards(tx) {
     }
 
     // Finals MVP - most WS in playoffs
-    const champTid = teams.find(t => t.playoffRoundsWon === 4).tid;
+    const champTid = teams.find(t => t.playoffRoundsWon === g.numPlayoffRounds).tid;
 
     // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
     let champPlayers = await tx.players.index('tid').getAll(champTid);
@@ -588,7 +588,7 @@ async function newSchedulePlayoffsDay(tx) {
     }
 
     // If playoffs are over, update winner and go to next phase
-    if (rnd === 3) {
+    if (rnd === g.numPlayoffRounds - 1) {
         let key;
         if (series[rnd][0].home.won === 4) {
             key = series[rnd][0].home.tid;
@@ -597,7 +597,7 @@ async function newSchedulePlayoffsDay(tx) {
         }
 
         await tx.teamSeasons.index("season, tid").iterate([g.season, key], teamSeason => {
-            teamSeason.playoffRoundsWon = 4;
+            teamSeason.playoffRoundsWon = g.numPlayoffRounds;
             teamSeason.hype += 0.05;
             if (teamSeason.hype > 1) {
                 teamSeason.hype = 1;

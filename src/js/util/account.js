@@ -294,7 +294,7 @@ async function checkDynasty(titles, years, slug, saveAchievement) {
         }
 
         // Won title?
-        if (teamSeasons[teamSeasons.length - 1 - i].playoffRoundsWon === 4) {
+        if (teamSeasons[teamSeasons.length - 1 - i].playoffRoundsWon === g.numPlayoffRounds) {
             titlesFound += 1;
         }
     }
@@ -324,7 +324,7 @@ async function checkMoneyball(maxPayroll, slug, saveAchievement) {
         tid: g.userTid,
     });
 
-    if (t.playoffRoundsWon === 4 && t.expenses.salary.amount <= maxPayroll) {
+    if (t.playoffRoundsWon === g.numPlayoffRounds && t.expenses.salary.amount <= maxPayroll) {
         if (saveAchievement) {
             addAchievements([slug]);
         }
@@ -366,7 +366,7 @@ checkAchievement.small_market = async (saveAchievement = true) => {
         tid: g.userTid,
     });
 
-    if (t.playoffRoundsWon === 4 && t.pop <= 2) {
+    if (t.playoffRoundsWon === g.numPlayoffRounds && t.pop <= 2) {
         if (saveAchievement) {
             addAchievements(["small_market"]);
         }

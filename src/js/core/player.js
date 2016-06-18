@@ -506,7 +506,7 @@ async function genBaseMoods(ot) {
 
     return teamSeasons.map(teamSeason => {
         // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
-        if (teamSeason.playoffRoundsWon === 4 && Math.random() < 0.99) {
+        if (teamSeason.playoffRoundsWon === g.numPlayoffRounds && Math.random() < 0.99) {
             return -0.25; // Should guarantee no refusing to re-sign
         }
 

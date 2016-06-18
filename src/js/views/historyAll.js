@@ -50,7 +50,7 @@ async function updateHistory(inputs, updateEvents) {
                     continue;
                 }
 
-                if (t.seasons[j].playoffRoundsWon === 4) {
+                if (t.seasons[j].playoffRoundsWon === g.numPlayoffRounds) {
                     seasons[i].champ = {
                         tid: t.tid,
                         abbrev: t.abbrev,
@@ -59,7 +59,7 @@ async function updateHistory(inputs, updateEvents) {
                         won: t.seasons[j].won,
                         lost: t.seasons[j].lost,
                     };
-                } else if (t.seasons[j].playoffRoundsWon === 3) {
+                } else if (t.seasons[j].playoffRoundsWon === g.numPlayoffRounds - 1) {
                     seasons[i].runnerUp = {
                         abbrev: t.abbrev,
                         region: t.region,

@@ -77,7 +77,7 @@ async function updateHistory(inputs, updateEvents, vm) {
         // Get champs
         let champ;
         for (let i = 0; i < teams.length; i++) {
-            if (teams[i].playoffRoundsWon === 4) {
+            if (teams[i].playoffRoundsWon === g.numPlayoffRounds) {
                 champ = teams[i];
                 break;
             }

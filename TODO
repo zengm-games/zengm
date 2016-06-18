@@ -2,6 +2,9 @@ more league customization
   variable numbers of conferences and divisions
   https://www.reddit.com/message/messages/5rcmpq
   fix notifications and shit based on playoffRoundsWon
+    text
+      places: leagueDashboard.html, 
+      generalize into helper function - already in templateHelpers recordAndPlayoffs
   playoffs end when series is used up
   example league files
 

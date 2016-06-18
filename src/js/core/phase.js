@@ -256,7 +256,7 @@ async function newPhaseBeforeDraft(tx) {
     });
 
     // Give award to all players on the championship team
-    const tid = teams.find(t => t.playoffRoundsWon === 4).tid;
+    const tid = teams.find(t => t.playoffRoundsWon === g.numPlayoffRounds).tid;
     if (tid !== undefined) {
         await tx.players.index('tid').iterate(tid, p => {
             p.awards.push({season: g.season, type: "Won Championship"});

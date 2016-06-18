@@ -58,7 +58,7 @@ async function updateTeamHistory(inputs, updateEvents, vm) {
             if (teamSeasons[i].playoffRoundsWon >= 0) {
                 playoffAppearances += 1;
             }
-            if (teamSeasons[i].playoffRoundsWon === 4) {
+            if (teamSeasons[i].playoffRoundsWon === g.numPlayoffRounds) {
                 championships += 1;
             }
 

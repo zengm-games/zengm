@@ -10,7 +10,7 @@
             <tr><th width="100%">Team</th><th align="right">GB</th></tr>
           </thead>
           <tbody data-bind="foreach: confTeams">
-            <tr data-bind="css: {separator: $index() === 7, info: highlight}"><td><span data-bind="text: rank"></span>. <a data-bind="attrLeagueUrl: {href: ['roster', abbrev]}, text: region"></a></td><td align="right" data-bind="text: gb"></td></tr>
+            <tr data-bind="css: {separator: $index() === 7 && $root.playoffsByConference(), info: highlight}"><td><span data-bind="text: rank"></span>. <a data-bind="attrLeagueUrl: {href: ['roster', abbrev]}, text: region"></a></td><td align="right" data-bind="text: gb"></td></tr>
           </tbody>
         </table>
         <a data-bind="attrLeagueUrl: {href: ['standings']}">» League Standings</a>

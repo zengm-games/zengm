@@ -53,7 +53,7 @@ const defaultGameAttributes = {
         {did: 4, cid: 1, name: "Northwest"},
         {did: 5, cid: 1, name: "Pacific"},
     ],
-    numPlayoffRounds: 3,
+    numPlayoffRounds: 4,
 };
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.

@@ -100,9 +100,12 @@ async function updateStandings(inputs, updateEvents, vm) {
             }
         }
 
+        const playoffsByConference = g.confs.length === 2 && !localStorage.top16playoffs;
+
         return {
-            season: inputs.season,
             confs,
+            playoffsByConference,
+            season: inputs.season,
         };
     }
 }

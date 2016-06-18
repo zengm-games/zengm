@@ -335,8 +335,11 @@ async function updateStandings(inputs, updateEvents) {
             }
         }
 
+        const playoffsByConference = g.confs.length === 2 && !localStorage.top16playoffs;
+
         return {
             confTeams,
+            playoffsByConference,
         };
     }
 }

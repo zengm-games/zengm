@@ -697,6 +697,7 @@ function genPlayoffSeries(teams) {
     const series = _.range(g.numPlayoffRounds).map(() => []);
     if (playoffsByConference) {
         // Default: top 50% of teams in each of the two conferences
+        const numSeriesPerConference = numPlayoffTeams / 4;
         for (let cid = 0; cid < g.confs.length; cid++) {
             const teamsConf = [];
             for (let i = 0; i < teams.length; i++) {
@@ -708,18 +709,11 @@ function genPlayoffSeries(teams) {
                     }
                 }
             }
-            series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
-            series[0][cid * 4].home.seed = 1;
-            series[0][cid * 4].away.seed = 8;
-            series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
-            series[0][1 + cid * 4].home.seed = 4;
-            series[0][1 + cid * 4].away.seed = 5;
-            series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
-            series[0][2 + cid * 4].home.seed = 3;
-            series[0][2 + cid * 4].away.seed = 6;
-            series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
-            series[0][3 + cid * 4].home.seed = 2;
-            series[0][3 + cid * 4].away.seed = 7;
+            for (let i = 0; i < numSeriesPerConference; i++) {
+                series[0][i + cid * numSeriesPerConference] = {home: teamsConf[i], away: teamsConf[numPlayoffTeams / 2 - 1 - i]};
+                series[0][i + cid * numSeriesPerConference].home.seed = i + 1;
+                series[0][i + cid * numSeriesPerConference].away.seed = numPlayoffTeams / 2 - i;
+            }
         }
     } else {
         // Alternative: top 50% of teams overall

@@ -173,16 +173,8 @@ ko.bindingHandlers.recordAndPlayoffs = {
         const option = args.length > 5 ? ko.unwrap(args[5]) : null;
 
         let extraText = "";
-        if (playoffRoundsWon === 4) {
-            extraText = "league champs";
-        } else if (playoffRoundsWon === 3) {
-            extraText = "conference champs";
-        } else if (playoffRoundsWon === 2) {
-            extraText = "made conference finals";
-        } else if (playoffRoundsWon === 1) {
-            extraText = "made second round";
-        } else if (playoffRoundsWon === 0) {
-            extraText = "made playoffs";
+        if (playoffRoundsWon >= 0) {
+            extraText = helpers.roundsWonText(playoffRoundsWon).toLowerCase();
         }
 
         let output = '';
@@ -195,6 +187,13 @@ ko.bindingHandlers.recordAndPlayoffs = {
         }
 
         return ko.bindingHandlers.html.update(element, () => output);
+    },
+};
+
+ko.bindingHandlers.roundsWonText = {
+    update: (element, valueAccessor) => {
+        const arg = valueAccessor();
+        return ko.bindingHandlers.html.update(element, () => helpers.roundsWonText(ko.unwrap(arg)));
     },
 };
 

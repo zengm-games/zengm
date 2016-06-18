@@ -887,6 +887,27 @@ function maybeReuseTx(storeNames, mode, tx, cb) {
     return g.dbl.tx(storeNames, mode, cb);
 }
 
+function roundsWonText(playoffRoundsWon) {
+    const playoffsByConference = g.confs.length === 2 && !localStorage.top16playoffs;
+
+    if (playoffRoundsWon === g.numPlayoffRounds) {
+        return "League champs";
+    }
+    if (playoffRoundsWon === g.numPlayoffRounds - 1) {
+        return playoffsByConference ? "Conference champs" : "Made finals";
+    }
+    if (playoffRoundsWon === g.numPlayoffRounds - 2) {
+        return playoffsByConference ? "Made conference finals" : "Made semifinals";
+    }
+    if (playoffRoundsWon > 1) {
+        return `Made ${ordinal(playoffRoundsWon + 1)} round`;
+    }
+    if (playoffRoundsWon === 0) {
+        return "Made playoffs";
+    }
+    return "";
+}
+
 module.exports = {
     validateAbbrev,
     getAbbrev,
@@ -924,4 +945,5 @@ module.exports = {
     overtimeCounter,
     yearRanges,
     maybeReuseTx,
+    roundsWonText,
 };

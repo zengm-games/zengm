@@ -22,20 +22,8 @@
             <!-- ko if: playoffRoundsWon() < 0 -->
               <span data-bind="ordinal: rank"></span> in conference
             <!-- /ko -->
-            <!-- ko if: playoffRoundsWon() === 0 -->
-              <span>Made playoffs</span>
-            <!-- /ko -->
-            <!-- ko if: playoffRoundsWon() === 1 -->
-              <span>Made second round</span>
-            <!-- /ko -->
-            <!-- ko if: playoffRoundsWon() === 2 -->
-              <span>Made conference finals</span>
-            <!-- /ko -->
-            <!-- ko if: playoffRoundsWon() === 3 -->
-              <span>Conference champs</span>
-            <!-- /ko -->
-            <!-- ko if: playoffRoundsWon() === 4 -->
-              <span>League champs</span>
+            <!-- ko if: playoffRoundsWon() >= 0 -->
+              <span data-bind="roundsWonText: playoffRoundsWon"></span>
             <!-- /ko -->
           </span>
         </div>
@@ -100,7 +88,7 @@
           <h3>Playoffs</h3>
           <p>
             <b><span data-bind="text: seriesTitle"></span></b><br>
-            <span data-bind="matchup: [0, 0]"></span><br>
+            <span data-bind="matchup: [[0, 0], $root.series(), $root.season()]"></span><br>
             <a data-bind="attrLeagueUrl: {href: ['playoffs']}">» Playoffs</a>
           </p>
         <!-- /ko -->

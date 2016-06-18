@@ -5,7 +5,9 @@
 
 <p data-bind="visible: !finalMatchups()">This is what the playoff matchups would be if the season ended right now.</p>
 
-<h3 class="hidden-xs">Western Conference <span class="pull-right">Eastern Conference</span></h3>
+<!-- ko if: playoffsByConference -->
+  <h3 class="hidden-xs">Western Conference <span class="pull-right">Eastern Conference</span></h3>
+<!-- /ko -->
 
 <div class="table-responsive">
   <table class="table-condensed" width="100%">

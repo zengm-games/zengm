@@ -67,8 +67,9 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
         // Display the current or archived playoffs
         return {
             finalMatchups,
-            numPlayoffRounds: g.numPlayoffRounds,
             matchups,
+            numPlayoffRounds: g.numPlayoffRounds,
+            playoffsByConference: g.confs.length === 2 && !localStorage.top16playoffs,
             season: inputs.season,
             series,
         };

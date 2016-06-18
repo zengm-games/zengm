@@ -1,6 +1,8 @@
 variable numbers of conferences and divisions
   https://www.reddit.com/message/messages/5rcmpq
-  example league files
+  documentation
+    example league file
+    start with 0, continuous, like tids
 
 better salary AI
   old players undervalued
@@ -402,6 +404,7 @@ separate active and retired players into separate object stores
 CURRENT
 -------
 
+standings view, if playoffsByConference === false, show whole league standings in right column, not conference standings
 percentages for FG, FT, 3pt below box score like Yahoo
 game log for individual player
   in each box score, include an array of players in the game. index on that.

@@ -47,14 +47,16 @@ async function updateStandings(inputs, updateEvents, vm) {
             sortBy: ["winp", "-lost", "won"],
         });
 
+        const numPlayoffTeams = Math.pow(2, g.numPlayoffRounds);
+
         const confs = [];
         for (let i = 0; i < g.confs.length; i++) {
-            const confRanks = [];
+            const playoffsRank = [];
             const confTeams = [];
             let l = 0;
             for (let k = 0; k < teams.length; k++) {
                 if (g.confs[i].cid === teams[k].cid) {
-                    confRanks[teams[k].tid] = l + 1; // Store ranks by tid, for use in division standings
+                    playoffsRank[teams[k].tid] = l + 1; // Store ranks by tid, for use in division standings
                     confTeams.push(helpers.deepCopy(teams[k]));
                     confTeams[l].rank = l + 1;
                     if (l === 0) {
@@ -85,22 +87,41 @@ async function updateStandings(inputs, updateEvents, vm) {
                             } else {
                                 divTeams[l].gb = helpers.gb(divTeams[0], divTeams[l]);
                             }
-                            divTeams[l].confRank = confRanks[divTeams[l].tid];
+
+                            if (playoffsRank[divTeams[l].tid] <= numPlayoffTeams / 2) {
+                                divTeams[l].playoffsRank = playoffsRank[divTeams[l].tid];
+                            } else {
+                                divTeams[l].playoffsRank = null;
+                            }
+
                             if (divTeams[l].tid === g.userTid) {
                                 divTeams[l].highlight = true;
                             } else {
                                 divTeams[l].highlight = false;
                             }
+
                             l += 1;
                         }
                     }
 
-                    confs[i].divs.push({name: g.divs[j].name, teams: divTeams});
+                    confs[i].divs.push({did: g.divs[j].did, name: g.divs[j].name, teams: divTeams});
                 }
             }
         }
 
         const playoffsByConference = g.confs.length === 2 && !localStorage.top16playoffs;
+
+        // Fix playoffsRank if conferences don't matter
+        if (!playoffsByConference) {
+            for (let i = 0; i < numPlayoffTeams; i++) {
+                const t = teams[i];
+                const div = confs[t.cid].divs.find(div => t.did === div.did);
+                const t2 = div.teams.find(t2 => t.tid === t2.tid);
+                if (t2) {
+                    t2.playoffsRank = i < numPlayoffTeams ? i + 1 : null;
+                }
+            }
+        }
 
         return {
             confs,

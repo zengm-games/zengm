@@ -29,7 +29,7 @@ ko.bindingHandlers.roundWinp = {
 
 // It would be better if this took the series object directly
 ko.bindingHandlers.matchup = {
-    update: (element, valueAccessor, allBindingsAccessor, viewModel) => {
+    update: (element, valueAccessor) => {
         const args = valueAccessor();
 
         const matchup = args[0];

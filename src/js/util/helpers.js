@@ -139,7 +139,7 @@ function getTeams(selectedTid = -1) {
         teams[i] = {
             abbrev: g.teamAbbrevsCache[i],
             region: g.teamRegionsCache[i],
-            name: g.teamNamesCache[i]
+            name: g.teamNamesCache[i],
         };
     }
 
@@ -226,7 +226,7 @@ function getTeamsDefault() {
         {tid: 26, cid: 0, did: 2, region: "Tampa", name: "Turtles", abbrev: "TPA", pop: 2.2},
         {tid: 27, cid: 0, did: 0, region: "Toronto", name: "Beavers", abbrev: "TOR", pop: 6.3},
         {tid: 28, cid: 1, did: 4, region: "Vancouver", name: "Whalers", abbrev: "VAN", pop: 2.3},
-        {tid: 29, cid: 0, did: 2, region: "Washington", name: "Monuments", abbrev: "WAS", pop: 4.2}
+        {tid: 29, cid: 0, did: 2, region: "Washington", name: "Monuments", abbrev: "WAS", pop: 4.2},
     ];
 
     for (const t of teams) {
@@ -273,7 +273,7 @@ function globalError(req) {
 
     ui.update({
         container: "content",
-        template: "error"
+        template: "error",
     });
 
     const contentEl = document.getElementById("content");
@@ -297,7 +297,7 @@ async function leagueError(req) {
 
     ui.update({
         container: "league_content",
-        template: "error"
+        template: "error",
     });
 
     const contentEl = document.getElementById("league_content");
@@ -341,7 +341,7 @@ function errorNotify(errorText) {
     eventLog.add(null, {
         type: "error",
         text: errorText,
-        saveToDb: false
+        saveToDb: false,
     });
 }
 
@@ -395,7 +395,7 @@ function skillsBlock(skills) {
         Dp: "Perimeter Defender",
         Po: "Post Scorer",
         Ps: "Passer",
-        R: "Rebounder"
+        R: "Rebounder",
     };
 
     let skillsHtml = '';
@@ -656,7 +656,7 @@ async function gameLogList(abbrev, season, gid, loadedGames) {
                 gid: game.gid,
                 tid,
                 selected: game.gid === gid,
-                overtime
+                overtime,
             });
 
             const i = games.length - 1;
@@ -692,7 +692,7 @@ function formatCompletedGame(game) {
     const output = {
         gid: game.gid,
         overtime: game.overtime,
-        won: game.won
+        won: game.won,
     };
     if (game.home) {
         output.teams = [team1, team0];
@@ -756,8 +756,8 @@ function checkNaNs() {
                                 }
 
                                 return value;
-                            })
-                        }
+                            }),
+                        },
                     });
                 }
 
@@ -816,7 +816,7 @@ function gameScore(arg) {
 
 async function updateMultiTeam(tid) {
     await require('../core/league').setGameAttributesComplete({
-        userTid: tid
+        userTid: tid,
     });
 
     // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
@@ -923,5 +923,5 @@ module.exports = {
     correctLinkLid,
     overtimeCounter,
     yearRanges,
-    maybeReuseTx
+    maybeReuseTx,
 };

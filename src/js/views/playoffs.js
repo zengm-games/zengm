@@ -8,7 +8,7 @@ const components = require('./components');
 
 function get(req) {
     return {
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -22,7 +22,7 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
                 attrs: ["tid", "cid", "abbrev", "name"],
                 seasonAttrs: ["winp"],
                 season: inputs.season,
-                sortBy: ["winp", "-lost", "won"]
+                sortBy: ["winp", "-lost", "won"],
             });
 
             series = [[], [], [], []];  // First round, second round, third round, fourth round
@@ -54,7 +54,7 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
         return {
             finalMatchups,
             series,
-            season: inputs.season
+            season: inputs.season,
         };
     }
 }
@@ -74,5 +74,5 @@ module.exports = bbgmView.init({
     get,
     runBefore: [updatePlayoffs],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

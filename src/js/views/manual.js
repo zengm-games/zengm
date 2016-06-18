@@ -22,13 +22,13 @@ function templateString(page) {
 
 function get(req) {
     return {
-        page: req.params.page !== undefined ? req.params.page : "overview"
+        page: req.params.page !== undefined ? req.params.page : "overview",
     };
 }
 
 function updateManual(inputs) {
     return {
-        page: inputs.page
+        page: inputs.page,
     };
 }
 
@@ -39,7 +39,7 @@ function uiFirst() {
 function uiEvery(updateEvents, vm) {
     ui.update({
         container: "manual-content",
-        template: templateString(vm.page())
+        template: templateString(vm.page()),
     });
 }
 
@@ -49,5 +49,5 @@ module.exports = bbgmView.init({
     get,
     runBefore: [updateManual],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

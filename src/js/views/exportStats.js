@@ -17,7 +17,7 @@ function genFileName(leagueName, season, grouping) {
 async function playerAveragesCSV(season) {
     let players = await g.dbl.players.getAll();
     players = await player.withStats(null, players, {
-        statsSeasons: season === "all" ? "all" : [season]
+        statsSeasons: season === "all" ? "all" : [season],
     });
 
     // Array of seasons in stats, either just one or all of them
@@ -30,7 +30,7 @@ async function playerAveragesCSV(season) {
             attrs: ["pid", "name", "age"],
             ratings: ["pos"],
             stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm", "per", "ewa"],
-            season: s
+            season: s,
         }).forEach(p => {
             output += `${[p.pid, p.name, p.ratings.pos, p.age, p.stats.abbrev, s, p.stats.gp, p.stats.gs, p.stats.min, p.stats.fg, p.stats.fga, p.stats.fgp, p.stats.tp, p.stats.tpa, p.stats.tpp, p.stats.ft, p.stats.fta, p.stats.ftp, p.stats.orb, p.stats.drb, p.stats.trb, p.stats.ast, p.stats.tov, p.stats.stl, p.stats.blk, p.stats.ba, p.stats.pf, p.stats.pts, p.stats.pm, p.stats.per, p.stats.ewa].join(",")}\n`;
         });
@@ -90,7 +90,7 @@ async function post(req) {
 
     const [output, l] = await Promise.all([
         csvPromise,
-        g.dbm.leagues.get(g.lid)
+        g.dbm.leagues.get(g.lid),
     ]);
 
     const blob = new Blob([output], {type: "text/csv"});
@@ -119,16 +119,16 @@ function updateExportStats(inputs, updateEvents) {
         const seasons = helpers.getSeasons();
         const options = [{
             key: "all",
-            val: "All Seasons"
+            val: "All Seasons",
         }];
         for (let j = 0; j < seasons.length; j++) {
             options.push({
                 key: seasons[j].season,
-                val: `${seasons[j].season} season`
+                val: `${seasons[j].season} season`,
             });
         }
         return {
-            seasons: options
+            seasons: options,
         };
     }
 }
@@ -142,5 +142,5 @@ module.exports = bbgmView.init({
     InitViewModel,
     post,
     runBefore: [updateExportStats],
-    uiFirst
+    uiFirst,
 });

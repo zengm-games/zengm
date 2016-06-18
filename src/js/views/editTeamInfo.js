@@ -8,7 +8,7 @@ const helpers = require('../util/helpers');
 function get() {
     if (!g.godMode) {
         return {
-            errorMessage: `You can't edit teams unless you enable <a href="${helpers.leagueUrl(["god_mode"])}">God Mode</a>.`
+            errorMessage: `You can't edit teams unless you enable <a href="${helpers.leagueUrl(["god_mode"])}">God Mode</a>.`,
         };
     }
 }
@@ -43,7 +43,7 @@ async function post(req) {
     await league.setGameAttributesComplete({
         teamAbbrevsCache: req.params.abbrev,
         teamRegionsCache: req.params.region,
-        teamNamesCache: req.params.name
+        teamNamesCache: req.params.name,
     });
 
     league.updateLastDbChange();
@@ -55,7 +55,7 @@ async function updateTeamInfo() {
     const teams = await team.filter({
         attrs: ["tid", "abbrev", "region", "name", "imgURL"],
         seasonAttrs: ["pop"],
-        season: g.season
+        season: g.season,
     });
 
     for (let i = 0; i < teams.length; i++) {
@@ -63,7 +63,7 @@ async function updateTeamInfo() {
     }
 
     return {
-        teams
+        teams,
     };
 }
 
@@ -152,7 +152,7 @@ function uiFirst() {
             await league.setGameAttributesComplete({
                 teamAbbrevsCache: newTeams.map(t => t.abbrev),
                 teamRegionsCache: newTeams.map(t => t.region),
-                teamNamesCache: newTeams.map(t => t.name)
+                teamNamesCache: newTeams.map(t => t.name),
             });
 
             league.updateLastDbChange();
@@ -166,5 +166,5 @@ module.exports = bbgmView.init({
     get,
     post,
     runBefore: [updateTeamInfo],
-    uiFirst
+    uiFirst,
 });

@@ -26,7 +26,7 @@ function calculateValues(data) {
         q1: quartile(data, 1),
         median: quartile(data, 2),
         q3: quartile(data, 3),
-        max: data[data.length - 1]
+        max: data[data.length - 1],
     };
 }
 
@@ -81,7 +81,7 @@ function create(plot) {
             q1: plot.quartiles[1],
             median: plot.quartiles[2],
             q3: plot.quartiles[3],
-            max: plot.quartiles[4]
+            max: plot.quartiles[4],
         };
     }
 
@@ -91,7 +91,7 @@ function create(plot) {
         q1: scaleValue(val.q1, plot.scale),
         median: scaleValue(val.median, plot.scale),
         q3: scaleValue(val.q3, plot.scale),
-        max: scaleValue(val.max, plot.scale)
+        max: scaleValue(val.max, plot.scale),
     };
 
 
@@ -203,5 +203,5 @@ function create(plot) {
 }
 
 module.exports = {
-    create
+    create,
 };

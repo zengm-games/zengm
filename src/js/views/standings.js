@@ -11,7 +11,7 @@ const helpers = require('../util/helpers');
 
 function get(req) {
     return {
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -26,16 +26,16 @@ const mapping = {
             return new function () {
                 komapping.fromJS(options.data, {
                     divs: {
-                        key: data => ko.unwrap(data.name)
+                        key: data => ko.unwrap(data.name),
                     },
                     teams: {
-                        key: data => ko.unwrap(data.tid)
-                    }
+                        key: data => ko.unwrap(data.tid),
+                    },
                 }, this);
             }();
         },
-        key: data => ko.unwrap(data.name)
-    }
+        key: data => ko.unwrap(data.name),
+    },
 };
 
 async function updateStandings(inputs, updateEvents, vm) {
@@ -44,7 +44,7 @@ async function updateStandings(inputs, updateEvents, vm) {
             attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
             seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
             season: inputs.season,
-            sortBy: ["winp", "-lost", "won"]
+            sortBy: ["winp", "-lost", "won"],
         });
 
         const confs = [];
@@ -102,7 +102,7 @@ async function updateStandings(inputs, updateEvents, vm) {
 
         return {
             season: inputs.season,
-            confs
+            confs,
         };
     }
 }
@@ -126,5 +126,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateStandings],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

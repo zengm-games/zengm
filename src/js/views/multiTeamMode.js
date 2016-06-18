@@ -13,13 +13,13 @@ async function updateMultiTeamMode(inputs, updateEvents) {
         for (let i = 0; i < g.numTeams; i++) {
             teams.push({
                 tid: i,
-                name: `${g.teamRegionsCache[i]} ${g.teamNamesCache[i]}`
+                name: `${g.teamRegionsCache[i]} ${g.teamNamesCache[i]}`,
             });
         }
 
         return {
             userTids: g.userTids,
-            teams
+            teams,
         };
     }
 }
@@ -55,5 +55,5 @@ function uiFirst(vm) {
 module.exports = bbgmView.init({
     id: "multiTeamMode",
     runBefore: [updateMultiTeamMode],
-    uiFirst
+    uiFirst,
 });

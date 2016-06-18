@@ -13,7 +13,7 @@ const mimeTypes = {
     '.png': 'image/png',
     '.jpeg': 'image/jpeg',
     '.bmp': 'image/bmp',
-    '.gif': 'image/gif'
+    '.gif': 'image/gif',
 };
 const sendFile = (res, filename) => {
     const ext = path.extname(filename);

@@ -7,7 +7,7 @@ const g = {};
 // If any of these things are supposed to change at any point, they should be stored in gameAttributes rather than here.
 g.confs = [
     {cid: 0, name: "Eastern Conference"},
-    {cid: 1, name: "Western Conference"}
+    {cid: 1, name: "Western Conference"},
 ];
 g.divs = [
     {did: 0, cid: 0, name: "Atlantic"},
@@ -15,7 +15,7 @@ g.divs = [
     {did: 2, cid: 0, name: "Southeast"},
     {did: 3, cid: 1, name: "Southwest"},
     {did: 4, cid: 1, name: "Northwest"},
-    {did: 5, cid: 1, name: "Pacific"}
+    {did: 5, cid: 1, name: "Pacific"},
 ];
 
 // Constants in all caps
@@ -29,7 +29,7 @@ g.PHASE = {
     DRAFT: 5,
     AFTER_DRAFT: 6,
     RESIGN_PLAYERS: 7,
-    FREE_AGENCY: 8
+    FREE_AGENCY: 8,
 };
 g.PLAYER = {
     FREE_AGENT: -1,
@@ -37,7 +37,7 @@ g.PLAYER = {
     RETIRED: -3,
     UNDRAFTED_2: -4, // Next year's draft class
     UNDRAFTED_3: -5, // Next next year's draft class
-    UNDRAFTED_FANTASY_TEMP: -6 // Store current draft class here during fantasy draft
+    UNDRAFTED_FANTASY_TEMP: -6, // Store current draft class here during fantasy draft
 };
 
 g.PHASE_TEXT = {
@@ -50,7 +50,7 @@ g.PHASE_TEXT = {
     "5": "draft",
     "6": "after draft",
     "7": "re-sign players",
-    "8": "free agency"
+    "8": "free agency",
 };
 
 /*    // Web workers - create only if we're not already inside a web worker!
@@ -72,12 +72,12 @@ g.vm = {
         username: ko.observable(null),
         email: ko.observable(null),
         goldUntil: ko.observable(0),
-        goldCancelled: ko.observable(0)
+        goldCancelled: ko.observable(0),
     },
     multiTeam: {
         userTid: ko.observable(null),
-        userTids: ko.observable([])
-    }
+        userTids: ko.observable([]),
+    },
 };
 
 g.enableLogging = window.enableLogging;
@@ -95,78 +95,78 @@ g.sport = "basketball"; // For account ajax stuff
 
 g.compositeWeights = {
     pace: {
-        ratings: ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss']
+        ratings: ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss'],
     },
     usage: {
         ratings: ['ins', 'dnk', 'fg', 'tp', 'spd', 'drb'],
-        weights: [1.5, 1, 1, 1, 0.15, 0.15]
+        weights: [1.5, 1, 1, 1, 0.15, 0.15],
     },
     dribbling: {
-        ratings: ['drb', 'spd']
+        ratings: ['drb', 'spd'],
     },
     passing: {
         ratings: ['drb', 'pss'],
-        weights: [0.4, 1]
+        weights: [0.4, 1],
     },
     turnovers: {
         ratings: ['drb', 'pss', 'spd', 'hgt', 'ins'],
-        weights: [1, 1, -1, 1, 1]
+        weights: [1, 1, -1, 1, 1],
     },
     shootingAtRim: {
         ratings: ['hgt', 'spd', 'jmp', 'dnk'],
-        weights: [1, 0.2, 0.6, 0.4]
+        weights: [1, 0.2, 0.6, 0.4],
     },
     shootingLowPost: {
         ratings: ['hgt', 'stre', 'spd', 'ins'],
-        weights: [1, 0.6, 0.2, 1]
+        weights: [1, 0.6, 0.2, 1],
     },
     shootingMidRange: {
         ratings: ['hgt', 'fg'],
-        weights: [0.2, 1]
+        weights: [0.2, 1],
     },
     shootingThreePointer: {
         ratings: ['hgt', 'tp'],
-        weights: [0.2, 1]
+        weights: [0.2, 1],
     },
     shootingFT: {
-        ratings: ['ft']
+        ratings: ['ft'],
     },
     rebounding: {
         ratings: ['hgt', 'stre', 'jmp', 'reb'],
-        weights: [1.5, 0.1, 0.1, 0.7]
+        weights: [1.5, 0.1, 0.1, 0.7],
     },
     stealing: {
         ratings: ['constant', 'spd', 'stl'],
-        weights: [1, 1, 1]
+        weights: [1, 1, 1],
     },
     blocking: {
         ratings: ['hgt', 'jmp', 'blk'],
-        weights: [1.5, 0.5, 0.5]
+        weights: [1.5, 0.5, 0.5],
     },
     fouling: {
         ratings: ['constant', 'hgt', 'blk', 'spd'],
-        weights: [1.5, 1, 1, -1]
+        weights: [1.5, 1, 1, -1],
     },
     defense: {
         ratings: ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'],
-        weights: [1, 1, 1, 0.5, 1, 1]
+        weights: [1, 1, 1, 0.5, 1, 1],
     },
     defenseInterior: {
         ratings: ['hgt', 'stre', 'spd', 'jmp', 'blk'],
-        weights: [2, 1, 0.5, 0.5, 1]
+        weights: [2, 1, 0.5, 0.5, 1],
     },
     defensePerimeter: {
         ratings: ['hgt', 'stre', 'spd', 'jmp', 'stl'],
-        weights: [1, 1, 2, 0.5, 1]
+        weights: [1, 1, 2, 0.5, 1],
     },
     endurance: {
         ratings: ['constant', 'endu', 'hgt'],
-        weights: [1, 1, -0.1]
+        weights: [1, 1, -0.1],
     },
     athleticism: {
         ratings: ['stre', 'spd', 'jmp', 'hgt'],
-        weights: [1, 1, 1, 0.5]
-    }
+        weights: [1, 1, 1, 0.5],
+    },
 };
 
 g.stripePublishableKey = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";

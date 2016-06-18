@@ -22,7 +22,7 @@ async function updateOwnerMood(tx) {
         ot: tx,
         seasonAttrs: ["won", "playoffRoundsWon", "profit"],
         season: g.season,
-        tid: g.userTid
+        tid: g.userTid,
     });
 
     const deltas = {};
@@ -91,7 +91,7 @@ async function awards(tx) {
         seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
         season: g.season,
         sortBy: "winp",
-        ot: tx
+        ot: tx,
     });
 
     let foundEast = false;
@@ -117,13 +117,13 @@ async function awards(tx) {
 
     let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT));
     players = await player.withStats(tx, players, {
-        statsSeasons: [g.season]
+        statsSeasons: [g.season],
     });
 
     players = player.filter(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
         stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
-        season: g.season
+        season: g.season,
     });
 
     // League leaders - points, rebounds, assists, steals, blocks
@@ -133,7 +133,7 @@ async function awards(tx) {
         {name: "League Rebounding Leader", stat: "trb", minValue: 800},
         {name: "League Assists Leader", stat: "ast", minValue: 400},
         {name: "League Steals Leader", stat: "stl", minValue: 125},
-        {name: "League Blocks Leader", stat: "blk", minValue: 100}
+        {name: "League Blocks Leader", stat: "blk", minValue: 100},
     ];
     for (const cat of categories) {
         players.sort((a, b) => b.stats[cat.stat] - a.stats[cat.stat]);
@@ -234,14 +234,14 @@ async function awards(tx) {
     champPlayers = await player.withStats(tx, champPlayers, {
         statsSeasons: [g.season],
         statsTid: champTid,
-        statsPlayoffs: true
+        statsPlayoffs: true,
     });
     champPlayers = player.filter(champPlayers, { // Only the champions, only playoff stats
         attrs: ["pid", "name", "tid", "abbrev"],
         stats: ["pts", "trb", "ast", "ewa"],
         season: g.season,
         playoffs: true,
-        tid: champTid
+        tid: champTid,
     });
     champPlayers.sort((a, b) => b.statsPlayoffs.ewa - a.statsPlayoffs.ewa);
     p = champPlayers[0];
@@ -268,7 +268,7 @@ async function awards(tx) {
             text,
             showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",
             pids: [p.pid],
-            tids: [p.tid]
+            tids: [p.tid],
         });
     }
 }
@@ -321,7 +321,7 @@ async function setSchedule(tx, tids) {
     for (let i = 0; i < tids.length; i++) {
         newSchedule.push({
             homeTid: tids[i][0],
-            awayTid: tids[i][1]
+            awayTid: tids[i][1],
         });
     }
 
@@ -695,5 +695,5 @@ module.exports = {
     setSchedule,
     newSchedule,
     newSchedulePlayoffsDay,
-    getDaysLeftSchedule
+    getDaysLeftSchedule,
 };

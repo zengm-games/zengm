@@ -7,12 +7,12 @@ const helpers = require('../util/helpers');
 function get() {
     if (g.phase === g.PHASE.DRAFT) {
         return {
-            errorMessage: "You can't start a fantasy draft while a regular draft is already in progress."
+            errorMessage: "You can't start a fantasy draft while a regular draft is already in progress.",
         };
     }
     if (g.phase === g.PHASE.FANTASY_DRAFT) {
         return {
-            redirectUrl: helpers.leagueUrl(["draft"])
+            redirectUrl: helpers.leagueUrl(["draft"]),
         };
     }
 }
@@ -33,5 +33,5 @@ module.exports = bbgmView.init({
     id: "fantasyDraft",
     get,
     post,
-    uiFirst
+    uiFirst,
 });

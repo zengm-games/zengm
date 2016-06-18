@@ -129,6 +129,6 @@ module.exports = {
     phaseChangeInProgress,
     canStartGames,
     canStartNegotiation,
-    unreadMessage
+    unreadMessage,
 };
 

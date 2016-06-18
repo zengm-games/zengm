@@ -19,11 +19,11 @@ function get(req) {
 
 const mapping = {
     history: {
-        create: options => options.data
+        create: options => options.data,
     },
     players: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateTeamHistory(inputs, updateEvents, vm) {
@@ -33,9 +33,9 @@ async function updateTeamHistory(inputs, updateEvents, vm) {
             g.dbl.players.index('statsTids').getAll(inputs.tid).then(players => {
                 return player.withStats(null, players, {
                     statsSeasons: "all",
-                    statsTid: inputs.tid
+                    statsTid: inputs.tid,
                 });
-            })
+            }),
         ]);
 
         let bestRecord = null;
@@ -51,7 +51,7 @@ async function updateTeamHistory(inputs, updateEvents, vm) {
                 season: teamSeasons[i].season,
                 won: teamSeasons[i].won,
                 lost: teamSeasons[i].lost,
-                playoffRoundsWon: teamSeasons[i].playoffRoundsWon
+                playoffRoundsWon: teamSeasons[i].playoffRoundsWon,
             });
             totalWon += teamSeasons[i].won;
             totalLost += teamSeasons[i].lost;
@@ -75,7 +75,7 @@ async function updateTeamHistory(inputs, updateEvents, vm) {
             attrs: ["pid", "name", "injury", "tid", "hof", "watch"],
             ratings: ["pos"],
             stats: ["season", "abbrev", "gp", "min", "pts", "trb", "ast", "per", "ewa"],
-            tid: inputs.tid
+            tid: inputs.tid,
         });
 
         for (let i = 0; i < players.length; i++) {
@@ -101,14 +101,14 @@ async function updateTeamHistory(inputs, updateEvents, vm) {
             team: {
                 name: g.teamNamesCache[inputs.tid],
                 region: g.teamRegionsCache[inputs.tid],
-                tid: inputs.tid
+                tid: inputs.tid,
             },
             totalWon,
             totalLost,
             playoffAppearances,
             championships,
             bestRecord,
-            worstRecord
+            worstRecord,
         };
     }
 }
@@ -129,7 +129,7 @@ function uiFirst(vm) {
                 } else if (data[data.length - 3]) {
                     row.classList.add("danger"); // Hall of Fame
                 }
-            }
+            },
         });
     }).extend({throttle: 1});
 
@@ -146,5 +146,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateTeamHistory],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

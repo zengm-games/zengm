@@ -595,7 +595,7 @@ async function release(tx, p, justDrafted) {
         tx.releasedPlayers.add({
             pid: p.pid,
             tid: p.tid,
-            contract: p.contract
+            contract: p.contract,
         });
     } else {
         // Clear player salary log if just drafted, because this won't be paid.
@@ -607,7 +607,7 @@ async function release(tx, p, justDrafted) {
         text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a>.`,
         showNotification: false,
         pids: [p.pid],
-        tids: [p.tid]
+        tids: [p.tid],
     });
 
     const baseMoods = await genBaseMoods(tx);
@@ -737,7 +737,7 @@ function name() {
     return {
         country,
         firstName,
-        lastName
+        lastName,
     };
 }
 
@@ -815,7 +815,7 @@ function addStatsRow(ot, p, playoffs = false) {
         pts: 0,
         per: 0,
         ewa: 0,
-        yearsWithTeam: 1
+        yearsWithTeam: 1,
     };
 
     p.statsTids.push(p.tid);
@@ -914,7 +914,7 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
     const nameInfo = name();
     p.born = {
         year: g.season - age,
-        loc: nameInfo.country
+        loc: nameInfo.country,
     };
 
     p.firstName = nameInfo.firstName;
@@ -938,7 +938,7 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
         teamRegion: null,
         pot,
         ovr: p.ratings[0].ovr,
-        skills: p.ratings[0].skills
+        skills: p.ratings[0].skills,
     };
 
     p.face = faces.generate();
@@ -978,7 +978,7 @@ function injury(healthRank) {
 
     return {
         type: injuries.types[i],
-        gamesRemaining: Math.round((0.7 * (healthRank - 1) / (g.numTeams - 1) + 0.65) * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])
+        gamesRemaining: Math.round((0.7 * (healthRank - 1) / (g.numTeams - 1) + 0.65) * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i]),
     };
 }
 
@@ -1111,7 +1111,7 @@ function filter(p, options) {
                         fp.awardsGrouped.push({
                             type: award,
                             count: awardsGroupedTemp[award].length,
-                            seasons: helpers.yearRanges(_.pluck(awardsGroupedTemp[award], "season"))
+                            seasons: helpers.yearRanges(_.pluck(awardsGroupedTemp[award], "season")),
                         });
                     }
                 }
@@ -1497,7 +1497,7 @@ function madeHof(p, playerStats) {
         F: 11,
         PF: 11.5,
         FC: 11.05,
-        C: 10.6
+        C: 10.6,
     };
 
     // Estimated wins added for each season http://insider.espn.go.com/nba/hollinger/statistics
@@ -1723,7 +1723,7 @@ function retire(tx, p, playerStats, retiredNotification) {
             text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> retired.`,
             showNotification: p.tid === g.userTid,
             pids: [p.pid],
-            tids: [p.tid]
+            tids: [p.tid],
         });
     }
 
@@ -1739,7 +1739,7 @@ function retire(tx, p, playerStats, retiredNotification) {
             text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> was inducted into the <a href="${helpers.leagueUrl(["hall_of_fame"])}">Hall of Fame</a>.`,
             showNotification: p.statsTids.indexOf(g.userTid) >= 0,
             pids: [p.pid],
-            tids: p.statsTids
+            tids: p.statsTids,
         });
     }
 
@@ -1751,27 +1751,27 @@ function moodColorText(p) {
     if (p.freeAgentMood[g.userTid] < 0.25) {
         return {
             color: "#5cb85c",
-            text: 'Eager to reach an agreement.'
+            text: 'Eager to reach an agreement.',
         };
     }
 
     if (p.freeAgentMood[g.userTid] < 0.5) {
         return {
             color: "#ccc",
-            text: 'Willing to sign for the right price.'
+            text: 'Willing to sign for the right price.',
         };
     }
 
     if (p.freeAgentMood[g.userTid] < 0.75) {
         return {
             color: "#f0ad4e",
-            text: 'Annoyed at you.'
+            text: 'Annoyed at you.',
         };
     }
 
     return {
         color: "#d9534f",
-        text: 'Insulted by your presence.'
+        text: 'Insulted by your presence.',
     };
 }
 
@@ -1884,7 +1884,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
             text,
             showNotification: tid === g.userTid,
             pids: [pid],
-            tids: [tid]
+            tids: [tid],
         });
     };
 
@@ -1982,7 +1982,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
             stats: p.stat,
             won,
             score: `${results.team[i].stat.pts}-${results.team[j].stat.pts}`,
-            overtimes: results.overtimes
+            overtimes: results.overtimes,
         });
     }
 }
@@ -2015,7 +2015,7 @@ async function killOne() {
         "suffered a heart attack in the team training facility and died",
         "was lost at sea and is presumed dead",
         "was run over by a car",
-        "was run over by a car, and then was run over by a second car. Police believe only the first was intentional"
+        "was run over by a car, and then was run over by a second car. Police believe only the first was intentional",
     ]);
 
     // Pick random team
@@ -2041,7 +2041,7 @@ async function killOne() {
             showNotification: tid === g.userTid,
             pids: [p.pid],
             tids: [tid],
-            persistent: true
+            persistent: true,
         });
     });
 }
@@ -2172,5 +2172,5 @@ module.exports = {
     augmentPartialPlayer,
     checkStatisticalFeat,
     killOne,
-    withStats
+    withStats,
 };

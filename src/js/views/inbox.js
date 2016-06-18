@@ -17,7 +17,7 @@ async function updateInbox() {
 
     return {
         anyUnread,
-        messages
+        messages,
     };
 }
 
@@ -28,5 +28,5 @@ function uiFirst() {
 module.exports = bbgmView.init({
     id: "inbox",
     runBefore: [updateInbox],
-    uiFirst
+    uiFirst,
 });

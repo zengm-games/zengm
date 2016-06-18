@@ -109,7 +109,7 @@
 
                     bar.css({
                         left: num * width,
-                        width: width - gap
+                        width: width - gap,
                     });
                 }
             });
@@ -139,7 +139,7 @@
         container.empty()
             .data("numBars", stacked ? data[0].length : data.length)
             .css({
-                position: "relative"
+                position: "relative",
             });
 
         // Convert heights to percentages
@@ -180,10 +180,10 @@
                         .css({
                             position: "absolute",
                             bottom: `${bottom}%`,
-                            height: `${height}%`
+                            height: `${height}%`,
                         })
                         .tooltip({
-                            title: titleStart + dataTooltipFn(data[i])
+                            title: titleStart + dataTooltipFn(data[i]),
                         })
                         .appendTo(container);
                 }
@@ -208,10 +208,10 @@
                             .css({
                                 position: "absolute",
                                 bottom: `${offsets[i]}%`,
-                                height: `${scaled[j][i]}%`
+                                height: `${scaled[j][i]}%`,
                             })
                             .tooltip({
-                                title: titleStart + dataTooltipFn(data[j][i])
+                                title: titleStart + dataTooltipFn(data[j][i]),
                             })
                             .appendTo(container);
                     }

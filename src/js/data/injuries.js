@@ -7,5 +7,5 @@ const types = ["Sprained Ankle", "Patellar Tendinitis", "Back Spasms", "Strained
 module.exports = {
     cumSum,
     gamesRemainings,
-    types
+    types,
 };

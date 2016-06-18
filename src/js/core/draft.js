@@ -20,7 +20,7 @@ async function genPicks(tx, season) {
                 tid,
                 originalTid: tid,
                 round,
-                season
+                season,
             }));
         }
     }
@@ -53,7 +53,7 @@ async function setOrder(ot, draftOrder) {
     const dbOrTx = ot || g.dbl;
     await dbOrTx.draftOrder.put({
         rid: 0,
-        draftOrder
+        draftOrder,
     });
 }
 
@@ -138,7 +138,7 @@ function logAction(tid, txt) {
         text: txt,
         showNotification: tid === g.userTid,
         pids: [],
-        tids: [tid]
+        tids: [tid],
     });
 }
 
@@ -257,7 +257,7 @@ async function genOrder(tx) {
         ot: tx,
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp", "playoffRoundsWon"],
-        season: g.season
+        season: g.season,
     });
 
     // Draft lottery
@@ -301,7 +301,7 @@ async function genOrder(tx) {
             draftPicksIndexed[tid] = [];
         }
         draftPicksIndexed[tid][draftPicks[i].round] = {
-            tid: draftPicks[i].tid
+            tid: draftPicks[i].tid,
         };
     }
 
@@ -316,7 +316,7 @@ async function genOrder(tx) {
             round: 1,
             pick: i + 1,
             tid,
-            originalTid: teams[firstThree[i]].tid
+            originalTid: teams[firstThree[i]].tid,
         });
 
         logLotteryWinners(chancePct, teams, tid, teams[firstThree[i]].tid, i + 1);
@@ -331,7 +331,7 @@ async function genOrder(tx) {
                 round: 1,
                 pick,
                 tid,
-                originalTid: teams[i].tid
+                originalTid: teams[i].tid,
             });
 
             if (pick < 15) {
@@ -355,7 +355,7 @@ async function genOrder(tx) {
             round: 2,
             pick: i + 1,
             tid,
-            originalTid: teams[i].tid
+            originalTid: teams[i].tid,
         });
     }
 
@@ -397,7 +397,7 @@ async function genOrderFantasy(tx, position) {
                 round,
                 pick: i + 1,
                 tid: tids[i],
-                originalTid: tids[i]
+                originalTid: tids[i],
             });
         }
 
@@ -471,7 +471,7 @@ async function selectPlayer(pick, pid) {
                 originalTid: pick.originalTid,
                 pot: p.ratings[0].pot,
                 ovr: p.ratings[0].ovr,
-                skills: p.ratings[0].skills
+                skills: p.ratings[0].skills,
             };
         }
 
@@ -482,7 +482,7 @@ async function selectPlayer(pick, pid) {
             const years = 4 - pick.round; // 2 years for 2nd round, 3 years for 1st round;
             p = player.setContract(p, {
                 amount: rookieSalaries[i],
-                exp: g.season + years
+                exp: g.season + years,
             }, true);
         }
 
@@ -498,7 +498,7 @@ async function selectPlayer(pick, pid) {
             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season])}">${g.teamNamesCache[pick.tid]}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> with the ${helpers.ordinal(pick.pick + (pick.round - 1) * 30)} pick in the <a href="${helpers.leagueUrl(["draft_summary", g.season])}">${draftName}</a>.`,
             showNotification: false,
             pids: [p.pid],
-            tids: [p.tid]
+            tids: [p.tid],
         });
 
         return await tx.players.put(p);
@@ -518,7 +518,7 @@ async function untilUserOrEnd() {
 
     const [playersAll, draftOrder] = await Promise.all([
         g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED),
-        getOrder()
+        getOrder(),
     ]);
 
     playersAll.sort((a, b) => b.value - a.value);
@@ -547,7 +547,7 @@ async function untilUserOrEnd() {
 
                 await require('../core/league').setGameAttributesComplete({
                     phase: g.nextPhase,
-                    nextPhase: null
+                    nextPhase: null,
                 });
 
                 ui.updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
@@ -601,5 +601,5 @@ module.exports = {
     getRookieSalaries,
     selectPlayer,
     updateChances,
-    lotterySort
+    lotterySort,
 };

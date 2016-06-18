@@ -13,7 +13,7 @@ function showSurvata() {
             explainer: "Please take this short survey to support Basketball GM!",
             disallowClose: true,
             allowSkip: false,
-            contentName: new Date().toISOString()
+            contentName: new Date().toISOString(),
         });
 
         s.on("load", data => {
@@ -67,5 +67,5 @@ function show() {
 
 module.exports = {
     show,
-    showModal
+    showModal,
 };

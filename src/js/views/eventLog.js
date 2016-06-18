@@ -11,7 +11,7 @@ function get(req) {
     return {
         tid,
         abbrev,
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -40,7 +40,7 @@ async function updateEventLog(inputs, updateEvents, vm) {
             return {
                 abbrev: inputs.abbrev,
                 events,
-                season: inputs.season
+                season: inputs.season,
             };
         }
 
@@ -63,7 +63,7 @@ async function updateEventLog(inputs, updateEvents, vm) {
             });
 
             return {
-                season: inputs.season
+                season: inputs.season,
             };
         }
     }
@@ -85,5 +85,5 @@ module.exports = bbgmView.init({
     InitViewModel,
     runBefore: [updateEventLog],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

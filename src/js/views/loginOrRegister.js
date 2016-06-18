@@ -25,7 +25,7 @@ function uiFirst() {
             data: `${$login.serialize()}&sport=${g.sport}`,
             dataType: "json",
             xhrFields: {
-                withCredentials: true
+                withCredentials: true,
             },
             success: async data => {
                 if (data.success) {
@@ -46,7 +46,7 @@ function uiFirst() {
             },
             error: () => {
                 document.getElementById("login-error").innerHTML = ajaxErrorMsg;
-            }
+            },
         });
     });
 
@@ -70,7 +70,7 @@ function uiFirst() {
             data: `${$register.serialize()}&sport=${g.sport}`,
             dataType: "json",
             xhrFields: {
-                withCredentials: true
+                withCredentials: true,
             },
             success: async data => {
                 if (data.success) {
@@ -104,7 +104,7 @@ function uiFirst() {
             },
             error: () => {
                 document.getElementById("register-error").innerHTML = ajaxErrorMsg;
-            }
+            },
         });
     });
 }
@@ -112,5 +112,5 @@ function uiFirst() {
 module.exports = bbgmView.init({
     id: "loginOrRegister",
     beforeReq: viewHelpers.beforeNonLeague,
-    uiFirst
+    uiFirst,
 });

@@ -4,7 +4,7 @@
 (function ($) {
     $.fn.tabSlideOut = function (callerSettings) {
         const settings = $.extend({
-            rightPos: '20px'
+            rightPos: '20px',
         }, callerSettings || {});
 
         settings.tabHandle = $(settings.tabHandle);

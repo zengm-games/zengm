@@ -27,7 +27,7 @@ async function updateInbox(inputs, updateEvents) {
         messages = messages.slice(0, 2);
 
         return {
-            messages
+            messages,
         };
     }
 }
@@ -36,7 +36,7 @@ async function updateTeam(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
         const [t, latestSeason] = await Promise.all([
             g.dbl.teams.get(g.userTid),
-            g.dbl.teamSeasons.index("season, tid").get([g.season, g.userTid])
+            g.dbl.teamSeasons.index("season, tid").get([g.season, g.userTid]),
         ]);
 
         return {
@@ -48,7 +48,7 @@ async function updateTeam(inputs, updateEvents) {
             cash: latestSeason.cash / 1000, // [millions of dollars]
             salaryCap: g.salaryCap / 1000, // [millions of dollars]
             season: g.season,
-            playoffRoundsWon: latestSeason.playoffRoundsWon
+            playoffRoundsWon: latestSeason.playoffRoundsWon,
         };
     }
 }
@@ -57,7 +57,7 @@ async function updatePayroll(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
         const payroll = await team.getPayroll(null, g.userTid).get(0);
         return {
-            payroll: payroll / 1000 // [millions of dollars]
+            payroll: payroll / 1000, // [millions of dollars]
         };
     }
 }
@@ -73,7 +73,7 @@ async function updateTeams(inputs, updateEvents) {
             seasonAttrs: ["won", "lost", "winp", "att", "revenue", "profit"],
             stats,
             season: g.season,
-            sortBy: ["winp", "-lost", "won"]
+            sortBy: ["winp", "-lost", "won"],
         });
 
         const cid = teams.find(t => t.tid === g.userTid).cid;
@@ -136,7 +136,7 @@ async function updateGames(inputs, updateEvents, vm) {
             if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
                 completed.push({
                     gid: game.gid,
-                    overtime
+                    overtime,
                 });
 
                 const i = completed.length - 1;
@@ -206,7 +206,7 @@ function updatePlayers(inputs, updateEvents) {
                 season: g.season,
                 showNoStats: true,
                 showRookies: true,
-                fuzz: true
+                fuzz: true,
             });
 
             // League leaders
@@ -218,7 +218,7 @@ function updatePlayers(inputs, updateEvents) {
                     pid: players[0].pid,
                     name: players[0].name,
                     abbrev: players[0].abbrev,
-                    stat: players[0].stats[stat]
+                    stat: players[0].stats[stat],
                 };
             }
 
@@ -231,13 +231,13 @@ function updatePlayers(inputs, updateEvents) {
                     vars.teamLeaders[stat] = {
                         pid: userPlayers[0].pid,
                         name: userPlayers[0].name,
-                        stat: userPlayers[0].stats[stat]
+                        stat: userPlayers[0].stats[stat],
                     };
                 } else {
                     vars.teamLeaders[stat] = {
                         pid: 0,
                         name: "",
-                        stat: 0
+                        stat: 0,
                     };
                 }
             }
@@ -256,7 +256,7 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
         const playoffSeries = await g.dbl.playoffSeries.get(g.season);
 
         const vars = {
-            showPlayoffSeries: false
+            showPlayoffSeries: false,
         };
 
         if (playoffSeries !== undefined) {
@@ -303,7 +303,7 @@ async function updateStandings(inputs, updateEvents) {
             attrs: ["tid", "cid", "abbrev", "region"],
             seasonAttrs: ["won", "lost", "winp"],
             season: g.season,
-            sortBy: ["winp", "-lost", "won"]
+            sortBy: ["winp", "-lost", "won"],
         });
 
         // Find user's conference
@@ -336,7 +336,7 @@ async function updateStandings(inputs, updateEvents) {
         }
 
         return {
-            confTeams
+            confTeams,
         };
     }
 }
@@ -349,5 +349,5 @@ module.exports = bbgmView.init({
     id: "leagueDashboard",
     InitViewModel,
     runBefore: [updateInbox, updateTeam, updatePayroll, updateTeams, updateGames, updateSchedule, updatePlayers, updatePlayoffs, updateStandings],
-    uiFirst
+    uiFirst,
 });

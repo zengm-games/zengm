@@ -102,5 +102,5 @@ const notify = (message, title, persistent = false, timeOut) => {
 };
 
 module.exports = {
-    notify
+    notify,
 };

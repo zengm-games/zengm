@@ -25,7 +25,7 @@ function InitViewModel() {
 
     // See views.gameLog for explanation
     this.boxScore = {
-        gid: ko.observable(-1)
+        gid: ko.observable(-1),
     };
     this.showBoxScore = ko.computed(function () {
         return this.boxScore.gid() >= 0;
@@ -50,7 +50,7 @@ async function updateGamesList(inputs, updateEvents, vm) {
 
         return {
             games,
-            boxScore: {gid: -1}
+            boxScore: {gid: -1},
         };
     }
 }
@@ -84,5 +84,5 @@ module.exports = bbgmView.init({
     id: "live",
     InitViewModel,
     runBefore: [updateGamesList],
-    uiFirst
+    uiFirst,
 });

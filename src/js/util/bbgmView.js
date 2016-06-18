@@ -17,7 +17,7 @@ function display(args, updateEvents) {
     if (containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading === args.id) {
         ui.update({
             container,
-            template: args.id
+            template: args.id,
         });
         ko.applyBindings(vm, containerEl);
         if (args.uiFirst !== undefined) {
@@ -100,7 +100,7 @@ function update(args) {
 
         await Promise.all([
             Promise.all(promisesAfter),
-            Promise.all(promisesWhenever)
+            Promise.all(promisesWhenever),
         ]);
 
         if (containerEl.dataset.idLoading === containerEl.dataset.idLoaded) {
@@ -189,5 +189,5 @@ function init(args) {
 }
 
 module.exports = {
-    init
+    init,
 };

@@ -38,7 +38,7 @@ function generateContractOptions(contract, ovr) {
             exp: exp + i,
             years: 1 + i,
             amount: 0,
-            smallestAmount: false
+            smallestAmount: false,
         };
 
         if (contractOptions[i].exp === contract.exp) {
@@ -67,7 +67,7 @@ function get(req) {
     const pid = parseInt(req.params.pid, 10);
 
     return {
-        pid: pid >= 0 ? pid : null // Null will load whatever the active one is
+        pid: pid >= 0 ? pid : null, // Null will load whatever the active one is
     };
 }
 
@@ -106,7 +106,7 @@ async function updateNegotiation(inputs) {
 
     if (negotiations.length === 0) {
         return {
-            errorMessage: `No negotiation with player ${inputs.pid} in progress.`
+            errorMessage: `No negotiation with player ${inputs.pid} in progress.`,
         };
     }
 
@@ -124,14 +124,14 @@ async function updateNegotiation(inputs) {
         season: g.season,
         showNoStats: true,
         showRookies: true,
-        fuzz: true
+        fuzz: true,
     });
 
     // This can happen if a negotiation is somehow started with a retired player
     if (!p) {
         contractNegotiation.cancel(negotiation.pid);
         return {
-            errorMessage: "Invalid negotiation. Please try again."
+            errorMessage: "Invalid negotiation. Please try again.",
         };
     }
 
@@ -157,7 +157,7 @@ async function updateNegotiation(inputs) {
         salaryCap: g.salaryCap / 1000,
         payroll: payroll / 1000,
         player: p,
-        resigning: negotiation.resigning
+        resigning: negotiation.resigning,
     };
 }
 
@@ -172,5 +172,5 @@ module.exports = bbgmView.init({
     get,
     post,
     runBefore: [updateNegotiation],
-    uiFirst
+    uiFirst,
 });

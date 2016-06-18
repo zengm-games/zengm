@@ -6,14 +6,14 @@ const viewHelpers = require('../util/viewHelpers');
 
 function get(req) {
     return {
-        token: req.params.token
+        token: req.params.token,
     };
 }
 
 function updateToken(inputs) {
     return {
         token: inputs.token,
-        showForm: null
+        showForm: null,
     };
 }
 
@@ -31,7 +31,7 @@ function uiFirst(vm) {
         data: {action: "check_token", token, sport: g.sport},
         dataType: "json",
         xhrFields: {
-            withCredentials: true
+            withCredentials: true,
         },
         success: data => {
             if (data.success) {
@@ -54,7 +54,7 @@ function uiFirst(vm) {
                         data: `${$resetpw.serialize()}&sport=${g.sport}`,
                         dataType: "json",
                         xhrFields: {
-                            withCredentials: true
+                            withCredentials: true,
                         },
                         success: data => {
                             if (data.success) {
@@ -81,7 +81,7 @@ function uiFirst(vm) {
                         },
                         error: () => {
                             document.getElementById("resetpw-error").innerHTML = ajaxErrorMsg;
-                        }
+                        },
                     });
                 });
             } else {
@@ -90,7 +90,7 @@ function uiFirst(vm) {
         },
         error: () => {
             document.getElementById("show-form-error").innerHTML = ajaxErrorMsg;
-        }
+        },
     });
 }
 
@@ -99,5 +99,5 @@ module.exports = bbgmView.init({
     get,
     beforeReq: viewHelpers.beforeNonLeague,
     runBefore: [updateToken],
-    uiFirst
+    uiFirst,
 });

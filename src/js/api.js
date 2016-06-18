@@ -94,5 +94,5 @@ async function play(amount) {
 }
 
 module.exports = {
-    play
+    play,
 };

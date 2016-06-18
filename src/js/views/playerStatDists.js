@@ -29,12 +29,12 @@ const nbaQuartiles = {
     stl: [0, 0.2985074627, 0.5330668605, 0.8278070175, 2.3333333333],
     blk: [0, 0.1111111111, 0.23875, 0.5, 2.7804878049],
     pf: [0, 1.2307692308, 1.828536436, 2.4295634921, 4],
-    pts: [0, 3.3333333333, 7.0507246377, 11.2698735321, 30.1463414634]
+    pts: [0, 3.3333333333, 7.0507246377, 11.2698735321, 30.1463414634],
 };
 
 function get(req) {
     return {
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -49,7 +49,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
         players = player.filter(players, {
             ratings: ["skills"],
             stats: ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"],
-            season: inputs.season
+            season: inputs.season,
         });
 
         const statsAll = players.reduce((memo, player) => {
@@ -67,7 +67,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
 
         return {
             season: inputs.season,
-            statsAll
+            statsAll,
         };
     }
 }
@@ -112,7 +112,7 @@ function uiFirst(vm) {
             blk: [0, 5],
             pf: [0, 6],
             pts: [0, 50],
-            per: [0, 35]
+            per: [0, 35],
         };
 
         for (const stat in vm.statsAll) {
@@ -120,7 +120,7 @@ function uiFirst(vm) {
                 boxPlot.create({
                     data: vm.statsAll[stat](),
                     scale: scale[stat],
-                    container: `${stat}BoxPlot`
+                    container: `${stat}BoxPlot`,
                 });
 
                 if (nbaQuartiles.hasOwnProperty(stat)) {
@@ -129,7 +129,7 @@ function uiFirst(vm) {
                         scale: scale[stat],
                         container: `${stat}BoxPlotNba`,
                         color: "#0088cc",
-                        labels: false
+                        labels: false,
                     });
                 }
             }
@@ -147,5 +147,5 @@ module.exports = bbgmView.init({
     InitViewModel,
     runBefore: [updatePlayers],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

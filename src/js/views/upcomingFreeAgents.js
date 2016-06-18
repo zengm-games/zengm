@@ -22,14 +22,14 @@ function get(req) {
     }
 
     return {
-        season
+        season,
     };
 }
 
 const mapping = {
     players: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateUpcomingFreeAgents(inputs) {
@@ -51,12 +51,12 @@ async function updateUpcomingFreeAgents(inputs) {
         season: g.season,
         showNoStats: true,
         showRookies: true,
-        fuzz: true
+        fuzz: true,
     });
 
     return {
         players,
-        season: inputs.season
+        season: inputs.season,
     };
 }
 
@@ -83,5 +83,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateUpcomingFreeAgents],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

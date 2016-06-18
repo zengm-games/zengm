@@ -10,55 +10,55 @@ const eventLog = require('./eventLog');
 const allAchievements = [{
     slug: "participation",
     name: "Participation",
-    desc: "You get an achievement just for creating an account, you special snowflake!"
+    desc: "You get an achievement just for creating an account, you special snowflake!",
 }, {
     slug: "fo_fo_fo",
     name: "Fo Fo Fo",
-    desc: "Go 16-0 in the playoffs."
+    desc: "Go 16-0 in the playoffs.",
 }, {
     slug: "septuawinarian",
     name: "Septuawinarian",
-    desc: "Win 70+ games in the regular season."
+    desc: "Win 70+ games in the regular season.",
 }, {
     slug: "98_degrees",
     name: "98 Degrees",
-    desc: "Go 98-0 in the playoffs and regular season."
+    desc: "Go 98-0 in the playoffs and regular season.",
 }, {
     slug: "dynasty",
     name: "Dynasty",
-    desc: "Win 6 championships in 8 years."
+    desc: "Win 6 championships in 8 years.",
 }, {
     slug: "dynasty_2",
     name: "Dynasty 2",
-    desc: "Win 8 championships in a row."
+    desc: "Win 8 championships in a row.",
 }, {
     slug: "dynasty_3",
     name: "Dynasty 3",
-    desc: "Win 11 championships in 13 years."
+    desc: "Win 11 championships in 13 years.",
 }, {
     slug: "moneyball",
     name: "Moneyball",
-    desc: "Win a title with a payroll under $40 million."
+    desc: "Win a title with a payroll under $40 million.",
 }, {
     slug: "moneyball_2",
     name: "Moneyball 2",
-    desc: "Win a title with a payroll under $30 million."
+    desc: "Win a title with a payroll under $30 million.",
 }, {
     slug: "hardware_store",
     name: "Hardware Store",
-    desc: "Players on your team win MVP, DPOY, SMOY, ROY, and Finals MVP in the same season."
+    desc: "Players on your team win MVP, DPOY, SMOY, ROY, and Finals MVP in the same season.",
 }, {
     slug: "small_market",
     name: "Small Market",
-    desc: "Win a title in a city with under 2 million people."
+    desc: "Win a title in a city with under 2 million people.",
 }, {
     slug: "sleeper_pick",
     name: "Sleeper Pick",
-    desc: "Use a non-lottery pick to draft the ROY."
+    desc: "Use a non-lottery pick to draft the ROY.",
 }, {
     slug: "hacker",
     name: "Hacker",
-    desc: 'Privately <a href="https://basketball-gm.com/contact/">report</a> a security issue in <a href="https://bitbucket.org/dumbmatter/bbgm-account">the account system</a> or some other part of the site.'
+    desc: 'Privately <a href="https://basketball-gm.com/contact/">report</a> a security issue in <a href="https://bitbucket.org/dumbmatter/bbgm-account">the account system</a> or some other part of the site.',
 }];
 
 /**
@@ -82,7 +82,7 @@ async function addAchievements(achievements, silent = false) {
             if (allAchievements[i].slug === slug) {
                 eventLog.add(null, {
                     type: "achievement",
-                    text: `"${allAchievements[i].name}" achievement awarded! <a href="/account">View all achievements.</a>`
+                    text: `"${allAchievements[i].name}" achievement awarded! <a href="/account">View all achievements.</a>`,
                 });
                 break;
             }
@@ -105,8 +105,8 @@ async function addAchievements(achievements, silent = false) {
             data: {achievements, sport: g.sport},
             dataType: "json",
             xhrFields: {
-                withCredentials: true
-            }
+                withCredentials: true,
+            },
         }));
 
         if (data.success) {
@@ -127,8 +127,8 @@ async function check() {
             data: `sport=${g.sport}`,
             dataType: "json",
             xhrFields: {
-                withCredentials: true
-            }
+                withCredentials: true,
+            },
         }));
 
         // Save username for display
@@ -182,8 +182,8 @@ async function getAchievements() {
             data: `sport=${g.sport}`,
             dataType: "json",
             xhrFields: {
-                withCredentials: true
-            }
+                withCredentials: true,
+            },
         }));
 
         // Merge local and remote achievements
@@ -240,7 +240,7 @@ checkAchievement.septuawinarian = async (saveAchievement = true) => {
     const t = await team.filter({
         seasonAttrs: ["won"],
         season: g.season,
-        tid: g.userTid
+        tid: g.userTid,
     });
 
     if (t.won >= 70) {
@@ -263,7 +263,7 @@ checkAchievement["98_degrees"] = async (saveAchievement = true) => {
         const t = await team.filter({
             seasonAttrs: ["won", "lost"],
             season: g.season,
-            tid: g.userTid
+            tid: g.userTid,
         });
         if (t.won === 82 && t.lost === 0) {
             if (saveAchievement) {
@@ -321,7 +321,7 @@ async function checkMoneyball(maxPayroll, slug, saveAchievement) {
     const t = await team.filter({
         seasonAttrs: ["expenses", "playoffRoundsWon"],
         season: g.season,
-        tid: g.userTid
+        tid: g.userTid,
     });
 
     if (t.playoffRoundsWon === 4 && t.expenses.salary.amount <= maxPayroll) {
@@ -363,7 +363,7 @@ checkAchievement.small_market = async (saveAchievement = true) => {
     const t = await team.filter({
         seasonAttrs: ["playoffRoundsWon", "pop"],
         season: g.season,
-        tid: g.userTid
+        tid: g.userTid,
     });
 
     if (t.playoffRoundsWon === 4 && t.pop <= 2) {
@@ -399,5 +399,5 @@ module.exports = {
     check,
     getAchievements,
     addAchievements,
-    checkAchievement
+    checkAchievement,
 };

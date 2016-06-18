@@ -21,7 +21,7 @@ const getName = (name, file) => {
         'Hot Rod Williams': ['Hot Rod', 'Williams'],
         'J. Robert Merritt': ['J. Robert', 'Merritt'],
         Nene: ['Nene', ''],
-        'St. Paul Latham': ['St. Paul', 'Latham']
+        'St. Paul Latham': ['St. Paul', 'Latham'],
     };
     let parts;
     if (nameFixes.hasOwnProperty(name)) {
@@ -296,7 +296,7 @@ const getCountry = (misc, file) => {
         Yaound: 'Cameroon',
         Zadar: 'Croatia',
         Zagreb: 'Croatia',
-        Zrenjanin: 'Serbia'
+        Zrenjanin: 'Serbia',
     };
 
     const countryFixes = {
@@ -316,7 +316,7 @@ const getCountry = (misc, file) => {
         'St. Vincent': 'Saint Vincent and the Grenadines',
         Taipei: 'Taiwan',
         'Trinidad & Tobago': 'Trinidad and Tobago',
-        WC: 'USA'
+        WC: 'USA',
     };
 
     const matches = misc.match(/Hometown: (.*)/);

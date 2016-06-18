@@ -30,7 +30,7 @@ function get(req) {
         tid,
         abbrev,
         season,
-        eventType: req.params.eventType || 'all'
+        eventType: req.params.eventType || 'all',
     };
 }
 
@@ -75,7 +75,7 @@ async function updateEventLog(inputs, updateEvents, vm) {
                 abbrev: inputs.abbrev,
                 events,
                 season: inputs.season,
-                eventType: inputs.eventType
+                eventType: inputs.eventType,
             };
         }
 
@@ -98,7 +98,7 @@ async function updateEventLog(inputs, updateEvents, vm) {
             });
 
             return {
-                season: inputs.season
+                season: inputs.season,
             };
         }
     }
@@ -108,7 +108,7 @@ function uiFirst(vm) {
     ko.computed(() => {
         ui.title(`Transactions - ${vm.season()}`);
     }).extend({
-        throttle: 1
+        throttle: 1,
     });
 }
 
@@ -122,6 +122,6 @@ module.exports = bbgmView.init({
     InitViewModel,
     runBefore: [updateEventLog],
     uiFirst,
-    uiEvery
+    uiEvery,
 });
 

@@ -8,7 +8,7 @@ const helpers = require('../util/helpers');
 
 function get(req) {
     return {
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -18,8 +18,8 @@ function InitViewModel() {
 
 const mapping = {
     players: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updatePlayers(inputs, updateEvents) {
@@ -30,7 +30,7 @@ async function updatePlayers(inputs, updateEvents) {
         players = player.filter(players, {
             attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
             ratings: ["ovr", "pos"],
-            stats: ["season", "abbrev", "gp", "min", "trb", "ast", "pts", "per", "ewa"]
+            stats: ["season", "abbrev", "gp", "min", "trb", "ast", "pts", "per", "ewa"],
         });
 
         // This stuff isn't in player.filter because it's only used here.
@@ -45,7 +45,7 @@ async function updatePlayers(inputs, updateEvents) {
             players[i].bestStats = {
                 gp: 0,
                 min: 0,
-                per: 0
+                per: 0,
             };
             for (let j = 0; j < players[i].stats.length; j++) {
                 if (players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per > players[i].bestStats.gp * players[i].bestStats.min * players[i].bestStats.per) {
@@ -55,7 +55,7 @@ async function updatePlayers(inputs, updateEvents) {
         }
 
         return {
-            players
+            players,
         };
     }
 }
@@ -78,7 +78,7 @@ function uiFirst(vm) {
                 if (data[data.length - 1]) {
                     row.classList.add("info");
                 }
-            }
+            },
         });
     }).extend({throttle: 1});
 
@@ -91,5 +91,5 @@ module.exports = bbgmView.init({
     InitViewModel,
     mapping,
     runBefore: [updatePlayers],
-    uiFirst
+    uiFirst,
 });

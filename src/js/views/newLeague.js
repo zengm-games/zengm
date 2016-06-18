@@ -99,13 +99,13 @@ async function updateNewLeague() {
     teams.unshift({
         tid: -1,
         region: "Random",
-        name: "Team"
+        name: "Team",
     });
 
     return {
         name: `League ${newLid}`,
         teams,
-        lastSelectedTid: parseInt(localStorage.lastSelectedTid, 10)
+        lastSelectedTid: parseInt(localStorage.lastSelectedTid, 10),
     };
 }
 
@@ -179,7 +179,7 @@ function uiFirst(vm) {
             newTeams.unshift({
                 tid: -1,
                 region: "Random",
-                name: "Team"
+                name: "Team",
             });
 
             komapping.fromJS({teams: newTeams}, vm);
@@ -240,5 +240,5 @@ module.exports = bbgmView.init({
     InitViewModel,
     post,
     runBefore: [updateNewLeague],
-    uiFirst
+    uiFirst,
 });

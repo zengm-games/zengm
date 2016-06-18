@@ -18,7 +18,7 @@ async function addSeason(season, tid) {
         ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
         showNoStats: true,
         showRookies: true,
-        fuzz: true
+        fuzz: true,
     });
 
     const players = [];
@@ -48,14 +48,14 @@ async function addSeason(season, tid) {
 
     return {
         players,
-        season
+        season,
     };
 }
 
 const mapping = {
     seasons: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateDraftScouting(inputs, updateEvents) {
@@ -69,11 +69,11 @@ async function updateDraftScouting(inputs, updateEvents) {
         const seasons = await Promise.all([
             addSeason(g.season + seasonOffset, firstUndraftedTid),
             addSeason(g.season + seasonOffset + 1, g.PLAYER.UNDRAFTED_2),
-            addSeason(g.season + seasonOffset + 2, g.PLAYER.UNDRAFTED_3)
+            addSeason(g.season + seasonOffset + 2, g.PLAYER.UNDRAFTED_3),
         ]);
 
         return {
-            seasons
+            seasons,
         };
     }
 }
@@ -220,5 +220,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateDraftScouting],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

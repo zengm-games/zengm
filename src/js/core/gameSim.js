@@ -139,14 +139,14 @@ class GameSim {
             gid: this.id,
             overtimes: this.overtimes,
             team: this.team,
-            clutchPlays: this.clutchPlays
+            clutchPlays: this.clutchPlays,
         };
 
         if (this.playByPlay !== undefined) {
             out.playByPlay = this.playByPlay;
             this.playByPlay.unshift({
                 type: "init",
-                boxScore: this.team
+                boxScore: this.team,
             });
         }
 
@@ -304,7 +304,7 @@ class GameSim {
                                 type: "sub",
                                 t,
                                 on: this.team[t].player[b].id,
-                                off: this.team[t].player[p].id
+                                off: this.team[t].player[p].id,
                             });
                         }
 
@@ -355,7 +355,7 @@ class GameSim {
                 Dp: 0,
                 Po: 0,
                 Ps: 0,
-                R: 0
+                R: 0,
             };
 
             for (let i = 0; i < 5; i++) {
@@ -819,7 +819,7 @@ class GameSim {
             tempText: eventText,
             showNotification: team.id === g.userTid,
             pids: [player.id],
-            tids: [team.id]
+            tids: [team.id],
         });
     }
 
@@ -890,7 +890,7 @@ class GameSim {
                     text: eventText,
                     showNotification: team.id === g.userTid,
                     pids: [player.id],
-                    tids: [team.id]
+                    tids: [team.id],
                 });
                 return;
             }
@@ -909,7 +909,7 @@ class GameSim {
             team: teamnum,
             player: playernum,
             type,
-            time: Math.floor(time * 600) / 10 // up to 0.1 of a second
+            time: Math.floor(time * 600) / 10, // up to 0.1 of a second
         };
 
         if (this.lastScoringPlay.length === 0) {
@@ -1085,7 +1085,7 @@ class GameSim {
                     t,
                     p,
                     s,
-                    amt
+                    amt,
                 });
             }
         }
@@ -1180,7 +1180,7 @@ class GameSim {
                         type: "text",
                         text,
                         t,
-                        time: `${Math.floor(this.t)}:${sec}`
+                        time: `${Math.floor(this.t)}:${sec}`,
                     });
                 }
             } else {
@@ -1206,5 +1206,5 @@ class GameSim {
 }
 
 module.exports = {
-    GameSim
+    GameSim,
 };

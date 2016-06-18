@@ -11,15 +11,15 @@ const helpers = require('../util/helpers');
 function get() {
     if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
         return {
-            redirectUrl: helpers.leagueUrl(["negotiation", -1])
+            redirectUrl: helpers.leagueUrl(["negotiation", -1]),
         };
     }
 }
 
 const mapping = {
     players: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateNegotiationList() {
@@ -29,9 +29,9 @@ async function updateNegotiationList() {
         g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(players => {
             return player.withStats(null, players, {
                 statsSeasons: [g.season],
-                statsTid: g.userTid
+                statsTid: g.userTid,
             });
-        })
+        }),
     ]);
 
     // For Multi Team Mode, might have other team's negotiations going on
@@ -46,7 +46,7 @@ async function updateNegotiationList() {
         season: g.season,
         tid: g.userTid,
         showNoStats: true,
-        fuzz: true
+        fuzz: true,
     });
 
     for (let i = 0; i < players.length; i++) {
@@ -63,7 +63,7 @@ async function updateNegotiationList() {
     }
 
     return {
-        players
+        players,
     };
 }
 
@@ -91,5 +91,5 @@ module.exports = bbgmView.init({
     get,
     mapping,
     runBefore: [updateNegotiationList],
-    uiFirst
+    uiFirst,
 });

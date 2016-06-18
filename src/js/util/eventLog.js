@@ -13,7 +13,7 @@ function add(ot, options) {
             type: options.type,
             text: options.text,
             pids: options.pids,
-            tids: options.tids
+            tids: options.tids,
         });
     }
 
@@ -46,5 +46,5 @@ function add(ot, options) {
 }
 
 module.exports = {
-    add
+    add,
 };

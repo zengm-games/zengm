@@ -90,11 +90,11 @@ function InitViewModel() {
 
 const mapping = {
     barData: {
-        create: options => ko.observable(options.data)
+        create: options => ko.observable(options.data),
     },
     contracts: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateTeamFinances(inputs, updateEvents, vm) {
@@ -102,7 +102,7 @@ async function updateTeamFinances(inputs, updateEvents, vm) {
         const vars = {
             abbrev: inputs.abbrev,
             tid: inputs.tid,
-            show: inputs.show
+            show: inputs.show,
         };
 
         const contracts = await team.getPayroll(null, inputs.tid).get(1);
@@ -149,7 +149,7 @@ async function updateTeamFinances(inputs, updateEvents, vm) {
             if (!teamSeasons[i].revenues.hasOwnProperty("luxuryTaxShare")) {
                 teamSeasons[i].revenues.luxuryTaxShare = {
                     amount: 0,
-                    rank: 15
+                    rank: 15,
                 };
             }
         }
@@ -196,7 +196,7 @@ async function updateTeamFinances(inputs, updateEvents, vm) {
             attrs: ["region", "name", "abbrev", "budget"],
             seasonAttrs: ["expenses", "payroll"],
             season: g.season,
-            tid: inputs.tid
+            tid: inputs.tid,
         });
 
         vars.team = t;
@@ -213,23 +213,23 @@ function uiFirst(vm) {
 
     $("#help-payroll-limits").popover({
         title: "Payroll Limits",
-        content: `The salary cap is a soft cap, meaning that you can exceed it to re-sign your own players or to sign free agents to minimum contracts ($" + g.minContract + "k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to ${g.luxuryTax} times the difference at the end of the season.`
+        content: `The salary cap is a soft cap, meaning that you can exceed it to re-sign your own players or to sign free agents to minimum contracts ($" + g.minContract + "k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to ${g.luxuryTax} times the difference at the end of the season.`,
     });
 
     $("#help-hype").popover({
         title: "Hype",
-        content: "\"Hype\" refers to fans' interest in your team. If your team is winning or improving, then hype increases; if your team is losing or stagnating, then hype decreases. Hype influences attendance, various revenue sources such as merchandising, and the attitude players have towards your organization."
+        content: "\"Hype\" refers to fans' interest in your team. If your team is winning or improving, then hype increases; if your team is losing or stagnating, then hype decreases. Hype influences attendance, various revenue sources such as merchandising, and the attitude players have towards your organization.",
     });
 
     $("#help-revenue-settings").popover({
         title: "Revenue Settings",
-        content: "Set your ticket price too high, and attendance will decrease and some fans will resent you for it. Set it too low, and you're not maximizing your profit."
+        content: "Set your ticket price too high, and attendance will decrease and some fans will resent you for it. Set it too low, and you're not maximizing your profit.",
     });
 
     $("#help-expense-settings").popover({
         title: "Expense Settings",
         html: true,
-        content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p>Facilities: Better training facilities make your players happier and other players envious; stadium renovations increase attendance."
+        content: "<p>Scouting: Controls the accuracy of displayed player ratings.<p></p>Coaching: Better coaches mean better player development.</p><p>Health: A good team of doctors speeds recovery from injuries.</p>Facilities: Better training facilities make your players happier and other players envious; stadium renovations increase attendance.",
     });
 
     // Form enabling/disabling
@@ -262,7 +262,7 @@ function uiFirst(vm) {
                 for (let i = 0; i < contractTotals.length; i++) {
                     cells[i + 1].innerHTML = helpers.formatCurrency(contractTotals[i], "M");
                 }
-            }
+            },
         });
     }).extend({throttle: 1});
 
@@ -283,7 +283,7 @@ function uiFirst(vm) {
             undefined,
             [
                 barSeasons,
-                ["national TV revenue", "local TV revenue", "ticket revenue", "corporate sponsorship revenue", "merchandising revenue", "luxury tax share revenue"]
+                ["national TV revenue", "local TV revenue", "ticket revenue", "corporate sponsorship revenue", "merchandising revenue", "luxury tax share revenue"],
             ],
             val => helpers.formatCurrency(val / 1000, "M", 1)
         );
@@ -293,7 +293,7 @@ function uiFirst(vm) {
             undefined,
             [
                 barSeasons,
-                ["player salaries", "minimum payroll tax", "luxury tax", "buy outs", "scouting", "coaching", "health", "facilities"]
+                ["player salaries", "minimum payroll tax", "luxury tax", "buy outs", "scouting", "coaching", "health", "facilities"],
             ],
             val => helpers.formatCurrency(val / 1000, "M", 1)
         );
@@ -319,6 +319,6 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateTeamFinances],
     uiFirst,
-    uiEvery
+    uiEvery,
 });
 

@@ -11,7 +11,7 @@ const Promise = require('bluebird');
 
 function get(req) {
     return {
-        byType: req.params.byType || "team"
+        byType: req.params.byType || "team",
     };
 }
 
@@ -22,8 +22,8 @@ function InitViewModel() {
 
 const mapping = {
     teamRecords: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 function getTeamLink(t) {
@@ -76,7 +76,7 @@ function getTeamRecord(t, awards) {
         bestRecordConf: awards[t.tid].bestRecordConf.toString(),
         allRookie: awards[t.tid].allRookie.toString(),
         allLeague: awards[t.tid].allLeagueTotal.toString(),
-        allDefense: awards[t.tid].allDefenseTotal.toString()
+        allDefense: awards[t.tid].allDefenseTotal.toString(),
     };
 }
 
@@ -93,7 +93,7 @@ function tallyAwards(awards) {
             allDefenseTotal: 0,
             allRookie: 0,
             bestRecord: 0,
-            bestRecordConf: 0
+            bestRecordConf: 0,
         };
     });
 
@@ -162,9 +162,9 @@ async function updateTeamRecords(inputs, updateEvents, vm) {
         const [teams, awards] = await Promise.all([
             team.filter({
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
-                seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"]
+                seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
             }),
-            g.dbl.awards.getAll()
+            g.dbl.awards.getAll(),
         ]);
 
         const awardsPerTeam = tallyAwards(awards);
@@ -190,7 +190,7 @@ async function updateTeamRecords(inputs, updateEvents, vm) {
             teamRecords: display,
             displayName,
             seasonCount,
-            byType: inputs.byType
+            byType: inputs.byType,
         };
     }
 }
@@ -199,7 +199,7 @@ function uiFirst(vm) {
     ko.computed(() => {
         ui.title("Team Records");
     }).extend({
-        throttle: 1
+        throttle: 1,
     });
 
     ko.computed(() => {
@@ -207,7 +207,7 @@ function uiFirst(vm) {
             return [t.team, t.won, t.lost, t.winp, t.playoffAppearances, t.lastPlayoffAppearance, t.finals, t.championships, t.lastChampionship, t.mvp, t.dpoy, t.smoy, t.roy, t.bestRecord, t.bestRecordConf, t.allRookie, t.allLeague, t.allDefense];
         }));
     }).extend({
-        throttle: 1
+        throttle: 1,
     });
 
     ui.tableClickableRows($("#team-records"));
@@ -224,6 +224,6 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateTeamRecords],
     uiFirst,
-    uiEvery
+    uiEvery,
 });
 

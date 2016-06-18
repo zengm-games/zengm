@@ -72,7 +72,7 @@ async function draftUntilUserOrEnd() {
 function get() {
     if (g.phase !== g.PHASE.DRAFT && g.phase !== g.PHASE.FANTASY_DRAFT) {
         return {
-            redirectUrl: helpers.leagueUrl(["draft_summary"])
+            redirectUrl: helpers.leagueUrl(["draft_summary"]),
         };
     }
 }
@@ -97,14 +97,14 @@ async function updateDraft() {
     let [undrafted, players] = await Promise.all([
         g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED).then(players => {
             return player.withStats(null, players, {
-                statsSeasons: [g.season]
+                statsSeasons: [g.season],
             });
         }),
         g.dbl.players.index('draft.year').getAll(g.season).then(players => {
             return player.withStats(null, players, {
-                statsSeasons: [g.season]
+                statsSeasons: [g.season],
             });
-        })
+        }),
     ]);
 
     undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
@@ -115,7 +115,7 @@ async function updateDraft() {
         season: g.season,
         showNoStats: true,
         showRookies: true,
-        fuzz: true
+        fuzz: true,
     });
 
     players = player.filter(players, {
@@ -124,7 +124,7 @@ async function updateDraft() {
         stats: ["per", "ewa"],
         season: g.season,
         showRookies: true,
-        fuzz: true
+        fuzz: true,
     });
 
     const drafted = [];
@@ -145,9 +145,9 @@ async function updateDraft() {
                 tid: slot.tid,
                 originalTid: slot.originalTid,
                 round: slot.round,
-                pick: slot.pick
+                pick: slot.pick,
             },
-            pid: -1
+            pid: -1,
         });
     }
 
@@ -156,7 +156,7 @@ async function updateDraft() {
         drafted,
         started,
         fantasyDraft: g.phase === g.PHASE.FANTASY_DRAFT,
-        userTids: g.userTids
+        userTids: g.userTids,
     };
 }
 
@@ -208,5 +208,5 @@ module.exports = bbgmView.init({
     id: "draft",
     get,
     runBefore: [updateDraft],
-    uiFirst
+    uiFirst,
 });

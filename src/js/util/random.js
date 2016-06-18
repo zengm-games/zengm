@@ -103,6 +103,6 @@ module.exports = {
     gauss,
     realGauss,
     uniform,
-    choice
+    choice,
 };
 

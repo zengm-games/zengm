@@ -90,7 +90,7 @@ function editableChanged(editable) {
                 highlightHandles();
             },
             handle: ".roster-handle",
-            disabled: true
+            disabled: true,
         });
     }
 
@@ -105,7 +105,7 @@ function get(req) {
     // Fix broken links
     if (req.params.abbrev === "FA") {
         return {
-            redirectUrl: helpers.leagueUrl(["free_agents"])
+            redirectUrl: helpers.leagueUrl(["free_agents"]),
         };
     }
 
@@ -124,7 +124,7 @@ function InitViewModel() {
     this.team = {
         cash: ko.observable(),
         name: ko.observable(),
-        region: ko.observable()
+        region: ko.observable(),
     };
     this.players = ko.observable([]);
     this.showTradeFor = ko.observable();
@@ -159,8 +159,8 @@ function InitViewModel() {
 
 const mapping = {
     players: {
-        key: data => ko.unwrap(data.pid)
-    }
+        key: data => ko.unwrap(data.pid),
+    },
 };
 
 function updateRoster(inputs, updateEvents, vm) {
@@ -176,8 +176,8 @@ function updateRoster(inputs, updateEvents, vm) {
                 {text: "-", ptModifier: "0.75"},
                 {text: " ", ptModifier: "1"},
                 {text: "+", ptModifier: "1.25"},
-                {text: "++", ptModifier: "1.75"}
-            ]
+                {text: "++", ptModifier: "1.75"},
+            ],
         };
 
         return g.dbl.tx(["players", "playerStats", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], async tx => {
@@ -186,7 +186,7 @@ function updateRoster(inputs, updateEvents, vm) {
                 tid: inputs.tid,
                 attrs: ["tid", "region", "name", "strategy", "imgURL"],
                 seasonAttrs: ["profit", "won", "lost", "playoffRoundsWon"],
-                ot: tx
+                ot: tx,
             });
 
             const attrs = ["pid", "tid", "draft", "name", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier", "watch", "gamesUntilTradable"];  // tid and draft are used for checking if a player can be released without paying his salary
@@ -200,10 +200,10 @@ function updateRoster(inputs, updateEvents, vm) {
                     tx.players.index('tid').getAll(inputs.tid).then(players => {
                         return player.withStats(tx, players, {
                             statsSeasons: [inputs.season],
-                            statsTid: inputs.tid
+                            statsTid: inputs.tid,
                         });
                     }),
-                    team.getPayroll(tx, inputs.tid).get(0)
+                    team.getPayroll(tx, inputs.tid).get(0),
                 ]);
 
                 // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
@@ -223,7 +223,7 @@ function updateRoster(inputs, updateEvents, vm) {
                     showNoStats: true,
                     showRookies: true,
                     fuzz: true,
-                    numGamesRemaining
+                    numGamesRemaining,
                 });
                 players.sort((a, b) => a.rosterOrder - b.rosterOrder);
 
@@ -250,7 +250,7 @@ function updateRoster(inputs, updateEvents, vm) {
                 let players = tx.players.index('statsTids').getAll(inputs.tid);
                 players = await player.withStats(tx, players, {
                     statsSeasons: "all",
-                    statsTid: inputs.tid
+                    statsTid: inputs.tid,
                 });
 
                 players = player.filter(players, {
@@ -259,7 +259,7 @@ function updateRoster(inputs, updateEvents, vm) {
                     stats,
                     season: inputs.season,
                     tid: inputs.tid,
-                    fuzz: true
+                    fuzz: true,
                 });
                 players.sort((a, b) => b.stats.gp * b.stats.min - a.stats.gp * a.stats.min);
 
@@ -348,13 +348,13 @@ function uiFirst(vm) {
             '<span style="background-color: #ff0">- Less Playing Time</span><br>' +
             '<span style="background-color: #ccc">&nbsp;&nbsp;&nbsp; Let Coach Decide</span><br>' +
             '<span style="background-color: #0f0">+ More Playing Time</span><br>' +
-            '<span style="background-color: #070; color: #fff">++ Even More Playing Time</span>'
+            '<span style="background-color: #070; color: #fff">++ Even More Playing Time</span>',
     });
 
     $("#help-roster-release").popover({
         title: "Release Player",
         html: true,
-        content: `<p>To free up a roster spot, you can release a player from your team. You will still have to pay his salary (and have it count against the salary cap) until his contract expires (you can view your released players' contracts in your <a href="${helpers.leagueUrl(["team_finances"])}">Team Finances</a>).</p>However, if you just drafted a player and the regular season has not started yet, his contract is not guaranteed and you can release him for free.`
+        content: `<p>To free up a roster spot, you can release a player from your team. You will still have to pay his salary (and have it count against the salary cap) until his contract expires (you can view your released players' contracts in your <a href="${helpers.leagueUrl(["team_finances"])}">Team Finances</a>).</p>However, if you just drafted a player and the regular season has not started yet, his contract is not guaranteed and you can release him for free.`,
     });
 
     $("#roster").on("change", "select", function () {
@@ -407,6 +407,6 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateRoster],
     uiFirst,
-    uiEvery
+    uiEvery,
 });
 

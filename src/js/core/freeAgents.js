@@ -24,9 +24,9 @@ async function autoSign(tx) {
             team.filter({
                 ot: tx,
                 attrs: ["strategy"],
-                season: g.season
+                season: g.season,
             }),
-            tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT)
+            tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT),
         ]);
 
         const strategies = teams.map(t => t.strategy);
@@ -65,7 +65,7 @@ async function autoSign(tx) {
 
             const [numPlayersOnRoster, payroll] = await Promise.all([
                 tx.players.index('tid').count(tid),
-                team.getPayroll(tx, tid).get(0)
+                team.getPayroll(tx, tid).get(0),
             ]);
 
             if (numPlayersOnRoster < 15) {
@@ -85,7 +85,7 @@ async function autoSign(tx) {
                             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                             showNotification: false,
                             pids: [p.pid],
-                            tids: [p.tid]
+                            tids: [p.tid],
                         });
 
                         players.splice(i, 1); // Remove from list of free agents
@@ -260,5 +260,5 @@ module.exports = {
     decreaseDemands,
     amountWithMood,
     refuseToNegotiate,
-    play
+    play,
 };

@@ -10,8 +10,8 @@ const helpers = require('../util/helpers');
 
 const mapping = {
     seasons: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateHistory(inputs, updateEvents) {
@@ -20,8 +20,8 @@ async function updateHistory(inputs, updateEvents) {
             g.dbl.awards.getAll(),
             team.filter({
                 attrs: ["tid", "abbrev", "region", "name"],
-                seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"]
-            })
+                seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
+            }),
         ]);
 
         const seasons = awards.map(a => {
@@ -30,7 +30,7 @@ async function updateHistory(inputs, updateEvents) {
                 finalsMvp: a.finalsMvp,
                 mvp: a.mvp,
                 dpoy: a.dpoy,
-                roy: a.roy
+                roy: a.roy,
             };
         });
 
@@ -57,7 +57,7 @@ async function updateHistory(inputs, updateEvents) {
                         region: t.region,
                         name: t.name,
                         won: t.seasons[j].won,
-                        lost: t.seasons[j].lost
+                        lost: t.seasons[j].lost,
                     };
                 } else if (t.seasons[j].playoffRoundsWon === 3) {
                     seasons[i].runnerUp = {
@@ -65,7 +65,7 @@ async function updateHistory(inputs, updateEvents) {
                         region: t.region,
                         name: t.name,
                         won: t.seasons[j].won,
-                        lost: t.seasons[j].lost
+                        lost: t.seasons[j].lost,
                     };
                 }
             }
@@ -85,7 +85,7 @@ async function updateHistory(inputs, updateEvents) {
         }
 
         return {
-            seasons
+            seasons,
         };
     }
 }
@@ -131,5 +131,5 @@ module.exports = bbgmView.init({
     id: "historyAll",
     mapping,
     runBefore: [updateHistory],
-    uiFirst
+    uiFirst,
 });

@@ -6,7 +6,7 @@ ko.bindingHandlers.round = {
     update: (element, valueAccessor) => {
         const args = valueAccessor();
         return ko.bindingHandlers.text.update(element, () => helpers.round(ko.unwrap(args[0]), args[1]));
-    }
+    },
 };
 
 ko.bindingHandlers.roundWinp = {
@@ -24,7 +24,7 @@ ko.bindingHandlers.roundWinp = {
         }
 
         return ko.bindingHandlers.text.update(element, () => output);
-    }
+    },
 };
 
 // It would be better if this took the series object directly
@@ -54,7 +54,7 @@ ko.bindingHandlers.matchup = {
         }
 
         return ko.bindingHandlers.html.update(element, () => source);
-    }
+    },
 };
 
 ko.bindingHandlers.newWindow = {
@@ -72,35 +72,35 @@ ko.bindingHandlers.newWindow = {
             // Window name is set to the current time, so each window has a unique name and thus a new window is always opened
             return `<a href="javascript:(function () { window.open('${url}?w=popup', Date.now(), 'height=600,width=800,scrollbars=yes'); }())" class="new_window" title="Move To New Window" data-no-davis="true"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA0AAAANABeWPPlAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFOSURBVDiNlZS9isJAFIU/F6s0m0VYYiOrhVukWQsbK4t9CDtbexGs8xY+ghY+QRBsbKcTAjZaqKyGXX2Bs00S1AwBD1yYOXPvmXvv/CAJSQAuoGetzAPCMKRSqTzSOURRRK/Xo1wqldyEewXwfR/P8zLHIAhYr9fZ3BjDeDym1WoBUAZ+i3ZaLBYsl8s7zhiTCbwk3DfwaROYz+fsdjs6nU7GOY6TjVOBGPixCbiuy2g0YrVa0Ww2c+svlpg7DAYDptMp3W6XyWRi9RHwRXKMh8NBKYbDoQC1221dr1dtNhv1+33NZjMZY9KjtAsEQSBAvu/rfD7rEYUC2+1WjuOo0Whov9/ngm8FchcJoFarEYYhnudRrVYLe5QTOJ1OANTrdQCOx6M1MI5jexOftdsMLsBbYb7wDkTAR+KflWC9hRakr+wi6e+2hGfNTb+Bf9965Lxmndc1AAAAAElFTkSuQmCC" height="16" width="16"></a>`;
         });
-    }
+    },
 };
 
 ko.bindingHandlers.skillsBlock = {
     update: (element, valueAccessor) => {
         const arg = valueAccessor();
         return ko.bindingHandlers.html.update(element, () => helpers.skillsBlock(ko.unwrap(arg)));
-    }
+    },
 };
 
 ko.bindingHandlers.watchBlock = {
     update: (element, valueAccessor) => {
         const args = valueAccessor();
         return ko.bindingHandlers.html.update(element, () => helpers.watchBlock(ko.unwrap(args[0]), ko.unwrap(args[1])));
-    }
+    },
 };
 
 ko.bindingHandlers.currency = {
     update: (element, valueAccessor) => {
         const args = valueAccessor();
         return ko.bindingHandlers.text.update(element, () => helpers.formatCurrency(ko.unwrap(args[0]), args[1]));
-    }
+    },
 };
 
 ko.bindingHandlers.numberWithCommas = {
     update: (element, valueAccessor) => {
         const args = valueAccessor();
         return ko.bindingHandlers.text.update(element, () => helpers.numberWithCommas(ko.unwrap(args)));
-    }
+    },
 };
 
 ko.bindingHandlers.playerNameLabels = {
@@ -113,7 +113,7 @@ ko.bindingHandlers.playerNameLabels = {
         return ko.bindingHandlers.html.update(element, () => {
             return helpers.playerNameLabels(ko.unwrap(args[0]), ko.unwrap(args[1]), injury, ko.unwrap(args[3]), ko.unwrap(args[4]));
         });
-    }
+    },
 };
 
 ko.bindingHandlers.attrLeagueUrl = {
@@ -136,14 +136,14 @@ ko.bindingHandlers.attrLeagueUrl = {
         }
 
         return ko.bindingHandlers.attr.update(element, () => toAttr);
-    }
+    },
 };
 
 ko.bindingHandlers.dropdown = {
     init: () => {
         // http://www.knockmeout.net/2012/05/quick-tip-skip-binding.html
         return {
-            controlsDescendantBindings: true
+            controlsDescendantBindings: true,
         };
     },
     update: (element, valueAccessor) => {
@@ -158,7 +158,7 @@ ko.bindingHandlers.dropdown = {
                     <!-- /ko -->
                     </form>`;
         });
-    }
+    },
 };
 
 ko.bindingHandlers.recordAndPlayoffs = {
@@ -194,21 +194,21 @@ ko.bindingHandlers.recordAndPlayoffs = {
         }
 
         return ko.bindingHandlers.html.update(element, () => output);
-    }
+    },
 };
 
 ko.bindingHandlers.draftAbbrev = {
     update: (element, valueAccessor) => {
         const args = valueAccessor();
         return ko.bindingHandlers.html.update(element, () => helpers.draftAbbrev(ko.unwrap(args[0]), ko.unwrap(args[1])));
-    }
+    },
 };
 
 ko.bindingHandlers.ordinal = {
     update: (element, valueAccessor) => {
         const arg = valueAccessor();
         return ko.bindingHandlers.html.update(element, () => helpers.ordinal(parseInt(ko.unwrap(arg), 10)));
-    }
+    },
 };
 
 ko.bindingHandlers.gameScore = {
@@ -221,7 +221,7 @@ ko.bindingHandlers.gameScore = {
             }
         }
         return ko.bindingHandlers.html.update(element, () => helpers.gameScore(newArg));
-    }
+    },
 };
 
 ko.bindingHandlers.multiTeamMenu = {
@@ -252,7 +252,7 @@ ko.bindingHandlers.multiTeamMenu = {
         return ko.bindingHandlers.html.update(element, () => {
             return `<label for="multi-team-select">Currently controlling:</label><br><select class="form-control" id="multi-team-select">${options}</select>`;
         });
-    }
+    },
 };
 
 ko.bindingHandlers.plusMinus = {
@@ -265,14 +265,14 @@ ko.bindingHandlers.plusMinus = {
             const val = helpers.plusMinus(plusminus, round);
             return (val !== val ? "" : val);
         });
-    }
+    },
 };
 
 ko.bindingHandlers.jumpToDropdown = {
     init: () => {
         // http://www.knockmeout.net/2012/05/quick-tip-skip-binding.html
         return {
-            controlsDescendantBindings: true
+            controlsDescendantBindings: true,
         };
     },
     update: (element, valueAccessor) => {
@@ -298,5 +298,5 @@ ko.bindingHandlers.jumpToDropdown = {
                       </ul>
                     </div>`;
         });
-    }
+    },
 };

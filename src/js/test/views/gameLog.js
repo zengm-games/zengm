@@ -24,20 +24,20 @@ function addFakeGame(tx, gid) {
         teams: [{
             pts: 100,
             tid: 0,
-            players: []
+            players: [],
         }, {
             pts: 105,
             tid: 4,
-            players: []
+            players: [],
         }],
-        overtimes: 0
+        overtimes: 0,
     };
     for (let j = 0; j < 2; j++) {
         for (let k = 0; k < 7; k++) {
             game.teams[j].players.push({
                 gs: 0,
                 min: 40,
-                injury: {type: "Healthy", gamesRemaining: 0}
+                injury: {type: "Healthy", gamesRemaining: 0},
             });
         }
     }

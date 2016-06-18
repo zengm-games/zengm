@@ -9,7 +9,7 @@ const components = require('./components');
 
 function get(req) {
     return {
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -19,8 +19,8 @@ function InitViewModel() {
 
 const mapping = {
     teams: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateLeagueFinances(inputs, updateEvents, vm) {
@@ -28,7 +28,7 @@ async function updateLeagueFinances(inputs, updateEvents, vm) {
         const teams = await team.filter({
             attrs: ["tid", "abbrev", "region", "name"],
             seasonAttrs: ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"],
-            season: inputs.season
+            season: inputs.season,
         });
 
         return {
@@ -37,7 +37,7 @@ async function updateLeagueFinances(inputs, updateEvents, vm) {
             minPayroll: g.minPayroll / 1000,
             luxuryPayroll: g.luxuryPayroll / 1000,
             luxuryTax: g.luxuryTax,
-            teams
+            teams,
         };
     }
 }
@@ -69,5 +69,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateLeagueFinances],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

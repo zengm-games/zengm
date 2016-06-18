@@ -19,7 +19,7 @@ const copyFiles = () => {
                 return false;
             }
             return true;
-        }
+        },
     });
 
     // Filter function still makes empty folders
@@ -56,13 +56,13 @@ const setTimestamps = () => {
         regex: "TIMESTAMP_GOES_HERE",
         replacement: d.toString(),
         paths: ["build/bbgm.appcache"],
-        silent: true
+        silent: true,
     });
     replace({
         regex: "REV_GOES_HERE",
         replacement: rev,
         paths: ["build/index.html"],
-        silent: true
+        silent: true,
     });
 };
 

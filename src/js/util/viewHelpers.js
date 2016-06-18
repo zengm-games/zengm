@@ -55,7 +55,7 @@ async function beforeLeague(req) {
 
             ui.update({
                 container: "content",
-                template: "leagueLayout"
+                template: "leagueLayout",
             });
             ko.applyBindings(g.vm.topMenu, document.getElementById("left-menu"));
 
@@ -95,5 +95,5 @@ async function beforeNonLeague(req) {
 
 module.exports = {
     beforeLeague,
-    beforeNonLeague
+    beforeNonLeague,
 };

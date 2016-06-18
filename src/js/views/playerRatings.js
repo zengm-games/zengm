@@ -19,7 +19,7 @@ function get(req) {
 
     return {
         abbrev,
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -30,15 +30,15 @@ function InitViewModel() {
 
 const mapping = {
     players: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updatePlayers(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("playerMovement") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) || inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev()) {
         let players = await g.dbl.players.getAll();
         players = await player.withStats(null, players, {
-            statsSeasons: [inputs.season]
+            statsSeasons: [inputs.season],
         });
 
         let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
@@ -55,7 +55,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
             season: inputs.season,
             showNoStats: true, // If this is true, it makes the "tid" entry do nothing
             showRookies: true,
-            fuzz: true
+            fuzz: true,
         });
 
         // player.filter TID option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
@@ -78,7 +78,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
         return {
             abbrev: inputs.abbrev,
             season: inputs.season,
-            players
+            players,
         };
     }
 }
@@ -109,6 +109,6 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updatePlayers],
     uiFirst,
-    uiEvery
+    uiEvery,
 });
 

@@ -9,7 +9,7 @@ const staticPage = (name, title) => {
         runBefore: [() => {}],
         uiFirst() {
             ui.title(title);
-        }
+        },
     });
 };
 
@@ -76,6 +76,6 @@ module.exports = {
     tradingBlock: require('./views/tradingBlock'),
     transactions: require('./views/transactions'),
     upcomingFreeAgents: require('./views/upcomingFreeAgents'),
-    watchList: require('./views/watchList')
+    watchList: require('./views/watchList'),
 };
 

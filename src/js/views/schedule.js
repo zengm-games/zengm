@@ -17,14 +17,14 @@ function InitViewModel() {
 
     this.completed = {
         loading: ko.observable(true), // Needed because this isn't really set until updateCompleted, which could be after first render
-        games: ko.observableArray([])
+        games: ko.observableArray([]),
     };
 }
 
 const mapping = {
     upcoming: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateUpcoming(inputs, updateEvents, vm) {
@@ -50,7 +50,7 @@ async function updateUpcoming(inputs, updateEvents, vm) {
         return {
             abbrev: inputs.abbrev,
             season: g.season,
-            upcoming: games
+            upcoming: games,
         };
     }
 }
@@ -95,5 +95,5 @@ module.exports = bbgmView.init({
     runBefore: [updateUpcoming],
     runWhenever: [updateCompleted],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

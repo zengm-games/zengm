@@ -12,7 +12,7 @@ const helpers = require('../util/helpers');
 function get(req) {
     return {
         statType: req.params.statType !== undefined ? req.params.statType : "per_game",
-        playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season"
+        playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season",
     };
 }
 
@@ -23,8 +23,8 @@ function InitViewModel() {
 
 const mapping = {
     players: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updatePlayers(inputs, updateEvents, vm) {
@@ -33,7 +33,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
         players = players.filter(p => p.watch && typeof p.watch !== "function"); // In Firefox, objects have a "watch" function
         players = await player.withStats(null, players, {
             statsSeasons: [g.season, g.season - 1], // For oldStats
-            statsPlayoffs: inputs.playoffs === "playoffs"
+            statsPlayoffs: inputs.playoffs === "playoffs",
         });
         players = player.filter(players, {
             attrs: ["pid", "name", "age", "injury", "tid", "abbrev", "watch", "contract", "freeAgentMood", "draft"],
@@ -47,7 +47,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
             showNoStats: true,
             showRookies: true,
             showRetired: true,
-            oldStats: true
+            oldStats: true,
         });
 
         // Add mood to free agent contracts
@@ -60,7 +60,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
         return {
             players,
             playoffs: inputs.playoffs,
-            statType: inputs.statType
+            statType: inputs.statType,
         };
     }
 }
@@ -136,5 +136,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updatePlayers],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

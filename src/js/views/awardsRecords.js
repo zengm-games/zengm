@@ -10,7 +10,7 @@ const components = require('./components');
 
 function get(req) {
     return {
-        awardType: req.params.awardType || 'champion'
+        awardType: req.params.awardType || 'champion',
     };
 }
 
@@ -22,67 +22,67 @@ function InitViewModel() {
 
 const mapping = {
     awardsRecords: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 const optionsTmp = [{
     val: "Won Championship",
-    key: "champion"
+    key: "champion",
 }, {
     val: "Most Valuable Player",
-    key: "mvp"
+    key: "mvp",
 }, {
     val: "Finals MVP",
-    key: "finals_mvp"
+    key: "finals_mvp",
 }, {
     val: "Defensive Player of the Year",
-    key: "dpoy"
+    key: "dpoy",
 }, {
     val: "Sixth Man of the Year",
-    key: "smoy"
+    key: "smoy",
 }, {
     val: "Rookie of the Year",
-    key: "roy"
+    key: "roy",
 }, {
     val: "First Team All-League",
-    key: "first_team"
+    key: "first_team",
 }, {
     val: "Second Team All-League",
-    key: "second_team"
+    key: "second_team",
 }, {
     val: "Third Team All-League",
-    key: "third_team"
+    key: "third_team",
 }, {
     val: "First Team All-Defensive",
-    key: "first_def"
+    key: "first_def",
 }, {
     val: "Second Team All-Defensive",
-    key: "second_def"
+    key: "second_def",
 }, {
     val: "Third Team All-Defensive",
-    key: "third_def"
+    key: "third_def",
 }, {
     val: "All-League",
-    key: "all_league"
+    key: "all_league",
 }, {
     val: "All-Defensive",
-    key: "all_def"
+    key: "all_def",
 }, {
     val: "League Scoring Leader",
-    key: "ppg_leader"
+    key: "ppg_leader",
 }, {
     val: "League Rebounding Leader",
-    key: "rpg_leader"
+    key: "rpg_leader",
 }, {
     val: "League Assists Leader",
-    key: "apg_leader"
+    key: "apg_leader",
 }, {
     val: "League Steals Leader",
-    key: "spg_leader"
+    key: "spg_leader",
 }, {
     val: "League Blocks Leader",
-    key: "bpg_leader"
+    key: "bpg_leader",
 }];
 
 const awardOptions = {};
@@ -138,7 +138,7 @@ function getPlayerAwards(p, awardType) {
         years,
         lastYear,
         retired: (p.retiredYear) ? "yes" : "no",
-        hof: (p.hof) ? "yes" : "no"
+        hof: (p.hof) ? "yes" : "no",
     };
 }
 
@@ -146,7 +146,7 @@ async function updateAwardsRecords(inputs, updateEvents, vm) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.awardType !== vm.awardType) {
         let players = await g.dbl.players.getAll();
         players = await player.withStats(null, players, {
-            statsSeasons: 'all'
+            statsSeasons: 'all',
         });
         players = players.filter(p => p.awards.length > 0);
 
@@ -158,7 +158,7 @@ async function updateAwardsRecords(inputs, updateEvents, vm) {
             awardsRecords,
             playerCount: awardsRecords.length,
             awardTypeVal: awardOptions[inputs.awardType],
-            awardType: inputs.awardType
+            awardType: inputs.awardType,
         };
     }
 }
@@ -167,7 +167,7 @@ function uiFirst(vm) {
     ko.computed(() => {
         ui.title("Awards Records");
     }).extend({
-        throttle: 1
+        throttle: 1,
     });
 
     ko.computed(() => {
@@ -176,10 +176,10 @@ function uiFirst(vm) {
         }), {
             paging: true,
             searching: true,
-            pagingType: "bootstrap"
+            pagingType: "bootstrap",
         });
     }).extend({
-        throttle: 1
+        throttle: 1,
     });
 
     ui.tableClickableRows($("#awards-records"));
@@ -196,6 +196,6 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateAwardsRecords],
     uiFirst,
-    uiEvery
+    uiEvery,
 });
 

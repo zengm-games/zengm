@@ -35,11 +35,11 @@ async function getOffers(userPids, userDpids) {
         let teams = [{
             tid: g.userTid,
             pids: userPids,
-            dpids: userDpids
+            dpids: userDpids,
         }, {
             tid,
             pids: [],
-            dpids: []
+            dpids: [],
         }];
 
         if (tid !== g.userTid) {
@@ -64,14 +64,14 @@ async function getOffers(userPids, userDpids) {
 function get(req) {
     if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
         return {
-            errorMessage: "You're not allowed to make trades now."
+            errorMessage: "You're not allowed to make trades now.",
         };
     }
 
     return {
         userPids: req.raw.userPids !== undefined ? req.raw.userPids : [],
         userDpids: req.raw.userDpids !== undefined ? req.raw.userDpids : [],
-        offers: req.raw.offers !== undefined ? req.raw.offers : []
+        offers: req.raw.offers !== undefined ? req.raw.offers : [],
     };
 }
 
@@ -99,17 +99,17 @@ async function post(req) {
     }, {
         userPids,
         userDpids,
-        offers
+        offers,
     });
 }
 
 const mapping = {
     userPicks: {
-        create: options => options.data
+        create: options => options.data,
     },
     userRoster: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateUserRoster(inputs, updateEvents) {
@@ -118,10 +118,10 @@ async function updateUserRoster(inputs, updateEvents) {
             g.dbl.players.index('tid').getAll(g.userTid).then(players => {
                 return player.withStats(null, players, {
                     statsSeasons: [g.season],
-                    statsTid: g.userTid
+                    statsTid: g.userTid,
                 });
             }),
-            g.dbl.draftPicks.index('tid').getAll(g.userTid)
+            g.dbl.draftPicks.index('tid').getAll(g.userTid),
         ]);
 
         userRoster = player.filter(userRoster, {
@@ -132,7 +132,7 @@ async function updateUserRoster(inputs, updateEvents) {
             tid: g.userTid,
             showNoStats: true,
             showRookies: true,
-            fuzz: true
+            fuzz: true,
         });
         userRoster = trade.filterUntradable(userRoster);
         for (let i = 0; i < userRoster.length; i++) {
@@ -151,7 +151,7 @@ async function updateUserRoster(inputs, updateEvents) {
             userPids: inputs.userPids,
             userDpids: inputs.userDpids,
             userPicks,
-            userRoster
+            userRoster,
         };
     }
 }
@@ -160,7 +160,7 @@ function updateOffers(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("tradingBlockAsk") >= 0) {
         if (inputs.offers.length === 0) {
             return {
-                offers: []
+                offers: [],
             };
         }
 
@@ -169,7 +169,7 @@ function updateOffers(inputs, updateEvents) {
                 attrs: ["abbrev", "region", "name", "strategy"],
                 seasonAttrs: ["won", "lost"],
                 season: g.season,
-                ot: tx
+                ot: tx,
             });
 
             // Take the pids and dpids in each offer and get the info needed to display the offer
@@ -180,7 +180,7 @@ function updateOffers(inputs, updateEvents) {
                 players = players.filter(p => inputs.offers[i].pids.indexOf(p.pid) >= 0);
                 players = await player.withStats(tx, players, {
                     statsSeasons: [g.season],
-                    statsTid: tid
+                    statsTid: tid,
                 });
                 players = player.filter(players, {
                     attrs: ["pid", "name", "age", "contract", "injury", "watch"],
@@ -190,7 +190,7 @@ function updateOffers(inputs, updateEvents) {
                     tid,
                     showNoStats: true,
                     showRookies: true,
-                    fuzz: true
+                    fuzz: true,
                 });
 
                 let picks = await tx.draftPicks.index('tid').getAll(tid);
@@ -211,14 +211,14 @@ function updateOffers(inputs, updateEvents) {
                     dpids: inputs.offers[i].dpids,
                     warning: inputs.offers[i].warning,
                     picks,
-                    players
+                    players,
                 };
             });
 
             random.shuffle(offers);
 
             return {
-                offers
+                offers,
             };
         });
     }
@@ -241,8 +241,8 @@ function uiFirst(vm) {
         ui.datatableSinglePage($("#roster-user"), 5, tradeable(vm.userRoster()), {
             columnDefs: [{
                 orderable: false,
-                targets: [0]
-            }]
+                targets: [0],
+            }],
         });
     }).extend({throttle: 1});
 
@@ -260,5 +260,5 @@ module.exports = bbgmView.init({
     post,
     mapping,
     runBefore: [updateUserRoster, updateOffers],
-    uiFirst
+    uiFirst,
 });

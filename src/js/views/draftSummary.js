@@ -15,7 +15,7 @@ function get(req) {
         if (g.season === g.startingSeason) {
             // No draft history
             return {
-                redirectUrl: helpers.leagueUrl(["draft_scouting"])
+                redirectUrl: helpers.leagueUrl(["draft_scouting"]),
             };
         }
         if (season === g.season) {
@@ -25,7 +25,7 @@ function get(req) {
     }
 
     return {
-        season
+        season,
     };
 }
 
@@ -35,15 +35,15 @@ function InitViewModel() {
 
 const mapping = {
     players: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateDraftSummary(inputs) {
     // Update every time because anything could change this (unless all players from class are retired)
     let playersAll = await g.dbl.players.index('draft.year').getAll(inputs.season);
     playersAll = await player.withStats(null, playersAll, {
-        statsSeasons: "all"
+        statsSeasons: "all",
     });
     playersAll = player.filter(playersAll, {
         attrs: ["tid", "abbrev", "draft", "pid", "name", "age"],
@@ -51,7 +51,7 @@ async function updateDraftSummary(inputs) {
         stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
         showNoStats: true,
         showRookies: true,
-        fuzz: true
+        fuzz: true,
     });
 
     const players = [];
@@ -84,7 +84,7 @@ async function updateDraftSummary(inputs) {
 
     return {
         players,
-        season: inputs.season
+        season: inputs.season,
     };
 }
 
@@ -114,5 +114,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateDraftSummary],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

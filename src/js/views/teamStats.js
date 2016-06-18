@@ -10,7 +10,7 @@ const helpers = require('../util/helpers');
 
 function get(req) {
     return {
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -20,8 +20,8 @@ function InitViewModel() {
 
 const mapping = {
     teams: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateTeams(inputs, updateEvents, vm) {
@@ -30,12 +30,12 @@ async function updateTeams(inputs, updateEvents, vm) {
             attrs: ["abbrev"],
             seasonAttrs: ["won", "lost"],
             stats: ["gp", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "oppPts", "diff"],
-            season: inputs.season
+            season: inputs.season,
         });
 
         return {
             season: inputs.season,
-            teams
+            teams,
         };
     }
 }
@@ -57,7 +57,7 @@ function uiFirst(vm) {
                 } else if (data[data.length - 1] < 0) {
                     row.childNodes[row.childNodes.length - 1].classList.add("text-danger");
                 }
-            }
+            },
         });
     }).extend({throttle: 1});
 
@@ -75,5 +75,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateTeams],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

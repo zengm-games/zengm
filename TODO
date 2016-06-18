@@ -1,6 +1,9 @@
 more league customization
   variable numbers of conferences and divisions
   number of teams in playoffs is dynamic
+  https://www.reddit.com/message/messages/5rcmpq
+  if # conferences > 3, then don't split playoffs by conference
+  fix notifications and shit based on playoffRoundsWon
 
 better salary AI
   old players undervalued

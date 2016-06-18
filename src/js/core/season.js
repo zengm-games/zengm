@@ -388,7 +388,7 @@ function newScheduleDefault(teams) {
         dids[teams[i].cid].push(teams[i].did);
     }
 
-    for (let cid = 0; cid < 2; cid++) {
+    for (let cid = 0; cid < g.confs.length; cid++) {
         const matchups = [];
         matchups.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
         let games = 0;
@@ -512,7 +512,14 @@ function newScheduleCrappy() {
  */
 function newSchedule(teams) {
     let tids;
-    if (g.numTeams === 30 && g.numGames === 82) {
+    let threeDivsPerConf = true;
+    for (const conf of g.confs) {
+        if (g.divs.filter(div => div.cid === conf.cid).length !== 3) {
+            threeDivsPerConf = false;
+            break;
+        }
+    }
+    if (g.numTeams === 30 && g.numGames === 82 && g.confs.length === 2 && threeDivsPerConf) {
         tids = newScheduleDefault(teams);
     } else {
         tids = newScheduleCrappy();

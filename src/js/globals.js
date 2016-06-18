@@ -160,6 +160,6 @@ g.compositeWeights = {
 g.stripePublishableKey = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
 // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-g.notInDb = ["dbm", "dbl", "lid", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "gameSimWorkers", "vm", "enableLogging", "tld", "sport", "compositeWeights", "stripePublishableKey", "notInDb"];
+g.notInDb = ["dbm", "dbl", "lid", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "vm", "enableLogging", "tld", "sport", "compositeWeights", "stripePublishableKey", "notInDb"];
 
 module.exports = g;

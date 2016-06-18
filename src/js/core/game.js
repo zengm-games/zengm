@@ -259,7 +259,7 @@ function writePlayerStats(tx, results) {
                         p.injury = p2.injury; // So it gets written to box score
                         eventLog.add(tx, {
                             type: "injured",
-                            text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.name}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
+                            text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
                             showNotification: p2.tid === g.userTid,
                             pids: [p2.pid],
                             tids: [p2.tid]
@@ -543,7 +543,7 @@ async function loadTeams(tx) {
         let p;
         for (let i = 0; i < players.length; i++) {
             const pos = players[i].ratings[players[i].ratings.length - 1].pos;
-            p = {id: players[i].pid, name: players[i].name, pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
+            p = {id: players[i].pid, name: `${players[i].firstName} ${players[i].lastName}`, pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
 
             // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
             if (t.id !== g.userTid) {
@@ -552,7 +552,7 @@ async function loadTeams(tx) {
 
             const rating = players[i].ratings.find(r => r.season === g.season);
             if (rating === undefined) {
-                throw new Error(`Player with no ratings for this season: ${players[i].name} (ID: ${players[i].pid})`);
+                throw new Error(`Player with no ratings for this season: ${players[i].firstName} ${players[i].lastName} (ID: ${players[i].pid})`);
             }
 
             p.skills = rating.skills;
@@ -670,7 +670,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
 
                     eventLog.add(tx, {
                         type: "healed",
-                        text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> has recovered from his injury.`,
+                        text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> has recovered from his injury.`,
                         showNotification: p.tid === g.userTid,
                         pids: [p.pid],
                         tids: [p.tid]

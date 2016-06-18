@@ -200,6 +200,7 @@ function uiFirst(vm) {
                 try {
                     leagueFile = JSON.parse(event.target.result);
                 } catch (e) {
+                    console.log(e);
                     vm.invalidLeagueFile(true);
                     return;
                 }

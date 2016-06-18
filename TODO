@@ -1,10 +1,11 @@
 more league customization
   variable numbers of conferences and divisions
-  number of teams in playoffs is dynamic
   https://www.reddit.com/message/messages/5rcmpq
   if # conferences > 3, then don't split playoffs by conference
   fix notifications and shit based on playoffRoundsWon
-  < 2
+  playoffs view conditional hide conf names
+  playoffs end when series is used up
+  example league files
 
 better salary AI
   old players undervalued

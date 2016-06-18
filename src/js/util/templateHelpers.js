@@ -32,8 +32,9 @@ ko.bindingHandlers.matchup = {
     update: (element, valueAccessor, allBindingsAccessor, viewModel) => {
         const args = valueAccessor();
 
-        const season = viewModel.season();
-        const series = viewModel.series()[args[0]][args[1]];
+        const matchup = args[0];
+        const season = args[2];
+        const series = args[1][matchup[0]][matchup[1]];
 
         let source = '';
         if (series && series.home.tid) {

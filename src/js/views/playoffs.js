@@ -1,5 +1,6 @@
 const g = require('../globals');
 const ui = require('../ui');
+const season = require('../core/season');
 const team = require('../core/team');
 const ko = require('knockout');
 const bbgmView = require('../util/bbgmView');
@@ -25,22 +26,8 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
                 sortBy: ["winp", "-lost", "won"],
             });
 
-            series = [[], [], [], []];  // First round, second round, third round, fourth round
-            for (let cid = 0; cid < 2; cid++) {
-                const teamsConf = teams.filter(t => t.cid === cid);
-                series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
-                series[0][cid * 4].home.seed = 1;
-                series[0][cid * 4].away.seed = 8;
-                series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
-                series[0][3 + cid * 4].home.seed = 2;
-                series[0][3 + cid * 4].away.seed = 7;
-                series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
-                series[0][2 + cid * 4].home.seed = 3;
-                series[0][2 + cid * 4].away.seed = 6;
-                series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
-                series[0][1 + cid * 4].home.seed = 4;
-                series[0][1 + cid * 4].away.seed = 5;
-            }
+            const result = season.genPlayoffSeries(teams);
+            series = result.series;
 
             finalMatchups = false;
         } else {
@@ -50,11 +37,40 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
             finalMatchups = true;
         }
 
+        // Formatting for the table in playoffs.html
+        const matchups = [];
+        for (let i = 0; i < g.numPlayoffRounds; i++) {
+            matchups[i] = [];
+        }
+        // Fill in with each round. Good lord, this is confusing, due to having to assemble it for an HTML table with rowspans.
+        for (let i = 0; i < g.numPlayoffRounds; i++) {
+            let numGamesInSide = Math.pow(2, g.numPlayoffRounds - i - 2);
+            if (numGamesInSide < 1) {
+                numGamesInSide = 1;
+            }
+
+            const rowspan = Math.pow(2, i);
+            for (let j = 0; j < numGamesInSide; j++) {
+                matchups[j * rowspan].splice(i, 0, {
+                    rowspan,
+                    matchup: [i, j],
+                });
+                if (g.numPlayoffRounds !== i + 1) {
+                    matchups[j * rowspan].splice(i, 0, {
+                        rowspan,
+                        matchup: [i, numGamesInSide + j],
+                    });
+                }
+            }
+        }
+
         // Display the current or archived playoffs
         return {
             finalMatchups,
-            series,
+            numPlayoffRounds: g.numPlayoffRounds,
+            matchups,
             season: inputs.season,
+            series,
         };
     }
 }

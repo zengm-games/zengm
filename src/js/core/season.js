@@ -717,9 +717,10 @@ function genPlayoffSeries(teams) {
                 }
             }
             for (let i = 0; i < numSeriesPerConference; i++) {
-                series[0][i + cid * numSeriesPerConference] = {home: teamsConf[i], away: teamsConf[numPlayoffTeams / 2 - 1 - i]};
-                series[0][i + cid * numSeriesPerConference].home.seed = i + 1;
-                series[0][i + cid * numSeriesPerConference].away.seed = numPlayoffTeams / 2 - i;
+                const j = i % 2 === 0 ? i : numSeriesPerConference - i;
+                series[0][j + cid * numSeriesPerConference] = {home: teamsConf[i], away: teamsConf[numPlayoffTeams / 2 - 1 - i]};
+                series[0][j + cid * numSeriesPerConference].home.seed = i + 1;
+                series[0][j + cid * numSeriesPerConference].away.seed = numPlayoffTeams / 2 - i;
             }
         }
     } else {

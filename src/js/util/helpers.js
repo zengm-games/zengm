@@ -899,7 +899,7 @@ function roundsWonText(playoffRoundsWon) {
     if (playoffRoundsWon === g.numPlayoffRounds - 2) {
         return playoffsByConference ? "Made conference finals" : "Made semifinals";
     }
-    if (playoffRoundsWon > 1) {
+    if (playoffRoundsWon >= 1) {
         return `Made ${ordinal(playoffRoundsWon + 1)} round`;
     }
     if (playoffRoundsWon === 0) {

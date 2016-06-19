@@ -116,9 +116,11 @@ async function updateStandings(inputs, updateEvents, vm) {
             for (let i = 0; i < teams.length; i++) {
                 const t = teams[i];
                 const div = confs[t.cid].divs.find(div => t.did === div.did);
-                const t2 = div.teams.find(t2 => t.tid === t2.tid);
-                if (t2) {
-                    t2.playoffsRank = i < numPlayoffTeams ? i + 1 : null;
+                if (div) {
+                    const t2 = div.teams.find(t2 => t.tid === t2.tid);
+                    if (t2) {
+                        t2.playoffsRank = i < numPlayoffTeams ? i + 1 : null;
+                    }
                 }
             }
         }

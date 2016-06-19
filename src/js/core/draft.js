@@ -144,10 +144,12 @@ function logAction(tid, txt) {
 
 function logLotteryChances(chances, teams, draftOrder) {
     for (let i = 0; i < chances.length; i++) {
-        const origTm = teams[i].tid;
-        const tm = draftOrder[origTm][1].tid;
-        const txt = lotteryLogTxt(tm, 'chance', helpers.round(chances[i], 2));
-        logAction(tm, txt);
+        if (i < teams.length) {
+            const origTm = teams[i].tid;
+            const tm = draftOrder[origTm][1].tid;
+            const txt = lotteryLogTxt(tm, 'chance', helpers.round(chances[i], 2));
+            logAction(tm, txt);
+        }
     }
 }
 

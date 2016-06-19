@@ -734,7 +734,7 @@ function genPlayoffSeries(teams) {
             }
         }
         for (let i = 0; i < numPlayoffTeams / 2; i++) {
-            const j = i < numPlayoffTeams / 4 ? i * 2 : (i - numPlayoffTeams / 4) * 2 + 1;
+            const j = i % 2 === 0 ? i : numPlayoffTeams / 2 - i;
             series[0][j] = {home: teamsConf[i], away: teamsConf[numPlayoffTeams - 1 - i]};
             series[0][j].home.seed = i + 1;
             series[0][j].away.seed = numPlayoffTeams - i;

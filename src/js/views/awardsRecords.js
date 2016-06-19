@@ -132,7 +132,7 @@ function getPlayerAwards(p, awardType) {
     years = formatYear(_.groupBy(years, 'team'));
 
     return {
-        player: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`,
+        player: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a>`,
         count: awards.length,
         countText: awards.length.toString(),
         years,

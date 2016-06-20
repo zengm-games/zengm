@@ -5,6 +5,7 @@ const backboard = require('backboard');
 const Promise = require('bluebird');
 const $ = require('jquery');
 const eventLog = require('./eventLog');
+const ads = require('../util/ads');
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const allAchievements = [{
@@ -137,6 +138,14 @@ async function check() {
         g.vm.topMenu.goldUntil(data.gold_until);
         g.vm.topMenu.goldCancelled(data.gold_cancelled);
 
+        // No ads for Gold members
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+        if (g.vm.topMenu.goldCancelled() || currentTimestamp > g.vm.topMenu.goldUntil()) {
+            document.getElementById('banner-ad-top-wrapper').innerHTML = '<div id="banner-ad-top" style="text-align: center; min-height: 95px; margin-top: 1em"></div>';
+            document.getElementById('banner-ad-bottom-wrapper').innerHTML = '<div id="banner-ad-bottom" style="text-align: center; min-height: 95px"></div>';
+            ads.showBanner();
+        }
+
         // If user is logged in, upload any locally saved achievements
         if (data.username !== "") {
             await g.dbm.tx("achievements", "readwrite", async tx => {
@@ -153,6 +162,7 @@ async function check() {
         }
     } catch (err) {
         // Don't freak out if an AJAX request fails or whatever
+        console.log(err);
     }
 }
 

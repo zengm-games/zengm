@@ -39,7 +39,7 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
 
         // Formatting for the table in playoffs.html
         const matchups = [];
-        for (let i = 0; i < g.numPlayoffRounds; i++) {
+        for (let i = 0; i < Math.pow(2, g.numPlayoffRounds - 2); i++) {
             matchups[i] = [];
         }
         // Fill in with each round. Good lord, this is confusing, due to having to assemble it for an HTML table with rowspans.

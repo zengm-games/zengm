@@ -36,7 +36,7 @@ async function play(amount) {
             const playoffSeries = await g.dbl.playoffSeries.get(g.season);
 
             // Max 7 days per round that hasn't started yet
-            const numDaysFutureRounds = (3 - playoffSeries.currentRound) * 7;
+            const numDaysFutureRounds = (g.numPlayoffRounds - 1 - playoffSeries.currentRound) * 7;
 
             // All current series are in sync, so just check one and see how many games are left
             const series = playoffSeries.series[playoffSeries.currentRound][0];

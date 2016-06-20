@@ -13,7 +13,7 @@ Backboard.on('quotaexceeded', () => {
         type: "error",
         text: 'Your browser isn\'t letting Basketball GM store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Improve Performance within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://basketball-gm.com/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>',
         saveToDb: false,
-        persistent: true
+        persistent: true,
     });
 });
 Backboard.on('blocked', () => window.alert("Please close any other tabs with this league open!"));
@@ -160,7 +160,7 @@ function migrateLeague(upgradeDB, lid) {
             const [teamAbbrevsCache, teamNamesCache, teamRegionsCache] = await Promise.all([
                 upgradeDB.gameAttributes.get('teamAbbrevsCache').then(ga => JSON.stringify(ga.value)),
                 upgradeDB.gameAttributes.get('teamNamesCache').then(ga => JSON.stringify(ga.value)),
-                upgradeDB.gameAttributes.get('teamRegionsCache').then(ga => JSON.stringify(ga.value))
+                upgradeDB.gameAttributes.get('teamRegionsCache').then(ga => JSON.stringify(ga.value)),
             ]);
 
             if (JSON.stringify(teamsDefault.map(t => t.abbrev)) !== teamAbbrevsCache) {
@@ -181,10 +181,24 @@ function migrateLeague(upgradeDB, lid) {
             });
         })());
     }
+    if (upgradeDB.oldVersion <= 18) {
+        // Split old single string p.name into two names
+        ((async () => {
+            await upgradeDB.players.iterate(async p => {
+                if (p.name) {
+                    const bothNames = p.name.split(" ");
+                    p.firstName = bothNames[0];
+                    p.lastName = bothNames[1];
+                    delete p.name;
+                }
+                return p;
+            });
+        })());
+    }
 }
 
 async function connectLeague(lid) {
-    const db = await Backboard.open(`league${lid}`, 18, upgradeDB => {
+    const db = await Backboard.open(`league${lid}`, 19, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {
@@ -228,5 +242,5 @@ async function reset() {
 module.exports = {
     connectMeta,
     connectLeague,
-    reset
+    reset,
 };

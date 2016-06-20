@@ -81,7 +81,7 @@ function get(req) {
     return {
         abbrev: helpers.validateAbbrev(req.params.abbrev)[1],
         gid: req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1,
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -89,13 +89,13 @@ function InitViewModel() {
     this.boxScore = {
         gid: ko.observable(-1),
         prevGid: ko.observable(null),
-        nextGid: ko.observable(null)
+        nextGid: ko.observable(null),
     };
     this.gamesList = {
         abbrev: ko.observable(),
         loading: ko.observable(true), // Needed because this isn't really set until updateGamesList, which could be after first render
         season: ko.observable(),
-        games: ko.observableArray([])
+        games: ko.observableArray([]),
     };
 
     // This computed is used so the box score won't be rendered until after it is fully loaded (due to the throttle). Otherwise, the mapping plugin sometimes sets the gid before the rest of the box score.
@@ -142,7 +142,7 @@ function updateTeamSeason(inputs) {
     return {
         // Needed for dropdown
         abbrev: inputs.abbrev,
-        season: inputs.season
+        season: inputs.season,
     };
 }
 
@@ -159,7 +159,7 @@ async function updateBoxScore(inputs, updateEvents, vm) {
         const game = await boxScore(inputs.gid);
 
         const vars = {
-            boxScore: game
+            boxScore: game,
         };
 
         // Either update the box score if we found one, or show placeholder
@@ -272,5 +272,5 @@ module.exports = bbgmView.init({
     runBefore: [updateBoxScore, updateTeamSeason],
     runWhenever: [updateGamesList],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

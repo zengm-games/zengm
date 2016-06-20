@@ -13,7 +13,7 @@
         "no-bitwise": "off",
         "no-caller": "error",
         "no-catch-shadow": "error",
-        "comma-dangle": "error",
+        "comma-dangle": ["error", "always-multiline"],
         "no-cond-assign": "error",
         "no-console": "off",
         "no-constant-condition": "off",
@@ -170,6 +170,8 @@
 
         "no-useless-rename": "error",
         "unicode-bom": "error",
-        "no-prototype-builtins": "off"
+        "no-prototype-builtins": "off",
+
+        "rest-spread-spacing": "error"
    }
 }

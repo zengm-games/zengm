@@ -24,7 +24,7 @@ function get(req) {
     return {
         abbrev,
         season,
-        playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season"
+        playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season",
     };
 }
 
@@ -36,8 +36,8 @@ function InitViewModel() {
 
 const mapping = {
     feats: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updatePlayers(inputs, updateEvents, vm) {
@@ -77,7 +77,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
             feats,
             abbrev: inputs.abbrev,
             season: inputs.season,
-            playoffs: inputs.playoffs
+            playoffs: inputs.playoffs,
         };
     }
 }
@@ -98,7 +98,7 @@ function uiFirst(vm) {
                 if (data[data.length - 1]) {
                     row.classList.add("info");
                 }
-            }
+            },
         });
     }).extend({throttle: 1});
 
@@ -116,5 +116,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updatePlayers],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

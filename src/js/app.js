@@ -50,7 +50,7 @@ require('./api');
         player: require('./core/player'),
         season: require('./core/season'),
         team: require('./core/team'),
-        trade: require('./core/trade')
+        trade: require('./core/trade'),
     };
 
     ui.init();

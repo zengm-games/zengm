@@ -29,12 +29,12 @@ const nbaStatsAll = {
     blk: [4.3, 5.8, 4.5, 4.4, 5.9, 4.5, 5, 5.2, 5.1, 5.1, 4.3, 5.4, 5.6, 5.9, 4.8, 4.7, 4.3, 4.3, 4.9, 5.7, 6.1, 4, 4.2, 4.4, 4.2, 4.2, 4.4, 4.7, 5.3, 4.9],
     pf: [21, 21.3, 20, 20.3, 22.4, 19, 22, 20.4, 19, 22.3, 19.2, 20.8, 21.7, 22.7, 22, 20, 22, 19.4, 21.1, 20, 22.6, 19.9, 20.5, 19.3, 20.1, 19, 21, 22, 20, 20.5],
     pts: [107.5, 106.5, 105.9, 105, 104.8, 103.7, 103.4, 102.1, 101.5, 101.1, 100.2, 99.9, 99.8, 99.4, 99.4, 99.2, 99.1, 99, 98.6, 98.6, 97.3, 97, 96.5, 96.3, 95.5, 95, 94.9, 94.2, 93.3, 91.9],
-    oppPts: [102.7, 105.7, 103.7, 105.9, 101, 98, 105.7, 94.6, 95.4, 107.7, 96, 97.6, 100.9, 101.3, 104.7, 93.7, 105.4, 97.5, 101.8, 91.3, 104.7, 100.6, 91.1, 94.8, 104.5, 95.8, 94, 100.4, 97.3, 92.7]
+    oppPts: [102.7, 105.7, 103.7, 105.9, 101, 98, 105.7, 94.6, 95.4, 107.7, 96, 97.6, 100.9, 101.3, 104.7, 93.7, 105.4, 97.5, 101.8, 91.3, 104.7, 100.6, 91.1, 94.8, 104.5, 95.8, 94, 100.4, 97.3, 92.7],
 };
 
 function get(req) {
     return {
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -47,7 +47,7 @@ async function updateTeams(inputs, updateEvents, vm) {
         const teams = await team.filter({
             seasonAttrs: ["won", "lost"],
             stats: ["fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "oppPts"],
-            season: inputs.season
+            season: inputs.season,
         });
 
         const statsAll = teams.reduce((memo, team) => {
@@ -65,7 +65,7 @@ async function updateTeams(inputs, updateEvents, vm) {
 
         return {
             season: inputs.season,
-            statsAll
+            statsAll,
         };
     }
 }
@@ -108,7 +108,7 @@ function uiFirst(vm) {
             blk: [0, 15],
             pf: [5, 25],
             pts: [80, 130],
-            oppPts: [80, 130]
+            oppPts: [80, 130],
         };
 
         for (const stat in vm.statsAll) {
@@ -116,7 +116,7 @@ function uiFirst(vm) {
                 boxPlot.create({
                     data: vm.statsAll[stat](),
                     scale: scale[stat],
-                    container: `${stat}BoxPlot`
+                    container: `${stat}BoxPlot`,
                 });
 
                 if (nbaStatsAll.hasOwnProperty(stat)) {
@@ -125,7 +125,7 @@ function uiFirst(vm) {
                         scale: scale[stat],
                         container: `${stat}BoxPlotNba`,
                         color: "#0088cc",
-                        labels: false
+                        labels: false,
                     });
                 }
             }
@@ -143,5 +143,5 @@ module.exports = bbgmView.init({
     InitViewModel,
     runBefore: [updateTeams],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

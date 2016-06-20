@@ -15,10 +15,10 @@ async function updateGodMode(inputs, updateEvents) {
             godMode: g.godMode,
             injuries: [{
                 text: 'Enabled',
-                disabled: false
+                disabled: false,
             }, {
                 text: 'Disabled',
-                disabled: true
+                disabled: true,
             }],
             disableInjuries: g.disableInjuries,
             numGames: g.numGames,
@@ -29,7 +29,7 @@ async function updateGodMode(inputs, updateEvents) {
             luxuryPayroll: g.luxuryPayroll / 1000,
             luxuryTax: g.luxuryTax,
             minContract: g.minContract / 1000,
-            maxContract: g.maxContract / 1000
+            maxContract: g.maxContract / 1000,
         };
     }
 }
@@ -62,7 +62,7 @@ function uiFirst(vm) {
             luxuryPayroll: parseInt(vm.luxuryPayroll() * 1000, 10),
             luxuryTax: parseFloat(vm.luxuryTax()),
             minContract: parseInt(vm.minContract() * 1000, 10),
-            maxContract: parseInt(vm.maxContract() * 1000, 10)
+            maxContract: parseInt(vm.maxContract() * 1000, 10),
         });
 
         league.updateLastDbChange();
@@ -70,7 +70,7 @@ function uiFirst(vm) {
         eventLog.add(null, {
             type: "success",
             text: 'God Mode options successfully updated.',
-            saveToDb: false
+            saveToDb: false,
         });
 
         ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
@@ -78,22 +78,22 @@ function uiFirst(vm) {
 
     $("#help-injuries").popover({
         title: "Injuries",
-        content: "This won't heal current injuries, but it will prevent any new ones from occurring."
+        content: "This won't heal current injuries, but it will prevent any new ones from occurring.",
     });
 
     $("#help-num-games").popover({
         title: "# Games Per Season",
-        content: "This will only apply to seasons that have not started yet."
+        content: "This will only apply to seasons that have not started yet.",
     });
 
     $("#help-luxury-tax").popover({
         title: "Luxury Tax",
-        content: "Take the difference between a team's payroll and the luxury tax threshold. Multiply that by this number. The result is the penalty they have to pay."
+        content: "Take the difference between a team's payroll and the luxury tax threshold. Multiply that by this number. The result is the penalty they have to pay.",
     });
 }
 
 module.exports = bbgmView.init({
     id: "godMode",
     runBefore: [updateGodMode],
-    uiFirst
+    uiFirst,
 });

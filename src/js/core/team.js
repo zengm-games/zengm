@@ -28,70 +28,70 @@ function genSeasonRow(tid, prevSeason) {
         lostConf: 0,
         lastTen: [],
         streak: 0,
-        playoffRoundsWon: -1,  // -1: didn't make playoffs. 0: lost in first round. ... 4: won championship
+        playoffRoundsWon: -1,  // -1: didn't make playoffs. 0: lost in first round. ... N: won championship
         hype: Math.random(),
         pop: 0,  // Needs to be set somewhere!
         tvContract: {
             amount: 0,
-            exp: 0
+            exp: 0,
         },
         revenues: {
             merch: {
                 amount: 0,
-                rank: 15.5
+                rank: 15.5,
             },
             sponsor: {
                 amount: 0,
-                rank: 15.5
+                rank: 15.5,
             },
             ticket: {
                 amount: 0,
-                rank: 15.5
+                rank: 15.5,
             },
             nationalTv: {
                 amount: 0,
-                rank: 15.5
+                rank: 15.5,
             },
             localTv: {
                 amount: 0,
-                rank: 15.5
-            }
+                rank: 15.5,
+            },
         },
         expenses: {
             salary: {
                 amount: 0,
-                rank: 15.5
+                rank: 15.5,
             },
             luxuryTax: {
                 amount: 0,
-                rank: 15.5
+                rank: 15.5,
             },
             minTax: {
                 amount: 0,
-                rank: 15.5
+                rank: 15.5,
             },
             buyOuts: {
                 amount: 0,
-                rank: 15.5
+                rank: 15.5,
             },
             scouting: {
                 amount: 0,
-                rank: 15.5
+                rank: 15.5,
             },
             coaching: {
                 amount: 0,
-                rank: 15.5
+                rank: 15.5,
             },
             health: {
                 amount: 0,
-                rank: 15.5
+                rank: 15.5,
             },
             facilities: {
                 amount: 0,
-                rank: 15.5
-            }
+                rank: 15.5,
+            },
         },
-        payrollEndOfSeason: -1
+        payrollEndOfSeason: -1,
     };
 
     if (prevSeason) {
@@ -143,7 +143,7 @@ function genStatsRow(tid, playoffs = false) {
         ba: 0,
         pf: 0,
         pts: 0,
-        oppPts: 0
+        oppPts: 0,
     };
 }
 
@@ -173,26 +173,26 @@ function generate(tm) {
         budget: {
             ticketPrice: {
                 amount: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.amount : helpers.round(25 + 25 * (g.numTeams - tm.popRank) / (g.numTeams - 1), 2),
-                rank: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.rank : tm.popRank
+                rank: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.rank : tm.popRank,
             },
             scouting: {
                 amount: tm.hasOwnProperty("budget") ? tm.budget.scouting.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
-                rank: tm.hasOwnProperty("budget") ? tm.budget.scouting.rank : tm.popRank
+                rank: tm.hasOwnProperty("budget") ? tm.budget.scouting.rank : tm.popRank,
             },
             coaching: {
                 amount: tm.hasOwnProperty("budget") ? tm.budget.coaching.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
-                rank: tm.hasOwnProperty("budget") ? tm.budget.coaching.rank : tm.popRank
+                rank: tm.hasOwnProperty("budget") ? tm.budget.coaching.rank : tm.popRank,
             },
             health: {
                 amount: tm.hasOwnProperty("budget") ? tm.budget.health.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
-                rank: tm.hasOwnProperty("budget") ? tm.budget.health.rank : tm.popRank
+                rank: tm.hasOwnProperty("budget") ? tm.budget.health.rank : tm.popRank,
             },
             facilities: {
                 amount: tm.hasOwnProperty("budget") ? tm.budget.facilities.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
-                rank: tm.hasOwnProperty("budget") ? tm.budget.facilities.rank : tm.popRank
-            }
+                rank: tm.hasOwnProperty("budget") ? tm.budget.facilities.rank : tm.popRank,
+            },
         },
-        strategy
+        strategy,
     };
 }
 
@@ -252,7 +252,7 @@ async function rosterAutoSort(tx, tid) {
         ratings: ["pos"],
         season: g.season,
         showNoStats: true,
-        showRookies: true
+        showRookies: true,
     });
     // Fuzz only for user's team
     if (tid === g.userTid) {
@@ -308,13 +308,14 @@ async function getContracts(tx, tid) {
     const contracts = players.map(p => {
         return {
             pid: p.pid,
-            name: p.name,
+            firstName: p.firstName,
+            lastName: p.lastName,
             skills: p.ratings[p.ratings.length - 1].skills,
             injury: p.injury,
             watch: p.watch !== undefined ? p.watch : false, // undefined check is for old leagues, can delete eventually
             amount: p.contract.amount,
             exp: p.contract.exp,
-            released: false
+            released: false,
         };
     });
 
@@ -326,21 +327,23 @@ async function getContracts(tx, tid) {
         if (p !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
             contracts.push({
                 pid: releasedPlayer.pid,
-                name: p.name,
+                firstName: p.firstName,
+                lastName: p.lastName,
                 skills: p.ratings[p.ratings.length - 1].skills,
                 injury: p.injury,
                 amount: releasedPlayer.contract.amount,
                 exp: releasedPlayer.contract.exp,
-                released: true
+                released: true,
             });
         } else {
             contracts.push({
                 pid: releasedPlayer.pid,
-                name: "Deleted Player",
+                firstName: "Deleted",
+                lastName: "Player",
                 skills: [],
                 amount: releasedPlayer.contract.amount,
                 exp: releasedPlayer.contract.exp,
-                released: true
+                released: true,
             });
         }
     }
@@ -648,7 +651,7 @@ function filter(options) {
 
             const [seasons, stats] = await Promise.all([
                 seasonsPromise,
-                statsPromise
+                statsPromise,
             ]);
             t.seasons = sortBy(seasons, "season");
             t.stats = sortBy(stats, ["season", "playoffs"]);
@@ -733,7 +736,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                         contract: p.contract,
                         worth: player.genContract(p, false, false, true),
                         injury: p.injury,
-                        age: g.season - p.born.year
+                        age: g.season - p.born.year,
                     });
                 } else {
                     remove.push({
@@ -742,7 +745,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                         contract: p.contract,
                         worth: player.genContract(p, false, false, true),
                         injury: p.injury,
-                        age: g.season - p.born.year
+                        age: g.season - p.born.year,
                     });
                 }
             }
@@ -756,7 +759,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                     contract: p.contract,
                     worth: player.genContract(p, false, false, true),
                     injury: p.injury,
-                    age: g.season - p.born.year
+                    age: g.season - p.born.year,
                 });
             }
         };
@@ -844,15 +847,15 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                             skills: [],
                             contract: {
                                 amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
-                                exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                                exp: dp.season + 2 + (2 - dp.round), // 3 for first round, 2 for second
                             },
                             worth: {
                                 amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
-                                exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                                exp: dp.season + 2 + (2 - dp.round), // 3 for first round, 2 for second
                             },
                             injury: {type: "Healthy", gamesRemaining: 0},
                             age: 19,
-                            draftPick: true
+                            draftPick: true,
                         });
                     });
 
@@ -886,15 +889,15 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                             skills: [],
                             contract: {
                                 amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
-                                exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                                exp: dp.season + 2 + (2 - dp.round), // 3 for first round, 2 for second
                             },
                             worth: {
                                 amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
-                                exp: dp.season + 2 + (2 - dp.round) // 3 for first round, 2 for second
+                                exp: dp.season + 2 + (2 - dp.round), // 3 for first round, 2 for second
                             },
                             injury: {type: "Healthy", gamesRemaining: 0},
                             age: 19,
-                            draftPick: true
+                            draftPick: true,
                         });
                     });
                 };
@@ -915,7 +918,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
             stats: ["gp"],
             season: g.season,
             tid,
-            ot: tx
+            ot: tx,
         });
 
         strategy = t.strategy;
@@ -970,7 +973,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
         Dp: 2,
         Po: 2,
         Ps: 4,
-        R: 3
+        R: 3,
     };
 
     const doSkillBonuses = (test, roster) => {
@@ -1174,7 +1177,7 @@ function updateStrategies(tx) {
         // Change in wins
         const [teamSeason, teamSeasonOld] = await Promise.all([
             tx.teamSeasons.index("season, tid").get([g.season, t.tid]),
-            tx.teamSeasons.index("season, tid").get([g.season - 1, t.tid])
+            tx.teamSeasons.index("season, tid").get([g.season - 1, t.tid]),
         ]);
 
         const won = teamSeason.won;
@@ -1184,13 +1187,13 @@ function updateStrategies(tx) {
         let players = await tx.players.index('tid').getAll(t.tid);
         players = await player.withStats(tx, players, {
             statsSeasons: [g.season],
-            statsTid: t.tid
+            statsTid: t.tid,
         });
         players = player.filter(players, {
             season: g.season,
             tid: t.tid,
             attrs: ["age", "value", "contract"],
-            stats: ["min"]
+            stats: ["min"],
         });
 
         let youngStar = 0; // Default value
@@ -1281,10 +1284,10 @@ function checkRosterSizes() {
 
                         eventLog.add(null, {
                             type: "freeAgent",
-                            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                             showNotification: false,
                             pids: [p.pid],
-                            tids: [p.tid]
+                            tids: [p.tid],
                         });
 
                         promises.push(tx.players.put(p));
@@ -1335,5 +1338,5 @@ module.exports = {
     updateStrategies,
     checkRosterSizes,
     getPayroll,
-    getPayrolls
+    getPayrolls,
 };

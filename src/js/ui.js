@@ -281,12 +281,12 @@ function init() {
                             type: "post",
                             headers: {
                                 Authorization: "Client-ID c2593243d3ea679",
-                                "X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H"
+                                "X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
                             },
                             data: {
-                                image: canvas.toDataURL().split(',')[1]
+                                image: canvas.toDataURL().split(',')[1],
                             },
-                            dataType: "json"
+                            dataType: "json",
                         }));
                         document.getElementById("screenshot-link").href = `http://imgur.com/${data.data.id}`;
                         $("#modal-screenshot").modal("show");
@@ -298,7 +298,7 @@ function init() {
                             helpers.errorNotify("Error saving screenshot.");
                         }
                     }
-                }
+                },
             });
         });
     }
@@ -359,8 +359,8 @@ function datatable(table, sortCol, data, extraOptions) {
             lengthMenu: "_MENU_ per page",
             info: "_START_ to _END_ of _TOTAL_",
             infoEmpty: "",
-            infoFiltered: "(filtered from _MAX_)"
-        }
+            infoFiltered: "(filtered from _MAX_)",
+        },
     }, extraOptions);
 
     table.dataTable(options);
@@ -380,7 +380,7 @@ function datatableSinglePage(table, sortCol, data, extraOptions) {
         },
         stateLoadCallback() {
             return JSON.parse(localStorage.getItem(`DataTables_${table[0].id}`));
-        }
+        },
     }, extraOptions);
 
     table.dataTable(options);
@@ -475,7 +475,7 @@ function updatePlayMenu(ot) {
         {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"},
         {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
         {id: "play-menu-abort-phase-change", url: "", label: "Abort"},
-        {id: "play-menu-stop-auto", url: "", label: `Stop auto play (${g.autoPlaySeasons} seasons left)`}
+        {id: "play-menu-stop-auto", url: "", label: `Stop auto play (${g.autoPlaySeasons} seasons left)`},
     ];
 
     let keys;
@@ -512,7 +512,7 @@ function updatePlayMenu(ot) {
         lock.unreadMessage(ot),
         lock.gamesInProgress(ot),
         lock.negotiationInProgress(ot),
-        lock.phaseChangeInProgress(ot)
+        lock.phaseChangeInProgress(ot),
     ]).spread((unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress) => {
         if (unreadMessage) {
             keys = ["play-menu-message"];
@@ -611,7 +611,7 @@ function highlightPlayButton() {
         placement: "bottom",
         title: "Welcome to Basketball GM!",
         content: "To advance through the game, use the Play button at the top. The options shown will change depending on the current state of the game.",
-        template: '<div class="popover popover-play"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+        template: '<div class="popover popover-play"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
     });
 
     // If the user finds the play button first, don't show the popover
@@ -641,5 +641,5 @@ module.exports = {
     updatePhase,
     updatePlayMenu,
     updateStatus,
-    highlightPlayButton
+    highlightPlayButton,
 };

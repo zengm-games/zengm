@@ -24,18 +24,18 @@ function generateFace() {
 function get(req) {
     if (!g.godMode) {
         return {
-            errorMessage: `You can't customize players unless you enable <a href="${helpers.leagueUrl(["god_mode"])}">God Mode</a>.`
+            errorMessage: `You can't customize players unless you enable <a href="${helpers.leagueUrl(["god_mode"])}">God Mode</a>.`,
         };
     }
 
     if (req.params.hasOwnProperty("pid")) {
         return {
-            pid: parseInt(req.params.pid, 10)
+            pid: parseInt(req.params.pid, 10),
         };
     }
 
     return {
-        pid: null
+        pid: null,
     };
 }
 
@@ -44,16 +44,16 @@ function InitViewModel() {
         face: ko.observable(),
         ratings: ko.observableArray(),
         born: {
-            year: ko.observable()
+            year: ko.observable(),
         },
         contract: {
             amount: ko.observable(),
-            exp: ko.observable()
+            exp: ko.observable(),
         },
         injury: {
             type: ko.observable(),
-            gamesRemaining: ko.observable()
-        }
+            gamesRemaining: ko.observable(),
+        },
     };
     this.positions = [];
 
@@ -77,7 +77,7 @@ function InitViewModel() {
                 if (isNaN(rating)) { rating = 0; }
                 this.p.ratings()[this.p.ratings().length - 1][ratingKey](rating);
             },
-            owner: this
+            owner: this,
         });
     }, this);
 
@@ -91,7 +91,7 @@ function InitViewModel() {
             if (age !== age) { age = 25; } // NaN check
             this.p.born.year(g.season - age);
         },
-        owner: this
+        owner: this,
     });
 
     // Set position for latest season
@@ -106,7 +106,7 @@ function InitViewModel() {
         write(value) {
             this.p.ratings()[this.p.ratings().length - 1].pos(value);
         },
-        owner: this
+        owner: this,
     });
 
     // Contract stuff
@@ -121,7 +121,7 @@ function InitViewModel() {
                 if (isNaN(amount)) { amount = g.minContract; }
                 this.p.contract.amount(amount);
             },
-            owner: this
+            owner: this,
         }),
         exp: ko.computed({
             read() {
@@ -143,8 +143,8 @@ function InitViewModel() {
 
                 this.p.contract.exp(season);
             },
-            owner: this
-        })
+            owner: this,
+        }),
     };
 
     // Injury stuff
@@ -156,7 +156,7 @@ function InitViewModel() {
             write(value) {
                 this.p.injury.type(value);
             },
-            owner: this
+            owner: this,
         }),
         gamesRemaining: ko.computed({
             read() {
@@ -170,22 +170,22 @@ function InitViewModel() {
 
                 this.p.injury.gamesRemaining(gamesRemaining);
             },
-            owner: this
-        })
+            owner: this,
+        }),
     };
 }
 
 const mapping = {
     teams: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateCustomizePlayer(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0) {
         const teams = await team.filter({
             attrs: ["tid", "region", "name"],
-            season: g.season
+            season: g.season,
         });
 
         // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
@@ -196,23 +196,23 @@ async function updateCustomizePlayer(inputs, updateEvents) {
         }
         teams.unshift({
             tid: g.PLAYER.RETIRED,
-            text: "Retired"
+            text: "Retired",
         });
         teams.unshift({
             tid: g.PLAYER.UNDRAFTED_3,
-            text: `${g.season + seasonOffset + 2} Draft Prospect`
+            text: `${g.season + seasonOffset + 2} Draft Prospect`,
         });
         teams.unshift({
             tid: g.PLAYER.UNDRAFTED_2,
-            text: `${g.season + seasonOffset + 1} Draft Prospect`
+            text: `${g.season + seasonOffset + 1} Draft Prospect`,
         });
         teams.unshift({
             tid: g.PLAYER.UNDRAFTED,
-            text: `${g.season + seasonOffset} Draft Prospect`
+            text: `${g.season + seasonOffset} Draft Prospect`,
         });
         teams.unshift({
             tid: g.PLAYER.FREE_AGENT,
-            text: "Free Agent"
+            text: "Free Agent",
         });
 
         const positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];
@@ -223,10 +223,10 @@ async function updateCustomizePlayer(inputs, updateEvents) {
                 eyes: [0, 1, 2, 3],
                 nose: [0, 1, 2],
                 mouth: [0, 1, 2, 3, 4],
-                hair: [0, 1, 2, 3, 4]
+                hair: [0, 1, 2, 3, 4],
             },
             positions,
-            teams
+            teams,
         };
 
         if (inputs.pid === null) {
@@ -389,5 +389,5 @@ module.exports = bbgmView.init({
     InitViewModel,
     mapping,
     runBefore: [updateCustomizePlayer],
-    uiFirst
+    uiFirst,
 });

@@ -11,7 +11,7 @@ const components = require('./components');
 
 function get(req) {
     return {
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -26,13 +26,13 @@ const mapping = {
             return new function () {
                 komapping.fromJS(options.data, {
                     data: {
-                        key: data => ko.unwrap(data.pid)
-                    }
+                        key: data => ko.unwrap(data.pid),
+                    },
                 }, this);
             }();
         },
-        key: data => ko.unwrap(data.name)
-    }
+        key: data => ko.unwrap(data.name),
+    },
 };
 
 async function updateLeaders(inputs, updateEvents, vm) {
@@ -42,7 +42,7 @@ async function updateLeaders(inputs, updateEvents, vm) {
             g.dbl.teamSeasons.index("season, tid").getAll(backboard.bound([inputs.season], [inputs.season, ''])),
             g.dbl.players.getAll().then(players => {
                 return player.withStats(null, players, {statsSeasons: [inputs.season]});
-            })
+            }),
         ]);
 
         // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
@@ -58,7 +58,7 @@ async function updateLeaders(inputs, updateEvents, vm) {
             attrs: ["pid", "name", "injury", "watch"],
             ratings: ["skills"],
             stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev", "tid"],
-            season: inputs.season
+            season: inputs.season,
         });
 
         const userAbbrev = helpers.getAbbrev(g.userTid);
@@ -126,7 +126,7 @@ async function updateLeaders(inputs, updateEvents, vm) {
 
         return {
             categories,
-            season: inputs.season
+            season: inputs.season,
         };
     }
 }
@@ -148,5 +148,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateLeaders],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

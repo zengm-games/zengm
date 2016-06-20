@@ -39,13 +39,13 @@ async function assessPayrollMinLuxury(tx) {
             if (payrolls[teamSeason.tid] <= g.salaryCap) {
                 teamSeason.revenues.luxuryTaxShare = {
                     amount: distribute,
-                    rank: 15.5
+                    rank: 15.5,
                 };
                 teamSeason.cash += distribute;
             } else {
                 teamSeason.revenues.luxuryTaxShare = {
                     amount: 0,
-                    rank: 15.5
+                    rank: 15.5,
                 };
             }
             return teamSeason;
@@ -166,6 +166,6 @@ function getRankLastThree(teamSeasons, category, item) {
 module.exports = {
     assessPayrollMinLuxury,
     updateRanks,
-    getRankLastThree
+    getRankLastThree,
 };
 

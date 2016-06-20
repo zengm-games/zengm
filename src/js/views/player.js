@@ -13,7 +13,7 @@ const helpers = require('../util/helpers');
 
 function get(req) {
     return {
-        pid: req.params.pid !== undefined ? parseInt(req.params.pid, 10) : undefined
+        pid: req.params.pid !== undefined ? parseInt(req.params.pid, 10) : undefined,
     };
 }
 
@@ -23,10 +23,10 @@ async function updatePlayer(inputs, updateEvents, vm) {
             g.dbl.players.get(inputs.pid).then(p => {
                 return player.withStats(null, [p], {
                     statsSeasons: "all",
-                    statsPlayoffs: true
+                    statsPlayoffs: true,
                 }).then(players => players[0]);
             }),
-            g.dbl.events.index('pids').getAll(inputs.pid)
+            g.dbl.events.index('pids').getAll(inputs.pid),
         ]);
 
         p = player.filter(p, {
@@ -36,7 +36,7 @@ async function updatePlayer(inputs, updateEvents, vm) {
             playoffs: true,
             showNoStats: true,
             showRookies: true,
-            fuzz: true
+            fuzz: true,
         });
 
         // Account for extra free agent demands
@@ -47,7 +47,7 @@ async function updatePlayer(inputs, updateEvents, vm) {
         const feats = events.filter(event => event.type === "playerFeat").map(event => {
             return {
                 season: event.season,
-                text: event.text
+                text: event.text,
             };
         });
 
@@ -56,7 +56,7 @@ async function updatePlayer(inputs, updateEvents, vm) {
         }).map(event => {
             return {
                 season: event.season,
-                text: event.text
+                text: event.text,
             };
         });
 
@@ -74,7 +74,7 @@ async function updatePlayer(inputs, updateEvents, vm) {
             injured: p.injury.type !== "Healthy",
             godMode: g.godMode,
             events,
-            feats
+            feats,
         };
     }
 }
@@ -114,5 +114,5 @@ module.exports = bbgmView.init({
     id: "player",
     get,
     runBefore: [updatePlayer],
-    uiFirst
+    uiFirst,
 });

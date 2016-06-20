@@ -110,7 +110,7 @@ describe("core/draft", () => {
             const sameRec = [
                 [3, 15, 25],
                 [10, 18],
-                [13, 26]
+                [13, 26],
             ];
             for (let i = 0; i < sameRec.length; i++) {
                 const tids = sameRec[i];
@@ -141,13 +141,13 @@ describe("core/draft", () => {
                     ot: tx,
                     attrs: ["tid", "cid"],
                     seasonAttrs: ["winp", "playoffRoundsWon"],
-                    season: g.season
+                    season: g.season,
                 });
                 const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
                 // index instead of tid
                 const sameRec = [
                     [6, 7, 8],
-                    [10, 11, 12]
+                    [10, 11, 12],
                 ];
                 draft.lotterySort(teams);
                 draft.updateChances(chances, teams, false);

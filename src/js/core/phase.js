@@ -35,7 +35,7 @@ async function finalize(phase, url, updateEvents) {
     // Set phase before updating play menu
     await require('../core/league').setGameAttributesComplete({
         phase,
-        phaseChangeInProgress: false
+        phaseChangeInProgress: false,
     });
     ui.updatePhase(`${g.season} ${g.PHASE_TEXT[phase]}`);
     await ui.updatePlayMenu(null);
@@ -132,7 +132,7 @@ async function newPhaseRegularSeason(tx) {
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
-                text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>'
+                text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>',
             });
         } else if ((nagged === 1 && Math.random() < 0.25) || (nagged >= 2 && Math.random < 0.025)) {
             localStorage.nagged = "2";
@@ -140,7 +140,7 @@ async function newPhaseRegularSeason(tx) {
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
-                text: '<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a></p><p><a href="https://www.facebook.com/basketball.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/BasketballGM/">Discuss Basketball GM on Reddit</a></p><p>The more people that play Basketball GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@basketball-gm.com">email me</a>.</p>'
+                text: '<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a></p><p><a href="https://www.facebook.com/basketball.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/BasketballGM/">Discuss Basketball GM on Reddit</a></p><p>The more people that play Basketball GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@basketball-gm.com">email me</a>.</p>',
             });
         } else if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random < 0.05)) {
             // Skipping 3, obsolete
@@ -149,7 +149,7 @@ async function newPhaseRegularSeason(tx) {
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
-                text: '<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="http://basketball-gm.co.nf/">you can find a user-made list of them here</a>.</p>'
+                text: '<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="http://basketball-gm.co.nf/">you can find a user-made list of them here</a>.</p>',
             });
         }
     }
@@ -167,7 +167,7 @@ async function newPhasePlayoffs(tx) {
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp"],
         season: g.season,
-        sortBy: "winp"
+        sortBy: "winp",
     });
 
     // Add entry for wins for each team; delete winp, which was only needed for sorting
@@ -175,85 +175,22 @@ async function newPhasePlayoffs(tx) {
         teams[i].won = 0;
     }
 
-    let series, tidPlayoffs;
-    if (!localStorage.top16playoffs) {
-        // Default: top 8 teams in each conference
-        tidPlayoffs = [];
-        series = [[], [], [], []];  // First round, second round, third round, fourth round
-        for (let cid = 0; cid < 2; cid++) {
-            const teamsConf = [];
-            for (let i = 0; i < teams.length; i++) {
-                if (teams[i].cid === cid) {
-                    if (teamsConf.length < 8) {
-                        teamsConf.push(teams[i]);
-                        tidPlayoffs.push(teams[i].tid);
-                    }
-                }
-            }
-            series[0][cid * 4] = {home: teamsConf[0], away: teamsConf[7]};
-            series[0][cid * 4].home.seed = 1;
-            series[0][cid * 4].away.seed = 8;
-            series[0][1 + cid * 4] = {home: teamsConf[3], away: teamsConf[4]};
-            series[0][1 + cid * 4].home.seed = 4;
-            series[0][1 + cid * 4].away.seed = 5;
-            series[0][2 + cid * 4] = {home: teamsConf[2], away: teamsConf[5]};
-            series[0][2 + cid * 4].home.seed = 3;
-            series[0][2 + cid * 4].away.seed = 6;
-            series[0][3 + cid * 4] = {home: teamsConf[1], away: teamsConf[6]};
-            series[0][3 + cid * 4].home.seed = 2;
-            series[0][3 + cid * 4].away.seed = 7;
-        }
-    } else {
-        // Alternative (localStorage.top16playoffs): top 16 teams overall
-        tidPlayoffs = [];
-        series = [[], [], [], []];  // First round, second round, third round, fourth round
-        const teamsConf = [];
-        for (let i = 0; i < teams.length; i++) {
-            if (teamsConf.length < 16) {
-                teamsConf.push(teams[i]);
-                tidPlayoffs.push(teams[i].tid);
-            }
-        }
-        series[0][0] = {home: teamsConf[0], away: teamsConf[15]};
-        series[0][0].home.seed = 1;
-        series[0][0].away.seed = 16;
-        series[0][1] = {home: teamsConf[7], away: teamsConf[8]};
-        series[0][1].home.seed = 8;
-        series[0][1].away.seed = 9;
-        series[0][2] = {home: teamsConf[3], away: teamsConf[12]};
-        series[0][2].home.seed = 4;
-        series[0][2].away.seed = 13;
-        series[0][3] = {home: teamsConf[4], away: teamsConf[11]};
-        series[0][3].home.seed = 5;
-        series[0][3].away.seed = 12;
-        series[0][4] = {home: teamsConf[1], away: teamsConf[14]};
-        series[0][4].home.seed = 2;
-        series[0][4].away.seed = 15;
-        series[0][5] = {home: teamsConf[6], away: teamsConf[9]};
-        series[0][5].home.seed = 7;
-        series[0][5].away.seed = 10;
-        series[0][6] = {home: teamsConf[2], away: teamsConf[13]};
-        series[0][6].home.seed = 3;
-        series[0][6].away.seed = 14;
-        series[0][7] = {home: teamsConf[5], away: teamsConf[10]};
-        series[0][7].home.seed = 6;
-        series[0][7].away.seed = 11;
-    }
+    const {series, tidPlayoffs} = season.genPlayoffSeries(teams);
 
-    tidPlayoffs.forEach(tid => {
+    for (const tid of tidPlayoffs) {
         eventLog.add(null, {
             type: "playoffs",
             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season])}">${g.teamNamesCache[tid]}</a> made the <a href="${helpers.leagueUrl(["playoffs", g.season])}">playoffs</a>.`,
             showNotification: tid === g.userTid,
-            tids: [tid]
+            tids: [tid],
         });
-    });
+    }
 
     await Promise.all([
         tx.playoffSeries.put({
             season: g.season,
             currentRound: 0,
-            series
+            series,
         }),
 
         // Add row to team stats and team season attributes
@@ -280,13 +217,13 @@ async function newPhasePlayoffs(tx) {
         }),
 
         // Add row to player stats
-        Promise.map(tidPlayoffs, tid => tx.players.index('tid').iterate(tid, p => player.addStatsRow(tx, p, true)))
+        Promise.map(tidPlayoffs, tid => tx.players.index('tid').iterate(tid, p => player.addStatsRow(tx, p, true))),
     ]);
 
 
     await Promise.all([
         finances.assessPayrollMinLuxury(tx),
-        season.newSchedulePlayoffsDay(tx)
+        season.newSchedulePlayoffsDay(tx),
     ]);
 
     // Don't redirect if we're viewing a live game now
@@ -315,11 +252,11 @@ async function newPhaseBeforeDraft(tx) {
         ot: tx,
         attrs: ["tid"],
         seasonAttrs: ["playoffRoundsWon"],
-        season: g.season
+        season: g.season,
     });
 
     // Give award to all players on the championship team
-    const tid = teams.find(t => t.playoffRoundsWon === 4).tid;
+    const tid = teams.find(t => t.playoffRoundsWon === g.numPlayoffRounds).tid;
     if (tid !== undefined) {
         await tx.players.index('tid').iterate(tid, p => {
             p.awards.push({season: g.season, type: "Won Championship"});
@@ -460,7 +397,7 @@ async function newPhaseResignPlayers(tx) {
                     type: "refuseToSign",
                     text: error,
                     pids: [p.pid],
-                    tids: [tid]
+                    tids: [tid],
                 });
             }
         }
@@ -476,7 +413,7 @@ async function newPhaseFreeAgency(tx) {
     const teams = await team.filter({
         ot: tx,
         attrs: ["strategy"],
-        season: g.season
+        season: g.season,
     });
     const strategies = teams.map(t => t.strategy);
 
@@ -505,10 +442,10 @@ async function newPhaseFreeAgency(tx) {
 
                 eventLog.add(null, {
                     type: "reSigned",
-                    text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                    text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,
                     pids: [p.pid],
-                    tids: [p.tid]
+                    tids: [p.tid],
                 });
 
                 return p; // Other endpoints include calls to addToFreeAgents, which handles updating the database
@@ -576,40 +513,40 @@ async function newPhase(phase, extra) {
     const phaseChangeInfo = {
         [g.PHASE.PRESEASON]: {
             objectStores: ["gameAttributes", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
-            func: newPhasePreseason
+            func: newPhasePreseason,
         },
         [g.PHASE.REGULAR_SEASON]: {
             objectStores: ["gameAttributes", "messages", "schedule", "teams"],
-            func: newPhaseRegularSeason
+            func: newPhaseRegularSeason,
         },
         [g.PHASE.PLAYOFFS]: {
             objectStores: ["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"],
-            func: newPhasePlayoffs
+            func: newPhasePlayoffs,
         },
         [g.PHASE.BEFORE_DRAFT]: {
             objectStores: ["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
-            func: newPhaseBeforeDraft
+            func: newPhaseBeforeDraft,
         },
         [g.PHASE.DRAFT]: {
             objectStores: ["draftPicks", "draftOrder", "gameAttributes", "players", "teams", "teamSeasons", "teamStats"],
-            func: newPhaseDraft
+            func: newPhaseDraft,
         },
         [g.PHASE.AFTER_DRAFT]: {
             objectStores: ["draftPicks", "gameAttributes"],
-            func: newPhaseAfterDraft
+            func: newPhaseAfterDraft,
         },
         [g.PHASE.RESIGN_PLAYERS]: {
             objectStores: ["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"],
-            func: newPhaseResignPlayers
+            func: newPhaseResignPlayers,
         },
         [g.PHASE.FREE_AGENCY]: {
             objectStores: ["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"],
-            func: newPhaseFreeAgency
+            func: newPhaseFreeAgency,
         },
         [g.PHASE.FANTASY_DRAFT]: {
             objectStores: ["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"],
-            func: newPhaseFantasyDraft
-        }
+            func: newPhaseFantasyDraft,
+        },
     };
 
     const phaseChangeInProgress = await lock.phaseChangeInProgress(null);
@@ -640,7 +577,7 @@ async function newPhase(phase, extra) {
                         type: "error",
                         text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
                         saveToDb: false,
-                        persistent: true
+                        persistent: true,
                     });
 
                     throw err;
@@ -675,5 +612,5 @@ async function abort() {
 
 module.exports = {
     newPhase,
-    abort
+    abort,
 };

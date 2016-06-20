@@ -5,7 +5,7 @@ const bbgmView = require('../util/bbgmView');
 
 function get(req) {
     return {
-        lid: parseInt(req.params.lid, 10)
+        lid: parseInt(req.params.lid, 10),
     };
 }
 
@@ -106,5 +106,5 @@ module.exports = bbgmView.init({
     id: "deleteOldData",
     get,
     post,
-    uiFirst
+    uiFirst,
 });

@@ -6,7 +6,7 @@ const helpers = require('../util/helpers');
 
 const vm = {
     formId: ko.observable(),
-    fields: ko.observable([])
+    fields: ko.observable([]),
 };
 
 /**
@@ -46,7 +46,7 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
             } else if (fields[i] === "teamsAndAll") {
                 options = [{
                     key: "all",
-                    val: "All Teams"
+                    val: "All Teams",
                 }];
                 for (let j = 0; j < g.numTeams; j++) {
                     options[j + 1] = {};
@@ -56,10 +56,10 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
             } else if (fields[i] === "teamsAndAllWatch") {
                 options = [{
                     key: "all",
-                    val: "All Teams"
+                    val: "All Teams",
                 }, {
                     key: "watch",
-                    val: "Watch List"
+                    val: "Watch List",
                 }];
                 for (let j = 0; j < g.numTeams; j++) {
                     options[j + 2] = {};
@@ -75,13 +75,13 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
                 if (fields[i] === "seasonsAndCareer") {
                     options.unshift({
                         key: "career",
-                        val: "Career Totals"
+                        val: "Career Totals",
                     });
                 }
                 if (fields[i] === "seasonsAndAll") {
                     options.unshift({
                         key: "all",
-                        val: "All Seasons"
+                        val: "All Seasons",
                     });
                 }
             } else if (fields[i] === "seasonsUpcoming") {
@@ -91,132 +91,132 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
                 for (let j = 0 + offset; j < 5 + offset; j++) {
                     options.push({
                         key: g.season + j,
-                        val: `${g.season + j} season`
+                        val: `${g.season + j} season`,
                     });
                 }
             } else if (fields[i] === "playoffs") {
                 options = [{
                     val: "Regular Season",
-                    key: "regular_season"
+                    key: "regular_season",
                 }, {
                     val: "Playoffs",
-                    key: "playoffs"
+                    key: "playoffs",
                 }];
             } else if (fields[i] === "shows") {
                 options = [{
                     val: "Past 10 Seasons",
-                    key: "10"
+                    key: "10",
                 }, {
                     val: "All Seasons",
-                    key: "all"
+                    key: "all",
                 }];
             } else if (fields[i] === "statTypes") {
                 options = [{
                     val: "Per Game",
-                    key: "per_game"
+                    key: "per_game",
                 }, {
                     val: "Per 36 Mins",
-                    key: "per_36"
+                    key: "per_36",
                 }, {
                     val: "Totals",
-                    key: "totals"
+                    key: "totals",
                 }];
             } else if (fields[i] === "awardType") {
                 options = [{
                     val: "Won Championship",
-                    key: "champion"
+                    key: "champion",
                 }, {
                     val: "Most Valuable Player",
-                    key: "mvp"
+                    key: "mvp",
                 }, {
                     val: "Finals MVP",
-                    key: "finals_mvp"
+                    key: "finals_mvp",
                 }, {
                     val: "Defensive Player of the Year",
-                    key: "dpoy"
+                    key: "dpoy",
                 }, {
                     val: "Sixth Man of the Year",
-                    key: "smoy"
+                    key: "smoy",
                 }, {
                     val: "Rookie of the Year",
-                    key: "roy"
+                    key: "roy",
                 }, {
                     val: "First Team All-League",
-                    key: "first_team"
+                    key: "first_team",
                 }, {
                     val: "Second Team All-League",
-                    key: "second_team"
+                    key: "second_team",
                 }, {
                     val: "Third Team All-League",
-                    key: "third_team"
+                    key: "third_team",
                 }, {
                     val: "All-League",
-                    key: "all_league"
+                    key: "all_league",
                 }, {
                     val: "First Team All-Defensive",
-                    key: "first_def"
+                    key: "first_def",
                 }, {
                     val: "Second Team All-Defensive",
-                    key: "second_def"
+                    key: "second_def",
                 }, {
                     val: "Third Team All-Defensive",
-                    key: "third_def"
+                    key: "third_def",
                 }, {
                     val: "All-Defensive",
-                    key: "all_def"
+                    key: "all_def",
                 }, {
                     val: "League Scoring Leader",
-                    key: "ppg_leader"
+                    key: "ppg_leader",
                 }, {
                     val: "League Rebounding Leader",
-                    key: "rpg_leader"
+                    key: "rpg_leader",
                 }, {
                     val: "League Assists Leader",
-                    key: "apg_leader"
+                    key: "apg_leader",
                 }, {
                     val: "League Steals Leader",
-                    key: "spg_leader"
+                    key: "spg_leader",
                 }, {
                     val: "League Blocks Leader",
-                    key: "bpg_leader"
+                    key: "bpg_leader",
                 }];
             } else if (fields[i] === "eventType") {
                 options = [{
                     val: "All Types",
-                    key: "all"
+                    key: "all",
                 }, {
                     val: "Draft",
-                    key: "draft"
+                    key: "draft",
                 }, {
                     val: "FA Signed",
-                    key: "freeAgent"
+                    key: "freeAgent",
                 }, {
                     val: "Resigned",
-                    key: "reSigned"
+                    key: "reSigned",
                 }, {
                     val: "Released",
-                    key: "release"
+                    key: "release",
                 }, {
                     val: "Trades",
-                    key: "trade"
+                    key: "trade",
                 }];
             } else if (fields[i] === "teamRecordType") {
                 options = [{
                     val: "By Team",
-                    key: "team"
+                    key: "team",
                 }, {
                     val: "By Conference",
-                    key: "conf"
+                    key: "conf",
                 }, {
                     val: "By Division",
-                    key: "div"
+                    key: "div",
                 }];
             }
             vm.fields().push({
                 id: fieldId,
                 name: fields[i],
                 options: ko.observableArray(options),
-                selected: ko.observable(selected[i])
+                selected: ko.observable(selected[i]),
             });
         }
 
@@ -256,7 +256,7 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
             if (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) {
                 vm.fields()[i].options.push({
                     val: `${g.season} season`,
-                    key: g.season
+                    key: g.season,
                 });
             }
         }
@@ -264,6 +264,6 @@ function dropdown(formId, fields, selected, updateEvents, extraParam) {
 }
 
 module.exports = {
-    dropdown
+    dropdown,
 };
 

@@ -10,7 +10,7 @@ function get(req) {
     if (req.raw.playByPlay !== undefined) {
         return {
             gidPlayByPlay: req.raw.gidPlayByPlay,
-            playByPlay: req.raw.playByPlay
+            playByPlay: req.raw.playByPlay,
         };
     }
 }
@@ -35,7 +35,7 @@ function InitViewModel() {
 
     // See views.gameLog for explanation
     this.boxScore = {
-        gid: ko.observable(-1)
+        gid: ko.observable(-1),
     };
     this.showBoxScore = ko.computed(function () {
         return this.boxScore.gid() >= 0;
@@ -82,14 +82,14 @@ async function updatePlayByPlay(inputs, updateEvents, vm) {
         }
 
         return {
-            boxScore
+            boxScore,
         };
     }
 
     // If no game is loaded by this point (either by this GET or a prior one), leave
     if (vm.boxScore.gid() < 0) {
         return {
-            redirectUrl: helpers.leagueUrl(["live"])
+            redirectUrl: helpers.leagueUrl(["live"]),
         };
     }
 }
@@ -100,8 +100,8 @@ function uiFirst() {
     // Keep plays list always visible
     $("#affixPlayByPlay").affix({
         offset: {
-            top: 80
-        }
+            top: 80,
+        },
     });
 
     // Keep height of plays list equal to window
@@ -221,5 +221,5 @@ module.exports = bbgmView.init({
     InitViewModel,
     runBefore: [updatePlayByPlay],
     runAfter: [startLiveGame],
-    uiFirst
+    uiFirst,
 });

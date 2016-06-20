@@ -17,17 +17,17 @@ async function updateSummary(vars) {
     const teams = [{
         tid: g.userTid,
         pids: vars.userPids,
-        dpids: vars.userDpids
+        dpids: vars.userDpids,
     }, {
         tid: otherTid,
         pids: vars.otherPids,
-        dpids: vars.otherDpids
+        dpids: vars.otherDpids,
     }];
 
     const summary = await trade.summary(teams);
     vars.summary = {
         enablePropose: !summary.warning && (teams[0].pids.length > 0 || teams[0].dpids.length > 0 || teams[1].pids.length > 0 || teams[1].dpids.length > 0),
-        warning: summary.warning
+        warning: summary.warning,
     };
 
     vars.summary.teams = [];
@@ -38,7 +38,7 @@ async function updateSummary(vars) {
             total: summary.teams[i].total,
             trade: summary.teams[i].trade,
             picks: summary.teams[i].picks,
-            other: i === 0 ? 1 : 0  // Index of other team
+            other: i === 0 ? 1 : 0,  // Index of other team
         };
     }
 
@@ -54,12 +54,12 @@ async function validateSavedPids() {
 function get(req) {
     if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) || g.phase === g.PHASE.FANTASY_DRAFT || g.gameOver) {
         return {
-            errorMessage: "You're not allowed to make trades now."
+            errorMessage: "You're not allowed to make trades now.",
         };
     }
 
     return {
-        message: req.raw.message !== undefined ? req.raw.message : null
+        message: req.raw.message !== undefined ? req.raw.message : null,
     };
 }
 
@@ -84,11 +84,11 @@ async function post(req) {
     const teams = [{
         tid: g.userTid,
         pids: userPids,
-        dpids: userDpids
+        dpids: userDpids,
     }, {
         tid: newOtherTid,
         pids: otherPids,
-        dpids: otherDpids
+        dpids: otherDpids,
     }];
 
     if (req.params.clear !== undefined) {
@@ -124,26 +124,26 @@ function InitViewModel() {
     this.teams = ko.observable([]);
     this.userTeamName = undefined;
     this.summary = {
-        enablePropose: ko.observable(false)
+        enablePropose: ko.observable(false),
     };
 }
 
 const mapping = {
     userPicks: {
-        create: options => options.data
+        create: options => options.data,
     },
     userRoster: {
-        create: options => options.data
+        create: options => options.data,
     },
     otherPicks: {
-        create: options => options.data
+        create: options => options.data,
     },
     otherRoster: {
-        create: options => options.data
+        create: options => options.data,
     },
     teams: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateTrade(inputs) {
@@ -152,7 +152,7 @@ async function updateTrade(inputs) {
         g.dbl.players.index('tid').getAll(g.userTid).then(players => {
             return player.withStats(null, players, {statsSeasons: [g.season]});
         }),
-        g.dbl.draftPicks.index('tid').getAll(g.userTid)
+        g.dbl.draftPicks.index('tid').getAll(g.userTid),
     ]);
 
     const attrs = ["pid", "name", "age", "contract", "injury", "watch", "gamesUntilTradable"];
@@ -167,7 +167,7 @@ async function updateTrade(inputs) {
         tid: g.userTid,
         showNoStats: true,
         showRookies: true,
-        fuzz: true
+        fuzz: true,
     });
     userRoster = trade.filterUntradable(userRoster);
 
@@ -195,8 +195,8 @@ async function updateTrade(inputs) {
             tid: otherTid,
             season: g.season,
             attrs: ["strategy"],
-            seasonAttrs: ["won", "lost"]
-        })
+            seasonAttrs: ["won", "lost"],
+        }),
     ]);
 
     otherRoster = player.filter(otherRoster, {
@@ -207,7 +207,7 @@ async function updateTrade(inputs) {
         tid: otherTid,
         showNoStats: true,
         showRookies: true,
-        fuzz: true
+        fuzz: true,
     });
     otherRoster = trade.filterUntradable(otherRoster);
 
@@ -238,7 +238,7 @@ async function updateTrade(inputs) {
         won: t.won,
         lost: t.lost,
         godMode: g.godMode,
-        forceTrade: false
+        forceTrade: false,
     };
     vars = await updateSummary(vars);
 
@@ -266,7 +266,7 @@ function uiFirst(vm) {
         Davis.location.replace(new Davis.Request({
             abbrev: $("#trade-select-team").val(),
             fullPath: helpers.leagueUrl(["trade"]),
-            method: "post"
+            method: "post",
         }));
     });
 
@@ -288,11 +288,11 @@ function uiFirst(vm) {
         let teams = [{
             tid: g.userTid,
             pids: serialized.filter(o => o.name === "user-pids").map(o => o.value).map(Math.floor),
-            dpids: serialized.filter(o => o.name === "user-dpids").map(o => o.value).map(Math.floor)
+            dpids: serialized.filter(o => o.name === "user-dpids").map(o => o.value).map(Math.floor),
         }, {
             tid: otherTid,
             pids: serialized.filter(o => o.name === "other-pids").map(o => o.value).map(Math.floor),
-            dpids: serialized.filter(o => o.name === "other-dpids").map(o => o.value).map(Math.floor)
+            dpids: serialized.filter(o => o.name === "other-dpids").map(o => o.value).map(Math.floor),
         }];
         teams = await trade.updatePlayers(teams);
 
@@ -347,8 +347,8 @@ function uiFirst(vm) {
         ui.datatableSinglePage($("#roster-user"), 5, tradeable("user", vm.userRoster()), {
             columnDefs: [{
                 orderable: false,
-                targets: [0]
-            }]
+                targets: [0],
+            }],
         });
     }).extend({throttle: 1});
 
@@ -356,8 +356,8 @@ function uiFirst(vm) {
         ui.datatableSinglePage($("#roster-other"), 5, tradeable("other", vm.otherRoster()), {
             columnDefs: [{
                 orderable: false,
-                targets: [0]
-            }]
+                targets: [0],
+            }],
         });
     }).extend({throttle: 1});
 
@@ -372,5 +372,5 @@ module.exports = bbgmView.init({
     InitViewModel,
     mapping,
     runBefore: [updateTrade],
-    uiFirst
+    uiFirst,
 });

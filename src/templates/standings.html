@@ -15,7 +15,7 @@
           <tbody data-bind="foreach: teams">
             <tr data-bind="css: {info: highlight}"><td>
               <a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $parents[2].season]}, text: region() + ' ' + name()"></a>
-              <span data-bind="visible: confRank() <= 8, text: '(' + confRank() + ')'"></span>
+              <span data-bind="visible: playoffsRank(), text: '(' + playoffsRank() + ')'"></span>
             </td><td data-bind="text: won"></td><td data-bind="text: lost"></td><td data-bind="roundWinp: winp"></td><td data-bind="text: gb"></td><td data-bind="text: wonHome() + '-' + lostHome()"></td><td data-bind="text: wonAway() + '-' + lostAway()"></td><td data-bind="text: wonDiv() + '-' + lostDiv()"></td><td data-bind="text: wonConf() + '-' + lostConf()"></td><td data-bind="text: streak"></td><td data-bind="text: lastTen"></td></tr>
           </tbody>
         </table>
@@ -28,7 +28,7 @@
         <tr><th width="100%">Team</th><th align="right">GB</th></tr>
       </thead>
       <tbody data-bind="foreach: teams">
-        <tr data-bind="css: {separator: $index() === 7, info: highlight}"><td><span data-bind="text: rank"></span>. <a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $parents[1].season]}, text: region"></a></td><td align="right" data-bind="text: gb"></td></tr>
+        <tr data-bind="css: {separator: $index() === 7 && $root.playoffsByConference(), info: highlight}"><td><span data-bind="text: rank"></span>. <a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $parents[1].season]}, text: region"></a></td><td align="right" data-bind="text: gb"></td></tr>
       </tbody>
       </table>
     </div>

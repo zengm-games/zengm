@@ -17,6 +17,6 @@ function numInArrayEqualTo(array, x) {
 }
 
 module.exports = {
-    numInArrayEqualTo
+    numInArrayEqualTo,
 };
 

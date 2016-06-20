@@ -43,7 +43,7 @@ async function create(teams) {
     await g.dbl.tx("trade", "readwrite", tx => {
         return tx.trade.put({
             rid: 0,
-            teams
+            teams,
         });
     });
 
@@ -170,7 +170,7 @@ async function updatePlayers(teams) {
         if (updated) {
             await tx.trade.put({
                 rid: 0,
-                teams
+                teams,
             });
         }
     });
@@ -210,7 +210,7 @@ function summary(teams) {
                     attrs: ["pid", "name", "contract"],
                     season: g.season,
                     tid: tids[i],
-                    showRookies: true
+                    showRookies: true,
                 });
                 s.teams[i].trade = players[i].filter(player => pids[i].indexOf(player.pid) >= 0);
                 s.teams[i].total = s.teams[i].trade.reduce((memo, player) => memo + player.contract.amount, 0);
@@ -221,7 +221,7 @@ function summary(teams) {
                 for (let j = 0; j < picks.length; j++) {
                     if (dpids[i].indexOf(picks[j].dpid) >= 0) {
                         s.teams[i].picks.push({
-                            desc: `${picks[j].season} ${picks[j].round === 1 ? "1st" : "2nd"} round pick (${g.teamAbbrevsCache[picks[j].originalTid]})`
+                            desc: `${picks[j].season} ${picks[j].round === 1 ? "1st" : "2nd"} round pick (${g.teamAbbrevsCache[picks[j].originalTid]})`,
                         });
                     }
                 }
@@ -380,7 +380,7 @@ async function propose(forceTrade) {
                 text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(s.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(s.teams[1])}.`,
                 showNotification: false,
                 pids: pids[0].concat(pids[1]),
-                tids
+                tids,
             });
         }
     });
@@ -426,7 +426,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
                         assets.push({
                             type: "player",
                             pid: p.pid,
-                            tid: teams[0].tid
+                            tid: teams[0].tid,
                         });
                     }
                 });
@@ -438,7 +438,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
                     assets.push({
                         type: "player",
                         pid: p.pid,
-                        tid: teams[1].tid
+                        tid: teams[1].tid,
                     });
                 }
             });
@@ -450,7 +450,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
                         assets.push({
                             type: "draftPick",
                             dpid: dp.dpid,
-                            tid: teams[0].tid
+                            tid: teams[0].tid,
                         });
                     }
                 });
@@ -462,7 +462,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
                     assets.push({
                         type: "draftPick",
                         dpid: dp.dpid,
-                        tid: teams[1].tid
+                        tid: teams[1].tid,
                     });
                 }
             });
@@ -573,7 +573,7 @@ async function getPickValues(ot) {
     const dbOrTx = ot || g.dbl;
 
     const estValues = {
-        default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37] // This is basically arbitrary
+        default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37], // This is basically arbitrary
     };
 
     // Look up to 4 season in the future, but depending on whether this is before or after the draft, the first or last will be empty/incomplete
@@ -606,7 +606,7 @@ async function getPickValues(ot) {
 async function makeItWorkTrade() {
     const [estValues, teams0] = await Promise.all([
         getPickValues(),
-        get()
+        get(),
     ]);
 
     const [found, teams] = await makeItWork(helpers.deepCopy(teams0), false, estValues);
@@ -638,7 +638,7 @@ async function makeItWorkTrade() {
     if (updated) {
         await g.dbl.tx("trade", "readwrite", tx => tx.trade.put({
             rid: 0,
-            teams
+            teams,
         }));
     }
 
@@ -660,5 +660,5 @@ module.exports = {
     makeItWork,
     makeItWorkTrade,
     filterUntradable,
-    getPickValues
+    getPickValues,
 };

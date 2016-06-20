@@ -9,7 +9,7 @@ const viewHelpers = require('../util/viewHelpers');
 
 function get(req) {
     return {
-        lid: parseInt(req.params.lid, 10)
+        lid: parseInt(req.params.lid, 10),
     };
 }
 
@@ -26,7 +26,7 @@ async function updateDeleteLeague(inputs) {
                 tx.games.count(),
                 tx.players.count(),
                 tx.teamSeasons.index("tid, season").getAll(backboard.bound([0], [0, ''])),
-                g.dbm.leagues.get(inputs.lid)
+                g.dbm.leagues.get(inputs.lid),
             ]);
 
             return {
@@ -34,7 +34,7 @@ async function updateDeleteLeague(inputs) {
                 name: l.name,
                 numGames,
                 numPlayers,
-                numSeasons: teamSeasons.length
+                numSeasons: teamSeasons.length,
             };
         });
     } catch (err) {
@@ -43,7 +43,7 @@ async function updateDeleteLeague(inputs) {
             name: null,
             numGames: null,
             numPlayers: null,
-            numSeasons: null
+            numSeasons: null,
         };
     }
 }
@@ -58,5 +58,5 @@ module.exports = bbgmView.init({
     get,
     post,
     runBefore: [updateDeleteLeague],
-    uiFirst
+    uiFirst,
 });

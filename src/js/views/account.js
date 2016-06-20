@@ -11,7 +11,7 @@ const ajaxErrorMsg = "Error connecting to server. Check your Internet connection
 function get(req) {
     return {
         goldSuccess: req.raw.goldResult !== undefined && req.raw.goldResult.success !== undefined ? req.raw.goldResult.success : null,
-        goldMessage: req.raw.goldResult !== undefined && req.raw.goldResult.message !== undefined ? req.raw.goldResult.message : null
+        goldMessage: req.raw.goldResult !== undefined && req.raw.goldResult.message !== undefined ? req.raw.goldResult.message : null,
     };
 }
 
@@ -34,7 +34,7 @@ async function updateAccount(inputs, updateEvents) {
             showGoldCancelled,
             showGoldPitch,
             goldSuccess: inputs.goldSuccess,
-            goldMessage: inputs.goldMessage
+            goldMessage: inputs.goldMessage,
         };
     }
 }
@@ -44,7 +44,7 @@ async function updateAchievements(inputs, updateEvents) {
         const achievements = await account.getAchievements();
 
         return {
-            achievements
+            achievements,
         };
     }
 }
@@ -68,22 +68,22 @@ function handleStripeButton() {
                         url: `//account.basketball-gm.${g.tld}/gold_start.php`,
                         data: {
                             sport: "basketball",
-                            token: token.id
+                            token: token.id,
                         },
                         dataType: "json",
                         xhrFields: {
-                            withCredentials: true
-                        }
+                            withCredentials: true,
+                        },
                     }));
                     ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
                 } catch (err) {
                     console.log(err);
                     ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
                         success: false,
-                        message: ajaxErrorMsg
+                        message: ajaxErrorMsg,
                     }});
                 }
-            }
+            },
         });
 
         buttonEl.addEventListener("click", e => {
@@ -93,7 +93,7 @@ function handleStripeButton() {
                 amount: 500,
                 email,
                 allowRememberMe: false,
-                panelLabel: "Subscribe for $5/month"
+                panelLabel: "Subscribe for $5/month",
             });
             e.preventDefault();
         });
@@ -112,19 +112,19 @@ function handleCancelLink() {
                     type: "POST",
                     url: `//account.basketball-gm.${g.tld}/gold_cancel.php`,
                     data: {
-                        sport: "basketball"
+                        sport: "basketball",
                     },
                     dataType: "json",
                     xhrFields: {
-                        withCredentials: true
-                    }
+                        withCredentials: true,
+                    },
                 }));
                 ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
             } catch (err) {
                 console.log(err);
                 ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
                     success: false,
-                    message: ajaxErrorMsg
+                    message: ajaxErrorMsg,
                 }});
             }
         }
@@ -145,7 +145,7 @@ function uiFirst() {
             url: `//account.basketball-gm.${g.tld}/logout.php`,
             data: `sport=${g.sport}`,
             xhrFields: {
-                withCredentials: true
+                withCredentials: true,
             },
             success: () => {
                 // Reset error display
@@ -156,7 +156,7 @@ function uiFirst() {
             },
             error: () => {
                 document.getElementById("logout-error").innerHTML = "Error connecting to server. Check your Internet connection or try again later.";
-            }
+            },
         });
     });
 
@@ -169,5 +169,5 @@ module.exports = bbgmView.init({
     get,
     beforeReq: viewHelpers.beforeNonLeague,
     runBefore: [updateAccount, updateAchievements],
-    uiFirst
+    uiFirst,
 });

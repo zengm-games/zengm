@@ -24,7 +24,7 @@ const defaultGameAttributes = {
     ownerMood: {
         wins: 0,
         playoffs: 0,
-        money: 0
+        money: 0,
     },
     gameOver: false,
     showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
@@ -40,7 +40,20 @@ const defaultGameAttributes = {
     minRosterSize: 10,
     numGames: 82, // per season
     quarterLength: 12, // [minutes]
-    disableInjuries: false
+    disableInjuries: false,
+    confs: [
+        {cid: 0, name: "Eastern Conference"},
+        {cid: 1, name: "Western Conference"},
+    ],
+    divs: [
+        {did: 0, cid: 0, name: "Atlantic"},
+        {did: 1, cid: 0, name: "Central"},
+        {did: 2, cid: 0, name: "Southeast"},
+        {did: 3, cid: 1, name: "Southwest"},
+        {did: 4, cid: 1, name: "Northwest"},
+        {did: 5, cid: 1, name: "Pacific"},
+    ],
+    numPlayoffRounds: 4,
 };
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
@@ -78,7 +91,7 @@ async function setGameAttributes(tx, gameAttributes) {
     await Promise.map(toUpdate, async key => {
         await tx.gameAttributes.put({
             key,
-            value: gameAttributes[key]
+            value: gameAttributes[key],
         });
 
         g[key] = gameAttributes[key];
@@ -145,7 +158,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
         tid,
         phaseText,
         teamName: teams[tid].name,
-        teamRegion: teams[tid].region
+        teamRegion: teams[tid].region,
     });
     await db.connectLeague(g.lid);
 
@@ -159,7 +172,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
         teamRegionsCache: teams.map(t => t.region),
         teamNamesCache: teams.map(t => t.name),
         gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
-        numTeams: teams.length // Will be 30 if the user doesn't supply custom rosters
+        numTeams: teams.length, // Will be 30 if the user doesn't supply custom rosters
     });
 
     // gameAttributes from input
@@ -203,7 +216,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
                             tid: t,
                             originalTid: t,
                             round,
-                            season: g.startingSeason + i
+                            season: g.startingSeason + i,
                         });
                     }
                 }
@@ -218,7 +231,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
         } else {
             tx.draftOrder.add({
                 rid: 1,
-                draftOrder: []
+                draftOrder: [],
             });
         }
 
@@ -269,13 +282,13 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
                 teams: [{
                     tid,
                     pids: [],
-                    dpids: []
+                    dpids: [],
                 },
                 {
                     tid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1).
                     pids: [],
-                    dpids: []
-                }]
+                    dpids: [],
+                }],
             });
         }
 
@@ -702,5 +715,5 @@ module.exports = {
     loadGameAttributes,
     updateLastDbChange,
     autoPlay,
-    initAutoPlay
+    initAutoPlay,
 };

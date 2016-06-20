@@ -21,12 +21,12 @@ function get(req) {
 
     if (season < g.startingSeason) {
         return {
-            errorMessage: "There is no league history yet. Check back after the playoffs."
+            errorMessage: "There is no league history yet. Check back after the playoffs.",
         };
     }
 
     return {
-        season
+        season,
     };
 }
 
@@ -36,14 +36,14 @@ async function updateHistory(inputs, updateEvents, vm) {
             g.dbl.awards.get(inputs.season),
             g.dbl.players.index('retiredYear').getAll(inputs.season).then(players => {
                 return player.withStats(null, players, {
-                    statsSeasons: [inputs.season]
+                    statsSeasons: [inputs.season],
                 });
             }),
             team.filter({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["playoffRoundsWon"],
-                season: inputs.season
-            })
+                season: inputs.season,
+            }),
         ]);
 
         // Hack placeholder for old seasons before Finals MVP existed
@@ -53,7 +53,7 @@ async function updateHistory(inputs, updateEvents, vm) {
                 name: "N/A",
                 pts: 0,
                 trb: 0,
-                ast: 0
+                ast: 0,
             };
         }
 
@@ -66,7 +66,7 @@ async function updateHistory(inputs, updateEvents, vm) {
             attrs: ["pid", "name", "age", "hof"],
             season: inputs.season,
             stats: ["tid", "abbrev"],
-            showNoStats: true
+            showNoStats: true,
         });
         for (let i = 0; i < retiredPlayers.length; i++) {
             // Show age at retirement, not current age
@@ -77,7 +77,7 @@ async function updateHistory(inputs, updateEvents, vm) {
         // Get champs
         let champ;
         for (let i = 0; i < teams.length; i++) {
-            if (teams[i].playoffRoundsWon === 4) {
+            if (teams[i].playoffRoundsWon === g.numPlayoffRounds) {
                 champ = teams[i];
                 break;
             }
@@ -88,7 +88,7 @@ async function updateHistory(inputs, updateEvents, vm) {
             champ,
             retiredPlayers,
             season: inputs.season,
-            userTid: g.userTid
+            userTid: g.userTid,
         };
     }
 }
@@ -108,5 +108,5 @@ module.exports = bbgmView.init({
     get,
     runBefore: [updateHistory],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

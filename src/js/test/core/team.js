@@ -76,7 +76,7 @@ describe("core/team", () => {
                 seasonAttrs: ["season", "won", "payroll"],
                 stats: ["gp", "fg", "fgp"],
                 tid: 4,
-                season: g.season
+                season: g.season,
             });
             assert.equal(t.tid, 4);
             assert.equal(t.abbrev, "CIN");
@@ -94,7 +94,7 @@ describe("core/team", () => {
                 attrs: ["tid", "abbrev"],
                 seasonAttrs: ["season", "won"],
                 stats: ["gp", "fg", "fgp"],
-                season: g.season
+                season: g.season,
             });
             assert.equal(teams.length, g.numTeams);
             assert.equal(teams[4].tid, 4);
@@ -112,7 +112,7 @@ describe("core/team", () => {
                 seasonAttrs: ["season", "won"],
                 stats: ["gp", "fg", "fgp"],
                 tid: 4,
-                season: g.season
+                season: g.season,
             });
             assert.equal(t.season, g.season);
             assert.equal(t.won, 0);
@@ -126,7 +126,7 @@ describe("core/team", () => {
                 attrs: ["tid", "abbrev"],
                 stats: ["gp", "fg", "fgp"],
                 tid: 4,
-                season: g.season
+                season: g.season,
             });
             assert.equal(t.tid, 4);
             assert.equal(t.abbrev, "CIN");
@@ -140,7 +140,7 @@ describe("core/team", () => {
                 attrs: ["tid", "abbrev"],
                 seasonAttrs: ["season", "won"],
                 tid: 4,
-                season: g.season
+                season: g.season,
             });
             assert.equal(t.tid, 4);
             assert.equal(t.abbrev, "CIN");
@@ -153,7 +153,7 @@ describe("core/team", () => {
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
                 season: g.season,
-                totals: true
+                totals: true,
             });
             assert.equal(t.gp, 10);
             assert.equal(t.fg, 50);
@@ -165,7 +165,7 @@ describe("core/team", () => {
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
                 season: g.season,
-                playoffs: true
+                playoffs: true,
             });
             assert.equal(t.gp, 4);
             assert.equal(t.fg, 3);
@@ -179,7 +179,7 @@ describe("core/team", () => {
                     seasonAttrs: ["season", "won"],
                     tid: 4,
                     season: g.season,
-                    ot: tx
+                    ot: tx,
                 });
                 assert.equal(t.tid, 4);
                 assert.equal(t.abbrev, "CIN");
@@ -195,7 +195,7 @@ describe("core/team", () => {
             const t = await team.filter({
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
-                playoffs: true
+                playoffs: true,
             });
             assert.equal(t.stats[0].gp, 4);
             assert.equal(t.stats[0].fg, 3);

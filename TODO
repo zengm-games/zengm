@@ -1,6 +1,11 @@
+newScheduleCrappy should be better
+
 better salary AI
   old players undervalued
   dynamically set based on cap space
+  increase salary cap, and startingSeason
+    need to make revenue higher too, then
+  https://www.reddit.com/r/gamedev/comments/4omk8h/simulating_marketbased_pricing/
 
 international names
   accurate faces (race)
@@ -65,8 +70,6 @@ get rid of everything in lib folder. either install from npm or create npm packa
 css build process?
 
 CI, dep version checking, etc
-
-go through old saved posts on reddit, update to new syntax
 
 eslint
   "arrow-parens": ["error", "as-needed"],
@@ -397,6 +400,7 @@ separate active and retired players into separate object stores
 CURRENT
 -------
 
+standings view, if playoffsByConference === false, show whole league standings in right column, not conference standings
 percentages for FG, FT, 3pt below box score like Yahoo
 game log for individual player
   in each box score, include an array of players in the game. index on that.

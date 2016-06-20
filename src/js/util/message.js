@@ -4,7 +4,7 @@ const random = require('./random');
 
 // First message after new game
 const first = [
-    "<p>Hey, sorry I didn't recognize you in the lobby this morning. I'm sure I'll get to know you eventually. Maybe after I get back from my trip to Tahiti?</p><p>Well, listen. Times are rough. Profit only increased by 10% last year. I know, I know, horrible. And I had to let half of our junior staffers go just to get that 10%!</p><p>So I'll cut right to the chase. I need money. And championships. Money and championships, that's what I'm interested in.</p><p>Get it done.</p>"
+    "<p>Hey, sorry I didn't recognize you in the lobby this morning. I'm sure I'll get to know you eventually. Maybe after I get back from my trip to Tahiti?</p><p>Well, listen. Times are rough. Profit only increased by 10% last year. I know, I know, horrible. And I had to let half of our junior staffers go just to get that 10%!</p><p>So I'll cut right to the chase. I need money. And championships. Money and championships, that's what I'm interested in.</p><p>Get it done.</p>",
 ];
 
 // Random activities the owner claims to be doing
@@ -35,12 +35,12 @@ const activities = [
     "figuring out how to fit in more courtside seats for celebrities",
     "coming up with a way to slightly shrink or expand the hoop, depending on which one we're shooting at",
     "perfecting my money laundering infrastructure (owning this team is very helpful)",
-    "making sure my \"girlfriends\" aren't posting pictures with black people on Instagram (how many times do I have to tell them??)"
+    "making sure my \"girlfriends\" aren't posting pictures with black people on Instagram (how many times do I have to tell them??)",
 ];
 
 // Intro of annual message
 const intro = [
-    "Sorry we haven't chatted much this year, but I've been busy {{activity}}. "
+    "Sorry we haven't chatted much this year, but I've been busy {{activity}}. ",
 ];
 
 // 0: bad overall, getting worse
@@ -53,68 +53,68 @@ const intro = [
 const wins = [];
 wins[0] = [
     "This is an embarassment. We lose so much, I can't even show my face around town. Buying this team was supposed to make me a celebrity, but not one of those bad celebrities that everyone hates. Turn it around.",
-    "I need some wins. Fans hate losers. Free agents hate losers. What's your strategy? Keep on losing until I fire you? You're making good progress, then."
+    "I need some wins. Fans hate losers. Free agents hate losers. What's your strategy? Keep on losing until I fire you? You're making good progress, then.",
 ];
 wins[1] = [
     "I recognize we're getting better and our team has some potential for growth, but don't fuck this up. You've already used up most of my patience.",
-    "You keep telling me we have \"potential\", but potential doesn't win games."
+    "You keep telling me we have \"potential\", but potential doesn't win games.",
 ];
 wins[2] = [
     "So, I mean, it could be worse. But that's not good enough.",
-    "In this league, mediocrity can be worse than losing. I hope you have some plan to get us to the next level."
+    "In this league, mediocrity can be worse than losing. I hope you have some plan to get us to the next level.",
 ];
 wins[3] = [
     "Don't think you can coast on your past success for too long. I'm not planning on rebuilding for a decade.",
-    "What have you done for me lately?"
+    "What have you done for me lately?",
 ];
 wins[4] = [
     "I'm pleased with our regular season performance.",
-    "I like the roster you've put together. We'll be at the top of our division for a long time."
+    "I like the roster you've put together. We'll be at the top of our division for a long time.",
 ];
 
 // Playoffs
 const playoffs = [];
 playoffs[0] = [
     "This town is starving, absolutely starving, for some postseason success. But with the job you're doing, we're not even close to the playoffs. Unacceptable.",
-    "Playoffs? Don't talk to me about playoffs. You kidding me? Playoffs? I just hope we can win a game!"
+    "Playoffs? Don't talk to me about playoffs. You kidding me? Playoffs? I just hope we can win a game!",
 ];
 playoffs[1] = [
     "In this town, you can't just be happy with making the playoffs. You have to get to the next level.",
-    "A first round playoff exit is boring."
+    "A first round playoff exit is boring.",
 ];
 playoffs[2] = [
     "Hey. I'm a champion. I don't know about you, but that's what my teams do. They win championships. Yeah, making the playoffs is okay I guess, but I'm not satisfied.",
-    "We need to make some real noise in the playoffs. Soon."
+    "We need to make some real noise in the playoffs. Soon.",
 ];
 playoffs[3] = [
     "Consistent playoff success is the standard. Never forget that.",
-    "I hope you don't plan on missing the playoffs again."
+    "I hope you don't plan on missing the playoffs again.",
 ];
 playoffs[4] = [
     "Winning titles can cover up a lot of flaws.",
-    "I need some more jewelry. Go get me another ring."
+    "I need some more jewelry. Go get me another ring.",
 ];
 
 // Money
 const money = [];
 money[0] = [
     "Money is an issue. I'm going broke. This is ridiculous. I'm supposed to be rich, but I can barely afford my monacle polish these days.",
-    "I can't afford a season in the red. Is it really that hard to turn a big profit in this business?"
+    "I can't afford a season in the red. Is it really that hard to turn a big profit in this business?",
 ];
 money[1] = [
-    "I like the recent financial turnaround you engineered. But I can't afford any setback."
+    "I like the recent financial turnaround you engineered. But I can't afford any setback.",
 ];
 money[2] = [
     "Listen. I need another private jet. Cut back on spending, increase revenue, whatever. I'm not an accountant. I just know I need another jet.",
-    "I didn't buy this team just for fun. We should be making a higher profit."
+    "I didn't buy this team just for fun. We should be making a higher profit.",
 ];
 money[3] = [
     "Just because you made some money in the past doesn't mean you're allowed to lose money now.",
-    "I liked what you were doing before this year, financially. This year, not so much."
+    "I liked what you were doing before this year, financially. This year, not so much.",
 ];
 money[4] = [
     "I just bought a nuclear submarine from the Russians. You believe that? That's all thanks to you. Keep pinching those pennies!",
-    "I just looked over the team finances. I like what I see. Keep up the good work there."
+    "I just looked over the team finances. I like what I see. Keep up the good work there.",
 ];
 
 // 0: bad
@@ -126,15 +126,15 @@ const ovr = [];
 ovr[0] = [
     "Bye.",
     "Please, don't bother me until you have some good news.",
-    "I'm watching you. Seriously, one of your assistant coaches is a spy. Don't fuck up."
+    "I'm watching you. Seriously, one of your assistant coaches is a spy. Don't fuck up.",
 ];
 ovr[1] = [
     "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships.",
     "You know, general managers aren't hired to be mediocre. Do better next year.",
-    "I've been meaning to tell you about this great idea I had. What if we only play 4 guys on defense, so the other guy can just wait for an easy score at the other end? Pure genius, isn't it?"
+    "I've been meaning to tell you about this great idea I had. What if we only play 4 guys on defense, so the other guy can just wait for an easy score at the other end? Pure genius, isn't it?",
 ];
 ovr[2] = [
-    "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}."
+    "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}.",
 ];
 
 /**
@@ -237,7 +237,7 @@ async function generate(tx, deltas) {
         read: false,
         from: "The Owner",
         year: g.season,
-        text: m
+        text: m,
     });
 
     if (ownerMoodSum > -1) {
@@ -251,10 +251,10 @@ async function generate(tx, deltas) {
     // Fired!
     await require('../core/league').setGameAttributes(tx, {
         gameOver: true,
-        showFirstOwnerMessage: true
+        showFirstOwnerMessage: true,
     });
 }
 
 module.exports = {
-    generate
+    generate,
 };

@@ -44,67 +44,67 @@ describe("core/player", () => {
             const playerStats = [{
                 min: 1 * 2.6,
                 per: 18.7,
-                ewa: 0
+                ewa: 0,
             }, {
                 min: 77 * 19.3,
                 per: 13,
-                ewa: 1.1
+                ewa: 1.1,
             }, {
                 min: 82 * 26,
                 per: 18.9,
-                ewa: 6.6
+                ewa: 6.6,
             }, {
                 min: 82 * 33.9,
                 per: 15.3,
-                ewa: 4.7
+                ewa: 4.7,
             }, {
                 min: 79 * 33.8,
                 per: 16,
-                ewa: 5.3
+                ewa: 5.3,
             }, {
                 min: 81 * 31,
                 per: 17.1,
-                ewa: 6.1
+                ewa: 6.1,
             }, {
                 min: 80 * 28,
                 per: 16.2,
-                ewa: 4.6
+                ewa: 4.6,
             }, {
                 min: 82 * 34.1,
                 per: 16.6,
-                ewa: 6.2
+                ewa: 6.2,
             }, {
                 min: 80 * 34.8,
                 per: 16.9,
-                ewa: 6.5
+                ewa: 6.5,
             }, {
                 min: 82 * 31.7,
                 per: 17.8,
-                ewa: 7
+                ewa: 7,
             }, {
                 min: 81 * 33.5,
                 per: 18.8,
-                ewa: 8.3
+                ewa: 8.3,
             }, {
                 min: 82 * 32,
                 per: 17.8,
-                ewa: 7
+                ewa: 7,
             }, {
                 min: 82 * 30.5,
                 per: 17,
-                ewa: 5.9
+                ewa: 5.9,
             }, {
                 min: 76 * 30.6,
                 per: 16.3,
-                ewa: 4.8
+                ewa: 4.8,
             }, {
                 min: 82 * 30.8,
                 per: 16,
-                ewa: 5
+                ewa: 5,
             }, {
                 min: 82 * 28,
                 per: 15.6,
-                ewa: 4.1
+                ewa: 4.1,
             }];
 
             assert.equal(player.madeHof(p, playerStats), false);
@@ -149,7 +149,7 @@ describe("core/player", () => {
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
                 tid: 4,
-                season: 2012
+                season: 2012,
             });
 
             assert.equal(pf.tid, 4);
@@ -174,7 +174,7 @@ describe("core/player", () => {
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
                 tid: 4,
-                season: 2012
+                season: 2012,
             });
 
             for (let i = 0; i < 2; i++) {
@@ -200,7 +200,7 @@ describe("core/player", () => {
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
                 tid: 4,
-                season: 2012
+                season: 2012,
             });
 
             assert.equal(pf.ratings.season, 2012);
@@ -222,7 +222,7 @@ describe("core/player", () => {
                 attrs: ["tid", "awards"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
                 tid: 4,
-                season: 2012
+                season: 2012,
             });
 
             assert.equal(pf.tid, 4);
@@ -244,7 +244,7 @@ describe("core/player", () => {
                 attrs: ["tid", "awards"],
                 ratings: ["season", "ovr"],
                 tid: 4,
-                season: 2012
+                season: 2012,
             });
 
             assert.equal(pf.tid, 4);
@@ -264,7 +264,7 @@ describe("core/player", () => {
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
                 tid: 5,
-                season: 2012
+                season: 2012,
             });
 
             assert.equal((typeof pf), "undefined");
@@ -275,7 +275,7 @@ describe("core/player", () => {
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg", "fgp", "per"],
                 tid: 4,
-                season: 2014
+                season: 2014,
             });
 
             assert.equal((typeof pf), "undefined");
@@ -285,7 +285,7 @@ describe("core/player", () => {
                 stats: ["gp", "fg"],
                 tid: 4,
                 season: 2012,
-                totals: true
+                totals: true,
             });
             assert.equal(pf.stats.gp, 5);
             assert.equal(pf.stats.fg, 20);
@@ -293,7 +293,7 @@ describe("core/player", () => {
             pf = player.filter(p, {
                 stats: ["gp", "fg"],
                 tid: 4,
-                season: 2012
+                season: 2012,
             });
             assert.equal(pf.stats.gp, 5);
             assert.equal(pf.stats.fg, 4);
@@ -303,7 +303,7 @@ describe("core/player", () => {
                 stats: ["gp", "fg"],
                 tid: 4,
                 season: 2012,
-                playoffs: true
+                playoffs: true,
             });
             assert.equal(pf.stats.gp, 5);
             assert.equal(pf.stats.fg, 4);
@@ -315,7 +315,7 @@ describe("core/player", () => {
                 stats: ["gp", "fg"],
                 tid: 5,
                 season: 2012,
-                showNoStats: true
+                showNoStats: true,
             });
             assert.equal((typeof pf), "object");
         });
@@ -324,7 +324,7 @@ describe("core/player", () => {
                 stats: ["gp", "fg"],
                 tid: 4,
                 season: 2015,
-                showNoStats: true
+                showNoStats: true,
             });
             assert.equal((typeof pf), "undefined");
         });
@@ -334,7 +334,7 @@ describe("core/player", () => {
                 stats: ["gp", "fg"],
                 tid: 5,
                 season: 2011,
-                showRookies: true
+                showRookies: true,
             });
             assert.equal((typeof pf), "object");
 
@@ -343,7 +343,7 @@ describe("core/player", () => {
                 stats: ["gp", "fg"],
                 tid: 5,
                 season: 2011,
-                showRookies: true
+                showRookies: true,
             });
             assert.equal((typeof pf), "undefined");
 
@@ -354,7 +354,7 @@ describe("core/player", () => {
                 ratings: ["ovr"],
                 tid: 4,
                 season: 2012,
-                fuzz: false
+                fuzz: false,
             });
             assert.equal(pf.ratings.ovr, p.ratings[1].ovr);
 
@@ -362,7 +362,7 @@ describe("core/player", () => {
                 ratings: ["ovr"],
                 tid: 4,
                 season: 2012,
-                fuzz: true
+                fuzz: true,
             });
             // This will break if ovr + fuzz is over 100 (should check bounds), but that never happens in practice
             assert.equal(pf.ratings.ovr, Math.round(p.ratings[1].ovr + p.ratings[1].fuzz));
@@ -373,7 +373,7 @@ describe("core/player", () => {
                 stats: ["gp", "fg"],
                 tid: 0,
                 season: 2013,
-                oldStats: true
+                oldStats: true,
             });
             assert.equal(pf.stats.gp, 8);
             assert.equal(pf.stats.fg, 7);
@@ -383,7 +383,7 @@ describe("core/player", () => {
                 stats: ["gp", "fg"],
                 tid: 0,
                 season: 2014,
-                oldStats: true
+                oldStats: true,
             });
             assert.equal(pf.stats.gp, 8);
             assert.equal(pf.stats.fg, 7);
@@ -392,7 +392,7 @@ describe("core/player", () => {
                 stats: ["gp", "fg"],
                 tid: 0,
                 season: 2014,
-                oldStats: false
+                oldStats: false,
             });
             assert.equal((typeof pf), "undefined");
 
@@ -405,7 +405,7 @@ describe("core/player", () => {
                 attrs: ["cashOwed"],
                 tid: 4,
                 season: 2012,
-                numGamesRemaining: 82
+                numGamesRemaining: 82,
             });
             assert.equal(pf.cashOwed, p.contract.amount * 2 / 1000);
 
@@ -413,7 +413,7 @@ describe("core/player", () => {
                 attrs: ["cashOwed"],
                 tid: 4,
                 season: 2012,
-                numGamesRemaining: 41
+                numGamesRemaining: 41,
             });
             assert.equal(pf.cashOwed, p.contract.amount * 1.5 / 1000);
 
@@ -421,7 +421,7 @@ describe("core/player", () => {
                 attrs: ["cashOwed"],
                 tid: 4,
                 season: 2012,
-                numGamesRemaining: 0
+                numGamesRemaining: 0,
             });
             assert.equal(pf.cashOwed, p.contract.amount / 1000);
         });
@@ -430,7 +430,7 @@ describe("core/player", () => {
                 attrs: ["tid", "awards"],
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg"],
-                totals: true
+                totals: true,
             });
 
             assert.equal(pf.tid, 4);
@@ -458,7 +458,7 @@ describe("core/player", () => {
                 ratings: ["season", "ovr"],
                 stats: ["season", "abbrev", "fg"],
                 tid: 4,
-                totals: true
+                totals: true,
             });
 
             assert.equal(pf.tid, 4);

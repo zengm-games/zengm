@@ -22,7 +22,7 @@ async function updateOwnerMood(tx) {
         ot: tx,
         seasonAttrs: ["won", "playoffRoundsWon", "profit"],
         season: g.season,
-        tid: g.userTid
+        tid: g.userTid,
     });
 
     const deltas = {};
@@ -91,7 +91,7 @@ async function awards(tx) {
         seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
         season: g.season,
         sortBy: "winp",
-        ot: tx
+        ot: tx,
     });
 
     let foundEast = false;
@@ -117,13 +117,13 @@ async function awards(tx) {
 
     let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT));
     players = await player.withStats(tx, players, {
-        statsSeasons: [g.season]
+        statsSeasons: [g.season],
     });
 
     players = player.filter(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
         stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
-        season: g.season
+        season: g.season,
     });
 
     // League leaders - points, rebounds, assists, steals, blocks
@@ -133,7 +133,7 @@ async function awards(tx) {
         {name: "League Rebounding Leader", stat: "trb", minValue: 800},
         {name: "League Assists Leader", stat: "ast", minValue: 400},
         {name: "League Steals Leader", stat: "stl", minValue: 125},
-        {name: "League Blocks Leader", stat: "blk", minValue: 100}
+        {name: "League Blocks Leader", stat: "blk", minValue: 100},
     ];
     for (const cat of categories) {
         players.sort((a, b) => b.stats[cat.stat] - a.stats[cat.stat]);
@@ -227,21 +227,21 @@ async function awards(tx) {
     }
 
     // Finals MVP - most WS in playoffs
-    const champTid = teams.find(t => t.playoffRoundsWon === 4).tid;
+    const champTid = teams.find(t => t.playoffRoundsWon === g.numPlayoffRounds).tid;
 
     // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
     let champPlayers = await tx.players.index('tid').getAll(champTid);
     champPlayers = await player.withStats(tx, champPlayers, {
         statsSeasons: [g.season],
         statsTid: champTid,
-        statsPlayoffs: true
+        statsPlayoffs: true,
     });
     champPlayers = player.filter(champPlayers, { // Only the champions, only playoff stats
         attrs: ["pid", "name", "tid", "abbrev"],
         stats: ["pts", "trb", "ast", "ewa"],
         season: g.season,
         playoffs: true,
-        tid: champTid
+        tid: champTid,
     });
     champPlayers.sort((a, b) => b.statsPlayoffs.ewa - a.statsPlayoffs.ewa);
     p = champPlayers[0];
@@ -268,7 +268,7 @@ async function awards(tx) {
             text,
             showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",
             pids: [p.pid],
-            tids: [p.tid]
+            tids: [p.tid],
         });
     }
 }
@@ -321,7 +321,7 @@ async function setSchedule(tx, tids) {
     for (let i = 0; i < tids.length; i++) {
         newSchedule.push({
             homeTid: tids[i][0],
-            awayTid: tids[i][1]
+            awayTid: tids[i][1],
         });
     }
 
@@ -388,7 +388,7 @@ function newScheduleDefault(teams) {
         dids[teams[i].cid].push(teams[i].did);
     }
 
-    for (let cid = 0; cid < 2; cid++) {
+    for (let cid = 0; cid < g.confs.length; cid++) {
         const matchups = [];
         matchups.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
         let games = 0;
@@ -512,7 +512,14 @@ function newScheduleCrappy() {
  */
 function newSchedule(teams) {
     let tids;
-    if (g.numTeams === 30 && g.numGames === 82) {
+    let threeDivsPerConf = true;
+    for (const conf of g.confs) {
+        if (g.divs.filter(div => div.cid === conf.cid).length !== 3) {
+            threeDivsPerConf = false;
+            break;
+        }
+    }
+    if (g.numTeams === 30 && g.numGames === 82 && g.confs.length === 2 && threeDivsPerConf) {
         tids = newScheduleDefault(teams);
     } else {
         tids = newScheduleCrappy();
@@ -581,7 +588,7 @@ async function newSchedulePlayoffsDay(tx) {
     }
 
     // If playoffs are over, update winner and go to next phase
-    if (rnd === 3) {
+    if (rnd === g.numPlayoffRounds - 1) {
         let key;
         if (series[rnd][0].home.won === 4) {
             key = series[rnd][0].home.tid;
@@ -590,7 +597,7 @@ async function newSchedulePlayoffsDay(tx) {
         }
 
         await tx.teamSeasons.index("season, tid").iterate([g.season, key], teamSeason => {
-            teamSeason.playoffRoundsWon = 4;
+            teamSeason.playoffRoundsWon = g.numPlayoffRounds;
             teamSeason.hype += 0.05;
             if (teamSeason.hype > 1) {
                 teamSeason.hype = 1;
@@ -688,6 +695,55 @@ async function getDaysLeftSchedule() {
     return numDays;
 }
 
+function genPlayoffSeries(teams) {
+    // Playoffs are split into two branches by conference only if there are exactly 2 conferences and the special secret option top16playoffs is not set
+    const playoffsByConference = g.confs.length === 2 && !localStorage.top16playoffs;
+
+    const tidPlayoffs = [];
+    const numPlayoffTeams = Math.pow(2, g.numPlayoffRounds);
+    const series = _.range(g.numPlayoffRounds).map(() => []);
+    if (playoffsByConference) {
+        // Default: top 50% of teams in each of the two conferences
+        const numSeriesPerConference = numPlayoffTeams / 4;
+        for (let cid = 0; cid < g.confs.length; cid++) {
+            const teamsConf = [];
+            for (let i = 0; i < teams.length; i++) {
+                if (teams[i].cid === cid) {
+                    teamsConf.push(teams[i]);
+                    tidPlayoffs.push(teams[i].tid);
+                    if (teamsConf.length >= numPlayoffTeams / 2) {
+                        break;
+                    }
+                }
+            }
+            for (let i = 0; i < numSeriesPerConference; i++) {
+                const j = i % 2 === 0 ? i : numSeriesPerConference - i;
+                series[0][j + cid * numSeriesPerConference] = {home: teamsConf[i], away: teamsConf[numPlayoffTeams / 2 - 1 - i]};
+                series[0][j + cid * numSeriesPerConference].home.seed = i + 1;
+                series[0][j + cid * numSeriesPerConference].away.seed = numPlayoffTeams / 2 - i;
+            }
+        }
+    } else {
+        // Alternative: top 50% of teams overall
+        const teamsConf = [];
+        for (let i = 0; i < teams.length; i++) {
+            teamsConf.push(teams[i]);
+            tidPlayoffs.push(teams[i].tid);
+            if (teamsConf.length >= numPlayoffTeams) {
+                break;
+            }
+        }
+        for (let i = 0; i < numPlayoffTeams / 2; i++) {
+            const j = i % 2 === 0 ? i : numPlayoffTeams / 2 - i;
+            series[0][j] = {home: teamsConf[i], away: teamsConf[numPlayoffTeams - 1 - i]};
+            series[0][j].home.seed = i + 1;
+            series[0][j].away.seed = numPlayoffTeams - i;
+        }
+    }
+
+    return {series, tidPlayoffs};
+}
+
 module.exports = {
     awards,
     updateOwnerMood,
@@ -695,5 +751,6 @@ module.exports = {
     setSchedule,
     newSchedule,
     newSchedulePlayoffsDay,
-    getDaysLeftSchedule
+    getDaysLeftSchedule,
+    genPlayoffSeries,
 };

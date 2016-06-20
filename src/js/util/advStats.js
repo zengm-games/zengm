@@ -22,7 +22,7 @@ async function calculatePER() {
         stats: ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb", "oppPts"],
         season: g.season,
         totals: true,
-        playoffs: g.PHASE.PLAYOFFS === g.phase
+        playoffs: g.PHASE.PLAYOFFS === g.phase,
     });
 
     // Total league stats (not per game averages) - gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
@@ -59,7 +59,7 @@ async function calculatePER() {
     let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(0));
     players = await player.withStats(null, players, {
         statsSeasons: [g.season],
-        statsPlayoffs: g.PHASE.PLAYOFFS === g.phase
+        statsPlayoffs: g.PHASE.PLAYOFFS === g.phase,
     });
 
     players = player.filter(players, {
@@ -68,7 +68,7 @@ async function calculatePER() {
         ratings: ["pos"],
         season: g.season,
         totals: true,
-        playoffs: g.PHASE.PLAYOFFS === g.phase
+        playoffs: g.PHASE.PLAYOFFS === g.phase,
     });
 
     const aPER = [];
@@ -136,7 +136,7 @@ async function calculatePER() {
         F: 11,
         PF: 11.5,
         FC: 11.05,
-        C: 10.6
+        C: 10.6,
     };
 
     for (let i = 0; i < players.length; i++) {
@@ -189,5 +189,5 @@ function calculateAll() {
 }
 
 module.exports = {
-    calculateAll
+    calculateAll,
 };

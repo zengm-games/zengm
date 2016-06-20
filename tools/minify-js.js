@@ -5,8 +5,8 @@ const result = UglifyJS.minify("build/gen/app.js", {
     inSourceMap: "build/gen/app.js.map",
     outSourceMap: "build/gen/app.js.map",
     mangle: {
-        except: ['require']
-    }
+        except: ['require'],
+    },
 });
 
 fs.writeFileSync('build/gen/app.js', result.code);

@@ -14,19 +14,19 @@ async function addSeason(season, tid) {
     let playersAll = await g.dbl.players.index('tid').getAll(tid);
 
     playersAll = player.filter(playersAll, {
-        attrs: ["pid", "name", "age", "watch", "valueFuzz"],
+        attrs: ["pid", "firstName", "lastName", "age", "watch", "valueFuzz"],
         ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
         showNoStats: true,
         showRookies: true,
-        fuzz: true
+        fuzz: true,
     });
 
     const players = [];
     for (let i = 0; i < playersAll.length; i++) {
         const pa = playersAll[i];
 
-        // Abbrevaite first name to prevent overflows
-        pa.name = `${pa.name.split(" ")[0].substr(0, 1)}. ${pa.name.split(" ")[1]}`;
+        // Abbreviate first name to prevent overflows
+        pa.name = `${pa.firstName.split(" ").map(s => s[0]).join(".")}. ${pa.lastName}`;
 
         // Attributes
         const p = {pid: pa.pid, name: pa.name, age: pa.age, watch: pa.watch, valueFuzz: pa.valueFuzz};
@@ -48,14 +48,14 @@ async function addSeason(season, tid) {
 
     return {
         players,
-        season
+        season,
     };
 }
 
 const mapping = {
     seasons: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateDraftScouting(inputs, updateEvents) {
@@ -69,11 +69,11 @@ async function updateDraftScouting(inputs, updateEvents) {
         const seasons = await Promise.all([
             addSeason(g.season + seasonOffset, firstUndraftedTid),
             addSeason(g.season + seasonOffset + 1, g.PLAYER.UNDRAFTED_2),
-            addSeason(g.season + seasonOffset + 2, g.PLAYER.UNDRAFTED_3)
+            addSeason(g.season + seasonOffset + 2, g.PLAYER.UNDRAFTED_3),
         ]);
 
         return {
-            seasons
+            seasons,
         };
     }
 }
@@ -220,5 +220,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateDraftScouting],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

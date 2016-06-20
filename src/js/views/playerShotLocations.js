@@ -10,7 +10,7 @@ const helpers = require('../util/helpers');
 
 function get(req) {
     return {
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -20,8 +20,8 @@ function InitViewModel() {
 
 const mapping = {
     players: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updatePlayers(inputs, updateEvents, vm) {
@@ -32,12 +32,12 @@ async function updatePlayers(inputs, updateEvents, vm) {
             attrs: ["pid", "name", "age", "injury", "watch"],
             ratings: ["skills", "pos"],
             stats: ["abbrev", "gp", "gs", "min", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"],
-            season: inputs.season
+            season: inputs.season,
         });
 
         return {
             season: inputs.season,
-            players
+            players,
         };
     }
 }
@@ -68,5 +68,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updatePlayers],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

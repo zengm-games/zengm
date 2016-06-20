@@ -8,6 +8,7 @@ number or not.
 
 - Default teams now have logos
 - International players from 85 countries, and better names for American players
+- Conferences and divisions are now customizable, although only through league files
 
 ## Techincal details
 

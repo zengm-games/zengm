@@ -10,8 +10,8 @@ const helpers = require('../util/helpers');
 
 const mapping = {
     teams: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updatePowerRankings(inputs, updateEvents) {
@@ -21,9 +21,9 @@ async function updatePowerRankings(inputs, updateEvents) {
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["won", "lost", "lastTen"],
                 stats: ["gp", "pts", "oppPts", "diff"],
-                season: g.season
+                season: g.season,
             }),
-            g.dbl.players.index('tid').getAll(backboard.lowerBound(0))
+            g.dbl.players.index('tid').getAll(backboard.lowerBound(0)),
         ]);
 
         // Array of arrays, containing the values for each player on each team
@@ -83,7 +83,7 @@ async function updatePowerRankings(inputs, updateEvents) {
         }
 
         return {
-            teams
+            teams,
         };
     }
 }
@@ -108,7 +108,7 @@ function uiFirst(vm) {
                 if (data[data.length - 1]) {
                     row.classList.add("info");
                 }
-            }
+            },
         });
     }).extend({throttle: 1});
 
@@ -119,5 +119,5 @@ module.exports = bbgmView.init({
     id: "powerRankings",
     mapping,
     runBefore: [updatePowerRankings],
-    uiFirst
+    uiFirst,
 });

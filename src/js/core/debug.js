@@ -144,7 +144,7 @@ async function regressRatingsPer() {
     players = player.filter(players, {
         ratings: ["season", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
         stats: ["season", "per", "min"],
-        totals: true
+        totals: true,
     });
 
     const pers = [];
@@ -260,5 +260,5 @@ module.exports = {
     leagueAverageContract,
     exportPlayerInfo,
     exportPlayerStats,
-    averageCareerArc
+    averageCareerArc,
 };

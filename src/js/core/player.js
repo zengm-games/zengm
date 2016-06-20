@@ -506,7 +506,7 @@ async function genBaseMoods(ot) {
 
     return teamSeasons.map(teamSeason => {
         // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
-        if (teamSeason.playoffRoundsWon === 4 && Math.random() < 0.99) {
+        if (teamSeason.playoffRoundsWon === g.numPlayoffRounds && Math.random() < 0.99) {
             return -0.25; // Should guarantee no refusing to re-sign
         }
 
@@ -595,7 +595,7 @@ async function release(tx, p, justDrafted) {
         tx.releasedPlayers.add({
             pid: p.pid,
             tid: p.tid,
-            contract: p.contract
+            contract: p.contract,
         });
     } else {
         // Clear player salary log if just drafted, because this won't be paid.
@@ -604,10 +604,10 @@ async function release(tx, p, justDrafted) {
 
     eventLog.add(null, {
         type: "release",
-        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>.`,
+        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a>.`,
         showNotification: false,
         pids: [p.pid],
-        tids: [p.tid]
+        tids: [p.tid],
     });
 
     const baseMoods = await genBaseMoods(tx);
@@ -728,15 +728,16 @@ function name() {
 
     // First name
     const fnRand = random.uniform(0, playerNames.first[country][playerNames.first[country].length - 1][1]);
-    const fn = playerNames.first[country].find(row => row[1] >= fnRand)[0];
+    const firstName = playerNames.first[country].find(row => row[1] >= fnRand)[0];
 
     // Last name
     const lnRand = random.uniform(0, playerNames.last[country][playerNames.last[country].length - 1][1]);
-    const ln = playerNames.last[country].find(row => row[1] >= lnRand)[0];
+    const lastName = playerNames.last[country].find(row => row[1] >= lnRand)[0];
 
     return {
         country,
-        name: `${fn} ${ln}`
+        firstName,
+        lastName,
     };
 }
 
@@ -814,7 +815,7 @@ function addStatsRow(ot, p, playoffs = false) {
         pts: 0,
         per: 0,
         ewa: 0,
-        yearsWithTeam: 1
+        yearsWithTeam: 1,
     };
 
     p.statsTids.push(p.tid);
@@ -913,10 +914,11 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
     const nameInfo = name();
     p.born = {
         year: g.season - age,
-        loc: nameInfo.country
+        loc: nameInfo.country,
     };
 
-    p.name = nameInfo.name;
+    p.firstName = nameInfo.firstName;
+    p.lastName = nameInfo.lastName;
     p.college = "";
     p.imgURL = ""; // Custom rosters can define player image URLs to be used rather than vector faces
 
@@ -936,7 +938,7 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
         teamRegion: null,
         pot,
         ovr: p.ratings[0].ovr,
-        skills: p.ratings[0].skills
+        skills: p.ratings[0].skills,
     };
 
     p.face = faces.generate();
@@ -976,7 +978,7 @@ function injury(healthRank) {
 
     return {
         type: injuries.types[i],
-        gamesRemaining: Math.round((0.7 * (healthRank - 1) / (g.numTeams - 1) + 0.65) * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i])
+        gamesRemaining: Math.round((0.7 * (healthRank - 1) / (g.numTeams - 1) + 0.65) * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i]),
     };
 }
 
@@ -1109,10 +1111,12 @@ function filter(p, options) {
                         fp.awardsGrouped.push({
                             type: award,
                             count: awardsGroupedTemp[award].length,
-                            seasons: helpers.yearRanges(_.pluck(awardsGroupedTemp[award], "season"))
+                            seasons: helpers.yearRanges(_.pluck(awardsGroupedTemp[award], "season")),
                         });
                     }
                 }
+            } else if (options.attrs[i] === "name") {
+                fp.name = `${p.firstName} ${p.lastName}`;
             } else {
                 fp[options.attrs[i]] = p[options.attrs[i]];
             }
@@ -1493,7 +1497,7 @@ function madeHof(p, playerStats) {
         F: 11,
         PF: 11.5,
         FC: 11.05,
-        C: 10.6
+        C: 10.6,
     };
 
     // Estimated wins added for each season http://insider.espn.go.com/nba/hollinger/statistics
@@ -1716,10 +1720,10 @@ function retire(tx, p, playerStats, retiredNotification) {
     if (retiredNotification) {
         eventLog.add(tx, {
             type: "retired",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>  retired.`,
+            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> retired.`,
             showNotification: p.tid === g.userTid,
             pids: [p.pid],
-            tids: [p.tid]
+            tids: [p.tid],
         });
     }
 
@@ -1732,10 +1736,10 @@ function retire(tx, p, playerStats, retiredNotification) {
         p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
         eventLog.add(tx, {
             type: "hallOfFame",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> was inducted into the <a href="${helpers.leagueUrl(["hall_of_fame"])}">Hall of Fame</a>.`,
+            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> was inducted into the <a href="${helpers.leagueUrl(["hall_of_fame"])}">Hall of Fame</a>.`,
             showNotification: p.statsTids.indexOf(g.userTid) >= 0,
             pids: [p.pid],
-            tids: p.statsTids
+            tids: p.statsTids,
         });
     }
 
@@ -1747,27 +1751,27 @@ function moodColorText(p) {
     if (p.freeAgentMood[g.userTid] < 0.25) {
         return {
             color: "#5cb85c",
-            text: 'Eager to reach an agreement.'
+            text: 'Eager to reach an agreement.',
         };
     }
 
     if (p.freeAgentMood[g.userTid] < 0.5) {
         return {
             color: "#ccc",
-            text: 'Willing to sign for the right price.'
+            text: 'Willing to sign for the right price.',
         };
     }
 
     if (p.freeAgentMood[g.userTid] < 0.75) {
         return {
             color: "#f0ad4e",
-            text: 'Annoyed at you.'
+            text: 'Annoyed at you.',
         };
     }
 
     return {
         color: "#d9534f",
-        text: 'Insulted by your presence.'
+        text: 'Insulted by your presence.',
     };
 }
 
@@ -1829,6 +1833,12 @@ function augmentPartialPlayer(p, scoutingRank) {
         p.ratings[0].pot = p.ratings[0].ovr;
     }
 
+    if (p.hasOwnProperty("name") && !(p.hasOwnProperty("firstName")) && !(p.hasOwnProperty("lastName"))) {
+        // parse and split names from roster file
+        p.firstName = p.name.split(" ")[0];
+        p.lastName = p.name.split(" ").slice(1, p.name.split(" ").length).join(" ");
+    }
+
     // Fix always-missing info
     if (p.tid === g.PLAYER.UNDRAFTED_2) {
         p.ratings[0].season = g.startingSeason + 1;
@@ -1874,7 +1884,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
             text,
             showNotification: tid === g.userTid,
             pids: [pid],
-            tids: [tid]
+            tids: [tid],
         });
     };
 
@@ -1972,7 +1982,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
             stats: p.stat,
             won,
             score: `${results.team[i].stat.pts}-${results.team[j].stat.pts}`,
-            overtimes: results.overtimes
+            overtimes: results.overtimes,
         });
     }
 }
@@ -1996,7 +2006,16 @@ async function killOne() {
         "had a stroke after reading about the owner's plans to trade him",
         "laughed himself to death while watching Modern Family",
         "died of exertion while trying to set the record for largerst number of sex partners in one day",
-        "rode his Segway off a cliff"
+        "rode his Segway off a cliff",
+        "fell into the gorilla pit at the zoo and was dismembered as the staff decided not to shoot the gorilla",
+        "was found in a hotel room with a belt around his neck and his hand around his dick",
+        "was pursued by a bear, and mauled", // poor Antigonus
+        "was smothered by a throng of ravenous, autograph-seeking fans after exiting the team plane",
+        `was killed by ${random.choice(["Miss Scarlet", "Professor Plum", "Mrs. Peacock", "Reverend Green", "Colonel Mustard", "Mrs. White"])}, in the ${random.choice(["kitchen", "ballroom", "conservatory", "dining room", "cellar", "billiard room", "library", "lounge", "hall", "study"])}, with the ${random.choice(["candlestick", "dagger", "lead pipe", "revolver", "rope", "spanner"])}`,
+        "suffered a heart attack in the team training facility and died",
+        "was lost at sea and is presumed dead",
+        "was run over by a car",
+        "was run over by a car, and then was run over by a second car. Police believe only the first was intentional",
     ]);
 
     // Pick random team
@@ -2009,10 +2028,7 @@ async function killOne() {
         let p = random.choice(players);
 
         // Get player stats, used for HOF calculation
-        const playerStats = await tx.playerStats.getAll({
-            index: "pid, season, tid",
-            key: backboard.bound([p.pid], [p.pid, ''])
-        });
+        const playerStats = await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, '']));
 
         p = retire(tx, p, playerStats, false);
         p.diedYear = g.season;
@@ -2021,11 +2037,11 @@ async function killOne() {
 
         await eventLog.add(tx, {
             type: "tragedy",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> ${reason}.`,
+            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> ${reason}.`,
             showNotification: tid === g.userTid,
             pids: [p.pid],
             tids: [tid],
-            persistent: true
+            persistent: true,
         });
     });
 }
@@ -2156,5 +2172,5 @@ module.exports = {
     augmentPartialPlayer,
     checkStatisticalFeat,
     killOne,
-    withStats
+    withStats,
 };

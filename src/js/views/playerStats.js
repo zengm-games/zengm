@@ -22,7 +22,7 @@ function get(req) {
         abbrev,
         season: req.params.season === "career" ? null : helpers.validateSeason(req.params.season),
         statType: req.params.statType !== undefined ? req.params.statType : "per_game",
-        playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season"
+        playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season",
     };
 }
 
@@ -35,8 +35,8 @@ function InitViewModel() {
 
 const mapping = {
     players: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updatePlayers(inputs, updateEvents, vm) {
@@ -45,7 +45,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
             let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED));
             players = await player.withStats(tx, players, {
                 statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
-                statsPlayoffs: inputs.playoffs === "playoffs"
+                statsPlayoffs: inputs.playoffs === "playoffs",
             });
 
             let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
@@ -63,7 +63,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
                 tid,
                 totals: inputs.statType === "totals",
                 per36: inputs.statType === "per_36",
-                playoffs: inputs.playoffs === "playoffs"
+                playoffs: inputs.playoffs === "playoffs",
             });
 
             // Find max gp to use for filtering
@@ -110,7 +110,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
                 abbrev: inputs.abbrev,
                 season: inputs.season,
                 statType: inputs.statType,
-                playoffs: inputs.playoffs
+                playoffs: inputs.playoffs,
             };
         });
     }
@@ -175,7 +175,7 @@ function uiFirst(vm) {
                 if (data[data.length - 1]) {
                     row.classList.add("info");
                 }
-            }
+            },
         });
     }).extend({throttle: 1});
 
@@ -193,5 +193,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updatePlayers],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

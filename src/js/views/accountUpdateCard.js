@@ -20,13 +20,13 @@ async function updateAccountUpdateCard(inputs, updateEvents) {
 
         if (username === null || username === "") {
             return {
-                errorMessage: "Log in to view this page."
+                errorMessage: "Log in to view this page.",
             };
         }
 
         if (g.vm.topMenu.goldCancelled()) {
             return {
-                errorMessage: "Cannot update card because your Basketball GM Gold account is cancelled."
+                errorMessage: "Cannot update card because your Basketball GM Gold account is cancelled.",
             };
         }
 
@@ -35,23 +35,23 @@ async function updateAccountUpdateCard(inputs, updateEvents) {
                 type: "GET",
                 url: `//account.basketball-gm.${g.tld}/gold_card_info.php`,
                 data: {
-                    sport: "basketball"
+                    sport: "basketball",
                 },
                 dataType: "json",
                 xhrFields: {
-                    withCredentials: true
-                }
+                    withCredentials: true,
+                },
             }));
             return {
                 last4: data.last4,
                 expMonth: data.expMonth,
-                expYear: data.expYear
+                expYear: data.expYear,
             };
         } catch (err) {
             return {
                 last4: "????",
                 expMonth: "??",
-                expYear: "????"
+                expYear: "????",
             };
         }
     }
@@ -72,12 +72,12 @@ async function stripeResponseHandler(vm, status, response) {
                 url: `//account.basketball-gm.${g.tld}/gold_card_update.php`,
                 data: {
                     sport: "basketball",
-                    token
+                    token,
                 },
                 dataType: "json",
                 xhrFields: {
-                    withCredentials: true
-                }
+                    withCredentials: true,
+                },
             }));
             ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
         } catch (err) {
@@ -110,5 +110,5 @@ module.exports = bbgmView.init({
     InitViewModel,
     beforeReq: viewHelpers.beforeNonLeague,
     runBefore: [updateAccountUpdateCard],
-    uiFirst
+    uiFirst,
 });

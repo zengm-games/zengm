@@ -25,7 +25,7 @@ function writeTeamStats(tx, results) {
             team.getPayroll(tx, results.team[t1].id).get(0),
             tx.teams.get(results.team[t1].id),
             tx.teamSeasons.index("tid, season").getAll(backboard.bound([results.team[t1].id, g.season - 2], [results.team[t1].id, g.season])),
-            tx.teamStats.index("season, tid").getAll([g.season, results.team[t1].id])
+            tx.teamStats.index("season, tid").getAll([g.season, results.team[t1].id]),
         ]);
 
         const teamSeason = teamSeasons[teamSeasons.length - 1];
@@ -206,12 +206,12 @@ function writeTeamStats(tx, results) {
         await Promise.all([
             tx.teams.put(t),
             tx.teamSeasons.put(teamSeason),
-            tx.teamStats.put(teamStats)
+            tx.teamStats.put(teamStats),
         ]);
 
         return {
             att,
-            ticketPrice
+            ticketPrice,
         };
     }, 0);
 }
@@ -259,10 +259,10 @@ function writePlayerStats(tx, results) {
                         p.injury = p2.injury; // So it gets written to box score
                         eventLog.add(tx, {
                             type: "injured",
-                            text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.name}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
+                            text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
                             showNotification: p2.tid === g.userTid,
                             pids: [p2.pid],
-                            tids: [p2.tid]
+                            tids: [p2.tid],
                         });
 
                         // Some chance of a loss of athleticism from serious injuries
@@ -315,8 +315,8 @@ async function writeGameStats(tx, results, att) {
         lost: {},
         teams: [
             {tid: results.team[0].id, players: []},
-            {tid: results.team[1].id, players: []}
-        ]
+            {tid: results.team[1].id, players: []},
+        ],
     };
 
     for (let t = 0; t < 2; t++) {
@@ -368,7 +368,7 @@ async function writeGameStats(tx, results, att) {
             type: results.team[tw].id === g.userTid ? "gameWon" : "gameLost",
             text,
             saveToDb: false,
-            tids: [results.team[0].id, results.team[1].id]
+            tids: [results.team[0].id, results.team[1].id],
         });
     }
 
@@ -456,7 +456,7 @@ async function updatePlayoffSeries(tx, results) {
                 type: "playoffs",
                 text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
                 showNotification,
-                tids: [winnerTid, loserTid]
+                tids: [winnerTid, loserTid],
             });
         }
     });
@@ -527,7 +527,7 @@ async function loadTeams(tx) {
         const [players, team, teamSeason] = await Promise.all([
             tx.players.index('tid').getAll(tid),
             tx.teams.get(tid),
-            tx.teamSeasons.index("season, tid").get([g.season, tid])
+            tx.teamSeasons.index("season, tid").get([g.season, tid]),
         ]);
 
         players.sort((a, b) => a.rosterOrder - b.rosterOrder);
@@ -543,7 +543,7 @@ async function loadTeams(tx) {
         let p;
         for (let i = 0; i < players.length; i++) {
             const pos = players[i].ratings[players[i].ratings.length - 1].pos;
-            p = {id: players[i].pid, name: players[i].name, pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
+            p = {id: players[i].pid, name: `${players[i].firstName} ${players[i].lastName}`, pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
 
             // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
             if (t.id !== g.userTid) {
@@ -552,7 +552,7 @@ async function loadTeams(tx) {
 
             const rating = players[i].ratings.find(r => r.season === g.season);
             if (rating === undefined) {
-                throw new Error(`Player with no ratings for this season: ${players[i].name} (ID: ${players[i].pid})`);
+                throw new Error(`Player with no ratings for this season: ${players[i].firstName} ${players[i].lastName} (ID: ${players[i].pid})`);
             }
 
             p.skills = rating.skills;
@@ -670,10 +670,10 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
 
                     eventLog.add(tx, {
                         type: "healed",
-                        text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> has recovered from his injury.`,
+                        text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> has recovered from his injury.`,
                         showNotification: p.tid === g.userTid,
                         pids: [p.pid],
-                        tids: [p.tid]
+                        tids: [p.tid],
                     });
                 }
 
@@ -701,7 +701,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
                 if (results[i].playByPlay !== undefined) {
                     raw = {
                         gidPlayByPlay,
-                        playByPlay: results[i].playByPlay
+                        playByPlay: results[i].playByPlay,
                     };
                     url = helpers.leagueUrl(["live_game"]);
                 }
@@ -830,5 +830,5 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
 }
 
 module.exports = {
-    play
+    play,
 };

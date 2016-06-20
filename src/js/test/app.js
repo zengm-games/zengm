@@ -7,7 +7,7 @@ require('../util/templateHelpers');
 
 mocha.setup({
     ui: 'bdd',
-    timeout: 20000
+    timeout: 20000,
 });
 
 require('./core/contractNegotiation');

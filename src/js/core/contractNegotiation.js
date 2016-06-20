@@ -35,7 +35,7 @@ async function create(tx, pid, resigning, tid = g.userTid) {
 
     const p = await tx.players.get(pid);
     if (p.tid !== g.PLAYER.FREE_AGENT) {
-        return `${p.name} is not a free agent.`;
+        return `${p.firstName} ${p.lastName} is not a free agent.`;
     }
 
     // Initial player proposal;
@@ -47,7 +47,7 @@ async function create(tx, pid, resigning, tid = g.userTid) {
     }
 
     if (freeAgents.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
-        return `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> refuses to sign with you, no matter what you offer.`;
+        return `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> refuses to sign with you, no matter what you offer.`;
     }
 
     const negotiation = {
@@ -56,7 +56,7 @@ async function create(tx, pid, resigning, tid = g.userTid) {
         team: {amount: playerAmount, years: playerYears},
         player: {amount: playerAmount, years: playerYears},
         orig: {amount: playerAmount, years: playerYears},
-        resigning
+        resigning,
     };
 
     await tx.negotiations.add(negotiation);
@@ -117,7 +117,7 @@ async function cancelAll(tx) {
 async function accept(pid, amount, exp) {
     const [negotiation, payroll] = await Promise.all([
         g.dbl.negotiations.get(pid),
-        team.getPayroll(null, g.userTid).get(0)
+        team.getPayroll(null, g.userTid).get(0),
     ]);
 
     // If this contract brings team over the salary cap, it's not a minimum;
@@ -148,24 +148,24 @@ async function accept(pid, amount, exp) {
 
             p = player.setContract(p, {
                 amount,
-                exp
+                exp,
             }, true);
 
             if (negotiation.resigning) {
                 eventLog.add(null, {
                     type: "reSigned",
-                    text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                    text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,
                     pids: [p.pid],
-                    tids: [g.userTid]
+                    tids: [g.userTid],
                 });
             } else {
                 eventLog.add(null, {
                     type: "freeAgent",
-                    text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                    text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,
                     pids: [p.pid],
-                    tids: [g.userTid]
+                    tids: [g.userTid],
                 });
             }
 
@@ -182,5 +182,5 @@ module.exports = {
     accept,
     cancel,
     cancelAll,
-    create
+    create,
 };

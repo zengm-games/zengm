@@ -29,7 +29,7 @@ async function updateDashboard() {
 
     return {
         leagues,
-        otherUrl
+        otherUrl,
     };
 }
 
@@ -41,5 +41,5 @@ module.exports = bbgmView.init({
     id: "dashboard",
     beforeReq: viewHelpers.beforeNonLeague,
     runBefore: [updateDashboard],
-    uiFirst
+    uiFirst,
 });

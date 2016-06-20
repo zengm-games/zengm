@@ -8,7 +8,7 @@ const helpers = require('../util/helpers');
 function get() {
     if (!g.gameOver && !g.godMode) {
         return {
-            errorMessage: `You may only switch to another team after you're fired or when you're in <a href="${helpers.leagueUrl(["god_mode"])}">God Mode</a>.`
+            errorMessage: `You may only switch to another team after you're fired or when you're in <a href="${helpers.leagueUrl(["god_mode"])}">God Mode</a>.`,
         };
     }
 }
@@ -28,9 +28,9 @@ async function post(req) {
         ownerMood: {
             wins: 0,
             playoffs: 0,
-            money: 0
+            money: 0,
         },
-        gracePeriodEnd: g.season + 3 // +3 is the same as +2 when staring a new league, since this happens at the end of a season
+        gracePeriodEnd: g.season + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
     });
 
     league.updateLastDbChange();
@@ -42,7 +42,7 @@ async function updateTeamSelect() {
     let teams = await team.filter({
         attrs: ["tid", "region", "name"],
         seasonAttrs: ["winp"],
-        season: g.season
+        season: g.season,
     });
 
     // Remove user's team (no re-hiring immediately after firing)
@@ -59,7 +59,7 @@ async function updateTeamSelect() {
 
     return {
         godMode: g.godMode,
-        teams
+        teams,
     };
 }
 
@@ -72,5 +72,5 @@ module.exports = bbgmView.init({
     get,
     post,
     runBefore: [updateTeamSelect],
-    uiFirst
+    uiFirst,
 });

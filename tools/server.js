@@ -9,7 +9,11 @@ const mimeTypes = {
     '.js': 'text/javascript',
     '.map': 'application/json',
     '.html': 'text/html',
-    '.woff': 'application/font-woff'
+    '.woff': 'application/font-woff',
+    '.png': 'image/png',
+    '.jpeg': 'image/jpeg',
+    '.bmp': 'image/bmp',
+    '.gif': 'image/gif',
 };
 const sendFile = (res, filename) => {
     const ext = path.extname(filename);

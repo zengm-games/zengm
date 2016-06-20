@@ -23,7 +23,7 @@ function uiFirst() {
             data: `${$lostpw.serialize()}&sport=${g.sport}`,
             dataType: "json",
             xhrFields: {
-                withCredentials: true
+                withCredentials: true,
             },
             success: data => {
                 if (data.success) {
@@ -34,7 +34,7 @@ function uiFirst() {
             },
             error: () => {
                 document.getElementById("lostpw-error").innerHTML = ajaxErrorMsg;
-            }
+            },
         });
     });
 }
@@ -42,5 +42,5 @@ function uiFirst() {
 module.exports = bbgmView.init({
     id: "lostPassword",
     beforeReq: viewHelpers.beforeNonLeague,
-    uiFirst
+    uiFirst,
 });

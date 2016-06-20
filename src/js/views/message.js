@@ -6,7 +6,7 @@ const bbgmView = require('../util/bbgmView');
 
 function get(req) {
     return {
-        mid: req.params.mid ? parseInt(req.params.mid, 10) : null
+        mid: req.params.mid ? parseInt(req.params.mid, 10) : null,
     };
 }
 
@@ -42,7 +42,7 @@ async function updateMessage(inputs, updateEvents, vm) {
         }
 
         return {
-            message
+            message,
         };
     }
 }
@@ -57,5 +57,5 @@ module.exports = bbgmView.init({
     id: "message",
     get,
     runBefore: [updateMessage],
-    uiFirst
+    uiFirst,
 });

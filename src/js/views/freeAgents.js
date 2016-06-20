@@ -23,20 +23,20 @@ function get() {
     if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) {
         if (g.phase === g.PHASE.RESIGN_PLAYERS) {
             return {
-                redirectUrl: helpers.leagueUrl(["negotiation"])
+                redirectUrl: helpers.leagueUrl(["negotiation"]),
             };
         }
 
         return {
-            errorMessage: "You're not allowed to sign free agents now."
+            errorMessage: "You're not allowed to sign free agents now.",
         };
     }
 }
 
 const mapping = {
     players: {
-        create: options => options.data
-    }
+        create: options => options.data,
+    },
 };
 
 async function updateFreeAgents() {
@@ -45,9 +45,9 @@ async function updateFreeAgents() {
         g.dbl.players.index('tid').getAll(g.userTid),
         g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(players => {
             return player.withStats(null, players, {
-                statsSeasons: [g.season, g.season - 1]
+                statsSeasons: [g.season, g.season - 1],
             });
-        })
+        }),
     ]);
 
     let capSpace = (g.salaryCap - payroll) / 1000;
@@ -63,7 +63,7 @@ async function updateFreeAgents() {
         showNoStats: true,
         showRookies: true,
         fuzz: true,
-        oldStats: true
+        oldStats: true,
     });
 
     for (let i = 0; i < players.length; i++) {
@@ -74,7 +74,7 @@ async function updateFreeAgents() {
     return {
         capSpace,
         numRosterSpots: 15 - userPlayers.length,
-        players
+        players,
     };
 }
 
@@ -84,7 +84,7 @@ function uiFirst(vm) {
     $("#help-salary-cap").popover({
         title: "Cap Space",
         html: true,
-        content: `<p>"Cap space" is the difference between your current payroll and the salary cap. You can sign a free agent to any valid contract as long as you don't go over the cap.</p>You can only exceed the salary cap to sign free agents to minimum contracts ($${g.minContract}k/year).`
+        content: `<p>"Cap space" is the difference between your current payroll and the salary cap. You can sign a free agent to any valid contract as long as you don't go over the cap.</p>You can only exceed the salary cap to sign free agents to minimum contracts ($${g.minContract}k/year).`,
     });
 
     ko.computed(() => {
@@ -124,5 +124,5 @@ module.exports = bbgmView.init({
     mapping,
     runBefore: [updateFreeAgents],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

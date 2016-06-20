@@ -10,7 +10,7 @@ const helpers = require('../util/helpers');
 
 function get(req) {
     return {
-        season: helpers.validateSeason(req.params.season)
+        season: helpers.validateSeason(req.params.season),
     };
 }
 
@@ -28,7 +28,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
             season: inputs.season,
             showNoStats: true,
             showRookies: true,
-            fuzz: true
+            fuzz: true,
         });
 
         const ratingsAll = players.reduce((memo, player) => {
@@ -46,7 +46,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
 
         return {
             season: inputs.season,
-            ratingsAll
+            ratingsAll,
         };
     }
 }
@@ -71,7 +71,7 @@ function uiFirst(vm) {
                 boxPlot.create({
                     data: vm.ratingsAll[rating](),
                     scale: [0, 100],
-                    container: `${rating}BoxPlot`
+                    container: `${rating}BoxPlot`,
                 });
             }
         }
@@ -88,5 +88,5 @@ module.exports = bbgmView.init({
     InitViewModel,
     runBefore: [updatePlayers],
     uiFirst,
-    uiEvery
+    uiEvery,
 });

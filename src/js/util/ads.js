@@ -76,11 +76,23 @@ function showBanner() {
         const bannerAdBottom = document.getElementById('banner-ad-bottom');
         if (bannerAdTop) {
             bannerAdTop.innerHTML = '';
-            postscribe(bannerAdTop, '<script src="https://tag.contextweb.com/TagPublish/getjs.aspx?action=VIEWAD&cwrun=200&cwadformat=728X90&cwpid=558539&cwwidth=728&cwheight=90&cwpnet=1&cwtagid=448749"></script>');
+            window.CasaleArgs = new Object();
+            window.CasaleArgs.version = 4;
+            window.CasaleArgs.adUnits = "2";
+            window.CasaleArgs.positionID = 1;
+            window.CasaleArgs.casaleID = 179365;
+            window.CasaleArgs.pubDefault = "<script src=\"https://tag.contextweb.com/TagPublish/getjs.aspx?action=VIEWAD&cwrun=200&cwadformat=728X90&cwpid=558539&cwwidth=728&cwheight=90&cwpnet=1&cwtagid=448749\"></script>";
+            postscribe(bannerAdTop, '<script type="text/javascript" src="https://js-sec.casalemedia.com/casaleJTag.js"></script>');
         }
         if (bannerAdBottom) {
             bannerAdBottom.innerHTML = '';
-            postscribe(bannerAdBottom, '<script src="https://tag.contextweb.com/TagPublish/getjs.aspx?action=VIEWAD&cwrun=200&cwadformat=728X90&cwpid=558539&cwwidth=728&cwheight=90&cwpnet=1&cwtagid=448752"></script>');
+            window.CasaleArgs = new Object();
+            window.CasaleArgs.version = 4;
+            window.CasaleArgs.adUnits = "2";
+            window.CasaleArgs.positionID = 1;
+            window.CasaleArgs.casaleID = 179394;
+            window.CasaleArgs.pubDefault = "<script src=\"https://tag.contextweb.com/TagPublish/getjs.aspx?action=VIEWAD&cwrun=200&cwadformat=728X90&cwpid=558539&cwwidth=728&cwheight=90&cwpnet=1&cwtagid=448752\"></script>";
+            postscribe(bannerAdBottom, '<script type="text/javascript" src="https://js-sec.casalemedia.com/casaleJTag.js"></script>');
         }
     }
 }

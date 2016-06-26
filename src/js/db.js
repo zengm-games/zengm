@@ -41,9 +41,7 @@ async function migrateMeta(upgradeDB) {
     console.log(`Upgrading meta database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
 
     if (upgradeDB.oldVersion <= 6) {
-        ((() => {
-            upgradeDB.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
-        })());
+        upgradeDB.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
     }
 }
 
@@ -126,88 +124,80 @@ async function migrateLeague(upgradeDB, lid) {
         throw new Error(`League is too old to upgrade (version ${upgradeDB.oldVersion})`);
     }
     if (upgradeDB.oldVersion <= 16) {
-        await ((async () => {
-            const teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {keyPath: "rid", autoIncrement: true});
-            const teamStatsStore = upgradeDB.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
+        const teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {keyPath: "rid", autoIncrement: true});
+        const teamStatsStore = upgradeDB.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
 
-            teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {unique: false});
-            teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {unique: true});
-            teamStatsStore.createIndex("tid", "tid", {unique: false});
-            teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false});
+        teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {unique: false});
+        teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {unique: true});
+        teamStatsStore.createIndex("tid", "tid", {unique: false});
+        teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false});
 
-            await upgradeDB.teams.iterate(async t => {
-                for (const teamStats of t.stats) {
-                    teamStats.tid = t.tid;
-                    if (!teamStats.hasOwnProperty("ba")) {
-                        teamStats.ba = 0;
-                    }
-                    await upgradeDB.teamStats.add(teamStats);
+        await upgradeDB.teams.iterate(async t => {
+            for (const teamStats of t.stats) {
+                teamStats.tid = t.tid;
+                if (!teamStats.hasOwnProperty("ba")) {
+                    teamStats.ba = 0;
                 }
-                for (const teamSeason of t.seasons) {
-                    teamSeason.tid = t.tid;
-                    await upgradeDB.teamSeasons.add(teamSeason);
-                }
-                delete t.stats;
-                delete t.seasons;
-                return t;
-            });
-        })());
+                await upgradeDB.teamStats.add(teamStats);
+            }
+            for (const teamSeason of t.seasons) {
+                teamSeason.tid = t.tid;
+                await upgradeDB.teamSeasons.add(teamSeason);
+            }
+            delete t.stats;
+            delete t.seasons;
+            return t;
+        });
     }
     if (upgradeDB.oldVersion <= 17) {
         // Use new default team logos, unless teams have been edited
-        await ((async () => {
-            const teamsDefault = helpers.getTeamsDefault();
-            const [teamAbbrevsCache, teamNamesCache, teamRegionsCache] = await Promise.all([
-                upgradeDB.gameAttributes.get('teamAbbrevsCache').then(ga => JSON.stringify(ga.value)),
-                upgradeDB.gameAttributes.get('teamNamesCache').then(ga => JSON.stringify(ga.value)),
-                upgradeDB.gameAttributes.get('teamRegionsCache').then(ga => JSON.stringify(ga.value)),
-            ]);
+        const teamsDefault = helpers.getTeamsDefault();
+        const [teamAbbrevsCache, teamNamesCache, teamRegionsCache] = await Promise.all([
+            upgradeDB.gameAttributes.get('teamAbbrevsCache').then(ga => JSON.stringify(ga.value)),
+            upgradeDB.gameAttributes.get('teamNamesCache').then(ga => JSON.stringify(ga.value)),
+            upgradeDB.gameAttributes.get('teamRegionsCache').then(ga => JSON.stringify(ga.value)),
+        ]);
 
-            if (JSON.stringify(teamsDefault.map(t => t.abbrev)) !== teamAbbrevsCache) {
-                return;
-            }
-            if (JSON.stringify(teamsDefault.map(t => t.name)) !== teamNamesCache) {
-                return;
-            }
-            if (JSON.stringify(teamsDefault.map(t => t.region)) !== teamRegionsCache) {
-                return;
-            }
+        if (JSON.stringify(teamsDefault.map(t => t.abbrev)) !== teamAbbrevsCache) {
+            return;
+        }
+        if (JSON.stringify(teamsDefault.map(t => t.name)) !== teamNamesCache) {
+            return;
+        }
+        if (JSON.stringify(teamsDefault.map(t => t.region)) !== teamRegionsCache) {
+            return;
+        }
 
-            await upgradeDB.teams.iterate(async t => {
-                if (!t.imgURL) {
-                    t.imgURL = teamsDefault[t.tid].imgURL;
-                }
-                return t;
-            });
-        })());
+        await upgradeDB.teams.iterate(async t => {
+            if (!t.imgURL) {
+                t.imgURL = teamsDefault[t.tid].imgURL;
+            }
+            return t;
+        });
     }
     if (upgradeDB.oldVersion <= 18) {
         // Split old single string p.name into two names
-        await ((async () => {
-            await upgradeDB.players.iterate(async p => {
-                if (p.name) {
-                    const bothNames = p.name.split(" ");
-                    p.firstName = bothNames[0];
-                    p.lastName = bothNames[1];
-                    delete p.name;
-                }
-                return p;
-            });
-        })());
+        await upgradeDB.players.iterate(async p => {
+            if (p.name) {
+                const bothNames = p.name.split(" ");
+                p.firstName = bothNames[0];
+                p.lastName = bothNames[1];
+                delete p.name;
+            }
+            return p;
+        });
     }
     if (upgradeDB.oldVersion <= 19) {
         // New best records format in awards
-        await ((async () => {
-            await upgradeDB.awards.iterate(async a => {
-                if (a.bre && a.brw) {
-                    a.bestRecordConfs = [a.bre, a.brw];
-                    a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
-                    delete a.bre;
-                    delete a.brw;
-                    return a;
-                }
-            });
-        })());
+        await upgradeDB.awards.iterate(async a => {
+            if (a.bre && a.brw) {
+                a.bestRecordConfs = [a.bre, a.brw];
+                a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
+                delete a.bre;
+                delete a.brw;
+                return a;
+            }
+        });
     }
 }
 

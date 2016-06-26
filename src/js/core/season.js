@@ -94,23 +94,11 @@ async function awards(tx) {
         ot: tx,
     });
 
-    let foundEast = false;
-    let foundWest = false;
-    for (let i = 0; i < teams.length; i++) {
-        if (!foundEast && teams[i].cid === 0) {
-            const t = teams[i];
-            awards.bre = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
-            foundEast = true;
-        } else if (!foundWest && teams[i].cid === 1) {
-            const t = teams[i];
-            awards.brw = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
-            foundWest = true;
-        }
-
-        if (foundEast && foundWest) {
-            break;
-        }
-    }
+    awards.bestRecord = {tid: teams[0].tid, abbrev: teams[0].abbrev, region: teams[0].region, name: teams[0].name, won: teams[0].won, lost: teams[0].lost};
+    awards.bestRecordConfs = g.confs.map(c => {
+        const t = teams.find(t => t.cid === c.cid);
+        return {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
+    });
 
     // Sort teams by tid so it can be easily used in awards formulas
     teams.sort((a, b) => a.tid - b.tid);
@@ -149,7 +137,7 @@ async function awards(tx) {
     // Add team games won to players
     for (let i = 0; i < players.length; i++) {
         // Special handling for players who were cut mid-season
-        if (players[i].tid >= 0) {
+        if (players[i].tid > 0) {
             players[i].won = teams[players[i].tid].won;
         } else {
             players[i].won = 20;

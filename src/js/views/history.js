@@ -86,6 +86,7 @@ async function updateHistory(inputs, updateEvents, vm) {
         return {
             awards,
             champ,
+            confs: g.confs,
             retiredPlayers,
             season: inputs.season,
             userTid: g.userTid,

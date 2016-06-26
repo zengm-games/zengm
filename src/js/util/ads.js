@@ -76,7 +76,7 @@ function showBanner() {
         const bannerAdBottom = document.getElementById('banner-ad-bottom');
         if (bannerAdTop) {
             bannerAdTop.innerHTML = '';
-            window.CasaleArgs = new Object();
+            window.CasaleArgs = {};
             window.CasaleArgs.version = 4;
             window.CasaleArgs.adUnits = "2";
             window.CasaleArgs.positionID = 1;
@@ -86,7 +86,7 @@ function showBanner() {
         }
         if (bannerAdBottom) {
             bannerAdBottom.innerHTML = '';
-            window.CasaleArgs = new Object();
+            window.CasaleArgs = {};
             window.CasaleArgs.version = 4;
             window.CasaleArgs.adUnits = "2";
             window.CasaleArgs.positionID = 1;

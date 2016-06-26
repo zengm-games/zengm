@@ -14,8 +14,12 @@
         <p>Finals MVP: <strong><a data-bind="attrLeagueUrl: {href: ['player', awards.finalsMvp.pid]}, css: {'bg-info': champ.tid() === userTid()}, text: awards.finalsMvp.name"></a></strong></span><br>
           <span data-bind="round: [awards.finalsMvp.pts, 1]"></span> pts, <span data-bind="round: [awards.finalsMvp.trb, 1]"></span> reb, <span data-bind="round: [awards.finalsMvp.ast, 1]"></span> ast</p>
         <h4>Best Record</h4>
-        <p>East: <span data-bind="css: {'bg-info': awards.bre.tid() === userTid()}"><a  data-bind="attrLeagueUrl: {href: ['roster', awards.bre.abbrev, season]}"><span data-bind="text: awards.bre.region"></span> <span data-bind="text: awards.bre.name"></span></a> (<span data-bind="text: awards.bre.won"></span>-<span data-bind="text: awards.bre.lost"></span>)</span><br>
-        West: <span data-bind="css: {'bg-info': awards.brw.tid() === userTid()}"><a data-bind="attrLeagueUrl: {href: ['roster', awards.brw.abbrev, season]}"><span data-bind="text: awards.brw.region"></span> <span data-bind="text: awards.brw.name"></span></a> (<span data-bind="text: awards.brw.won"></span>-<span data-bind="text: awards.brw.lost"></span>)</span><br></p>
+        <!-- ko foreach: awards.bestRecordConfs -->
+          <p>
+            <span data-bind="text: $parent.confs()[$index()].name"></span>:<br>
+            <span data-bind="css: {'bg-info': tid() === $root.userTid()}"><a  data-bind="attrLeagueUrl: {href: ['roster', abbrev, $root.season]}"><span data-bind="text: region"></span> <span data-bind="text: name"></span></a> (<span data-bind="text: won"></span>-<span data-bind="text: lost"></span>)</span><br>
+          </p>
+        <!-- /ko -->
         <h4>Most Valuable Player</h4>
         <p><span data-bind="css: {'bg-info': awards.mvp.tid() === userTid()}"><strong><a data-bind="attrLeagueUrl: {href: ['player', awards.mvp.pid]}, text: awards.mvp.name"></a></strong> (<a data-bind="attrLeagueUrl: {href: ['roster', awards.mvp.abbrev, season]}, text: awards.mvp.abbrev"></a>)</span><br>
         <span data-bind="round: [awards.mvp.pts, 1]"></span> pts, <span data-bind="round: [awards.mvp.trb, 1]"></span> reb, <span data-bind="round: [awards.mvp.ast, 1]"></span> ast</p>

@@ -102,33 +102,27 @@ function tallyAwards(awards) {
         teams[a.dpoy.tid].dpoy++;
         teams[a.smoy.tid].smoy++;
         teams[a.roy.tid].roy++;
-        teams[a.bre.tid].bestRecordConf++;
-        teams[a.brw.tid].bestRecordConf++;
-        if (a.bre.won === a.brw.won) {
-            teams[a.bre.tid].bestRecord += 0.5;
-            teams[a.brw.tid].bestRecord += 0.5;
-        } else if (a.bre.won > a.brw.won) {
-            teams[a.bre.tid].bestRecord++;
-        } else {
-            teams[a.brw.tid].bestRecord++;
+        for (const t of a.bestRecordConfs) {
+            teams[t.tid].bestRecordConf++;
         }
+        teams[a.bestRecord.tid].bestRecord++;
 
         for (let i = 0; i < a.allRookie.length; i++) {
             teams[a.allRookie[i].tid].allRookie++;
         }
 
         for (let i = 0; i < a.allLeague.length; i++) {
-            a.allLeague[i].players.forEach(p => {
+            for (const p of a.allLeague[i].players.forEach) {
                 teams[p.tid].allLeague[i]++;
                 teams[p.tid].allLeagueTotal++;
-            });
+            }
         }
 
         for (let i = 0; i < a.allDefensive.length; i++) {
-            a.allDefensive[i].players.forEach(p => {
+            for (const p of a.allDefensive[i].players.forEach) {
                 teams[p.tid].allDefense[i]++;
                 teams[p.tid].allDefenseTotal++;
-            });
+            }
         }
     });
 

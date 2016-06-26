@@ -35,7 +35,7 @@ function createMeta(upgradeDB) {
  *
  * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
  */
-function migrateMeta(upgradeDB) {
+async function migrateMeta(upgradeDB) {
     document.getElementById("content").innerHTML = migrateMessage;
 
     console.log(`Upgrading meta database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
@@ -48,11 +48,11 @@ function migrateMeta(upgradeDB) {
 }
 
 async function connectMeta() {
-    const db = await Backboard.open('meta', 7, upgradeDB => {
+    const db = await Backboard.open('meta', 7, async upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createMeta(upgradeDB);
         } else {
-            migrateMeta(upgradeDB);
+            await migrateMeta(upgradeDB);
         }
     });
 
@@ -117,7 +117,7 @@ function createLeague(upgradeDB, lid) {
  * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
  * @param {number} lid Integer league ID number.
  */
-function migrateLeague(upgradeDB, lid) {
+async function migrateLeague(upgradeDB, lid) {
     document.getElementById("content").innerHTML = migrateMessage;
 
     console.log(`Upgrading league${lid} database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
@@ -126,7 +126,7 @@ function migrateLeague(upgradeDB, lid) {
         throw new Error(`League is too old to upgrade (version ${upgradeDB.oldVersion})`);
     }
     if (upgradeDB.oldVersion <= 16) {
-        ((async () => {
+        await ((async () => {
             const teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {keyPath: "rid", autoIncrement: true});
             const teamStatsStore = upgradeDB.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
 
@@ -155,7 +155,7 @@ function migrateLeague(upgradeDB, lid) {
     }
     if (upgradeDB.oldVersion <= 17) {
         // Use new default team logos, unless teams have been edited
-        ((async () => {
+        await ((async () => {
             const teamsDefault = helpers.getTeamsDefault();
             const [teamAbbrevsCache, teamNamesCache, teamRegionsCache] = await Promise.all([
                 upgradeDB.gameAttributes.get('teamAbbrevsCache').then(ga => JSON.stringify(ga.value)),
@@ -183,7 +183,7 @@ function migrateLeague(upgradeDB, lid) {
     }
     if (upgradeDB.oldVersion <= 18) {
         // Split old single string p.name into two names
-        ((async () => {
+        await ((async () => {
             await upgradeDB.players.iterate(async p => {
                 if (p.name) {
                     const bothNames = p.name.split(" ");
@@ -195,14 +195,28 @@ function migrateLeague(upgradeDB, lid) {
             });
         })());
     }
+    if (upgradeDB.oldVersion <= 19) {
+        // New best records format in awards
+        await ((async () => {
+            await upgradeDB.awards.iterate(async a => {
+                if (a.bre && a.brw) {
+                    a.bestRecordConfs = [a.bre, a.brw];
+                    a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
+                    delete a.bre;
+                    delete a.brw;
+                    return a;
+                }
+            });
+        })());
+    }
 }
 
 async function connectLeague(lid) {
-    const db = await Backboard.open(`league${lid}`, 19, upgradeDB => {
+    const db = await Backboard.open(`league${lid}`, 20, async upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {
-            migrateLeague(upgradeDB, lid);
+            await migrateLeague(upgradeDB, lid);
         }
     });
 

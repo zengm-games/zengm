@@ -1,7 +1,6 @@
 bre/brw -> bestRecord and bestRecordConfs
-  history
-  teamRecords
-  upgrade code
+  upgrade db
+  imported league
 
 conference glitches
   hardcoded conference names in playoffs view https://www.reddit.com/r/BasketballGM/comments/4op2uo/8team_custom_league/d4gpmzs

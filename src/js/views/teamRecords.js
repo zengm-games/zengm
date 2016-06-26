@@ -102,24 +102,35 @@ function tallyAwards(awards) {
         teams[a.dpoy.tid].dpoy++;
         teams[a.smoy.tid].smoy++;
         teams[a.roy.tid].roy++;
-        for (const t of a.bestRecordConfs) {
-            teams[t.tid].bestRecordConf++;
-        }
-        teams[a.bestRecord.tid].bestRecord++;
+        if (a.bre && a.brw) {
+            // For old league files, this format is obsolete now
+            teams[a.bre.tid].bestRecordConf++;
+            teams[a.brw.tid].bestRecordConf++;
+            if (a.bre.won >= a.brw.won) {
+                teams[a.bre.tid].bestRecord++;
+            } else {
+                teams[a.brw.tid].bestRecord++;
+            }
+        } else {
+            for (const t of a.bestRecordConfs) {
+                teams[t.tid].bestRecordConf++;
+            }
+            teams[a.bestRecord.tid].bestRecord++;
 
-        for (let i = 0; i < a.allRookie.length; i++) {
-            teams[a.allRookie[i].tid].allRookie++;
+            for (let i = 0; i < a.allRookie.length; i++) {
+                teams[a.allRookie[i].tid].allRookie++;
+            }
         }
 
         for (let i = 0; i < a.allLeague.length; i++) {
-            for (const p of a.allLeague[i].players.forEach) {
+            for (const p of a.allLeague[i].players) {
                 teams[p.tid].allLeague[i]++;
                 teams[p.tid].allLeagueTotal++;
             }
         }
 
         for (let i = 0; i < a.allDefensive.length; i++) {
-            for (const p of a.allDefensive[i].players.forEach) {
+            for (const p of a.allDefensive[i].players) {
                 teams[p.tid].allDefense[i]++;
                 teams[p.tid].allDefenseTotal++;
             }

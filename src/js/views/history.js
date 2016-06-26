@@ -62,6 +62,11 @@ async function updateHistory(inputs, updateEvents, vm) {
             awards.allRookie = [];
         }
 
+        // For old league files, this format is obsolete now
+        if (awards.bre && awards.brw) {
+            awards.bestRecordConfs = [awards.bre, awards.brw];
+        }
+
         retiredPlayers = player.filter(retiredPlayers, {
             attrs: ["pid", "name", "age", "hof"],
             season: inputs.season,

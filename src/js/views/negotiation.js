@@ -16,7 +16,7 @@ async function redirectNegotiationOrRoster(cancelled) {
     } else if (cancelled) {
         ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
     } else {
-        ui.realtimeUpdate([], helpers.leagueUrl(["roster"]));
+        ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
     }
 }
 

@@ -43,12 +43,11 @@ async function updatePlayers(inputs, updateEvents) {
             }
 
             players[i].bestStats = {
-                gp: 0,
-                min: 0,
-                per: 0,
+                gp: 1,
+                ewa: 0
             };
             for (let j = 0; j < players[i].stats.length; j++) {
-                if (players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per > players[i].bestStats.gp * players[i].bestStats.min * players[i].bestStats.per) {
+                if (players[i].stats[j].gp > 0 && players[i].stats[j].ewa / players[i].stats[j].gp > players[i].bestStats.ewa / players[i].bestStats.gp) {
                     players[i].bestStats = players[i].stats[j];
                 }
             }

@@ -46,16 +46,16 @@ async function updatePlayers(inputs, updateEvents) {
             players[i].bestStats = {};
             let bestEWA = 0;
             for (let j = 0; j < players[i].stats.length; j++) {
-                const r_ewa = players[i].stats[j].ewa;
-                let p_ewa = 0;
+                const rEWA = players[i].stats[j].ewa;
+                let pEWA = 0;
                 for (let k = 0; k < players[i].statsPlayoffs.length; k++) {
                     if (players[i].stats[j].season == players[i].statsPlayoffs[k].season) {
-                        p_ewa = players[i].statsPlayoffs[k].ewa;
+                        pEWA = players[i].statsPlayoffs[k].ewa;
                         break;
                     }
                 }
-                if (r_ewa + p_ewa > bestEWA) {
-                    bestEWA = r_ewa + p_ewa;
+                if (rEWA + pEWA > bestEWA) {
+                    bestEWA = rEWA + pEWA;
                     players[i].bestStats = players[i].stats[j];
                 }
             }

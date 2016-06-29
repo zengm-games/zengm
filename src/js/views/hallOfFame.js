@@ -31,7 +31,7 @@ async function updatePlayers(inputs, updateEvents) {
             attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
             ratings: ["ovr", "pos"],
             stats: ["season", "abbrev", "gp", "min", "trb", "ast", "pts", "per", "ewa"],
-            playoffs: true
+            playoffs: true,
         });
 
         // This stuff isn't in player.filter because it's only used here.
@@ -49,7 +49,7 @@ async function updatePlayers(inputs, updateEvents) {
                 const rEWA = players[i].stats[j].ewa;
                 let pEWA = 0;
                 for (let k = 0; k < players[i].statsPlayoffs.length; k++) {
-                    if (players[i].stats[j].season == players[i].statsPlayoffs[k].season) {
+                    if (players[i].stats[j].season === players[i].statsPlayoffs[k].season) {
                         pEWA = players[i].statsPlayoffs[k].ewa;
                         break;
                     }

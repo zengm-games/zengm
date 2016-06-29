@@ -26,11 +26,12 @@ async function updatePlayers(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.BEFORE_DRAFT)) {
         let players = await g.dbl.players.index('tid').getAll(g.PLAYER.RETIRED);
         players = players.filter(p => p.hof);
-        players = await player.withStats(null, players, {statsSeasons: "all"});
+        players = await player.withStats(null, players, {statsSeasons: "all", statsPlayoffs: true});
         players = player.filter(players, {
             attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
             ratings: ["ovr", "pos"],
             stats: ["season", "abbrev", "gp", "min", "trb", "ast", "pts", "per", "ewa"],
+            playoffs: true
         });
 
         // This stuff isn't in player.filter because it's only used here.
@@ -42,12 +43,19 @@ async function updatePlayers(inputs, updateEvents) {
                 }
             }
 
-            players[i].bestStats = {
-                gp: 1,
-                ewa: 0
-            };
+            players[i].bestStats = {};
+            let bestEWA = 0;
             for (let j = 0; j < players[i].stats.length; j++) {
-                if (players[i].stats[j].gp > 0 && players[i].stats[j].ewa / players[i].stats[j].gp > players[i].bestStats.ewa / players[i].bestStats.gp) {
+                const r_ewa = players[i].stats[j].ewa;
+                let p_ewa = 0;
+                for (let k = 0; k < players[i].statsPlayoffs.length; k++) {
+                    if (players[i].stats[j].season == players[i].statsPlayoffs[k].season) {
+                        p_ewa = players[i].statsPlayoffs[k].ewa;
+                        break;
+                    }
+                }
+                if (r_ewa + p_ewa > bestEWA) {
+                    bestEWA = r_ewa + p_ewa;
                     players[i].bestStats = players[i].stats[j];
                 }
             }

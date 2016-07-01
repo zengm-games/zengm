@@ -26,7 +26,10 @@ async function addSeason(season, tid) {
         const pa = playersAll[i];
 
         // Abbreviate first name to prevent overflows
-        pa.name = `${pa.firstName.split(/[ .-]/).map(s => s === "" ? "" : s[0] + ".").join("")} ${pa.lastName}`;
+        const names = pa.firstName.split(/[ .-]/);
+        const abbrev = names.map(s => s === "" ? "" : `${s[0]}.`);
+        const concat = abbrev.join("");
+        pa.name = `${concat} ${pa.lastName}`;
 
         // Attributes
         const p = {pid: pa.pid, name: pa.name, age: pa.age, watch: pa.watch, valueFuzz: pa.valueFuzz};

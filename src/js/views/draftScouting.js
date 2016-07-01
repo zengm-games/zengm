@@ -27,7 +27,7 @@ async function addSeason(season, tid) {
 
         // Abbreviate first name to prevent overflows
         const names = pa.firstName.split(/[ .-]/);
-        const abbrev = names.map(s => s === "" ? "" : `${s[0]}.`);
+        const abbrev = names.map(s => {return s === "" ? "" : `${s[0]}.`;});
         const concat = abbrev.join("");
         pa.name = `${concat} ${pa.lastName}`;
 

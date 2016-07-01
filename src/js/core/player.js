@@ -732,7 +732,7 @@ function name() {
 
     // Middle Name, randomly
     const middle = random.uniform(0, 1);
-    if (middle < 0.02) {
+    if (middle < 0.03) {
         // break loop if there is a country with no simple names
         let steps = 0;
         while (/[ .-]/.test(firstName) && steps < 100) {

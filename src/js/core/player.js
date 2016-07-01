@@ -727,12 +727,63 @@ function name() {
     const country = playerNames.countries.find(row => row[1] >= cRand)[0];
 
     // First name
-    const fnRand = random.uniform(0, playerNames.first[country][playerNames.first[country].length - 1][1]);
-    const firstName = playerNames.first[country].find(row => row[1] >= fnRand)[0];
+    let fnRand = random.uniform(0, playerNames.first[country][playerNames.first[country].length - 1][1]);
+    let firstName = playerNames.first[country].find(row => row[1] >= fnRand)[0];
+
+    // Middle Name, randomly
+    const middle = random.uniform(0, 1);
+    if (middle < 0.02) {
+        // break loop if there is a country with no simple names
+        let steps = 0;
+        while (/[ .-]/.test(firstName) && steps < 100) {
+            fnRand = random.uniform(0, playerNames.first[country][playerNames.first[country].length - 1][1]);
+            firstName = playerNames.first[country].find(row => row[1] >= fnRand)[0];
+            steps = steps + 1;
+        }
+        let mnRand = random.uniform(0, playerNames.first[country][playerNames.first[country].length - 1][1]);
+        let middleName = playerNames.first[country].find(row => row[1] >= mnRand)[0];
+        steps = 0;
+        while (/[ .-]/.test(middleName) && steps < 100) {
+            mnRand = random.uniform(0, playerNames.first[country][playerNames.first[country].length - 1][1]);
+            middleName = playerNames.first[country].find(row => row[1] >= mnRand)[0];
+            steps = steps + 1;
+        }
+
+        // abbreviation rules:
+        // 50% will initialize their middle name
+        // 50% will use it fully
+        // of the 50% who initialize, 50% will initialize Fn
+        // of the 50% who don't, 10% will instead initialize Fn
+        const abbrev = random.uniform(0, 1);
+        const initFn = random.uniform(0, 1);
+        if (abbrev < 0.5) {
+            // initialize it
+            middleName = `${middleName.charAt(0)}.`;
+            if (initFn < 0.5) {
+                firstName = `${firstName.charAt(0)}.`;
+            }
+        } else {
+            // use it fully
+            if (initFn < 0.1) {
+                firstName = `${firstName.charAt(0)}.`;
+            }
+        }
+        firstName = `${firstName} ${middleName}`;
+    }
 
     // Last name
     const lnRand = random.uniform(0, playerNames.last[country][playerNames.last[country].length - 1][1]);
-    const lastName = playerNames.last[country].find(row => row[1] >= lnRand)[0];
+    let lastName = playerNames.last[country].find(row => row[1] >= lnRand)[0];
+
+    // Jr. or III, randomly
+    const son = random.uniform(0, 1);
+    if (son < 0.03) {
+        if (son < 0.0009) {
+            lastName = `${lastName} III`;
+        } else {
+            lastName = `${lastName} Jr.`;
+        }
+    }
 
     return {
         country,

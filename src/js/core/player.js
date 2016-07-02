@@ -732,7 +732,7 @@ function name() {
 
     // Middle Name, randomly
     const middle = random.uniform(0, 1);
-    if (middle < 0.03) {
+    if (middle < 0.05) {
         // break loop if there is a country with no simple names
         let steps = 0;
         while (/[ .-]/.test(firstName) && steps < 100) {
@@ -754,21 +754,21 @@ function name() {
         //   e.g. {Xavier Y. Zed}
         // 50% will use it fully
         //   e.g. {Xavier Yanick Zed}
-        // of the 50% who initialize, 10% will initialize Fn
+        // of the 50% who initialize, 1% will initialize Fn
         //   e.g. {X. Y. Zed}
-        // of the 50% who don't, 10% will instead initialize Fn
+        // of the 50% who don't, 5% will instead initialize Fn
         //   e.g. {X. Yanick Zed}
         const abbrev = random.uniform(0, 1);
         const initFn = random.uniform(0, 1);
         if (abbrev < 0.5) {
             // initialize it
             middleName = `${middleName.charAt(0)}.`;
-            if (initFn < 0.1) {
+            if (initFn < 0.01) {
                 firstName = `${firstName.charAt(0)}.`;
             }
         } else {
             // use it fully
-            if (initFn < 0.1) {
+            if (initFn < 0.05) {
                 firstName = `${firstName.charAt(0)}.`;
             }
         }
@@ -782,8 +782,8 @@ function name() {
     // Jr. or III, randomly
     const son = random.uniform(0, 1);
     const english = ["USA", "Canada", "Australia"];
-    if (english.indexOf(country) > 0 && son < 0.03) {
-        if (son < 0.0009) {
+    if (english.indexOf(country) > 0 && son < 0.01) {
+        if (son < 0.004) {
             lastName = `${lastName} III`;
         } else {
             lastName = `${lastName} Jr.`;

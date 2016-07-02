@@ -781,7 +781,8 @@ function name() {
 
     // Jr. or III, randomly
     const son = random.uniform(0, 1);
-    if (son < 0.03) {
+    const english = ["USA", "Canada", "Australia"];
+    if (english.indexOf(country) > 0 && son < 0.03) {
         if (son < 0.0009) {
             lastName = `${lastName} III`;
         } else {

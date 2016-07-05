@@ -482,13 +482,13 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
         }
         // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any g.PLAYER.UNDRAFTED
         if (createUndrafted1 && (g.phase <= g.PHASE.BEFORE_DRAFT || g.phase >= g.PHASE.FREE_AGENCY)) {
-            draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1);
+            draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1, true);
         }
         if (createUndrafted2) {
-            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2);
+            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2, true);
         }
         if (createUndrafted3) {
-            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3);
+            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3, true);
         }
     });
 

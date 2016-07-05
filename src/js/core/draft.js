@@ -69,7 +69,7 @@ async function setOrder(ot, draftOrder) {
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
  * @return {Promise}
  */
-async function genPlayers(tx, tid, scoutingRank = null, numPlayers) {
+async function genPlayers(tx, tid, scoutingRank = null, numPlayers, newLeague = false) {
     if (numPlayers === null || numPlayers === undefined) {
         numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
     }
@@ -93,7 +93,7 @@ async function genPlayers(tx, tid, scoutingRank = null, numPlayers) {
         let draftYear = g.season;
 
         let baseAge = 19;
-        if (g.season === g.startingSeason && g.phase < g.PHASE.DRAFT) {
+        if (newLeague) {
             // New league, creating players for draft in same season and following 2 seasons
             if (tid === g.PLAYER.UNDRAFTED_2) {
                 baseAge -= 1;

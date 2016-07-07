@@ -755,7 +755,7 @@ function name() {
         // 50% will use it fully
         //   e.g. {Xavier Yanick Zed}
         const abbrev = random.uniform(0, 1);
-        if (abbrev < 0.5 || country == "USA") {
+        if (abbrev < 0.5 || country === "USA") {
             // initialize it
             middleName = `${middleName.charAt(0)}.`;
         } else {

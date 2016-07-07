@@ -754,23 +754,12 @@ function name() {
         //   e.g. {Xavier Y. Zed}
         // 50% will use it fully
         //   e.g. {Xavier Yanick Zed}
-        // of the 50% who initialize, 1% will initialize Fn
-        //   e.g. {X. Y. Zed}
-        // of the 50% who don't, 5% will instead initialize Fn
-        //   e.g. {X. Yanick Zed}
         const abbrev = random.uniform(0, 1);
-        const initFn = random.uniform(0, 1);
         if (abbrev < 0.5) {
             // initialize it
             middleName = `${middleName.charAt(0)}.`;
-            if (initFn < 0.01) {
-                firstName = `${firstName.charAt(0)}.`;
-            }
         } else {
             // use it fully
-            if (initFn < 0.05) {
-                firstName = `${firstName.charAt(0)}.`;
-            }
         }
         firstName = `${firstName} ${middleName}`;
     }

@@ -1173,6 +1173,12 @@ function filter(p, options) {
                 }
             } else if (options.attrs[i] === "name") {
                 fp.name = `${p.firstName} ${p.lastName}`;
+            } else if (options.attrs[i] === "nameAbbreviation") {
+                // can't use "abbrev" because that's Team Abbrev
+                const names = p.firstName.split(/[ .-]/);
+                const abbrev = names.map(s => {return s === "" ? "" : `${s[0]}.`;});
+                const concat = abbrev.join("");
+                fp.nameAbbreviation = `${concat} ${p.lastName}`;
             } else {
                 fp[options.attrs[i]] = p[options.attrs[i]];
             }

@@ -14,7 +14,7 @@ async function addSeason(season, tid) {
     let playersAll = await g.dbl.players.index('tid').getAll(tid);
 
     playersAll = player.filter(playersAll, {
-        attrs: ["pid", "firstName", "lastName", "age", "watch", "valueFuzz"],
+        attrs: ["pid", "nameAbbreviation", "age", "watch", "valueFuzz"],
         ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
         showNoStats: true,
         showRookies: true,
@@ -25,14 +25,9 @@ async function addSeason(season, tid) {
     for (let i = 0; i < playersAll.length; i++) {
         const pa = playersAll[i];
 
-        // Abbreviate first name to prevent overflows
-        const names = pa.firstName.split(/[ .-]/);
-        const abbrev = names.map(s => {return s === "" ? "" : `${s[0]}.`;});
-        const concat = abbrev.join("");
-        pa.name = `${concat} ${pa.lastName}`;
-
         // Attributes
-        const p = {pid: pa.pid, name: pa.name, age: pa.age, watch: pa.watch, valueFuzz: pa.valueFuzz};
+        // set name to pa.nameAbbreviation to prevent overflows
+        const p = {pid: pa.pid, name: pa.nameAbbreviation, age: pa.age, watch: pa.watch, valueFuzz: pa.valueFuzz};
 
         // Ratings - just take the only entry
         p.ovr = pa.ratings[0].ovr;

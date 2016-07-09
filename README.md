@@ -70,7 +70,7 @@ To run the game locally, you need some way of running a web server to display
 the content. There are currently two ways to do it. It doesn't matter which
 you use as long as you can get it to run on your computer.
 
-#### 1. Express (easiest)
+#### 1. Node.js (easiest)
 
 Run
 
@@ -82,7 +82,7 @@ and point your browser to <http://localhost:3000/>.
 
 The mod_rewrite rules in `.htaccess` can be used to make Apache run Basketball
 GM. Everything should work if you point it at the `build` folder with
-mod_rewrite enabled. That's how it's done on basketball-gm.com.
+mod_rewrite enabled. That's how it's done on play.basketball-gm.com.
 
 ### Step 4 - Testing
 

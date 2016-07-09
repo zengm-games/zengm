@@ -172,23 +172,23 @@ function generate(tm) {
         imgURL: tm.imgURL !== undefined ? tm.imgURL : "",
         budget: {
             ticketPrice: {
-                amount: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.amount : helpers.round(25 + 25 * (g.numTeams - tm.popRank) / (g.numTeams - 1), 2),
+                amount: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.amount : helpers.round((g.salaryCap / 90000) * 37 + 25 * (g.numTeams - tm.popRank) / (g.numTeams - 1), 2),
                 rank: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.rank : tm.popRank,
             },
             scouting: {
-                amount: tm.hasOwnProperty("budget") ? tm.budget.scouting.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                amount: tm.hasOwnProperty("budget") ? tm.budget.scouting.amount : helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
                 rank: tm.hasOwnProperty("budget") ? tm.budget.scouting.rank : tm.popRank,
             },
             coaching: {
-                amount: tm.hasOwnProperty("budget") ? tm.budget.coaching.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                amount: tm.hasOwnProperty("budget") ? tm.budget.coaching.amount : helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
                 rank: tm.hasOwnProperty("budget") ? tm.budget.coaching.rank : tm.popRank,
             },
             health: {
-                amount: tm.hasOwnProperty("budget") ? tm.budget.health.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                amount: tm.hasOwnProperty("budget") ? tm.budget.health.amount : helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
                 rank: tm.hasOwnProperty("budget") ? tm.budget.health.rank : tm.popRank,
             },
             facilities: {
-                amount: tm.hasOwnProperty("budget") ? tm.budget.facilities.amount : helpers.round(900 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                amount: tm.hasOwnProperty("budget") ? tm.budget.facilities.amount : helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
                 rank: tm.hasOwnProperty("budget") ? tm.budget.facilities.rank : tm.popRank,
             },
         },

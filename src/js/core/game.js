@@ -60,16 +60,16 @@ function writeTeamStats(tx, results) {
             coachingPaid = t.budget.coaching.amount / g.numGames;
             healthPaid = t.budget.health.amount / g.numGames;
             facilitiesPaid = t.budget.facilities.amount / g.numGames;
-            merchRevenue = 3 * att / 1000;
+            merchRevenue = (g.salaryCap / 90000) * 4.5 * att / 1000;
             if (merchRevenue > 250) {
                 merchRevenue = 250;
             }
-            sponsorRevenue = 10 * att / 1000;
+            sponsorRevenue = (g.salaryCap / 90000) * 15 * att / 1000;
             if (sponsorRevenue > 600) {
                 sponsorRevenue = 600;
             }
-            nationalTvRevenue = 250;
-            localTvRevenue = 10 * att / 1000;
+            nationalTvRevenue = (g.salaryCap / 90000) * 375;
+            localTvRevenue = (g.salaryCap / 90000) * 15 * att / 1000;
             if (localTvRevenue > 1200) {
                 localTvRevenue = 1200;
             }

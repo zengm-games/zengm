@@ -31,12 +31,12 @@ const defaultGameAttributes = {
     autoPlaySeasons: 0,
     godMode: false,
     godModeInPast: false,
-    salaryCap: 60000, // [thousands of dollars]
-    minPayroll: 40000, // [thousands of dollars]
-    luxuryPayroll: 65000, // [thousands of dollars]
+    salaryCap: 90000, // [thousands of dollars]
+    minPayroll: 60000, // [thousands of dollars]
+    luxuryPayroll: 100000, // [thousands of dollars]
     luxuryTax: 1.5,
-    minContract: 500, // [thousands of dollars]
-    maxContract: 20000, // [thousands of dollars]
+    minContract: 750, // [thousands of dollars]
+    maxContract: 30000, // [thousands of dollars]
     minRosterSize: 10,
     numGames: 82, // per season
     quarterLength: 12, // [minutes]

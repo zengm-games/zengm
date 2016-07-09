@@ -17,6 +17,7 @@ better salary AI
   dynamically set based on cap space
   increase salary cap, and startingSeason
     need to make revenue higher too, then
+      scale w/ salary cap dynamically
   https://www.reddit.com/r/gamedev/comments/4omk8h/simulating_marketbased_pricing/
   FAs less likely to sign https://www.reddit.com/r/BasketballGM/comments/4qla6t/free_agent_mood/d4ww715?context=3
 
@@ -90,6 +91,8 @@ eslint
 
 CURRENT
 -------
+
+bold highest values in career on player stats tables like wikipedia https://www.reddit.com/r/BasketballGM/comments/4rgn0p/two_statrelated_suggestions/
 
 pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qjahi/minor_suggestion_generate_separate_pages_for_each/
 

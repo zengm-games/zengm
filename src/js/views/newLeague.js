@@ -39,7 +39,7 @@ function removeUnneededTeamProps(teams) {
 async function post(req) {
     document.getElementById("create-new-league").disabled = true;
 
-    let startingSeason = 2015;
+    let startingSeason = 2016;
 
     const tid = parseInt(req.params.tid, 10);
     localStorage.lastSelectedTid = tid;

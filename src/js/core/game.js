@@ -78,7 +78,7 @@ function writeTeamStats(tx, results) {
         // Attendance - final estimate
         if (t1 === 0) { // Base on home team
             att = random.gauss(att, 1000);
-            att *= 30 / ticketPrice;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
+            att *= 45 / ((g.salaryCap / 90000) * ticketPrice);  // Attendance depends on ticket price. Not sure if this formula is reasonable.
             att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(teamSeasons, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
             if (att > 25000) {
                 att = 25000;

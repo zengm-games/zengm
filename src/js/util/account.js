@@ -39,11 +39,11 @@ const allAchievements = [{
 }, {
     slug: "moneyball",
     name: "Moneyball",
-    desc: "Win a title with a payroll under $40 million.",
+    desc: "Win a title with a payroll under $60 million.",
 }, {
     slug: "moneyball_2",
     name: "Moneyball 2",
-    desc: "Win a title with a payroll under $30 million.",
+    desc: "Win a title with a payroll under $45 million.",
 }, {
     slug: "hardware_store",
     name: "Hardware Store",
@@ -344,9 +344,9 @@ async function checkMoneyball(maxPayroll, slug, saveAchievement) {
     return false;
 }
 
-checkAchievement.moneyball = (saveAchievement = true) => checkMoneyball(40000, "moneyball", saveAchievement);
+checkAchievement.moneyball = (saveAchievement = true) => checkMoneyball(60000, "moneyball", saveAchievement);
 
-checkAchievement.moneyball_2 = (saveAchievement = true) => checkMoneyball(30000, "moneyball_2", saveAchievement);
+checkAchievement.moneyball_2 = (saveAchievement = true) => checkMoneyball(45000, "moneyball_2", saveAchievement);
 
 checkAchievement.hardware_store = async (saveAchievement = true) => {
     if (g.godModeInPast) {

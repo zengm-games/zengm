@@ -46,7 +46,7 @@ async function updateDraftSummary(inputs) {
         statsSeasons: "all",
     });
     playersAll = player.filter(playersAll, {
-        attrs: ["tid", "abbrev", "draft", "pid", "name", "age"],
+        attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
         showNoStats: true,
@@ -60,7 +60,7 @@ async function updateDraftSummary(inputs) {
 
         if (pa.draft.round === 1 || pa.draft.round === 2) {
             // Attributes
-            const p = {pid: pa.pid, name: pa.name, draft: pa.draft, currentAge: pa.age, currentAbbrev: pa.abbrev};
+            const p = {pid: pa.pid, name: pa.name, draft: pa.draft, currentAge: pa.age, currentAbbrev: pa.abbrev, hof: pa.hof};
 
             // Ratings
             const currentPr = pa.ratings[pa.ratings.length - 1];
@@ -96,9 +96,13 @@ function uiFirst(vm) {
     ko.computed(() => {
         const season = vm.season();
         ui.datatableSinglePage($("#draft-results"), 0, vm.players().map(p => {
-            return [`${p.draft.round}-${p.draft.pick}`, `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`, p.pos, helpers.draftAbbrev(p.draft.tid, p.draft.originalTid, season), String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), `<span class="skills-alone">${helpers.skillsBlock(p.draft.skills)}</span>`, `<a href="${helpers.leagueUrl(["roster", p.currentAbbrev])}">${p.currentAbbrev}</a>`, String(p.currentAge), String(p.currentOvr), String(p.currentPot), `<span class="skills-alone">${helpers.skillsBlock(p.currentSkills)}</span>`, helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.draft.tid === g.userTid];
+            return [`${p.draft.round}-${p.draft.pick}`, `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`, p.pos, helpers.draftAbbrev(p.draft.tid, p.draft.originalTid, season), String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), `<span class="skills-alone">${helpers.skillsBlock(p.draft.skills)}</span>`, `<a href="${helpers.leagueUrl(["roster", p.currentAbbrev])}">${p.currentAbbrev}</a>`, String(p.currentAge), String(p.currentOvr), String(p.currentPot), `<span class="skills-alone">${helpers.skillsBlock(p.currentSkills)}</span>`, helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.hof, p.draft.tid === g.userTid];
         }), {
             rowCallback(row, data) {
+                // Highlight HOF players
+                if (data[data.length - 2]) {
+                    row.classList.add("danger");
+                }
                 // Highlight user's team
                 if (data[data.length - 1]) {
                     row.classList.add("info");

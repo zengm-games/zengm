@@ -111,6 +111,17 @@ const getName = (name, file) => {
         parts[0] = fnFixes[parts[0]];
     }
 
+    const lnFixes = {
+        'MBaye': "M'Baye",
+        'NDoye': "N'Doye",
+        'NDiaye': "N'Diaye",
+        'OBrien': "O'Brien",
+    };
+    const lnIndex = parts.length - 1;
+    if (lnFixes.hasOwnProperty(parts[lnIndex])) {
+        parts[lnIndex] = lnFixes[parts[lnIndex]];
+    }
+
     return parts;
 };
 

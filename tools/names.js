@@ -22,6 +22,10 @@ const getName = (name, file) => {
         'J. Robert Merritt': ['J. Robert', 'Merritt'],
         Nene: ['Nene', ''],
         'St. Paul Latham': ['St. Paul', 'Latham'],
+        'ATorri Shine': ["A'Torri", 'Shine'],
+        'DAndre Johnson': ["D'Andre", 'Johnson'],
+        'DMarius Wilkes': ["D'Marius", 'Wilkes'],
+        'DMarr Suggs': ["D'Marr", 'Suggs'],
     };
     let parts;
     if (nameFixes.hasOwnProperty(name)) {

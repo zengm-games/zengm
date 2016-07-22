@@ -15,7 +15,10 @@ const getName = (name, file) => {
         throw new Error(`No name found in ${file}, probably it is not a valid player page`);
     }
 
-    // Handles rare first names with spaces manually, along with Nene having no last name and some typos
+    // Handles rare first names manually:
+    // 1. names with spaces
+    // 2. Nene having no last name
+    // 3. Apostrophe first names
     const nameFixes = {
         'Billy Ray Bates': ['Billy Ray', 'Bates'],
         'Hot Rod Williams': ['Hot Rod', 'Williams'],

@@ -45,11 +45,13 @@ async function updatePlayers(inputs, updateEvents) {
 
             players[i].bestStats = {};
             let bestEWA = 0;
+            players[i].legacy = {};
             for (let j = 0; j < players[i].stats.length; j++) {
                 const rEWA = players[i].stats[j].ewa;
+                const team = players[i].stats[j].abbrev;
                 let pEWA = 0;
                 for (let k = 0; k < players[i].statsPlayoffs.length; k++) {
-                    if (players[i].stats[j].season === players[i].statsPlayoffs[k].season) {
+                    if (players[i].stats[j].season === players[i].statsPlayoffs[k].season && team === players[i].statsPlayoffs[k].abbrev) {
                         pEWA = players[i].statsPlayoffs[k].ewa;
                         break;
                     }
@@ -58,7 +60,15 @@ async function updatePlayers(inputs, updateEvents) {
                     bestEWA = rEWA + pEWA;
                     players[i].bestStats = players[i].stats[j];
                 }
+                if (players[i].legacy.hasOwnProperty(team)) {
+                    players[i].legacy[team] += rEWA + pEWA;
+                } else {
+                    players[i].legacy[team] = rEWA + pEWA;
+                }
             }
+
+            const careerTeam = Object.keys(players[i].legacy).reduce((teamA, teamB) => {return players[i].legacy[teamA] > players[i].legacy[teamB] ? teamA : teamB;});
+            players[i].legacy.abbrev = careerTeam;
         }
 
         return {
@@ -78,7 +88,7 @@ function uiFirst(vm) {
             } else {
                 pick = '';
             }
-            return [`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`, p.ratings[p.ratings.length - 1].pos, String(p.draft.year), String(p.retiredYear), pick, String(p.peakOvr), String(p.bestStats.season), `<a href="${helpers.leagueUrl(["roster", p.bestStats.abbrev, p.bestStats.season])}">${p.bestStats.abbrev}</a>`, String(p.bestStats.gp), helpers.round(p.bestStats.min, 1), helpers.round(p.bestStats.pts, 1), helpers.round(p.bestStats.trb, 1), helpers.round(p.bestStats.ast, 1), helpers.round(p.bestStats.per, 1), String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.statsTids.indexOf(g.userTid) >= 0];
+            return [`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`, p.ratings[p.ratings.length - 1].pos, String(p.draft.year), String(p.retiredYear), `<a href="${helpers.leagueUrl(["team_history", p.legacy.abbrev])}">${p.legacy.abbrev}</a>`, pick, String(p.peakOvr), String(p.bestStats.season), `<a href="${helpers.leagueUrl(["roster", p.bestStats.abbrev, p.bestStats.season])}">${p.bestStats.abbrev}</a>`, String(p.bestStats.gp), helpers.round(p.bestStats.min, 1), helpers.round(p.bestStats.pts, 1), helpers.round(p.bestStats.trb, 1), helpers.round(p.bestStats.ast, 1), helpers.round(p.bestStats.per, 1), String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.statsTids.indexOf(g.userTid) >= 0];
         }), {
             rowCallback(row, data) {
                 // Highlight players from the user's team

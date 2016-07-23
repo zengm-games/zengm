@@ -21,14 +21,14 @@
     <div class="list-group" data-bind="foreach: player.contractOptions">
       <div class="list-group-item" data-bind="css: {'list-group-item-success': smallestAmount()}" style="height: 54px">
         <div class="pull-left" style="padding-top: 8px">
-          $<span data-bind="round: [amount, 2]"></span>M per year, through <span data-bind="text: exp"></span> (<span data-bind="text: years() + (years() === 1 ? ' season' : ' seasons')"></span>)
+          $<span data-bind="round: [amount, 2]"></span>M per year<span class="hidden-xs">, through <span data-bind="text: exp"></span></span> (<span data-bind="text: years() + (years() === 1 ? ' season' : ' seasons')"></span>)
         </div>
 
         <form class="pull-right" data-bind="attrLeagueUrl: {action: ['negotiation', $root.player.pid]}" method="POST">
           <input type="hidden" name="accept" value="1">
           <input type="hidden" name="amount" data-bind="attr: {value: amount}">
           <input type="hidden" name="exp" data-bind="attr: {value: exp}">
-          <button type="submit" class="btn btn-success" id="accept">Sign Contract</button>
+          <button type="submit" class="btn btn-success" id="accept">Sign<span class="hidden-xs"> Contract</span></button>
         </form>
       </div>
     </div>

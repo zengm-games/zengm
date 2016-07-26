@@ -18,17 +18,12 @@ const getName = (name, file) => {
     // Handles rare first names manually:
     // 1. names with spaces
     // 2. Nene having no last name
-    // 3. Apostrophe first names
     const nameFixes = {
         'Billy Ray Bates': ['Billy Ray', 'Bates'],
         'Hot Rod Williams': ['Hot Rod', 'Williams'],
         'J. Robert Merritt': ['J. Robert', 'Merritt'],
         Nene: ['Nene', ''],
         'St. Paul Latham': ['St. Paul', 'Latham'],
-        'ATorri Shine': ["A'Torri", 'Shine'],
-        'DAndre Johnson': ["D'Andre", 'Johnson'],
-        'DMarius Wilkes': ["D'Marius", 'Wilkes'],
-        'DMarr Suggs': ["D'Marr", 'Suggs'],
     };
     let parts;
     if (nameFixes.hasOwnProperty(name)) {
@@ -106,7 +101,12 @@ const getName = (name, file) => {
         }
     }
 
-    const fnFixes = {};
+    const fnFixes = {
+        'ATorri': "A'Torri",
+        'DAndre': "D'Andre",
+        'DMarius': "D'Marius",
+        'DMarr': "D'Marr",
+    }
     if (fnFixes.hasOwnProperty(parts[0])) {
         parts[0] = fnFixes[parts[0]];
     }

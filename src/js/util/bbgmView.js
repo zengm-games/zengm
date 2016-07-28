@@ -16,11 +16,11 @@ function display(args, updateEvents) {
     const containerEl = document.getElementById(container);
 
     if (containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading === args.id) {
+        ReactDOM.unmountComponentAtNode(containerEl);
         ui.update({
             container,
             template: args.id,
         });
-        ReactDOM.unmountComponentAtNode(containerEl);
         ko.applyBindings(vm, containerEl);
         if (args.uiFirst !== undefined) {
             args.uiFirst(vm);

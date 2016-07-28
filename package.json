@@ -36,6 +36,8 @@
     "knockout.mapping": "2.4.3",
     "lodash.sortby": "4.5.0",
     "postscribe": "2.0.6",
+    "react": "^15.2.1",
+    "react-dom": "^15.2.1",
     "source-map-support": "0.4.2",
     "underscore": "1.8.3"
   },
@@ -58,6 +60,7 @@
     "babel-plugin-transform-es2015-shorthand-properties": "6.8.0",
     "babel-plugin-transform-es2015-spread": "6.8.0",
     "babel-plugin-transform-es2015-template-literals": "6.8.0",
+    "babel-preset-react": "6.11.1",
     "babelify": "7.3.0",
     "brfs": "1.4.3",
     "browserify": "13.0.1",
@@ -167,6 +170,9 @@
     ]
   },
   "babel": {
+    "presets": [
+      "react"
+    ],
     "plugins": [
       "transform-es2015-template-literals",
       "transform-es2015-literals",

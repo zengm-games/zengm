@@ -908,6 +908,20 @@ function roundsWonText(playoffRoundsWon) {
     return "";
 }
 
+function roundWinp(arg) {
+    let output = parseFloat(arg).toFixed(3);
+
+    if (output[0] === "0") {
+        // Delete leading 0
+        output = output.slice(1, output.length);
+    } else {
+        // Delete trailing digit if no leading 0
+        output = output.slice(0, output.length - 1);
+    }
+
+    return output;
+}
+
 module.exports = {
     validateAbbrev,
     getAbbrev,
@@ -946,4 +960,5 @@ module.exports = {
     yearRanges,
     maybeReuseTx,
     roundsWonText,
+    roundWinp,
 };

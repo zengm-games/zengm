@@ -13,17 +13,7 @@ ko.bindingHandlers.roundWinp = {
     update: (element, valueAccessor) => {
         const arg = ko.unwrap(valueAccessor());
 
-        let output = parseFloat(arg).toFixed(3);
-
-        if (output[0] === "0") {
-            // Delete leading 0
-            output = output.slice(1, output.length);
-        } else {
-            // Delete trailing digit if no leading 0
-            output = output.slice(0, output.length - 1);
-        }
-
-        return ko.bindingHandlers.text.update(element, () => output);
+        return ko.bindingHandlers.text.update(element, () => helpers.roundWinp(arg));
     },
 };
 

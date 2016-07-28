@@ -1,11 +1,9 @@
 const g = require('../globals');
 const ui = require('../ui');
 const team = require('../core/team');
-const $ = require('jquery');
-const ko = require('knockout');
-const komapping = require('knockout.mapping');
+const React = require('react');
 const components = require('./components');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
 
 
@@ -15,31 +13,9 @@ function get(req) {
     };
 }
 
-function InitViewModel() {
-    this.season = ko.observable();
-    this.confs = ko.observable([]);
-}
-
-const mapping = {
-    confs: {
-        create(options) {
-            return new function () {
-                komapping.fromJS(options.data, {
-                    divs: {
-                        key: data => ko.unwrap(data.name),
-                    },
-                    teams: {
-                        key: data => ko.unwrap(data.tid),
-                    },
-                }, this);
-            }();
-        },
-        key: data => ko.unwrap(data.name),
-    },
-};
-
-async function updateStandings(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
+async function updateStandings(inputs, updateEvents, state) {
+console.log('updateStandings', inputs, state);
+    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== state.season) {
         const teams = await team.filter({
             attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
             seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
@@ -133,7 +109,7 @@ async function updateStandings(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
+/*function uiFirst(vm) {
     ko.computed(() => {
         ui.title(`Standings - ${vm.season()}`);
     }).extend({throttle: 1});
@@ -143,14 +119,81 @@ function uiFirst(vm) {
 
 function uiEvery(updateEvents, vm) {
     components.dropdown("standings-dropdown", ["seasons"], [vm.season()], updateEvents);
-}
+}*/
 
-module.exports = bbgmView.init({
+const initialState = {
+    season: null,
+    confs: [],
+};
+
+const Component = props => {
+console.log('standings props', props);
+    return (
+        <div>
+            DROPDOWNS
+            <h1>Standings NEWWINDOW</h1>
+            {props.confs.map(conf => {
+                return <div key={conf.cid}>
+                    <h2>{conf.name}</h2>
+                    <div className="row">
+                        <div className="col-sm-9">
+                            {conf.divs.map(div => {
+                                return <div className="table-responsive" key={div.did}>
+                                    <table className="table table-striped table-bordered table-condensed standings-division">
+                                        <thead>
+                                            <tr><th width="100%">{div.name}</th><th>W</th><th>L</th><th>Pct</th><th>GB</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            {div.teams.map(t => {
+                                                return <tr data-bind="css: {info: highlight}" key={t.tid}>
+                                                    <td>
+                                                        <a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $parents[2].season]}">{t.region} {t.name}</a>
+                                                        <span>{t.playoffsRank ? ` (${t.playoffsRank})` : ''}</span>
+                                                    </td>
+                                                    <td>{t.won}</td>
+                                                    <td>{t.lost}</td>
+                                                    <td>{helpers.roundWinp(t.winp)}</td>
+                                                    <td>{t.gb}</td>
+                                                    <td>{t.wonHome} {t.lostHome}</td>
+                                                    <td>{t.wonAway} {t.lostAway}</td>
+                                                    <td>{t.wonDiv} {t.lostDiv}</td>
+                                                    <td>{t.wonConf} {t.lostConf}</td>
+                                                    <td>{t.streak}</td>
+                                                    <td>{t.lastTen}</td>
+                                                </tr>;
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>;
+                            })}
+                        </div>
+
+                        <div className="col-sm-3 hidden-xs">
+                            <table className="table table-striped table-bordered table-condensed">
+                            <thead>
+                                <tr><th width="100%">Team</th><th style={{textAlign: 'right'}}>GB</th></tr>
+                            </thead>
+                            <tbody>
+                                {conf.teams.map(t => {
+                                    return <tr data-bind="css: {separator: $index() === 7 && $root.playoffsByConference(), info: highlight}" key={t.tid}>
+                                        <td>{t.rank}. <a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $parents[1].season]}">{t.region}</a></td>
+                                        <td style={{textAlign: 'right'}}>{t.gb}</td>
+                                    </tr>;
+                                })}
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>;
+            })}
+        </div>
+    );
+};
+
+module.exports = bbgmViewReact.init({
     id: "standings",
     get,
-    InitViewModel,
-    mapping,
     runBefore: [updateStandings],
-    uiFirst,
-    uiEvery,
+    initialState,
+    Component,
 });

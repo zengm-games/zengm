@@ -4,6 +4,7 @@ const Promise = require('bluebird');
 const $ = require('jquery');
 const ko = require('knockout');
 const komapping = require('knockout.mapping');
+const ReactDOM = require('react-dom');
 const _ = require('underscore');
 const helpers = require('./helpers');
 const viewHelpers = require('./viewHelpers');
@@ -19,6 +20,7 @@ function display(args, updateEvents) {
             container,
             template: args.id,
         });
+        ReactDOM.unmountComponentAtNode(containerEl);
         ko.applyBindings(vm, containerEl);
         if (args.uiFirst !== undefined) {
             args.uiFirst(vm);

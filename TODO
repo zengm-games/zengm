@@ -1,3 +1,27 @@
+REACT
+
+Start with standings
+
+Flow:
+  Davis.js parses URL, sends req to controller
+  if another view is loaded currently, make a note that it's switching so the old one doesn't need to listen for updates
+  controller parses req and sends result to run* functions
+  run* functions run
+  if first load of this view, save state and attach to DOM
+  if not first load, update state (using setState, can be partial)
+
+is UI updating okay without waiting for this.setState to finish?
+
+do i need some initviewmodel type thing?
+
+when all react: https://github.com/reactjs/react-router/issues/2101 to handle transitions smoothly.
+  in the meantime,
+    expose a get that renders the component AFTER loading all data (straight ReactDOM.render, cleaning up any existing React or ko bindings on container)
+    expose an update that updates the data currently rendered
+    see also https://facebook.github.io/react/blog/2015/10/01/react-render-and-top-level-api.html
+
+---
+
 make FAs less eager to sign with bad teams
   alternative idea to just threshold: https://www.reddit.com/r/nba/comments/4tfaph/i_made_basketball_gm_a_free_basketball_management/d5hqqal
 

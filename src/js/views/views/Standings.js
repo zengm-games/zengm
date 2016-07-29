@@ -3,12 +3,13 @@ const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
 const Dropdown = require('../components/Dropdown');
+const LeagueLink = require('../components/LeagueLink');
 const clickable = require('../wrappers/clickable');
 
-const DivStandingsRow = clickable(({t, clicked, toggleClicked}) => {
+const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {
     return <tr onClick={toggleClicked} key={t.tid} className={classNames({info: t.highlight, warning: clicked})}>
         <td>
-            <a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $parents[2].season]}">{t.region} {t.name}</a>
+            <LeagueLink parts={['roster', t.abbrev, season]}>{t.region} {t.name}</LeagueLink>
             <span>{t.playoffsRank ? ` (${t.playoffsRank})` : ''}</span>
         </td>
         <td>{t.won}</td>
@@ -24,20 +25,32 @@ const DivStandingsRow = clickable(({t, clicked, toggleClicked}) => {
     </tr>;
 });
 
-const DivStandings = ({div}) => {
+const DivStandings = ({div, season}) => {
     return <div className="table-responsive">
         <table className="table table-striped table-bordered table-condensed table-hover standings-division">
             <thead>
-                <tr><th width="100%">{div.name}</th><th>W</th><th>L</th><th>Pct</th><th>GB</th><th>Home</th><th>Road</th><th>Div</th><th>Conf</th><th>Streak</th><th>L10</th></tr>
+                <tr>
+                    <th width="100%">{div.name}</th>
+                    <th>W</th>
+                    <th>L</th>
+                    <th>Pct</th>
+                    <th>GB</th>
+                    <th>Home</th>
+                    <th>Road</th>
+                    <th>Div</th>
+                    <th>Conf</th>
+                    <th>Streak</th>
+                    <th>L10</th>
+                </tr>
             </thead>
             <tbody>
-                {div.teams.map(t => <DivStandingsRow key={t.tid} t={t} />)}
+                {div.teams.map(t => <DivStandingsRow key={t.tid} t={t} season={season} />)}
             </tbody>
         </table>
     </div>;
 };
 
-const ConfStandings = ({playoffsByConference, teams}) => {
+const ConfStandings = ({playoffsByConference, season, teams}) => {
     return <table className="table table-striped table-bordered table-condensed">
         <thead>
             <tr><th width="100%">Team</th><th style={{textAlign: 'right'}}>GB</th></tr>
@@ -45,7 +58,7 @@ const ConfStandings = ({playoffsByConference, teams}) => {
         <tbody>
             {teams.map((t, i) => {
                 return <tr key={t.tid} className={classNames({info: t.highlight, separator: i === 7 && playoffsByConference})}>
-                    <td>{t.rank}. <a data-bind="attrLeagueUrl: {href: ['roster', abbrev, $parents[1].season]}">{t.region}</a></td>
+                    <td>{t.rank}. <LeagueLink parts={['roster', t.abbrev, season]}>{t.region}</LeagueLink></td>
                     <td style={{textAlign: 'right'}}>{t.gb}</td>
                 </tr>;
             })}
@@ -67,11 +80,11 @@ module.exports = ({confs = [], playoffsByConference = true, season}) => {
             <h2>{conf.name}</h2>
             <div className="row">
                 <div className="col-sm-9">
-                    {conf.divs.map(div => <DivStandings div={div} key={div.did} />)}
+                    {conf.divs.map(div => <DivStandings key={div.did} div={div} season={season} />)}
                 </div>
 
                 <div className="col-sm-3 hidden-xs">
-                    <ConfStandings teams={conf.teams} playoffsByConference={playoffsByConference} />
+                    <ConfStandings playoffsByConference={playoffsByConference} season={season} teams={conf.teams} />
                 </div>
             </div>
         </div>)}

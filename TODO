@@ -1,8 +1,8 @@
 REACT
 
 Start with standings
-  dropdown
   new window
+  jump to
   links
   revisit bbgmViewReact API
 
@@ -25,6 +25,8 @@ when all react
       expose an update that updates the data currently rendered
       see also https://facebook.github.io/react/blog/2015/10/01/react-render-and-top-level-api.html
   reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
+
+prod mode in build
 
 ---
 

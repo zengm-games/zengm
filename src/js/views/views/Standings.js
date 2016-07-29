@@ -4,6 +4,7 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
 const Dropdown = require('../components/Dropdown');
 const LeagueLink = require('../components/LeagueLink');
+const NewWindowLink = require('../components/NewWindowLink');
 const clickable = require('../wrappers/clickable');
 
 const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {
@@ -75,7 +76,7 @@ module.exports = ({confs = [], playoffsByConference = true, season}) => {
 
     return <div>
         <Dropdown view="standings" fields={["seasons"]} values={[season]} />
-        <h1>Standings NEWWINDOW</h1>
+        <h1>Standings <NewWindowLink /></h1>
         {confs.map(conf => <div key={conf.cid}>
             <h2>{conf.name}</h2>
             <div className="row">

@@ -548,8 +548,11 @@ select.teams {
   text-decoration: none;
 }
 
+.new_window {
+  cursor: pointer;
+}
 @media (max-width: 768px) {
-  .new_window {
+  .new_window  {
     display: none;
   }
 }

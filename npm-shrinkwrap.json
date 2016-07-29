@@ -705,6 +705,11 @@
       "from": "cipher-base@>=1.0.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/cipher-base/-/cipher-base-1.0.2.tgz"
     },
+    "classnames": {
+      "version": "2.2.5",
+      "from": "classnames@latest",
+      "resolved": "https://registry.npmjs.org/classnames/-/classnames-2.2.5.tgz"
+    },
     "clean-css": {
       "version": "3.4.18",
       "from": "clean-css@3.4.18",

@@ -5,16 +5,15 @@ const EventEmitter = require('events');
 const ko = require('knockout');
 const React = require('react');
 const ReactDOM = require('react-dom');
-const helpers = require('./helpers');
 const viewHelpers = require('./viewHelpers');
 
 const emitter = new EventEmitter();
 
-function controllerFactory(Component, initialState) {
+function controllerFactory(Component) {
     return class Controller extends React.Component {
         constructor(props) {
             super(props);
-            this.state = initialState;
+            this.state = {};
         }
 
         componentDidMount() {
@@ -27,7 +26,6 @@ function controllerFactory(Component, initialState) {
         }
 
         async update(args, inputs, updateEvents, cb) {
-console.log('args', args)
             const container = g.lid !== null ? "league_content" : "content";
             const containerEl = document.getElementById(container);
 
@@ -36,11 +34,11 @@ console.log('args', args)
             // (2) loaded, but loading something else
             if ((containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading !== args.id) || (containerEl.dataset.idLoaded === args.id && containerEl.dataset.idLoading !== args.id && containerEl.dataset.idLoading !== '')) {
                 containerEl.dataset.idLoading = args.id;
-    //            g.vm.topMenu.template(args.id);
+//                g.vm.topMenu.template(args.id);
 
                 updateEvents.push("firstRun");
 
-    //            vm = new args.InitViewModel(inputs);
+//                vm = new args.InitViewModel(inputs);
             } else if (containerEl.dataset.idLoading === args.id) {
                 // If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
                 cb();
@@ -134,7 +132,7 @@ function get(fnUpdate, args) {
             ko.cleanNode(containerEl);
             ReactDOM.unmountComponentAtNode(containerEl);
 
-            const WrappedComponent = controllerFactory(args.Component, args.initialState);
+            const WrappedComponent = controllerFactory(args.Component);
             ReactDOM.render(<WrappedComponent />, containerEl);
         }
 
@@ -161,6 +159,19 @@ function init(args) {
     return output;
 }
 
+let currentTitle = 'Basketball GM';
+function title(newTitle) {
+    if (g.lid !== null) {
+        newTitle += ` - ${g.leagueName}`;
+    }
+    newTitle = `${newTitle} - Basketball GM`;
+    if (newTitle !== currentTitle) {
+        currentTitle = newTitle;
+        document.title = newTitle;
+    }
+}
+
 module.exports = {
     init,
+    title,
 };

@@ -212,16 +212,6 @@ function updateRoster(inputs, updateEvents, state) {
 }
 
 function uiFirst(vm) {
-    ko.computed(() => {
-        const picture = document.getElementById("picture");
-
-        // If imgURL is not an empty string, use it for team logo on roster page
-        if (vm.team.imgURL()) {
-            picture.style.display = "inline";
-            picture.style.backgroundImage = `url('${vm.team.imgURL()}')`;
-        }
-    }).extend({throttle: 1});
-
     $("#help-roster-pt").popover({
         title: "Playing Time Modifier",
         html: true,

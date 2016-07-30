@@ -61,6 +61,12 @@ const handleRelease = async p => {
 const Roster = ({abbrev, editable, payroll, players, salaryCap, season, showTradeFor, team}) => {
     bbgmViewReact.title(`${team.region} ${team.name} Roster - ${season}`);
 
+    const logoStyle = {};
+    if (team.imgURL) {
+        logoStyle.display = "inline";
+        logoStyle.backgroundImage = `url('${team.imgURL}')`;
+    }
+
     return <div>
         <Dropdown view="roster" fields={["teams", "seasons"]} values={[abbrev, season]} />
         <div className="btn-group pull-right">
@@ -75,7 +81,7 @@ const Roster = ({abbrev, editable, payroll, players, salaryCap, season, showTrad
 
         <h1>{team.region} {team.name} Roster <NewWindowLink /></h1>
         <p>More: <a href={helpers.leagueUrl(['team_finances', abbrev])}>Finances</a> | <a href={helpers.leagueUrl(['game_log', abbrev, season])}>Game Log</a> | <a href={helpers.leagueUrl(['team_history', abbrev])}>History</a> | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
-        <div id="picture" className="team-picture"></div>
+        <div className="team-picture" style={logoStyle}></div>
         <div id="teamInfo">
             <h3>
                 Record: <RecordAndPlayoffs

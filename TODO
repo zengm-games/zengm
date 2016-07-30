@@ -10,9 +10,6 @@ roster
   clickable
   really needs to be a class? handleRelease doesn't
     constructor needed?
-  logos
-    with
-    without
   trade for button
     hover on untradable
 

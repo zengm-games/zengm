@@ -105,10 +105,6 @@ async function updateStandings(inputs, updateEvents, state) {
     }
 }
 
-/*function uiEvery(updateEvents, vm) {
-    components.dropdown("standings-dropdown", ["seasons"], [vm.season()], updateEvents);
-}*/
-
 module.exports = bbgmViewReact.init({
     id: "standings",
     get,

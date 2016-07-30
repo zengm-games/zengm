@@ -1,5 +1,5 @@
-const helpers = require('../../util/helpers');
 const React = require('react');
+const helpers = require('../../util/helpers');
 
 module.exports = class NewWindowLink extends React.Component {
     constructor(props) {

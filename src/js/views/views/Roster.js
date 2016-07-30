@@ -209,9 +209,9 @@ const RosterRow = clickable(props => {
             </button>
         </td> : null}
         {showTradeFor ? <td>
-            <form method="POST" style={{margin: 0}} data-bind="attrLeagueUrl: {action: ['trade']}">
-                <input type="hidden" name="pid" data-bind="attr: {value: pid}" />
-                <button type="submit" className="btn btn-default btn-xs" data-bind="enable: !untradable()" title={p.untradableMsg}>Trade For</button>
+            <form method="POST" style={{margin: 0}} action={helpers.leagueUrl(['trade'])} title={p.untradableMsg}>
+                <input type="hidden" name="pid" value={p.pid} />
+                <button type="submit" className="btn btn-default btn-xs" disabled={p.untradable}>Trade For</button>
             </form>
         </td> : null}
     </tr>;

@@ -1,9 +1,5 @@
 REACT
 
-roster
-  trade for button
-    hover on untradable
-
 benchmark
 
 is UI updating okay without waiting for this.setState to finish?
@@ -34,6 +30,7 @@ when all react
     playerNameLabels
     skillsBlock
   get rid of bootstrap js
+  revisit "trade for" buttons POST
 
 prod mode in build
 

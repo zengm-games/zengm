@@ -27,7 +27,6 @@ module.exports = {
     editTeamInfo: fs.readFileSync(__dirname + '/../templates/editTeamInfo.html', 'utf8'),
     history: fs.readFileSync(__dirname + '/../templates/history.html', 'utf8'),
     historyAll: fs.readFileSync(__dirname + '/../templates/historyAll.html', 'utf8'),
-    inbox: fs.readFileSync(__dirname + '/../templates/inbox.html', 'utf8'),
     leaders: fs.readFileSync(__dirname + '/../templates/leaders.html', 'utf8'),
     leagueDashboard: fs.readFileSync(__dirname + '/../templates/leagueDashboard.html', 'utf8'),
     leagueFinances: fs.readFileSync(__dirname + '/../templates/leagueFinances.html', 'utf8'),

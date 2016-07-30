@@ -2,6 +2,8 @@ REACT
 
 deploy and ask for feedback
 
+propTypes for Roster, Schedule, Standings, including internal components
+
 is UI updating okay without waiting for this.setState to finish?
 
 do i need some initviewmodel type thing?

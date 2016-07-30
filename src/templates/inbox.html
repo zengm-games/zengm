@@ -1,9 +1,0 @@
-<h1>Inbox <span data-bind="newWindow: []"></span></h1>
-
-<p class="text-danger" data-bind="visible: anyUnread">You have a new message. Read it before continuing.</p>
-
-<table class="table table-striped table-bordered table-condensed" id="messages">
-  <tbody data-bind="foreach: messages">
-      <tr data-bind="css: {unread: !read()}"><td class="year"><a data-bind="text: year, attrLeagueUrl: {href: ['message', mid]}"></td><td class="from"><a data-bind="text: from, attrLeagueUrl: {href: ['message', mid]}"></a></td><td class="text"><a data-bind="text: text, attrLeagueUrl: {href: ['message', mid]}"></a></td></tr>
-  </tbody>
-</table>

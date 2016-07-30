@@ -5,9 +5,8 @@ roster
   bootstrap ? icons
   FA redirectUrl
   playing time change
-  auto sort
   new sort mechanism
-  get rid of jquery ui
+  test auto sort
   clickable
   really needs to be a class? handleRelease doesn't
     constructor needed?

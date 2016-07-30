@@ -212,16 +212,6 @@ function updateRoster(inputs, updateEvents, state) {
 }
 
 function uiFirst(vm) {
-    $("#roster-auto-sort").click(async () => {
-        vm.players([]); // This is a hack to force a UI update because the jQuery UI sortable roster reordering does not update the view model, which can cause the view model to think the roster is sorted correctly when it really isn't. (Example: load the roster, auto sort, reload, drag reorder it, auto sort -> the auto sort doesn't update the UI.) Fixing this issue would fix flickering.
-
-        // Explicitly make sure writing is done before rosterAutoSort
-        await g.dbl.tx("players", "readwrite", tx => team.rosterAutoSort(tx, g.userTid));
-
-        league.updateLastDbChange();
-        ui.realtimeUpdate(["playerMovement"]);
-    });
-
     ko.computed(() => {
         const picture = document.getElementById("picture");
 

@@ -64,12 +64,14 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
             }
         }
 
+        const confNames = g.confs.map(conf => conf.name);
+
         // Display the current or archived playoffs
         return {
             finalMatchups,
             matchups,
             numPlayoffRounds: g.numPlayoffRounds,
-            playoffsByConference: g.confs.length === 2 && !localStorage.top16playoffs,
+            confNames,
             season: inputs.season,
             series,
         };

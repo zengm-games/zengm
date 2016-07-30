@@ -1,4 +1,7 @@
+hack to fix 0 population bug https://www.reddit.com/r/BasketballGM/comments/4uu0cx/nobody_in_my_league_is_making_a_profit/d5u4qkq?context=3
+
 make FAs less eager to sign with bad teams
+  alternative idea to just threshold: https://www.reddit.com/r/nba/comments/4tfaph/i_made_basketball_gm_a_free_basketball_management/d5hqqal
 
 display numerical owner mood somehow
 
@@ -13,7 +16,6 @@ refuse to sign in god mode https://www.reddit.com/r/BasketballGM/comments/4p2s1q
 on new season, other tabs should stay at "current season" instead of switching URL to last season
 
 conference glitches
-  hardcoded conference names in playoffs view https://www.reddit.com/r/BasketballGM/comments/4op2uo/8team_custom_league/d4gpmzs
   best record https://www.reddit.com/r/BasketballGM/comments/4oxbgm/cant_view_the_playoffs/d4gmogi
 
 newScheduleCrappy should be better
@@ -614,14 +616,7 @@ gameSim
   assists should be function of speed, since those players have the ball more
   situational awareness http://www.reddit.com/r/BasketballGM/comments/1yg6wi/end_of_game_simulation/
   mediocre players on bad teams should be less efficient (shouldn't put up such a high PER, which falls if they join a good team)
-contract negotiation
-  don't have counter-offers be too drastic
-  weirdness
-    http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1
-    http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
-    http://www.reddit.com/r/BasketballGM/comments/20k310/may_have_encountered_a_bug_during_contract/
-  add free agent to the end of roster
-  http://www.reddit.com/r/BasketballGM/comments/1ykybp/free_agent_signing_suggestion/
+add free agent to the end of roster
 fuzz should affect potential more than other variables, when pot is different than ovr
 mode with ratings hidden
   implement like fuzz?

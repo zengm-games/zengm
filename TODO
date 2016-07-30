@@ -1,6 +1,6 @@
 REACT
 
-benchmark
+deploy and ask for feedback
 
 is UI updating okay without waiting for this.setState to finish?
 
@@ -31,8 +31,6 @@ when all react
     skillsBlock
   get rid of bootstrap js
   revisit "trade for" buttons POST
-
-prod mode in build
 
 updateEvents need to be passed to dropdown?
 

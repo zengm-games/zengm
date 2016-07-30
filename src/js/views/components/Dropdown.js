@@ -212,9 +212,9 @@ class Dropdown extends React.Component {
     }
 }
 Dropdown.propTypes = {
-    fields: React.PropTypes.arrayOf(React.PropTypes.string),
-    values: React.PropTypes.array,
-    view: React.PropTypes.string,
+    fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+    values: React.PropTypes.array.isRequired,
+    view: React.PropTypes.string.isRequired,
 };
 
 module.exports = Dropdown;

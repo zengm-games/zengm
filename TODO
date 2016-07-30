@@ -15,7 +15,6 @@ roster
   new sort mechanism
   get rid of jquery ui
   clickable
-  injury updates
   really needs to be a class? handleRelease doesn't
     constructor needed?
   logos
@@ -45,6 +44,10 @@ when all react
   delete templateHelpers
   delete knockout dependency
   helper functions that return HTML strings should instead be React components, for safety. migrate/delete any remaining
+    recordAndPlayoffs
+    watchBlock
+    playerNameLabels
+    skillsBlock
 
 prod mode in build
 
@@ -1074,7 +1077,6 @@ roster
   check release, buy out, trade for
   flatten a bit
   vars.ptModifiers does not need to be observable
-  for some reason, vars.players.injury stuff isnt' observable so days remaining injured doesn't update in a timely manner. very bizarre
 dataTables/grid knockout
   examples
     https://github.com/CogShift/Knockout.Extensions

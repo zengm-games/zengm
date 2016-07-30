@@ -6,7 +6,7 @@ const league = require('../../core/league');
 const player = require('../../core/player');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {Dropdown, LeagueLink, NewWindowLink} = require('../components/index');
+const {Dropdown, LeagueLink, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} = require('../components/index');
 const clickable = require('../wrappers/clickable');
 
 const doRelease = (pid, justDrafted) => {
@@ -75,7 +75,16 @@ class Roster extends React.Component {
             <p>More: <LeagueLink parts={['team_finances', abbrev]}>Finances</LeagueLink> | <LeagueLink parts={['game_log', abbrev, season]}>Game Log</LeagueLink> | <LeagueLink parts={['team_history', abbrev]}>History</LeagueLink> | <LeagueLink parts={['transactions', abbrev]}>Transactions</LeagueLink></p>
             <div id="picture" className="team-picture"></div>
             <div id="teamInfo">
-                <h3>Record: {helpers.recordAndPlayoffs(abbrev, season, team.won, team.lost, team.playoffRoundsWon, 'noSeason')}</h3>
+                <h3>
+                    Record: <RecordAndPlayoffs
+                        abbrev={abbrev}
+                        season={season}
+                        won={team.won}
+                        lost={team.lost}
+                        playoffRoundsWon={team.playoffRoundsWon}
+                        option='noSeason'
+                    />
+                </h3>
 
                 {season === g.season ? <p>
                     {15 - players.length} open roster spots<br />
@@ -117,7 +126,15 @@ class Roster extends React.Component {
                             const rosterHandleStyle = {backgroundColor: i <= 4 ? '#428bca' : '#5bc0de'};
                             return <tr key={p.pid} className={classNames({separator: i === 4})}>
                                 {editable ? <td className="roster-handle" style={rosterHandleStyle}></td> : null}
-                                <td>{helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch)}></td>
+                                <td>
+                                    <PlayerNameLabels
+                                        pid={p.pid}
+                                        name={p.name}
+                                        injury={p.injury}
+                                        skills={p.ratings.skills}
+                                        watch={p.watch}
+                                    />
+                                </td>
                                 <td>{p.ratings.pos}</td>
                                 <td>{p.age}</td>
                                 <td>{p.stats.yearsWithTeam}</td>

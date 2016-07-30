@@ -1,10 +1,8 @@
 const g = require('../globals');
-const ui = require('../ui');
 const season = require('../core/season');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
-const components = require('./components');
+const Schedule = require('./views/Schedule');
 
 function get(req) {
     const inputs = {};
@@ -12,36 +10,31 @@ function get(req) {
     return inputs;
 }
 
-function InitViewModel() {
-    this.abbrev = ko.observable();
-
-    this.completed = {
-        loading: ko.observable(true), // Needed because this isn't really set until updateCompleted, which could be after first render
-        games: ko.observableArray([]),
-    };
-}
-
-const mapping = {
-    upcoming: {
-        create: options => options.data,
-    },
-};
-
-async function updateUpcoming(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0 || inputs.abbrev !== vm.abbrev()) {
+async function updateUpcoming(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0 || inputs.abbrev !== state.abbrev) {
         const schedule = await season.getSchedule();
         const games = [];
         for (let i = 0; i < schedule.length; i++) {
             const game = schedule[i];
             if (inputs.tid === game.homeTid || inputs.tid === game.awayTid) {
-                const team0 = {tid: game.homeTid, abbrev: g.teamAbbrevsCache[game.homeTid], region: g.teamRegionsCache[game.homeTid], name: g.teamNamesCache[game.homeTid]};
-                const team1 = {tid: game.awayTid, abbrev: g.teamAbbrevsCache[game.awayTid], region: g.teamRegionsCache[game.awayTid], name: g.teamNamesCache[game.awayTid]};
+                const team0 = {
+                    tid: game.homeTid,
+                    abbrev: g.teamAbbrevsCache[game.homeTid],
+                    region: g.teamRegionsCache[game.homeTid],
+                    name: g.teamNamesCache[game.homeTid],
+                };
+                const team1 = {
+                    tid: game.awayTid,
+                    abbrev: g.teamAbbrevsCache[game.awayTid],
+                    region: g.teamRegionsCache[game.awayTid],
+                    name: g.teamNamesCache[game.awayTid],
+                };
 
                 let row;
                 if (inputs.tid === game.homeTid) {
-                    row = {teams: [team1, team0], vsat: "at"};
+                    row = {gid: game.gid, teams: [team1, team0], vsat: "at"};
                 } else {
-                    row = {teams: [team1, team0], vsat: "at"};
+                    row = {gid: game.gid, teams: [team1, team0], vsat: "at"};
                 }
                 games.push(row);
             }
@@ -56,44 +49,38 @@ async function updateUpcoming(inputs, updateEvents, vm) {
 }
 
 // Based on views.gameLog.updateGamesList
-async function updateCompleted(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.abbrev !== vm.abbrev()) {
+async function updateCompleted(inputs, updateEvents, state, setState) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.abbrev !== state.abbrev) {
+        // Reset list, so old completed games don't temporarily show when switching team
+        if (state.completed) {
+            setState({completed: undefined});
+        }
+
         // Load all games in list
-        vm.completed.loading(true);
-        vm.completed.games([]);
-        const games = await helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games());
+        const games = await helpers.gameLogList(inputs.abbrev, g.season, -1);
         for (let i = 0; i < games.length; i++) {
             games[i] = helpers.formatCompletedGame(games[i]);
         }
 
-        vm.completed.games(games);
-        vm.completed.loading(false);
+        return {completed: games};
     }
     if (updateEvents.indexOf("gameSim") >= 0) {
+        const completed = state.completed;
         // Partial update of only new games
-        const games = await helpers.gameLogList(inputs.abbrev, g.season, -1, vm.completed.games());
+        const games = await helpers.gameLogList(inputs.abbrev, g.season, -1, state.completed);
         for (let i = games.length - 1; i >= 0; i--) {
             games[i] = helpers.formatCompletedGame(games[i]);
-            vm.completed.games.unshift(games[i]);
+            completed.unshift(games[i]);
         }
+
+        return {completed};
     }
 }
 
-function uiFirst() {
-    ui.title("Schedule");
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("schedule-dropdown", ["teams"], [vm.abbrev()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "schedule",
     get,
-    InitViewModel,
-    mapping,
     runBefore: [updateUpcoming],
     runWhenever: [updateCompleted],
-    uiFirst,
-    uiEvery,
+    Component: Schedule,
 });

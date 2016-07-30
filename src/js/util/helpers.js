@@ -621,7 +621,7 @@ function ordinal(x) {
  * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
  * @return {Promise.<Array.<Object>>} Resolves to a list of game objects.
  */
-async function gameLogList(abbrev, season, gid, loadedGames) {
+async function gameLogList(abbrev, season, gid, loadedGames = []) {
     const out = validateAbbrev(abbrev);
     const tid = out[0];
     abbrev = out[1];

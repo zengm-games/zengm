@@ -51,7 +51,7 @@ function controllerFactory(Component) {
             // Run promises in parallel, update when each one is ready
             // This runs no matter what
             const promisesWhenever = args.runWhenever.map(async fn => {
-                const vars = await Promise.resolve(fn(inputs, updateEvents, this.state));
+                const vars = await Promise.resolve(fn(inputs, updateEvents, this.state, this.setState.bind(this)));
                 if (vars !== undefined) {
                     this.setState(vars);
                 }

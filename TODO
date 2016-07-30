@@ -1,20 +1,10 @@
 REACT
 
-Start with standings
-  jump to
-  revisit bbgmViewReact API
-
-Flow:
-  Davis.js parses URL, sends req to controller
-  if another view is loaded currently, make a note that it's switching so the old one doesn't need to listen for updates
-  controller parses req and sends result to run* functions
-  run* functions run
-  if first load of this view, save state and attach to DOM
-  if not first load, update state (using setState, can be partial)
-
 is UI updating okay without waiting for this.setState to finish?
 
 do i need some initviewmodel type thing?
+
+abstract games list in schedule and dashboard
 
 when all react
   https://github.com/reactjs/react-router/issues/2101 to handle transitions smoothly.
@@ -26,6 +16,8 @@ when all react
   require('../components/index') -> require('../components')
 
 prod mode in build
+
+updateEvents need to be passed to dropdown?
 
 ---
 

@@ -1,7 +1,8 @@
 const classNames = require('classnames');
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
-const {Dropdown, LeagueLink, NewWindowLink} = require('../components/index');
+const helpers = require('../../util/helpers');
+const {Dropdown, NewWindowLink} = require('../components/index');
 
 module.exports = ({abbrev, completed, season, upcoming = []}) => {
     bbgmViewReact.title('Schedule');
@@ -15,9 +16,9 @@ module.exports = ({abbrev, completed, season, upcoming = []}) => {
                 <h2>Upcoming Games</h2>
                 <ul className="list-group">
                     {upcoming.map(({gid, teams}) => <li className="list-group-item schedule-row" key={gid}>
-                        <LeagueLink parts={['roster', teams[0].abbrev]}>{teams[0].region}</LeagueLink>
+                        <a href={helpers.leagueUrl(['roster', teams[0].abbrev])}>{teams[0].region}</a>
                         <span className="schedule-at"> @ </span>
-                        <LeagueLink parts={['roster', teams[1].abbrev]}>{teams[1].region}</LeagueLink>
+                        <a href={helpers.leagueUrl(['roster', teams[1].abbrev])}>{teams[1].region}</a>
                     </li>)}
                 </ul>
             </div>
@@ -33,12 +34,12 @@ module.exports = ({abbrev, completed, season, upcoming = []}) => {
                             <div className="schedule-results">
                                 <div className="schedule-wl">{won ? 'W' : 'L'}</div>
                                 <div className="schedule-score">
-                                    <LeagueLink parts={['game_log', abbrev, season, gid]}>{score}{overtime}</LeagueLink>
+                                    <a href={helpers.leagueUrl(['game_log', abbrev, season, gid])}>{score}{overtime}</a>
                                 </div>
                             </div>
-                            <LeagueLink parts={['roster', teams[0].abbrev]}>{teams[0].region}</LeagueLink>
+                            <a href={helpers.leagueUrl(['roster', teams[0].abbrev])}>{teams[0].region}</a>
                             <span className="schedule-at"> @ </span>
-                            <LeagueLink parts={['roster', teams[1].abbrev]}>{teams[1].region}</LeagueLink>
+                            <a href={helpers.leagueUrl(['roster', teams[1].abbrev])}>{teams[1].region}</a>
                         </li>;
                     })}
                 </ul>

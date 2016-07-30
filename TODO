@@ -1,7 +1,5 @@
 REACT
 
-get rid of LeagueLink, just use helpers directly
-
 roster
   tags with id
   bootstrap ? icons

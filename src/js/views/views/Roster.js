@@ -6,7 +6,7 @@ const league = require('../../core/league');
 const player = require('../../core/player');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {Dropdown, LeagueLink, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} = require('../components/index');
+const {Dropdown, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} = require('../components/index');
 const clickable = require('../wrappers/clickable');
 
 const doRelease = (pid, justDrafted) => {
@@ -66,13 +66,13 @@ class Roster extends React.Component {
                     More Info <span className="caret"></span>
                 </button>
                 <ul className="dropdown-menu">
-                    <li><LeagueLink parts={['player_stats', abbrev, season]}>Player Stats</LeagueLink></li>
-                    <li><LeagueLink parts={['player_ratings', abbrev, season]}>Player Ratings</LeagueLink></li>
+                    <li><a href={helpers.leagueUrl(['player_stats', abbrev, season])}>Player Stats</a></li>
+                    <li><a href={helpers.leagueUrl(['player_ratings', abbrev, season])}>Player Ratings</a></li>
                 </ul>
             </div>
 
             <h1>{team.region} {team.name} Roster <NewWindowLink /></h1>
-            <p>More: <LeagueLink parts={['team_finances', abbrev]}>Finances</LeagueLink> | <LeagueLink parts={['game_log', abbrev, season]}>Game Log</LeagueLink> | <LeagueLink parts={['team_history', abbrev]}>History</LeagueLink> | <LeagueLink parts={['transactions', abbrev]}>Transactions</LeagueLink></p>
+            <p>More: <a href={helpers.leagueUrl(['team_finances', abbrev])}>Finances</a> | <a href={helpers.leagueUrl(['game_log', abbrev, season])}>Game Log</a> | <a href={helpers.leagueUrl(['team_history', abbrev])}>History</a> | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
             <div id="picture" className="team-picture"></div>
             <div id="teamInfo">
                 <h3>

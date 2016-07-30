@@ -2,13 +2,13 @@ const classNames = require('classnames');
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {Dropdown, JumpTo, LeagueLink, NewWindowLink} = require('../components/index');
+const {Dropdown, JumpTo, NewWindowLink} = require('../components/index');
 const clickable = require('../wrappers/clickable');
 
 const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {
     return <tr onClick={toggleClicked} key={t.tid} className={classNames({info: t.highlight, warning: clicked})}>
         <td>
-            <LeagueLink parts={['roster', t.abbrev, season]}>{t.region} {t.name}</LeagueLink>
+            <a href={helpers.leagueUrl(['roster', t.abbrev, season])}>{t.region} {t.name}</a>
             <span>{t.playoffsRank ? ` (${t.playoffsRank})` : ''}</span>
         </td>
         <td>{t.won}</td>
@@ -57,7 +57,7 @@ const ConfStandings = ({playoffsByConference, season, teams}) => {
         <tbody>
             {teams.map((t, i) => {
                 return <tr key={t.tid} className={classNames({info: t.highlight, separator: i === 7 && playoffsByConference})}>
-                    <td>{t.rank}. <LeagueLink parts={['roster', t.abbrev, season]}>{t.region}</LeagueLink></td>
+                    <td>{t.rank}. <a href={helpers.leagueUrl(['roster', t.abbrev, season])}>{t.region}</a></td>
                     <td style={{textAlign: 'right'}}>{t.gb}</td>
                 </tr>;
             })}

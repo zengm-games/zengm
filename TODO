@@ -1,9 +1,6 @@
 REACT
 
 roster
-  clickable
-  really needs to be a class? handleRelease doesn't
-    constructor needed?
   trade for button
     hover on untradable
 
@@ -17,6 +14,8 @@ abstract games list in schedule and dashboard
 
 add to watch list
   other ui.js crap
+
+better eslint
 
 when all react
   https://github.com/reactjs/react-router/issues/2101 to handle transitions smoothly.

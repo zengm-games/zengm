@@ -6,7 +6,7 @@ const {Dropdown, JumpTo, NewWindowLink} = require('../components/index');
 const clickable = require('../wrappers/clickable');
 
 const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {
-    return <tr onClick={toggleClicked} key={t.tid} className={classNames({info: t.highlight, warning: clicked})}>
+    return <tr key={t.tid} className={classNames({info: t.highlight, warning: clicked})} onClick={toggleClicked}>
         <td>
             <a href={helpers.leagueUrl(['roster', t.abbrev, season])}>{t.region} {t.name}</a>
             <span>{t.playoffsRank ? ` (${t.playoffsRank})` : ''}</span>

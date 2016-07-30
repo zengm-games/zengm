@@ -165,8 +165,9 @@ const swapRosterOrder = async (pid1, pid2) => {
     });
 };
 
-const RosterRow = ({editable, handleReorderClick, i, p, season, selectedPid, showTradeFor}) => {
-    return <tr key={p.pid} className={classNames({separator: i === 4})}>
+const RosterRow = clickable(props => {
+    const {clicked, editable, handleReorderClick, i, p, season, selectedPid, showTradeFor, toggleClicked} = props;
+    return <tr key={p.pid} className={classNames({separator: i === 4, warning: clicked})} onClick={toggleClicked}>
         {editable ? <ReorderHandle i={i} pid={p.pid} onClick={handleReorderClick} selectedPid={selectedPid} /> : null}
         <td>
             <PlayerNameLabels
@@ -214,7 +215,7 @@ const RosterRow = ({editable, handleReorderClick, i, p, season, selectedPid, sho
             </form>
         </td> : null}
     </tr>;
-};
+});
 
 class Roster extends React.Component {
     constructor(props) {

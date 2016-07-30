@@ -1,9 +1,7 @@
 REACT
 
 roster
-  tags with id
   new sort mechanism: make sure it works on mobile
-  test auto sort
   clickable
   really needs to be a class? handleRelease doesn't
     constructor needed?

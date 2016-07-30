@@ -116,7 +116,7 @@ const PlayingTime = ({p}) => {
     ];
 
     return <select
-        className="form-control"
+        className="form-control pt-modifier-select"
         value={p.ptModifier}
         onChange={event => handlePtChange(p, event)}
         style={ptStyles[String(p.ptModifier)]}
@@ -210,7 +210,7 @@ class Roster extends React.Component {
             <h1>{team.region} {team.name} Roster <NewWindowLink /></h1>
             <p>More: <a href={helpers.leagueUrl(['team_finances', abbrev])}>Finances</a> | <a href={helpers.leagueUrl(['game_log', abbrev, season])}>Game Log</a> | <a href={helpers.leagueUrl(['team_history', abbrev])}>History</a> | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
             <div className="team-picture" style={logoStyle}></div>
-            <div id="teamInfo">
+            <div>
                 <h3>
                     Record: <RecordAndPlayoffs
                         abbrev={abbrev}
@@ -230,12 +230,12 @@ class Roster extends React.Component {
                     {showTradeFor ? `Strategy: ${team.strategy}` : null}
                 </p> : null}
             </div>
-            {editable ? <p id="instructions">Click row handles to move players between the starting lineup (<span className="roster-starter">&#9632;</span>) and the bench (<span className="roster-bench">&#9632;</span>).</p> : null}
+            {editable ? <p>Click row handles to move players between the starting lineup (<span className="roster-starter">&#9632;</span>) and the bench (<span className="roster-bench">&#9632;</span>).</p> : null}
             {editable ? <p><button className="btn btn-default" onClick={handleAutoSort}>Auto sort roster</button>
             </p> : null}
 
             <div className="table-responsive">
-                <table className="table table-striped table-bordered table-condensed table-hover" id="roster">
+                <table className="table table-striped table-bordered table-condensed table-hover">
                     <thead>
                         <tr>
                             {editable ? <th></th> : null}

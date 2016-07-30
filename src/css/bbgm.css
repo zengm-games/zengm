@@ -406,27 +406,27 @@ select.teams {
   color: #d9534f;
 }
 
-#roster select {
+.pt-modifier-select {
   margin: 0;
   width: auto;
   padding: 0;
   height: 20px;
 }
-/* These colors are duplicated in js/core/roster.js because of Firefox */
-#roster select option[value="1"] {
+/* These colors are duplicated from Roster.js */
+.pt-modifier-select option[value="1"] {
   background-color: #ccc;
 }
-#roster select option[value="1.75"] {
+.pt-modifier-select option[value="1.75"] {
   background-color: #070;
   color: #fff;
 }
-#roster select option[value="1.25"] {
+.pt-modifier-select option[value="1.25"] {
   background-color: #0f0;
 }
-#roster select option[value="0.75"] {
+.pt-modifier-select option[value="0.75"] {
   background-color: #ff0;
 }
-#roster select option[value="0"] {
+.pt-modifier-select option[value="0"] {
   background-color: #a00;
   color: #fff;
 }

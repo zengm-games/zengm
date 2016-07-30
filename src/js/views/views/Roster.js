@@ -165,6 +165,57 @@ const swapRosterOrder = async (pid1, pid2) => {
     });
 };
 
+const RosterRow = ({editable, handleReorderClick, i, p, season, selectedPid, showTradeFor}) => {
+    return <tr key={p.pid} className={classNames({separator: i === 4})}>
+        {editable ? <ReorderHandle i={i} pid={p.pid} onClick={handleReorderClick} selectedPid={selectedPid} /> : null}
+        <td>
+            <PlayerNameLabels
+                pid={p.pid}
+                name={p.name}
+                injury={p.injury}
+                skills={p.ratings.skills}
+                watch={p.watch}
+            />
+        </td>
+        <td>{p.ratings.pos}</td>
+        <td>{p.age}</td>
+        <td>{p.stats.yearsWithTeam}</td>
+        <td>
+            {p.ratings.ovr}
+            {p.ratings.dovr !== 0 ? <span className={classNames({'text-success': p.ratings.dovr > 0, 'text-danger': p.ratings.dovr < 0})}> ({p.ratings.dovr > 0 ? '+' : null}{p.ratings.dovr})</span> : null }
+        </td>
+        <td>
+            {p.ratings.pot}
+            {p.ratings.dpot !== 0 ? <span className={classNames({'text-success': p.ratings.dpot > 0, 'text-danger': p.ratings.dpot < 0})}> ({p.ratings.dpot > 0 ? '+' : null}{p.ratings.dpot})</span> : null }
+        </td>
+        {season === g.season ? <td>
+            {helpers.formatCurrency(p.contract.amount, 'M')} thru {p.contract.exp}
+        </td> : null}
+        <td>{p.stats.gp}</td>
+        <td>{helpers.round(p.stats.min, 1)}</td>
+        <td>{helpers.round(p.stats.pts, 1)}</td>
+        <td>{helpers.round(p.stats.trb, 1)}</td>
+        <td>{helpers.round(p.stats.ast, 1)}</td>
+        <td>{helpers.round(p.stats.per, 1)}</td>
+        {editable ? <td><PlayingTime p={p} /></td> : null}
+        {editable ? <td>
+            <button
+                className="btn btn-default btn-xs"
+                disabled={!p.canRelease}
+                onClick={() => handleRelease(p)}
+            >
+                Release
+            </button>
+        </td> : null}
+        {showTradeFor ? <td>
+            <form method="POST" style={{margin: 0}} data-bind="attrLeagueUrl: {action: ['trade']}">
+                <input type="hidden" name="pid" data-bind="attr: {value: pid}" />
+                <button type="submit" className="btn btn-default btn-xs" data-bind="enable: !untradable()" title={p.untradableMsg}>Trade For</button>
+            </form>
+        </td> : null}
+    </tr>;
+};
+
 class Roster extends React.Component {
     constructor(props) {
         super(props);
@@ -271,54 +322,17 @@ class Roster extends React.Component {
                     </thead>
                     <tbody>
                         {players.map((p, i) => {
-                            return <tr key={p.pid} className={classNames({separator: i === 4})}>
-                                {editable ? <ReorderHandle i={i} pid={p.pid} onClick={this.handleReorderClick.bind(this, p.pid)} selectedPid={this.state.selectedPid} /> : null}
-                                <td>
-                                    <PlayerNameLabels
-                                        pid={p.pid}
-                                        name={p.name}
-                                        injury={p.injury}
-                                        skills={p.ratings.skills}
-                                        watch={p.watch}
-                                    />
-                                </td>
-                                <td>{p.ratings.pos}</td>
-                                <td>{p.age}</td>
-                                <td>{p.stats.yearsWithTeam}</td>
-                                <td>
-                                    {p.ratings.ovr}
-                                    {p.ratings.dovr !== 0 ? <span className={classNames({'text-success': p.ratings.dovr > 0, 'text-danger': p.ratings.dovr < 0})}> ({p.ratings.dovr > 0 ? '+' : null}{p.ratings.dovr})</span> : null }
-                                </td>
-                                <td>
-                                    {p.ratings.pot}
-                                    {p.ratings.dpot !== 0 ? <span className={classNames({'text-success': p.ratings.dpot > 0, 'text-danger': p.ratings.dpot < 0})}> ({p.ratings.dpot > 0 ? '+' : null}{p.ratings.dpot})</span> : null }
-                                </td>
-                                {season === g.season ? <td>
-                                    {helpers.formatCurrency(p.contract.amount, 'M')} thru {p.contract.exp}
-                                </td> : null}
-                                <td>{p.stats.gp}</td>
-                                <td>{helpers.round(p.stats.min, 1)}</td>
-                                <td>{helpers.round(p.stats.pts, 1)}</td>
-                                <td>{helpers.round(p.stats.trb, 1)}</td>
-                                <td>{helpers.round(p.stats.ast, 1)}</td>
-                                <td>{helpers.round(p.stats.per, 1)}</td>
-                                {editable ? <td><PlayingTime p={p} /></td> : null}
-                                {editable ? <td>
-                                    <button
-                                        className="btn btn-default btn-xs"
-                                        disabled={!p.canRelease}
-                                        onClick={() => handleRelease(p)}
-                                    >
-                                        Release
-                                    </button>
-                                </td> : null}
-                                {showTradeFor ? <td>
-                                    <form method="POST" style={{margin: 0}} data-bind="attrLeagueUrl: {action: ['trade']}">
-                                        <input type="hidden" name="pid" data-bind="attr: {value: pid}" />
-                                        <button type="submit" className="btn btn-default btn-xs" data-bind="enable: !untradable()" title={p.untradableMsg}>Trade For</button>
-                                    </form>
-                                </td> : null}
-                            </tr>;
+                            const handleReorderClick = this.handleReorderClick.bind(this, p.pid);
+                            return <RosterRow
+                                key={p.pid}
+                                editable={editable}
+                                handleReorderClick={handleReorderClick}
+                                i={i}
+                                p={p}
+                                season={season}
+                                selectedPid={this.state.selectedPid}
+                                showTradeFor={showTradeFor}
+                            />;
                         })}
                     </tbody>
                 </table>

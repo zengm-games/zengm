@@ -1,7 +1,6 @@
 REACT
 
 roster
-  new sort mechanism: make sure it works on mobile
   clickable
   really needs to be a class? handleRelease doesn't
     constructor needed?

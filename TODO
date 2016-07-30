@@ -6,10 +6,6 @@ roster
   FA redirectUrl
   playing time change
   auto sort
-  Release button
-    functionality
-    <5 players warning
-    disabled correctly?
   new sort mechanism
   get rid of jquery ui
   clickable

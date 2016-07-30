@@ -2,7 +2,6 @@ REACT
 
 roster
   tags with id
-  bootstrap ? icons
   FA redirectUrl
   playing time change
   new sort mechanism
@@ -38,6 +37,7 @@ when all react
     watchBlock
     playerNameLabels
     skillsBlock
+  get rid of bootstrap js
 
 prod mode in build
 

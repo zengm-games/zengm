@@ -475,6 +475,10 @@ select.teams {
   font-weight: normal;
 }
 
+.popover-content p:last-child {
+  margin-bottom: 0;
+}
+
 /* Stupid fix for popover on first run */
 .popover-play {
   width: 276px;

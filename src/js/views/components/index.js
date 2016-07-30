@@ -1,5 +1,6 @@
 module.exports = {
     Dropdown: require('./Dropdown'),
+    HelpPopover: require('./HelpPopover'),
     JumpTo: require('./JumpTo'),
     NewWindowLink: require('./NewWindowLink'),
     PlayerNameLabels: require('./PlayerNameLabels'),

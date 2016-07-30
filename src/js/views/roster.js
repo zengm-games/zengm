@@ -212,23 +212,6 @@ function updateRoster(inputs, updateEvents, state) {
 }
 
 function uiFirst(vm) {
-    $("#help-roster-pt").popover({
-        title: "Playing Time Modifier",
-        html: true,
-        content: "<p>Your coach will divide up playing time based on ability and stamina. If you want to influence his judgement, your options are:</p>" +
-            '<span style="background-color: #a00; color: #fff">0 No Playing Time</span><br>' +
-            '<span style="background-color: #ff0">- Less Playing Time</span><br>' +
-            '<span style="background-color: #ccc">&nbsp;&nbsp;&nbsp; Let Coach Decide</span><br>' +
-            '<span style="background-color: #0f0">+ More Playing Time</span><br>' +
-            '<span style="background-color: #070; color: #fff">++ Even More Playing Time</span>',
-    });
-
-    $("#help-roster-release").popover({
-        title: "Release Player",
-        html: true,
-        content: `<p>To free up a roster spot, you can release a player from your team. You will still have to pay his salary (and have it count against the salary cap) until his contract expires (you can view your released players' contracts in your <a href="${helpers.leagueUrl(["team_finances"])}">Team Finances</a>).</p>However, if you just drafted a player and the regular season has not started yet, his contract is not guaranteed and you can release him for free.`,
-    });
-
     $("#roster").on("change", "select", function () {
         // Update select color
 

@@ -7,7 +7,7 @@ const player = require('../../core/player');
 const team = require('../../core/team');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {Dropdown, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} = require('../components/index');
+const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} = require('../components/index');
 const clickable = require('../wrappers/clickable');
 
 const handleAutoSort = async () => {
@@ -124,8 +124,20 @@ const Roster = ({abbrev, editable, payroll, players, salaryCap, season, showTrad
                         <th title="Rebounds Per Game">Reb</th>
                         <th title="Assists Per Game">Ast</th>
                         <th title="Player Efficiency Rating">PER</th>
-                        {editable ? <th title="Playing Time Modifier" style={{textAlign: 'center'}}>PT <span className="glyphicon glyphicon-question-sign help-icon" id="help-roster-pt" data-placement="left"></span></th> : null}
-                        {editable ? <th>Release <span className="glyphicon glyphicon-question-sign help-icon" id="help-roster-release" data-placement="left"></span></th> : null}
+                        {editable ? <th title="Playing Time Modifier">PT <HelpPopover placement="left" title="Playing Time Modifier">
+                            <p>Your coach will divide up playing time based on ability and stamina. If you want to influence his judgement, your options are:</p>
+                            <p>
+                                <span style={{backgroundColor: '#a00', color: '#fff'}}>0 No Playing Time</span><br />
+                                <span style={{backgroundColor: '#ff0'}}>- Less Playing Time</span><br />
+                                <span style={{backgroundColor: '#ccc'}}>&nbsp;&nbsp;&nbsp; Let Coach Decide</span><br />
+                                <span style={{backgroundColor: '#0f0'}}>+ More Playing Time</span><br />
+                                <span style={{backgroundColor: '#070', color: '#fff'}}>++ Even More Playing Time</span>
+                            </p>
+                        </HelpPopover></th> : null}
+                        {editable ? <th>Release <HelpPopover placement="left" title="Release Player">
+                            <p>To free up a roster spot, you can release a player from your team. You will still have to pay his salary (and have it count against the salary cap) until his contract expires (you can view your released players' contracts in your <a href={helpers.leagueUrl(["team_finances"])}>Team Finances</a>).</p>
+                            <p>However, if you just drafted a player and the regular season has not started yet, his contract is not guaranteed and you can release him for free.</p>
+                        </HelpPopover></th> : null}
                         {showTradeFor ? <th>Trade For</th> : null}
                     </tr>
                 </thead>

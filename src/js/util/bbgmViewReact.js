@@ -117,8 +117,7 @@ function get(fnUpdate, args) {
 //            return helpers.error(inputs.errorMessage, cb);
         }
         if (inputs.redirectUrl !== undefined) {
-            throw new Error('Handle redirect!');
-//            return ui.realtimeUpdate([], inputs.redirectUrl, cb);
+            return ui.realtimeUpdate([], inputs.redirectUrl, cb);
         }
 
         const container = g.lid !== null ? "league_content" : "content";

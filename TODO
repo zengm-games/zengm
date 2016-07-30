@@ -1,10 +1,37 @@
 REACT
 
+get rid of LeagueLink, just use helpers directly
+
+roster
+  tags with id
+  bootstrap ? icons
+  FA redirectUrl
+  playing time change
+  auto sort
+  Release button
+    functionality
+    <5 players warning
+    disabled correctly?
+  new sort mechanism
+  get rid of jquery ui
+  clickable
+  injury updates
+  really needs to be a class? handleRelease doesn't
+    constructor needed?
+  logos
+    with
+    without
+  trade for button
+    hover on untradable
+
 is UI updating okay without waiting for this.setState to finish?
 
 do i need some initviewmodel type thing?
 
 abstract games list in schedule and dashboard
+
+add to watch list
+  other ui.js crap
 
 when all react
   https://github.com/reactjs/react-router/issues/2101 to handle transitions smoothly.
@@ -14,6 +41,10 @@ when all react
       see also https://facebook.github.io/react/blog/2015/10/01/react-render-and-top-level-api.html
   reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
   require('../components/index') -> require('../components')
+  make sure no data-bind
+  delete templateHelpers
+  delete knockout dependency
+  helper functions that return HTML strings should instead be React components, for safety. migrate/delete any remaining
 
 prod mode in build
 

@@ -180,6 +180,8 @@ function init(args) {
     args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
     args.mapping = args.mapping !== undefined ? args.mapping : {};
 
+    if (args.Component) { throw new Error('Use bbgmViewReact, dumbass'); }
+
     const output = {};
     output.update = update(args);
     output.get = get(args.beforeReq, args.get, output.update);

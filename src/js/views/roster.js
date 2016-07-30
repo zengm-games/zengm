@@ -8,31 +8,9 @@ const trade = require('../core/trade');
 const Promise = require('bluebird');
 const ko = require('knockout');
 const $ = require('jquery');
-const components = require('./components');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
-
-
-function highlightHandles() {
-    let i = 1;
-    $("#roster tbody").children().each(function () {
-        const tr = $(this);
-        if (i <= 5) {
-            // Because of CSS specificity issues, hard code color
-            //tr.find("td:first").removeClass("btn-info").addClass("btn-primary");
-            tr.find("td:first").css("background-color", "#428bca");
-        } else {
-            //tr.find("td:first").removeClass("btn-primary").addClass("btn-info");
-            tr.find("td:first").css("background-color", "#5bc0de");
-        }
-        if (i === 5) {
-            tr.addClass("separator");
-        } else {
-            tr.removeClass("separator");
-        }
-        i++;
-    });
-}
+const Roster = require('./views/Roster');
 
 async function doReorder(sortedPids) {
     await g.dbl.tx("players", "readwrite", async tx => {
@@ -45,25 +23,6 @@ async function doReorder(sortedPids) {
     });
 
     league.updateLastDbChange();
-}
-
-function doRelease(pid, justDrafted) {
-    return g.dbl.tx(["players", "releasedPlayers", "teamSeasons"], "readwrite", async tx => {
-        const numPlayersOnRoster = await tx.players.index('tid').count(g.userTid);
-        if (numPlayersOnRoster <= 5) {
-            return "You must keep at least 5 players on your roster.";
-        }
-
-        const p = await tx.players.get(pid);
-
-        // Don't let the user update CPU-controlled rosters
-        if (p.tid !== g.userTid) {
-            return "You aren't allowed to do this.";
-        }
-
-        await player.release(tx, p, justDrafted);
-        league.updateLastDbChange();
-    });
 }
 
 function editableChanged(editable) {
@@ -87,7 +46,6 @@ function editableChanged(editable) {
                 }
 
                 await doReorder(sortedPids);
-                highlightHandles();
             },
             handle: ".roster-handle",
             disabled: true,
@@ -117,27 +75,6 @@ function get(req) {
 }
 
 function InitViewModel() {
-    this.abbrev = ko.observable();
-    this.season = ko.observable();
-    this.payroll = ko.observable();
-    this.salaryCap = ko.observable();
-    this.team = {
-        cash: ko.observable(),
-        name: ko.observable(),
-        region: ko.observable(),
-    };
-    this.players = ko.observable([]);
-    this.showTradeFor = ko.observable();
-    this.editable = ko.observable();
-
-    // Throttling these makes transient error messages like "Message: ReferenceError: isCurrentSeason is undefined". Not throttling doesn't seem to induce any lag.
-    this.numRosterSpots = ko.computed(function () {
-        return 15 - this.players().length;
-    }, this);
-    this.isCurrentSeason = ko.computed(function () {
-        return g.season === this.season();
-    }, this);
-
     this.ptChange = async p => {
         // NEVER UPDATE AI TEAMS
         // This shouldn't be necessary, but sometimes it gets triggered
@@ -157,14 +94,8 @@ function InitViewModel() {
     };
 }
 
-const mapping = {
-    players: {
-        key: data => ko.unwrap(data.pid),
-    },
-};
-
-function updateRoster(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season()) {
+function updateRoster(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== state.abbrev || inputs.season !== state.season) {
         const vars = {
             abbrev: inputs.abbrev,
             season: inputs.season,
@@ -281,33 +212,6 @@ function updateRoster(inputs, updateEvents, vm) {
 }
 
 function uiFirst(vm) {
-    // Release and Buy Out buttons, which will only appear if the roster is editable
-    // Trade For button is handled by POST
-    $("#roster").on("click", "button", async function () {
-        const pid = parseInt(this.parentNode.parentNode.dataset.pid, 10);
-        const players = vm.players();
-        const p = players.find(p => p.pid() === pid);
-
-        if (this.dataset.action === "release") {
-            // If a player was just drafted by his current team and the regular season hasn't started, then he can be released without paying anything
-            const justDrafted = p.tid() === p.draft.tid() && ((p.draft.year() === g.season && g.phase >= g.PHASE.DRAFT) || (p.draft.year() === g.season - 1 && g.phase < g.PHASE.REGULAR_SEASON));
-            let releaseMessage;
-            if (justDrafted) {
-                releaseMessage = `Are you sure you want to release ${p.name()}?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
-            } else {
-                releaseMessage = `Are you sure you want to release ${p.name()}?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${p.contract.exp()}.`;
-            }
-            if (window.confirm(releaseMessage)) {
-                const error = await doRelease(pid, justDrafted);
-                if (error) {
-                    window.alert(`Error: ${error}`);
-                } else {
-                    ui.realtimeUpdate(["playerMovement"]);
-                }
-            }
-        }
-    });
-
     $("#roster-auto-sort").click(async () => {
         vm.players([]); // This is a hack to force a UI update because the jQuery UI sortable roster reordering does not update the view model, which can cause the view model to think the roster is sorted correctly when it really isn't. (Example: load the roster, auto sort, reload, drag reorder it, auto sort -> the auto sort doesn't update the UI.) Fixing this issue would fix flickering.
 
@@ -317,18 +221,6 @@ function uiFirst(vm) {
         league.updateLastDbChange();
         ui.realtimeUpdate(["playerMovement"]);
     });
-
-    ko.computed(() => {
-        ui.title(`${vm.team.region()} ${vm.team.name()} Roster - ${vm.season()}`);
-    }).extend({throttle: 1});
-
-    ko.computed(() => {
-        vm.players(); // Ensure this runs when vm.players changes.
-        if (vm.editable()) {
-            highlightHandles();
-        }
-        editableChanged(vm.editable());
-    }).extend({throttle: 1});
 
     ko.computed(() => {
         const picture = document.getElementById("picture");
@@ -390,23 +282,11 @@ function uiFirst(vm) {
         this.style.color = color;
         this.style.backgroundColor = backgroundColor;
     });
-
-    ui.tableClickableRows($("#roster"));
 }
 
-function uiEvery(updateEvents, vm) {
-    components.dropdown("roster-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
-
-    $("#roster select").change(); // Set initial bg colors
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "roster",
     get,
-    InitViewModel,
-    mapping,
     runBefore: [updateRoster],
-    uiFirst,
-    uiEvery,
+    Component: Roster,
 });
-

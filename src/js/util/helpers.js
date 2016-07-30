@@ -922,6 +922,24 @@ function roundWinp(arg) {
     return output;
 }
 
+function recordAndPlayoffs(abbrev, season, won, lost, playoffRoundsWon, option) {
+    let extraText = "";
+    if (playoffRoundsWon >= 0) {
+        extraText = roundsWonText(playoffRoundsWon).toLowerCase();
+    }
+
+    let output = '';
+    if (option !== "noSeason") {
+        output += `<a href="${leagueUrl(["roster", abbrev, season])}">${season}</a>: `;
+    }
+    output += `<a href="${leagueUrl(["standings", season])}">${won}-${lost}</a>`;
+    if (extraText) {
+        output += `, <a href="${leagueUrl(["playoffs", season])}">${extraText}</a>`;
+    }
+
+    return output;
+}
+
 module.exports = {
     validateAbbrev,
     getAbbrev,
@@ -961,4 +979,5 @@ module.exports = {
     maybeReuseTx,
     roundsWonText,
     roundWinp,
+    recordAndPlayoffs,
 };

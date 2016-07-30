@@ -162,21 +162,7 @@ ko.bindingHandlers.recordAndPlayoffs = {
         const playoffRoundsWon = args.length > 4 ? ko.unwrap(args[4]) : null;
         const option = args.length > 5 ? ko.unwrap(args[5]) : null;
 
-        let extraText = "";
-        if (playoffRoundsWon >= 0) {
-            extraText = helpers.roundsWonText(playoffRoundsWon).toLowerCase();
-        }
-
-        let output = '';
-        if (option !== "noSeason") {
-            output += `<a href="${helpers.leagueUrl(["roster", abbrev, season])}">${season}</a>: `;
-        }
-        output += `<a href="${helpers.leagueUrl(["standings", season])}">${won}-${lost}</a>`;
-        if (extraText) {
-            output += `, <a href="${helpers.leagueUrl(["playoffs", season])}">${extraText}</a>`;
-        }
-
-        return ko.bindingHandlers.html.update(element, () => output);
+        return ko.bindingHandlers.html.update(element, () => helpers.recordAndPlayoffs(abbrev, season, won, lost, playoffRoundsWon, option));
     },
 };
 

@@ -1,61 +1,12 @@
 const g = require('../globals');
-const league = require('../core/league');
 const player = require('../core/player');
 const season = require('../core/season');
 const team = require('../core/team');
 const trade = require('../core/trade');
 const Promise = require('bluebird');
-const $ = require('jquery');
 const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
 const Roster = require('./views/Roster');
-
-async function doReorder(sortedPids) {
-    await g.dbl.tx("players", "readwrite", async tx => {
-        // Update rosterOrder
-        for (let i = 0; i < sortedPids.length; i++) {
-            const p = await tx.players.get(sortedPids[i]);
-            p.rosterOrder = i;
-            await tx.players.put(p);
-        }
-    });
-
-    league.updateLastDbChange();
-}
-
-function editableChanged(editable) {
-    const rosterTbody = $("#roster tbody");
-
-    if (!rosterTbody.is(":ui-sortable")) {
-        // The first time editableChanged is called, set up sorting, but disable it by default
-        $("#roster tbody").sortable({
-            helper(e, ui) {
-                // Return helper which preserves the width of table cells being reordered
-                ui.children().each(function () {
-                    $(this).width($(this).width());
-                });
-                return ui;
-            },
-            cursor: "move",
-            async update() {
-                const sortedPids = $(this).sortable("toArray", {attribute: "data-pid"});
-                for (let i = 0; i < sortedPids.length; i++) {
-                    sortedPids[i] = parseInt(sortedPids[i], 10);
-                }
-
-                await doReorder(sortedPids);
-            },
-            handle: ".roster-handle",
-            disabled: true,
-        });
-    }
-
-    if (editable) {
-        rosterTbody.sortable("enable");//.disableSelection();
-    } else {
-        rosterTbody.sortable("disable");//.enableSelection();
-    }
-}
 
 function get(req) {
     // Fix broken links
@@ -79,7 +30,7 @@ function updateRoster(inputs, updateEvents, state) {
             season: inputs.season,
             editable: inputs.season === g.season && inputs.tid === g.userTid,
             salaryCap: g.salaryCap / 1000,
-            showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid
+            showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid,
         };
 
         return g.dbl.tx(["players", "playerStats", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], async tx => {

@@ -167,7 +167,7 @@ const swapRosterOrder = async (pid1, pid2) => {
 
 const RosterRow = clickable(props => {
     const {clicked, editable, handleReorderClick, i, p, season, selectedPid, showTradeFor, toggleClicked} = props;
-    return <tr key={p.pid} className={classNames({separator: i === 4, warning: clicked})} onClick={toggleClicked}>
+    return <tr key={p.pid} className={classNames({separator: i === 4, warning: clicked})}>
         {editable ? <ReorderHandle i={i} pid={p.pid} onClick={handleReorderClick} selectedPid={selectedPid} /> : null}
         <td>
             <PlayerNameLabels
@@ -178,28 +178,28 @@ const RosterRow = clickable(props => {
                 watch={p.watch}
             />
         </td>
-        <td>{p.ratings.pos}</td>
-        <td>{p.age}</td>
-        <td>{p.stats.yearsWithTeam}</td>
-        <td>
+        <td onClick={toggleClicked}>{p.ratings.pos}</td>
+        <td onClick={toggleClicked}>{p.age}</td>
+        <td onClick={toggleClicked}>{p.stats.yearsWithTeam}</td>
+        <td onClick={toggleClicked}>
             {p.ratings.ovr}
             {p.ratings.dovr !== 0 ? <span className={classNames({'text-success': p.ratings.dovr > 0, 'text-danger': p.ratings.dovr < 0})}> ({p.ratings.dovr > 0 ? '+' : null}{p.ratings.dovr})</span> : null }
         </td>
-        <td>
+        <td onClick={toggleClicked}>
             {p.ratings.pot}
             {p.ratings.dpot !== 0 ? <span className={classNames({'text-success': p.ratings.dpot > 0, 'text-danger': p.ratings.dpot < 0})}> ({p.ratings.dpot > 0 ? '+' : null}{p.ratings.dpot})</span> : null }
         </td>
         {season === g.season ? <td>
             {helpers.formatCurrency(p.contract.amount, 'M')} thru {p.contract.exp}
         </td> : null}
-        <td>{p.stats.gp}</td>
-        <td>{helpers.round(p.stats.min, 1)}</td>
-        <td>{helpers.round(p.stats.pts, 1)}</td>
-        <td>{helpers.round(p.stats.trb, 1)}</td>
-        <td>{helpers.round(p.stats.ast, 1)}</td>
-        <td>{helpers.round(p.stats.per, 1)}</td>
-        {editable ? <td><PlayingTime p={p} /></td> : null}
-        {editable ? <td>
+        <td onClick={toggleClicked}>{p.stats.gp}</td>
+        <td onClick={toggleClicked}>{helpers.round(p.stats.min, 1)}</td>
+        <td onClick={toggleClicked}>{helpers.round(p.stats.pts, 1)}</td>
+        <td onClick={toggleClicked}>{helpers.round(p.stats.trb, 1)}</td>
+        <td onClick={toggleClicked}>{helpers.round(p.stats.ast, 1)}</td>
+        <td onClick={toggleClicked}>{helpers.round(p.stats.per, 1)}</td>
+        {editable ? <td onClick={toggleClicked}><PlayingTime p={p} /></td> : null}
+        {editable ? <td onClick={toggleClicked}>
             <button
                 className="btn btn-default btn-xs"
                 disabled={!p.canRelease}
@@ -208,7 +208,7 @@ const RosterRow = clickable(props => {
                 Release
             </button>
         </td> : null}
-        {showTradeFor ? <td>
+        {showTradeFor ? <td onClick={toggleClicked}>
             <form method="POST" style={{margin: 0}} action={helpers.leagueUrl(['trade'])} title={p.untradableMsg}>
                 <input type="hidden" name="pid" value={p.pid} />
                 <button type="submit" className="btn btn-default btn-xs" disabled={p.untradable}>Trade For</button>

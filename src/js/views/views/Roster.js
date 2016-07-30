@@ -10,12 +10,35 @@ const helpers = require('../../util/helpers');
 const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} = require('../components/index');
 const clickable = require('../wrappers/clickable');
 
+const ptStyles = {
+    '0': {
+        backgroundColor: '#a00',
+        color: '#fff',
+    },
+    '0.75': {
+        backgroundColor: '#ff0',
+        color: '#000',
+    },
+    '1': {
+        backgroundColor: '#ccc',
+        color: '#000',
+    },
+    '1.25': {
+        backgroundColor: '#0f0',
+        color: '#000',
+    },
+    '1.75': {
+        backgroundColor: '#070',
+        color: '#fff',
+    },
+};
+
 const handleAutoSort = async () => {
     // Explicitly make sure writing is done before rosterAutoSort
     await g.dbl.tx("players", "readwrite", tx => team.rosterAutoSort(tx, g.userTid));
 
-    league.updateLastDbChange();
     ui.realtimeUpdate(["playerMovement"]);
+    league.updateLastDbChange();
 };
 
 const doRelease = (pid, justDrafted) => {
@@ -56,6 +79,51 @@ const handleRelease = async p => {
             ui.realtimeUpdate(["playerMovement"]);
         }
     }
+};
+
+const handlePtChange = async (p, event) => {
+    const ptModifier = parseFloat(event.target.value);
+
+    if (isNaN(ptModifier)) {
+        return;
+    }
+
+    // NEVER UPDATE AI TEAMS
+    // This shouldn't be necessary, but just in case...
+    if (p.tid !== g.userTid) {
+        return;
+    }
+
+    // Update ptModifier in database
+    const p2 = await g.dbl.players.get(p.pid);
+    if (p2.ptModifier !== ptModifier) {
+        p2.ptModifier = ptModifier;
+        await g.dbl.players.put(p2);
+
+        ui.realtimeUpdate(["playerMovement"]);
+        league.updateLastDbChange();
+    }
+};
+
+const PlayingTime = ({p}) => {
+    const ptModifiers = [
+        {text: "0", ptModifier: "0"},
+        {text: "-", ptModifier: "0.75"},
+        {text: " ", ptModifier: "1"},
+        {text: "+", ptModifier: "1.25"},
+        {text: "++", ptModifier: "1.75"},
+    ];
+
+    return <select
+        className="form-control"
+        value={p.ptModifier}
+        onChange={event => handlePtChange(p, event)}
+        style={ptStyles[String(p.ptModifier)]}
+    >
+        {ptModifiers.map(({text, ptModifier}) => {
+            return <option key={ptModifier} value={ptModifier}>{text}</option>;
+        })}
+    </select>;
 };
 
 const Roster = ({abbrev, editable, payroll, players, salaryCap, season, showTradeFor, team}) => {
@@ -127,11 +195,11 @@ const Roster = ({abbrev, editable, payroll, players, salaryCap, season, showTrad
                         {editable ? <th title="Playing Time Modifier">PT <HelpPopover placement="left" title="Playing Time Modifier">
                             <p>Your coach will divide up playing time based on ability and stamina. If you want to influence his judgement, your options are:</p>
                             <p>
-                                <span style={{backgroundColor: '#a00', color: '#fff'}}>0 No Playing Time</span><br />
-                                <span style={{backgroundColor: '#ff0'}}>- Less Playing Time</span><br />
-                                <span style={{backgroundColor: '#ccc'}}>&nbsp;&nbsp;&nbsp; Let Coach Decide</span><br />
-                                <span style={{backgroundColor: '#0f0'}}>+ More Playing Time</span><br />
-                                <span style={{backgroundColor: '#070', color: '#fff'}}>++ Even More Playing Time</span>
+                                <span style={ptStyles['0']}>0 No Playing Time</span><br />
+                                <span style={ptStyles['0.75']}>- Less Playing Time</span><br />
+                                <span style={ptStyles['1']}>&nbsp;&nbsp;&nbsp; Let Coach Decide</span><br />
+                                <span style={ptStyles['1.25']}>+ More Playing Time</span><br />
+                                <span style={ptStyles['1.75']}>++ Even More Playing Time</span>
                             </p>
                         </HelpPopover></th> : null}
                         {editable ? <th>Release <HelpPopover placement="left" title="Release Player">
@@ -175,9 +243,7 @@ const Roster = ({abbrev, editable, payroll, players, salaryCap, season, showTrad
                             <td>{helpers.round(p.stats.trb, 1)}</td>
                             <td>{helpers.round(p.stats.ast, 1)}</td>
                             <td>{helpers.round(p.stats.per, 1)}</td>
-                            {editable ? <td>
-                                <select className="form-control" data-bind="options: $root.ptModifiers, optionsText: 'text', optionsValue: 'ptModifier', value: ptModifier, event: {change: $root.ptChange}"></select>
-                            </td> : null}
+                            {editable ? <td><PlayingTime p={p} /></td> : null}
                             {editable ? <td>
                                 <button
                                     className="btn btn-default btn-xs"

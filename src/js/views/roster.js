@@ -1,12 +1,10 @@
 const g = require('../globals');
-const ui = require('../ui');
 const league = require('../core/league');
 const player = require('../core/player');
 const season = require('../core/season');
 const team = require('../core/team');
 const trade = require('../core/trade');
 const Promise = require('bluebird');
-const ko = require('knockout');
 const $ = require('jquery');
 const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
@@ -74,26 +72,6 @@ function get(req) {
     return inputs;
 }
 
-function InitViewModel() {
-    this.ptChange = async p => {
-        // NEVER UPDATE AI TEAMS
-        // This shouldn't be necessary, but sometimes it gets triggered
-        if (this.team.tid() !== g.userTid) {
-            return;
-        }
-
-        // Update ptModifier in database
-        const pid = p.pid();
-        const ptModifier = parseFloat(p.ptModifier());
-        const p2 = await g.dbl.players.get(pid);
-        if (p2.ptModifier !== ptModifier) {
-            p2.ptModifier = ptModifier;
-            await g.dbl.players.put(p2);
-            league.updateLastDbChange();
-        }
-    };
-}
-
 function updateRoster(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== state.abbrev || inputs.season !== state.season) {
         const vars = {
@@ -101,14 +79,7 @@ function updateRoster(inputs, updateEvents, state) {
             season: inputs.season,
             editable: inputs.season === g.season && inputs.tid === g.userTid,
             salaryCap: g.salaryCap / 1000,
-            showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid,
-            ptModifiers: [
-                {text: "0", ptModifier: "0"},
-                {text: "-", ptModifier: "0.75"},
-                {text: " ", ptModifier: "1"},
-                {text: "+", ptModifier: "1.25"},
-                {text: "++", ptModifier: "1.75"},
-            ],
+            showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid
         };
 
         return g.dbl.tx(["players", "playerStats", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], async tx => {
@@ -209,42 +180,6 @@ function updateRoster(inputs, updateEvents, state) {
             return vars;
         });
     }
-}
-
-function uiFirst(vm) {
-    $("#roster").on("change", "select", function () {
-        // Update select color
-
-        // NEVER UPDATE AI TEAMS
-        // This shouldn't be necessary, but sometimes it gets triggered
-        if (vm.team.tid() !== g.userTid) {
-            return;
-        }
-
-        // These don't work in Firefox, so do it manually
-//            backgroundColor = $('option:selected', this).css('background-color');
-//            color = $('option:selected', this).css('color');
-        let backgroundColor, color;
-        if (this.value === "1") {
-            backgroundColor = "#ccc";
-            color = "#000";
-        } else if (this.value === "1.75") {
-            backgroundColor = "#070";
-            color = "#fff";
-        } else if (this.value === "1.25") {
-            backgroundColor = "#0f0";
-            color = "#000";
-        } else if (this.value === "0.75") {
-            backgroundColor = "#ff0";
-            color = "#000";
-        } else if (this.value === "0") {
-            backgroundColor = "#a00";
-            color = "#fff";
-        }
-
-        this.style.color = color;
-        this.style.backgroundColor = backgroundColor;
-    });
 }
 
 module.exports = bbgmViewReact.init({

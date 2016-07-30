@@ -3,7 +3,6 @@ REACT
 roster
   tags with id
   FA redirectUrl
-  playing time change
   new sort mechanism
   test auto sort
   clickable
@@ -11,6 +10,8 @@ roster
     constructor needed?
   trade for button
     hover on untradable
+
+benchmark
 
 is UI updating okay without waiting for this.setState to finish?
 

@@ -25,58 +25,58 @@ async function updateStandings(inputs, updateEvents, state) {
         for (let i = 0; i < g.confs.length; i++) {
             const playoffsRank = [];
             const confTeams = [];
-            let l = 0;
-            for (let k = 0; k < teams.length; k++) {
-                if (g.confs[i].cid === teams[k].cid) {
-                    playoffsRank[teams[k].tid] = l + 1; // Store ranks by tid, for use in division standings
-                    confTeams.push(helpers.deepCopy(teams[k]));
-                    confTeams[l].rank = l + 1;
-                    if (l === 0) {
-                        confTeams[l].gb = 0;
+            let j = 0;
+            for (const t of teams) {
+                if (g.confs[i].cid === t.cid) {
+                    playoffsRank[t.tid] = j + 1; // Store ranks by tid, for use in division standings
+                    confTeams.push(helpers.deepCopy(t));
+                    confTeams[j].rank = j + 1;
+                    if (j === 0) {
+                        confTeams[j].gb = 0;
                     } else {
-                        confTeams[l].gb = helpers.gb(confTeams[0], confTeams[l]);
+                        confTeams[j].gb = helpers.gb(confTeams[0], confTeams[j]);
                     }
-                    if (confTeams[l].tid === g.userTid) {
-                        confTeams[l].highlight = true;
+                    if (confTeams[j].tid === g.userTid) {
+                        confTeams[j].highlight = true;
                     } else {
-                        confTeams[l].highlight = false;
+                        confTeams[j].highlight = false;
                     }
-                    l += 1;
+                    j += 1;
                 }
             }
 
             confs.push({cid: g.confs[i].cid, name: g.confs[i].name, divs: [], teams: confTeams});
 
-            for (let j = 0; j < g.divs.length; j++) {
-                if (g.divs[j].cid === g.confs[i].cid) {
+            for (const div of g.divs) {
+                if (div.cid === g.confs[i].cid) {
                     const divTeams = [];
-                    let l = 0;
-                    for (let k = 0; k < teams.length; k++) {
-                        if (g.divs[j].did === teams[k].did) {
-                            divTeams.push(helpers.deepCopy(teams[k]));
-                            if (l === 0) {
-                                divTeams[l].gb = 0;
+                    let j = 0;
+                    for (const t of teams) {
+                        if (div.did === t.did) {
+                            divTeams.push(helpers.deepCopy(t));
+                            if (j === 0) {
+                                divTeams[j].gb = 0;
                             } else {
-                                divTeams[l].gb = helpers.gb(divTeams[0], divTeams[l]);
+                                divTeams[j].gb = helpers.gb(divTeams[0], divTeams[j]);
                             }
 
-                            if (playoffsRank[divTeams[l].tid] <= numPlayoffTeams / 2) {
-                                divTeams[l].playoffsRank = playoffsRank[divTeams[l].tid];
+                            if (playoffsRank[divTeams[j].tid] <= numPlayoffTeams / 2) {
+                                divTeams[j].playoffsRank = playoffsRank[divTeams[j].tid];
                             } else {
-                                divTeams[l].playoffsRank = null;
+                                divTeams[j].playoffsRank = null;
                             }
 
-                            if (divTeams[l].tid === g.userTid) {
-                                divTeams[l].highlight = true;
+                            if (divTeams[j].tid === g.userTid) {
+                                divTeams[j].highlight = true;
                             } else {
-                                divTeams[l].highlight = false;
+                                divTeams[j].highlight = false;
                             }
 
-                            l += 1;
+                            j += 1;
                         }
                     }
 
-                    confs[i].divs.push({did: g.divs[j].did, name: g.divs[j].name, teams: divTeams});
+                    confs[i].divs.push({did: div.did, name: div.name, teams: divTeams});
                 }
             }
         }

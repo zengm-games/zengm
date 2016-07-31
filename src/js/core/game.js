@@ -383,7 +383,7 @@ async function writeGameStats(tx, results, att) {
                 }
                 delete results.clutchPlays[i].tempText;
             }
-            if(g.phase === g.PHASE.PLAYOFFS) {
+            if (g.phase === g.PHASE.PLAYOFFS) {
                 eventLog.add(tx, await getPlayoffFeat(tx, results.clutchPlays[i]));
             } else {
                 results.clutchPlays[i].text += `.`;
@@ -397,25 +397,25 @@ async function writeGameStats(tx, results, att) {
 
 async function getPlayoffFeat(tx, clutchPlay) {
     const playoffs = await tx.playoffSeries.get(g.season);
-    for(let k = 0; k < playoffs.series[playoffs.currentRound].length; k++) {
-        let series = playoffs.series[playoffs.currentRound][k];
-        if(series.home.tid === clutchPlay.tids[0] || series.away.tid === clutchPlay.tids[0]) {
-            clutchPlay.text += ` in game ` + (series.home.won + series.away.won + 1) + ` of the `;
-            switch(playoffs.currentRound) {
+    for (let k = 0; k < playoffs.series[playoffs.currentRound].length; k++) {
+        const series = playoffs.series[playoffs.currentRound][k];
+        if (series.home.tid === clutchPlay.tids[0] || series.away.tid === clutchPlay.tids[0]) {
+            clutchPlay.text += ` in game ${series.home.won + series.away.won + 1} of the `;
+            switch (playoffs.currentRound) {
                 case 0:
-                    clutchPlay.text += ` first round of the playoffs`;
+                    clutchPlay.text += " first round of the playoffs";
                     break;
                 case 1:
-                    clutchPlay.text += ` second round of the playoffs`;
+                    clutchPlay.text += " second round of the playoffs";
                     break;
                 case 2:
-                    clutchPlay.text += ` conference finals`;
+                    clutchPlay.text += " conference finals";
                     break;
                 case 3:
-                    clutchPlay.text += ` finals`;
+                    clutchPlay.text += " finals";
                     break;
             }
-            clutchPlay.text += `.`;
+            clutchPlay.text += ".";
             break;
         }
     }

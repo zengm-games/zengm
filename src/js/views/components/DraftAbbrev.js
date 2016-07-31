@@ -12,7 +12,7 @@ const DraftAbbrev = ({originalTid, tid, season}) => {
     }
 
     return <span>
-        <a href={helpers.leagueUrl(["roster", abbrev, season])}>{abbrev}</a> (from <a href={helpers.leagueUrl(["roster", originalAbbrev, season])}>{originalAbbrev}</a>
+        <a href={helpers.leagueUrl(["roster", abbrev, season])}>{abbrev}</a> (from <a href={helpers.leagueUrl(["roster", originalAbbrev, season])}>{originalAbbrev}</a>)
     </span>;
 };
 DraftAbbrev.propTypes = {

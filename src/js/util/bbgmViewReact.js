@@ -36,7 +36,7 @@ function controllerFactory(Component) {
             if ((containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading !== args.id) || (containerEl.dataset.idLoaded === args.id && containerEl.dataset.idLoading !== args.id && containerEl.dataset.idLoading !== '') || (containerEl.dataset.idLoaded === args.id && containerEl.dataset.idLoading === '' && containerEl.dataset.reactFirstRun === 'false')) {
                 containerEl.dataset.idLoading = args.id;
                 containerEl.dataset.reactFirstRun = 'true';
-//                g.vm.topMenu.template(args.id);
+                g.vm.topMenu.template(args.id); // For left menu
 
                 updateEvents.push("firstRun");
 

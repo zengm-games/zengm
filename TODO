@@ -1,5 +1,14 @@
 REACT
 
+generic datatables wrapper
+  https://github.com/alecperkey/react-jquery-datatables
+  https://gist.github.com/checkraiser/8555856
+  args
+    cols - title, description, and hidden (for row callbacks)
+    rows - array of arrays
+    option for pagination
+    option for sorting (better than what i have now, ideally)
+
 deploy and ask for feedback
 
 propTypes for Roster, Schedule, Standings, including internal components

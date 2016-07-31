@@ -38,7 +38,6 @@ module.exports = {
     manual: fs.readFileSync(__dirname + '/../templates/manual.html', 'utf8'),
     manualCustomRosters: fs.readFileSync(__dirname + '/../templates/manualCustomRosters.html', 'utf8'),
     manualOverview: fs.readFileSync(__dirname + '/../templates/manualOverview.html', 'utf8'),
-    message: fs.readFileSync(__dirname + '/../templates/message.html', 'utf8'),
     multiTeamMode: fs.readFileSync(__dirname + '/../templates/multiTeamMode.html', 'utf8'),
     negotiation: fs.readFileSync(__dirname + '/../templates/negotiation.html', 'utf8'),
     negotiationList: fs.readFileSync(__dirname + '/../templates/negotiationList.html', 'utf8'),

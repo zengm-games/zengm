@@ -32,8 +32,10 @@ function controllerFactory(Component) {
             // Reset league content and view model only if it's:
             // (1) if it's not loaded and not loading yet
             // (2) loaded, but loading something else
-            if ((containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading !== args.id) || (containerEl.dataset.idLoaded === args.id && containerEl.dataset.idLoading !== args.id && containerEl.dataset.idLoading !== '')) {
+            // (3) god these are just hacks, kill it all when we're React only
+            if ((containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading !== args.id) || (containerEl.dataset.idLoaded === args.id && containerEl.dataset.idLoading !== args.id && containerEl.dataset.idLoading !== '') || (containerEl.dataset.idLoaded === args.id && containerEl.dataset.idLoading === '' && containerEl.dataset.reactFirstRun === 'false')) {
                 containerEl.dataset.idLoading = args.id;
+                containerEl.dataset.reactFirstRun = 'true';
 //                g.vm.topMenu.template(args.id);
 
                 updateEvents.push("firstRun");

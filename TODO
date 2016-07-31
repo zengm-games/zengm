@@ -33,6 +33,8 @@ when all react
     skillsBlock
   get rid of bootstrap js
   revisit "trade for" buttons POST
+  references to data-
+  references to vm
 
 updateEvents need to be passed to dropdown?
 

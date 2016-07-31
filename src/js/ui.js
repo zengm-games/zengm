@@ -338,6 +338,7 @@ function update(data, react = false) {
         }
     }
     containerEl.dataset.idLoaded = data.template;
+    containerEl.dataset.reactFirstRun = 'false';
 }
 
 // Data tables

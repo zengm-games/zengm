@@ -5,13 +5,38 @@ generic datatables wrapper
   https://gist.github.com/checkraiser/8555856
   args
     cols - title, description, and hidden (for row callbacks)
+      or specify columns like https://datatables.net/reference/option/columns.title with HTML inline, rather than react components
+        but react components is what i want, ugh. same issue with rows
     rows - array of arrays
     option for pagination
     option for sorting (better than what i have now, ideally)
+  OR, write my own
+    per-column default sort order (like on click)
+    overall default sort order
+    sorting
+      somehow support custom orders for things like L10, $, draft picks, etc
+      what if it's a react component, can i get text somehow?
+    filtering
+    pagination (optional)
+    apply classes to row
+      row.classNames = {obj for input to classNames} where row is an array
+    key for rows
+      row.key, like classNames
+    clickable
+    cols
+      title
+      desc
+      orderSequence
+      sortType (default auto, override needed in cases like react component (otherwise always string))
+      width (or expand, if this is not sufficient)
+    superCols - some way to specify cols above cols, like FG/Reb in stats tables
+    column header double click github issue
 
 deploy and ask for feedback
 
 propTypes for Roster, Schedule, Standings, including internal components
+
+bring back drag and drop on roster - both click and drag/drop methods should work at same time, why not?
 
 is UI updating okay without waiting for this.setState to finish?
 
@@ -23,6 +48,8 @@ add to watch list
   other ui.js crap
 
 better eslint
+
+merge dependencies on sortBy and orderBy
 
 when all react
   https://github.com/reactjs/react-router/issues/2101 to handle transitions smoothly.
@@ -44,6 +71,7 @@ when all react
   revisit "trade for" buttons POST
   references to data-
   references to vm
+  delete datatables and unused CSS/images
 
 updateEvents need to be passed to dropdown?
 

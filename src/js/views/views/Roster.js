@@ -144,21 +144,28 @@ const ReorderHandle = ({i, onClick, pid, selectedPid}) => {
     return <td className="roster-handle" style={{backgroundColor}} onClick={onClick}></td>;
 };
 
-const swapRosterOrder = async (pid1, pid2) => {
+// This needs to look at all players, because rosterOrder is not guaranteed to be unique after free agent signings and trades
+const swapRosterOrder = async (sortedPlayers, pid1, pid2) => {
     await g.dbl.tx("players", "readwrite", async tx => {
-        const [p1, p2] = await Promise.all([
-            tx.players.get(pid1),
-            tx.players.get(pid2),
-        ]);
+        const rosterOrder1 = sortedPlayers.findIndex(p => p.pid === pid1);
+        const rosterOrder2 = sortedPlayers.findIndex(p => p.pid === pid2);
+        const promises = sortedPlayers.map(async (sortedPlayer, i) => {
+            const pid = sortedPlayers[i].pid;
+            const p = await tx.players.get(pid);
+            let rosterOrder = i;
+            if (pid === pid1) {
+                rosterOrder = rosterOrder2;
+            } else if (pid === pid2) {
+                rosterOrder = rosterOrder1;
+            }
 
-        const temp = p1.rosterOrder;
-        p1.rosterOrder = p2.rosterOrder;
-        p2.rosterOrder = temp;
+            if (p.rosterOrder !== rosterOrder) {
+                p.rosterOrder = rosterOrder;
+                await tx.players.put(p);
+            }
+        });
 
-        await Promise.all([
-            tx.players.put(p1),
-            tx.players.put(p2),
-        ]);
+        await Promise.all(promises);
 
         ui.realtimeUpdate(["playerMovement"]);
         league.updateLastDbChange();
@@ -231,7 +238,7 @@ class Roster extends React.Component {
         } else if (this.state.selectedPid === pid) {
             this.setState({selectedPid: undefined});
         } else {
-            await swapRosterOrder(pid, this.state.selectedPid);
+            await swapRosterOrder(this.props.players, pid, this.state.selectedPid);
             this.setState({selectedPid: undefined});
         }
     }

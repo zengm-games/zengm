@@ -1,5 +1,6 @@
 module.exports = {
     DataTable: require('./DataTable'),
+    DraftAbbrev: require('./DraftAbbrev'),
     Dropdown: require('./Dropdown'),
     HelpPopover: require('./HelpPopover'),
     JumpTo: require('./JumpTo'),

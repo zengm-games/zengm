@@ -2,12 +2,25 @@ const classNames = require('classnames');
 const orderBy = require('lodash.orderby');
 const React = require('react');
 const textContent = require('react-addons-text-content');
+const g = require('../../globals');
 const clickable = require('../wrappers/clickable');
 
-const Header = ({cols, handleColClick, sortBy}) => {
+const Header = ({cols, handleColClick, sortBy, superCols}) => {
     return <thead>
+        {superCols ? <tr>
+            {superCols.map(({colspan, desc, title}, i) => {
+                return <th
+                    key={i}
+                    colSpan={colspan}
+                    style={{textAlign: 'center'}}
+                    title={desc}
+                >
+                    {title}
+                </th>;
+            })}
+        </tr> : null}
         <tr>
-            {cols.map(({title, desc, width}, i) => {
+            {cols.map(({desc, title, width}, i) => {
                 let className = 'sorting';
                 if (sortBy[0] === i) {
                     className = sortBy[1] === 'asc' ? 'sorting_asc' : 'sorting_desc';
@@ -17,7 +30,9 @@ const Header = ({cols, handleColClick, sortBy}) => {
                     key={i}
                     onClick={() => handleColClick(i)}
                     title={desc}
-                    width={width}>{title}
+                    width={width}
+                >
+                    {title}
                 </th>;
             })}
         </tr>
@@ -38,11 +53,24 @@ const getSortVal = (val, sortType) => {
         sortVal = val;
     }
 
-    if (sortType === 'number' && typeof sortVal !== 'number') {
-        return parseFloat(sortVal);
+    if (sortType === 'number') {
+        if (val === null) {
+            return -Infinity;
+        } else if (typeof sortVal !== 'number') {
+            return parseFloat(sortVal);
+        }
+        return val;
     }
     if (sortType === 'lastTen') {
         return parseInt(sortVal.split('-')[0], 10);
+    }
+    if (sortType === 'draftPick') {
+        const [round, pick] = sortVal.split('-');
+        return parseInt(round, 10) * g.numTeams + parseInt(pick, 10);
+    }
+    if (sortType === 'name') {
+        const parts = sortVal.split(' ');
+        return parts[parts.length - 1];
     }
     return sortVal;
 };
@@ -70,7 +98,7 @@ class DataTable extends React.Component {
     }
 
     render() {
-        const {cols, rows} = this.props;
+        const {cols, rows, superCols} = this.props;
 
         const sortedRows = orderBy(rows, [row => {
             return getSortVal(row.data[this.state.sortBy[0]], cols[this.state.sortBy[0]].sortType);
@@ -82,6 +110,7 @@ class DataTable extends React.Component {
                     cols={cols}
                     handleColClick={this.handleColClick}
                     sortBy={this.state.sortBy}
+                    superCols={superCols}
                 />
                 <tbody>
                     {sortedRows.map(row => <Row key={row.key} row={row} />)}

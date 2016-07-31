@@ -14,7 +14,6 @@ module.exports = {
     deleteOldData: fs.readFileSync(__dirname + '/../templates/deleteOldData.html', 'utf8'),
     draft: fs.readFileSync(__dirname + '/../templates/draft.html', 'utf8'),
     draftScouting: fs.readFileSync(__dirname + '/../templates/draftScouting.html', 'utf8'),
-    draftSummary: fs.readFileSync(__dirname + '/../templates/draftSummary.html', 'utf8'),
     error: fs.readFileSync(__dirname + '/../templates/error.html', 'utf8'),
     eventLog: fs.readFileSync(__dirname + '/../templates/eventLog.html', 'utf8'),
     exportLeague: fs.readFileSync(__dirname + '/../templates/exportLeague.html', 'utf8'),

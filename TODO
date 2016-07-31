@@ -1,5 +1,9 @@
 REACT
 
+draft summary
+  super header
+  https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills
+
 generic datatables wrapper
   https://github.com/alecperkey/react-jquery-datatables
   https://gist.github.com/checkraiser/8555856
@@ -73,7 +77,9 @@ when all react
   references to vm
   delete datatables and unused CSS/images
 
-updateEvents need to be passed to dropdown?
+Dropdown
+  updateEvents need to be passed to dropdown to handle season change?
+  "view" parameter is really first URL component, can't that be automatically retrieved?
 
 ---
 

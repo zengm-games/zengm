@@ -4,8 +4,9 @@ const draft = require('../core/draft');
 const player = require('../core/player');
 const Promise = require('bluebird');
 const $ = require('jquery');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
+const Draft = require('./views/Draft');
 
 function updateDraftTables(pids) {
     for (let i = 0; i < pids.length; i++) {
@@ -35,37 +36,6 @@ function updateDraftTables(pids) {
                 break;
             }
         }
-    }
-}
-
-async function draftUser(pid) {
-    const draftOrder = await draft.getOrder();
-    const pick = draftOrder.shift();
-    if (g.userTids.indexOf(pick.tid) >= 0) {
-        await draft.selectPlayer(pick, pid);
-        await g.dbl.tx("draftOrder", "readwrite", tx => draft.setOrder(tx, draftOrder));
-        return pid;
-    }
-
-    console.log("ERROR: User trying to draft out of turn.");
-}
-
-async function draftUntilUserOrEnd() {
-    ui.updateStatus("Draft in progress...");
-    const pids = await draft.untilUserOrEnd();
-    const draftOrder = await draft.getOrder();
-
-    let done = false;
-    if (draftOrder.length === 0) {
-        done = true;
-        ui.updateStatus("Idle");
-
-        $("#undrafted th:last-child, #undrafted td:last-child").remove();
-    }
-
-    updateDraftTables(pids);
-    if (!done) {
-        $("#undrafted button").removeAttr("disabled");
     }
 }
 
@@ -161,21 +131,6 @@ async function updateDraft() {
 }
 
 function uiFirst() {
-    ui.title("Draft");
-
-    const startDraft = $("#start-draft");
-    startDraft.click(() => {
-        $(startDraft.parent()).hide();
-        draftUntilUserOrEnd();
-    });
-
-    $("#undrafted").on("click", "button", async function () {
-        $("#undrafted button").attr("disabled", "disabled");
-        const pid = await draftUser(parseInt(this.getAttribute("data-player-id"), 10));
-        updateDraftTables([pid]);
-        draftUntilUserOrEnd();
-    });
-
     $("#view-drafted").click(() => {
         $("body, html").animate({scrollLeft: $(document).outerWidth() - $(window).width()}, 250);
     });
@@ -186,9 +141,6 @@ function uiFirst() {
     // Scroll undrafted to the right, so "Draft" button is never cut off
     const undraftedContainer = document.getElementById("undrafted").parentNode;
     undraftedContainer.scrollLeft = undraftedContainer.scrollWidth;
-
-    ui.tableClickableRows($("#undrafted"));
-    ui.tableClickableRows($("#drafted"));
 
     // If this is a fantasy draft, make everybody use two screens to save space
     if (g.phase === g.PHASE.FANTASY_DRAFT) {
@@ -204,9 +156,9 @@ function uiFirst() {
     }
 }
 
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "draft",
     get,
     runBefore: [updateDraft],
-    uiFirst,
+    Component: Draft,
 });

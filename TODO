@@ -1,7 +1,17 @@
 REACT
 
+draft
+  PlayerNameLabels switch to name as child, to faciliate sort?
+  If user has first pick, started should always be true because there's no need to wait
+  delay each pick
+  highlight user picks
+  jquery needed for switching drafted/undrafted on mobile?
+  sortable tables
+    some columns unsortable
+  fantasy draft
+    add Contract, PER, and EWA cols <th title="Player Efficiency Rating" data-bind="visible: fantasyDraft">PER</th><th title="Estimated Wins Added" data-bind="visible: fantasyDraft">EWA</th>
+
 draft summary
-  super header
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills
 
 generic datatables wrapper
@@ -79,6 +89,7 @@ when all react
 
 Dropdown
   updateEvents need to be passed to dropdown to handle season change?
+    could pass season as a prop. anything else require update?
   "view" parameter is really first URL component, can't that be automatically retrieved?
 
 ---

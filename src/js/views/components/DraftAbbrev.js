@@ -17,7 +17,7 @@ const DraftAbbrev = ({originalTid, tid, season}) => {
 };
 DraftAbbrev.propTypes = {
     originalTid: React.PropTypes.number.isRequired,
-    season: React.PropTypes.number.isRequired,
+    season: React.PropTypes.number,
     tid: React.PropTypes.number.isRequired,
 };
 

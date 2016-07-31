@@ -2,7 +2,6 @@ const classNames = require('classnames');
 const orderBy = require('lodash.orderby');
 const React = require('react');
 const textContent = require('react-addons-text-content');
-const helpers = require('../../util/helpers');
 const clickable = require('../wrappers/clickable');
 
 const Header = ({cols, handleColClick, sortBy}) => {

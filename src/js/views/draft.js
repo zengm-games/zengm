@@ -105,7 +105,8 @@ async function updateDraft() {
     }
     drafted.sort((a, b) => (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick));
 
-    const started = drafted.length > 0;
+    // Start draft if a pick has already been made (then it's already started)
+    let started = drafted.length > 0;
 
     const draftOrder = await draft.getOrder();
     for (let i = 0; i < draftOrder.length; i++) {
@@ -120,6 +121,9 @@ async function updateDraft() {
             pid: -1,
         });
     }
+
+    // ...or start draft if the user has the first pick (in which case starting it has no effect, might as well do it automatically)
+    started = started || g.userTids.indexOf(drafted[0].draft.tid) >= 0;
 
     return {
         undrafted,

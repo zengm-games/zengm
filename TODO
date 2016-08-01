@@ -4,7 +4,6 @@ draft
   PlayerNameLabels switch to name as child, to faciliate sort?
   If user has first pick, started should always be true because there's no need to wait
   delay each pick
-  highlight user picks
   jquery needed for switching drafted/undrafted on mobile?
   sortable tables
     some columns unsortable

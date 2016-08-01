@@ -1,21 +1,24 @@
 const classNames = require('classnames');
 const React = require('react');
+const g = require('../../globals');
 const ui = require('../../ui');
 const draft = require('../../core/draft');
+const league = require('../../core/league');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {DraftAbbrev, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
 async function draftUntilUserOrEnd() {
     ui.updateStatus("Draft in progress...");
-    const pids = await draft.untilUserOrEnd();
+    await draft.untilUserOrEnd();
     const draftOrder = await draft.getOrder();
 
     if (draftOrder.length === 0) {
         ui.updateStatus("Idle");
     }
 
-    updateDraftTables(pids);
+    ui.realtimeUpdate(["playerMovement"]);
+    league.updateLastDbChange();
 }
 
 async function draftUser(pid) {
@@ -25,13 +28,17 @@ async function draftUser(pid) {
         await draft.selectPlayer(pick, pid);
         await g.dbl.tx("draftOrder", "readwrite", tx => draft.setOrder(tx, draftOrder));
         await draftUntilUserOrEnd();
+    } else {
+        console.log("ERROR: User trying to draft out of turn.");
     }
-
-    console.log("ERROR: User trying to draft out of turn.");
 }
 
-const Draft = ({drafted, fantasyDraft, started, undrafted, usersTurn, userTids}) => {
+const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], userTids}) => {
     bbgmViewReact.title('Draft');
+
+    const nextPick = drafted.find(p => p.pid < 0);
+    const usersTurn = nextPick && userTids.indexOf(nextPick.draft.tid) >= 0;
+console.log(usersTurn);
 
     const colsUndrafted = [{
         title: 'Name',
@@ -61,23 +68,24 @@ const Draft = ({drafted, fantasyDraft, started, undrafted, usersTurn, userTids})
                 p.age,
                 p.ratings.ovr,
                 p.ratings.pot,
-                <button className="btn btn-xs btn-primary" onClick={() => draftUser(p.pid)}>Draft</button>,
+                <button className="btn btn-xs btn-primary" disabled={!usersTurn} onClick={() => draftUser(p.pid)}>Draft</button>,
             ],
         };
     });
 
     const colsDrafted = [{
         title: 'Pick',
+        sortType: 'draftPick',
     }, {
         title: 'Team',
-    }].concat(colsUndrafted);
+    }].concat(colsUndrafted.slice(0, -1));
 
-    const rowsDrafted = drafted.map(p => {
+    const rowsDrafted = drafted.map((p, i) => {
         return {
-            key: `${draft.round}-${draft.pick}`,
+            key: i,
             data: [
-                <span>{draft.round}-{draft.pick}</span>,
-                <DraftAbbrev originalTid={draft.originalTid} tid={draft.tid} />,
+                <span>{p.draft.round}-{p.draft.pick}</span>,
+                <DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid} />,
                 p.pid >= 0 ? <PlayerNameLabels pid={p.pid} name={p.name} injury={p.injury} skills={p.ratings.skills} watch={p.watch} /> : null,
                 p.pid >= 0 ? p.ratings.pos : null,
                 p.pid >= 0 ? p.age : null,
@@ -122,6 +130,6 @@ const Draft = ({drafted, fantasyDraft, started, undrafted, usersTurn, userTids})
             </div>
         </div>
     </div>;
-}
+};
 
 module.exports = Draft;

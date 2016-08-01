@@ -1,5 +1,9 @@
 REACT
 
+DataTable
+  https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
+  also a couple columns on draft
+
 draft
   PlayerNameLabels switch to name as child, to faciliate sort?
   If user has first pick, started should always be true because there's no need to wait
@@ -9,9 +13,6 @@ draft
     some columns unsortable
   fantasy draft
     add Contract, PER, and EWA cols <th title="Player Efficiency Rating" data-bind="visible: fantasyDraft">PER</th><th title="Estimated Wins Added" data-bind="visible: fantasyDraft">EWA</th>
-
-draft summary
-  https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills
 
 generic datatables wrapper
   https://github.com/alecperkey/react-jquery-datatables

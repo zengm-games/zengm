@@ -20,10 +20,13 @@ const Header = ({cols, handleColClick, sortBy, superCols}) => {
             })}
         </tr> : null}
         <tr>
-            {cols.map(({desc, title, width}, i) => {
+            {cols.map(({desc, sortSequence, title, width}, i) => {
                 let className = 'sorting';
                 if (sortBy[0] === i) {
                     className = sortBy[1] === 'asc' ? 'sorting_asc' : 'sorting_desc';
+                }
+                if (sortSequence && sortSequence.length === 0) {
+                    className = null;
                 }
                 return <th
                     className={className}
@@ -86,9 +89,16 @@ class DataTable extends React.Component {
     }
 
     handleColClick(i) {
+        const col = this.props.cols[i];
+
+        // Ignore click on unsortable column
+        if (col.sortSequence && col.sortSequence.length === 0) {
+            return;
+        }
+
         let order;
         if (this.state.sortBy[0] !== i) {
-            order = this.props.cols[i].sortSequence ? this.props.cols[i].sortSequence[0] : 'asc';
+            order = col.sortSequence ? col.sortSequence[0] : 'asc';
         } else {
             order = this.state.sortBy[1] === 'asc' ? 'desc' : 'asc';
         }

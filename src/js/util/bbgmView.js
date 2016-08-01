@@ -14,10 +14,11 @@ let vm;
 function display(args, updateEvents) {
     const container = g.lid !== null ? "league_content" : "content";
     const containerEl = document.getElementById(container);
+    const otherContainerEl = document.getElementById(g.lid !== null ? "content" : "league_content");
 
     if (containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading === args.id) {
-        ReactDOM.unmountComponentAtNode(document.getElementById('league_content'));
-        ReactDOM.unmountComponentAtNode(document.getElementById('content'));
+        if (containerEl) { ReactDOM.unmountComponentAtNode(containerEl); }
+        if (otherContainerEl) { ReactDOM.unmountComponentAtNode(document.getElementById('content')); }
         ui.update({
             container,
             template: args.id,

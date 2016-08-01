@@ -42,6 +42,7 @@ console.log(usersTurn);
 
     const colsUndrafted = [{
         title: 'Name',
+        width: '100%',
     }, {
         title: 'Pos',
         desc: 'Position',
@@ -57,6 +58,7 @@ console.log(usersTurn);
         sortSequence: ['desc', 'asc'],
     }, {
         title: 'Draft',
+        sortSequence: [],
     }];
 
     const rowsUndrafted = undrafted.map(p => {

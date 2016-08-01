@@ -16,7 +16,8 @@ function display(args, updateEvents) {
     const containerEl = document.getElementById(container);
 
     if (containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading === args.id) {
-        ReactDOM.unmountComponentAtNode(containerEl);
+        ReactDOM.unmountComponentAtNode(document.getElementById('league_content'));
+        ReactDOM.unmountComponentAtNode(document.getElementById('content'));
         ui.update({
             container,
             template: args.id,

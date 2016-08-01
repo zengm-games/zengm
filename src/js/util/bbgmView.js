@@ -14,11 +14,8 @@ let vm;
 function display(args, updateEvents) {
     const container = g.lid !== null ? "league_content" : "content";
     const containerEl = document.getElementById(container);
-    const otherContainerEl = document.getElementById(g.lid !== null ? "content" : "league_content");
 
     if (containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading === args.id) {
-        if (containerEl) { ReactDOM.unmountComponentAtNode(containerEl); }
-        if (otherContainerEl) { ReactDOM.unmountComponentAtNode(document.getElementById('content')); }
         ui.update({
             container,
             template: args.id,
@@ -128,6 +125,11 @@ function get(fnBeforeReq, fnGet, fnUpdate) {
         if (inputs === undefined) {
             inputs = {};
         }
+
+        const containerEl = document.getElementById('content');
+        const otherContainerEl = document.getElementById('league_content');
+        if (containerEl) { ReactDOM.unmountComponentAtNode(containerEl); }
+        if (otherContainerEl) { ReactDOM.unmountComponentAtNode(otherContainerEl); }
 
         // Check for errors/redirects
         if (inputs.errorMessage !== undefined) {

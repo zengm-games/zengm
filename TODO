@@ -8,6 +8,8 @@ DataTable
 roster
   try dnd too
     if not, at least maek the handles distinct
+  need to update state with new position (moveCard from example) and rerender
+    could be similar to the code that actually applies to db... just store the two indices and swap/increment the players
 
 draft
   delay each pick

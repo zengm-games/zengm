@@ -1,6 +1,9 @@
 const Promise = require('bluebird');
 const classNames = require('classnames');
 const React = require('react');
+const {findDOMNode} = require('react-dom');
+const {DragDropContext, DragSource, DropTarget} = require('react-dnd');
+const HTML5Backend = require('react-dnd-html5-backend');
 const g = require('../../globals');
 const ui = require('../../ui');
 const league = require('../../core/league');
@@ -150,7 +153,7 @@ const swapRosterOrder = async (sortedPlayers, pid1, pid2) => {
         const rosterOrder1 = sortedPlayers.findIndex(p => p.pid === pid1);
         const rosterOrder2 = sortedPlayers.findIndex(p => p.pid === pid2);
         const promises = sortedPlayers.map(async (sortedPlayer, i) => {
-            const pid = sortedPlayers[i].pid;
+            const pid = sortedPlayer.pid;
             const p = await tx.players.get(pid);
             let rosterOrder = i;
             if (pid === pid1) {
@@ -172,9 +175,112 @@ const swapRosterOrder = async (sortedPlayers, pid1, pid2) => {
     });
 };
 
-const RosterRow = clickable(props => {
-    const {clicked, editable, handleReorderClick, i, p, season, selectedPid, showTradeFor, toggleClicked} = props;
-    return <tr key={p.pid} className={classNames({separator: i === 4, warning: clicked})}>
+const handleReorderDrag = async (sortedPlayers, indSource, indTarget) => {
+    await g.dbl.tx("players", "readwrite", async tx => {
+        const promises = sortedPlayers.map(async (sortedPlayer, i) => {
+            const pid = sortedPlayer.pid;
+            const p = await tx.players.get(pid);
+            let rosterOrder = i;
+            if (i === indSource) {
+                rosterOrder = indTarget;
+            } else if (i >= indTarget) {
+                rosterOrder += 1;
+            }
+
+            if (p.rosterOrder !== rosterOrder) {
+                p.rosterOrder = rosterOrder;
+                await tx.players.put(p);
+            }
+        });
+
+        await Promise.all(promises);
+
+        ui.realtimeUpdate(["playerMovement"]);
+        league.updateLastDbChange();
+    });
+};
+
+const rowSource = {
+    beginDrag(props) {
+        return {
+            id: props.p.pid,
+            index: props.i,
+        };
+    },
+};
+
+const rowTarget = {
+    hover(props, monitor, component) {
+        const dragIndex = monitor.getItem().index;
+        const hoverIndex = props.i;
+
+        // Don't replace items with themselves
+        if (dragIndex === hoverIndex) {
+            return;
+        }
+
+        // Determine rectangle on screen
+        const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
+
+        // Get vertical middle
+        const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+
+        // Determine mouse position
+        const clientOffset = monitor.getClientOffset();
+
+        // Get pixels to the top
+        const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+        // Only perform the move when the mouse has crossed half of the items height
+        // When dragging downwards, only move when the cursor is below 50%
+        // When dragging upwards, only move when the cursor is above 50%
+
+        // Dragging downwards
+        if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+            return;
+        }
+
+        // Dragging upwards
+        if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+            return;
+        }
+
+console.log('MOVE ROW IN UI ONLY');
+/*        // Time to actually perform the action
+        props.moveRow(dragIndex, hoverIndex);
+
+        // Note: we're mutating the monitor item here!
+        // Generally it's better to avoid mutations,
+        // but it's good here for the sake of performance
+        // to avoid expensive index searches.
+        monitor.getItem().index = hoverIndex;*/
+    },
+
+    drop(props, monitor, component) {
+        const dragIndex = monitor.getItem().index;
+        const hoverIndex = props.i;
+        props.handleReorderDrag(dragIndex, hoverIndex);
+    },
+};
+
+const collectSource = (connect, monitor) => {
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging(),
+    };
+};
+
+const collectTarget = connect => {
+    return {
+        connectDropTarget: connect.dropTarget(),
+    };
+};
+
+const RosterRow = DragSource('row', rowSource, collectSource)(DropTarget('row', rowTarget, collectTarget)(clickable(props => {
+    const {clicked, connectDragSource, connectDropTarget, editable, handleReorderClick, i, isDragging, p, season, selectedPid, showTradeFor, toggleClicked} = props;
+    console.log('isdragging', isDragging, p.pid);
+
+    return connectDragSource(connectDropTarget(<tr key={p.pid} className={classNames({separator: i === 4, warning: clicked})} style={{opacity: isDragging ? 0.25 : 1}}>
         {editable ? <ReorderHandle i={i} pid={p.pid} onClick={handleReorderClick} selectedPid={selectedPid} /> : null}
         <td>
             <PlayerNameLabels
@@ -221,8 +327,8 @@ const RosterRow = clickable(props => {
                 <button type="submit" className="btn btn-default btn-xs" disabled={p.untradable}>Trade For</button>
             </form>
         </td> : null}
-    </tr>;
-});
+    </tr>));
+})));
 
 class Roster extends React.Component {
     constructor(props) {
@@ -289,7 +395,7 @@ class Roster extends React.Component {
                     {showTradeFor ? `Strategy: ${team.strategy}` : null}
                 </p> : null}
             </div>
-            {editable ? <p>Click row handles to move players between the starting lineup (<span className="roster-starter">&#9632;</span>) and the bench (<span className="roster-bench">&#9632;</span>).</p> : null}
+            {editable ? <p>Click or drag row handles to move players between the starting lineup (<span className="roster-starter">&#9632;</span>) and the bench (<span className="roster-bench">&#9632;</span>).</p> : null}
             {editable ? <p><button className="btn btn-default" onClick={handleAutoSort}>Auto sort roster</button>
             </p> : null}
 
@@ -335,6 +441,7 @@ class Roster extends React.Component {
                                 key={p.pid}
                                 editable={editable}
                                 handleReorderClick={handleReorderClick}
+                                handleReorderDrag={handleReorderDrag.bind(null, players)}
                                 i={i}
                                 p={p}
                                 season={season}
@@ -350,4 +457,4 @@ class Roster extends React.Component {
 }
 Roster.defaultProps = {players: [], team: {}};
 
-module.exports = Roster;
+module.exports = DragDropContext(HTML5Backend)(Roster);

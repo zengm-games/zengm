@@ -3,12 +3,14 @@ REACT
 DataTable
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
   also a couple columns on draft
+    PlayerNameLabels switch to name as child, to faciliate sort?
+
+roster
+  try dnd too
+    if not, at least maek the handles distinct
 
 draft
-  PlayerNameLabels switch to name as child, to faciliate sort?
-  If user has first pick, started should always be true because there's no need to wait
   delay each pick
-  jquery needed for switching drafted/undrafted on mobile?
   sortable tables
     some columns unsortable
   fantasy draft

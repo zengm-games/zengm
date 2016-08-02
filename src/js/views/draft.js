@@ -135,17 +135,6 @@ async function updateDraft() {
 }
 
 function uiFirst() {
-    $("#view-drafted").click(() => {
-        $("body, html").animate({scrollLeft: $(document).outerWidth() - $(window).width()}, 250);
-    });
-    $("#view-undrafted").click(() => {
-        $("body, html").animate({scrollLeft: 0}, 250);
-    });
-
-    // Scroll undrafted to the right, so "Draft" button is never cut off
-    const undraftedContainer = document.getElementById("undrafted").parentNode;
-    undraftedContainer.scrollLeft = undraftedContainer.scrollWidth;
-
     // If this is a fantasy draft, make everybody use two screens to save space
     if (g.phase === g.PHASE.FANTASY_DRAFT) {
         $("#undrafted-col").removeClass("col-sm-6").addClass("col-xs-12");

@@ -1,4 +1,5 @@
 const classNames = require('classnames');
+const $ = require('jquery');
 const React = require('react');
 const g = require('../../globals');
 const ui = require('../../ui');
@@ -33,12 +34,18 @@ async function draftUser(pid) {
     }
 }
 
+const viewDrafted = () => {
+    $("body, html").animate({scrollLeft: $(document).outerWidth() - $(window).width()}, 250);
+};
+const viewUndrafted = () => {
+    $("body, html").animate({scrollLeft: 0}, 250);
+};
+
 const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], userTids}) => {
     bbgmViewReact.title('Draft');
 
     const nextPick = drafted.find(p => p.pid < 0);
     const usersTurn = nextPick && userTids.indexOf(nextPick.draft.tid) >= 0;
-console.log(usersTurn);
 
     const colsUndrafted = [{
         title: 'Name',
@@ -109,7 +116,7 @@ console.log(usersTurn);
             <div className="col-sm-6" id="undrafted-col">
                 <h2>
                     Undrafted Players
-                    <span className="pull-right"><button type="button" className="btn btn-info btn-xs visible-xs" id="view-drafted">View Drafted</button></span>
+                    <span className="pull-right"><button type="button" className="btn btn-info btn-xs visible-xs" onClick={viewDrafted}>View Drafted</button></span>
                 </h2>
 
                 <DataTable
@@ -121,7 +128,7 @@ console.log(usersTurn);
             <div className="col-sm-6 sidebar-offcanvas" id="drafted-col">
                 <h2>
                     Draft Results
-                    <span className="pull-right"><button type="button" className="btn btn-info btn-xs visible-xs" id="view-undrafted">View Undrafted</button></span>
+                    <span className="pull-right"><button type="button" className="btn btn-info btn-xs visible-xs" onClick={viewUndrafted}>View Undrafted</button></span>
                 </h2>
 
                 <DataTable

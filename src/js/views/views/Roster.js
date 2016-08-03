@@ -207,6 +207,9 @@ const rowSource = {
             index: props.i,
         };
     },
+    endDrag(props) {
+        props.handleEndDrag();
+    },
 };
 
 const rowTarget = {
@@ -245,15 +248,7 @@ const rowTarget = {
             return;
         }
 
-console.log('MOVE ROW IN UI ONLY');
-/*        // Time to actually perform the action
-        props.moveRow(dragIndex, hoverIndex);
-
-        // Note: we're mutating the monitor item here!
-        // Generally it's better to avoid mutations,
-        // but it's good here for the sake of performance
-        // to avoid expensive index searches.
-        monitor.getItem().index = hoverIndex;*/
+        props.handleHoverRow(dragIndex, hoverIndex);
     },
 
     drop(props, monitor, component) {
@@ -278,8 +273,6 @@ const collectTarget = connect => {
 
 const RosterRow = DragSource('row', rowSource, collectSource)(DropTarget('row', rowTarget, collectTarget)(clickable(props => {
     const {clicked, connectDragSource, connectDropTarget, editable, handleReorderClick, i, isDragging, p, season, selectedPid, showTradeFor, toggleClicked} = props;
-    console.log('isdragging', isDragging, p.pid);
-
     return connectDragSource(connectDropTarget(<tr key={p.pid} className={classNames({separator: i === 4, warning: clicked})} style={{opacity: isDragging ? 0.25 : 1}}>
         {editable ? <ReorderHandle i={i} pid={p.pid} onClick={handleReorderClick} selectedPid={selectedPid} /> : null}
         <td>
@@ -334,8 +327,25 @@ class Roster extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            dragIndex: undefined,
+            hoverIndex: undefined,
             selectedPid: undefined,
         };
+        this.handleHoverRow = this.handleHoverRow.bind(this);
+        this.handleEndDrag = this.handleEndDrag.bind(this);
+    }
+
+    handleHoverRow(dragIndex, hoverIndex) {
+        if (dragIndex !== this.state.dragIndex || hoverIndex !== this.state.hoverIndex) {
+            this.setState({dragIndex, hoverIndex});
+        }
+    }
+
+    handleEndDrag() {
+        this.setState({
+            hoverIndex: undefined,
+            selectedPid: undefined,
+        });
     }
 
     async handleReorderClick(pid) {
@@ -358,6 +368,24 @@ class Roster extends React.Component {
         if (team.imgURL) {
             logoStyle.display = "inline";
             logoStyle.backgroundImage = `url('${team.imgURL}')`;
+        }
+
+        let playersWithDragSwap;
+        if (this.state.dragIndex !== undefined && this.state.hoverIndex !== undefined) {
+            playersWithDragSwap = [];
+            for (let i = 0; i < players.length; i++) {
+                const p = players[i];
+
+                if (i === this.state.hoverIndex) {
+                    playersWithDragSwap[i] = players[this.state.dragIndex];
+                } else if (i > this.state.hoverIndex && i <= this.state.dragIndex) {
+                    playersWithDragSwap[i] = players[i - 1];
+                } else {
+                    playersWithDragSwap[i] = players[i];
+                }
+            }
+        } else {
+            playersWithDragSwap = players;
         }
 
         return <div>
@@ -435,12 +463,14 @@ class Roster extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {players.map((p, i) => {
+                        {playersWithDragSwap.map((p, i) => {
                             const handleReorderClick = this.handleReorderClick.bind(this, p.pid);
                             return <RosterRow
                                 key={p.pid}
                                 editable={editable}
+                                handleEndDrag={this.handleEndDrag}
                                 handleReorderClick={handleReorderClick}
+                                handleHoverRow={this.handleHoverRow}
                                 handleReorderDrag={handleReorderDrag.bind(null, players)}
                                 i={i}
                                 p={p}

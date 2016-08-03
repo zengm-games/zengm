@@ -588,7 +588,7 @@ function draftAbbrev(tid, originalTid, season) {
 }
 
 function pickDesc(pick) {
-    let desc = `${pick.season} ${pick.round === 1 ? "first" : "second"} round pick`;
+    let desc = `${pick.season} ${pick.round === 1 ? "1st" : "2nd"} round pick`;
     if (pick.tid !== pick.originalTid) {
         desc += ` (from ${g.teamAbbrevsCache[pick.originalTid]})`;
     }

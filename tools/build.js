@@ -4,12 +4,16 @@ const replace = require("replace");
 const fse = require('fs-extra');
 
 const reset = () => {
+    console.log('Resetting "build" directory...');
+
     fse.removeSync('build');
     fs.mkdirSync('build');
     fs.mkdirSync('build/gen');
 };
 
 const copyFiles = () => {
+    console.log('Copying files from "src" directory to "build" directory...');
+
     fse.copySync('src', 'build', {
         filter: filename => {
             if (filename.indexOf('src/js') === 0) {

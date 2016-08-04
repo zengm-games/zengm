@@ -37,18 +37,23 @@ const copyFiles = () => {
 const minifyCss = () => {
     console.log("Minifying CSS...");
 
-    const source = fs.readFileSync("src/css/bootstrap.css") +
-                 fs.readFileSync("src/css/bbgm.css") +
-                 fs.readFileSync("src/css/bbgm-notifications.css") +
-                 fs.readFileSync("src/css/DT_bootstrap.css");
-    const result = (new CleanCSS()).minify(source);
-    if (result.errors.length > 0) {
-        console.log('clean-css errors', result.errors);
-    }
-    if (result.warnings.length > 0) {
-        console.log('clean-css warnings', result.warnings);
-    }
-    fs.writeFileSync("build/gen/bbgm.css", result.styles);
+    const cssFilenames = [
+        'bootstrap.css',
+        'bbgm.css',
+        'bbgm-notifications.css',
+        'DT_bootstrap.css',
+    ];
+
+    const cssFilePaths = cssFilenames.map(filename => `src/css/${filename}`);
+    new CleanCSS({
+        // Don't rebase source URLs.
+        rebase: false,
+    }).minify(cssFilePaths, (error, minified) => {
+        if (error) console.log('clean-css errors', error);
+
+        const stylesString = minified.styles;
+        fs.writeFileSync('build/gen/bbgm.css', stylesString);
+    });
 };
 
 const setTimestamps = () => {

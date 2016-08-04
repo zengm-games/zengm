@@ -13,22 +13,25 @@ const reset = () => {
 
 const copyFiles = () => {
     console.log('Copying files from "src" directory to "build" directory...');
+    const foldersToIgnore = ['js', 'templates'];
 
     fse.copySync('src', 'build', {
         filter: filename => {
-            if (filename.indexOf('src/js') === 0) {
-                return false;
+            // Loop through folders to ignore.
+            for (const folder of foldersToIgnore) {
+                if (filename.indexOf(`src/${folder}`) === 0) {
+                    return false;
+                }
             }
-            if (filename.indexOf('src/templates') === 0) {
-                return false;
-            }
+
             return true;
         },
     });
 
-    // Filter function still makes empty folders
-    fse.removeSync('build/js');
-    fse.removeSync('build/templates');
+    // Remove the empty folders created by the "filter" function.
+    for (const folder of foldersToIgnore) {
+        fse.removeSync(`build/${folder}`);
+    }
 };
 
 const minifyCss = () => {

@@ -69,17 +69,41 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
         sortSequence: [],
     }];
 
+    if (fantasyDraft) {
+        colsUndrafted.splice(5, 0, {
+            title: 'Contract',
+        }, {
+            title: 'PER',
+            desc: 'Player Efficiency Rating',
+            sortSequence: ['desc', 'asc'],
+        }, {
+            title: 'EWA',
+            desc: 'Estimated Wins Added',
+            sortSequence: ['desc', 'asc'],
+        });
+    }
+
     const rowsUndrafted = undrafted.map(p => {
+        const data = [
+            <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels>,
+            p.ratings.pos,
+            p.age,
+            p.ratings.ovr,
+            p.ratings.pot,
+            <button className="btn btn-xs btn-primary" disabled={!usersTurn} onClick={() => draftUser(p.pid)}>Draft</button>,
+        ];
+
+        if (fantasyDraft) {
+            data.splice(5, 0,
+                `${helpers.formatCurrency(p.contract.amount, 'M')} thru ${p.contract.exp}`,
+                helpers.round(p.stats.per, 1),
+                helpers.round(p.stats.ewa, 1)
+            );
+        }
+
         return {
             key: p.pid,
-            data: [
-                <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels>,
-                p.ratings.pos,
-                p.age,
-                p.ratings.ovr,
-                p.ratings.pot,
-                <button className="btn btn-xs btn-primary" disabled={!usersTurn} onClick={() => draftUser(p.pid)}>Draft</button>,
-            ],
+            data,
         };
     });
 
@@ -91,17 +115,27 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
     }].concat(colsUndrafted.slice(0, -1));
 
     const rowsDrafted = drafted.map((p, i) => {
+        const data = [
+            `${p.draft.round}-${p.draft.pick}`,
+            <DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid}>{p.draft.tid} {p.draft.originalTid}</DraftAbbrev>,
+            p.pid >= 0 ? <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels> : null,
+            p.pid >= 0 ? p.ratings.pos : null,
+            p.pid >= 0 ? p.age : null,
+            p.pid >= 0 ? p.ratings.ovr : null,
+            p.pid >= 0 ? p.ratings.pot : null,
+        ];
+
+        if (fantasyDraft) {
+            data.splice(6, 0,
+                `${helpers.formatCurrency(p.contract.amount, 'M')} thru ${p.contract.exp}`,
+                helpers.round(p.stats.per, 1),
+                helpers.round(p.stats.ewa, 1)
+            );
+        }
+
         return {
             key: i,
-            data: [
-                <span>{p.draft.round}-{p.draft.pick}</span>,
-                <DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid}>{p.draft.tid} {p.draft.originalTid}</DraftAbbrev>,
-                p.pid >= 0 ? <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels> : null,
-                p.pid >= 0 ? p.ratings.pos : null,
-                p.pid >= 0 ? p.age : null,
-                p.pid >= 0 ? p.ratings.ovr : null,
-                p.pid >= 0 ? p.ratings.pot : null,
-            ],
+            data,
             classNames: {info: userTids.indexOf(p.draft.tid) >= 0},
         };
     });

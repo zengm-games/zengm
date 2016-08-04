@@ -100,7 +100,8 @@ const DraftSummary = ({players = [], season}) => {
     const rows = players.map(p => {
         return {
             key: p.pid,
-            data: [`${p.draft.round}-${p.draft.pick}`,
+            data: [
+                `${p.draft.round}-${p.draft.pick}`,
                 <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
                 p.pos,
                 <DraftAbbrev originalTid={p.draft.originalTid} season={season} tid={p.draft.tid}>{p.draft.tid} {p.draft.originalTid}</DraftAbbrev>,

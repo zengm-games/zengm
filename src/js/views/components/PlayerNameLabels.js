@@ -3,8 +3,8 @@ const helpers = require('../../util/helpers');
 const SkillsBlock = require('./SkillsBlock');
 const WatchBlock = require('./WatchBlock');
 
-const PlayerNameLabels = ({pid, name, injury, skills, watch}) => {
-    const playerName = <a href={helpers.leagueUrl(["player", pid])}>{name}</a>;
+const PlayerNameLabels = ({children, injury, pid, skills, watch}) => {
+    const playerName = <a href={helpers.leagueUrl(["player", pid])}>{children}</a>;
 
     let injuryIcon = null;
     if (injury !== undefined) {

@@ -50,6 +50,7 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
     const colsUndrafted = [{
         title: 'Name',
         width: '100%',
+        sortType: 'name',
     }, {
         title: 'Pos',
         desc: 'Position',
@@ -72,7 +73,7 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
         return {
             key: p.pid,
             data: [
-                <PlayerNameLabels pid={p.pid} name={p.name} injury={p.injury} skills={p.ratings.skills} watch={p.watch} />,
+                <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels>,
                 p.ratings.pos,
                 p.age,
                 p.ratings.ovr,
@@ -95,7 +96,7 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
             data: [
                 <span>{p.draft.round}-{p.draft.pick}</span>,
                 <DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid} />,
-                p.pid >= 0 ? <PlayerNameLabels pid={p.pid} name={p.name} injury={p.injury} skills={p.ratings.skills} watch={p.watch} /> : null,
+                p.pid >= 0 ? <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels> : null,
                 p.pid >= 0 ? p.ratings.pos : null,
                 p.pid >= 0 ? p.age : null,
                 p.pid >= 0 ? p.ratings.ovr : null,

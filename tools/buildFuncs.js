@@ -45,7 +45,6 @@ const minifyCss = () => {
 
     const cssFilenames = [
         'bootstrap.css',
-        'bbgm.css',
         'bbgm-notifications.css',
         'DT_bootstrap.css',
     ];

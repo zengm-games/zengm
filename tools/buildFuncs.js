@@ -106,4 +106,4 @@ module.exports = {
     copyFiles,
     minifyCss,
     setTimestamps,
-}
+};

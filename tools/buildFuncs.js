@@ -37,20 +37,7 @@ const copyFiles = () => {
 
 const minifyCss = () => {
     console.log("Minifying CSS...");
-
     let source = '';
-
-    /*
-     * Sass files
-     */
-
-    // If more Sass files are needed, then create them and @import them into
-    // this main Sass file.
-    const sassFilePath = 'src/css/bbgm.scss';
-    const sassResult = sass.renderSync({
-        file: sassFilePath,
-    });
-    source += sassResult.css.toString();
 
     /*
      * CSS files
@@ -68,6 +55,21 @@ const minifyCss = () => {
         source += fs.readFileSync(`src/css/${filename}`);
     }
 
+    /*
+     * Sass files
+     */
+
+    // If more Sass files are needed, then create them and @import them into
+    // this main Sass file.
+    const sassFilePath = 'src/css/bbgm.scss';
+    const sassResult = sass.renderSync({
+        file: sassFilePath,
+    });
+    source += sassResult.css.toString();
+
+    /*
+     * Use CleanCSS to minify CSS and Sass sources.
+     */
     const result = (new CleanCSS()).minify(source);
     if (result.errors.length > 0) {
         console.log('clean-css errors', result.errors);

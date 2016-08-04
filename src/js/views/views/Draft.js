@@ -95,7 +95,7 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
             key: i,
             data: [
                 <span>{p.draft.round}-{p.draft.pick}</span>,
-                <DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid} />,
+                <DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid}>{p.draft.tid} {p.draft.originalTid}</DraftAbbrev>,
                 p.pid >= 0 ? <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels> : null,
                 p.pid >= 0 ? p.ratings.pos : null,
                 p.pid >= 0 ? p.age : null,

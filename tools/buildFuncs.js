@@ -2,6 +2,7 @@ const fs = require("fs");
 const CleanCSS = require('clean-css');
 const replace = require("replace");
 const fse = require('fs-extra');
+const sass = require('node-sass');
 
 const reset = () => {
     console.log('Resetting "build" directory...');
@@ -37,6 +38,24 @@ const copyFiles = () => {
 const minifyCss = () => {
     console.log("Minifying CSS...");
 
+    let source = '';
+
+    /*
+     * Sass files
+     */
+
+    // If more Sass files are needed, then create them and @import them into
+    // this main Sass file.
+    const sassFilePath = 'src/css/bbgm.scss';
+    const sassResult = sass.renderSync({
+        file: sassFilePath,
+    });
+    source += sassResult.css.toString();
+
+    /*
+     * CSS files
+     */
+
     const cssFilenames = [
         'bootstrap.css',
         'bbgm.css',
@@ -44,16 +63,19 @@ const minifyCss = () => {
         'DT_bootstrap.css',
     ];
 
-    const cssFilePaths = cssFilenames.map(filename => `src/css/${filename}`);
-    new CleanCSS({
-        // Don't rebase source URLs.
-        rebase: false,
-    }).minify(cssFilePaths, (error, minified) => {
-        if (error) console.log('clean-css errors', error);
+    // Read each CSS file into a string.
+    for (const filename of cssFilenames) {
+        source += fs.readFileSync(`src/css/${filename}`);
+    }
 
-        const stylesString = minified.styles;
-        fs.writeFileSync('build/gen/bbgm.css', stylesString);
-    });
+    const result = (new CleanCSS()).minify(source);
+    if (result.errors.length > 0) {
+        console.log('clean-css errors', result.errors);
+    }
+    if (result.warnings.length > 0) {
+        console.log('clean-css warnings', result.warnings);
+    }
+    fs.writeFileSync("build/gen/bbgm.css", result.styles);
 };
 
 const setTimestamps = () => {

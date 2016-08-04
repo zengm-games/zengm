@@ -86,6 +86,7 @@
     "karma-mocha": "1.1.1",
     "karma-mocha-reporter": "2.0.4",
     "mocha": "2.5.3",
+    "node-sass": "^3.8.0",
     "replace": "0.3.0",
     "watchify": "3.7.0"
   },

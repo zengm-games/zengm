@@ -25,12 +25,12 @@ const PlayerNameLabels = ({children, injury, pid, skills, watch}) => {
     </span>;
 };
 PlayerNameLabels.propTypes = {
-    pid: React.PropTypes.number.isRequired,
-    name: React.PropTypes.string.isRequired,
+    children: React.PropTypes.string.isRequired,
     injury: React.PropTypes.shape({
         gamesRemaining: React.PropTypes.number.isRequired,
         type: React.PropTypes.string.isRequired,
     }),
+    pid: React.PropTypes.number.isRequired,
     skills: React.PropTypes.arrayOf(React.PropTypes.string),
     watch: React.PropTypes.bool,
 };

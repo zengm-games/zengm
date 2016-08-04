@@ -112,9 +112,6 @@ function uiFirst() {
         $(".row-offcanvas").addClass("row-offcanvas-force");
         $(".row-offcanvas-right").addClass("row-offcanvas-right-force");
         $(".sidebar-offcanvas").addClass("sidebar-offcanvas-force");
-
-        $("#view-drafted").removeClass("visible-xs");
-        $("#view-undrafted").removeClass("visible-xs");
     }
 }
 

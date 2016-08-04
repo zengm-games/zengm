@@ -127,9 +127,9 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
 
         if (fantasyDraft) {
             data.splice(6, 0,
-                `${helpers.formatCurrency(p.contract.amount, 'M')} thru ${p.contract.exp}`,
-                helpers.round(p.stats.per, 1),
-                helpers.round(p.stats.ewa, 1)
+                p.pid >= 0 ? `${helpers.formatCurrency(p.contract.amount, 'M')} thru ${p.contract.exp}` : null,
+                p.pid >= 0 ? helpers.round(p.stats.per, 1) : null,
+                p.pid >= 0 ? helpers.round(p.stats.ewa, 1) : null
             );
         }
 
@@ -139,6 +139,8 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
             classNames: {info: userTids.indexOf(p.draft.tid) >= 0},
         };
     });
+
+    const buttonClasses = classNames('btn', 'btn-info', 'btn-xs', {'visible-xs': !fantasyDraft});
 
     return <div>
         <h1>Draft <NewWindowLink /></h1>
@@ -151,7 +153,7 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
             <div className="col-sm-6" id="undrafted-col">
                 <h2>
                     Undrafted Players
-                    <span className="pull-right"><button type="button" className="btn btn-info btn-xs visible-xs" onClick={viewDrafted}>View Drafted</button></span>
+                    <span className="pull-right"><button type="button" className={buttonClasses} onClick={viewDrafted}>View Drafted</button></span>
                 </h2>
 
                 <DataTable
@@ -163,7 +165,7 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
             <div className="col-sm-6 sidebar-offcanvas" id="drafted-col">
                 <h2>
                     Draft Results
-                    <span className="pull-right"><button type="button" className="btn btn-info btn-xs visible-xs" onClick={viewUndrafted}>View Undrafted</button></span>
+                    <span className="pull-right"><button type="button" className={buttonClasses} onClick={viewUndrafted}>View Undrafted</button></span>
                 </h2>
 
                 <DataTable

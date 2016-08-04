@@ -13,7 +13,7 @@ const reset = () => {
 
 const copyFiles = () => {
     console.log('Copying files from "src" directory to "build" directory...');
-    const foldersToIgnore = ['js', 'templates'];
+    const foldersToIgnore = ['css', 'js', 'templates'];
 
     fse.copySync('src', 'build', {
         filter: filename => {

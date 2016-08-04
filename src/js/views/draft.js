@@ -106,9 +106,6 @@ async function updateDraft() {
 function uiFirst() {
     // If this is a fantasy draft, make everybody use two screens to save space
     if (g.phase === g.PHASE.FANTASY_DRAFT) {
-        $("#undrafted-col").removeClass("col-sm-6").addClass("col-xs-12");
-        $("#drafted-col").removeClass("col-sm-6").addClass("col-xs-12");
-
         $(".row-offcanvas").addClass("row-offcanvas-force");
         $(".row-offcanvas-right").addClass("row-offcanvas-right-force");
         $(".sidebar-offcanvas").addClass("sidebar-offcanvas-force");

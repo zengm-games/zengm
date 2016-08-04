@@ -142,6 +142,15 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
 
     const buttonClasses = classNames('btn', 'btn-info', 'btn-xs', {'visible-xs': !fantasyDraft});
 
+    const wrapperClasses = classNames('row', 'row-offcanvas', 'row-offcanvas-right', {
+        'row-offcanvas-force': fantasyDraft,
+        'row-offcanvas-right-force': fantasyDraft,
+    });
+
+    const colClass = fantasyDraft ? 'col-xs-12' : 'col-sm-6';
+    const undraftedColClasses = classNames(colClass);
+    const draftedColClasses = classNames('sidebar-offcanvas', colClass, {'sidebar-offcanvas-force': fantasyDraft});
+
     return <div>
         <h1>Draft <NewWindowLink /></h1>
 
@@ -149,8 +158,8 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
 
         {started ? null : <p><button className="btn btn-large btn-success" onClick={draftUntilUserOrEnd}>Start Draft</button></p>}
 
-        <div className="row row-offcanvas row-offcanvas-right">
-            <div className="col-sm-6" id="undrafted-col">
+        <div className={wrapperClasses}>
+            <div className={undraftedColClasses}>
                 <h2>
                     Undrafted Players
                     <span className="pull-right"><button type="button" className={buttonClasses} onClick={viewDrafted}>View Drafted</button></span>
@@ -162,7 +171,7 @@ const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], use
                     rows={rowsUndrafted}
                 />
             </div>
-            <div className="col-sm-6 sidebar-offcanvas" id="drafted-col">
+            <div className={draftedColClasses}>
                 <h2>
                     Draft Results
                     <span className="pull-right"><button type="button" className={buttonClasses} onClick={viewUndrafted}>View Undrafted</button></span>

@@ -76,74 +76,93 @@ footer {
 
 .navbar-default {
   .navbar-nav-no-collapse {
-    > li {
-      > a {
-        color: #777777;
+    > li > a {
+      color: #777777;
+
+      &:hover,
+      &:focus {
+        color: #333333;
+        background-color: transparent;
+      }
+    }
+
+    > .active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: #555555;
+        background-color: #e7e7e7;
+      }
+    }
+
+    > .disabled > a {
+      &,
+      &:hover,
+      &:focus {
+        color: #cccccc;
+        background-color: transparent;
+      }
+    }
+
+    > .dropdown > a {
+      &:hover .caret,
+      &:focus .caret {
+        border-top-color: #333333;
+        border-bottom-color: #333333;
+      }
+
+      .caret {
+        border-top-color: #777777;
+        border-bottom-color: #777777;
+      }
+    }
+
+    > .open > a {
+      &,
+      &:hover,
+      &:focus {
+        background-color: #e7e7e7;
+        color: #555555;
+      }
+    }
+
+    > .open > a {
+      .caret,
+      &:hover .caret,
+      &:focus .caret {
+        border-top-color: #555555;
+        border-bottom-color: #555555;
       }
     }
   }
 }
 
-.navbar-default .navbar-nav-no-collapse > li > a:hover,
-.navbar-default .navbar-nav-no-collapse > li > a:focus {
-  color: #333333;
-  background-color: transparent;
-}
-.navbar-default .navbar-nav-no-collapse > .active > a,
-.navbar-default .navbar-nav-no-collapse > .active > a:hover,
-.navbar-default .navbar-nav-no-collapse > .active > a:focus {
-  color: #555555;
-  background-color: #e7e7e7;
-}
-.navbar-default .navbar-nav-no-collapse > .disabled > a,
-.navbar-default .navbar-nav-no-collapse > .disabled > a:hover,
-.navbar-default .navbar-nav-no-collapse > .disabled > a:focus {
-  color: #cccccc;
-  background-color: transparent;
-}
-.navbar-default .navbar-nav-no-collapse > .dropdown > a:hover .caret,
-.navbar-default .navbar-nav-no-collapse > .dropdown > a:focus .caret {
-  border-top-color: #333333;
-  border-bottom-color: #333333;
-}
-.navbar-default .navbar-nav-no-collapse > .open > a,
-.navbar-default .navbar-nav-no-collapse > .open > a:hover,
-.navbar-default .navbar-nav-no-collapse > .open > a:focus {
-  background-color: #e7e7e7;
-  color: #555555;
-}
-.navbar-default .navbar-nav-no-collapse > .open > a .caret,
-.navbar-default .navbar-nav-no-collapse > .open > a:hover .caret,
-.navbar-default .navbar-nav-no-collapse > .open > a:focus .caret {
-  border-top-color: #555555;
-  border-bottom-color: #555555;
-}
-.navbar-default .navbar-nav-no-collapse > .dropdown > a .caret {
-  border-top-color: #777777;
-  border-bottom-color: #777777;
-}
-
 .god-mode {
   background-color: #563d7c !important;
   color: #fff !important;
+
+  &:hover,
+  &:focus {
+    background-color: #4a356b !important;
+  }
 }
-.god-mode:hover, .god-mode:focus {
-  background-color: #4a356b !important;
-}
+
 .god-mode-text {
   padding: 0 3px;
 }
 
-/* For the user/login widget */
+// For the user/login widget
 .user-menu {
   display: block;
   padding: 16px 15px;
-  margin-right: -15px; /* No right margin, like navbar-brand's left margin */
+  margin-right: -15px; // No right margin, like navbar-brand's left margin
+
+  &:hover {
+    text-decoration: none;
+  }
 }
-.user-menu:hover {
-  text-decoration: none;
-}
-/* http://stackoverflow.com/a/20839087/786644 */
+
+// http://stackoverflow.com/a/20839087/786644
 .navbar-link .visible-lg {
     display: none !important;
 }
@@ -162,68 +181,83 @@ footer {
 #play-button-link {
   color: #fff;
   background-color: #5cb85c;
-}
-#play-button-link:hover, #play-button-link:focus {
-  background-color: #47a447;
-}
-#play-button-link b.caret {
-  border-top-color: #fff;
+
+  &:hover,
+  &:focus {
+    background-color: #47a447;
+  }
+
+  b.caret {
+    border-top-color: #fff;
+  }
 }
 
 // This is for keyboard shortcuts in dropdowns
 .dropdown-menu > li > a {
   position: relative;
   padding-right: 70px;
-}
-.dropdown-menu > li > a > span.kbd {
-  position: absolute;
-  right: 20px;
-  top: 3px;
-}
-.dropdown-menu > li > a:hover > .text-muted {
-  color: #ccc;
+
+  > span.kbd {
+    position: absolute;
+    right: 20px;
+    top: 3px;
+  }
+
+  &:hover > .text-muted {
+    color: #ccc;
+  }
 }
 
 ul.dashboard-boxes {
   list-style: none;
   margin: 0 -1em 0 0;
   padding: 0;
-}
-ul.dashboard-boxes li {
-  float: left;
-  margin: 1em 1em 0 0;
-  position: relative;
-  overflow: hidden;
-}
-ul.dashboard-boxes li strong {
-  white-space: nowrap;
-}
-ul.dashboard-boxes li a.league {
-  display: block;
-  height: 60px;
-  padding: 2px 8px 6px 8px;
-  text-align: left;
-  width: 151px;
-}
-ul.dashboard-boxes li a.league:hover {
-  color: #000;
-}
-ul.dashboard-boxes li form.delete button {
-  border-radius: 0 4px 0 4px;
-  position: absolute;
-  top: 0px;
-  right: 5px;
-}
-ul.dashboard-boxes li.dashboard-box-new a {
-  color: #fff;
-}
-ul.dashboard-boxes li.dashboard-box-new a:hover {
-  color: #fff;
-}
-ul.dashboard-boxes li.dashboard-box-new h2 {
-  font-size: 20px;
-  line-height: 26px;
-  margin-top: 1px;
+
+  li {
+    float: left;
+    margin: 1em 1em 0 0;
+    position: relative;
+    overflow: hidden;
+
+    strong {
+      white-space: nowrap;
+    }
+
+    a.league {
+      display: block;
+      height: 60px;
+      padding: 2px 8px 6px 8px;
+      text-align: left;
+      width: 151px;
+
+      &:hover {
+        color: #000;
+      }
+    }
+
+    form.delete button {
+      border-radius: 0 4px 0 4px;
+      position: absolute;
+      top: 0px;
+      right: 5px;
+    }
+
+    &.dashboard-box-new {
+      a {
+        color: #fff;
+
+        &:hover {
+          color: #fff;
+        }
+      }
+
+      h2 {
+        font-size: 20px;
+        line-height: 26px;
+        margin-top: 1px;
+      }
+    }
+  }
 }
 
 .negotiation-team-years {
@@ -239,8 +273,7 @@ ul.dashboard-boxes li.dashboard-box-new h2 {
   .row-offcanvas {
     position: relative;
   }
-  .row-offcanvas-right
-  .sidebar-offcanvas {
+  .row-offcanvas-right .sidebar-offcanvas {
     right: -100%;
   }
   .sidebar-offcanvas {
@@ -253,8 +286,7 @@ ul.dashboard-boxes li.dashboard-box-new h2 {
   .row-offcanvas-force {
     position: relative;
   }
-  .row-offcanvas-right-force
-  .sidebar-offcanvas-force {
+  .row-offcanvas-right-force .sidebar-offcanvas-force {
     right: -100%;
   }
   .sidebar-offcanvas-force {
@@ -273,14 +305,18 @@ table {
   white-space: nowrap;
 }
 
-.table-bordered tbody tr.separator td {
-  border-bottom: 1px solid #888;
-}
-.table-bordered thead tr:last-child th {
-  border-bottom: 1px solid #888;
-}
-.table-bordered tfoot tr:first-child th {
-  border-top: 1px solid #888;
+.table-bordered {
+  tbody tr.separator td {
+    border-bottom: 1px solid #888;
+  }
+
+  thead tr:last-child th {
+    border-bottom: 1px solid #888;
+  }
+
+  tfoot tr:first-child th {
+    border-top: 1px solid #888;
+  }
 }
 
 .roster-handle {
@@ -296,19 +332,22 @@ table {
   color: #5bc0de;
 }
 
-#game-log-list tbody td {
-  padding: 0;
+#game-log-list {
+  tbody td {
+    padding: 0;
+  }
+
+  td a {
+    color: #3a87ad;
+    display: block;
+    // Expand to encompass normal td padding, which was set to 0 here above.
+    padding: 4px 5px 4px 5px;
+    text-decoration: none;
+  }
 }
 
-#game-log-list td a {
-  color: #3a87ad;
-  display: block;
-  // Expand to encompass normal td padding, which was set to 0 here above.
-  padding: 4px 5px 4px 5px;
-  text-decoration: none;
-}
-
-#game-log-list tbody tr:hover td, #messages tbody tr:hover td {
+#game-log-list tbody tr:hover td,
+#messages tbody tr:hover td {
   background-color: #d9edf7;
   border-color: #bce8f1;
   text-decoration: none;
@@ -379,10 +418,10 @@ table {
 
 #trade-summary {
   background-color: #fff;
-}
 
-#trade-summary form {
-  margin-bottom: 5px;
+  form {
+    margin-bottom: 5px;
+  }
 }
 
 .select-team {
@@ -441,36 +480,44 @@ table {
 }
 
 // These colors are duplicated from Roster.js
-.pt-modifier-select option[value="1"] {
-  background-color: #ccc;
-}
-.pt-modifier-select option[value="1.75"] {
-  background-color: #070;
-  color: #fff;
-}
-.pt-modifier-select option[value="1.25"] {
-  background-color: #0f0;
-}
-.pt-modifier-select option[value="0.75"] {
-  background-color: #ff0;
-}
-.pt-modifier-select option[value="0"] {
-  background-color: #a00;
-  color: #fff;
+.pt-modifier-select {
+  option[value="1"] {
+    background-color: #ccc;
+  }
+
+  option[value="1.75"] {
+    background-color: #070;
+    color: #fff;
+  }
+
+  option[value="1.25"] {
+    background-color: #0f0;
+  }
+
+  option[value="0.75"] {
+    background-color: #ff0;
+  }
+
+  option[value="0"] {
+    background-color: #a00;
+    color: #fff;
+  }
 }
 
 .achievements {
   margin: -4px;
-}
-.achievements .list-group-item {
-  border-radius: 0;
-  border: 0;
-  padding: 0;
-}
-.achievements .list-group-item div {
-  border-radius: 4px;
-  margin: 4px;
-  padding: 10px 15px;
+
+  .list-group-item {
+    border-radius: 0;
+    border: 0;
+    padding: 0;
+
+    div {
+      border-radius: 4px;
+      margin: 4px;
+      padding: 10px 15px;
+    }
+  }
 }
 
 .bar-graph-small {
@@ -501,18 +548,19 @@ table {
 .popover-content {
   font-size: 13px;
   font-weight: normal;
-}
 
-.popover-content p:last-child {
-  margin-bottom: 0;
+  p:last-child {
+    margin-bottom: 0;
+  }
 }
 
 // Stupid fix for popover on first run
 .popover-play {
   width: 276px;
-}
-.popover-play .popover-title {
-  background-color: #d0e9c6;
+
+  .popover-title {
+    background-color: #d0e9c6;
+  }
 }
 
 .finances-settings-label {
@@ -545,39 +593,45 @@ table {
 
 .trading-block-offer {
   margin-bottom: 2em;
-}
 
-.trading-block-offer h2 {
-  float: left;
-  margin-right: 0.5em;
+  h2 {
+    float: left;
+    margin-right: 0.5em;
+  }
 }
 
 #messages {
   table-layout: fixed;
   width: 100%;
+
+  td {
+    padding: 0;
+
+    a {
+      color: #333333;
+      display: block;
+      padding: 4px 5px 4px 5px;
+      text-decoration: none;
+    }
+  }
+
+  .year {
+    width: 40px;
+  }
+
+  .from {
+    width: 130px;
+  }
+
+  .text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: auto;
+  }
 }
-#messages td {
-  padding: 0;
-}
-#messages .year {
-  width: 40px;
-}
-#messages .from {
-  width: 130px;
-}
-#messages .text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: auto;
-}
+
 .unread {
   font-weight: bold;
-}
-#messages td a {
-  color: #333333;
-  display: block;
-  padding: 4px 5px 4px 5px;
-  text-decoration: none;
 }
 
 .new_window {
@@ -597,16 +651,21 @@ table {
   margin-top: 20px;
   padding-bottom: 2px;
   padding-top: 12px;
+
+  button {
+    margin-top: -4px;
+  }
 }
-.alert-top button {
-  margin-top: -4px;
-}
-.alert-changes h4 {
-  margin-top: 0;
-}
-.alert-changes ul {
-  margin-bottom: 9px;
-  padding-left: 18px;
+
+.alert-changes {
+  h4 {
+    margin-top: 0;
+  }
+
+  ul {
+    margin-bottom: 9px;
+    padding-left: 18px;
+  }
 }
 
 .strong {
@@ -635,11 +694,13 @@ tr.warning > td {
   .affix-bottom {
     width: 213px;
   }
+
   .affix {
     // Undo the static from mobile first approach
     position: fixed;
     top: 60px;
   }
+
   .affix-bottom {
     // Undo the static from mobile first approach
     position: absolute;
@@ -670,24 +731,31 @@ tr.warning > td {
   padding: 5px 20px;
   text-transform: uppercase;
 }
-.bs-sidebar .nav > li > a {
-  display: block;
-  color: #333;
-  padding: 5px 20px;
-}
-.bs-sidebar .nav > li > a:hover,
-.bs-sidebar .nav > li > a:focus {
-  text-decoration: none;
-  background-color: #e0e0e0;
-  color: #333;
-}
-.bs-sidebar .nav > .active > a,
-.bs-sidebar .nav > .active:hover > a,
-.bs-sidebar .nav > .active:focus > a {
-  background-color: transparent;
-  border-right: 4px solid #428bca;
-  color: #333;
-  font-weight: bold;
+
+.bs-sidebar {
+  .nav {
+    > li > a {
+      display: block;
+      color: #333;
+      padding: 5px 20px;
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        background-color: #e0e0e0;
+        color: #333;
+      }
+    }
+
+    > .active > a,
+    > .active:hover > a,
+    > .active:focus > a {
+      background-color: transparent;
+      border-right: 4px solid #428bca;
+      color: #333;
+      font-weight: bold;
+    }
+  }
 }
 
 #multi-team-menu {

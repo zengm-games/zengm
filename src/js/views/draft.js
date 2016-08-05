@@ -103,15 +103,6 @@ async function updateDraft() {
     };
 }
 
-function uiFirst() {
-    // If this is a fantasy draft, make everybody use two screens to save space
-    if (g.phase === g.PHASE.FANTASY_DRAFT) {
-        $(".row-offcanvas").addClass("row-offcanvas-force");
-        $(".row-offcanvas-right").addClass("row-offcanvas-right-force");
-        $(".sidebar-offcanvas").addClass("sidebar-offcanvas-force");
-    }
-}
-
 module.exports = bbgmViewReact.init({
     id: "draft",
     get,

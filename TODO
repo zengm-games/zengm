@@ -10,8 +10,6 @@ roster
 
 draft
   delay each pick
-  fantasy draft
-    does not display picks
 
 generic datatables wrapper
   https://github.com/alecperkey/react-jquery-datatables

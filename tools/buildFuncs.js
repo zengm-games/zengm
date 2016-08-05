@@ -43,11 +43,7 @@ const minifyCss = () => {
      * CSS files
      */
 
-    const cssFilenames = [
-        'bootstrap.css',
-        'bbgm-notifications.css',
-        'DT_bootstrap.css',
-    ];
+    const cssFilenames = [];
 
     // Read each CSS file into a string.
     for (const filename of cssFilenames) {

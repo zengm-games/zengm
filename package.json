@@ -21,7 +21,9 @@
     "build-js": "node tools/build-js.js",
     "minify-js": "node tools/minify-js.js",
     "watch-js": "watchify -d src/js/app.js -o build/gen/app.js -v",
-    "lint": "eslint src/js/** tools/**",
+    "lint": "concurrently --raw 'npm run lint-css' 'npm run lint-js'",
+    "lint-css": "stylelint 'src/css/*.*css'",
+    "lint-js": "eslint src/js/** tools/**",
     "test": "karma start",
     "copy-mocha": "cp node_modules/mocha/mocha.css build/gen/mocha.css && cp node_modules/mocha/mocha.js build/gen/mocha.js",
     "build-test": "npm run copy-mocha && browserify -d src/js/test/app.js -o build/gen/app-test.js",
@@ -88,6 +90,8 @@
     "mocha": "2.5.3",
     "node-sass": "^3.8.0",
     "replace": "0.3.0",
+    "stylelint": "^7.1.0",
+    "stylelint-config-standard": "^12.0.0",
     "watchify": "3.7.0"
   },
   "browser": {

@@ -5,6 +5,7 @@ const EventEmitter = require('events');
 const ko = require('knockout');
 const React = require('react');
 const ReactDOM = require('react-dom');
+const helpers = require('./helpers');
 const viewHelpers = require('./viewHelpers');
 
 const emitter = new EventEmitter();
@@ -115,8 +116,7 @@ function get(fnUpdate, args) {
 
         // Check for errors/redirects
         if (inputs.errorMessage !== undefined) {
-            throw new Error('Handle errorMessage!');
-//            return helpers.error(inputs.errorMessage, cb);
+            return helpers.error(inputs.errorMessage, cb);
         }
         if (inputs.redirectUrl !== undefined) {
             return ui.realtimeUpdate([], inputs.redirectUrl, cb);

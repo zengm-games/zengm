@@ -1,9 +1,17 @@
+# This is the root config file.
 root = true
 
+# CSS files
 [*.{css,scss}]
 indent_style = space
 indent_size = 2
 
+# JavaScript files
 [*.js]
 indent_style = space
 indent_size = 4
+
+# JSON files
+[*.json]
+indent_style = space
+indent_size = 2

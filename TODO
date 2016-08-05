@@ -2,17 +2,16 @@ REACT
 
 DataTable
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
-  also a couple columns on draft
+    for now, pass sort key as child and it works
+
+roster
+  try dnd too
+    if not, at least maek the handles distinct
 
 draft
-  PlayerNameLabels switch to name as child, to faciliate sort?
-  If user has first pick, started should always be true because there's no need to wait
   delay each pick
-  jquery needed for switching drafted/undrafted on mobile?
-  sortable tables
-    some columns unsortable
   fantasy draft
-    add Contract, PER, and EWA cols <th title="Player Efficiency Rating" data-bind="visible: fantasyDraft">PER</th><th title="Estimated Wins Added" data-bind="visible: fantasyDraft">EWA</th>
+    does not display picks
 
 generic datatables wrapper
   https://github.com/alecperkey/react-jquery-datatables

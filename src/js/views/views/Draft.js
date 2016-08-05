@@ -1,4 +1,5 @@
 const classNames = require('classnames');
+const $ = require('jquery');
 const React = require('react');
 const g = require('../../globals');
 const ui = require('../../ui');
@@ -33,16 +34,23 @@ async function draftUser(pid) {
     }
 }
 
+const viewDrafted = () => {
+    $("body, html").animate({scrollLeft: $(document).outerWidth() - $(window).width()}, 250);
+};
+const viewUndrafted = () => {
+    $("body, html").animate({scrollLeft: 0}, 250);
+};
+
 const Draft = ({drafted = [], fantasyDraft, started = false, undrafted = [], userTids}) => {
     bbgmViewReact.title('Draft');
 
     const nextPick = drafted.find(p => p.pid < 0);
     const usersTurn = nextPick && userTids.indexOf(nextPick.draft.tid) >= 0;
-console.log(usersTurn);
 
     const colsUndrafted = [{
         title: 'Name',
         width: '100%',
+        sortType: 'name',
     }, {
         title: 'Pos',
         desc: 'Position',
@@ -61,17 +69,41 @@ console.log(usersTurn);
         sortSequence: [],
     }];
 
+    if (fantasyDraft) {
+        colsUndrafted.splice(5, 0, {
+            title: 'Contract',
+        }, {
+            title: 'PER',
+            desc: 'Player Efficiency Rating',
+            sortSequence: ['desc', 'asc'],
+        }, {
+            title: 'EWA',
+            desc: 'Estimated Wins Added',
+            sortSequence: ['desc', 'asc'],
+        });
+    }
+
     const rowsUndrafted = undrafted.map(p => {
+        const data = [
+            <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels>,
+            p.ratings.pos,
+            p.age,
+            p.ratings.ovr,
+            p.ratings.pot,
+            <button className="btn btn-xs btn-primary" disabled={!usersTurn} onClick={() => draftUser(p.pid)}>Draft</button>,
+        ];
+
+        if (fantasyDraft) {
+            data.splice(5, 0,
+                `${helpers.formatCurrency(p.contract.amount, 'M')} thru ${p.contract.exp}`,
+                helpers.round(p.stats.per, 1),
+                helpers.round(p.stats.ewa, 1)
+            );
+        }
+
         return {
             key: p.pid,
-            data: [
-                <PlayerNameLabels pid={p.pid} name={p.name} injury={p.injury} skills={p.ratings.skills} watch={p.watch} />,
-                p.ratings.pos,
-                p.age,
-                p.ratings.ovr,
-                p.ratings.pot,
-                <button className="btn btn-xs btn-primary" disabled={!usersTurn} onClick={() => draftUser(p.pid)}>Draft</button>,
-            ],
+            data,
         };
     });
 
@@ -83,20 +115,41 @@ console.log(usersTurn);
     }].concat(colsUndrafted.slice(0, -1));
 
     const rowsDrafted = drafted.map((p, i) => {
+        const data = [
+            `${p.draft.round}-${p.draft.pick}`,
+            <DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid}>{p.draft.tid} {p.draft.originalTid}</DraftAbbrev>,
+            p.pid >= 0 ? <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels> : null,
+            p.pid >= 0 ? p.ratings.pos : null,
+            p.pid >= 0 ? p.age : null,
+            p.pid >= 0 ? p.ratings.ovr : null,
+            p.pid >= 0 ? p.ratings.pot : null,
+        ];
+
+        if (fantasyDraft) {
+            data.splice(6, 0,
+                p.pid >= 0 ? `${helpers.formatCurrency(p.contract.amount, 'M')} thru ${p.contract.exp}` : null,
+                p.pid >= 0 ? helpers.round(p.stats.per, 1) : null,
+                p.pid >= 0 ? helpers.round(p.stats.ewa, 1) : null
+            );
+        }
+
         return {
             key: i,
-            data: [
-                <span>{p.draft.round}-{p.draft.pick}</span>,
-                <DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid} />,
-                p.pid >= 0 ? <PlayerNameLabels pid={p.pid} name={p.name} injury={p.injury} skills={p.ratings.skills} watch={p.watch} /> : null,
-                p.pid >= 0 ? p.ratings.pos : null,
-                p.pid >= 0 ? p.age : null,
-                p.pid >= 0 ? p.ratings.ovr : null,
-                p.pid >= 0 ? p.ratings.pot : null,
-            ],
+            data,
             classNames: {info: userTids.indexOf(p.draft.tid) >= 0},
         };
     });
+
+    const buttonClasses = classNames('btn', 'btn-info', 'btn-xs', {'visible-xs': !fantasyDraft});
+
+    const wrapperClasses = classNames('row', 'row-offcanvas', 'row-offcanvas-right', {
+        'row-offcanvas-force': fantasyDraft,
+        'row-offcanvas-right-force': fantasyDraft,
+    });
+
+    const colClass = fantasyDraft ? 'col-xs-12' : 'col-sm-6';
+    const undraftedColClasses = classNames(colClass);
+    const draftedColClasses = classNames('sidebar-offcanvas', colClass, {'sidebar-offcanvas-force': fantasyDraft});
 
     return <div>
         <h1>Draft <NewWindowLink /></h1>
@@ -105,11 +158,11 @@ console.log(usersTurn);
 
         {started ? null : <p><button className="btn btn-large btn-success" onClick={draftUntilUserOrEnd}>Start Draft</button></p>}
 
-        <div className="row row-offcanvas row-offcanvas-right">
-            <div className="col-sm-6" id="undrafted-col">
+        <div className={wrapperClasses}>
+            <div className={undraftedColClasses}>
                 <h2>
                     Undrafted Players
-                    <span className="pull-right"><button type="button" className="btn btn-info btn-xs visible-xs" id="view-drafted">View Drafted</button></span>
+                    <span className="pull-right"><button type="button" className={buttonClasses} onClick={viewDrafted}>View Drafted</button></span>
                 </h2>
 
                 <DataTable
@@ -118,10 +171,10 @@ console.log(usersTurn);
                     rows={rowsUndrafted}
                 />
             </div>
-            <div className="col-sm-6 sidebar-offcanvas" id="drafted-col">
+            <div className={draftedColClasses}>
                 <h2>
                     Draft Results
-                    <span className="pull-right"><button type="button" className="btn btn-info btn-xs visible-xs" id="view-undrafted">View Undrafted</button></span>
+                    <span className="pull-right"><button type="button" className={buttonClasses} onClick={viewUndrafted}>View Undrafted</button></span>
                 </h2>
 
                 <DataTable

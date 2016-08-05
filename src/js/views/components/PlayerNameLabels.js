@@ -3,8 +3,8 @@ const helpers = require('../../util/helpers');
 const SkillsBlock = require('./SkillsBlock');
 const WatchBlock = require('./WatchBlock');
 
-const PlayerNameLabels = ({pid, name, injury, skills, watch}) => {
-    const playerName = <a href={helpers.leagueUrl(["player", pid])}>{name}</a>;
+const PlayerNameLabels = ({children, injury, pid, skills, watch}) => {
+    const playerName = <a href={helpers.leagueUrl(["player", pid])}>{children}</a>;
 
     let injuryIcon = null;
     if (injury !== undefined) {
@@ -25,12 +25,12 @@ const PlayerNameLabels = ({pid, name, injury, skills, watch}) => {
     </span>;
 };
 PlayerNameLabels.propTypes = {
-    pid: React.PropTypes.number.isRequired,
-    name: React.PropTypes.string.isRequired,
+    children: React.PropTypes.string.isRequired,
     injury: React.PropTypes.shape({
         gamesRemaining: React.PropTypes.number.isRequired,
         type: React.PropTypes.string.isRequired,
     }),
+    pid: React.PropTypes.number.isRequired,
     skills: React.PropTypes.arrayOf(React.PropTypes.string),
     watch: React.PropTypes.bool,
 };

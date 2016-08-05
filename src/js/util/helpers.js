@@ -375,8 +375,6 @@ function bbgmPing(type) {
         } else if (type === "season" && g.autoPlaySeasons === 0) {
             window._gaq.push(["_trackEvent", "BBGM", "Completed season", g.season.toString()]); //eslint-disable-line no-underscore-dangle
             window._gaq.push(["_trackEvent", "BBGM", "Season protocol", window.location.origin]); //eslint-disable-line no-underscore-dangle
-        } else if (type === "banner_ad_attempt") {
-            window._gaq.push(["_trackEvent", "BBGM", "Banner ad attempt"]); //eslint-disable-line no-underscore-dangle
         }
     }
 }

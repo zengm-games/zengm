@@ -189,8 +189,6 @@ const Select = ({field, handleChange, value}) => {
 
 class Dropdown extends React.Component {
     handleChange(i, event) {
-        console.log('handleChange', i, event);
-
         const values = this.props.values.slice();
         values[i] = event.target.value;
         const url = helpers.leagueUrl([this.props.view].concat(values));
@@ -200,14 +198,16 @@ class Dropdown extends React.Component {
 
     render() {
         return <form className="form-inline pull-right bbgm-dropdown">
-            <div className="form-group" style={{marginLeft: '4px', marginBottom: '4px'}}>
-                {this.props.fields.map((field, i) => <Select
-                    key={field}
-                    field={field}
-                    value={this.props.values[i]}
-                    handleChange={newValue => this.handleChange(i, newValue)}
-                />)}
-            </div>
+            {this.props.fields.map((field, i) => {
+                return <div className="form-group" style={{marginLeft: '4px', marginBottom: '4px'}}>
+                    <Select
+                        key={field}
+                        field={field}
+                        value={this.props.values[i]}
+                        handleChange={event => this.handleChange(i, event)}
+                    />
+                </div>;
+            })}
         </form>;
     }
 }

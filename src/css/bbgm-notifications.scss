@@ -4,42 +4,45 @@
   right: 6px;
   z-index: 9999;
 }
+
 .notification-container-extra-margin-bottom {
   bottom: 60px;
 }
 
 .notification {
-  padding: 6px 12px;
-  margin: 0 0 6px 0;
   background-color: #000;
-  opacity: 0.8;
-  color: #fff;
   border-radius: 3px;
   box-shadow: #999 0 0 12px;
-  width: 300px;
+  color: #fff;
+  margin: 0 0 6px;
+  opacity: .8;
+  padding: 6px 12px;
   position: relative;
+  width: 300px;
 
   &:hover {
-    opacity: 1;
     box-shadow: #000 0 0 12px;
+    opacity: 1;
   }
 
   a {
-    color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
+    // Decrease saturation by 30, increase value by 10
+    color: #a5c7e3;
 
     &:hover {
-      color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
+      // Decrease saturation by 30, increase value by 10
+      color: #a5c7e3;
     }
   }
 }
 
 .notification-fadein {
-  /* This transition is for the hover, not original fade in */
+  // This transition is for the hover, not original fade in
   transition: opacity .25s ease-in-out;
 
-  /* Fade in on notification show */
-  -webkit-animation: fadeIn 0.75s;
-  animation: fadeIn 0.75s;
+  // Fade in on notification show
+  -webkit-animation: fadeIn .75s;
+  animation: fadeIn .75s;
 }
 
 .notification-persistent {
@@ -51,27 +54,29 @@
   background: transparent;
   border: 0;
   padding: 0 7px;
-  opacity: 0.7;
+  opacity: .7;
   position: absolute;
   top: 0;
   right: 0;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     opacity: 1;
   }
 }
 
 .notification-delete {
-  -webkit-animation: fadeOut 0.75s;
-  animation: fadeOut 0.75s;
+  -webkit-animation: fadeOut .75s;
+  animation: fadeOut .75s;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
   }
+
   to {
-    opacity: 0.8;
+    opacity: .8;
   }
 }
 
@@ -79,15 +84,17 @@
   from {
     opacity: 0;
   }
+
   to {
-    opacity: 0.8;
+    opacity: .8;
   }
 }
 
 @keyframes fadeOut {
   from {
-    opacity: 0.8;
+    opacity: .8;
   }
+
   to {
     opacity: 0;
   }
@@ -95,8 +102,9 @@
 
 @-webkit-keyframes fadeOut {
   from {
-    opacity: 0.8;
+    opacity: .8;
   }
+
   to {
     opacity: 0;
   }

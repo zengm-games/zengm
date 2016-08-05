@@ -3,5 +3,8 @@
   "ignoreFiles": [
     "src/css/bootstrap.scss",
     "src/css/DT_bootstrap.scss"
-  ]
+  ],
+  "rules": {
+    "number-leading-zero": "never"
+  }
 }

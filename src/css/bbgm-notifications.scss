@@ -5,7 +5,7 @@
   z-index: 9999;
 }
 .notification-container-extra-margin-bottom {
-  bottom: 60px;  
+  bottom: 60px;
 }
 
 .notification {
@@ -18,7 +18,21 @@
   box-shadow: #999 0 0 12px;
   width: 300px;
   position: relative;
+
+  &:hover {
+    opacity: 1;
+    box-shadow: #000 0 0 12px;
+  }
+
+  a {
+    color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
+
+    &:hover {
+      color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
+    }
+  }
 }
+
 .notification-fadein {
   /* This transition is for the hover, not original fade in */
   transition: opacity .25s ease-in-out;
@@ -27,19 +41,9 @@
   -webkit-animation: fadeIn 0.75s;
   animation: fadeIn 0.75s;
 }
+
 .notification-persistent {
   background-color: darkred;
-}
-
-.notification:hover {
-  opacity: 1;
-  box-shadow: #000 0 0 12px;
-}
-.notification a {
-  color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
-}
-.notification a:hover {
-  color: #a5c7e3; /* Decrease saturation by 30, increase value by 10 */
 }
 
 .notification-close {
@@ -51,44 +55,49 @@
   position: absolute;
   top: 0;
   right: 0;
-}
-.notification-close:hover, .notification-close:focus {
-  opacity: 1;
+
+  &:hover, &:focus {
+    opacity: 1;
+  }
 }
 
 .notification-delete {
   -webkit-animation: fadeOut 0.75s;
   animation: fadeOut 0.75s;
 }
+
 @keyframes fadeIn {
   from {
-      opacity: 0;
+    opacity: 0;
   }
   to {
-      opacity: 0.8;
+    opacity: 0.8;
   }
 }
+
 @-webkit-keyframes fadeIn {
   from {
-      opacity: 0;
+    opacity: 0;
   }
   to {
-      opacity: 0.8;
+    opacity: 0.8;
   }
 }
+
 @keyframes fadeOut {
   from {
-      opacity: 0.8;
+    opacity: 0.8;
   }
   to {
-      opacity: 0;
+    opacity: 0;
   }
 }
+
 @-webkit-keyframes fadeOut {
   from {
-      opacity: 0.8;
+    opacity: 0.8;
   }
   to {
-      opacity: 0;
+    opacity: 0;
   }
 }

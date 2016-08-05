@@ -2,70 +2,77 @@ const React = require('react');
 const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {DataTable, DraftAbbrev, Dropdown, JumpTo, NewWindowLink, SkillsBlock} = require('../components/index');
+const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
-const DraftSummary = ({players = [], season}) => {
-    bbgmViewReact.title(`${season} Draft Summary`);
+const HallOfFame = ({players = [], season}) => {
+    bbgmViewReact.title('Hall of Fame');
 
     const superCols = [{
         title: '',
-        colspan: 3,
+        colspan: 6,
     }, {
-        title: 'At Draft',
-        colspan: 5,
-    }, {
-        title: 'Current',
-        colspan: 5,
+        title: 'Best Season',
+        colspan: 8,
     }, {
         title: 'Career Stats',
         colspan: 7,
     }];
 
     const cols = [{
-        title: 'Pick',
-        desc: 'Draft Pick',
-        sortType: 'draftPick',
-    }, {
         title: 'Name',
         sortType: 'name',
     }, {
         title: 'Pos',
         desc: 'Position',
     }, {
+        title: 'Drafted',
+    }, {
+        title: 'Retired',
+    }, {
+        title: 'Pick',
+        desc: 'Draft Pick',
+        sortType: 'draftPick',
+    }, {
+        title: 'Peak Ovr',
+        desc: 'Peak Overall Rating',
+        sortSequence: ['desc', 'asc'],
+    }, {
+        title: 'Year',
+    }, {
         title: 'Team',
-    }, {
-        title: 'Age',
-    }, {
-        title: 'Ovr',
-        desc: 'Overall Rating',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Pot',
-        desc: 'Potential Rating',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Skills',
-    }, {
-        title: 'Team',
-    }, {
-        title: 'Age',
-    }, {
-        title: 'Ovr',
-        desc: 'Overall Rating',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Pot',
-        desc: 'Potential Rating',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Skills',
     }, {
         title: 'GP',
         desc: 'Games Played',
         sortSequence: ['desc', 'asc'],
+    }, {
+        title: 'Min',
+        desc: 'Minutes Per Game',
+        sortSequence: ['desc', 'asc'],
         sortType: 'number',
+    }, {
+        title: 'PPG',
+        desc: 'Points Per Game',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    }, {
+        title: 'Reb',
+        desc: 'Rebounds Per Game',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    }, {
+        title: 'Ast',
+        desc: 'Assists Per Game',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    }, {
+        title: 'PER',
+        desc: 'Player Efficiency Rating',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    }, {
+        title: 'GP',
+        desc: 'Games Played',
+        sortSequence: ['desc', 'asc'],
     }, {
         title: 'Min',
         desc: 'Minutes Per Game',
@@ -102,20 +109,21 @@ const DraftSummary = ({players = [], season}) => {
         return {
             key: p.pid,
             data: [
-                `${p.draft.round}-${p.draft.pick}`,
                 <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
-                p.pos,
-                <DraftAbbrev originalTid={p.draft.originalTid} season={season} tid={p.draft.tid}>{p.draft.tid} {p.draft.originalTid}</DraftAbbrev>,
-                p.draft.age,
-                p.draft.ovr,
-                p.draft.pot,
-                <span className="skills-alone"><SkillsBlock skills={p.draft.skills} /></span>,
-                <a href={helpers.leagueUrl(["roster", p.currentAbbrev])}>{p.currentAbbrev}</a>,
-                p.currentAge,
-                p.currentOvr,
-                p.currentPot,
-                <span className="skills-alone"><SkillsBlock skills={p.currentSkills} /></span>,
-                helpers.round(p.careerStats.gp),
+                p.ratings[p.ratings.length - 1].pos,
+                p.draft.year,
+                p.retiredYear,
+                p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : '',
+                p.peakOvr,
+                p.bestStats.season,
+                <a href={helpers.leagueUrl(["roster", p.bestStats.abbrev, p.bestStats.season])}>{p.bestStats.abbrev}</a>,
+                p.bestStats.gp,
+                helpers.round(p.bestStats.min, 1),
+                helpers.round(p.bestStats.pts, 1),
+                helpers.round(p.bestStats.trb, 1),
+                helpers.round(p.bestStats.ast, 1),
+                helpers.round(p.bestStats.per, 1),
+                p.careerStats.gp,
                 helpers.round(p.careerStats.min, 1),
                 helpers.round(p.careerStats.pts, 1),
                 helpers.round(p.careerStats.trb, 1),
@@ -124,28 +132,24 @@ const DraftSummary = ({players = [], season}) => {
                 helpers.round(p.careerStats.ewa, 1),
             ],
             classNames: {
-                danger: p.hof,
-                info: p.draft.tid === g.userTid,
+                info: p.statsTids.indexOf(g.userTid) >= 0,
             },
         };
     });
 
     return <div>
-        <Dropdown view="draft_summary" fields={["seasons"]} values={[season]} />
-        <JumpTo season={season} />
-        <h1>{season} Draft Summary <NewWindowLink /></h1>
+        <h1>Hall of Fame <NewWindowLink /></h1>
 
-        <p>More: <a href={helpers.leagueUrl(['draft_scouting'])}>Future Draft Scouting</a></p>
+        <p>Players are eligible to be inducted into the Hall of Fame after they retire. The formula for inclusion is very similar to <a href="http://espn.go.com/nba/story/_/id/8736873/nba-experts-rebuild-springfield-hall-fame-espn-magazine">the method described in this article</a>. Hall of famers who played for your team are <span className="text-info">highlighted in blue</span>.</p>
 
-        <p>Players drafted by your team are <span className="text-info">highlighted in blue</span>. Players in the Hall of Fame are <span className="text-danger">highlighted in red</span>.</p>
 
         <DataTable
             cols={cols}
-            defaultSort={[0, 'asc']}
+            defaultSort={[20, 'desc']}
             rows={rows}
             superCols={superCols}
         />
     </div>;
 };
 
-module.exports = DraftSummary;
+module.exports = HallOfFame;

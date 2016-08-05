@@ -1,17 +1,15 @@
-# This is the root config file.
+# Root config file
 root = true
 
-# CSS files
-[*.{css,scss}]
-indent_style = space
+# All files
+[*]
+charset = utf-8
+end_of_line = lf
 indent_size = 2
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
 
-# JavaScript files
+# JavaScript
 [*.js]
-indent_style = space
 indent_size = 4
-
-# JSON files
-[*.json]
-indent_style = space
-indent_size = 2

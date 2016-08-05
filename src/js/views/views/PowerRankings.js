@@ -42,13 +42,6 @@ const PowerRankings = ({teams = []}) => {
     const rows = teams.map(t => {
         const performanceRank = t.gp > 0 ? t.performanceRank : "-";
 
-        let diff = helpers.round(t.diff, 1);
-        if (t.diff > 0) {
-            diff = <span className="text-success">{diff}</span>;
-        } else if (t.diff < 0) {
-            diff = <span className="text-danger">{diff}</span>;
-        }
-
         return {
             key: t.tid,
             data: [
@@ -59,7 +52,7 @@ const PowerRankings = ({teams = []}) => {
                 t.won,
                 t.lost,
                 t.lastTen,
-                diff,
+                <span className={t.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(t.diff, 1)}</span>,
             ],
             classNames: {
                 info: t.tid === g.userTid,

@@ -81,10 +81,13 @@ when all react
     playerNameLabels
     skillsBlock
   get rid of bootstrap js
+  get rid of datatables js
   revisit "trade for" buttons POST
   references to data-
   references to vm
   delete datatables and unused CSS/images
+  get rid of brfs
+  go through ui.js, reevaluate
 
 Dropdown
   updateEvents need to be passed to dropdown to handle season change?

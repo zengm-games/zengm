@@ -75,6 +75,10 @@ const getSortVal = (val, sortType) => {
         const parts = sortVal.split(' ');
         return parts[parts.length - 1];
     }
+    if (sortType === 'currency') {
+        // Drop $ and parseFloat will just keep the numeric part at the beginning of the string
+        return parseFloat(sortVal.replace('$', ''));
+    }
     return sortVal;
 };
 

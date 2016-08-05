@@ -1,5 +1,6 @@
-const g = require('../globals');
 const ko = require('knockout');
+const ReactDOM = require('react-dom');
+const g = require('../globals');
 const eventLog = require('./eventLog');
 
 /**
@@ -271,6 +272,8 @@ function globalError(req) {
 
     viewHelpers.beforeNonLeague();
 
+    ReactDOM.unmountComponentAtNode(document.getElementById("league_content"));
+
     ui.update({
         container: "content",
         template: "error",
@@ -294,6 +297,8 @@ async function leagueError(req) {
     const viewHelpers = require('./viewHelpers');
 
     await viewHelpers.beforeLeague(req);
+
+    ReactDOM.unmountComponentAtNode(document.getElementById("league_content"));
 
     ui.update({
         container: "league_content",

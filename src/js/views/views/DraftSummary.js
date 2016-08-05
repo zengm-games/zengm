@@ -134,7 +134,7 @@ const DraftSummary = ({players = [], season}) => {
         <JumpTo season={season} />
         <h1>{season} Draft Summary <NewWindowLink /></h1>
 
-        <p>More: <a data-bind="attrLeagueUrl: {href: ['draft_scouting']}">Future Draft Scouting</a></p>
+        <p>More: <a href={helpers.leagueUrl(['draft_scouting'])}>Future Draft Scouting</a></p>
 
         <p>Players drafted by your team are <span className="text-info">highlighted in blue</span>. Players in the Hall of Fame are <span className="text-danger">highlighted in red</span>.</p>
 

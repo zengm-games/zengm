@@ -1,9 +1,8 @@
 const g = require('../globals');
-const ui = require('../ui');
-const league = require('../core/league');
 const team = require('../core/team');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
+const NewTeam = require('./views/NewTeam');
 
 function get() {
     if (!g.gameOver && !g.godMode) {
@@ -11,31 +10,6 @@ function get() {
             errorMessage: `You may only switch to another team after you're fired or when you're in <a href="${helpers.leagueUrl(["god_mode"])}">God Mode</a>.`,
         };
     }
-}
-
-async function post(req) {
-    document.getElementById("new-team").disabled = true;
-
-    const newUserTid = parseInt(req.params.tid, 10);
-
-    ui.updateStatus("Idle");
-    ui.updatePlayMenu(null);
-
-    await league.setGameAttributesComplete({
-        gameOver: false,
-        userTid: newUserTid,
-        userTids: [newUserTid],
-        ownerMood: {
-            wins: 0,
-            playoffs: 0,
-            money: 0,
-        },
-        gracePeriodEnd: g.season + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
-    });
-
-    league.updateLastDbChange();
-    league.updateMetaNameRegion(g.teamNamesCache[g.userTid], g.teamRegionsCache[g.userTid]);
-    ui.realtimeUpdate([], helpers.leagueUrl([]));
 }
 
 async function updateTeamSelect() {
@@ -63,14 +37,9 @@ async function updateTeamSelect() {
     };
 }
 
-function uiFirst() {
-    ui.title("New Team");
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "newTeam",
     get,
-    post,
     runBefore: [updateTeamSelect],
-    uiFirst,
+    Component: NewTeam,
 });

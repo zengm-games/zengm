@@ -1,7 +1,7 @@
-const ui = require('../ui');
 const changes = require('../data/changes');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const viewHelpers = require('../util/viewHelpers');
+const Changes = require('./views/Changes');
 
 function updateChanges() {
     return {
@@ -9,13 +9,9 @@ function updateChanges() {
     };
 }
 
-function uiFirst() {
-    ui.title("Changes");
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "changes",
     beforeReq: viewHelpers.beforeNonLeague,
     runBefore: [updateChanges],
-    uiFirst,
+    Component: Changes,
 });

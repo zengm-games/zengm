@@ -109,6 +109,7 @@ class Draft extends React.Component {
         if (fantasyDraft) {
             colsUndrafted.splice(5, 0, {
                 title: 'Contract',
+                sortType: 'currency',
             }, {
                 title: 'PER',
                 desc: 'Player Efficiency Rating',

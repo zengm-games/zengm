@@ -21,14 +21,7 @@
         document.getElementsByTagName("head")[0].appendChild(el);
       }
 
-      if (localStorage.debug === "debug") {
-        loadCSS("css/bootstrap.css");
-        loadCSS("css/bbgm.css");
-        loadCSS("css/bbgm-notifications.css");
-        loadCSS("css/DT_bootstrap.css");
-      } else {
-        loadCSS("gen/bbgm.css");
-      }
+      loadCSS("gen/bbgm.css");
 
       window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
 

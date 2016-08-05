@@ -30,6 +30,8 @@ bundler.bundle((err, src, map) => {
     fs.writeFileSync('gen/app.js.map', map);
 });*/
 
+console.log('Bundling JavaScript files...');
+
 bundler
     .transform({global: true}, envify({NODE_ENV: 'production'}))
     .bundle()

@@ -21,7 +21,7 @@
     "build-js": "node tools/build-js.js",
     "minify-js": "node tools/minify-js.js",
     "watch-js": "watchify -d src/js/app.js -o build/gen/app.js -v",
-    "lint": "npm run lint-js",
+    "lint": "concurrently --raw 'npm run lint-css' 'npm run lint-js'",
     "lint-css": "stylelint 'src/css/*.*css'",
     "lint-js": "eslint src/js/** tools/**",
     "test": "karma start",

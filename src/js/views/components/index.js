@@ -6,6 +6,7 @@ module.exports = {
     JumpTo: require('./JumpTo'),
     NewWindowLink: require('./NewWindowLink'),
     PlayerNameLabels: require('./PlayerNameLabels'),
+    RatingWithChange: require('./RatingWithChange'),
     RecordAndPlayoffs: require('./RecordAndPlayoffs'),
     SkillsBlock: require('./SkillsBlock'),
     WatchBlock: require('./WatchBlock'),

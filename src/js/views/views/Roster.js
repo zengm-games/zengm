@@ -9,7 +9,7 @@ const player = require('../../core/player');
 const team = require('../../core/team');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} = require('../components/index');
+const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} = require('../components/index');
 const clickable = require('../wrappers/clickable');
 
 const ptStyles = {
@@ -206,12 +206,10 @@ const RosterRow = clickable(props => {
         <td onClick={toggleClicked}>{p.age}</td>
         <td onClick={toggleClicked}>{p.stats.yearsWithTeam}</td>
         <td onClick={toggleClicked}>
-            {p.ratings.ovr}
-            {p.ratings.dovr !== 0 ? <span className={classNames({'text-success': p.ratings.dovr > 0, 'text-danger': p.ratings.dovr < 0})}> ({p.ratings.dovr > 0 ? '+' : null}{p.ratings.dovr})</span> : null }
+            <RatingWithChange change={p.ratings.dovr}>{p.ratings.ovr}</RatingWithChange>
         </td>
         <td onClick={toggleClicked}>
-            {p.ratings.pot}
-            {p.ratings.dpot !== 0 ? <span className={classNames({'text-success': p.ratings.dpot > 0, 'text-danger': p.ratings.dpot < 0})}> ({p.ratings.dpot > 0 ? '+' : null}{p.ratings.dpot})</span> : null }
+            <RatingWithChange change={p.ratings.dpot}>{p.ratings.pot}</RatingWithChange>
         </td>
         {season === g.season ? <td>
             {helpers.formatCurrency(p.contract.amount, 'M')} thru {p.contract.exp}

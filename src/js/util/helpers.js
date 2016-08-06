@@ -600,6 +600,10 @@ function pickDesc(pick) {
 }
 
 function ordinal(x) {
+    if (x === undefined || x === null) {
+        return null;
+    }
+
     let suffix;
     if (x >= 11 && x <= 13) {
         suffix = "th";

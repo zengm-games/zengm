@@ -361,7 +361,7 @@ table {
 }
 
 #game-log-list tbody tr:hover td,
-#messages tbody tr:hover td {
+.messages-table tbody tr:hover td {
   background-color: #d9edf7;
   border-color: #bce8f1;
   text-decoration: none;
@@ -629,7 +629,7 @@ table {
   }
 }
 
-#messages {
+.messages-table {
   table-layout: fixed;
   width: 100%;
 

@@ -1,8 +1,7 @@
 {
   "extends": "stylelint-config-standard",
   "ignoreFiles": [
-    "src/css/bootstrap.scss",
-    "src/css/DT_bootstrap.scss"
+    "src/css/bootstrap.scss"
   ],
   "rules": {
     "number-leading-zero": "never"

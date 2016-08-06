@@ -1,93 +1,14 @@
 const React = require('react');
 const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
 const PlayerRatings = ({abbrev, players = [], season}) => {
     bbgmViewReact.title(`Player Ratings - ${season}`);
 
-    const cols = [{
-        title: 'Name',
-        sortType: 'name',
-    }, {
-        title: 'Pos',
-        desc: 'Position',
-    }, {
-        title: 'Team',
-    }, {
-        title: 'Age',
-    }, {
-        title: 'Country',
-    }, {
-        title: 'Ovr',
-        desc: 'Overall',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Pot',
-        desc: 'Potential',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Hgt',
-        desc: 'Height',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Str',
-        desc: 'Strength',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Spd',
-        desc: 'Speed',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Jmp',
-        desc: 'Jumping',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'End',
-        desc: 'Endurance',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Ins',
-        desc: 'Inside Scoring',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Dnk',
-        desc: 'Dunks/Layups',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'FT',
-        desc: 'Free Throw Shooting',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: '2Pt',
-        desc: 'Two-Point Shooting',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: '3Pt',
-        desc: 'Three-Point Shooting',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Blk',
-        desc: 'Blocks',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Stl',
-        desc: 'Steals',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Drb',
-        desc: 'Dribbling',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Pss',
-        desc: 'Passing',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Reb',
-        desc: 'Rebounding',
-        sortSequence: ['desc', 'asc'],
-    }];
+    const cols = getCols('Name', 'Pos', 'Team', 'Age', 'Country', 'Ovr', 'Pot', 'rating:Hgt', 'rating:Str', 'rating:Spd', 'rating:Jmp', 'rating:End', 'rating:Ins', 'rating:Dnk', 'rating:FT', 'rating:2Pt', 'rating:3Pt', 'rating:Blk', 'rating:Stl', 'rating:Drb', 'rating:Pss', 'rating:Reb');
 
     const rows = players.map(p => {
         return {

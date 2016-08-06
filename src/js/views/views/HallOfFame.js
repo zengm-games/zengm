@@ -1,6 +1,7 @@
 const React = require('react');
 const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, NewWindowLink} = require('../components/index');
 
@@ -18,92 +19,7 @@ const HallOfFame = ({players = []}) => {
         colspan: 7,
     }];
 
-    const cols = [{
-        title: 'Name',
-        sortType: 'name',
-    }, {
-        title: 'Pos',
-        desc: 'Position',
-    }, {
-        title: 'Drafted',
-    }, {
-        title: 'Retired',
-    }, {
-        title: 'Pick',
-        desc: 'Draft Pick',
-        sortType: 'draftPick',
-    }, {
-        title: 'Peak Ovr',
-        desc: 'Peak Overall Rating',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Year',
-    }, {
-        title: 'Team',
-    }, {
-        title: 'GP',
-        desc: 'Games Played',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Min',
-        desc: 'Minutes Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'PPG',
-        desc: 'Points Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Reb',
-        desc: 'Rebounds Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Ast',
-        desc: 'Assists Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'PER',
-        desc: 'Player Efficiency Rating',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'GP',
-        desc: 'Games Played',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Min',
-        desc: 'Minutes Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'PPG',
-        desc: 'Points Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Reb',
-        desc: 'Rebounds Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Ast',
-        desc: 'Assists Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'PER',
-        desc: 'Player Efficiency Rating',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'EWA',
-        desc: 'Estimated Wins Added',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }];
+    const cols = getCols('Name', 'Pos', 'Drafted', 'Retired', 'Pick', 'Peak Ovr', 'Year', 'Team', 'GP', 'Min', 'PPG', 'Reb', 'Ast', 'PER', 'GP', 'Min', 'PPG', 'Reb', 'Ast', 'PER', 'EWA');
 
     const rows = players.map(p => {
         return {

@@ -7,6 +7,7 @@ const draft = require('../../core/draft');
 const finances = require('../../core/finances');
 const player = require('../../core/player');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
@@ -128,24 +129,7 @@ class DraftScouting extends React.Component {
 
         bbgmViewReact.title('Draft Scouting');
 
-        const cols = [{
-            title: '#',
-        }, {
-            title: 'Name',
-        }, {
-            title: 'Pos',
-            desc: 'Position',
-        }, {
-            title: 'Age',
-        }, {
-            title: 'Ovr',
-            desc: 'Overall rating',
-            sortSequence: ['desc', 'asc'],
-        }, {
-            title: 'Pot',
-            desc: 'Potential rating',
-            sortSequence: ['desc', 'asc'],
-        }];
+        const cols = getCols('#', 'Name', 'Pos', 'Age', 'Ovr', 'Pot');
 
         return <div>
             <h1>Draft Scouting <NewWindowLink /></h1>

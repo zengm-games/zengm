@@ -1,6 +1,7 @@
 const React = require('react');
 const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components/index');
 
@@ -11,28 +12,7 @@ const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season
         bbgmViewReact.title(`League Finances - ${season}`);
     }
 
-    const cols = [{
-        title: 'Team',
-    }, {
-        title: 'Avg Attendance',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'Revenue (YTD)',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
-    }, {
-        title: 'Profit (YTD)',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
-    }, {
-        title: 'Cash',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
-    }, {
-        title: 'Payroll',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
-    }];
+    const cols = getCols('Team', 'Avg Attendance', 'Revenue (YTD)', 'Profit (YTD)', 'Cash', 'Payroll');
 
     const rows = teams.map(t => {
         const payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons

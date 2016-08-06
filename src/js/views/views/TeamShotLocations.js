@@ -1,6 +1,7 @@
 const React = require('react');
 const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, NewWindowLink} = require('../components/index');
 
@@ -29,81 +30,7 @@ const TeamShotLocations = ({season, teams = []}) => {
         colspan: 3,
     }];
 
-    const cols = [{
-        title: 'Team',
-    }, {
-        title: 'GP',
-        desc: 'Games Played',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'W',
-        desc: 'Won',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'L',
-        desc: 'Lost',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'M',
-        desc: 'Made',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'A',
-        desc: 'Attempted',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: '%',
-        desc: 'Percentage',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'M',
-        desc: 'Made',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'A',
-        desc: 'Attempted',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: '%',
-        desc: 'Percentage',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'M',
-        desc: 'Made',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'A',
-        desc: 'Attempted',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: '%',
-        desc: 'Percentage',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'M',
-        desc: 'Made',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'A',
-        desc: 'Attempted',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: '%',
-        desc: 'Percentage',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }];
+    const cols = getCols('Team', 'GP', 'W', 'L', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%');
 
     const rows = teams.map(t => {
         return {

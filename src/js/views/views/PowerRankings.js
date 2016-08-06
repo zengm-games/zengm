@@ -1,43 +1,15 @@
 const React = require('react');
 const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, NewWindowLink} = require('../components/index');
 
 const PowerRankings = ({teams = []}) => {
     bbgmViewReact.title('Power Rankings');
 
-    const cols = [{
-        title: 'O',
-        desc: 'Overall',
-    }, {
-        title: 'P',
-        desc: 'Performance',
-    }, {
-        title: 'T',
-        desc: 'Talent',
-    }, {
-        title: 'Team',
-        width: '100%',
-    }, {
-        title: 'W',
-        desc: 'Games Won',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'L',
-        desc: 'Games Lost',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'L10',
-        desc: 'Last Ten Games',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'lastTen',
-    }, {
-        title: 'Diff',
-        desc: 'Point Differential',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }];
+    const cols = getCols('O', 'P', 'T', 'Team', 'W', 'L', 'L10', 'Diff');
+    cols[3].width = '100%';
 
     const rows = teams.map(t => {
         const performanceRank = t.gp > 0 ? t.performanceRank : "-";

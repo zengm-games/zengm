@@ -1,6 +1,7 @@
 const React = require('react');
 const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components/index');
 
@@ -35,126 +36,7 @@ const TeamStats = ({season, teams = []}) => {
         colspan: 9,
     }];
 
-    const cols = [{
-        title: 'Team',
-    }, {
-        title: 'GP',
-        desc: 'Games Played',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'W',
-        desc: 'Won',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'L',
-        desc: 'Lost',
-        sortSequence: ['desc', 'asc'],
-    }, {
-        title: 'M',
-        desc: 'Made',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'A',
-        desc: 'Attempted',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: '%',
-        desc: 'Percentage',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'M',
-        desc: 'Made',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'A',
-        desc: 'Attempted',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: '%',
-        desc: 'Percentage',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'M',
-        desc: 'Made',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'A',
-        desc: 'Attempted',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: '%',
-        desc: 'Percentage',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Off',
-        desc: 'Offensive',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Def',
-        desc: 'Defensive',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Tot',
-        desc: 'Total',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Ast',
-        desc: 'Assists',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'TO',
-        desc: 'Turnovers',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Stl',
-        desc: 'Steals',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Blk',
-        desc: 'Blocks',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'BA',
-        desc: 'Blocks Against',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'PF',
-        desc: 'Personal Fouls',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Pts',
-        desc: 'Points',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'OPts',
-        desc: "Opponent's Points",
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }, {
-        title: 'Diff',
-        desc: 'Point Differential',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
-    }];
+    const cols = getCols('Team', 'GP', 'W', 'L', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'Off', 'Def', 'Tot', 'Ast', 'TO', 'Stl', 'Blk', 'BA', 'PF', 'Pts', 'OPts', 'Diff');
 
     const rows = teams.map(t => {
         return {

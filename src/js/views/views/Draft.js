@@ -131,7 +131,7 @@ class Draft extends React.Component {
             ];
 
             if (fantasyDraft) {
-                data.splice(6, 0,
+                data.splice(7, 0,
                     p.pid >= 0 ? `${helpers.formatCurrency(p.contract.amount, 'M')} thru ${p.contract.exp}` : null,
                     p.pid >= 0 ? helpers.round(p.stats.per, 1) : null,
                     p.pid >= 0 ? helpers.round(p.stats.ewa, 1) : null

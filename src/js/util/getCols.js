@@ -1,6 +1,9 @@
 const helpers = require('./helpers');
 
 const cols = {
+    '': {
+        sortSequence: ['desc', 'asc'],
+    },
     '#': {},
     '%': {
         desc: 'Percentage',
@@ -42,6 +45,10 @@ const cols = {
         sortType: 'currency',
     },
     'Country': {},
+    'DPOY': {
+        desc: 'Defensive Player of the Year',
+        sortType: 'name',
+    },
     'Def': {
         desc: 'Defensive',
         sortSequence: ['desc', 'asc'],
@@ -71,6 +78,10 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'Finals MVP': {
+        desc: 'Finals Most Valuable Player',
+        sortType: 'name',
+    },
     'GP': {
         desc: 'Games Played',
         sortSequence: ['desc', 'asc'],
@@ -85,10 +96,15 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'lastTen',
     },
+    'League Champion': {},
     'M': {
         desc: 'Made',
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
+    },
+    'MVP': {
+        desc: 'Most Valuable Player',
+        sortType: 'name',
     },
     'Min': {
         desc: 'Minutes Per Game',
@@ -163,6 +179,10 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'ROY': {
+        desc: 'Rookie of the Year',
+        sortType: 'name',
+    },
     'Reb': {
         desc: 'Rebounds Per Game',
         sortSequence: ['desc', 'asc'],
@@ -173,6 +193,7 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'currency',
     },
+    'Runner Up': {},
     'Skills': {},
     'Stl': {
         desc: 'Steals',

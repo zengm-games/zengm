@@ -95,7 +95,7 @@ const getSortVal = (val, sortType) => {
         if (sortVal === null) {
             return null;
         }
-        const parts = sortVal.split(' ');
+        const parts = sortVal.split(' (')[0].split(' ');
         return parts[parts.length - 1];
     }
     if (sortType === 'currency') {

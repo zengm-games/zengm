@@ -147,7 +147,7 @@ class DataTable extends React.Component {
 
         this.state = {
             sortBy: this.props.defaultSort,
-            perPage: perPage,
+            perPage,
             currentPage: 1,
             searchText: '',
         };
@@ -215,9 +215,13 @@ class DataTable extends React.Component {
         let end = start + this.state.perPage - 1;
         if (end > rowsFiltered.length) { end = rowsFiltered.length; }
 
-        const sortedRows = orderBy(rowsFiltered, [row => {
+        let sortedRows = orderBy(rowsFiltered, [row => {
             return getSortVal(row.data[this.state.sortBy[0]], cols[this.state.sortBy[0]].sortType);
-        }], [this.state.sortBy[1]]).slice(start - 1, end);
+        }], [this.state.sortBy[1]]);
+
+        if (pagination) {
+            sortedRows = sortedRows.slice(start - 1, end);
+        }
 
         let aboveTable = null;
         let belowTable = null;

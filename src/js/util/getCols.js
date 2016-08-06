@@ -35,6 +35,10 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'currency',
     },
+    'Contract': {
+        sortSequence: ['desc', 'asc'],
+        sortType: 'currency',
+    },
     'Country': {},
     'Def': {
         desc: 'Defensive',
@@ -45,6 +49,9 @@ const cols = {
         desc: 'Point Differential',
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
+    },
+    'Draft': {
+        sortSequence: [],
     },
     'Drafted': {},
     'EWA': {
@@ -255,6 +262,7 @@ module.exports = (...titles) => {
             throw new Error(`Unknown column: "${title}"`);
         }
 
+        // Deep copy so other properties can be set on col, like width
         return helpers.deepCopy(cols[title]);
     });
 };

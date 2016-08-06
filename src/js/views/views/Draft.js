@@ -6,6 +6,7 @@ const ui = require('../../ui');
 const draft = require('../../core/draft');
 const league = require('../../core/league');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
@@ -84,41 +85,11 @@ class Draft extends React.Component {
         const nextPick = drafted.find(p => p.pid < 0);
         const usersTurn = nextPick && userTids.indexOf(nextPick.draft.tid) >= 0;
 
-        const colsUndrafted = [{
-            title: 'Name',
-            width: '100%',
-            sortType: 'name',
-        }, {
-            title: 'Pos',
-            desc: 'Position',
-        }, {
-            title: 'Age',
-        }, {
-            title: 'Ovr',
-            desc: 'Overall rating',
-            sortSequence: ['desc', 'asc'],
-        }, {
-            title: 'Pot',
-            desc: 'Potential rating',
-            sortSequence: ['desc', 'asc'],
-        }, {
-            title: 'Draft',
-            sortSequence: [],
-        }];
+        const colsUndrafted = getCols('Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Draft');
+        colsUndrafted[0].width = '100%';
 
         if (fantasyDraft) {
-            colsUndrafted.splice(5, 0, {
-                title: 'Contract',
-                sortType: 'currency',
-            }, {
-                title: 'PER',
-                desc: 'Player Efficiency Rating',
-                sortSequence: ['desc', 'asc'],
-            }, {
-                title: 'EWA',
-                desc: 'Estimated Wins Added',
-                sortSequence: ['desc', 'asc'],
-            });
+            colsUndrafted.splice(5, 0, ...getCols('Contract', 'PER', 'EWA'));
         }
 
         const rowsUndrafted = undrafted.map(p => {
@@ -145,12 +116,7 @@ class Draft extends React.Component {
             };
         });
 
-        const colsDrafted = [{
-            title: 'Pick',
-            sortType: 'draftPick',
-        }, {
-            title: 'Team',
-        }].concat(colsUndrafted.slice(0, -1));
+        const colsDrafted = getCols('Pick', 'Team').concat(colsUndrafted.slice(0, -1));
 
         const draftedMerged = fantasyDraft ? this.state.fantasyDrafted.concat(drafted) : drafted;
         const rowsDrafted = draftedMerged.map((p, i) => {

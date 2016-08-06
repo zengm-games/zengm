@@ -27,6 +27,12 @@ div.dataTables_paginate {
 ul.pagination {
   margin: 0;
 }
+ul.pagination a {
+  cursor: pointer;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
 
 table.table {
   clear: both;

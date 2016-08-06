@@ -119,18 +119,18 @@ const Paging = ({currentPage, numRows, onClick, perPage}) => {
     const numberedPages = [];
     for (let i = firstShownPage; i <= lastShownPage; i++) {
         numberedPages.push(<li key={i} className={i === currentPage ? 'active' : ''}>
-            <a href="#" data-no-davis="true" onClick={() => onClick(i)}>{i}</a>
+            <a data-no-davis="true" onClick={() => onClick(i)}>{i}</a>
         </li>);
     }
 
     return <div className="dataTables_paginate paging_bootstrap">
         <ul className="pagination">
             <li className={classNames('prev', {disabled: !showPrev})}>
-                <a href="#" data-no-davis="true" onClick={() => showPrev && onClick(currentPage - 1)}>← Prev</a>
+                <a data-no-davis="true" onClick={() => showPrev && onClick(currentPage - 1)}>← Prev</a>
             </li>
             {numberedPages}
             <li className={classNames('next', {disabled: !showNext})}>
-                <a href="#" data-no-davis="true" onClick={() => showNext && onClick(currentPage + 1)}>Next →</a>
+                <a data-no-davis="true" onClick={() => showNext && onClick(currentPage + 1)}>Next →</a>
             </li>
         </ul>
     </div>;
@@ -140,15 +140,21 @@ class DataTable extends React.Component {
     constructor(props) {
         super(props);
 
+        let perPage = parseInt(localStorage.perPage, 10);
+        if (isNaN(perPage)) {
+            perPage = 10;
+        }
+
         this.state = {
             sortBy: this.props.defaultSort,
-            perPage: 10,
+            perPage: perPage,
             currentPage: 1,
             searchText: '',
         };
 
         this.handleColClick = this.handleColClick.bind(this);
         this.handlePaging = this.handlePaging.bind(this);
+        this.handlePerPage = this.handlePerPage.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
     }
 
@@ -174,6 +180,14 @@ class DataTable extends React.Component {
     handlePaging(newPage) {
         if (newPage !== this.state.currentPage) {
             this.setState({currentPage: newPage});
+        }
+    }
+
+    handlePerPage(event) {
+        const perPage = parseInt(event.target.value, 10);
+        if (!isNaN(perPage) && perPage !== this.state.perPage) {
+            localStorage.perPage = perPage;
+            this.setState({perPage});
         }
     }
 
@@ -211,7 +225,12 @@ class DataTable extends React.Component {
             aboveTable = <div>
                 <div className="dataTables_length">
                     <label>
-                        <select className="form-control input-sm" style={{width: '75px'}} value={this.state.perPage}>
+                        <select
+                            className="form-control input-sm"
+                            onChange={this.handlePerPage}
+                            style={{width: '75px'}}
+                            value={this.state.perPage}
+                        >
                             <option value="10">10</option>
                             <option value="25">25</option>
                             <option value="50">50</option>

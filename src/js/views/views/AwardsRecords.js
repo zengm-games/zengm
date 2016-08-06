@@ -28,22 +28,20 @@ const AwardsRecords = ({awardsRecords}) => {
     });
 
     return <div>
-           // not sure what to pass in for dropdown values
-        <Dropdown view="award_records" fields={["awardType"]} />
 
-        // you are here
-        <JumpTo season={season} />
-        <h1>{season} Draft Summary <NewWindowLink /></h1>
+        <Dropdown view="award_records" fields={["awardType"]} values={["awardType"]} />
 
-        <p>More: <a href={helpers.leagueUrl(['draft_scouting'])}>Future Draft Scouting</a></p>
+        <h1>Awards (react)</h1>
 
-        <p>Players drafted by your team are <span className="text-info">highlighted in blue</span>. Players in the Hall of Fame are <span className="text-danger">highlighted in red</span>.</p>
+        <p>More: <a href={helpers.leagueUrl(['history_all'])}>League Historyzzz</a>
+        <a href={helpers.leagueUrl(['team_records'])}>Team Records</a></p>
+
+        <p>Players in the Hall of Fame are <span className="text-danger">highlighted in red</span>.</p>
 
         <DataTable
             cols={cols}
             defaultSort={[0, 'asc']}
             rows={rows}
-            superCols={superCols}
         />
     </div>;
 };

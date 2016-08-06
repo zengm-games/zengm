@@ -23,12 +23,8 @@
     "watch-js": "watchify -d src/js/app.js -o build/gen/app.js -v",
     "lint": "concurrently --raw 'npm run lint-css' 'npm run lint-js'",
     "lint-css": "stylelint 'src/css/*.*css'",
-<<<<<<< HEAD
-    "lint-js": "eslint src/js/** tools/** --fix",
-=======
     "lint-js": "eslint src/js/** tools/**",
     "lint-js-fix": "eslint src/js/** tools/** --fix",
->>>>>>> f3e0474fe8d5dbac33c0e4a9ab258cbc4b8b05c3
     "test": "karma start",
     "copy-mocha": "cp node_modules/mocha/mocha.css build/gen/mocha.css && cp node_modules/mocha/mocha.js build/gen/mocha.js",
     "build-test": "npm run copy-mocha && browserify -d src/js/test/app.js -o build/gen/app-test.js",

@@ -61,6 +61,16 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'FG%': {
+        desc: 'Field Goal Percentage',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
+    'FT%': {
+        desc: 'Free Throw Percentage',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
     'GP': {
         desc: 'Games Played',
         sortSequence: ['desc', 'asc'],
@@ -174,6 +184,11 @@ const cols = {
     },
     'TO': {
         desc: 'Turnovers',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
+    'TP%': {
+        desc: 'Three Point Percentage',
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },

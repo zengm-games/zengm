@@ -50,5 +50,4 @@ module.exports = {
     trade: fs.readFileSync(__dirname + '/../templates/trade.html', 'utf8'),
     tradingBlock: fs.readFileSync(__dirname + '/../templates/tradingBlock.html', 'utf8'),
     upcomingFreeAgents: fs.readFileSync(__dirname + '/../templates/upcomingFreeAgents.html', 'utf8'),
-    watchList: fs.readFileSync(__dirname + '/../templates/watchList.html', 'utf8'),
 };

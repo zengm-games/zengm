@@ -30,6 +30,8 @@ const AwardsRecords = ({awardsRecords}) => {
     return <div>
            // not sure what to pass in for dropdown values
         <Dropdown view="award_records" fields={["awardType"]} />
+
+        // you are here
         <JumpTo season={season} />
         <h1>{season} Draft Summary <NewWindowLink /></h1>
 

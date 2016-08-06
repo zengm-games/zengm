@@ -71,7 +71,7 @@ const getSortVal = (val, sortType) => {
     }
 
     if (sortType === 'number') {
-        if (val === null) {
+        if (sortVal === null) {
             return -Infinity;
         } else if (typeof sortVal !== 'number') {
             return parseFloat(sortVal);
@@ -79,17 +79,29 @@ const getSortVal = (val, sortType) => {
         return val;
     }
     if (sortType === 'lastTen') {
+        if (sortVal === null) {
+            return null;
+        }
         return parseInt(sortVal.split('-')[0], 10);
     }
     if (sortType === 'draftPick') {
+        if (sortVal === null) {
+            return null;
+        }
         const [round, pick] = sortVal.split('-');
         return parseInt(round, 10) * g.numTeams + parseInt(pick, 10);
     }
     if (sortType === 'name') {
-        const parts = sortVal.split(' ');
+        if (sortVal === null) {
+            return null;
+        }
+        const parts = sortVal.split(' (')[0].split(' ');
         return parts[parts.length - 1];
     }
     if (sortType === 'currency') {
+        if (sortVal === null) {
+            return null;
+        }
         // Drop $ and parseFloat will just keep the numeric part at the beginning of the string
         return parseFloat(sortVal.replace('$', ''));
     }

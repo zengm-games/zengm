@@ -1,6 +1,9 @@
 const helpers = require('./helpers');
 
 const cols = {
+    '': {
+        sortSequence: ['desc', 'asc'],
+    },
     '#': {},
     '%': {
         desc: 'Percentage',
@@ -12,7 +15,9 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
-    'Age': {},
+    'Age': {
+        sortType: 'number',
+    },
     'Ast': {
         desc: 'Assists Per Game',
         sortSequence: ['desc', 'asc'],
@@ -40,6 +45,10 @@ const cols = {
         sortType: 'currency',
     },
     'Country': {},
+    'DPOY': {
+        desc: 'Defensive Player of the Year',
+        sortType: 'name',
+    },
     'Def': {
         desc: 'Defensive',
         sortSequence: ['desc', 'asc'],
@@ -59,6 +68,20 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'FG%': {
+        desc: 'Field Goal Percentage',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
+    'FT%': {
+        desc: 'Free Throw Percentage',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
+    'Finals MVP': {
+        desc: 'Finals Most Valuable Player',
+        sortType: 'name',
+    },
     'GP': {
         desc: 'Games Played',
         sortSequence: ['desc', 'asc'],
@@ -73,10 +96,15 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'lastTen',
     },
+    'League Champion': {},
     'M': {
         desc: 'Made',
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
+    },
+    'MVP': {
+        desc: 'Most Valuable Player',
+        sortType: 'name',
     },
     'Min': {
         desc: 'Minutes Per Game',
@@ -102,6 +130,7 @@ const cols = {
     'Ovr': {
         desc: 'Overall Rating',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'P': {
         desc: 'Performance',
@@ -139,6 +168,7 @@ const cols = {
     'Pot': {
         desc: 'Potential Rating',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'Profit (YTD)': {
         sortSequence: ['desc', 'asc'],
@@ -148,6 +178,10 @@ const cols = {
         desc: 'Points',
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
+    },
+    'ROY': {
+        desc: 'Rookie of the Year',
+        sortType: 'name',
     },
     'Reb': {
         desc: 'Rebounds Per Game',
@@ -159,6 +193,7 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'currency',
     },
+    'Runner Up': {},
     'Skills': {},
     'Stl': {
         desc: 'Steals',
@@ -170,6 +205,11 @@ const cols = {
     },
     'TO': {
         desc: 'Turnovers',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
+    'TP%': {
+        desc: 'Three Point Percentage',
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },

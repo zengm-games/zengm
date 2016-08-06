@@ -1,5 +1,6 @@
 const Promise = require('bluebird');
 const classNames = require('classnames');
+const $ = require('jquery');
 const React = require('react');
 const g = require('../../globals');
 const ui = require('../../ui');
@@ -8,7 +9,7 @@ const player = require('../../core/player');
 const team = require('../../core/team');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} = require('../components/index');
+const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} = require('../components/index');
 const clickable = require('../wrappers/clickable');
 
 const ptStyles = {
@@ -172,9 +173,26 @@ const swapRosterOrder = async (sortedPlayers, pid1, pid2) => {
     });
 };
 
+const handleReorderDrag = async sortedPids => {
+    await g.dbl.tx("players", "readwrite", async tx => {
+        const promises = sortedPids.map(async (pid, rosterOrder) => {
+            const p = await tx.players.get(pid);
+            if (p.rosterOrder !== rosterOrder) {
+                p.rosterOrder = rosterOrder;
+                await tx.players.put(p);
+            }
+        });
+
+        await Promise.all(promises);
+
+        ui.realtimeUpdate(["playerMovement"]);
+        league.updateLastDbChange();
+    });
+};
+
 const RosterRow = clickable(props => {
     const {clicked, editable, handleReorderClick, i, p, season, selectedPid, showTradeFor, toggleClicked} = props;
-    return <tr key={p.pid} className={classNames({separator: i === 4, warning: clicked})}>
+    return <tr key={p.pid} className={classNames({separator: i === 4, warning: clicked})} data-pid={p.pid}>
         {editable ? <ReorderHandle i={i} pid={p.pid} onClick={handleReorderClick} selectedPid={selectedPid} /> : null}
         <td>
             <PlayerNameLabels
@@ -188,12 +206,10 @@ const RosterRow = clickable(props => {
         <td onClick={toggleClicked}>{p.age}</td>
         <td onClick={toggleClicked}>{p.stats.yearsWithTeam}</td>
         <td onClick={toggleClicked}>
-            {p.ratings.ovr}
-            {p.ratings.dovr !== 0 ? <span className={classNames({'text-success': p.ratings.dovr > 0, 'text-danger': p.ratings.dovr < 0})}> ({p.ratings.dovr > 0 ? '+' : null}{p.ratings.dovr})</span> : null }
+            <RatingWithChange change={p.ratings.dovr}>{p.ratings.ovr}</RatingWithChange>
         </td>
         <td onClick={toggleClicked}>
-            {p.ratings.pot}
-            {p.ratings.dpot !== 0 ? <span className={classNames({'text-success': p.ratings.dpot > 0, 'text-danger': p.ratings.dpot < 0})}> ({p.ratings.dpot > 0 ? '+' : null}{p.ratings.dpot})</span> : null }
+            <RatingWithChange change={p.ratings.dpot}>{p.ratings.pot}</RatingWithChange>
         </td>
         {season === g.season ? <td>
             {helpers.formatCurrency(p.contract.amount, 'M')} thru {p.contract.exp}
@@ -242,6 +258,48 @@ class Roster extends React.Component {
         }
     }
 
+    initSortable() {
+        const rosterTbody = $("#roster-tbody");
+
+        // The first this is called, set up sorting, but disable it by default
+        if (!rosterTbody.is(":ui-sortable")) {
+            rosterTbody.sortable({
+                helper(e, ui) {
+                    // Return helper which preserves the width of table cells being reordered
+                    ui.children().each(function () {
+                        $(this).width($(this).width());
+                    });
+                    return ui;
+                },
+                cursor: "move",
+                async update() {
+                    const sortedPids = $(this).sortable("toArray", {attribute: "data-pid"});
+                    for (let i = 0; i < sortedPids.length; i++) {
+                        sortedPids[i] = parseInt(sortedPids[i], 10);
+                    }
+
+                    await handleReorderDrag(sortedPids);
+                },
+                handle: ".roster-handle",
+                disabled: true,
+            });
+        }
+
+        if (this.props.editable) {
+            rosterTbody.sortable("enable");
+        } else {
+            rosterTbody.sortable("disable");
+        }
+    }
+
+    componentDidMount() {
+        this.initSortable();
+    }
+
+    componentDidUpdate() {
+        this.initSortable();
+    }
+
     render() {
         const {abbrev, editable, payroll, players, salaryCap, season, showTradeFor, team} = this.props;
 
@@ -288,7 +346,7 @@ class Roster extends React.Component {
                     {showTradeFor ? `Strategy: ${team.strategy}` : null}
                 </p> : null}
             </div>
-            {editable ? <p>Click row handles to move players between the starting lineup (<span className="roster-starter">&#9632;</span>) and the bench (<span className="roster-bench">&#9632;</span>).</p> : null}
+            {editable ? <p>Click or drag row handles to move players between the starting lineup (<span className="roster-starter">&#9632;</span>) and the bench (<span className="roster-bench">&#9632;</span>).</p> : null}
             {editable ? <p><button className="btn btn-default" onClick={handleAutoSort}>Auto sort roster</button>
             </p> : null}
 
@@ -327,7 +385,7 @@ class Roster extends React.Component {
                             {showTradeFor ? <th>Trade For</th> : null}
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="roster-tbody">
                         {players.map((p, i) => {
                             const handleReorderClick = this.handleReorderClick.bind(this, p.pid);
                             return <RosterRow

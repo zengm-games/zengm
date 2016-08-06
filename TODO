@@ -1,55 +1,15 @@
 REACT
 
+HistoryAll
+  sort properly all columns?
+
 DataTable
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
     for now, pass sort key as child and it works
   multiple sort columns
 
-roster
-  try dnd too
-    if not, at least maek the handles distinct
-    http://www.sawyerh.com/writing/using-jquery-ui-sortable-with-react/
-
 draft
   delay each pick
-
-generic datatables wrapper
-  https://github.com/alecperkey/react-jquery-datatables
-  https://gist.github.com/checkraiser/8555856
-  args
-    cols - title, description, and hidden (for row callbacks)
-      or specify columns like https://datatables.net/reference/option/columns.title with HTML inline, rather than react components
-        but react components is what i want, ugh. same issue with rows
-    rows - array of arrays
-    option for pagination
-    option for sorting (better than what i have now, ideally)
-  OR, write my own
-    per-column default sort order (like on click)
-    overall default sort order
-    sorting
-      somehow support custom orders for things like L10, $, draft picks, etc
-      what if it's a react component, can i get text somehow?
-    filtering
-    pagination (optional)
-    apply classes to row
-      row.classNames = {obj for input to classNames} where row is an array
-    key for rows
-      row.key, like classNames
-    clickable
-    cols
-      title
-      desc
-      orderSequence
-      sortType (default auto, override needed in cases like react component (otherwise always string))
-      width (or expand, if this is not sufficient)
-    superCols - some way to specify cols above cols, like FG/Reb in stats tables
-    column header double click github issue
-
-deploy and ask for feedback
-
-propTypes for Roster, Schedule, Standings, including internal components
-
-bring back drag and drop on roster - both click and drag/drop methods should work at same time, why not?
 
 is UI updating okay without waiting for this.setState to finish?
 
@@ -93,6 +53,8 @@ Dropdown
   updateEvents need to be passed to dropdown to handle season change?
     could pass season as a prop. anything else require update?
   "view" parameter is really first URL component, can't that be automatically retrieved?
+
+get rid of debug mode, loadCSS
 
 ---
 

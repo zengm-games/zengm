@@ -16,7 +16,7 @@
     "start": "node tools/server.js",
     "build": "node tools/build.js && npm run build-js",
     "test": "karma start",
-    "lint": "eslint src/js/** tools/**",
+    "lint": "eslint src/js/** tools/** --fix",
     "build-js": "node tools/build-js.js",
     "minify-js": "node tools/minify-js.js",
     "watch-js": "watchify -d src/js/app.js -o build/gen/app.js",

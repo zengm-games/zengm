@@ -3,9 +3,9 @@ const React = require('react');
 const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {NewWindowLink, PlayerNameLabels, RatingWithChange} = require('../components/index');
+const {NewWindowLink, PlayerNameLabels, PlayoffMatchup, RatingWithChange} = require('../components/index');
 
-const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed = [], confTeams = [], leagueLeaders = {ast: {}, pts: {}, trb: {}}, lost, messages = [], name, oppPts, oppPtsRank, payroll, playoffRoundsWon, playoffsByConference, profit, pts, ptsRank, rank, region, revenue, salaryCap, season, seriesTitle, showPlayoffSeries, starters = [], teamLeaders = {ast: {}, pts: {}, trb: {}}, trb, trbRank, upcoming = [], won}) => {
+const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed = [], confTeams = [], leagueLeaders = {ast: {}, pts: {}, trb: {}}, lost, messages = [], name, oppPts, oppPtsRank, payroll, playoffRoundsWon, playoffsByConference, profit, pts, ptsRank, rank, region, revenue, salaryCap, season, series, seriesTitle, showPlayoffSeries, starters = [], teamLeaders = {ast: {}, pts: {}, trb: {}}, trb, trbRank, upcoming = [], won}) => {
     bbgmViewReact.title('Dashboard');
 
     return <div>
@@ -109,11 +109,9 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed = [], confT
                         ?
                             <div>
                                 <h3>Playoffs</h3>
-                                <p>
-                                    <b>{seriesTitle}</b><br />
-                                    <span data-bind="matchup: [[0, 0], $root.series(), $root.season()]"></span><br />
-                                    <a href={helpers.leagueUrl(['playoffs'])}>» Playoffs</a>
-                                </p>
+                                <b>{seriesTitle}</b><br />
+                                <PlayoffMatchup season={season} series={series} />
+                                <a href={helpers.leagueUrl(['playoffs'])}>» Playoffs</a>
                             </div>
                         :
                             <div>

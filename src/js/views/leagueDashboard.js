@@ -261,7 +261,7 @@ async function updatePlayoffs(inputs, updateEvents) {
             for (let rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
                 for (let i = 0; i < series[rnd].length; i++) {
                     if (series[rnd][i].home.tid === g.userTid || series[rnd][i].away.tid === g.userTid) {
-                        vars.series = [[series[rnd][i]]];
+                        vars.series = series[rnd][i];
                         found = true;
                         vars.showPlayoffSeries = true;
                         if (rnd === 0) {

@@ -5,11 +5,6 @@ DataTable
     for now, pass sort key as child and it works
   multiple sort columns
 
-roster
-  try dnd too
-    if not, at least maek the handles distinct
-    http://www.sawyerh.com/writing/using-jquery-ui-sortable-with-react/
-
 draft
   delay each pick
 

@@ -4,7 +4,6 @@ const season = require('../core/season');
 const team = require('../core/team');
 const backboard = require('backboard');
 const Promise = require('bluebird');
-const komapping = require('knockout.mapping');
 const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
 const LeagueDashboard = require('./views/LeagueDashboard');

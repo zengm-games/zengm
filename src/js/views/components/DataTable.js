@@ -82,14 +82,49 @@ const getSortVal = (val, sortType) => {
     return sortVal;
 };
 
+const Info = ({currentPage, numRows, numRowsUnfiltered, perPage}) => {
+    const start = 1 + (currentPage - 1) * perPage;
+    let end = start + perPage - 1;
+    if (end > numRows) { end = numRows; }
+
+    const filteredText = numRows !== numRowsUnfiltered ? ` (filtered from ${numRowsUnfiltered})` : null
+
+    return <div className="dataTables_info hidden-xs">{start} to {end} of {numRows}{filteredText}</div>;
+};
+
+const Paging = ({currentPage, numRows, onClick, perPage}) => {
+    const showPrev = currentPage > 1;
+    const showNext = numRows > (currentPage * perPage);
+
+    return <div className="dataTables_paginate paging_bootstrap">
+        <ul className="pagination">
+            <li className={classNames('prev', {disabled: !showPrev})}>
+                <a href="#" data-no-davis="true" onClick={() => onClick(currentPage - 1)}>← Prev</a>
+            </li>
+            <li className="active">
+                <a href="#" data-no-davis="true" onClick={() => onClick(currentPage)}>1</a>
+            </li>
+            <li className={classNames('next', {disabled: !showNext})}>
+                <a href="#" data-no-davis="true" onClick={() => onClick(currentPage + 1)}>Next →</a>
+            </li>
+        </ul>
+    </div>;
+};
+
 class DataTable extends React.Component {
     constructor(props) {
         super(props);
-        this.handleColClick = this.handleColClick.bind(this);
 
         this.state = {
             sortBy: this.props.defaultSort,
+            perPage: 10,
+            currentPage: 1,
+            searchText: '',
         };
+
+        this.handleColClick = this.handleColClick.bind(this);
+        this.handlePaging = this.handlePaging.bind(this);
+        this.handleSearch = this.handleSearch.bind(this);
     }
 
     handleColClick(i) {
@@ -111,14 +146,78 @@ class DataTable extends React.Component {
         });
     }
 
-    render() {
-        const {cols, rows, superCols} = this.props;
+    handlePaging(newPage) {
+console.log('new page', newPage);
+    }
 
-        const sortedRows = orderBy(rows, [row => {
+    handleSearch(event) {
+        this.setState({
+            searchText: event.target.value.toLowerCase(),
+        });
+    }
+
+    render() {
+        const {cols, pagination, rows, superCols} = this.props;
+
+        const rowsFiltered = this.state.searchText === '' ? rows : rows.filter(row => {
+            for (let i = 0; i < row.data.length; i++) {
+                if (String(getSortVal(row.data[i], cols[i].sortType)).toLowerCase().includes(this.state.searchText)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        const sortedRows = orderBy(rowsFiltered, [row => {
             return getSortVal(row.data[this.state.sortBy[0]], cols[this.state.sortBy[0]].sortType);
         }], [this.state.sortBy[1]]);
 
+        let aboveTable = null;
+        let belowTable = null;
+        if (pagination) {
+            aboveTable = <div>
+                <div className="dataTables_length">
+                    <label>
+                        <select className="form-control input-sm" style={{width: '75px'}} value={this.state.perPage}>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select> per page
+                    </label>
+                </div>
+                <div className="dataTables_filter">
+                    <label>
+                        <input
+                            className="form-control input-sm"
+                            onChange={this.handleSearch}
+                            placeholder="Search"
+                            style={{width: '200px'}}
+                            type="search"
+                        />
+                    </label>
+                </div>
+            </div>;
+
+            belowTable = <div>
+                <Info
+                    currentPage={this.state.currentPage}
+                    numRows={rowsFiltered.length}
+                    numRowsUnfiltered={rows.length}
+                    perPage={this.state.perPage}
+                />
+                <Paging
+                    currentPage={this.state.currentPage}
+                    numRows={rowsFiltered.length}
+                    onClick={this.handlePaging}
+                    perPage={this.state.perPage}
+                />
+            </div>;
+        }
+
         return <div className="table-responsive">
+            {aboveTable}
             <table className="table table-striped table-bordered table-condensed table-hover">
                 <Header
                     cols={cols}
@@ -130,6 +229,7 @@ class DataTable extends React.Component {
                     {sortedRows.map(row => <Row key={row.key} row={row} />)}
                 </tbody>
             </table>
+            {belowTable}
         </div>;
     }
 }

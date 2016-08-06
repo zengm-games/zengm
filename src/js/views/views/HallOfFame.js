@@ -146,6 +146,7 @@ const HallOfFame = ({players = [], season}) => {
         <DataTable
             cols={cols}
             defaultSort={[20, 'desc']}
+            pagination={true}
             rows={rows}
             superCols={superCols}
         />

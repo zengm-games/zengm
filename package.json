@@ -24,6 +24,7 @@
     "lint": "concurrently --raw 'npm run lint-css' 'npm run lint-js'",
     "lint-css": "stylelint 'src/css/*.*css'",
     "lint-js": "eslint src/js/** tools/**",
+    "lint-js-fix": "eslint src/js/** tools/** --fix",
     "test": "karma start",
     "copy-mocha": "cp node_modules/mocha/mocha.css build/gen/mocha.css && cp node_modules/mocha/mocha.js build/gen/mocha.js",
     "build-test": "npm run copy-mocha && browserify -d src/js/test/app.js -o build/gen/app-test.js",

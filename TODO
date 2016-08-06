@@ -89,6 +89,8 @@ Dropdown
     could pass season as a prop. anything else require update?
   "view" parameter is really first URL component, can't that be automatically retrieved?
 
+get rid of debug mode, loadCSS
+
 ---
 
 make FAs less eager to sign with bad teams

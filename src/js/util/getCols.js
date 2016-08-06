@@ -12,7 +12,9 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
-    'Age': {},
+    'Age': {
+        sortType: 'number',
+    },
     'Ast': {
         desc: 'Assists Per Game',
         sortSequence: ['desc', 'asc'],
@@ -102,6 +104,7 @@ const cols = {
     'Ovr': {
         desc: 'Overall Rating',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'P': {
         desc: 'Performance',
@@ -139,6 +142,7 @@ const cols = {
     'Pot': {
         desc: 'Potential Rating',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'Profit (YTD)': {
         sortSequence: ['desc', 'asc'],

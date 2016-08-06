@@ -4,8 +4,6 @@ DataTable
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
     for now, pass sort key as child and it works
   multiple sort columns
-  fancy paginated version
-    per page
 
 roster
   try dnd too

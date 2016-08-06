@@ -5,7 +5,6 @@ DataTable
     for now, pass sort key as child and it works
   multiple sort columns
   fancy paginated version
-    pagination buttons
     per page
 
 roster

@@ -1,14 +1,7 @@
 const g = require('../globals');
 const player = require('../core/player');
 const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
 const HallOfFame = require('./views/HallOfFame');
-
-function get(req) {
-    return {
-        season: helpers.validateSeason(req.params.season),
-    };
-}
 
 async function updatePlayers(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.BEFORE_DRAFT)) {
@@ -50,7 +43,6 @@ async function updatePlayers(inputs, updateEvents) {
 
 module.exports = bbgmViewReact.init({
     id: "hallOfFame",
-    get,
     runBefore: [updatePlayers],
     Component: HallOfFame,
 });

@@ -48,6 +48,20 @@ const Row = clickable(({clicked, row, toggleClicked}) => {
     </tr>;
 });
 
+const getSearchVal = val => {
+    let sortVal;
+    if (React.isValidElement(val)) {
+        sortVal = textContent(val);
+    } else {
+        sortVal = val;
+    }
+
+    if (sortVal.toString) {
+        return sortVal.toString().toLowerCase();
+    }
+    return null;
+};
+
 const getSortVal = (val, sortType) => {
     let sortVal;
     if (React.isValidElement(val)) {
@@ -82,12 +96,8 @@ const getSortVal = (val, sortType) => {
     return sortVal;
 };
 
-const Info = ({currentPage, numRows, numRowsUnfiltered, perPage}) => {
-    const start = 1 + (currentPage - 1) * perPage;
-    let end = start + perPage - 1;
-    if (end > numRows) { end = numRows; }
-
-    const filteredText = numRows !== numRowsUnfiltered ? ` (filtered from ${numRowsUnfiltered})` : null
+const Info = ({end, numRows, numRowsUnfiltered, start}) => {
+    const filteredText = numRows !== numRowsUnfiltered ? ` (filtered from ${numRowsUnfiltered})` : null;
 
     return <div className="dataTables_info hidden-xs">{start} to {end} of {numRows}{filteredText}</div>;
 };
@@ -96,16 +106,31 @@ const Paging = ({currentPage, numRows, onClick, perPage}) => {
     const showPrev = currentPage > 1;
     const showNext = numRows > (currentPage * perPage);
 
+    const numPages = Math.ceil(numRows / perPage);
+    let firstShownPage = currentPage <= 3 ? 1 : currentPage - 2;
+    while (firstShownPage > 1 && (numPages - firstShownPage < 4)) {
+        firstShownPage -= 1;
+    }
+    let lastShownPage = firstShownPage + 4;
+    if (lastShownPage > numPages) {
+        lastShownPage = numPages;
+    }
+
+    const numberedPages = [];
+    for (let i = firstShownPage; i <= lastShownPage; i++) {
+        numberedPages.push(<li key={i} className={i === currentPage ? 'active' : ''}>
+            <a href="#" data-no-davis="true" onClick={() => onClick(i)}>{i}</a>
+        </li>);
+    }
+
     return <div className="dataTables_paginate paging_bootstrap">
         <ul className="pagination">
             <li className={classNames('prev', {disabled: !showPrev})}>
-                <a href="#" data-no-davis="true" onClick={() => onClick(currentPage - 1)}>← Prev</a>
+                <a href="#" data-no-davis="true" onClick={() => showPrev && onClick(currentPage - 1)}>← Prev</a>
             </li>
-            <li className="active">
-                <a href="#" data-no-davis="true" onClick={() => onClick(currentPage)}>1</a>
-            </li>
+            {numberedPages}
             <li className={classNames('next', {disabled: !showNext})}>
-                <a href="#" data-no-davis="true" onClick={() => onClick(currentPage + 1)}>Next →</a>
+                <a href="#" data-no-davis="true" onClick={() => showNext && onClick(currentPage + 1)}>Next →</a>
             </li>
         </ul>
     </div>;
@@ -147,11 +172,14 @@ class DataTable extends React.Component {
     }
 
     handlePaging(newPage) {
-console.log('new page', newPage);
+        if (newPage !== this.state.currentPage) {
+            this.setState({currentPage: newPage});
+        }
     }
 
     handleSearch(event) {
         this.setState({
+            currentPage: 1,
             searchText: event.target.value.toLowerCase(),
         });
     }
@@ -161,7 +189,7 @@ console.log('new page', newPage);
 
         const rowsFiltered = this.state.searchText === '' ? rows : rows.filter(row => {
             for (let i = 0; i < row.data.length; i++) {
-                if (String(getSortVal(row.data[i], cols[i].sortType)).toLowerCase().includes(this.state.searchText)) {
+                if (getSearchVal(row.data[i]).includes(this.state.searchText)) {
                     return true;
                 }
             }
@@ -169,9 +197,13 @@ console.log('new page', newPage);
             return false;
         });
 
+        const start = 1 + (this.state.currentPage - 1) * this.state.perPage;
+        let end = start + this.state.perPage - 1;
+        if (end > rowsFiltered.length) { end = rowsFiltered.length; }
+
         const sortedRows = orderBy(rowsFiltered, [row => {
             return getSortVal(row.data[this.state.sortBy[0]], cols[this.state.sortBy[0]].sortType);
-        }], [this.state.sortBy[1]]);
+        }], [this.state.sortBy[1]]).slice(start - 1, end);
 
         let aboveTable = null;
         let belowTable = null;
@@ -202,10 +234,10 @@ console.log('new page', newPage);
 
             belowTable = <div>
                 <Info
-                    currentPage={this.state.currentPage}
+                    end={end}
                     numRows={rowsFiltered.length}
                     numRowsUnfiltered={rows.length}
-                    perPage={this.state.perPage}
+                    start={start}
                 />
                 <Paging
                     currentPage={this.state.currentPage}

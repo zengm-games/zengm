@@ -199,9 +199,8 @@ class Dropdown extends React.Component {
     render() {
         return <form className="form-inline pull-right bbgm-dropdown">
             {this.props.fields.map((field, i) => {
-                return <div className="form-group" style={{marginLeft: '4px', marginBottom: '4px'}}>
+                return <div key={field} className="form-group" style={{marginLeft: '4px', marginBottom: '4px'}}>
                     <Select
-                        key={field}
                         field={field}
                         value={this.props.values[i]}
                         handleChange={event => this.handleChange(i, event)}

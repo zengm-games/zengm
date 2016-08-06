@@ -2,9 +2,9 @@ const React = require('react');
 const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, NewWindowLink} = require('../components/index');
 
-const HallOfFame = ({players = [], season}) => {
+const HallOfFame = ({players = []}) => {
     bbgmViewReact.title('Hall of Fame');
 
     const superCols = [{
@@ -141,7 +141,6 @@ const HallOfFame = ({players = [], season}) => {
         <h1>Hall of Fame <NewWindowLink /></h1>
 
         <p>Players are eligible to be inducted into the Hall of Fame after they retire. The formula for inclusion is very similar to <a href="http://espn.go.com/nba/story/_/id/8736873/nba-experts-rebuild-springfield-hall-fame-espn-magazine">the method described in this article</a>. Hall of famers who played for your team are <span className="text-info">highlighted in blue</span>.</p>
-
 
         <DataTable
             cols={cols}

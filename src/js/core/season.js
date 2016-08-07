@@ -578,9 +578,9 @@ async function newSchedulePlayoffsDay(tx) {
     // If playoffs are over, update winner and go to next phase
     if (rnd === g.numPlayoffRounds - 1) {
         let key;
-        if (series[rnd][0].home.won === 4) {
+        if (series[rnd][0].home.won >= 4) {
             key = series[rnd][0].home.tid;
-        } else if (series[rnd][0].away.won === 4) {
+        } else {
             key = series[rnd][0].away.tid;
         }
 
@@ -605,14 +605,14 @@ async function newSchedulePlayoffsDay(tx) {
     for (let i = 0; i < series[rnd].length; i += 2) {
         // Find the two winning teams
         let team1, team2;
-        if (series[rnd][i].home.won === 4) {
+        if (series[rnd][i].home.won >= 4) {
             team1 = helpers.deepCopy(series[rnd][i].home);
             tidsWon.push(series[rnd][i].home.tid);
         } else {
             team1 = helpers.deepCopy(series[rnd][i].away);
             tidsWon.push(series[rnd][i].away.tid);
         }
-        if (series[rnd][i + 1].home.won === 4) {
+        if (series[rnd][i + 1].home.won >= 4) {
             team2 = helpers.deepCopy(series[rnd][i + 1].home);
             tidsWon.push(series[rnd][i + 1].home.tid);
         } else {

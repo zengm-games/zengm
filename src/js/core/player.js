@@ -46,7 +46,7 @@ function ovr(ratings) {
 
 function fuzzRating(rating, fuzz) {
     // Turn off fuzz in multi team mode, because it doesn't have any meaning there in its current form
-    if (g.userTids.length > 1) {
+    if (g.userTids.length > 1 || g.godMode) {
         fuzz = 0;
     }
 

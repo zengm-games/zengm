@@ -1,7 +1,7 @@
 const React = require('react');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const bbgmViewReact = require('../util/bbgmViewReact');
+const bbgmViewReact = require('../../util/bbgmViewReact');
 
 const {DataTable, Dropdown} = require('../components/index');
 
@@ -33,7 +33,7 @@ const AwardsRecords = ({awardsRecords}) => {
 
         <h1>Awards (react)</h1>
 
-        <p>More: <a href={helpers.leagueUrl(['history_all'])}>League Historyzzz</a>
+        <p>More: <a href={helpers.leagueUrl(['history_all'])}>League History</a>
         <a href={helpers.leagueUrl(['team_records'])}>Team Records</a></p>
 
         <p>Players in the Hall of Fame are <span className="text-danger">highlighted in red</span>.</p>

@@ -63,7 +63,7 @@ which will start the server and watch JS and CSS files for changes and
 recompile. This simple runs both `npm start` and `npm run watch` together, which
 can be run separately if you wish.
 
-Open `package.json` to see more all available scripts.
+Open `package.json` to see all available scripts.
 
 ### Step 3 - Running
 

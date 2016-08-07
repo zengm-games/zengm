@@ -36,6 +36,7 @@ class Trade extends React.Component {
         this.state = {
             forceTrade: false,
         };
+        this.handleTeamChange = this.handleTeamChange.bind(this);
     }
 
     async handleAssetChange(type, id) {
@@ -67,6 +68,11 @@ class Trade extends React.Component {
         league.updateLastDbChange();
     }
 
+    handleTeamChange(event) {
+        const otherTid = g.teamAbbrevsCache.indexOf(event.target.value);
+        console.log(event.target.value, otherTid);
+    }
+
     render() {
         const {godMode, lost, message, otherDpids = [], otherPicks = [], otherRoster = [], otherTid, salaryCap, summary = {enablePropose: false, teams: []}, showResigningMsg, strategy, teams = [], userDpids = [], userPicks = [], userRoster = [], userTeamName, won} = this.props;
 
@@ -87,7 +93,7 @@ class Trade extends React.Component {
             <div className="row">
                 <div className="col-md-9">
                     <form id="rosters" className="form-inline">
-                        <select className="form-control select-team" style={{marginBottom: '6px'}} value={g.teamAbbrevsCache[otherTid]}>
+                        <select className="form-control select-team" style={{marginBottom: '6px'}} defaultValue={g.teamAbbrevsCache[otherTid]} onChange={this.handleTeamChange}>
                             {teams.map(t => <option key={t.abbrev} value={t.abbrev}>
                                 {t.region} {t.name}
                             </option>)}
@@ -144,7 +150,7 @@ class Trade extends React.Component {
                             <h4>{t.name}</h4>
                             <h5>Trade Away:</h5>
                             <ul className="list-unstyled">
-                                {t.trade.map(p => <li key={p.pid}>
+                                {t.trade.map(p => <li key={`p${p.pid}`}>
                                     <a href={helpers.leagueUrl(['player', p.pid])}>{p.name}</a> ({helpers.formatCurrency(p.contract.amount, 'M')})
                                 </li>)}
                                 {t.picks.map(pick => <li key={pick.dpid}>{pick.desc}</li>)}
@@ -152,7 +158,7 @@ class Trade extends React.Component {
                             </ul>
                             <h5>Receive:</h5>
                             <ul className="list-unstyled">
-                                {summary.teams[t.other].trade.map(p => <li key={p.pid}>
+                                {summary.teams[t.other].trade.map(p => <li key={`p${p.pid}`}>
                                     <a href={helpers.leagueUrl(['player', p.pid])}>{p.name}</a> ({helpers.formatCurrency(p.contract.amount, 'M')})
                                 </li>)}
                                 {summary.teams[t.other].picks.map(pick => <li key={pick.dpid}>{pick.desc}</li>)}

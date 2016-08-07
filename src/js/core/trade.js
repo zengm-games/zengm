@@ -221,6 +221,7 @@ function summary(teams) {
                 for (let j = 0; j < picks.length; j++) {
                     if (dpids[i].indexOf(picks[j].dpid) >= 0) {
                         s.teams[i].picks.push({
+                            dpid: picks[j].dpid,
                             desc: `${picks[j].season} ${picks[j].round === 1 ? "1st" : "2nd"} round pick (${g.teamAbbrevsCache[picks[j].originalTid]})`,
                         });
                     }

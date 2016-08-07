@@ -3,6 +3,8 @@ REACT
 Trade
   how to handle Trade For buttons?
     call function to create trade, then redirect. not the responsibility of trade page
+  Team dropdown
+  buttons on right
 
 HistoryAll
   sort properly all columns?

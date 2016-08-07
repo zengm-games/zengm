@@ -8,12 +8,12 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
-const genRows = (players, handleAssetChange) => {
+const genRows = (players, handleChangeAsset) => {
     return players.map(p => {
         return {
             key: p.pid,
             data: [
-                <input type="checkbox" value={p.pid} title={p.untradableMsg} defaultChecked={p.selected} disabled={p.untradable} onChange={() => handleAssetChange(p.pid)} />,
+                <input type="checkbox" value={p.pid} title={p.untradableMsg} defaultChecked={p.selected} disabled={p.untradable} onChange={() => handleChangeAsset(p.pid)} />,
                 <PlayerNameLabels injury={p.injury} pid={p.pid} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels>,
                 p.ratings.pos,
                 p.age,
@@ -36,10 +36,10 @@ class Trade extends React.Component {
         this.state = {
             forceTrade: false,
         };
-        this.handleTeamChange = this.handleTeamChange.bind(this);
+        this.handleChangeTeam = this.handleChangeTeam.bind(this);
     }
 
-    async handleAssetChange(type, id) {
+    async handleChangeAsset(type, id) {
         const ids = {
             'user-pids': this.props.userPids,
             'user-dpids': this.props.userDpids,
@@ -68,9 +68,23 @@ class Trade extends React.Component {
         league.updateLastDbChange();
     }
 
-    handleTeamChange(event) {
+    async handleChangeTeam(event) {
         const otherTid = g.teamAbbrevsCache.indexOf(event.target.value);
         console.log(event.target.value, otherTid);
+
+        const teams = [{
+            tid: g.userTid,
+            pids: this.props.userPids,
+            dpids: this.props.userDpids,
+        }, {
+            tid: otherTid,
+            pids: [],
+            dpids: [],
+        }];
+        await trade.create(teams);
+
+        ui.realtimeUpdate();
+        league.updateLastDbChange();
     }
 
     render() {
@@ -80,8 +94,8 @@ class Trade extends React.Component {
 
         const cols = getCols('', 'Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Contract', 'Min', 'Pts', 'Reb', 'Ast', 'PER');
         cols[0].sortSequence = [];
-        const otherRows = genRows(otherRoster, this.handleAssetChange.bind(this, 'other-pids'));
-        const userRows = genRows(userRoster, this.handleAssetChange.bind(this, 'user-pids'));
+        const otherRows = genRows(otherRoster, this.handleChangeAsset.bind(this, 'other-pids'));
+        const userRows = genRows(userRoster, this.handleChangeAsset.bind(this, 'user-pids'));
 
         return <div>
             <h1>Trade <NewWindowLink /></h1>
@@ -93,7 +107,7 @@ class Trade extends React.Component {
             <div className="row">
                 <div className="col-md-9">
                     <form id="rosters" className="form-inline">
-                        <select className="form-control select-team" style={{marginBottom: '6px'}} defaultValue={g.teamAbbrevsCache[otherTid]} onChange={this.handleTeamChange}>
+                        <select className="form-control select-team" style={{marginBottom: '6px'}} defaultValue={g.teamAbbrevsCache[otherTid]} onChange={this.handleChangeTeam}>
                             {teams.map(t => <option key={t.abbrev} value={t.abbrev}>
                                 {t.region} {t.name}
                             </option>)}
@@ -112,7 +126,7 @@ class Trade extends React.Component {
                                 <tbody>
                                     {otherPicks.map(pick => <tr key={pick.dpid}>
                                         <td>
-                                            <input name="other-dpids" type="checkbox" value={pick.dpid} defaultChecked={otherDpids.includes(pick.dpid)} onChange={() => this.handleAssetChange('other-dpids', pick.dpid)} />
+                                            <input name="other-dpids" type="checkbox" value={pick.dpid} defaultChecked={otherDpids.includes(pick.dpid)} onChange={() => this.handleChangeAsset('other-dpids', pick.dpid)} />
                                         </td>
                                         <td>{pick.desc}</td>
                                     </tr>)}
@@ -134,7 +148,7 @@ class Trade extends React.Component {
                                 <tbody>
                                     {userPicks.map(pick => <tr key={pick.dpid}>
                                         <td>
-                                            <input name="user-dpids" type="checkbox" value={pick.dpid} defaultChecked={userDpids.includes(pick.dpid)} onChange={() => this.handleAssetChange('user-dpids', pick.dpid)} />
+                                            <input name="user-dpids" type="checkbox" value={pick.dpid} defaultChecked={userDpids.includes(pick.dpid)} onChange={() => this.handleChangeAsset('user-dpids', pick.dpid)} />
                                         </td>
                                         <td>{pick.desc}</td>
                                     </tr>)}

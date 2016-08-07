@@ -8,8 +8,9 @@ const Davis = require('../lib/davis');
 const $ = require('jquery');
 const ko = require('knockout');
 const komapping = require('knockout.mapping');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
+const Trade = require('./views/Trade');
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 async function updateSummary(vars) {
@@ -120,32 +121,6 @@ async function post(req) {
     }
 }
 
-function InitViewModel() {
-    this.teams = ko.observable([]);
-    this.userTeamName = undefined;
-    this.summary = {
-        enablePropose: ko.observable(false),
-    };
-}
-
-const mapping = {
-    userPicks: {
-        create: options => options.data,
-    },
-    userRoster: {
-        create: options => options.data,
-    },
-    otherPicks: {
-        create: options => options.data,
-    },
-    otherRoster: {
-        create: options => options.data,
-    },
-    teams: {
-        create: options => options.data,
-    },
-};
-
 async function updateTrade(inputs) {
     let [teams, userRoster, userPicks] = await Promise.all([
         validateSavedPids(),
@@ -233,6 +208,7 @@ async function updateTrade(inputs) {
         otherPicks,
         otherPids: teams[1].pids,
         otherRoster,
+        otherTid,
         message: inputs.message,
         strategy: t.strategy,
         won: t.won,
@@ -243,7 +219,7 @@ async function updateTrade(inputs) {
     vars = await updateSummary(vars);
 
     // Always run this, for multi team mode
-    vars.teams = helpers.getTeams(otherTid);
+    vars.teams = helpers.getTeams();
     vars.teams.splice(g.userTid, 1); // Can't trade with yourself
     vars.userTeamName = `${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[g.userTid]}`;
 
@@ -258,8 +234,6 @@ async function updateTrade(inputs) {
 }
 
 function uiFirst(vm) {
-    ui.title("Trade");
-
     // Don't use the dropdown function because this needs to be a POST
     $("#trade-select-team").change(() => {
         // ui.realtimeUpdate currently can't handle a POST request
@@ -365,12 +339,9 @@ function uiFirst(vm) {
     ui.tableClickableRows($("#roster-other"));
 }
 
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "trade",
     get,
-    post,
-    InitViewModel,
-    mapping,
     runBefore: [updateTrade],
-    uiFirst,
+    Component: Trade,
 });

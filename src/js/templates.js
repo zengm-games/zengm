@@ -46,7 +46,6 @@ module.exports = {
     teamRecords: fs.readFileSync(__dirname + '/../templates/teamRecords.html', 'utf8'),
     teamStatDists: fs.readFileSync(__dirname + '/../templates/teamStatDists.html', 'utf8'),
     transactions: fs.readFileSync(__dirname + '/../templates/transactions.html', 'utf8'),
-    trade: fs.readFileSync(__dirname + '/../templates/trade.html', 'utf8'),
     tradingBlock: fs.readFileSync(__dirname + '/../templates/tradingBlock.html', 'utf8'),
     upcomingFreeAgents: fs.readFileSync(__dirname + '/../templates/upcomingFreeAgents.html', 'utf8'),
 };

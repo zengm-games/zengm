@@ -1,5 +1,9 @@
 REACT
 
+Trade
+  how to handle Trade For buttons?
+    call function to create trade, then redirect. not the responsibility of trade page
+
 HistoryAll
   sort properly all columns?
 
@@ -10,10 +14,9 @@ DataTable
 
 draft
   delay each pick
+  disabled based on state, not prop?
 
 is UI updating okay without waiting for this.setState to finish?
-
-do i need some initviewmodel type thing?
 
 abstract games list in schedule and dashboard
 
@@ -48,6 +51,7 @@ when all react
   delete datatables and unused CSS/images
   get rid of brfs
   go through ui.js, reevaluate
+  get rid of default params in views
 
 Dropdown
   updateEvents need to be passed to dropdown to handle season change?
@@ -57,6 +61,9 @@ Dropdown
 get rid of debug mode, loadCSS
 
 ---
+
+different height distributions by country https://www.reddit.com/message/messages/644he7
+  even global setting would be nice, for country specific leagues
 
 make FAs less eager to sign with bad teams
   alternative idea to just threshold: https://www.reddit.com/r/nba/comments/4tfaph/i_made_basketball_gm_a_free_basketball_management/d5hqqal

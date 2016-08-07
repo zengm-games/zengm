@@ -946,6 +946,11 @@ function recordAndPlayoffs(abbrev, season, won, lost, playoffRoundsWon, option) 
         output += `, <a href="${leagueUrl(["playoffs", season])}">${extraText}</a>`;
     }
 
+    // Bold the output if this is a championship.
+    if (playoffRoundsWon === g.numPlayoffRounds) {
+        output = `<strong>${output}</strong>`;
+    }
+
     return output;
 }
 

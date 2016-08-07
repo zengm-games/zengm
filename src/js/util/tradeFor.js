@@ -11,7 +11,6 @@ module.exports = async ({pid}) => {
 
     // Start new trade for a single player
     if (pid !== undefined) {
-console.log('hi', g.userTid);
         teams = [{
             tid: g.userTid,
             pids: [],
@@ -22,8 +21,6 @@ console.log('hi', g.userTid);
             dpids: [],
         }];
     }
-
-console.log(teams);
 
     // Start a new trade based on a list of pids and dpids, like from the trading block
     await trade.create(teams);

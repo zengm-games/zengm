@@ -3,9 +3,10 @@ const orderBy = require('lodash.orderby');
 const React = require('react');
 const textContent = require('react-addons-text-content');
 const g = require('../../globals');
+const helpers = require('../../util/helpers');
 const clickable = require('../wrappers/clickable');
 
-const Header = ({cols, handleColClick, sortBy, superCols}) => {
+const Header = ({cols, handleColClick, sortBys, superCols}) => {
     return <thead>
         {superCols ? <tr>
             {superCols.map(({colspan, desc, title}, i) => {
@@ -21,17 +22,22 @@ const Header = ({cols, handleColClick, sortBy, superCols}) => {
         </tr> : null}
         <tr>
             {cols.map(({desc, sortSequence, title, width}, i) => {
-                let className = 'sorting';
-                if (sortBy[0] === i) {
-                    className = sortBy[1] === 'asc' ? 'sorting_asc' : 'sorting_desc';
-                }
+                let className;
                 if (sortSequence && sortSequence.length === 0) {
                     className = null;
+                } else {
+                    className = 'sorting';
+                    for (const sortBy of sortBys) {
+                        if (sortBy[0] === i) {
+                            className = sortBy[1] === 'asc' ? 'sorting_asc' : 'sorting_desc';
+                            break;
+                        }
+                    }
                 }
                 return <th
                     className={className}
                     key={i}
-                    onClick={() => handleColClick(i)}
+                    onClick={event => handleColClick(event, i)}
                     title={desc}
                     width={width}
                 >
@@ -158,7 +164,7 @@ class DataTable extends React.Component {
         }
 
         this.state = {
-            sortBy: this.props.defaultSort,
+            sortBys: [this.props.defaultSort],
             perPage,
             currentPage: 1,
             searchText: '',
@@ -170,7 +176,7 @@ class DataTable extends React.Component {
         this.handleSearch = this.handleSearch.bind(this);
     }
 
-    handleColClick(i) {
+    handleColClick(event, i) {
         const col = this.props.cols[i];
 
         // Ignore click on unsortable column
@@ -178,14 +184,53 @@ class DataTable extends React.Component {
             return;
         }
 
-        let order;
-        if (this.state.sortBy[0] !== i) {
-            order = col.sortSequence ? col.sortSequence[0] : 'asc';
-        } else {
-            order = this.state.sortBy[1] === 'asc' ? 'desc' : 'asc';
+        let found = false;
+        let sortBys = helpers.deepCopy(this.state.sortBys);
+
+        const nextOrder = (col, sortBy) => {
+            if (col.sortSequence) {
+                // Move up to next entry in sortSequence
+                let j = col.sortSequence.indexOf(sortBy[1]) + 1;
+                if (j >= col.sortSequence.length) {
+                    j = 0;
+                }
+                return col.sortSequence[j];
+            }
+
+            // Default asc/desc toggle
+            return sortBy[1] === 'asc' ? 'desc' : 'asc';
+        };
+
+        // If this column is already in sortBys and shift is pressed, update
+        if (event.shiftKey) {
+            for (const sortBy of sortBys) {
+                if (sortBy[0] === i) {
+                    sortBy[1] = nextOrder(col, sortBy);
+                    found = true;
+                    break;
+                }
+            }
+
+            // If this column is not in sortBys and shift is pressed, append
+            if (!found) {
+                sortBys.push([i, col.sortSequence ? col.sortSequence[0] : 'asc']);
+                found = true;
+            }
         }
+
+        // If this column is the only one in sortBys, update order
+        if (!found && sortBys.length === 1 && sortBys[0][0] === i) {
+            sortBys[0][1] = nextOrder(col, sortBys[0]);
+            found = true;
+        }
+
+        // Otherwise, reset to sorting only by this column, default order
+        if (!found) {
+            sortBys = [[i, col.sortSequence ? col.sortSequence[0] : 'asc']];
+        }
+
         this.setState({
-            sortBy: [i, order],
+            sortBys,
         });
     }
 
@@ -227,9 +272,9 @@ class DataTable extends React.Component {
         let end = start + this.state.perPage - 1;
         if (end > rowsFiltered.length) { end = rowsFiltered.length; }
 
-        let sortedRows = orderBy(rowsFiltered, [row => {
-            return getSortVal(row.data[this.state.sortBy[0]], cols[this.state.sortBy[0]].sortType);
-        }], [this.state.sortBy[1]]);
+        let sortedRows = orderBy(rowsFiltered, this.state.sortBys.map(sortBy => row => {
+            return getSortVal(row.data[sortBy[0]], cols[sortBy[0]].sortType);
+        }), this.state.sortBys.map(sortBy => sortBy[1]));
 
         if (pagination) {
             sortedRows = sortedRows.slice(start - 1, end);
@@ -289,7 +334,7 @@ class DataTable extends React.Component {
                 <Header
                     cols={cols}
                     handleColClick={this.handleColClick}
-                    sortBy={this.state.sortBy}
+                    sortBys={this.state.sortBys}
                     superCols={superCols}
                 />
                 <tbody>

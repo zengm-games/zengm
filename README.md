@@ -89,8 +89,8 @@ mod_rewrite enabled. That's how it's done on play.basketball-gm.com.
 
 ### Step 4 - Testing
 
-ESLint is used to enforce some coding standards. It's mostly pretty standard
-Crockfordian stuff. To run ESLint on the entire codebase, run
+ESLint and stylelint are used to enforce some coding standards. To run them on
+the entirecodebase, run
 
     npm run lint-js
 

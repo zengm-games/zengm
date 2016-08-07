@@ -5,31 +5,32 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 
 const {DataTable, Dropdown} = require('../components/index');
 
-const AwardsRecords = ({awardsRecords}) => {
+const AwardsRecords = ({awardsRecords, awardType, awardTypeVal, playerCount}) => {
     bbgmViewReact.title('Awards Records');
-
     const cols = getCols('Name', 'Count', 'Year', 'Last', 'Retired', 'HOF');
 
-    const rows = awardsRecords.map(a => {
-        return {
-            key: a.pid,
-            data: [
-                <a href={helpers.leagueUrl(["player", a.pid])}>{a.name}</a>,
-                a.count,
-                a.years,
-                a.lastYear,
-                a.retired,
-                a.hof,
-            ],
-            classNames: {
-                danger: a.hof,
-            },
-        };
-    });
+    const rows =  {};
+    // {awardsRecords}.map(a => {
+    //     return {
+    //         key: a.pid,
+    //         data: [
+    //             <a href={helpers.leagueUrl(["player", a.pid])}>{a.name}</a>,
+    //             a.count,
+    //             a.years,
+    //             a.lastYear,
+    //             a.retired,
+    //             a.hof,
+    //         ],
+    //         classNames: {
+    //             danger: a.hof,
+    //         },
+    //     };
+    // });
 
+//<Dropdown view="award_records" fields={[{awardType}]} values={[{awardTypeVal}]} />
     return <div>
 
-        <Dropdown view="award_records" fields={["awardType"]} values={["awardType"]} />
+
 
         <h1>Awards (react)</h1>
 
@@ -43,9 +44,10 @@ const AwardsRecords = ({awardsRecords}) => {
             defaultSort={[0, 'asc']}
             rows={rows}
         />
+
+        <div>we had some parts left over...playerCount: {playerCount}</div>
     </div>;
 };
-
 
 
 module.exports = AwardsRecords;

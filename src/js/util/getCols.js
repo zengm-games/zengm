@@ -44,6 +44,10 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'currency',
     },
+    'Count': {
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
     'Country': {},
     'DPOY': {
         desc: 'Defensive Player of the Year',
@@ -87,6 +91,7 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'HOF': {},
     'L': {
         desc: 'Games Lost',
         sortSequence: ['desc', 'asc'],
@@ -95,6 +100,10 @@ const cols = {
         desc: 'Last Ten Games',
         sortSequence: ['desc', 'asc'],
         sortType: 'lastTen',
+    },
+    'Last': {
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'League Champion': {},
     'M': {

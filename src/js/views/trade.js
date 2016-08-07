@@ -105,15 +105,6 @@ async function post(req) {
         ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message});
         askButtonEl.textContent = "What would make this deal work?";
         askButtonEl.disabled = false;
-    } else if (pid !== null) {
-        // Start new trade for a single player
-        teams[1].pids = [pid];
-        await trade.create(teams);
-        ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
-    } else if (newOtherTid !== null || userPids.length > 0 || otherPids.length > 0 || userDpids.length > 0 || otherDpids.length > 0) {
-        // Start a new trade based on a list of pids and dpids, like from the trading block
-        await trade.create(teams);
-        ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
     }
 }
 

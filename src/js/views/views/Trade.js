@@ -38,6 +38,7 @@ class Trade extends React.Component {
         };
         this.handleChangeTeam = this.handleChangeTeam.bind(this);
         this.handleClickClear = this.handleClickClear.bind(this);
+        this.handleClickForceTrade = this.handleClickForceTrade.bind(this);
     }
 
     async handleChangeAsset(type, id) {
@@ -93,6 +94,13 @@ class Trade extends React.Component {
 
         ui.realtimeUpdate();
         league.updateLastDbChange();
+    }
+
+    handleClickForceTrade() {
+console.log(this.state.forceTrade);
+        this.setState({
+            forceTrade: !this.state.forceTrade,
+        });
     }
 
     render() {
@@ -196,17 +204,9 @@ class Trade extends React.Component {
                     {message ? <p className="alert alert-info">{message}</p> : null}
 
                     <center>
-                        <form method="POST" id="propose-trade" data-bind="attrLeagueUrl: {action: ['trade']}">
-                            <input type="hidden" name="propose" value="1" />
-                            {godMode ? <label className="god-mode god-mode-text"><input type="checkbox" value={this.state.forceTrade} />Force Trade</label> : null}<br />
-                            <button type="submit" className="btn btn-large btn-primary" disabled={!summary.enablePropose && !this.state.forceTrade}>Propose Trade</button>
-                        </form>
-
-                        <form method="POST" id="propose-trade" data-bind="attrLeagueUrl: {action: ['trade']}">
-                            <input type="hidden" name="ask" value="1" />
-                            <button type="submit" className="btn" id="ask-button">What would make this deal work?</button>
-                        </form>
-
+                        {godMode ? <label className="god-mode god-mode-text"><input type="checkbox" onClick={this.handleClickForceTrade} value={this.state.forceTrade} />Force Trade</label> : null}<br />
+                        <button type="submit" className="btn btn-large btn-primary" disabled={!summary.enablePropose && !this.state.forceTrade} style={{marginBottom: '5px'}}>Propose Trade</button>
+                        <button type="submit" className="btn" style={{marginBottom: '5px'}}>What would make this deal work?</button>
                         <button type="submit" className="btn" onClick={this.handleClickClear}>Clear Trade</button>
                     </center>
                 </div>

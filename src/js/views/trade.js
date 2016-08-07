@@ -96,15 +96,6 @@ async function post(req) {
         // Propose trade
         const message = await trade.propose(req.params.hasOwnProperty("force-trade")).get(1);
         ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message});
-    } else if (req.params.ask !== undefined) {
-        // What would make this deal work?
-        const askButtonEl = document.getElementById("ask-button");
-        askButtonEl.textContent = "Waiting for answer...";
-        askButtonEl.disabled = true;
-        const message = await trade.makeItWorkTrade();
-        ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message});
-        askButtonEl.textContent = "What would make this deal work?";
-        askButtonEl.disabled = false;
     }
 }
 

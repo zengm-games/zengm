@@ -34,14 +34,21 @@ class Trade extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            asking: false,
+            askMessage: null,
             forceTrade: false,
         };
         this.handleChangeTeam = this.handleChangeTeam.bind(this);
+        this.handleClickAsk = this.handleClickAsk.bind(this);
         this.handleClickClear = this.handleClickClear.bind(this);
         this.handleClickForceTrade = this.handleClickForceTrade.bind(this);
     }
 
     async handleChangeAsset(type, id) {
+        this.setState({
+            message: null,
+        });
+
         const ids = {
             'user-pids': this.props.userPids,
             'user-dpids': this.props.userDpids,
@@ -71,6 +78,10 @@ class Trade extends React.Component {
     }
 
     async handleChangeTeam(event) {
+        this.setState({
+            message: null,
+        });
+
         const otherTid = g.teamAbbrevsCache.indexOf(event.target.value);
         console.log(event.target.value, otherTid);
 
@@ -89,7 +100,28 @@ class Trade extends React.Component {
         league.updateLastDbChange();
     }
 
+    async handleClickAsk() {
+        this.setState({
+            asking: true,
+            message: null,
+        });
+
+        const message = await trade.makeItWorkTrade();
+
+        this.setState({
+            asking: false,
+            message,
+        });
+
+        ui.realtimeUpdate();
+        league.updateLastDbChange();
+    }
+
     async handleClickClear() {
+        this.setState({
+            message: null,
+        });
+
         await trade.clear();
 
         ui.realtimeUpdate();
@@ -97,14 +129,13 @@ class Trade extends React.Component {
     }
 
     handleClickForceTrade() {
-console.log(this.state.forceTrade);
         this.setState({
             forceTrade: !this.state.forceTrade,
         });
     }
 
     render() {
-        const {godMode, lost, message, otherDpids = [], otherPicks = [], otherRoster = [], otherTid, salaryCap, summary = {enablePropose: false, teams: []}, showResigningMsg, strategy, teams = [], userDpids = [], userPicks = [], userRoster = [], userTeamName, won} = this.props;
+        const {godMode, lost, otherDpids = [], otherPicks = [], otherRoster = [], otherTid, salaryCap, summary = {enablePropose: false, teams: []}, showResigningMsg, strategy, teams = [], userDpids = [], userPicks = [], userRoster = [], userTeamName, won} = this.props;
 
         bbgmViewReact.title('Trade');
 
@@ -201,12 +232,14 @@ console.log(this.state.forceTrade);
 
                     <br />
                     {summary.warning ? <p className="alert alert-danger"><strong>Warning!</strong> {summary.warning}</p> : null}
-                    {message ? <p className="alert alert-info">{message}</p> : null}
+                    {this.state.message ? <p className="alert alert-info">{this.state.message}</p> : null}
 
                     <center>
                         {godMode ? <label className="god-mode god-mode-text"><input type="checkbox" onClick={this.handleClickForceTrade} value={this.state.forceTrade} />Force Trade</label> : null}<br />
                         <button type="submit" className="btn btn-large btn-primary" disabled={!summary.enablePropose && !this.state.forceTrade} style={{marginBottom: '5px'}}>Propose Trade</button>
-                        <button type="submit" className="btn" style={{marginBottom: '5px'}}>What would make this deal work?</button>
+                        <button type="submit" className="btn" disabled={this.state.asking} style={{marginBottom: '5px'}} onClick={this.handleClickAsk}>
+                            {this.state.asking ? 'Waiting for answer...' : 'What would make this deal work?'}
+                        </button>
                         <button type="submit" className="btn" onClick={this.handleClickClear}>Clear Trade</button>
                     </center>
                 </div>

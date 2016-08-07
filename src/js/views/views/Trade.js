@@ -42,6 +42,7 @@ class Trade extends React.Component {
         this.handleClickAsk = this.handleClickAsk.bind(this);
         this.handleClickClear = this.handleClickClear.bind(this);
         this.handleClickForceTrade = this.handleClickForceTrade.bind(this);
+        this.handleClickPropose = this.handleClickPropose.bind(this);
     }
 
     async handleChangeAsset(type, id) {
@@ -132,6 +133,17 @@ class Trade extends React.Component {
         this.setState({
             forceTrade: !this.state.forceTrade,
         });
+    }
+
+    async handleClickPropose() {
+        const [, message] = await trade.propose(this.state.forceTrade);
+
+        this.setState({
+            message,
+        });
+
+        ui.realtimeUpdate();
+        league.updateLastDbChange();
     }
 
     render() {
@@ -236,7 +248,7 @@ class Trade extends React.Component {
 
                     <center>
                         {godMode ? <label className="god-mode god-mode-text"><input type="checkbox" onClick={this.handleClickForceTrade} value={this.state.forceTrade} />Force Trade</label> : null}<br />
-                        <button type="submit" className="btn btn-large btn-primary" disabled={!summary.enablePropose && !this.state.forceTrade} style={{marginBottom: '5px'}}>Propose Trade</button>
+                        <button type="submit" className="btn btn-large btn-primary" disabled={!summary.enablePropose && !this.state.forceTrade} onClick={this.handleClickPropose} style={{marginBottom: '5px'}}>Propose Trade</button>
                         <button type="submit" className="btn" disabled={this.state.asking} style={{marginBottom: '5px'}} onClick={this.handleClickAsk}>
                             {this.state.asking ? 'Waiting for answer...' : 'What would make this deal work?'}
                         </button>

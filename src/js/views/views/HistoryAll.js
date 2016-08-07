@@ -62,7 +62,7 @@ const HistoryAll = ({seasons = []}) => {
         <h1>League History <NewWindowLink /></h1>
 
         <p>More:
-            <a data-bind="attrLeagueUrl: {href: ['team_records']}">Team Records</a> |
+            <a data-bind="attrLeagueUrl: {href: ['team_records']}">Team Records</a> |&nbsp;
             <a href={helpers.leagueUrl(['awards_records'])}>Awards Records</a>
         </p>
 

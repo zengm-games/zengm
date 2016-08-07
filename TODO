@@ -4,8 +4,8 @@ Trade
   how to handle Trade For buttons?
     call function to create trade, then redirect. not the responsibility of trade page
       like handleChangeTeam
-  Team dropdown
   buttons on right
+  god mode
 
 HistoryAll
   sort properly all columns?

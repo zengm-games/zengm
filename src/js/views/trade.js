@@ -92,11 +92,7 @@ async function post(req) {
         dpids: otherDpids,
     }];
 
-    if (req.params.clear !== undefined) {
-        // Clear trade
-        await trade.clear();
-        ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
-    } else if (req.params.propose !== undefined) {
+    if (req.params.propose !== undefined) {
         // Propose trade
         const message = await trade.propose(req.params.hasOwnProperty("force-trade")).get(1);
         ui.realtimeUpdate([], helpers.leagueUrl(["trade"]), undefined, {message});

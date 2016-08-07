@@ -37,6 +37,7 @@ class Trade extends React.Component {
             forceTrade: false,
         };
         this.handleChangeTeam = this.handleChangeTeam.bind(this);
+        this.handleClickClear = this.handleClickClear.bind(this);
     }
 
     async handleChangeAsset(type, id) {
@@ -82,6 +83,13 @@ class Trade extends React.Component {
             dpids: [],
         }];
         await trade.create(teams);
+
+        ui.realtimeUpdate();
+        league.updateLastDbChange();
+    }
+
+    async handleClickClear() {
+        await trade.clear();
 
         ui.realtimeUpdate();
         league.updateLastDbChange();
@@ -199,10 +207,7 @@ class Trade extends React.Component {
                             <button type="submit" className="btn" id="ask-button">What would make this deal work?</button>
                         </form>
 
-                        <form method="POST" id="clear-trade" data-bind="attrLeagueUrl: {action: ['trade']}">
-                            <input type="hidden" name="clear" value="1" />
-                            <button type="submit" className="btn">Clear Trade</button>
-                        </form>
+                        <button type="submit" className="btn" onClick={this.handleClickClear}>Clear Trade</button>
                     </center>
                 </div>
             </div>

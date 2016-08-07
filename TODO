@@ -7,10 +7,6 @@ DataTable
     for now, pass sort key as child and it works
   multiple sort columns
 
-draft
-  delay each pick
-  disabled based on state, not prop?
-
 is UI updating okay without waiting for this.setState to finish?
 
 abstract games list in schedule and dashboard
@@ -19,8 +15,6 @@ add to watch list
   other ui.js crap
 
 better eslint
-
-merge dependencies on sortBy and orderBy
 
 when all react
   https://github.com/reactjs/react-router/issues/2101 to handle transitions smoothly.
@@ -57,6 +51,9 @@ get rid of debug mode, loadCSS
 
 Trade
   could be cleaned up a lot
+
+Draft
+  make it cooler
 
 ---
 

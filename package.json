@@ -41,7 +41,6 @@
     "knockout": "3.2.0",
     "knockout.mapping": "2.4.3",
     "lodash.orderby": "^4.5.1",
-    "lodash.sortby": "4.5.0",
     "postscribe": "2.0.6",
     "react": "15.2.1",
     "react-addons-text-content": "0.0.4",

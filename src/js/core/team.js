@@ -6,7 +6,7 @@ const _ = require('underscore');
 const eventLog = require('../util/eventLog');
 const helpers = require('../util/helpers');
 const random = require('../util/random');
-const sortBy = require('lodash.sortby');
+const orderBy = require('lodash.orderby');
 
 function genSeasonRow(tid, prevSeason) {
     const newSeason = {
@@ -653,8 +653,8 @@ function filter(options) {
                 seasonsPromise,
                 statsPromise,
             ]);
-            t.seasons = sortBy(seasons, "season");
-            t.stats = sortBy(stats, ["season", "playoffs"]);
+            t.seasons = orderBy(seasons, "season");
+            t.stats = orderBy(stats, ["season", "playoffs"]);
             return t;
         });
 

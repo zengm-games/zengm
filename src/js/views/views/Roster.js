@@ -9,6 +9,7 @@ const player = require('../../core/player');
 const team = require('../../core/team');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
+const tradeFor = require('../../util/tradeFor');
 const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} = require('../components/index');
 const clickable = require('../wrappers/clickable');
 
@@ -230,11 +231,13 @@ const RosterRow = clickable(props => {
                 Release
             </button>
         </td> : null}
-        {showTradeFor ? <td onClick={toggleClicked}>
-            <form method="POST" style={{margin: 0}} action={helpers.leagueUrl(['trade'])} title={p.untradableMsg}>
-                <input type="hidden" name="pid" value={p.pid} />
-                <button type="submit" className="btn btn-default btn-xs" disabled={p.untradable}>Trade For</button>
-            </form>
+        {showTradeFor ? <td onClick={toggleClicked} title={p.untradableMsg}>
+            <button
+                className="btn btn-default btn-xs"
+                disabled={p.untradable}
+                onClick={() => tradeFor({pid: p.pid})}
+                type="submit"
+            >Trade For</button>
         </td> : null}
     </tr>;
 });

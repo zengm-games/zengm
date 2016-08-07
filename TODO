@@ -1,14 +1,6 @@
 REACT
 
-Trade
-  how to handle Trade For buttons?
-    call function to create trade, then redirect. not the responsibility of trade page
-      like handleChangeTeam
-  buttons on right
-  god mode
-
-HistoryAll
-  sort properly all columns?
+Trade For buttons -> util/tradeFor
 
 DataTable
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary

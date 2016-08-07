@@ -248,11 +248,11 @@ class Trade extends React.Component {
 
                     <center>
                         {godMode ? <label className="god-mode god-mode-text"><input type="checkbox" onClick={this.handleClickForceTrade} value={this.state.forceTrade} />Force Trade</label> : null}<br />
-                        <button type="submit" className="btn btn-large btn-primary" disabled={!summary.enablePropose && !this.state.forceTrade} onClick={this.handleClickPropose} style={{marginBottom: '5px'}}>Propose Trade</button>
-                        <button type="submit" className="btn" disabled={this.state.asking} style={{marginBottom: '5px'}} onClick={this.handleClickAsk}>
+                        <button type="submit" className="btn btn-large btn-primary" disabled={!summary.enablePropose && !this.state.forceTrade} onClick={this.handleClickPropose} style={{margin: '5px 5px 5px 0'}}>Propose Trade</button>
+                        <button type="submit" className="btn" disabled={this.state.asking} onClick={this.handleClickAsk} style={{margin: '5px 5px 5px 0'}}>
                             {this.state.asking ? 'Waiting for answer...' : 'What would make this deal work?'}
                         </button>
-                        <button type="submit" className="btn" onClick={this.handleClickClear}>Clear Trade</button>
+                        <button type="submit" className="btn" onClick={this.handleClickClear} style={{margin: '5px 5px 5px 0'}}>Clear Trade</button>
                     </center>
                 </div>
             </div>

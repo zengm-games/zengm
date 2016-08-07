@@ -92,7 +92,7 @@ mod_rewrite enabled. That's how it's done on play.basketball-gm.com.
 ESLint is used to enforce some coding standards. It's mostly pretty standard
 Crockfordian stuff. To run ESLint on the entire codebase, run
 
-    npm run lint
+    npm run lint-js
 
 Integration and unit tests are bunched together in the `js/test` folder.
 Coverage is not great. They can be run from the command line in Karma with

@@ -26,7 +26,7 @@ const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {
 
 const DivStandings = ({div, season}) => {
     return <div className="table-responsive">
-        <table className="table table-striped table-bordered table-condensed table-hover standings-division">
+        <table className="table table-striped table-bordered table-condensed table-hover">
             <thead>
                 <tr>
                     <th width="100%">{div.name}</th>

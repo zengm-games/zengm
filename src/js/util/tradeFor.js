@@ -4,13 +4,13 @@ const helpers = require('./helpers');
 const league = require('../core/league');
 const trade = require('../core/trade');
 
-module.exports = async ({pid}) => {
+module.exports = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}) => {
     console.log('trade for', pid);
 
-    let teams = await trade.get();
+    let teams;
 
-    // Start new trade for a single player
     if (pid !== undefined) {
+        // Start new trade for a single player, like a Trade For button
         teams = [{
             tid: g.userTid,
             pids: [],
@@ -19,6 +19,17 @@ module.exports = async ({pid}) => {
             tid: undefined,
             pids: [pid],
             dpids: [],
+        }];
+    } else {
+        // Start a new trade with everything specified, from the trading block
+        teams = [{
+            tid: g.userTid,
+            pids: userPids,
+            dpids: userDpids,
+        }, {
+            tid,
+            pids: otherPids,
+            dpids: otherDpids,
         }];
     }
 

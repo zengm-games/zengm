@@ -33,8 +33,8 @@ const PlayerShotLocations = ({season, players = []}) => {
             key: p.pid,
             data: [
                 <PlayerNameLabels
-                    pid={p.pid}
                     injury={p.injury}
+                    pid={p.pid}
                     skills={p.ratings.skills}
                     watch={p.watch}
                 >{p.name}</PlayerNameLabels>,

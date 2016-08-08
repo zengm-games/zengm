@@ -87,6 +87,11 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'GS': {
+        desc: 'Games Started',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
     'L': {
         desc: 'Games Lost',
         sortSequence: ['desc', 'asc'],

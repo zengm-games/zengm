@@ -6,11 +6,7 @@ const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, NewWindowLink} = require('../components/index');
 
 const TeamShotLocations = ({season, teams = []}) => {
-    if (season === undefined) {
-        bbgmViewReact.title('Team Shot Locations');
-    } else {
-        bbgmViewReact.title(`Team Shot Locations - ${season}`);
-    }
+    bbgmViewReact.title(`Team Shot Locations - ${season}`);
 
     const superCols = [{
         title: '',

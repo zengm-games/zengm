@@ -230,6 +230,7 @@ class DataTable extends React.Component {
         }
 
         this.setState({
+            currentPage: 1,
             sortBys,
         });
     }
@@ -244,7 +245,10 @@ class DataTable extends React.Component {
         const perPage = parseInt(event.target.value, 10);
         if (!isNaN(perPage) && perPage !== this.state.perPage) {
             localStorage.perPage = perPage;
-            this.setState({perPage});
+            this.setState({
+                currentPage: 1,
+                perPage,
+            });
         }
     }
 

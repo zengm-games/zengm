@@ -5,15 +5,16 @@ const path = require("path");
 const port = 3000;
 
 const mimeTypes = {
+    '.bmp': 'image/bmp',
     '.css': 'text/css',
+    '.gif': 'image/gif',
+    '.html': 'text/html',
+    '.ico': 'image/x-icon',
+    '.jpeg': 'image/jpeg',
     '.js': 'text/javascript',
     '.map': 'application/json',
-    '.html': 'text/html',
-    '.woff': 'application/font-woff',
     '.png': 'image/png',
-    '.jpeg': 'image/jpeg',
-    '.bmp': 'image/bmp',
-    '.gif': 'image/gif',
+    '.woff': 'application/font-woff',
 };
 const sendFile = (res, filename) => {
     const ext = path.extname(filename);

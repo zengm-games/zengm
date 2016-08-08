@@ -14,6 +14,7 @@ const mimeTypes = {
     '.jpeg': 'image/jpeg',
     '.bmp': 'image/bmp',
     '.gif': 'image/gif',
+    '.ico': 'image/x-icon',
 };
 const sendFile = (res, filename) => {
     const ext = path.extname(filename);

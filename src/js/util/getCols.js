@@ -45,6 +45,10 @@ const cols = {
         sortType: 'currency',
     },
     'Country': {},
+    'Current Contract': {
+        sortSequence: ['desc', 'asc'],
+        sortType: 'currency',
+    },
     'DPOY': {
         desc: 'Defensive Player of the Year',
         sortType: 'name',
@@ -53,6 +57,10 @@ const cols = {
         desc: 'Defensive',
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
+    },
+    'Desired Contract': {
+        sortSequence: ['desc', 'asc'],
+        sortType: 'currency',
     },
     'Diff': {
         desc: 'Point Differential',

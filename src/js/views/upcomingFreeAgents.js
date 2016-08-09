@@ -1,12 +1,9 @@
 const g = require('../globals');
-const ui = require('../ui');
 const player = require('../core/player');
 const backboard = require('backboard');
-const $ = require('jquery');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
-const components = require('./components');
+const UpcomingFreeAgents = require('./views/UpcomingFreeAgents');
 
 function get(req) {
     let season = helpers.validateSeason(req.params.season);
@@ -25,12 +22,6 @@ function get(req) {
         season,
     };
 }
-
-const mapping = {
-    players: {
-        create: options => options.data,
-    },
-};
 
 async function updateUpcomingFreeAgents(inputs) {
     let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(0));
@@ -60,28 +51,9 @@ async function updateUpcomingFreeAgents(inputs) {
     };
 }
 
-function uiFirst(vm) {
-    ui.title("Upcoming Free Agents");
-
-    ko.computed(() => {
-        ui.datatable($("#upcoming-free-agents"), 4, vm.players().map(p => {
-            // The display: none for mood allows sorting, somehow
-            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.ratings.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), `${helpers.formatCurrency(p.contract.amount, "M")} thru ${p.contract.exp}`, `${helpers.formatCurrency(p.contractDesired.amount, "M")} thru ${p.contractDesired.exp}`];
-        }));
-    }).extend({throttle: 1});
-
-    ui.tableClickableRows($("#upcoming-free-agents"));
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("upcoming-free-agents-dropdown", ["seasonsUpcoming"], [vm.season()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "upcomingFreeAgents",
     get,
-    mapping,
     runBefore: [updateUpcomingFreeAgents],
-    uiFirst,
-    uiEvery,
+    Component: UpcomingFreeAgents,
 });

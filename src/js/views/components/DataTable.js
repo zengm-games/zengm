@@ -49,7 +49,7 @@ const Header = ({cols, handleColClick, sortBys, superCols}) => {
 };
 
 const Row = clickable(({clicked, row, toggleClicked}) => {
-    return <tr className={classNames(row.classNames, {warning: clicked})} onClick={toggleClicked.bind(this)}>
+    return <tr className={classNames(row.classNames, {warning: clicked})} onClick={toggleClicked}>
         {row.data.map((value, i) => <td key={i}>{value}</td>)}
     </tr>;
 });

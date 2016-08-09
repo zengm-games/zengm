@@ -9,10 +9,12 @@ module.exports = Component => {
             };
         }
 
-        toggleClicked(clickedNode) {
+        toggleClicked(event) {
+            const ignoredElements = ['A', 'BUTTON', 'SELECT'];
+
             // Don't toggle the row if a link was clicked.
-            if (clickedNode.target.nodeName === 'A') {
-                return true;
+            if (ignoredElements.indexOf(event.target.nodeName) > -1) {
+                return;
             }
 
             this.setState({
@@ -21,7 +23,7 @@ module.exports = Component => {
         }
 
         render() {
-            return <Component {...this.props} {...this.state} toggleClicked={clickedNode => this.toggleClicked(clickedNode)} />;
+            return <Component {...this.props} {...this.state} toggleClicked={event => this.toggleClicked(event)} />;
         }
     };
 };

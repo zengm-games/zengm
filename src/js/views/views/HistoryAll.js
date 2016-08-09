@@ -58,10 +58,8 @@ const HistoryAll = ({seasons = []}) => {
          * Special cases for team names.
          */
 
-        /*
-         * Champ
-         */
-
+        // Champ
+        //
         // Wrap it in a SPAN.
         let champEl = <span>{teamName(s.champ, s.season)}{countText}</span>;
 
@@ -73,10 +71,7 @@ const HistoryAll = ({seasons = []}) => {
             }
         }
 
-        /*
-         * Runner up
-         */
-
+        // Runner up
         let runnerUpEl = teamName(s.runnerUp, s.season);
 
         // "Runner up" is our team.

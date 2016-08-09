@@ -101,6 +101,11 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'lastTen',
     },
+    'Last Season': {
+        desc: 'Last Season with Team',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
     'League Champion': {},
     'M': {
         desc: 'Made',

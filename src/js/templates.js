@@ -41,7 +41,6 @@ module.exports = {
     playoffs: fs.readFileSync(__dirname + '/../templates/playoffs.html', 'utf8'),
     resetPassword: fs.readFileSync(__dirname + '/../templates/resetPassword.html', 'utf8'),
     teamFinances: fs.readFileSync(__dirname + '/../templates/teamFinances.html', 'utf8'),
-    teamHistory: fs.readFileSync(__dirname + '/../templates/teamHistory.html', 'utf8'),
     teamRecords: fs.readFileSync(__dirname + '/../templates/teamRecords.html', 'utf8'),
     teamStatDists: fs.readFileSync(__dirname + '/../templates/teamStatDists.html', 'utf8'),
     transactions: fs.readFileSync(__dirname + '/../templates/transactions.html', 'utf8'),

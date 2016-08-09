@@ -388,7 +388,7 @@ class Roster extends React.Component {
                             {showTradeFor ? <th>Trade For</th> : null}
                         </tr>
                     </thead>
-                    <tbody id="roster-tbody">
+                    <tbody>
                         {players.map((p, i) => {
                             const handleReorderClick = this.handleReorderClick.bind(this, p.pid);
                             return <RosterRow

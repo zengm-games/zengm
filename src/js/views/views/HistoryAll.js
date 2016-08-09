@@ -60,11 +60,7 @@ const HistoryAll = ({seasons = []}) => {
 
     return <div>
         <h1>League History <NewWindowLink /></h1>
-
-        <p>More:
-            <a data-bind="attrLeagueUrl: {href: ['team_records']}">Team Records</a> |
-            <a data-bind="attrLeagueUrl: {href: ['awards_records']}">Awards Records</a>
-        </p>
+        <p>More: <a href={helpers.leagueUrl(['team_records'])}>Team Records</a> | <a href={helpers.leagueUrl(['awards_records'])}>Awards Records</a></p>
 
         <DataTable
             cols={cols}

@@ -34,7 +34,7 @@ const UpcomingFreeAgents = ({players = [], season}) => {
     });
 
     return <div>
-        <Dropdown view="team_history" fields={["seasonsUpcoming"]} values={[season]} />
+        <Dropdown view="upcoming_free_agents" fields={["seasonsUpcoming"]} values={[season]} />
         <h1>Upcoming Free Agents <NewWindowLink /></h1>
         <p>More: <a href={helpers.leagueUrl(['free_agents'])}>Current Free Agents</a></p>
 

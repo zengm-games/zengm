@@ -34,7 +34,6 @@ module.exports = {
     negotiationList: fs.readFileSync(__dirname + '/../templates/negotiationList.html', 'utf8'),
     newLeague: fs.readFileSync(__dirname + '/../templates/newLeague.html', 'utf8'),
     player: fs.readFileSync(__dirname + '/../templates/player.html', 'utf8'),
-    playerFeats: fs.readFileSync(__dirname + '/../templates/playerFeats.html', 'utf8'),
     playerRatingDists: fs.readFileSync(__dirname + '/../templates/playerRatingDists.html', 'utf8'),
     playerStatDists: fs.readFileSync(__dirname + '/../templates/playerStatDists.html', 'utf8'),
     playerStats: fs.readFileSync(__dirname + '/../templates/playerStats.html', 'utf8'),

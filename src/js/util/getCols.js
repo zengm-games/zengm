@@ -100,6 +100,11 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'GmSc': {
+        desc: 'Game Score',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
     'L': {
         desc: 'Games Lost',
         sortSequence: ['desc', 'asc'],
@@ -139,6 +144,9 @@ const cols = {
         desc: "Opponent's Points",
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
+    },
+    'Opp': {
+        desc: 'Opponent',
     },
     'Off': {
         desc: 'Offensive',
@@ -206,12 +214,16 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'Result': {},
     'Retired': {},
     'Revenue (YTD)': {
         sortSequence: ['desc', 'asc'],
         sortType: 'currency',
     },
     'Runner Up': {},
+    'Season': {
+        sortSequence: ['desc', 'asc'],
+    },
     'Skills': {},
     'Stl': {
         desc: 'Steals',

@@ -41,6 +41,9 @@ License Agreement from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 ### Step 1 - Installing
 
+Since `tools/server.js` uses ES6 syntax throughout, it is recommended that you
+have at least Node v6 installed.
+
 All of the tooling used in development can be retrieved by installing
 [npm](https://www.npmjs.com/) and running
 

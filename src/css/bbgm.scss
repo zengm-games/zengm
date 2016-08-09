@@ -1,0 +1,798 @@
+@import 'bootstrap';
+@import 'DT_bootstrap';
+@import 'bbgm-notifications';
+
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+
+footer {
+  color: #777;
+}
+
+.rev {
+  font-size: 9px;
+  margin-top: -7px;
+}
+
+.navbar-brand {
+  img {
+    vertical-align: top;
+  }
+
+  span {
+    padding-left: 5px;
+    float: right;
+  }
+}
+
+// This is like navbar-text, but with different margins so two lines of text can
+// fit, and with no responsive stuff so it always shows in the navbar.
+.navbar-text-two-line-no-collapse {
+  color: #777;
+  float: left;
+  margin: 6px 15px 7px;
+}
+
+// This is a copy of the navbar-nav styles, with no responsive stuff.
+.navbar-collapse {
+  .navbar-nav-no-collapse.navbar-left:first-child {
+    margin-left: -15px;
+  }
+
+  .navbar-nav-no-collapse.navbar-right:last-child {
+    margin-right: -15px;
+  }
+}
+
+.navbar-nav-no-collapse {
+  margin: 8px -15px;
+
+  > li {
+    > a {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      line-height: 18px;
+    }
+
+    > .dropdown-menu {
+      margin-top: 0;
+      border-top-right-radius: 0;
+      border-top-left-radius: 0;
+    }
+  }
+}
+
+.navbar-nav-no-collapse {
+  float: left;
+  margin: 0;
+
+  > li {
+    float: left;
+  }
+
+  > li > a {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+}
+
+.navbar-default {
+  .navbar-nav-no-collapse {
+    > li > a {
+      color: #777;
+
+      &:hover,
+      &:focus {
+        color: #333;
+        background-color: transparent;
+      }
+    }
+
+    > .active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: #555;
+        background-color: #e7e7e7;
+      }
+    }
+
+    > .disabled > a {
+      &,
+      &:hover,
+      &:focus {
+        color: #ccc;
+        background-color: transparent;
+      }
+    }
+
+    > .dropdown > a {
+      &:hover .caret,
+      &:focus .caret {
+        border-top-color: #333;
+        border-bottom-color: #333;
+      }
+
+      .caret {
+        border-top-color: #777;
+        border-bottom-color: #777;
+      }
+    }
+
+    > .open > a {
+      &,
+      &:hover,
+      &:focus {
+        background-color: #e7e7e7;
+        color: #555;
+      }
+    }
+
+    > .open > a {
+      .caret,
+      &:hover .caret,
+      &:focus .caret {
+        border-top-color: #555;
+        border-bottom-color: #555;
+      }
+    }
+  }
+}
+
+.god-mode {
+  background-color: #563d7c !important;
+  color: #fff !important;
+
+  &:hover,
+  &:focus {
+    background-color: #4a356b !important;
+  }
+}
+
+.god-mode-text {
+  padding: 0 3px;
+}
+
+// For the user/login widget
+.user-menu {
+  display: block;
+  padding: 16px 15px;
+  margin-right: -15px; // No right margin, like navbar-brand's left margin
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+// http://stackoverflow.com/a/20839087/786644
+.navbar-link .visible-lg {
+  display: none !important;
+}
+
+@media (min-width: 1200px) {
+  .navbar-link .visible-lg {
+    display: inline-block !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .user-menu {
+    margin-left: -15px; // Move closer to hamburger menu
+  }
+}
+
+// These colors are copied from the default "success" button.
+#play-button-link {
+  color: #fff;
+  background-color: #5cb85c;
+
+  &:hover,
+  &:focus {
+    background-color: #47a447;
+  }
+
+  b.caret {
+    border-top-color: #fff;
+  }
+}
+
+// This is for keyboard shortcuts in dropdowns
+.dropdown-menu > li > a {
+  position: relative;
+  padding-right: 70px;
+
+  > span.kbd {
+    position: absolute;
+    right: 20px;
+    top: 3px;
+  }
+
+  &:hover > .text-muted {
+    color: #ccc;
+  }
+}
+
+ul.dashboard-boxes {
+  list-style: none;
+  margin: 0 -1em 0 0;
+  padding: 0;
+
+  li {
+    float: left;
+    margin: 1em 1em 0 0;
+    position: relative;
+    overflow: hidden;
+
+    strong {
+      white-space: nowrap;
+    }
+
+    a.league {
+      display: block;
+      height: 60px;
+      padding: 2px 8px 6px;
+      text-align: left;
+      width: 151px;
+
+      &:hover {
+        color: #000;
+      }
+    }
+
+    form.delete button {
+      border-radius: 0 4px;
+      position: absolute;
+      right: 5px;
+      top: 0;
+    }
+
+    &.dashboard-box-new {
+      a {
+        color: #fff;
+
+        &:hover {
+          color: #fff;
+        }
+      }
+
+      h2 {
+        font-size: 20px;
+        line-height: 26px;
+        margin-top: 1px;
+      }
+    }
+  }
+}
+
+.negotiation-team-years {
+  width: 110px;
+}
+
+.negotiation-team-amount {
+  width: 180px;
+}
+
+// From the Bootstrap offcanvas example
+// http://getbootstrap.com/examples/offcanvas/
+@media screen and (max-width: 768px) {
+  .row-offcanvas {
+    position: relative;
+  }
+
+  .row-offcanvas-right .sidebar-offcanvas {
+    right: -100%;
+  }
+
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .row-offcanvas-force {
+    position: relative;
+  }
+
+  .row-offcanvas-right-force .sidebar-offcanvas-force {
+    right: -100%;
+  }
+
+  .sidebar-offcanvas-force {
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+}
+
+.help-icon {
+  cursor: pointer;
+  font-size: 13px;
+}
+
+table {
+  white-space: nowrap;
+}
+
+.table-bordered {
+  tbody tr.separator td {
+    border-bottom: 1px solid #888;
+  }
+
+  thead tr:last-child th {
+    border-bottom: 1px solid #888;
+  }
+
+  tfoot tr:first-child th {
+    border-top: 1px solid #888;
+  }
+}
+
+.roster-handle {
+  cursor: pointer;
+  max-width: 36px;
+  min-width: 36px;
+  width: 36px;
+}
+
+.roster-starter {
+  color: #428bca;
+}
+
+.roster-bench {
+  color: #5bc0de;
+}
+
+#game-log-list {
+  tbody td {
+    padding: 0;
+  }
+
+  td a {
+    color: #3a87ad;
+    display: block;
+    // Expand to encompass normal td padding, which was set to 0 here above.
+    padding: 4px 5px;
+    text-decoration: none;
+  }
+}
+
+#game-log-list tbody tr:hover td,
+.messages-table tbody tr:hover td {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  text-decoration: none;
+}
+
+.game-log-score table {
+  margin-top: 15px;
+  width: auto;
+}
+
+.game-log-four-factors table {
+  margin-top: 15px;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  .game-log-score {
+    float: left;
+    margin-right: 30px;
+  }
+
+  .game-log-four-factors {
+    float: left;
+  }
+}
+
+.schedule-row {
+  color: #000;
+  font-size: 16px;
+}
+
+.schedule-results {
+  float: left;
+  width: 135px;
+  text-align: center;
+}
+
+.schedule-wl {
+  font-size: 22px;
+  text-decoration: underline;
+  width: 26px;
+  float: left;
+  text-align: center;
+}
+
+.schedule-score {
+  margin-left: 6px;
+  font-size: 14px;
+  // so bottom aligns despite float
+  line-height: 36px;
+}
+
+.schedule-at {
+  font-size: 22px;
+}
+
+.table-nonfluid {
+  width: auto;
+}
+
+// Auto width seems to work well..
+//
+// select.season {
+//   width: 125px;
+// }
+// select.seasons {
+//   width: 125px;
+// }
+// select.past-x {
+//   width: 135px;
+// }
+// select.teams {
+//   width: 203px;
+// }
+
+#trade-summary {
+  background-color: #fff;
+
+  form {
+    margin-bottom: 5px;
+  }
+}
+
+.select-team {
+  width: 203px;
+}
+
+.player-picture {
+  height: 150px;
+  float: left;
+  margin-right: 10px;
+  width: 100px;
+}
+
+#player-awards {
+  white-space: normal;
+}
+
+.team-picture {
+  display: none; // Hide by default, shown in views/roster.js
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-right: 10px;
+  margin-top: 12px;
+  width: 120px;
+  height: 120px;
+  float: left;
+}
+
+.skill {
+  cursor: default;
+  font-size: 10px;
+  line-height: 18px;
+  margin-left: 5px;
+  vertical-align: 2%;
+}
+
+.skills-alone {
+  margin-left: -5px;
+  vertical-align: 2%;
+}
+
+.watch {
+  color: #aaa;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.watch-active {
+  color: #d9534f;
+}
+
+.pt-modifier-select {
+  margin: 0;
+  width: auto;
+  padding: 0;
+  height: 20px;
+}
+
+// These colors are duplicated from Roster.js
+.pt-modifier-select {
+  option[value="1"] {
+    background-color: #ccc;
+  }
+
+  option[value="1.75"] {
+    background-color: #070;
+    color: #fff;
+  }
+
+  option[value="1.25"] {
+    background-color: #0f0;
+  }
+
+  option[value="0.75"] {
+    background-color: #ff0;
+  }
+
+  option[value="0"] {
+    background-color: #a00;
+    color: #fff;
+  }
+}
+
+.achievements {
+  margin: -4px;
+
+  .list-group-item {
+    border-radius: 0;
+    border: 0;
+    padding: 0;
+
+    div {
+      border-radius: 4px;
+      margin: 4px;
+      padding: 10px 15px;
+    }
+  }
+}
+
+.bar-graph-small {
+  height: 40px;
+}
+
+.bar-graph-medium {
+  height: 60px;
+}
+
+.bar-graph-large {
+  height: 100px;
+}
+
+// From bootstrap
+.bar-graph-1 { background-color: #049cdb; }
+.bar-graph-2 { background-color: #f89406; }
+.bar-graph-3 { background-color: #9d261d; }
+.bar-graph-4 { background-color: #ffc40d; }
+.bar-graph-5 { background-color: #7a43b6; }
+.bar-graph-6 { background-color: #46a546; }
+.bar-graph-7 { background-color: #c3325f; }
+.bar-graph-8 { background-color: #444; }
+
+.icon-question-sign {
+  cursor: pointer;
+}
+
+// Stupid fix for popover in h4
+.popover-content {
+  font-size: 13px;
+  font-weight: normal;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Stupid fix for popover on first run
+.popover-play {
+  width: 276px;
+
+  .popover-title {
+    background-color: #d0e9c6;
+  }
+}
+
+.finances-settings-label {
+  line-height: 32px;
+  padding-right: 1em;
+  text-align: right;
+  width: 100px;
+}
+
+.finances-settings-text {
+  line-height: 32px;
+  padding-left: 1em;
+}
+
+.finances-settings-text-small {
+  font-size: 12px;
+  line-height: 15px;
+  padding-left: 1em;
+}
+
+.finances-settings-field {
+  width: 115px;
+}
+
+.finances-settings button {
+  display: none;
+}
+
+.label-injury {
+  cursor: default;
+  margin-left: 5px;
+  vertical-align: 20%;
+}
+
+.trading-block-offer {
+  margin-top: 2em;
+
+  h2 {
+    float: left;
+    margin-right: .5em;
+  }
+}
+
+.messages-table {
+  table-layout: fixed;
+  width: 100%;
+
+  td {
+    padding: 0;
+
+    a {
+      color: #333;
+      display: block;
+      padding: 4px 5px;
+      text-decoration: none;
+    }
+  }
+
+  .year {
+    width: 40px;
+  }
+
+  .from {
+    width: 130px;
+  }
+
+  .text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: auto;
+  }
+}
+
+.unread {
+  font-weight: bold;
+}
+
+.new_window {
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .new_window {
+    display: none;
+  }
+}
+
+.alert p:last-child {
+  margin-bottom: 0;
+}
+
+.alert-top {
+  margin-top: 20px;
+  padding-bottom: 2px;
+  padding-top: 12px;
+
+  button {
+    margin-top: -4px;
+  }
+}
+
+.alert-changes {
+  h4 {
+    margin-top: 0;
+  }
+
+  ul {
+    margin-bottom: 9px;
+    padding-left: 18px;
+  }
+}
+
+.strong {
+  font-weight: bold;
+}
+
+// HACK so that the td.info class can be overriden in teamHistory (and possibly
+// elsewhere).
+tr.warning > td {
+  background-color: #fcf8e3;
+  border-color: #fbeed5;
+}
+
+// Affix stuff taken from Bootstrap docs and used for the play-by-play in live
+// gameSim.
+//
+// By default it's not affixed in mobile views, so undo that.
+.affix {
+  position: static;
+}
+
+// Show and affix the side nav when space allows it
+@media (min-width: 992px) {
+  // Widen the fixed sidebar
+  .affix,
+  .affix-bottom {
+    width: 213px;
+  }
+
+  .affix {
+    // Undo the static from mobile first approach
+    position: fixed;
+    top: 60px;
+  }
+
+  .affix-bottom {
+    // Undo the static from mobile first approach
+    position: absolute;
+  }
+}
+
+@media (min-width: 1200px) {
+  // Widen the fixed sidebar again
+  .affix-bottom,
+  .affix {
+    width: 360px;
+  }
+}
+
+// Large screen sidebar, adapted from Bootstrap docs
+.bs-sidenav {
+  margin-top: 24px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  border: 1px solid #e7e7e7;
+}
+
+.bs-navheader {
+  color: #777;
+  font-size: 11px;
+  font-weight: bold;
+  margin-top: 14px;
+  padding: 5px 20px;
+  text-transform: uppercase;
+}
+
+.bs-sidebar {
+  .nav {
+    > li > a {
+      display: block;
+      color: #333;
+      padding: 5px 20px;
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        background-color: #e0e0e0;
+        color: #333;
+      }
+    }
+
+    > .active > a,
+    > .active:hover > a,
+    > .active:focus > a {
+      background-color: transparent;
+      border-right: 4px solid #428bca;
+      color: #333;
+      font-weight: bold;
+    }
+  }
+}
+
+#multi-team-menu {
+  background-color: #fff;
+  position: fixed;
+  right: 6px;
+  bottom: 6px;
+}

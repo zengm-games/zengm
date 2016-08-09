@@ -41,7 +41,7 @@ License Agreement from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 ### Step 1 - Installing
 
-All of the tooling used in development can be installed by simply installing
+All of the tooling used in development can be retrieved by installing
 [npm](https://www.npmjs.com/) and running
 
     npm install
@@ -50,19 +50,20 @@ from within this folder.
 
 ### Step 2 - Building
 
-Basketball GM uses the Browserify for JS minification and clean-css for
-CSS minification. To minify everything, run
+Basketball GM uses Browserify for JS minification and clean-css for
+CSS minification. To build the app along with all its assets, run
 
     npm run build
 
 However during development, you probably would rather do
 
-    npm run watch-js
+    npm run start-watch
 
-which will constantly look for changes in your JS files and recompile. Then for
-CSS files, if you go to Tools > Debug Mode (inside the game), it will use the
-raw uncompiled CSS files so you don't need to keep compiling them after each
-change.
+which will start the server and watch JS and CSS files for changes and
+recompile. This simple runs both `npm start` and `npm run watch` together, which
+can be run separately if you wish.
+
+Open `package.json` to see all available scripts.
 
 ### Step 3 - Running
 
@@ -76,7 +77,9 @@ Run
 
     npm start
 
-and point your browser to <http://localhost:3000/>.
+and point your browser to <http://localhost:3000/>. If you use the command
+`npm run start-watch` from above, then running the command `npm start` is not
+necessary.
 
 #### 2. Apache
 
@@ -86,10 +89,10 @@ mod_rewrite enabled. That's how it's done on play.basketball-gm.com.
 
 ### Step 4 - Testing
 
-ESLint is used to enforce some coding standards. It's mostly pretty standard
-Crockfordian stuff. To run ESLint on the entire codebase, run
+ESLint and stylelint are used to enforce some coding standards. To run them on
+the entirecodebase, run
 
-    npm run lint
+    npm run lint-js
 
 Integration and unit tests are bunched together in the `js/test` folder.
 Coverage is not great. They can be run from the command line in Karma with
@@ -155,13 +158,9 @@ For instance, "defensive rebounds" is "drb".
 ### To do on new version
 
 - Make sure tests all pass (if necessary)
-
 - Write database upgrade code in `db.js` (if not already done piecemeal)
-
 - Write key changes in `js/data/changes.js`
-
 - Set version in index.html, CHANGES.md, and README.md, like <http://semver.org/>
-
 - Tag it in git like:
 
         git tag -a v3.0.0-beta.2 -m ''

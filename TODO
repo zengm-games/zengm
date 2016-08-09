@@ -1,4 +1,71 @@
+REACT
+
+go to invalid league # - react error
+
+Trade For buttons -> util/tradeFor
+
+DataTable
+  https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
+    for now, pass sort key as child and it works
+
+is UI updating okay without waiting for this.setState to finish?
+
+abstract games list in schedule and dashboard
+
+add to watch list
+  other ui.js crap
+
+better eslint
+
+when all react
+  https://github.com/reactjs/react-router/issues/2101 to handle transitions smoothly.
+    in the meantime,
+      expose a get that renders the component AFTER loading all data (straight ReactDOM.render, cleaning up any existing React or ko bindings on container)
+      expose an update that updates the data currently rendered
+      see also https://facebook.github.io/react/blog/2015/10/01/react-render-and-top-level-api.html
+  reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
+  require('../components/index') -> require('../components')
+  make sure no data-bind
+  delete templateHelpers
+  delete knockout dependency
+  helper functions that return HTML strings should instead be React components, for safety. migrate/delete any remaining
+    recordAndPlayoffs
+    watchBlock
+    playerNameLabels
+    skillsBlock
+  get rid of bootstrap js
+  get rid of datatables js
+  revisit "trade for" buttons POST
+  references to data-
+  references to vm
+  delete datatables and unused CSS/images
+  get rid of brfs
+  go through ui.js, reevaluate
+  get rid of default params in views
+
+Dropdown
+  updateEvents need to be passed to dropdown to handle season change?
+    could pass season as a prop. anything else require update?
+  "view" parameter is really first URL component, can't that be automatically retrieved?
+
+get rid of debug mode, loadCSS
+
+Trade
+  could be cleaned up a lot
+
+Draft
+  make it cooler
+
+---
+
 hack to fix 0 population bug https://www.reddit.com/r/BasketballGM/comments/4uu0cx/nobody_in_my_league_is_making_a_profit/d5u4qkq?context=3
+
+pressing alt+p rapidly can result in extra games being played
+
+make positions edited in god mode sticky, like custom roster
+
+different height distributions by country https://www.reddit.com/message/messages/644he7
+  even global setting would be nice, for country specific leagues
 
 make FAs less eager to sign with bad teams
   alternative idea to just threshold: https://www.reddit.com/r/nba/comments/4tfaph/i_made_basketball_gm_a_free_basketball_management/d5hqqal
@@ -1022,7 +1089,6 @@ roster
   check release, buy out, trade for
   flatten a bit
   vars.ptModifiers does not need to be observable
-  for some reason, vars.players.injury stuff isnt' observable so days remaining injured doesn't update in a timely manner. very bizarre
 dataTables/grid knockout
   examples
     https://github.com/CogShift/Knockout.Extensions

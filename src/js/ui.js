@@ -323,10 +323,12 @@ function title(text) {
  * @memberOf ui
  * @param  {Object} data An object with several properties: "template" the name of the HTML template file in the templates folder; "container" is the id of the container div (probably content or league_content).
  */
-function update(data) {
+function update(data, react = false) {
     const rendered = templates[data.template];
     const containerEl = document.getElementById(data.container);
-    containerEl.innerHTML = rendered;
+    if (!react) {
+        containerEl.innerHTML = rendered;
+    }
 
     if (data.container === "league_content") {
         const contentEl = document.getElementById("content");
@@ -336,6 +338,7 @@ function update(data) {
         }
     }
     containerEl.dataset.idLoaded = data.template;
+    containerEl.dataset.reactFirstRun = 'false';
 }
 
 // Data tables

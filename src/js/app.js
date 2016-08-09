@@ -29,7 +29,6 @@ require('lib/jquery.dataTables');
 require('lib/jquery.dataTables.bbgmSorting');
 require('lib/jquery.dataTables.bootstrap');
 require('jquery-ui/sortable');
-require('jquery-ui-touch-punch');
 require('./util/templateHelpers');
 require('./api');
 

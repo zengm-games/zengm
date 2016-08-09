@@ -1,8 +1,8 @@
 const g = require('../globals');
 const ui = require('../ui');
 const league = require('../core/league');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
+const Message = require('./views/Message');
 
 function get(req) {
     return {
@@ -10,8 +10,8 @@ function get(req) {
     };
 }
 
-async function updateMessage(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.message.mid() !== inputs.mid) {
+async function updateMessage(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || state.message.mid !== inputs.mid) {
         let message, readThisPageview;
         await g.dbl.tx("messages", "readwrite", async tx => {
             readThisPageview = false;
@@ -47,15 +47,9 @@ async function updateMessage(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Message From ${vm.message.from()}`);
-    }).extend({throttle: 1});
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "message",
     get,
     runBefore: [updateMessage],
-    uiFirst,
+    Component: Message,
 });

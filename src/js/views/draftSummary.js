@@ -1,11 +1,8 @@
 const g = require('../globals');
-const ui = require('../ui');
 const player = require('../core/player');
-const $ = require('jquery');
-const ko = require('knockout');
-const components = require('./components');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
+const DraftSummary = require('./views/DraftSummary');
 
 function get(req) {
     let season = helpers.validateSeason(req.params.season);
@@ -28,16 +25,6 @@ function get(req) {
         season,
     };
 }
-
-function InitViewModel() {
-    this.season = ko.observable();
-}
-
-const mapping = {
-    players: {
-        create: options => options.data,
-    },
-};
 
 async function updateDraftSummary(inputs) {
     // Update every time because anything could change this (unless all players from class are retired)
@@ -69,9 +56,9 @@ async function updateDraftSummary(inputs) {
                 p.currentPot = currentPr.pot;
                 p.currentSkills = currentPr.skills;
             } else {
-                p.currentOvr = "";
-                p.currentPot = "";
-                p.currentSkills = "";
+                p.currentOvr = null;
+                p.currentPot = null;
+                p.currentSkills = [];
             }
             p.pos = currentPr.pos;
 
@@ -88,42 +75,9 @@ async function updateDraftSummary(inputs) {
     };
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`${vm.season()} Draft Summary`);
-    }).extend({throttle: 1});
-
-    ko.computed(() => {
-        const season = vm.season();
-        ui.datatableSinglePage($("#draft-results"), 0, vm.players().map(p => {
-            return [`${p.draft.round}-${p.draft.pick}`, `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`, p.pos, helpers.draftAbbrev(p.draft.tid, p.draft.originalTid, season), String(p.draft.age), String(p.draft.ovr), String(p.draft.pot), `<span class="skills-alone">${helpers.skillsBlock(p.draft.skills)}</span>`, `<a href="${helpers.leagueUrl(["roster", p.currentAbbrev])}">${p.currentAbbrev}</a>`, String(p.currentAge), String(p.currentOvr), String(p.currentPot), `<span class="skills-alone">${helpers.skillsBlock(p.currentSkills)}</span>`, helpers.round(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.hof, p.draft.tid === g.userTid];
-        }), {
-            rowCallback(row, data) {
-                // Highlight HOF players
-                if (data[data.length - 2]) {
-                    row.classList.add("danger");
-                }
-                // Highlight user's team
-                if (data[data.length - 1]) {
-                    row.classList.add("info");
-                }
-            },
-        });
-    }).extend({throttle: 1});
-
-    ui.tableClickableRows($("#draft-results"));
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("draft-summary-dropdown", ["seasons"], [vm.season()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "draftSummary",
     get,
-    InitViewModel,
-    mapping,
     runBefore: [updateDraftSummary],
-    uiFirst,
-    uiEvery,
+    Component: DraftSummary,
 });

@@ -1,13 +1,8 @@
 const g = require('../globals');
-const ui = require('../ui');
 const team = require('../core/team');
-const $ = require('jquery');
-const ko = require('knockout');
-const komapping = require('knockout.mapping');
-const components = require('./components');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
-
+const Standings = require('./views/Standings');
 
 function get(req) {
     return {
@@ -15,31 +10,8 @@ function get(req) {
     };
 }
 
-function InitViewModel() {
-    this.season = ko.observable();
-    this.confs = ko.observable([]);
-}
-
-const mapping = {
-    confs: {
-        create(options) {
-            return new function () {
-                komapping.fromJS(options.data, {
-                    divs: {
-                        key: data => ko.unwrap(data.name),
-                    },
-                    teams: {
-                        key: data => ko.unwrap(data.tid),
-                    },
-                }, this);
-            }();
-        },
-        key: data => ko.unwrap(data.name),
-    },
-};
-
-async function updateStandings(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
+async function updateStandings(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== state.season) {
         const teams = await team.filter({
             attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
             seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
@@ -53,58 +25,58 @@ async function updateStandings(inputs, updateEvents, vm) {
         for (let i = 0; i < g.confs.length; i++) {
             const playoffsRank = [];
             const confTeams = [];
-            let l = 0;
-            for (let k = 0; k < teams.length; k++) {
-                if (g.confs[i].cid === teams[k].cid) {
-                    playoffsRank[teams[k].tid] = l + 1; // Store ranks by tid, for use in division standings
-                    confTeams.push(helpers.deepCopy(teams[k]));
-                    confTeams[l].rank = l + 1;
-                    if (l === 0) {
-                        confTeams[l].gb = 0;
+            let j = 0;
+            for (const t of teams) {
+                if (g.confs[i].cid === t.cid) {
+                    playoffsRank[t.tid] = j + 1; // Store ranks by tid, for use in division standings
+                    confTeams.push(helpers.deepCopy(t));
+                    confTeams[j].rank = j + 1;
+                    if (j === 0) {
+                        confTeams[j].gb = 0;
                     } else {
-                        confTeams[l].gb = helpers.gb(confTeams[0], confTeams[l]);
+                        confTeams[j].gb = helpers.gb(confTeams[0], confTeams[j]);
                     }
-                    if (confTeams[l].tid === g.userTid) {
-                        confTeams[l].highlight = true;
+                    if (confTeams[j].tid === g.userTid) {
+                        confTeams[j].highlight = true;
                     } else {
-                        confTeams[l].highlight = false;
+                        confTeams[j].highlight = false;
                     }
-                    l += 1;
+                    j += 1;
                 }
             }
 
-            confs.push({name: g.confs[i].name, divs: [], teams: confTeams});
+            confs.push({cid: g.confs[i].cid, name: g.confs[i].name, divs: [], teams: confTeams});
 
-            for (let j = 0; j < g.divs.length; j++) {
-                if (g.divs[j].cid === g.confs[i].cid) {
+            for (const div of g.divs) {
+                if (div.cid === g.confs[i].cid) {
                     const divTeams = [];
-                    let l = 0;
-                    for (let k = 0; k < teams.length; k++) {
-                        if (g.divs[j].did === teams[k].did) {
-                            divTeams.push(helpers.deepCopy(teams[k]));
-                            if (l === 0) {
-                                divTeams[l].gb = 0;
+                    let j = 0;
+                    for (const t of teams) {
+                        if (div.did === t.did) {
+                            divTeams.push(helpers.deepCopy(t));
+                            if (j === 0) {
+                                divTeams[j].gb = 0;
                             } else {
-                                divTeams[l].gb = helpers.gb(divTeams[0], divTeams[l]);
+                                divTeams[j].gb = helpers.gb(divTeams[0], divTeams[j]);
                             }
 
-                            if (playoffsRank[divTeams[l].tid] <= numPlayoffTeams / 2) {
-                                divTeams[l].playoffsRank = playoffsRank[divTeams[l].tid];
+                            if (playoffsRank[divTeams[j].tid] <= numPlayoffTeams / 2) {
+                                divTeams[j].playoffsRank = playoffsRank[divTeams[j].tid];
                             } else {
-                                divTeams[l].playoffsRank = null;
+                                divTeams[j].playoffsRank = null;
                             }
 
-                            if (divTeams[l].tid === g.userTid) {
-                                divTeams[l].highlight = true;
+                            if (divTeams[j].tid === g.userTid) {
+                                divTeams[j].highlight = true;
                             } else {
-                                divTeams[l].highlight = false;
+                                divTeams[j].highlight = false;
                             }
 
-                            l += 1;
+                            j += 1;
                         }
                     }
 
-                    confs[i].divs.push({did: g.divs[j].did, name: g.divs[j].name, teams: divTeams});
+                    confs[i].divs.push({did: div.did, name: div.name, teams: divTeams});
                 }
             }
         }
@@ -133,24 +105,9 @@ async function updateStandings(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Standings - ${vm.season()}`);
-    }).extend({throttle: 1});
-
-    ui.tableClickableRows($(".standings-division"));
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("standings-dropdown", ["seasons"], [vm.season()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "standings",
     get,
-    InitViewModel,
-    mapping,
     runBefore: [updateStandings],
-    uiFirst,
-    uiEvery,
+    Component: Standings,
 });

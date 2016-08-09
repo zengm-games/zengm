@@ -1,5 +1,6 @@
-const g = require('../globals');
 const ko = require('knockout');
+const ReactDOM = require('react-dom');
+const g = require('../globals');
 const eventLog = require('./eventLog');
 
 /**
@@ -271,6 +272,8 @@ function globalError(req) {
 
     viewHelpers.beforeNonLeague();
 
+    ReactDOM.unmountComponentAtNode(document.getElementById("league_content"));
+
     ui.update({
         container: "content",
         template: "error",
@@ -294,6 +297,8 @@ async function leagueError(req) {
     const viewHelpers = require('./viewHelpers');
 
     await viewHelpers.beforeLeague(req);
+
+    ReactDOM.unmountComponentAtNode(document.getElementById("league_content"));
 
     ui.update({
         container: "league_content",
@@ -586,7 +591,7 @@ function draftAbbrev(tid, originalTid, season) {
 }
 
 function pickDesc(pick) {
-    let desc = `${pick.season} ${pick.round === 1 ? "first" : "second"} round pick`;
+    let desc = `${pick.season} ${pick.round === 1 ? "1st" : "2nd"} round pick`;
     if (pick.tid !== pick.originalTid) {
         desc += ` (from ${g.teamAbbrevsCache[pick.originalTid]})`;
     }
@@ -595,6 +600,10 @@ function pickDesc(pick) {
 }
 
 function ordinal(x) {
+    if (x === undefined || x === null) {
+        return null;
+    }
+
     let suffix;
     if (x >= 11 && x <= 13) {
         suffix = "th";
@@ -621,7 +630,7 @@ function ordinal(x) {
  * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
  * @return {Promise.<Array.<Object>>} Resolves to a list of game objects.
  */
-async function gameLogList(abbrev, season, gid, loadedGames) {
+async function gameLogList(abbrev, season, gid, loadedGames = []) {
     const out = validateAbbrev(abbrev);
     const tid = out[0];
     abbrev = out[1];
@@ -908,6 +917,38 @@ function roundsWonText(playoffRoundsWon) {
     return "";
 }
 
+function roundWinp(arg) {
+    let output = parseFloat(arg).toFixed(3);
+
+    if (output[0] === "0") {
+        // Delete leading 0
+        output = output.slice(1, output.length);
+    } else {
+        // Delete trailing digit if no leading 0
+        output = output.slice(0, output.length - 1);
+    }
+
+    return output;
+}
+
+function recordAndPlayoffs(abbrev, season, won, lost, playoffRoundsWon, option) {
+    let extraText = "";
+    if (playoffRoundsWon >= 0) {
+        extraText = roundsWonText(playoffRoundsWon).toLowerCase();
+    }
+
+    let output = '';
+    if (option !== "noSeason") {
+        output += `<a href="${leagueUrl(["roster", abbrev, season])}">${season}</a>: `;
+    }
+    output += `<a href="${leagueUrl(["standings", season])}">${won}-${lost}</a>`;
+    if (extraText) {
+        output += `, <a href="${leagueUrl(["playoffs", season])}">${extraText}</a>`;
+    }
+
+    return output;
+}
+
 module.exports = {
     validateAbbrev,
     getAbbrev,
@@ -946,4 +987,6 @@ module.exports = {
     yearRanges,
     maybeReuseTx,
     roundsWonText,
+    roundWinp,
+    recordAndPlayoffs,
 };

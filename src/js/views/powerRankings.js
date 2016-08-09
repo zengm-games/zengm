@@ -1,18 +1,9 @@
 const g = require('../globals');
-const ui = require('../ui');
 const team = require('../core/team');
 const backboard = require('backboard');
 const Promise = require('bluebird');
-const $ = require('jquery');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
-
-const mapping = {
-    teams: {
-        create: options => options.data,
-    },
-};
+const bbgmViewReact = require('../util/bbgmViewReact');
+const PowerRankings = require('./views/PowerRankings');
 
 async function updatePowerRankings(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
@@ -88,36 +79,8 @@ async function updatePowerRankings(inputs, updateEvents) {
     }
 }
 
-function uiFirst(vm) {
-    ui.title("Power Rankings");
-
-    ko.computed(() => {
-        ui.datatableSinglePage($("#power-rankings"), 0, vm.teams().map(t => {
-            const performanceRank = t.gp > 0 ? String(t.performanceRank) : "-";
-            return [String(t.overallRank), performanceRank, String(t.talentRank), `<a href="${helpers.leagueUrl(["roster", t.abbrev])}">${t.region} ${t.name}</a>`, String(t.won), String(t.lost), t.lastTen, helpers.round(t.diff, 1), t.tid === g.userTid];
-        }), {
-            rowCallback(row, data) {
-                // Show point differential in green or red for positive or negative
-                if (data[data.length - 2] > 0) {
-                    row.childNodes[row.childNodes.length - 1].classList.add("text-success");
-                } else if (data[data.length - 2] < 0) {
-                    row.childNodes[row.childNodes.length - 1].classList.add("text-danger");
-                }
-
-                // Highlight user team
-                if (data[data.length - 1]) {
-                    row.classList.add("info");
-                }
-            },
-        });
-    }).extend({throttle: 1});
-
-    ui.tableClickableRows($("#power-rankings"));
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "powerRankings",
-    mapping,
     runBefore: [updatePowerRankings],
-    uiFirst,
+    Component: PowerRankings,
 });

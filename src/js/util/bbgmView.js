@@ -4,6 +4,7 @@ const Promise = require('bluebird');
 const $ = require('jquery');
 const ko = require('knockout');
 const komapping = require('knockout.mapping');
+const ReactDOM = require('react-dom');
 const _ = require('underscore');
 const helpers = require('./helpers');
 const viewHelpers = require('./viewHelpers');
@@ -125,6 +126,11 @@ function get(fnBeforeReq, fnGet, fnUpdate) {
             inputs = {};
         }
 
+        const containerEl = document.getElementById('content');
+        const otherContainerEl = document.getElementById('league_content');
+        if (containerEl) { ReactDOM.unmountComponentAtNode(containerEl); }
+        if (otherContainerEl) { ReactDOM.unmountComponentAtNode(otherContainerEl); }
+
         // Check for errors/redirects
         if (inputs.errorMessage !== undefined) {
             return helpers.error(inputs.errorMessage, cb);
@@ -177,6 +183,8 @@ function init(args) {
     args.runAfter = args.runAfter !== undefined ? args.runAfter : [];
     args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
     args.mapping = args.mapping !== undefined ? args.mapping : {};
+
+    if (args.Component) { throw new Error('Use bbgmViewReact, dumbass'); }
 
     const output = {};
     output.update = update(args);

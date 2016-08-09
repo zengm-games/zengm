@@ -15,11 +15,17 @@
   "scripts": {
     "start": "node tools/server.js",
     "build": "node tools/build.js && npm run build-js",
-    "test": "karma start",
-    "lint": "eslint src/js/** tools/**",
+    "start-watch": "concurrently --kill-others 'npm run start' 'npm run watch-css' 'npm run watch-js'",
+    "watch": "concurrently --kill-others 'npm run watch-css' 'npm run watch-js'",
+    "watch-css": "node tools/watch-css.js",
     "build-js": "node tools/build-js.js",
     "minify-js": "node tools/minify-js.js",
-    "watch-js": "watchify -d src/js/app.js -o build/gen/app.js",
+    "watch-js": "watchify -d src/js/app.js -o build/gen/app.js -v",
+    "lint": "concurrently --raw 'npm run lint-css' 'npm run lint-js'",
+    "lint-css": "stylelint 'src/css/*.*css'",
+    "lint-js": "eslint src/js/** tools/**",
+    "lint-js-fix": "eslint src/js/** tools/** --fix",
+    "test": "karma start",
     "copy-mocha": "cp node_modules/mocha/mocha.css build/gen/mocha.css && cp node_modules/mocha/mocha.js build/gen/mocha.js",
     "build-test": "npm run copy-mocha && browserify -d src/js/test/app.js -o build/gen/app-test.js",
     "watch-test": "npm run copy-mocha && watchify -d src/js/test/app.js -o build/gen/app-test.js"
@@ -27,15 +33,19 @@
   "dependencies": {
     "backboard": "1.0.5",
     "bluebird": "3.3.4",
+    "classnames": "2.2.5",
     "facesjs": "1.0.0",
     "indexeddb-getall-shim": "1.2.2",
     "jquery": "2.*",
-    "jquery-ui": "1.10.*",
-    "jquery-ui-touch-punch": "0.2.3",
+    "jquery-ui": "1.10.x",
     "knockout": "3.2.0",
     "knockout.mapping": "2.4.3",
-    "lodash.sortby": "4.5.0",
+    "lodash.orderby": "^4.5.1",
     "postscribe": "2.0.6",
+    "react": "15.2.1",
+    "react-addons-text-content": "0.0.4",
+    "react-bootstrap": "0.30.0",
+    "react-dom": "15.2.1",
     "source-map-support": "0.4.2",
     "underscore": "1.8.3"
   },
@@ -58,13 +68,18 @@
     "babel-plugin-transform-es2015-shorthand-properties": "6.8.0",
     "babel-plugin-transform-es2015-spread": "6.8.0",
     "babel-plugin-transform-es2015-template-literals": "6.8.0",
+    "babel-preset-react": "6.11.1",
     "babelify": "7.3.0",
     "brfs": "1.4.3",
     "browserify": "13.0.1",
     "browserify-shim": "3.8.12",
     "cheerio": "0.20.0",
+    "chokidar": "^1.6.0",
     "clean-css": "3.4.18",
+    "concurrently": "^2.2.0",
+    "envify": "3.4.1",
     "eslint": "3.1.1",
+    "eslint-plugin-react": "^5.2.2",
     "exorcist": "0.4.0",
     "fs-extra": "0.30.0",
     "karma": "1.1.1",
@@ -74,7 +89,10 @@
     "karma-mocha": "1.1.1",
     "karma-mocha-reporter": "2.0.4",
     "mocha": "2.5.3",
+    "node-sass": "^3.8.0",
     "replace": "0.3.0",
+    "stylelint": "^7.1.0",
+    "stylelint-config-standard": "^12.0.0",
     "watchify": "3.7.0"
   },
   "browser": {
@@ -167,6 +185,9 @@
     ]
   },
   "babel": {
+    "presets": [
+      "react"
+    ],
     "plugins": [
       "transform-es2015-template-literals",
       "transform-es2015-literals",

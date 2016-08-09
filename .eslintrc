@@ -1,12 +1,15 @@
 {
     "parser": "babel-eslint",
+    "plugins": [
+        "eslint-plugin-react"
+    ],
     "env": {
         "browser": true,
         "node": true,
         "amd": false,
         "mocha": true,
         "jasmine": false
-   },
+    },
     "rules": {
         "no-alert": "off",
         "no-array-constructor": "error",
@@ -172,6 +175,9 @@
         "unicode-bom": "error",
         "no-prototype-builtins": "off",
 
-        "rest-spread-spacing": "error"
+        "rest-spread-spacing": "error",
+
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error"
    }
 }

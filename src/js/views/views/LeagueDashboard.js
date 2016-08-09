@@ -8,9 +8,15 @@ const {NewWindowLink, PlayerNameLabels, PlayoffMatchup, RatingWithChange} = requ
 const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed = [], confTeams = [], leagueLeaders = {ast: {}, pts: {}, trb: {}}, lost, messages = [], name, oppPts, oppPtsRank, payroll, playoffRoundsWon, playoffsByConference, profit, pts, ptsRank, rank, region, revenue, salaryCap, season, series, seriesTitle, showPlayoffSeries, starters = [], teamLeaders = {ast: {}, pts: {}, trb: {}}, trb, trbRank, upcoming = [], won}) => {
     bbgmViewReact.title('Dashboard');
 
+    // Show the remaining number of games, only for the regular season.
     const gamesPlayed = won + lost;
     const gamesRemaining = g.numGames - gamesPlayed;
     const percentComplete = gamesPlayed / gamesRemaining;
+
+    let gamesRemainingTag = null;
+    if (g.phase === g.PHASE.REGULAR_SEASON) {
+        gamesRemainingTag = <p>{gamesRemaining} games remaining ({(percentComplete * 100).toFixed(1)}% complete)</p>;
+    }
 
     return <div>
         <h1>{region} {name} Dashboard <NewWindowLink /></h1>
@@ -120,7 +126,7 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed = [], confT
                         :
                             <div>
                                 <h3>Upcoming Games</h3>
-                                <p>{gamesRemaining} games remaining ({(percentComplete * 100).toFixed(1)}% complete)</p>
+                                {gamesRemainingTag}
                                 <ul className="list-group" style={{marginBottom: '6px'}}>
                                     {upcoming.map(game => <li key={game.gid} className="list-group-item schedule-row">
                                         <a href={helpers.leagueUrl(['roster', game.teams[0].abbrev])}>{game.teams[0].region}</a>

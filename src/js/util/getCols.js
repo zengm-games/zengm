@@ -10,6 +10,11 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    '+/-': {
+        desc: 'Plus/Minus',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
     'A': {
         desc: 'Attempted',
         sortSequence: ['desc', 'asc'],

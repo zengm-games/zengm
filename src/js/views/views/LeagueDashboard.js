@@ -120,7 +120,7 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed = [], confT
                         :
                             <div>
                                 <h3>Upcoming Games</h3>
-                                <div>{gamesRemaining} games remaining ({(percentComplete * 100).toFixed(1)}% complete)</div>
+                                <p>{gamesRemaining} games remaining ({(percentComplete * 100).toFixed(1)}% complete)</p>
                                 <ul className="list-group" style={{marginBottom: '6px'}}>
                                     {upcoming.map(game => <li key={game.gid} className="list-group-item schedule-row">
                                         <a href={helpers.leagueUrl(['roster', game.teams[0].abbrev])}>{game.teams[0].region}</a>

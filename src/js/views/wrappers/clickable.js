@@ -9,14 +9,19 @@ module.exports = Component => {
             };
         }
 
-        toggleClicked() {
+        toggleClicked(clickedNode) {
+            // Don't toggle the row if a link was clicked.
+            if (clickedNode.target.nodeName === 'A') {
+                return true;
+            }
+
             this.setState({
                 clicked: !this.state.clicked,
             });
         }
 
         render() {
-            return <Component {...this.props} {...this.state} toggleClicked={() => this.toggleClicked()} />;
+            return <Component {...this.props} {...this.state} toggleClicked={clickedNode => this.toggleClicked(clickedNode)} />;
         }
     };
 };

@@ -21,7 +21,7 @@ const PlayerNameLabels = ({children, injury, pid, skills, watch}) => {
         {playerName}
         {injuryIcon}
         <SkillsBlock skills={skills} />
-        {watch !== undefined ? <WatchBlock pid={pid} watch={watch} /> : null}
+        {watch === true ? <WatchBlock pid={pid} watch={watch} /> : null}
     </span>;
 };
 PlayerNameLabels.propTypes = {

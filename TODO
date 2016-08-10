@@ -1,5 +1,8 @@
 REACT
 
+PlayerStats
+  career totals null select thing
+
 go to invalid league # - react error
 
 Trade For buttons -> util/tradeFor

@@ -19,7 +19,7 @@ const awardName = (award, season) => {
     if (award.tid === g.userTid) {
         return {
             classNames: 'info',
-            data: ret,
+            value: ret,
         };
     } else {
         return ret;
@@ -58,7 +58,7 @@ const HistoryAll = ({seasons = []}) => {
         if (s.champ && s.champ.tid === g.userTid) {
             champEl = {
                 classNames: 'info',
-                data: champEl,
+                value: champEl,
             }
         }
 
@@ -66,7 +66,7 @@ const HistoryAll = ({seasons = []}) => {
         if (s.runnerUp && s.runnerUp.tid === g.userTid) {
             runnerUpEl = {
                 classNames: 'info',
-                data: runnerUpEl,
+                value: runnerUpEl,
             }
         }
 

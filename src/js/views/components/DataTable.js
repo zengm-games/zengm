@@ -53,7 +53,7 @@ const Row = clickable(({clicked, row, toggleClicked}) => {
         {row.data.map((value, i) => {
             // Check if there are class names.
             if (value.classNames) {
-                return <td className={classNames(value.classNames)} key={i}>{value.data}</td>;
+                return <td className={classNames(value.classNames)} key={i}>{value.value}</td>;
             } else {
                 return <td key={i}>{value}</td>;
             }

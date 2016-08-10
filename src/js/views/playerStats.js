@@ -27,7 +27,6 @@ async function updatePlayers(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
         return g.dbl.tx(["players", "playerStats"], async tx => {
             let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED));
-console.log(inputs);
             players = await player.withStats(tx, players, {
                 statsSeasons: inputs.season !== null ? [inputs.season] : "all", // If no season is input, get all stats for career totals
                 statsPlayoffs: inputs.playoffs === "playoffs",
@@ -50,7 +49,6 @@ console.log(inputs);
                 per36: inputs.statType === "per_36",
                 playoffs: inputs.playoffs === "playoffs",
             });
-console.log('start', players);
 
             // Find max gp to use for filtering
             let gp = 0;
@@ -87,7 +85,6 @@ console.log('start', players);
 
                     if (inputs.playoffs !== 'playoffs') {
                         if (min > gp * 5) {
-console.log(1, p.name, p.statsPlayoffs);
                             return true;
                         }
                     }
@@ -96,19 +93,16 @@ console.log(1, p.name, p.statsPlayoffs);
                     if (inputs.playoffs === 'playoffs') {
                         if (inputs.season) {
                             if (p.statsPlayoffs.gp > 0) {
-console.log(2, p.name, p.statsPlayoffs);
                                 return true;
                             }
                         } else {
                             if (p.careerStatsPlayoffs.gp > 0) {
-console.log(3, p.name, p.statsPlayoffs);
                                 return true;
                             }
                         }
                     }
                 });
             }
-console.log('end data loader', players);
 
             return {
                 players,

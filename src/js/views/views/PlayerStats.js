@@ -107,15 +107,10 @@ const PlayerStats = ({abbrev, season, statType, players = [], playoffs}) => {
                 info: tid === g.userTid,
             },
         };
-    })/*.filter(p => {
-        // Skip no stats: never played, didn't make playoffs, etc
-        // Filter comes after map because p.stats is mutated
-// SHOULDN'T THIS HAPPEN IN DATA LOADER?
-        return p.stats && p.stats.gp;
-    });*/
+    });
 
     return <div>
-        <Dropdown view="player_stats" fields={["teamsAndAllWatch", "seasonsAndCareer", "statTypes", "playoffs"]} values={[abbrev, season, statType, playoffs]} />
+        <Dropdown view="player_stats" fields={["teamsAndAllWatch", "seasonsAndCareer", "statTypes", "playoffs"]} values={[abbrev, season === null ? 'career' : season, statType, playoffs]} />
         <JumpTo season={season} />
         <h1>Player Stats <NewWindowLink /></h1>
         <p>More: <a href={helpers.leagueUrl(['player_shot_locations', season])}>Shot Locations</a> | <a href={helpers.leagueUrl(['player_stat_dists', season])}>Stat Distributions</a></p>

@@ -272,7 +272,10 @@ function globalError(req) {
 
     viewHelpers.beforeNonLeague();
 
-    ReactDOM.unmountComponentAtNode(document.getElementById("league_content"));
+    const leagueContentEl = document.getElementById("league_content");
+    if (leagueContentEl) {
+        ReactDOM.unmountComponentAtNode(leagueContentEl);
+    }
 
     ui.update({
         container: "content",

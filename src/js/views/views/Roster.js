@@ -195,7 +195,7 @@ const RosterRow = clickable(props => {
     const {clicked, editable, handleReorderClick, i, p, season, selectedPid, showTradeFor, toggleClicked} = props;
     return <tr key={p.pid} className={classNames({separator: i === 4, warning: clicked})} data-pid={p.pid}>
         {editable ? <ReorderHandle i={i} pid={p.pid} onClick={handleReorderClick} selectedPid={selectedPid} /> : null}
-        <td>
+        <td onClick={toggleClicked}>
             <PlayerNameLabels
                 pid={p.pid}
                 injury={p.injury}

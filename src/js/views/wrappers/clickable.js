@@ -10,10 +10,9 @@ module.exports = Component => {
         }
 
         toggleClicked(event) {
-            const ignoredElements = ['A', 'BUTTON', 'SELECT'];
-
             // Don't toggle the row if a link was clicked.
-            if (ignoredElements.indexOf(event.target.nodeName) > -1) {
+            const ignoredElements = ['A', 'BUTTON', 'INPUT', 'SELECT'];
+            if (ignoredElements.includes(event.target.nodeName)) {
                 return;
             }
 

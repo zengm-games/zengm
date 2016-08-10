@@ -41,8 +41,9 @@ License Agreement from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 ### Step 1 - Installing
 
-All of the tooling used in development can be installed by simply installing
-[npm](https://www.npmjs.com/) and running
+First, make sure you're using [Node.js](https://nodejs.org/) v6 or higher. older
+versions probably won't work. Then, all of the tooling used in development can
+be set up by simply installing [npm](https://www.npmjs.com/) and running
 
     npm install
 

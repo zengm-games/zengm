@@ -49,7 +49,7 @@ async function beforeLeague(req) {
         const l = await g.dbm.leagues.get(g.lid);
         if (l === undefined) {
             helpers.error('League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!', reqCb, true);
-            return [,,'abort'];
+            return [[], () => {}, 'abort'];
         }
 
         await db.connectLeague(g.lid);

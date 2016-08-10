@@ -64,11 +64,9 @@ async function updateHistory(inputs, updateEvents) {
 
         // Count up number of championships per team
         const championshipsByTid = [];
-
         for (let i = 0; i < g.numTeams; i++) {
             championshipsByTid.push(0);
         }
-
         for (let i = 0; i < seasons.length; i++) {
             if (seasons[i].champ) {
                 championshipsByTid[seasons[i].champ.tid] += 1;

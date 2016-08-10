@@ -51,12 +51,11 @@ const Header = ({cols, handleColClick, sortBys, superCols}) => {
 const Row = clickable(({clicked, row, toggleClicked}) => {
     return <tr className={classNames(row.classNames, {warning: clicked})} onClick={toggleClicked}>
         {row.data.map((value, i) => {
-            // Check if there are class names.
-            if (value.classNames) {
+            // Value is either the value, or an object containing the value as a property
+            if (value.hasOwnProperty('value')) {
                 return <td className={classNames(value.classNames)} key={i}>{value.value}</td>;
-            } else {
-                return <td key={i}>{value}</td>;
             }
+            return <td key={i}>{value}</td>;
         })}
     </tr>;
 });

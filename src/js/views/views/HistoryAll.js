@@ -12,8 +12,8 @@ const awardName = (award, season) => {
     }
 
     const ret = <span>
-            <PlayerNameLabels pid={award.pid}>{award.name}</PlayerNameLabels> (<a href={helpers.leagueUrl(["roster", g.teamAbbrevsCache[award.tid], season])}>{g.teamAbbrevsCache[award.tid]}</a>)
-        </span>;
+        <PlayerNameLabels pid={award.pid}>{award.name}</PlayerNameLabels> (<a href={helpers.leagueUrl(["roster", g.teamAbbrevsCache[award.tid], season])}>{g.teamAbbrevsCache[award.tid]}</a>)
+    </span>;
 
     // This is our team.
     if (award.tid === g.userTid) {
@@ -21,9 +21,8 @@ const awardName = (award, season) => {
             classNames: 'info',
             value: ret,
         };
-    } else {
-        return ret;
     }
+    return ret;
 };
 
 
@@ -59,7 +58,7 @@ const HistoryAll = ({seasons = []}) => {
             champEl = {
                 classNames: 'info',
                 value: champEl,
-            }
+            };
         }
 
         let runnerUpEl = teamName(s.runnerUp, s.season);
@@ -67,7 +66,7 @@ const HistoryAll = ({seasons = []}) => {
             runnerUpEl = {
                 classNames: 'info',
                 value: runnerUpEl,
-            }
+            };
         }
 
         return {

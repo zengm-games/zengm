@@ -54,16 +54,7 @@ const HistoryAll = ({seasons = []}) => {
             countText = null;
         }
 
-        /*
-         * Special cases for team names.
-         */
-
-        // Champ
-        //
-        // Wrap it in a SPAN.
         let champEl = <span>{teamName(s.champ, s.season)}{countText}</span>;
-
-        // "Champ" is our team.
         if (s.champ && s.champ.tid === g.userTid) {
             champEl = {
                 classNames: 'info',
@@ -71,10 +62,7 @@ const HistoryAll = ({seasons = []}) => {
             }
         }
 
-        // Runner up
         let runnerUpEl = teamName(s.runnerUp, s.season);
-
-        // "Runner up" is our team.
         if (s.runnerUp && s.runnerUp.tid === g.userTid) {
             runnerUpEl = {
                 classNames: 'info',

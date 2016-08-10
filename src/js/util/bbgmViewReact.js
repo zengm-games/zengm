@@ -107,7 +107,11 @@ function controllerFactory(Component) {
 
 function get(fnUpdate, args) {
     return async req => {
-        const [updateEvents, cb] = await args.beforeReq(req);
+        const [updateEvents, cb, abort] = await args.beforeReq(req);
+
+        if (abort === 'abort') {
+            return;
+        }
 
         let inputs = args.get(req);
         if (inputs === undefined) {

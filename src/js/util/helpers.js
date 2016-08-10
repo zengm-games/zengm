@@ -301,7 +301,10 @@ async function leagueError(req) {
 
     await viewHelpers.beforeLeague(req);
 
-    ReactDOM.unmountComponentAtNode(document.getElementById("league_content"));
+    const leagueContentEl = document.getElementById("league_content");
+    if (leagueContentEl) {
+        ReactDOM.unmountComponentAtNode(leagueContentEl);
+    }
 
     ui.update({
         container: "league_content",

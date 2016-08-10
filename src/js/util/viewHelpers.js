@@ -49,35 +49,36 @@ async function beforeLeague(req) {
         const l = await g.dbm.leagues.get(g.lid);
         if (l === undefined) {
             helpers.error('League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!', reqCb, true);
-        } else {
-            await db.connectLeague(g.lid);
-            await league.loadGameAttributes(null);
-
-            ui.update({
-                container: "content",
-                template: "leagueLayout",
-            });
-            ko.applyBindings(g.vm.topMenu, document.getElementById("left-menu"));
-
-            // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
-            if (popup) {
-                $("#top-menu").hide();
-                $("body").css("padding-top", "0");
-
-                const css = document.createElement("style");
-                css.type = "text/css";
-                css.innerHTML = ".new_window { display: none }";
-                document.body.appendChild(css);
-            }
-
-            // Update play menu
-            ui.updateStatus();
-            ui.updatePhase();
-            await ui.updatePlayMenu(null);
-            g.vm.topMenu.lid(g.lid);
-            checkDbChange(g.lid);
-            return [updateEvents, reqCb];
+            return [,,'abort'];
         }
+
+        await db.connectLeague(g.lid);
+        await league.loadGameAttributes(null);
+
+        ui.update({
+            container: "content",
+            template: "leagueLayout",
+        });
+        ko.applyBindings(g.vm.topMenu, document.getElementById("left-menu"));
+
+        // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
+        if (popup) {
+            $("#top-menu").hide();
+            $("body").css("padding-top", "0");
+
+            const css = document.createElement("style");
+            css.type = "text/css";
+            css.innerHTML = ".new_window { display: none }";
+            document.body.appendChild(css);
+        }
+
+        // Update play menu
+        ui.updateStatus();
+        ui.updatePhase();
+        await ui.updatePlayMenu(null);
+        g.vm.topMenu.lid(g.lid);
+        checkDbChange(g.lid);
+        return [updateEvents, reqCb];
     }
 
     return [updateEvents, reqCb];

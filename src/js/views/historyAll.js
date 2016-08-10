@@ -51,6 +51,7 @@ async function updateHistory(inputs, updateEvents) {
                     };
                 } else if (t.seasons[j].playoffRoundsWon === g.numPlayoffRounds - 1) {
                     seasons[i].runnerUp = {
+                        tid: t.tid,
                         abbrev: t.abbrev,
                         region: t.region,
                         name: t.name,
@@ -63,14 +64,15 @@ async function updateHistory(inputs, updateEvents) {
 
         // Count up number of championships per team
         const championshipsByTid = [];
+
         for (let i = 0; i < g.numTeams; i++) {
             championshipsByTid.push(0);
         }
+
         for (let i = 0; i < seasons.length; i++) {
             if (seasons[i].champ) {
                 championshipsByTid[seasons[i].champ.tid] += 1;
                 seasons[i].champ.count = championshipsByTid[seasons[i].champ.tid];
-                delete seasons[i].champ.tid;
             }
         }
 

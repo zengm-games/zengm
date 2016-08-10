@@ -11,9 +11,19 @@ const awardName = (award, season) => {
         return 'N/A';
     }
 
-    return <span>
-        <PlayerNameLabels pid={award.pid}>{award.name}</PlayerNameLabels> (<a href={helpers.leagueUrl(["roster", g.teamAbbrevsCache[award.tid], season])}>{g.teamAbbrevsCache[award.tid]}</a>)
-    </span>;
+    const ret = <span>
+            <PlayerNameLabels pid={award.pid}>{award.name}</PlayerNameLabels> (<a href={helpers.leagueUrl(["roster", g.teamAbbrevsCache[award.tid], season])}>{g.teamAbbrevsCache[award.tid]}</a>)
+        </span>;
+
+    // This is our team.
+    if (award.tid === g.userTid) {
+        return {
+            classNames: 'info',
+            value: ret,
+        };
+    } else {
+        return ret;
+    }
 };
 
 
@@ -44,12 +54,28 @@ const HistoryAll = ({seasons = []}) => {
             countText = null;
         }
 
+        let champEl = <span>{teamName(s.champ, s.season)}{countText}</span>;
+        if (s.champ && s.champ.tid === g.userTid) {
+            champEl = {
+                classNames: 'info',
+                value: champEl,
+            }
+        }
+
+        let runnerUpEl = teamName(s.runnerUp, s.season);
+        if (s.runnerUp && s.runnerUp.tid === g.userTid) {
+            runnerUpEl = {
+                classNames: 'info',
+                value: runnerUpEl,
+            }
+        }
+
         return {
             key: s.season,
             data: [
                 seasonLink,
-                <span>{teamName(s.champ, s.season)}{countText}</span>,
-                teamName(s.runnerUp, s.season),
+                champEl,
+                runnerUpEl,
                 awardName(s.finalsMvp, s.season),
                 awardName(s.mvp, s.season),
                 awardName(s.dpoy, s.season),

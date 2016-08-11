@@ -30,13 +30,7 @@ async function updateUpcoming(inputs, updateEvents, state) {
                     name: g.teamNamesCache[game.awayTid],
                 };
 
-                let row;
-                if (inputs.tid === game.homeTid) {
-                    row = {gid: game.gid, teams: [team1, team0], vsat: "at"};
-                } else {
-                    row = {gid: game.gid, teams: [team1, team0], vsat: "at"};
-                }
-                games.push(row);
+                games.push({gid: game.gid, teams: [team1, team0]});
             }
         }
 

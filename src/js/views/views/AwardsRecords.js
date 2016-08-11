@@ -5,7 +5,7 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 
 const {DataTable, NewWindowLink} = require('../components/index');
 
-const AwardsRecords = ({awardsRecords, playerCount}) => {
+const AwardsRecords = ({awardsRecords, playerCount, awardTypeVal}) => {
     bbgmViewReact.title('Awards Records');
     const cols = getCols('Name', 'Count', 'Year', 'Last', 'Retired', 'HOF');
 
@@ -27,20 +27,18 @@ const AwardsRecords = ({awardsRecords, playerCount}) => {
     }) : [];
 
     return <div>
-
         <h1>Awards<NewWindowLink /></h1>
 
         <p>More: <a href={helpers.leagueUrl(['history_all'])}>League History</a> |&nbsp;
         <a href={helpers.leagueUrl(['team_records'])}>Team Records</a></p>
+
+        <h4>{playerCount} players - {awardTypeVal} </h4>
 
         <DataTable
             cols={cols}
             defaultSort={[0, 'asc']}
             rows={rows}
         />
-
-        <div>we had some parts left over...playerCount: {playerCount}</div>
-        <div>{rows.length}</div>
     </div>;
 };
 

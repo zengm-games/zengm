@@ -21,7 +21,7 @@ const PlayerNameLabels = ({children, injury, pid, skills, watch}) => {
         {playerName}
         {injuryIcon}
         <SkillsBlock skills={skills} />
-        {watch === true ? <WatchBlock pid={pid} watch={watch} /> : null}
+        {typeof watch === 'boolean' ? <WatchBlock pid={pid} watch={watch} /> : null}
     </span>;
 };
 PlayerNameLabels.propTypes = {
@@ -32,7 +32,10 @@ PlayerNameLabels.propTypes = {
     }),
     pid: React.PropTypes.number.isRequired,
     skills: React.PropTypes.arrayOf(React.PropTypes.string),
-    watch: React.PropTypes.bool,
+    watch: React.PropTypes.oneOfType([
+        React.PropTypes.bool,
+        React.PropTypes.func, // For Firefox's Object.watch
+    ]),
 };
 
 module.exports = PlayerNameLabels;

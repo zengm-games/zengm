@@ -170,9 +170,9 @@ async function updateSchedule(inputs, updateEvents) {
 
                 let row;
                 if (g.userTid === game.homeTid) {
-                    row = {gid: game.gid, teams: [team1, team0], vsat: "at"};
+                    row = {gid: game.gid, teams: [team1, team0]};
                 } else {
-                    row = {gid: game.gid, teams: [team1, team0], vsat: "at"};
+                    row = {gid: game.gid, teams: [team1, team0]};
                 }
                 games.push(row);
             }

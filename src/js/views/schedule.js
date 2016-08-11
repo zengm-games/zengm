@@ -3,6 +3,7 @@ const season = require('../core/season');
 const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
 const Schedule = require('./views/Schedule');
+const team = require('../core/team');
 
 function get(req) {
     const inputs = {};
@@ -12,10 +13,17 @@ function get(req) {
 
 async function updateUpcoming(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0 || inputs.abbrev !== state.abbrev) {
-        const schedule = await season.getSchedule();
+        const [schedule, teams] = await Promise.all([
+            season.getSchedule(),
+            team.filter({
+                attrs: ['tid', 'abbrev'],
+                seasonAttrs: ['won', 'lost', 'lastTen', 'streak'],
+                season: g.season,
+            }),
+        ]);
+
         const games = [];
-        for (let i = 0; i < schedule.length; i++) {
-            const game = schedule[i];
+        for (const game of schedule) {
             if (inputs.tid === game.homeTid || inputs.tid === game.awayTid) {
                 const team0 = {
                     tid: game.homeTid,

@@ -84,19 +84,7 @@ async function post(req) {
         }
         redirectNegotiationOrRoster(false);
     } else if (req.params.hasOwnProperty("new")) {
-        // If there is no active negotiation with this pid, create it
-        const negotiation = await g.dbl.negotiations.get(pid);
-        if (!negotiation) {
-            const error = await g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", tx => contractNegotiation.create(tx, pid, false));
-            if (error !== undefined && error) {
-                helpers.errorNotify(error);
-                ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
-            } else {
-                ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
-            }
-        } else {
-            ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
-        }
+        console.log('use actions.negotiate');
     }
 }
 

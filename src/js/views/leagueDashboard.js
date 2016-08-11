@@ -168,13 +168,7 @@ async function updateSchedule(inputs, updateEvents) {
                 const team0 = {tid: game.homeTid, abbrev: g.teamAbbrevsCache[game.homeTid], region: g.teamRegionsCache[game.homeTid], name: g.teamNamesCache[game.homeTid]};
                 const team1 = {tid: game.awayTid, abbrev: g.teamAbbrevsCache[game.awayTid], region: g.teamRegionsCache[game.awayTid], name: g.teamNamesCache[game.awayTid]};
 
-                let row;
-                if (g.userTid === game.homeTid) {
-                    row = {gid: game.gid, teams: [team1, team0]};
-                } else {
-                    row = {gid: game.gid, teams: [team1, team0]};
-                }
-                games.push(row);
+                games.push({gid: game.gid, teams: [team1, team0]});
             }
 
             if (games.length >= numShowUpcoming) {

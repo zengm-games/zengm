@@ -377,17 +377,49 @@ async function writeGameStats(tx, results, att) {
             if (results.clutchPlays[i].hasOwnProperty("tempText")) {
                 results.clutchPlays[i].text = results.clutchPlays[i].tempText;
                 if (results.clutchPlays[i].tids[0] === results.team[tw].id) {
-                    results.clutchPlays[i].text += ` in ${results.team[tw].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a'} <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tw].id], g.season, results.gid])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a> win over the ${g.teamNamesCache[results.team[tl].id]}.`;
+                    results.clutchPlays[i].text += ` in ${results.team[tw].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a'} <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tw].id], g.season, results.gid])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a> win over the ${g.teamNamesCache[results.team[tl].id]}`;
                 } else {
-                    results.clutchPlays[i].text += ` in ${results.team[tl].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a'} <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tl].id], g.season, results.gid])}">${results.team[tl].stat.pts}-${results.team[tw].stat.pts}</a> loss to the ${g.teamNamesCache[results.team[tw].id]}.`;
+                    results.clutchPlays[i].text += ` in ${results.team[tl].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a'} <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[results.team[tl].id], g.season, results.gid])}">${results.team[tl].stat.pts}-${results.team[tw].stat.pts}</a> loss to the ${g.teamNamesCache[results.team[tw].id]}`;
                 }
                 delete results.clutchPlays[i].tempText;
             }
-            eventLog.add(tx, results.clutchPlays[i]);
+            if (g.phase === g.PHASE.PLAYOFFS) {
+                eventLog.add(tx, await getPlayoffFeat(tx, results.clutchPlays[i]));
+            } else {
+                results.clutchPlays[i].text += `.`;
+                eventLog.add(tx, results.clutchPlays[i]);
+            }
         }
     }
 
     await tx.games.put(gameStats);
+}
+
+async function getPlayoffFeat(tx, clutchPlay) {
+    const playoffs = await tx.playoffSeries.get(g.season);
+    for (let k = 0; k < playoffs.series[playoffs.currentRound].length; k++) {
+        const series = playoffs.series[playoffs.currentRound][k];
+        if (series.home.tid === clutchPlay.tids[0] || series.away.tid === clutchPlay.tids[0]) {
+            clutchPlay.text += ` in game ${series.home.won + series.away.won + 1} of the `;
+            switch (playoffs.currentRound) {
+                case 0:
+                    clutchPlay.text += " first round of the playoffs";
+                    break;
+                case 1:
+                    clutchPlay.text += " second round of the playoffs";
+                    break;
+                case 2:
+                    clutchPlay.text += " conference finals";
+                    break;
+                case 3:
+                    clutchPlay.text += " finals";
+                    break;
+            }
+            clutchPlay.text += ".";
+            break;
+        }
+    }
+    return clutchPlay;
 }
 
 async function updatePlayoffSeries(tx, results) {

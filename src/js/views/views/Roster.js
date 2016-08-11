@@ -236,7 +236,6 @@ const RosterRow = clickable(props => {
                 className="btn btn-default btn-xs"
                 disabled={p.untradable}
                 onClick={() => tradeFor({pid: p.pid})}
-                type="submit"
             >Trade For</button>
         </td> : null}
     </tr>;

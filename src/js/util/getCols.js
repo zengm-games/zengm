@@ -23,6 +23,10 @@ const cols = {
     'Age': {
         sortType: 'number',
     },
+    'Asking For': {
+        sortSequence: ['desc', 'asc'],
+        sortType: 'currency',
+    },
     'Ast': {
         desc: 'Assists Per Game',
         sortSequence: ['desc', 'asc'],
@@ -139,9 +143,11 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'Mood': {},
     'Name': {
         sortType: 'name',
     },
+    'Negotiate': {},
     'O': {
         desc: 'Overall',
     },

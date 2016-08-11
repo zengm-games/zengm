@@ -17,8 +17,8 @@ async function updateUpcoming(inputs, updateEvents, state) {
         const [schedule, teamsFiltered] = await Promise.all([
             season.getSchedule(),
             team.filter({
-                attrs: ['tid', 'abbrev'],
-                seasonAttrs: ['won', 'lost', 'lastTen', 'streak'],
+                attrs: ['tid'],
+                seasonAttrs: ['won', 'lost'],
                 season: g.season,
             }),
         ]);

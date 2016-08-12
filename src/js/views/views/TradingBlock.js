@@ -37,7 +37,7 @@ const OfferPlayerRow = clickable(({clicked, p, toggleClicked}) => {
 });
 
 const Offer = props => {
-    const {abbrev, dpids, handleClickNegotiate, i, lost, name, picks = [], pids, players = [], region, strategy, tid, warning, won} = props;
+    const {abbrev, dpids, handleClickNegotiate, i, lost, name, payroll, picks = [], pids, players = [], region, strategy, tid, warning, won} = props;
 
     let offerPlayers = null;
     if (players.length > 0) {
@@ -71,7 +71,7 @@ const Offer = props => {
 
     return <div className="trading-block-offer">
         <h3>Offer {i + 1}: <a href={helpers.leagueUrl(['roster', abbrev])}>{region} {name}</a></h3>
-        <p>{won}-{lost}, {strategy}</p>
+        <p>{won}-{lost}, {strategy}, {helpers.formatCurrency(payroll / 1000, 'M')} payroll</p>
         <p className="text-danger">{warning}</p>
         <div className="row" style={{clear: 'both'}}>
             {offerPlayers}
@@ -174,6 +174,8 @@ const augmentOffers = offers => {
                 pick.desc = helpers.pickDesc(pick);
             }
 
+            const payroll = await team.getPayroll(null, tid).get(0);
+
             return {
                 tid,
                 abbrev: teams[tid].abbrev,
@@ -185,6 +187,7 @@ const augmentOffers = offers => {
                 pids: offers[i].pids,
                 dpids: offers[i].dpids,
                 warning: offers[i].warning,
+                payroll,
                 picks,
                 players,
             };

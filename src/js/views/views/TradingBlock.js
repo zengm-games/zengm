@@ -37,7 +37,7 @@ const OfferPlayerRow = clickable(({clicked, p, toggleClicked}) => {
 });
 
 const Offer = props => {
-    const {abbrev, dpids, handleClickNegotiate, i, lost, name, picks = [], pids, players = [], region, strategy, tid, warning, won, payroll} = props;
+    const {abbrev, dpids, handleClickNegotiate, i, lost, name, payroll, picks = [], pids, players = [], region, strategy, tid, warning, won} = props;
 
     let offerPlayers = null;
     if (players.length > 0) {

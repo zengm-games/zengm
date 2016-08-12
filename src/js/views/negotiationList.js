@@ -1,12 +1,9 @@
 const g = require('../globals');
-const ui = require('../ui');
-const freeAgents = require('../core/freeAgents');
 const player = require('../core/player');
 const Promise = require('bluebird');
-const $ = require('jquery');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
+const NegotiationList = require('./views/NegotiationList');
 
 function get() {
     if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
@@ -15,12 +12,6 @@ function get() {
         };
     }
 }
-
-const mapping = {
-    players: {
-        create: options => options.data,
-    },
-};
 
 async function updateNegotiationList() {
     // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
@@ -67,29 +58,9 @@ async function updateNegotiationList() {
     };
 }
 
-function uiFirst(vm) {
-    ui.title("Re-sign Players");
-
-    ko.computed(() => {
-        ui.datatable($("#negotiation-list"), 4, vm.players().map(p => {
-            let negotiateButton;
-            if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
-                negotiateButton = "Refuses!";
-            } else {
-                // This can be a plain link because the negotiation has already been started at this point.
-                negotiateButton = `<a href="${helpers.leagueUrl(["negotiation", p.pid])}" class="btn btn-default btn-xs">Negotiate</a>`;
-            }
-            return [helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), p.ratings.pos, String(p.age), String(p.ratings.ovr), String(p.ratings.pot), helpers.round(p.stats.min, 1), helpers.round(p.stats.pts, 1), helpers.round(p.stats.trb, 1), helpers.round(p.stats.ast, 1), helpers.round(p.stats.per, 1), `${helpers.formatCurrency(p.contract.amount, "M")} thru ${p.contract.exp}`, `<div title="${p.mood.text}" style="width: 100%; height: 21px; background-color: ${p.mood.color}"><span style="display: none">${p.freeAgentMood[g.userTid]}</span></div>`, negotiateButton];
-        }));
-    }).extend({throttle: 1});
-
-    ui.tableClickableRows($("#negotiation-list"));
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "negotiationList",
     get,
-    mapping,
     runBefore: [updateNegotiationList],
-    uiFirst,
+    Component: NegotiationList,
 });

@@ -1,12 +1,5 @@
 REACT
 
-Free Agents
-  gameSimulationStart
-    too much delay for it to indicate what it's supposed to, need to listen directly to gameSimulationStart and gameSimulationStop
-    store in state, initial value is g.gameSimInProgress
-    listen for gameSimulationStart and gameSimulationStop in componentDidMount and componentWillUnmount
-    OR call ui.realtimeUpdate with some updateEvent after setting gameSimInProgress in game.js
-
 Trade For buttons -> util/tradeFor
   merge into util/actions
 

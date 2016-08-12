@@ -616,6 +616,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
         ui.updateStatus("Idle");
         await league.setGameAttributesComplete({gamesInProgress: false});
         await ui.updatePlayMenu(null);
+        ui.realtimeUpdate(["g.gamesInProgress"]);
 
         // Check to see if the season is over
         if (g.phase < g.PHASE.PLAYOFFS) {
@@ -818,6 +819,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
             if (userTeamSizeError === null) {
                 await league.setGameAttributesComplete({gamesInProgress: true});
                 await ui.updatePlayMenu(null);
+                ui.realtimeUpdate(["g.gamesInProgress"]);
                 cbRunDay();
             } else {
                 ui.updateStatus("Idle");

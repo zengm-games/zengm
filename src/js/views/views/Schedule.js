@@ -16,9 +16,9 @@ module.exports = ({abbrev, completed, season, teamInfo, upcoming = []}) => {
                 <h2>Upcoming Games</h2>
                 <ul className="list-group">
                     {upcoming.map(({gid, teams}) => <li className="list-group-item schedule-row" key={gid}>
-                        <a href={helpers.leagueUrl(['roster', teams[0].abbrev])}>{teams[0].region}</a> ({teamInfo[teams[0].tid].won}-{teamInfo[teams[0].tid].lost})
+                        <a href={helpers.leagueUrl(['roster', teams[0].abbrev])}>{teams[0].region}</a> <span className="schedule-extra">({teamInfo[teams[0].tid].won}-{teamInfo[teams[0].tid].lost})</span>
                         <span className="schedule-at"> @ </span>
-                        <a href={helpers.leagueUrl(['roster', teams[1].abbrev])}>{teams[1].region}</a> ({teamInfo[teams[1].tid].won}-{teamInfo[teams[1].tid].lost})
+                        <a href={helpers.leagueUrl(['roster', teams[1].abbrev])}>{teams[1].region}</a> <span className="schedule-extra">({teamInfo[teams[1].tid].won}-{teamInfo[teams[1].tid].lost})</span>
                     </li>)}
                 </ul>
             </div>
@@ -37,9 +37,9 @@ module.exports = ({abbrev, completed, season, teamInfo, upcoming = []}) => {
                                     <a href={helpers.leagueUrl(['game_log', abbrev, season, gid])}>{score}{overtime}</a>
                                 </div>
                             </div>
-                            <a href={helpers.leagueUrl(['roster', teams[0].abbrev])}>{teams[0].region}</a> ({teamInfo[teams[0].tid].won}-{teamInfo[teams[0].tid].lost})
+                            <a href={helpers.leagueUrl(['roster', teams[0].abbrev])}>{teams[0].region}</a> <span className="schedule-extra">({teamInfo[teams[0].tid].won}-{teamInfo[teams[0].tid].lost})</span>
                             <span className="schedule-at"> @ </span>
-                            <a href={helpers.leagueUrl(['roster', teams[1].abbrev])}>{teams[1].region}</a> ({teamInfo[teams[1].tid].won}-{teamInfo[teams[1].tid].lost})
+                            <a href={helpers.leagueUrl(['roster', teams[1].abbrev])}>{teams[1].region}</a> <span className="schedule-extra">({teamInfo[teams[1].tid].won}-{teamInfo[teams[1].tid].lost})</span>
                         </li>;
                     })}
                 </ul>

@@ -6,10 +6,10 @@ const player = require('../../core/player');
 const team = require('../../core/team');
 const trade = require('../../core/trade');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const {tradeFor} = require('../../util/actions');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const random = require('../../util/random');
-const tradeFor = require('../../util/tradeFor');
 const clickable = require('../wrappers/clickable');
 const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components/index');
 

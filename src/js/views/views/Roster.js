@@ -7,9 +7,9 @@ const ui = require('../../ui');
 const league = require('../../core/league');
 const player = require('../../core/player');
 const team = require('../../core/team');
+const {tradeFor} = require('../../util/actions');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const tradeFor = require('../../util/tradeFor');
 const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} = require('../components/index');
 const clickable = require('../wrappers/clickable');
 

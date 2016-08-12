@@ -1,11 +1,11 @@
 const g = require('../globals');
 const ui = require('../ui');
 const contractNegotiation = require('../core/contractNegotiation');
+const league = require('../core/league');
+const trade = require('../core/trade');
 const helpers = require('./helpers');
 
 const negotiate = async pid => {
-    console.log('Start negotiation with ', pid);
-
     // If there is no active negotiation with this pid, create it
     const negotiation = await g.dbl.negotiations.get(pid);
     if (!negotiation) {
@@ -22,6 +22,41 @@ const negotiate = async pid => {
     }
 };
 
+const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}) => {
+    let teams;
+
+    if (pid !== undefined) {
+        // Start new trade for a single player, like a Trade For button
+        teams = [{
+            tid: g.userTid,
+            pids: [],
+            dpids: [],
+        }, {
+            tid: undefined,
+            pids: [pid],
+            dpids: [],
+        }];
+    } else {
+        // Start a new trade with everything specified, from the trading block
+        teams = [{
+            tid: g.userTid,
+            pids: userPids,
+            dpids: userDpids,
+        }, {
+            tid,
+            pids: otherPids,
+            dpids: otherDpids,
+        }];
+    }
+
+    // Start a new trade based on a list of pids and dpids, like from the trading block
+    await trade.create(teams);
+    ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
+    league.updateLastDbChange();
+};
+
+
 module.exports = {
     negotiate,
+    tradeFor,
 };

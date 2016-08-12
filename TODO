@@ -1,11 +1,12 @@
 REACT
 
-Trade For buttons -> util/tradeFor
-  merge into util/actions
-
 DataTable
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
     for now, pass sort key as child and it works
+  Fancy features
+    CSV export
+    show/hide columns
+    filtering
 
 is UI updating okay without waiting for this.setState to finish?
 

@@ -103,9 +103,9 @@ async function setGameAttributes(tx, gameAttributes) {
         // Trigger a signal for the team finances view. This is stupid.
         if (key === "gamesInProgress") {
             if (gameAttributes[key]) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
+                $("#finances-settings, #live-games-list").trigger("gameSimulationStart");
             } else {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
+                $("#finances-settings, #live-games-list").trigger("gameSimulationStop");
             }
         }
     });

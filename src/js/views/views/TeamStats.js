@@ -5,7 +5,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components/index');
 
-const TeamStats = ({season, teams = []}) => {
+const TeamStats = ({season, stats, teams = []}) => {
     if (season === undefined) {
         bbgmViewReact.title('Team Stats');
     } else {
@@ -39,39 +39,32 @@ const TeamStats = ({season, teams = []}) => {
     const cols = getCols('Team', 'GP', 'W', 'L', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'Off', 'Def', 'Tot', 'Ast', 'TO', 'Stl', 'Blk', 'BA', 'PF', 'Pts', 'OPts', 'Diff');
 
     const rows = teams.map(t => {
-        return {
-            key: t.tid,
-            data: [
-                <a href={helpers.leagueUrl(["roster", t.abbrev, season])}>{t.abbrev}</a>,
-                t.gp,
-                t.won,
-                t.lost,
-                helpers.round(t.fg, 1),
-                helpers.round(t.fga, 1),
-                helpers.round(t.fgp, 1),
-                helpers.round(t.tp, 1),
-                helpers.round(t.tpa, 1),
-                helpers.round(t.tpp, 1),
-                helpers.round(t.ft, 1),
-                helpers.round(t.fta, 1),
-                helpers.round(t.ftp, 1),
-                helpers.round(t.orb, 1),
-                helpers.round(t.drb, 1),
-                helpers.round(t.trb, 1),
-                helpers.round(t.ast, 1),
-                helpers.round(t.tov, 1),
-                helpers.round(t.stl, 1),
-                helpers.round(t.blk, 1),
-                helpers.round(t.ba, 1),
-                helpers.round(t.pf, 1),
-                helpers.round(t.pts, 1),
-                helpers.round(t.oppPts, 1),
-                <span className={t.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(t.diff, 1)}</span>,
-            ],
-            classNames: {
-                info: t.tid === g.userTid,
-            },
-        };
+        const statTypeColumns = ['fg', 'fga', 'fgp', 'tp', 'tpa', 'tpp', 'ft', 'fta', 'ftp', 'orb', 'drb', 'trb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts', 'oppPts'];
+
+        // Create the cells for this row.
+        const data = [
+            <a href={helpers.leagueUrl(["roster", t.abbrev, season])}>{t.abbrev}</a>,
+            t.gp, t.won, t.lost
+        ];
+
+        for (const column of statTypeColumns) {
+            data.push(helpers.round(t[column], 1));
+        }
+
+        data.push(<span className={t.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(t.diff, 1)}</span>);
+
+        // This is our team.
+        if (g.userTid === t.tid) {
+            return {
+                key: t.tid,
+                data,
+            };
+        } else {
+            return {
+                key: t.tid,
+                data,
+            };
+        }
     });
 
     return <div>

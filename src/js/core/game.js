@@ -546,7 +546,7 @@ async function loadTeams(tx) {
             p = {id: players[i].pid, name: `${players[i].firstName} ${players[i].lastName}`, pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
 
             // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
-            if (t.id !== g.userTid) {
+            if (g.userTids.includes(t.id)) {
                 p.ptModifier = 1;
             }
 

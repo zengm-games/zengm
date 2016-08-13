@@ -3,6 +3,7 @@ const season = require('../core/season');
 const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
 const Schedule = require('./views/Schedule');
+const team = require('../core/team');
 
 function get(req) {
     const inputs = {};
@@ -12,10 +13,25 @@ function get(req) {
 
 async function updateUpcoming(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0 || inputs.abbrev !== state.abbrev) {
-        const schedule = await season.getSchedule();
-        const games = [];
-        for (let i = 0; i < schedule.length; i++) {
-            const game = schedule[i];
+        // Get schedule and all teams.
+        const [schedule, teamsFiltered] = await Promise.all([
+            season.getSchedule(),
+            team.filter({
+                attrs: ['tid'],
+                seasonAttrs: ['won', 'lost'],
+                season: g.season,
+            }),
+        ]);
+
+        // Create an object with team IDs as its keys.
+        const teamInfo = {};
+        for (const team of teamsFiltered) {
+            teamInfo[team.tid] = team;
+        }
+
+        // Loop through each game in the schedule.
+        const upcoming = [];
+        for (const game of schedule) {
             if (inputs.tid === game.homeTid || inputs.tid === game.awayTid) {
                 const team0 = {
                     tid: game.homeTid,
@@ -30,14 +46,15 @@ async function updateUpcoming(inputs, updateEvents, state) {
                     name: g.teamNamesCache[game.awayTid],
                 };
 
-                games.push({gid: game.gid, teams: [team1, team0]});
+                upcoming.push({gid: game.gid, teams: [team1, team0]});
             }
         }
 
         return {
             abbrev: inputs.abbrev,
             season: g.season,
-            upcoming: games,
+            teamInfo,
+            upcoming,
         };
     }
 }

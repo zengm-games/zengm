@@ -43,6 +43,7 @@ when all react
   get rid of brfs
   go through ui.js, reevaluate
   get rid of default params in views
+  escape HTML saved to IDB very carefully (event log)
 
 Dropdown
   updateEvents need to be passed to dropdown to handle season change?

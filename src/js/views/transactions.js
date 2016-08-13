@@ -1,9 +1,7 @@
 const g = require('../globals');
-const ui = require('../ui');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
-const components = require('./components');
+const Transactions = require('./views/Transactions');
 
 function get(req) {
     let abbrev, tid;
@@ -34,21 +32,14 @@ function get(req) {
     };
 }
 
-function InitViewModel() {
-    this.abbrev = ko.observable();
-    this.season = ko.observable();
-    this.eventType = ko.observable();
-    this.events = ko.observableArray([]);
-}
-
-async function updateEventLog(inputs, updateEvents, vm) {
-    if (updateEvents.length >= 0 || inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev() || inputs.eventType !== vm.eventType) {
-        if (inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev() || inputs.eventType !== vm.eventType) {
-            vm.events([]);
+async function updateEventLog(inputs, updateEvents, state) {
+    if (updateEvents.length >= 0 || inputs.season !== state.season || inputs.abbrev !== state.abbrev || inputs.eventType !== state.eventType) {
+        let events = state.events === undefined ? [] : state.events;
+        if (inputs.season !== state.season || inputs.abbrev !== state.abbrev || inputs.eventType !== state.eventType) {
+            events = [];
         }
 
-        if (vm.events().length === 0) {
-            let events;
+        if (events.length === 0) {
             if (inputs.season === "all") {
                 events = await g.dbl.events.getAll();
             } else {
@@ -57,71 +48,46 @@ async function updateEventLog(inputs, updateEvents, vm) {
 
             // Show all events, newest at top
             events.reverse(); // Newest first
-
-            // Filter by team
-            if (inputs.abbrev !== "all") {
-                events = events.filter(event => event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0);
-            }
-
-            if (inputs.eventType === "all") {
-                events = events.filter(event => event.type === 'reSigned' || event.type === 'release' || event.type === 'trade' || event.type === 'freeAgent' || event.type === 'draft');
-            } else {
-                events = events.filter(event => event.type === inputs.eventType);
-            }
-
-            events.forEach(helpers.correctLinkLid);
-
-            return {
-                abbrev: inputs.abbrev,
-                events,
-                season: inputs.season,
-                eventType: inputs.eventType,
-            };
-        }
-
-        if (inputs.season === g.season) { // Can't update old seasons!
+        } else if (inputs.season === g.season) { // Can't update old seasons!
             // Update by adding any new events to the top of the list
-            const maxEid = ko.unwrap(vm.events()[0].eid); // unwrap shouldn't be necessary
+            const maxEid = events[0].eid;
             const newEvents = [];
             await g.dbl.events.index('season').iterate(inputs.season, "prev", (event, shortCircuit) => {
                 if (event.eid > maxEid) {
-                    if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
-                        newEvents.push(event);
-                    }
+                    newEvents.push(event);
                 } else {
                     shortCircuit();
                     // Oldest first (cursor is in "prev" direction and we're adding to the front of vm.events)
                     for (let i = newEvents.length - 1; i >= 0; i--) {
-                        vm.events.unshift(newEvents[i]);
+                        events.unshift(newEvents[i]);
                     }
                 }
             });
-
-            return {
-                season: inputs.season,
-            };
         }
+
+        if (inputs.abbrev !== "all") {
+            events = events.filter(event => event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0);
+        }
+        if (inputs.eventType === "all") {
+            events = events.filter(event => event.type === 'reSigned' || event.type === 'release' || event.type === 'trade' || event.type === 'freeAgent' || event.type === 'draft');
+        } else {
+            events = events.filter(event => event.type === inputs.eventType);
+        }
+
+        events.forEach(helpers.correctLinkLid);
+
+        return {
+            abbrev: inputs.abbrev,
+            events,
+            season: inputs.season,
+            eventType: inputs.eventType,
+        };
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Transactions - ${vm.season()}`);
-    }).extend({
-        throttle: 1,
-    });
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("event-log-dropdown", ["teamsAndAll", "seasonsAndAll", "eventType"], [vm.abbrev(), vm.season(), vm.eventType()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "transactions",
     get,
-    InitViewModel,
     runBefore: [updateEventLog],
-    uiFirst,
-    uiEvery,
+    Component: Transactions,
 });
-

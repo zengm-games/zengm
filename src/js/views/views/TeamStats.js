@@ -92,12 +92,33 @@ const TeamStats = ({season, stats, teams = []}) => {
         }
     });
 
+    function legendSquare(className) {
+        return <table className="table" style={{display: 'inline-block', height: '10px', margin: '0 5px 0 10px', width: '10px'}}>
+            <tbody>
+                <tr className={className}>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>;
+    }
+
     return <div>
         <Dropdown view="team_stats" fields={["seasons"]} values={[season]} />
         <JumpTo season={season} />
         <h1>Team Stats <NewWindowLink /></h1>
 
-        <p>More: <a href={helpers.leagueUrl(['team_shot_locations', season])}>Shot Locations</a> | <a href={helpers.leagueUrl(['team_stat_dists', season])}>Stat Distributions</a></p>
+        <div className="row">
+            <p className="col-sm-3">
+                More: <a href={helpers.leagueUrl(['team_shot_locations', season])}>Shot Locations</a> | <a href={helpers.leagueUrl(['team_stat_dists', season])}>Stat Distributions</a>
+            </p>
+            <p className="col-sm-9 text-right">
+                For a statistical category, among all teams, your team is in the...
+
+                {legendSquare('success')} <strong>Top third</strong>
+                {legendSquare('warning')} <strong>Middle third</strong>
+                {legendSquare('danger')} <strong>Bottom third</strong>
+            </p>
+        </div>
 
         <DataTable
             cols={cols}

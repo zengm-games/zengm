@@ -74,8 +74,17 @@ const getSearchVal = val => {
     return null;
 };
 
-const getSortVal = (val, sortType) => {
+const getSortVal = (value, sortType) => {
+    let val;
     let sortVal;
+
+    // Get the right 'value'.
+    if (value !== null && value.hasOwnProperty('value')) {
+        val = value.value;
+    } else {
+        val = value;
+    }
+
     if (React.isValidElement(val)) {
         sortVal = textContent(val);
     } else {

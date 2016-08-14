@@ -97,13 +97,16 @@ const TeamStats = ({season, stats, teams = []}) => {
     });
 
     function legendSquare(className) {
-        return <table className="table" style={{display: 'inline-block', height: '10px', margin: '0 5px 0 10px', width: '10px'}}>
-            <tbody>
-                <tr className={className}>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>;
+        const styles = {
+            bottom: '-2.5px',
+            display: 'inline-block',
+            height: '15px',
+            margin: '0 2.5px 0 10px',
+            position: 'relative',
+            width: '15px',
+        };
+
+        return <span className={`bg-${className}`} style={styles}></span>;
     }
 
     return <div>

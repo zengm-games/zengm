@@ -71,7 +71,7 @@ const TeamStats = ({season, stats, teams = []}) => {
 
                 let className;
                 if (percentile >= 2 / 3) className = 'success';
-                else if (percentile >= 1 / 3) className = 'info';
+                else if (percentile >= 1 / 3) className = 'warning';
                 else className = 'danger';
 
                 data[key] = {

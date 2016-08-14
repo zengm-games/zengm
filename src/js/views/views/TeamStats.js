@@ -112,15 +112,17 @@ const TeamStats = ({season, stats, teams = []}) => {
         <h1>Team Stats <NewWindowLink /></h1>
 
         <div className="row">
-            <p className="col-sm-3">
+            <p className="col-sm-4">
                 More: <a href={helpers.leagueUrl(['team_shot_locations', season])}>Shot Locations</a> | <a href={helpers.leagueUrl(['team_stat_dists', season])}>Stat Distributions</a>
             </p>
-            <p className="col-sm-9 text-right">
-                For a statistical category, among all teams, your team is in the...
+            <p className="col-sm-8 text-right">
+                <p>For a statistical category, among all teams, your team is in the...</p>
 
-                {legendSquare('success')} <strong>Top third</strong>
-                {legendSquare('warning')} <strong>Middle third</strong>
-                {legendSquare('danger')} <strong>Bottom third</strong>
+                <p>
+                    {legendSquare('success')} <strong>Top third</strong>
+                    {legendSquare('warning')} <strong>Middle third</strong>
+                    {legendSquare('danger')} <strong>Bottom third</strong>
+                </p>
             </p>
         </div>
 

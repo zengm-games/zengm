@@ -38,19 +38,27 @@ async function updateTeams(inputs, updateEvents, state) {
         }
 
         // Sort stat types. "Better" values are at the start of the arrays.
-        for (const [statType, statValues] of Object.entries(stats)) {
+        for (const statType of Object.keys(stats)) {
             stats[statType].sort((a, b) => {
                 // Sort lowest first.
                 if (lowerIsBetter.indexOf(statType) > -1) {
-                    if (a < b) return -1;
-                    else if (a > b) return 1;
-                    else return 0;
-                // Sort highest first.
-                } else {
-                    if (a < b) return 1;
-                    else if (a > b) return -1;
-                    else return 0;
+                    if (a < b) {
+                        return -1;
+                    } else if (a > b) {
+                        return 1;
+                    }
+
+                    return 0;
                 }
+
+                // Sort highest first.
+                if (a < b) {
+                    return 1;
+                } else if (a > b) {
+                    return -1;
+                }
+
+                return 0;
             });
         }
 

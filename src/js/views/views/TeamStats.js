@@ -56,7 +56,7 @@ const TeamStats = ({season, stats, teams = []}) => {
             data[column] = value;
         }
 
-        data['diff'] = <span className={t.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(t.diff, 1)}</span>;
+        data.diff = <span className={t.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(t.diff, 1)}</span>;
 
         // This is our team.
         if (g.userTid === t.tid) {
@@ -70,26 +70,30 @@ const TeamStats = ({season, stats, teams = []}) => {
                 const percentile = 1 - (stats[key].indexOf(t[key]) / (teamCount - 1));
 
                 let className;
-                if (percentile >= 2 / 3) className = 'success';
-                else if (percentile >= 1 / 3) className = 'warning';
-                else className = 'danger';
+                if (percentile >= 2 / 3) {
+                    className = 'success';
+                } else if (percentile >= 1 / 3) {
+                    className = 'warning';
+                } else {
+                    className = 'danger';
+                }
 
                 data[key] = {
                     classNames: className,
                     value,
-                }
+                };
             }
 
             return {
                 key: t.tid,
                 data: Object.values(data),
             };
-        } else {
-            return {
-                key: t.tid,
-                data: Object.values(data),
-            };
         }
+
+        return {
+            key: t.tid,
+            data: Object.values(data),
+        };
     });
 
     function legendSquare(className) {

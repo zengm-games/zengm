@@ -2,6 +2,7 @@ const g = require('../globals');
 const season = require('../core/season');
 const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
+const Promise = require('bluebird');
 const Schedule = require('./views/Schedule');
 const team = require('../core/team');
 

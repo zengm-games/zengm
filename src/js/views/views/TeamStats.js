@@ -6,11 +6,7 @@ const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components/index');
 
 const TeamStats = ({season, stats, teams = []}) => {
-    if (season === undefined) {
-        bbgmViewReact.title('Team Stats');
-    } else {
-        bbgmViewReact.title(`Team Stats - ${season}`);
-    }
+    bbgmViewReact.title(`Team Stats - ${season}`);
 
     const superCols = [{
         title: '',
@@ -115,10 +111,10 @@ const TeamStats = ({season, stats, teams = []}) => {
         <h1>Team Stats <NewWindowLink /></h1>
 
         <div className="row">
-            <p className="col-sm-4">
+            <div className="col-sm-4">
                 More: <a href={helpers.leagueUrl(['team_shot_locations', season])}>Shot Locations</a> | <a href={helpers.leagueUrl(['team_stat_dists', season])}>Stat Distributions</a>
-            </p>
-            <p className="col-sm-8 text-right">
+            </div>
+            <div className="col-sm-8 text-right">
                 <p>For a statistical category, among all teams, your team is in the...</p>
 
                 <p>
@@ -126,7 +122,7 @@ const TeamStats = ({season, stats, teams = []}) => {
                     {legendSquare('warning')} <strong>Middle third</strong>
                     {legendSquare('danger')} <strong>Bottom third</strong>
                 </p>
-            </p>
+            </div>
         </div>
 
         <DataTable

@@ -4,6 +4,7 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components/index');
+const _ = require('underscore');
 
 const TeamStats = ({season, stats, teams = []}) => {
     bbgmViewReact.title(`Team Stats - ${season}`);
@@ -57,7 +58,7 @@ const TeamStats = ({season, stats, teams = []}) => {
         // This is our team.
         if (g.userTid === t.tid) {
             // Color stat values accordingly.
-            for (const [key, value] of Object.entries(data)) {
+            for (const [key, value] of _.pairs(data)) {
                 if (statTypeColumns.indexOf(key) === -1 && otherStatColumns.indexOf(key) === -1) {
                     continue;
                 }
@@ -82,13 +83,13 @@ const TeamStats = ({season, stats, teams = []}) => {
 
             return {
                 key: t.tid,
-                data: Object.values(data),
+                data: _.values(data),
             };
         }
 
         return {
             key: t.tid,
-            data: Object.values(data),
+            data: _.values(data),
         };
     });
 

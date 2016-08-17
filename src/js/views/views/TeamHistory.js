@@ -8,8 +8,24 @@ const {DataTable, Dropdown, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} 
 const TeamHistory = ({abbrev, bestRecord = {}, championships, history = [], players = [], playoffAppearances, team = {}, totalLost, totalWon, worstRecord = {}}) => {
     bbgmViewReact.title('Team History');
 
-    const cols = getCols('Name', 'Pos', 'GP', 'Min', 'Pts', 'Reb', 'Ast', 'PER', 'EWA', 'Last Season');
+    const historySeasons = history.map((h) => {
+        const recordAndPlayoffs = <RecordAndPlayoffs
+            abbrev={abbrev}
+            lost={h.lost}
+            playoffRoundsWon={h.playoffRoundsWon}
+            season={h.season}
+            // Bold championship seasons.
+            style={(h.playoffRoundsWon === g.numPlayoffRounds ? {fontWeight: 'bold'} : null)}
+            won={h.won}
+        />;
 
+        return <span key={h.season}>
+            {recordAndPlayoffs}
+            <br />
+        </span>;
+    });
+
+    const cols = getCols('Name', 'Pos', 'GP', 'Min', 'Pts', 'Reb', 'Ast', 'PER', 'EWA', 'Last Season');
     const rows = players.map(p => {
         return {
             key: p.pid,
@@ -67,16 +83,7 @@ const TeamHistory = ({abbrev, bestRecord = {}, championships, history = [], play
 
                 <h2>Seasons</h2>
                 <p style={{MozColumnWidth: '15em', MozColumns: '15em', WebkitColumns: '15em', columns: '15em'}}>
-                    {history.map(h => <span key={h.season}>
-                        <RecordAndPlayoffs
-                            abbrev={abbrev}
-                            lost={h.lost}
-                            playoffRoundsWon={h.playoffRoundsWon}
-                            season={h.season}
-                            won={h.won}
-                        />
-                        <br />
-                    </span>)}
+                    {historySeasons}
                 </p>
             </div>
             <div className="col-sm-9">

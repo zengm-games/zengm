@@ -7,6 +7,7 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const classNames = require('classnames');
 
 const genRows = (players, handleChangeAsset) => {
     return players.map(p => {
@@ -34,9 +35,11 @@ class Trade extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            accepted: false,
             asking: false,
             askMessage: null,
             forceTrade: false,
+            message: null,
         };
         this.handleChangeTeam = this.handleChangeTeam.bind(this);
         this.handleClickAsk = this.handleClickAsk.bind(this);
@@ -136,9 +139,10 @@ class Trade extends React.Component {
     }
 
     async handleClickPropose() {
-        const [, message] = await trade.propose(this.state.forceTrade);
+        const [accepted, message] = await trade.propose(this.state.forceTrade);
 
         this.setState({
+            accepted,
             message,
         });
 
@@ -243,8 +247,9 @@ class Trade extends React.Component {
                     </div>
 
                     <br />
+
                     {summary.warning ? <p className="alert alert-danger"><strong>Warning!</strong> {summary.warning}</p> : null}
-                    {this.state.message ? <p className="alert alert-info">{this.state.message}</p> : null}
+                    {this.state.message ? <p className={classNames('alert', this.state.accepted ? 'alert-success' : 'alert-info')}>{this.state.message}</p> : null}
 
                     <center>
                         {godMode ? <label className="god-mode god-mode-text"><input type="checkbox" onClick={this.handleClickForceTrade} value={this.state.forceTrade} />Force Trade</label> : null}<br />

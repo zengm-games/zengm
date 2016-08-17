@@ -397,7 +397,17 @@ async function propose(forceTrade) {
         return [true, 'Trade accepted! "Nice doing business with you!"'];
     }
 
-    return [false, 'Trade rejected! "What, are you crazy?"'];
+    // Return a different rejection message based on how close we are to a deal. When dv < 0, the closer to 0, the better the trade for the AI.
+    let message;
+    if (dv > -5) {
+        message = "Close, but not quite good enough.";
+    } else if (dv > -10) {
+        message = "That's not a good deal for me.";
+    } else {
+        message = 'What, are you crazy?!';
+    }
+
+    return [false, `Trade rejected! "${message}"`];
 }
 
 /**

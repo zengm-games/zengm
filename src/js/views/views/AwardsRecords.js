@@ -3,7 +3,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 
-const {DataTable, NewWindowLink} = require('../components/index');
+const {DataTable, Dropdown, NewWindowLink} = require('../components/index');
 
 const AwardsRecords = ({awardsRecords, playerCount, awardTypeVal}) => {
     bbgmViewReact.title('Awards Records');
@@ -27,6 +27,8 @@ const AwardsRecords = ({awardsRecords, playerCount, awardTypeVal}) => {
     }) : [];
 
     return <div>
+
+        <Dropdown view="awards_records" fields={["awardType"]} values={'Won Championship'} />
         <h1>Awards<NewWindowLink /></h1>
 
         <p>More: <a href={helpers.leagueUrl(['history_all'])}>League History</a> |&nbsp;

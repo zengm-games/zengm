@@ -35,9 +35,11 @@ class Trade extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            accepted: false,
             asking: false,
             askMessage: null,
             forceTrade: false,
+            message: null,
         };
         this.handleChangeTeam = this.handleChangeTeam.bind(this);
         this.handleClickAsk = this.handleClickAsk.bind(this);
@@ -247,7 +249,7 @@ class Trade extends React.Component {
                     <br />
 
                     {summary.warning ? <p className="alert alert-danger"><strong>Warning!</strong> {summary.warning}</p> : null}
-                    {this.state.message ? <p className={classNames('alert', { 'alert-success': this.state.accepted ? true : false, 'alert-danger': this.state.accepted ? false : true })}>{this.state.message}</p> : null}
+                    {this.state.message ? <p className={classNames('alert', this.state.accepted ? 'alert-success' : 'alert-info')}>{this.state.message}</p> : null}
 
                     <center>
                         {godMode ? <label className="god-mode god-mode-text"><input type="checkbox" onClick={this.handleClickForceTrade} value={this.state.forceTrade} />Force Trade</label> : null}<br />

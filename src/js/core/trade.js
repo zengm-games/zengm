@@ -400,7 +400,7 @@ async function propose(forceTrade) {
     // Return a different rejection message based on how close we are to a deal. When dv < 0, the closer to 0, the better the trade for the AI.
     let message;
     if (dv > -5) {
-        message = "This trade is not quite there yet for me.";
+        message = "Close, but not quite good enough.";
     } else if (dv > -10) {
         message = "That's not a good deal for me.";
     } else {

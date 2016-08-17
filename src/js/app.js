@@ -28,7 +28,6 @@ require('lib/jquery.barGraph');
 require('lib/jquery.dataTables');
 require('lib/jquery.dataTables.bbgmSorting');
 require('lib/jquery.dataTables.bootstrap');
-require('./lib/object-values-entries-polyfill');
 require('jquery-ui/sortable');
 require('./util/templateHelpers');
 require('./api');

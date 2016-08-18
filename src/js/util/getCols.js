@@ -20,6 +20,21 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'ADT': {
+        desc: 'All Defensive Team',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
+    'ALT': {
+        desc: 'All League Team',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
+    'ART': {
+        desc: 'All Rookie Team',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
     'Age': {
         sortType: 'number',
     },
@@ -40,6 +55,16 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'BR': {
+        desc: 'Best Record',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
+    'BRC': {
+        desc: 'Best Conference Record',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
     'Blk': {
         desc: 'Blocks',
         sortSequence: ['desc', 'asc'],
@@ -49,6 +74,12 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'currency',
     },
+    'Championships': {
+        desc: 'Championships Won',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
+    'Conference': {},
     'Contract': {
         sortSequence: ['desc', 'asc'],
         sortType: 'currency',
@@ -76,6 +107,7 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'Division': {},
     'Draft': {
         sortSequence: [],
     },
@@ -92,6 +124,11 @@ const cols = {
     },
     'FT%': {
         desc: 'Free Throw Percentage',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
+    'Finals': {
+        desc: 'Finals Appearances',
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
@@ -123,9 +160,15 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'lastTen',
     },
+    'Last Playoffs': {
+        sortType: 'number',
+    },
     'Last Season': {
         desc: 'Last Season with Team',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
+    'Last Title': {
         sortType: 'number',
     },
     'League Champion': {},
@@ -199,6 +242,11 @@ const cols = {
         desc: 'Draft Pick',
         sortType: 'draftPick',
     },
+    'Playoffs': {
+        desc: 'Playoff Appearances',
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
     'Pos': {
         desc: 'Position',
     },
@@ -232,6 +280,10 @@ const cols = {
         sortType: 'currency',
     },
     'Runner Up': {},
+    'SMOY': {
+        desc: 'Sixth Man of the Year',
+        sortType: 'name',
+    },
     'Season': {
         sortSequence: ['desc', 'asc'],
     },

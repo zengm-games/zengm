@@ -8,6 +8,7 @@ DataTable
     CSV export
     show/hide columns
     filtering
+    persist sort
 
 is UI updating okay without waiting for this.setState to finish?
 
@@ -44,6 +45,7 @@ when all react
   go through ui.js, reevaluate
   get rid of default params in views
   escape HTML saved to IDB very carefully (event log)
+  delete components.js
 
 Dropdown
   updateEvents need to be passed to dropdown to handle season change?

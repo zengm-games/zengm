@@ -57,8 +57,7 @@ const TeamHistory = ({abbrev, bestRecord = {}, championships, history = [], play
     return <div>
         <Dropdown view="team_history" fields={["teams"]} values={[abbrev]} />
         <h1>{team.region} {team.name} History <NewWindowLink /></h1>
-        <p>More: <a href={helpers.leagueUrl(['roster', abbrev])}>Roster</a> | <a href={helpers.leagueUrl(['team_finances', abbrev])}>Finances</a> | <a href={helpers.leagueUrl(['game_log', abbrev])}>Game Log</a>
-        | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
+        <p>More: <a href={helpers.leagueUrl(['roster', abbrev])}>Roster</a> | <a href={helpers.leagueUrl(['team_finances', abbrev])}>Finances</a> | <a href={helpers.leagueUrl(['game_log', abbrev])}>Game Log</a> | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
 
         <div className="row">
             <div className="col-sm-3">

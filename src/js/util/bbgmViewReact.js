@@ -157,6 +157,8 @@ function init(args) {
     if (args.runAfter) { throw new Error('Invalid arg runAfter'); }
     if (args.mapping) { throw new Error('Invalid arg mapping'); }
 
+    if (!args.Component) { throw new Error('Missing arg Component'); }
+
     const output = {};
     output.update = (inputs, updateEvents, cb) => emitter.emit('update', args, inputs, updateEvents, cb);
     output.get = get(output.update, args);

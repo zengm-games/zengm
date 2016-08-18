@@ -32,7 +32,7 @@ const DivStandings = ({div, season}) => {
                     <th width="100%">{div.name}</th>
                     <th>W</th>
                     <th>L</th>
-                    <th>Pct</th>
+                    <th>%</th>
                     <th>GB</th>
                     <th>Home</th>
                     <th>Road</th>

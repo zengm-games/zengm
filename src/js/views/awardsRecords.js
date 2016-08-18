@@ -1,30 +1,15 @@
 const g = require('../globals');
-const ui = require('../ui');
-const $ = require('jquery');
-const ko = require('knockout');
 const _ = require('underscore');
 const player = require('../core/player');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
-const components = require('./components');
+const AwardsRecords = require('./views/AwardsRecords');
 
 function get(req) {
     return {
         awardType: req.params.awardType || 'champion',
     };
 }
-
-function InitViewModel() {
-    this.awardType = ko.observable();
-    this.playerCount = ko.observable();
-    this.awardTypeVal = ko.observable();
-}
-
-const mapping = {
-    awardsRecords: {
-        create: options => options.data,
-    },
-};
 
 const optionsTmp = [{
     val: "Won Championship",
@@ -132,7 +117,8 @@ function getPlayerAwards(p, awardType) {
     years = formatYear(_.groupBy(years, 'team'));
 
     return {
-        player: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a>`,
+        name: `${p.firstName} ${p.lastName}`,
+        pid: p.pid,
         count: awards.length,
         countText: awards.length.toString(),
         years,
@@ -163,39 +149,12 @@ async function updateAwardsRecords(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title("Awards Records");
-    }).extend({
-        throttle: 1,
-    });
-
-    ko.computed(() => {
-        ui.datatableSinglePage($("#awards-records"), 0, vm.awardsRecords().map(p => {
-            return [p.player, p.countText, p.years, p.lastYear, p.retired, p.hof];
-        }), {
-            paging: true,
-            searching: true,
-            pagingType: "bootstrap",
-        });
-    }).extend({
-        throttle: 1,
-    });
-
-    ui.tableClickableRows($("#awards-records"));
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("awards-records-dropdown", ["awardType"], [vm.awardType()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "awardsRecords",
     get,
-    InitViewModel,
-    mapping,
     runBefore: [updateAwardsRecords],
-    uiFirst,
-    uiEvery,
+    Component: AwardsRecords,
 });
+
+
 

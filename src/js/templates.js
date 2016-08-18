@@ -6,7 +6,6 @@ const fs = require('fs');
 module.exports = {
     account: fs.readFileSync(__dirname + '/../templates/account.html', 'utf8'),
     accountUpdateCard: fs.readFileSync(__dirname + '/../templates/accountUpdateCard.html', 'utf8'),
-    awardsRecords: fs.readFileSync(__dirname + '/../templates/awardsRecords.html', 'utf8'),
     customizePlayer: fs.readFileSync(__dirname + '/../templates/customizePlayer.html', 'utf8'),
     dashboard: fs.readFileSync(__dirname + '/../templates/dashboard.html', 'utf8'),
     deleteLeague: fs.readFileSync(__dirname + '/../templates/deleteLeague.html', 'utf8'),
@@ -38,4 +37,8 @@ module.exports = {
     resetPassword: fs.readFileSync(__dirname + '/../templates/resetPassword.html', 'utf8'),
     teamFinances: fs.readFileSync(__dirname + '/../templates/teamFinances.html', 'utf8'),
     teamStatDists: fs.readFileSync(__dirname + '/../templates/teamStatDists.html', 'utf8'),
+    transactions: fs.readFileSync(__dirname + '/../templates/transactions.html', 'utf8'),
+    trade: fs.readFileSync(__dirname + '/../templates/trade.html', 'utf8'),
+    tradingBlock: fs.readFileSync(__dirname + '/../templates/tradingBlock.html', 'utf8'),
+    upcomingFreeAgents: fs.readFileSync(__dirname + '/../templates/upcomingFreeAgents.html', 'utf8'),
 };

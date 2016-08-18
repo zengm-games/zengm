@@ -84,6 +84,10 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'currency',
     },
+    'Count': {
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
     'Country': {},
     'Current Contract': {
         sortSequence: ['desc', 'asc'],
@@ -151,6 +155,7 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
+    'HOF': {},
     'L': {
         desc: 'Games Lost',
         sortSequence: ['desc', 'asc'],
@@ -169,6 +174,10 @@ const cols = {
         sortType: 'number',
     },
     'Last Title': {
+        sortType: 'number',
+    },
+    'Last': {
+        sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
     'League Champion': {},

@@ -105,7 +105,7 @@ function getPlayerAwards(p, awardType) {
     const formatYear = year => {
         return Object.keys(year).map(k => {
             const years = helpers.yearRanges(year[k].map(y => y.season)).join(', ');
-            return `${k} <small>(${years})</small>`;
+            return `${k} (${years})`;
         }).join(', ');
     };
 

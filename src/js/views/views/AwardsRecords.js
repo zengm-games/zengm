@@ -20,9 +20,6 @@ const AwardsRecords = ({awardsRecords, playerCount, awardTypeVal}) => {
                 a.retired,
                 a.hof,
             ],
-            classNames: {
-                danger: a.hof === 'yes',
-            },
         };
     }) : [];
 
@@ -40,6 +37,7 @@ const AwardsRecords = ({awardsRecords, playerCount, awardTypeVal}) => {
             cols={cols}
             defaultSort={[0, 'asc']}
             rows={rows}
+            pagination={true}
         />
     </div>;
 };

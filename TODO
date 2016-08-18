@@ -1,5 +1,10 @@
 REACT
 
+TeamFinances
+  help-icon
+  disable/enable form items
+  get rid of form tag
+
 DataTable
   USE FOR OTHER TABLES TOO, not just sortable ones. will be nice for colnames, especially
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary

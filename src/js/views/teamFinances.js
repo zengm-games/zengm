@@ -3,12 +3,9 @@ const ui = require('../ui');
 const finances = require('../core/finances');
 const team = require('../core/team');
 const backboard = require('backboard');
-const $ = require('jquery');
-const ko = require('knockout');
-const components = require('./components');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
-
+const TeamFinances = require('./views/TeamFinances');
 
 function disableFinanceSettings(tid) {
     $("#finances-settings input, #finances-settings button").attr("disabled", "disabled");
@@ -207,10 +204,6 @@ async function updateTeamFinances(inputs, updateEvents, vm) {
 }
 
 function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`${vm.team.region()} ${vm.team.name()} Finances`);
-    }).extend({throttle: 1});
-
     $("#help-payroll-limits").popover({
         title: "Payroll Limits",
         content: `The salary cap is a soft cap, meaning that you can exceed it to re-sign your own players or to sign free agents to minimum contracts ($" + g.minContract + "k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to ${g.luxuryTax} times the difference at the end of the season.`,
@@ -266,8 +259,6 @@ function uiFirst(vm) {
         });
     }).extend({throttle: 1});
 
-    ui.tableClickableRows($("#player-salaries"));
-
     ko.computed(() => {
         const barData = vm.barData();
         const barSeasons = vm.barSeasons();
@@ -302,8 +293,6 @@ function uiFirst(vm) {
 }
 
 function uiEvery(updateEvents, vm) {
-    components.dropdown("team-finances-dropdown", ["teams", "shows"], [vm.abbrev(), vm.show()], updateEvents);
-
     if (g.gamesInProgress) {
         disableFinanceSettings(vm.tid());
     } else {
@@ -311,14 +300,9 @@ function uiEvery(updateEvents, vm) {
     }
 }
 
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "teamFinances",
     get,
-    post,
-    InitViewModel,
-    mapping,
     runBefore: [updateTeamFinances],
-    uiFirst,
-    uiEvery,
+    Component: TeamFinances,
 });
-

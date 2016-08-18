@@ -11,7 +11,7 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed = [], confT
     // Show the remaining number of games, only for the regular season.
     const gamesPlayed = won + lost;
     const gamesRemaining = g.numGames - gamesPlayed;
-    const percentComplete = gamesPlayed / gamesRemaining;
+    const percentComplete = gamesPlayed / g.numGames;
 
     let gamesRemainingTag = null;
     if (g.phase === g.PHASE.REGULAR_SEASON) {

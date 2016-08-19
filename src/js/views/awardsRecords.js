@@ -2,7 +2,6 @@ const g = require('../globals');
 const _ = require('underscore');
 const player = require('../core/player');
 const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
 const AwardsRecords = require('./views/AwardsRecords');
 
 function get(req) {
@@ -102,19 +101,12 @@ function getPlayerAwards(p, awardType) {
         return '-';
     };
 
-    const formatYear = year => {
-        return Object.keys(year).map(k => {
-            const years = helpers.yearRanges(year[k].map(y => y.season)).join(', ');
-            return `${k} (${years})`;
-        }).join(', ');
-    };
-
     const awards = p.awards.filter(filter);
-    let years = awards.map(a => {
+    const years = awards.map(a => {
         return {team: getTeam(a.season), season: a.season};
     });
     const lastYear = _.max(years.map(y => y.season)).toString();
-    years = formatYear(_.groupBy(years, 'team'));
+
 
     return {
         name: `${p.firstName} ${p.lastName}`,

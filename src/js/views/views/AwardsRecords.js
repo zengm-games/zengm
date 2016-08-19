@@ -2,6 +2,7 @@ const React = require('react');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const _ = require('underscore');
 
 const {DataTable, Dropdown, NewWindowLink} = require('../components/index');
 
@@ -9,13 +10,20 @@ const AwardsRecords = ({awardsRecords, playerCount, awardTypeVal}) => {
     bbgmViewReact.title('Awards Records');
     const cols = getCols('Name', 'Count', 'Year', 'Last', 'Retired', 'HOF');
 
+    const formatYear = year => {
+        return Object.keys(year).map(k => {
+            const years = helpers.yearRanges(year[k].map(y => y.season)).join(', ');
+            return <span>{k} <small>({years})</small></span>;
+        });
+    };
+
     const rows = awardsRecords ? awardsRecords.map(a => {
         return {
             key: a.pid,
             data: [
                 <a href={helpers.leagueUrl(["player", a.pid])}>{a.name}</a>,
                 a.count,
-                a.years,
+                formatYear(_.groupBy(a.years, 'team')),
                 a.lastYear,
                 a.retired,
                 a.hof,

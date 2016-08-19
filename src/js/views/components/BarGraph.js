@@ -1,4 +1,6 @@
 const React = require('react');
+const OverlayTrigger = require('react-bootstrap/lib/OverlayTrigger');
+const Tooltip = require('react-bootstrap/lib/Tooltip');
 
 /**
  * Bar plots, both stacked and normal.
@@ -169,15 +171,18 @@ class BarGraph extends React.Component {
                         cssClass = 'bar-graph-3';
                     }
 
-console.log('tooltip', titleStart + tooltipCb(val))
-                    return <div key={i} className={cssClass} style={{
-                        marginLeft: `${gap}px`,
-                        position: 'absolute',
-                        bottom: `${bottom}%`,
-                        height: `${height}%`,
-                        left: `${i * widthPct}%`,
-                        width: `calc(${widthPct}% - ${gap}px)`,
-                    }} />;
+                    const tooltip = <Tooltip id="tooltip">{titleStart}{tooltipCb(val)}</Tooltip>;
+
+                    return <OverlayTrigger key={i} overlay={tooltip} placement="top">
+                        <div className={cssClass} style={{
+                            marginLeft: `${gap}px`,
+                            position: 'absolute',
+                            bottom: `${bottom}%`,
+                            height: `${height}%`,
+                            left: `${i * widthPct}%`,
+                            width: `calc(${widthPct}% - ${gap}px)`,
+                        }} />
+                    </OverlayTrigger>;
                 })}
             </div>;
         }

@@ -150,71 +150,74 @@ class BarGraph extends React.Component {
         }
 
         // Draw bars
+        let bars;
         if (!stacked) {
             // Not stacked
-            return <div style={{height: '100%', marginLeft: '-${gap}px', position: 'relative'}}>
-                {data.map((val, i) => {
-                    let titleStart = '';
-                    if (labels !== undefined) {
-                        titleStart = `${labels[i]}: `;
-                    }
-
-                    // Fix for negative values
-                    let bottom, cssClass, height;
-                    if (val >= 0) {
-                        bottom = scale(0, ylim);
-                        height = scaled[i] - scale(0, ylim);
-                        cssClass = 'bar-graph-1';
-                    } else {
-                        bottom = scaled[i];
-                        height = scale(0, ylim) - scaled[i];
-                        cssClass = 'bar-graph-3';
-                    }
-
-                    const tooltip = <Tooltip id="tooltip">{titleStart}{tooltipCb(val)}</Tooltip>;
-
-                    return <OverlayTrigger key={i} overlay={tooltip} placement="top">
-                        <div className={cssClass} style={{
-                            marginLeft: `${gap}px`,
-                            position: 'absolute',
-                            bottom: `${bottom}%`,
-                            height: `${height}%`,
-                            left: `${i * widthPct}%`,
-                            width: `calc(${widthPct}% - ${gap}px)`,
-                        }} />
-                    </OverlayTrigger>;
-                })}
-            </div>;
-        }
-
-        // Stacked
-        const offsets = [];
-        for (let j = 0; j < data.length; j++) {
-            for (let i = 0; i < data[j].length; i++) {
-                if (j === 0) {
-                    offsets[i] = 0;
-                } else {
-                    offsets[i] += scaled[j - 1][i];
+            bars = data.map((val, i) => {
+                let titleStart = '';
+                if (labels !== undefined) {
+                    titleStart = `${labels[i]}: `;
                 }
-                if (data[j][i] !== null && data[j][i] !== undefined) {
-                    let titleStart = "";
-                    if (labels !== undefined) {
-                        titleStart = `${labels[0][i]} ${labels[1][j]}: `;
+
+                // Fix for negative values
+                let bottom, cssClass, height;
+                if (val >= 0) {
+                    bottom = scale(0, ylim);
+                    height = scaled[i] - scale(0, ylim);
+                    cssClass = 'bar-graph-1';
+                } else {
+                    bottom = scaled[i];
+                    height = scale(0, ylim) - scaled[i];
+                    cssClass = 'bar-graph-3';
+                }
+
+                const tooltip = <Tooltip id="tooltip">{titleStart}{tooltipCb(val)}</Tooltip>;
+
+                return <OverlayTrigger key={i} overlay={tooltip} placement="top">
+                    <div className={cssClass} style={{
+                        marginLeft: `${gap}px`,
+                        position: 'absolute',
+                        bottom: `${bottom}%`,
+                        height: `${height}%`,
+                        left: `${i * widthPct}%`,
+                        width: `calc(${widthPct}% - ${gap}px)`,
+                    }} />
+                </OverlayTrigger>;
+            });
+        } else {
+            // Stacked
+            const offsets = [];
+            for (let j = 0; j < data.length; j++) {
+                for (let i = 0; i < data[j].length; i++) {
+                    if (j === 0) {
+                        offsets[i] = 0;
+                    } else {
+                        offsets[i] += scaled[j - 1][i];
                     }
-                    $("<div></div>", {"class": `bar-graph-${j + 1}`})
-                        .data("num", i)
-                        .css({
-                            position: "absolute",
-                            bottom: `${offsets[i]}%`,
-                            height: `${scaled[j][i]}%`,
-                        })
-                        .tooltip({
-                            title: titleStart + tooltipCb(data[j][i]),
-                        })
-                        .appendTo(container);
+                    if (data[j][i] !== null && data[j][i] !== undefined) {
+                        let titleStart = "";
+                        if (labels !== undefined) {
+                            titleStart = `${labels[0][i]} ${labels[1][j]}: `;
+                        }
+                        $("<div></div>", {"class": `bar-graph-${j + 1}`})
+                            .data("num", i)
+                            .css({
+                                position: "absolute",
+                                bottom: `${offsets[i]}%`,
+                                height: `${scaled[j][i]}%`,
+                            })
+                            .tooltip({
+                                title: titleStart + tooltipCb(data[j][i]),
+                            })
+                            .appendTo(container);
+                    }
                 }
             }
         }
+
+        return <div style={{height: '100%', marginLeft: `-${gap}px`, position: 'relative'}}>
+            {bars}
+        </div>;
     }
 }
 

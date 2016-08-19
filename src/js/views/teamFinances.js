@@ -208,7 +208,6 @@ async function updateTeamFinances(inputs, updateEvents, state) {
             ],
             val => helpers.formatCurrency(val / 1000, "M", 1)
         );
-        $.barGraph($("#bar-graph-cash"), barData.cash, undefined, barSeasons, val => helpers.formatCurrency(val, "M", 1));
     }).extend({throttle: 1});
 }
 

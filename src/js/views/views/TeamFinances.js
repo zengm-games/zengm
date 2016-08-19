@@ -106,7 +106,13 @@ console.log(barData, barSeasons)
                 <h4>Expenses</h4>
                 <div id="bar-graph-expenses" className="bar-graph-large"></div><br /><br />
                 <h4>Cash</h4>
-                <div id="bar-graph-cash" className="bar-graph-medium"></div>
+                <div id="bar-graph-cash" className="bar-graph-medium">
+                    <BarGraph
+                        data={barData.cash}
+                        labels={barSeasons}
+                        tooltipCb={val => helpers.formatCurrency(val, 'M', 1)}
+                    />
+                </div>
             </div>
             <div className="col-md-5 col-sm-6">
                 <form method="POST" id="finances-settings" data-bind="attrLeagueUrl: {action: ['team_finances']}">

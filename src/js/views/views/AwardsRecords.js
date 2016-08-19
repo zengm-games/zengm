@@ -6,14 +6,14 @@ const _ = require('underscore');
 
 const {DataTable, Dropdown, NewWindowLink} = require('../components/index');
 
-const AwardsRecords = ({awardsRecords, playerCount, awardTypeVal}) => {
+const AwardsRecords = ({awardsRecords, awardType, awardTypeVal, playerCount}) => {
     bbgmViewReact.title('Awards Records');
     const cols = getCols('Name', 'Count', 'Year', 'Last', 'Retired', 'HOF');
 
     const formatYear = year => {
-        return Object.keys(year).map(k => {
+        return Object.keys(year).map((k, i) => {
             const years = helpers.yearRanges(year[k].map(y => y.season)).join(', ');
-            return <span>{k} <small>({years})</small></span>;
+            return <span key={i}>{k} <small>({years})</small></span>;
         });
     };
 
@@ -32,8 +32,7 @@ const AwardsRecords = ({awardsRecords, playerCount, awardTypeVal}) => {
     }) : [];
 
     return <div>
-
-        <Dropdown view="awards_records" fields={["awardType"]} values={[awardTypeVal]} />
+        <Dropdown view="awards_records" fields={["awardType"]} values={[awardType]} />
         <h1>Awards<NewWindowLink /></h1>
 
         <p>More: <a href={helpers.leagueUrl(['history_all'])}>League History</a> | <a href={helpers.leagueUrl(['team_records'])}>Team Records</a></p>

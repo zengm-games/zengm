@@ -6,7 +6,6 @@ const fs = require('fs');
 module.exports = {
     account: fs.readFileSync(__dirname + '/../templates/account.html', 'utf8'),
     accountUpdateCard: fs.readFileSync(__dirname + '/../templates/accountUpdateCard.html', 'utf8'),
-    awardsRecords: fs.readFileSync(__dirname + '/../templates/awardsRecords.html', 'utf8'),
     customizePlayer: fs.readFileSync(__dirname + '/../templates/customizePlayer.html', 'utf8'),
     dashboard: fs.readFileSync(__dirname + '/../templates/dashboard.html', 'utf8'),
     deleteLeague: fs.readFileSync(__dirname + '/../templates/deleteLeague.html', 'utf8'),

@@ -165,6 +165,10 @@ const cols = {
         sortSequence: ['desc', 'asc'],
         sortType: 'lastTen',
     },
+    'Last': {
+        sortSequence: ['desc', 'asc'],
+        sortType: 'number',
+    },
     'Last Playoffs': {
         sortType: 'number',
     },
@@ -174,10 +178,6 @@ const cols = {
         sortType: 'number',
     },
     'Last Title': {
-        sortType: 'number',
-    },
-    'Last': {
-        sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
     'League Champion': {},

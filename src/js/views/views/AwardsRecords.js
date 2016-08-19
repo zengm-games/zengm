@@ -36,14 +36,13 @@ const AwardsRecords = ({awardsRecords, playerCount, awardTypeVal}) => {
         <Dropdown view="awards_records" fields={["awardType"]} values={[awardTypeVal]} />
         <h1>Awards<NewWindowLink /></h1>
 
-        <p>More: <a href={helpers.leagueUrl(['history_all'])}>League History</a> |&nbsp;
-        <a href={helpers.leagueUrl(['team_records'])}>Team Records</a></p>
+        <p>More: <a href={helpers.leagueUrl(['history_all'])}>League History</a> | <a href={helpers.leagueUrl(['team_records'])}>Team Records</a></p>
 
         <h4>{playerCount} players - {awardTypeVal} </h4>
 
         <DataTable
             cols={cols}
-            defaultSort={[0, 'asc']}
+            defaultSort={[1, 'desc']}
             rows={rows}
             pagination={true}
         />

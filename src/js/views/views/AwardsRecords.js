@@ -6,18 +6,18 @@ const _ = require('underscore');
 
 const {DataTable, Dropdown, NewWindowLink} = require('../components/index');
 
-const AwardsRecords = ({awardsRecords, awardType, awardTypeVal, playerCount}) => {
+const AwardsRecords = ({awardType, awardTypeVal, awardsRecords = [], playerCount}) => {
     bbgmViewReact.title('Awards Records');
     const cols = getCols('Name', 'Count', 'Year', 'Last', 'Retired', 'HOF');
 
     const formatYear = year => {
         return Object.keys(year).map((k, i) => {
             const years = helpers.yearRanges(year[k].map(y => y.season)).join(', ');
-            return <span key={i}>{k} <small>({years})</small></span>;
+            return <span key={i}>{i > 0 ? ', ' : null}{k} <small>({years})</small></span>;
         });
     };
 
-    const rows = awardsRecords ? awardsRecords.map(a => {
+    const rows = awardsRecords.map(a => {
         return {
             key: a.pid,
             data: [
@@ -29,7 +29,7 @@ const AwardsRecords = ({awardsRecords, awardType, awardTypeVal, playerCount}) =>
                 a.hof,
             ],
         };
-    }) : [];
+    });
 
     return <div>
         <Dropdown view="awards_records" fields={["awardType"]} values={[awardType]} />

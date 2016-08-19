@@ -7,7 +7,7 @@ const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
 const TeamFinances = require('./views/TeamFinances');
 
-function disableFinanceSettings(tid) {
+/*function disableFinanceSettings(tid) {
     $("#finances-settings input, #finances-settings button").attr("disabled", "disabled");
     if (tid === g.userTid) {
         $("#finances-settings .text-danger").html("Stop game simulation to edit.");
@@ -26,7 +26,7 @@ function enableFinanceSettings(tid) {
         $("#finances-settings button").hide();
     }
     $("#finances-settings .text-danger").html("");
-}
+}*/
 
 function get(req) {
     const inputs = {};
@@ -35,7 +35,7 @@ function get(req) {
     return inputs;
 }
 
-async function post(req) {
+/*async function post(req) {
     $("#finances-settings button").attr("disabled", "disabled").html("Saving...");
 
     await g.dbl.tx(["teams", "teamSeasons"], "readwrite", async tx => {
@@ -62,44 +62,18 @@ async function post(req) {
     });
 
     ui.realtimeUpdate(["teamFinances"]);
-}
+}*/
 
-function InitViewModel() {
-    this.tid = ko.observable();
-    this.show = ko.observable();
-    this.payroll = ko.observable();
-    this.salaryCap = ko.observable(g.salaryCap / 1000);
-    this.minPayroll = ko.observable(g.minPayroll / 1000);
-    this.luxuryPayroll = ko.observable(g.luxuryPayroll / 1000);
-    this.luxuryTax = ko.observable(g.luxuryTax);
-
-    this.aboveBelow = {};
-    this.aboveBelow.minPayroll = ko.computed(function () {
-        return this.payroll() > this.minPayroll() ? "above" : "below";
-    }, this).extend({throttle: 1});
-    this.aboveBelow.salaryCap = ko.computed(function () {
-        return this.payroll() > this.salaryCap() ? "above" : "below";
-    }, this).extend({throttle: 1});
-    this.aboveBelow.luxuryPayroll = ko.computed(function () {
-        return this.payroll() > this.luxuryPayroll() ? "above" : "below";
-    }, this).extend({throttle: 1});
-}
-
-const mapping = {
-    barData: {
-        create: options => ko.observable(options.data),
-    },
-    contracts: {
-        create: options => options.data,
-    },
-};
-
-async function updateTeamFinances(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || inputs.tid !== vm.tid() || inputs.show !== vm.show()) {
+async function updateTeamFinances(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || inputs.tid !== state.tid || inputs.show !== state.show) {
         const vars = {
             abbrev: inputs.abbrev,
             tid: inputs.tid,
             show: inputs.show,
+            salaryCap: g.salaryCap / 1000,
+            minPayroll: g.minPayroll / 1000,
+            luxuryPayroll: g.luxuryPayroll / 1000,
+            luxuryTax: g.luxuryTax,
         };
 
         const contracts = await team.getPayroll(null, inputs.tid).get(1);
@@ -203,7 +177,7 @@ async function updateTeamFinances(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
+/*function uiFirst(vm) {
     $("#help-payroll-limits").popover({
         title: "Payroll Limits",
         content: `The salary cap is a soft cap, meaning that you can exceed it to re-sign your own players or to sign free agents to minimum contracts ($" + g.minContract + "k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to ${g.luxuryTax} times the difference at the end of the season.`,
@@ -228,36 +202,6 @@ function uiFirst(vm) {
     // Form enabling/disabling
     $("#finances-settings").on("gameSimulationStart", () => disableFinanceSettings(vm.tid()));
     $("#finances-settings").on("gameSimulationStop", () => enableFinanceSettings(vm.tid()));
-
-    ko.computed(() => {
-        ui.datatableSinglePage($("#player-salaries"), 1, vm.contracts().map(p => {
-            const output = [helpers.playerNameLabels(p.pid, `${p.firstName} ${p.lastName}`, p.injury, p.skills, p.watch)];
-            if (p.released) {
-                output[0] = `<i>${output[0]}</i>`;
-            }
-            for (let i = 0; i < 5; i++) {
-                if (p.amounts[i]) {
-                    output.push(helpers.formatCurrency(p.amounts[i], "M"));
-                } else {
-                    output.push("");
-                }
-                if (p.released) {
-                    output[i + 1] = `<i>${output[i + 1]}</i>`;
-                }
-            }
-            return output;
-        }), {
-            // This is needed to update the totals at the bottom. Knockout can't do it directly because (apparently) DataTables handles the whole table, even the tfoot.
-            footerCallback: tfoot => {
-                const cells = tfoot.getElementsByTagName('th');
-                const contractTotals = vm.contractTotals();
-
-                for (let i = 0; i < contractTotals.length; i++) {
-                    cells[i + 1].innerHTML = helpers.formatCurrency(contractTotals[i], "M");
-                }
-            },
-        });
-    }).extend({throttle: 1});
 
     ko.computed(() => {
         const barData = vm.barData();
@@ -298,7 +242,7 @@ function uiEvery(updateEvents, vm) {
     } else {
         enableFinanceSettings(vm.tid());
     }
-}
+}*/
 
 module.exports = bbgmViewReact.init({
     id: "teamFinances",

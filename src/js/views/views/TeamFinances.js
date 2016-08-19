@@ -1,13 +1,49 @@
 const React = require('react');
-const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
-const TeamFinances = ({abbrev, aboveBelow = {luxuryPayroll: null, minPayroll: null, salaryCap: null}, minPayroll, show, team = {budget: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, expenses: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, name: null, region: null}}) => {
+const TeamFinances = ({abbrev, contractTotals = [], contracts = [], luxuryPayroll, luxuryTax, minPayroll, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, expenses: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, name: null, region: null}}) => {
     bbgmViewReact.title(`${team.region} ${team.name} Finances`);
-    
+
+    const cols = getCols('Name').concat(salariesSeasons.map(season => {
+        return {
+            title: season,
+            sortSequence: ['desc', 'asc'],
+            sortType: 'currency',
+        };
+    }));
+
+    const rows = contracts.map(p => {
+        const data = [
+            <PlayerNameLabels
+                injury={p.injury}
+                pid={p.pid}
+                skills={p.skills}
+                style={{fontStyle: p.released ? 'italic' : 'normal'}}
+                watch={p.watch}
+            >{p.firstName} {p.lastName}</PlayerNameLabels>,
+        ];
+        for (let i = 0; i < 5; i++) {
+            if (p.amounts[i]) {
+                data.push(helpers.formatCurrency(p.amounts[i], "M"));
+            } else {
+                data.push(null);
+            }
+            if (p.released) {
+                data[i + 1] = <i>{data[i + 1]}</i>;
+            }
+        }
+
+        return {
+            key: p.pid,
+            data,
+        };
+    });
+
+    const footer = ['Totals'].concat(contractTotals.map(amount => helpers.formatCurrency(amount, 'M')));
+
     return <div>
         <Dropdown view="team_finances" fields={["teams", "shows"]} values={[abbrev, show]} />
         <h1>{team.region} {team.name} Finances <NewWindowLink /></h1>
@@ -15,7 +51,10 @@ const TeamFinances = ({abbrev, aboveBelow = {luxuryPayroll: null, minPayroll: nu
         <p>More: <a href={helpers.leagueUrl(['roster', abbrev])}>Roster</a> | <a href={helpers.leagueUrl(['game_log', abbrev])}>Game Log</a> | <a href={helpers.leagueUrl(['team_history', abbrev])}>History</a> | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
 
 
-        <p className="clearfix">The current payroll (<b>{helpers.formatCurrency([team.payroll, 'M'])}</b>) is {aboveBelow.minPayroll} the minimum payroll limit (<b>{helpers.formatCurrency([minPayroll, 'M'])}</b>), {aboveBelow.salaryCap} the salary cap (<b>{helpers.formatCurrency([salaryCap, 'M'])}</b>), and {aboveBelow.luxuryPayroll} the luxury tax limit (<b>{helpers.formatCurrency([luxuryPayroll, 'M'])}</b>). <span className="glyphicon glyphicon-question-sign help-icon" id="help-payroll-limits" data-placement="bottom"></span></p>
+        <p className="clearfix">The current payroll (<b>{helpers.formatCurrency([team.payroll, 'M'])}</b>) is {payroll
+ > minPayroll ? 'above' : 'below'} the minimum payroll limit (<b>{helpers.formatCurrency([minPayroll, 'M'])}</b>), {payroll
+ > salaryCap ? 'above' : 'below'} the salary cap (<b>{helpers.formatCurrency([salaryCap, 'M'])}</b>), and {payroll
+ > luxuryPayroll ? 'above' : 'below'} the luxury tax limit (<b>{helpers.formatCurrency([luxuryPayroll, 'M'])}</b>). <span className="glyphicon glyphicon-question-sign help-icon" id="help-payroll-limits" data-placement="bottom"></span></p>
 
         <div className="row">
             <div className="col-md-3 col-sm-2">
@@ -94,25 +133,12 @@ const TeamFinances = ({abbrev, aboveBelow = {luxuryPayroll: null, minPayroll: nu
 
         <p>You can release players from <a href={helpers.leagueUrl(['roster'])}>your roster</a>. Released players who are still owed money are <i>shown in italics</i>.</p>
 
-        <div className="table-responsive">
-            <table className="table table-striped table-bordered table-condensed" id="player-salaries">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <!-- ko foreach: salariesSeasons -->
-                            <th data-bind="text: $data"></th>
-                        <!-- /ko -->
-                    </tr>
-                </thead>
-                <tbody></tbody>
-                <tfoot>
-                        <th>Totals</th>
-                        <!-- ko foreach: contractTotals -->
-                            <th></th>
-                        <!-- /ko -->
-                </tfoot>
-            </table>
-        </div>
+        <DataTable
+            cols={cols}
+            defaultSort={[1, 'desc']}
+            footer={footer}
+            rows={rows}
+        />
     </div>;
 };
 

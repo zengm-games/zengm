@@ -2,9 +2,9 @@ const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
-const TeamFinances = ({abbrev, contractTotals = [], contracts = [], luxuryPayroll, luxuryTax, minPayroll, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, expenses: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, name: null, region: null}}) => {
+const TeamFinances = ({abbrev, contractTotals = [], contracts = [], luxuryPayroll, luxuryTax, minContract, minPayroll, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, expenses: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, name: null, region: null}}) => {
     bbgmViewReact.title(`${team.region} ${team.name} Finances`);
 
     const cols = getCols('Name').concat(salariesSeasons.map(season => {
@@ -54,13 +54,17 @@ const TeamFinances = ({abbrev, contractTotals = [], contracts = [], luxuryPayrol
         <p className="clearfix">The current payroll (<b>{helpers.formatCurrency([team.payroll, 'M'])}</b>) is {payroll
  > minPayroll ? 'above' : 'below'} the minimum payroll limit (<b>{helpers.formatCurrency([minPayroll, 'M'])}</b>), {payroll
  > salaryCap ? 'above' : 'below'} the salary cap (<b>{helpers.formatCurrency([salaryCap, 'M'])}</b>), and {payroll
- > luxuryPayroll ? 'above' : 'below'} the luxury tax limit (<b>{helpers.formatCurrency([luxuryPayroll, 'M'])}</b>). <span className="glyphicon glyphicon-question-sign help-icon" id="help-payroll-limits" data-placement="bottom"></span></p>
+ > luxuryPayroll ? 'above' : 'below'} the luxury tax limit (<b>{helpers.formatCurrency([luxuryPayroll, 'M'])}</b>). <HelpPopover placement="bottom" title="Payroll Limits">
+            The salary cap is a soft cap, meaning that you can exceed it to re-sign your own players or to sign free agents to minimum contracts (${minContract}k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to {luxuryTax} times the difference at the end of the season.
+        </HelpPopover></p>
 
         <div className="row">
             <div className="col-md-3 col-sm-2">
                 <h4>Wins</h4>
                 <div id="bar-graph-won" className="bar-graph-small"></div><br /><br />
-                <span className="clickover"><h4>Hype <span className="glyphicon glyphicon-question-sign help-icon" id="help-hype" data-placement="right"></span></h4></span>
+                <h4>Hype <HelpPopover placement="right" title="Hype">
+                    "Hype" refers to fans' interest in your team. If your team is winning or improving, then hype increases; if your team is losing or stagnating, then hype decreases. Hype influences attendance, various revenue sources such as merchandising, and the attitude players have towards your organization.
+                </HelpPopover></h4>
                 <div id="bar-graph-hype" className="bar-graph-small"></div><br /><br />
                 <h4>Region Population</h4>
                 <div id="bar-graph-pop" className="bar-graph-small"></div><br /><br />
@@ -77,7 +81,9 @@ const TeamFinances = ({abbrev, contractTotals = [], contracts = [], luxuryPayrol
             </div>
             <div className="col-md-5 col-sm-6">
                 <form method="POST" id="finances-settings" data-bind="attrLeagueUrl: {action: ['team_finances']}">
-                    <h4>Revenue Settings <span className="glyphicon glyphicon-question-sign help-icon" id="help-revenue-settings" data-placement="bottom"></span></h4>
+                    <h4>Revenue Settings <HelpPopover placement="bottom" title="Revenue Settings">
+                        Set your ticket price too high, and attendance will decrease and some fans will resent you for it. Set it too low, and you're not maximizing your profit.
+                    </HelpPopover></h4>
                     <p className="text-danger"></p>
                     <div className="row">
                         <div className="pull-left finances-settings-label">Ticket Price</div>
@@ -87,7 +93,12 @@ const TeamFinances = ({abbrev, contractTotals = [], contracts = [], luxuryPayrol
                         <div className="pull-left finances-settings-text">Leaguewide rank: #{team.budget.ticketPrice.rank}</div>
                     </div>
                     <p></p>
-                    <h4>Expense Settings <span className="glyphicon glyphicon-question-sign help-icon" id="help-expense-settings" data-placement="bottom"></span></h4>
+                    <h4>Expense Settings <HelpPopover placement="bottom" title="Expense Settings">
+                        <p>Scouting: Controls the accuracy of displayed player ratings.</p>
+                        <p>Coaching: Better coaches mean better player development.</p>
+                        <p>Health: A good team of doctors speeds recovery from injuries.</p>
+                        <p>Facilities: Better training facilities make your players happier and other players envious; stadium renovations increase attendance.</p>
+                    </HelpPopover></h4>
                     <p className="text-danger"></p>
                     <div className="row">
                         <div className="pull-left finances-settings-label">Scouting</div>

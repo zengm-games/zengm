@@ -1,6 +1,9 @@
 REACT
 
 TeamFinances
+  bargraph
+    tooltips
+    null/undefined values in new league
   help-icon
   disable/enable form items, like FA
   get rid of form tag

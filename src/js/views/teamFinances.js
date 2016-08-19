@@ -68,6 +68,7 @@ async function updateTeamFinances(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || inputs.tid !== state.tid || inputs.show !== state.show) {
         const vars = {
             abbrev: inputs.abbrev,
+            numGames: g.numGames,
             tid: inputs.tid,
             show: inputs.show,
             salaryCap: g.salaryCap / 1000,
@@ -186,11 +187,6 @@ async function updateTeamFinances(inputs, updateEvents, state) {
     ko.computed(() => {
         const barData = vm.barData();
         const barSeasons = vm.barSeasons();
-
-        $.barGraph($("#bar-graph-won"), barData.won, [0, g.numGames], barSeasons);
-        $.barGraph($("#bar-graph-hype"), barData.hype, [0, 1], barSeasons, val => helpers.round(val, 2));
-        $.barGraph($("#bar-graph-pop"), barData.pop, [0, 20], barSeasons, val => `${helpers.round(val, 1)}M`);
-        $.barGraph($("#bar-graph-att"), barData.att, [0, 25000], barSeasons, val => helpers.numberWithCommas(helpers.round(val)));
 
         $.barGraph(
             $("#bar-graph-revenue"),

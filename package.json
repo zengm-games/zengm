@@ -104,7 +104,6 @@
     "lib/bootstrap-popover": "./src/js/lib/bootstrap-popover.js",
     "lib/bootstrap-tooltip": "./src/js/lib/bootstrap-tooltip.js",
     "lib/bootstrap-transition": "./src/js/lib/bootstrap-transition.js",
-    "lib/jquery.barGraph": "./src/js/lib/jquery.barGraph.js",
     "lib/jquery.dataTables": "./src/js/lib/jquery.dataTables.js",
     "lib/jquery.dataTables.bbgmSorting": "./src/js/lib/jquery.dataTables.bbgmSorting.js",
     "lib/jquery.dataTables.bootstrap": "./src/js/lib/jquery.dataTables.bootstrap.js"
@@ -150,12 +149,6 @@
     },
     "lib/bootstrap-transition": {
       "depends": [
-        "jquery:jQuery"
-      ]
-    },
-    "lib/jquery.barGraph": {
-      "depends": [
-        "lib/bootstrap-tooltip",
         "jquery:jQuery"
       ]
     },

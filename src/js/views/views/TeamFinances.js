@@ -2,9 +2,9 @@ const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
-const TeamFinances = ({abbrev, contractTotals = [], contracts = [], luxuryPayroll, luxuryTax, minContract, minPayroll, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, expenses: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, name: null, region: null}}) => {
+const TeamFinances = ({abbrev, barData = {}, barSeasons, contractTotals = [], contracts = [], luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, expenses: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, name: null, region: null}}) => {
     bbgmViewReact.title(`${team.region} ${team.name} Finances`);
 
     const cols = getCols('Name').concat(salariesSeasons.map(season => {
@@ -44,6 +44,8 @@ const TeamFinances = ({abbrev, contractTotals = [], contracts = [], luxuryPayrol
 
     const footer = ['Totals'].concat(contractTotals.map(amount => helpers.formatCurrency(amount, 'M')));
 
+console.log(barData, barSeasons)
+
     return <div>
         <Dropdown view="team_finances" fields={["teams", "shows"]} values={[abbrev, show]} />
         <h1>{team.region} {team.name} Finances <NewWindowLink /></h1>
@@ -61,15 +63,42 @@ const TeamFinances = ({abbrev, contractTotals = [], contracts = [], luxuryPayrol
         <div className="row">
             <div className="col-md-3 col-sm-2">
                 <h4>Wins</h4>
-                <div id="bar-graph-won" className="bar-graph-small"></div><br /><br />
+                <div className="bar-graph-small">
+                    <BarGraph
+                        data={barData.won}
+                        labels={barSeasons}
+                        ylim={[0, numGames]}
+                    />
+                </div><br /><br />
                 <h4>Hype <HelpPopover placement="right" title="Hype">
                     "Hype" refers to fans' interest in your team. If your team is winning or improving, then hype increases; if your team is losing or stagnating, then hype decreases. Hype influences attendance, various revenue sources such as merchandising, and the attitude players have towards your organization.
                 </HelpPopover></h4>
-                <div id="bar-graph-hype" className="bar-graph-small"></div><br /><br />
+                <div id="bar-graph-hype" className="bar-graph-small">
+                    <BarGraph
+                        data={barData.hype}
+                        labels={barSeasons}
+                        tooltipCb={val => helpers.round(val, 2)}
+                        ylim={[0, 1]}
+                    />
+                </div><br /><br />
                 <h4>Region Population</h4>
-                <div id="bar-graph-pop" className="bar-graph-small"></div><br /><br />
+                <div id="bar-graph-pop" className="bar-graph-small">
+                    <BarGraph
+                        data={barData.pop}
+                        labels={barSeasons}
+                        tooltipCb={val => `${helpers.round(val, 1)}M`}
+                        ylim={[0, 20]}
+                    />
+                </div><br /><br />
                 <h4>Average Attendance</h4>
-                <div id="bar-graph-att" className="bar-graph-small"></div>
+                <div id="bar-graph-att" className="bar-graph-small">
+                    <BarGraph
+                        data={barData.att}
+                        labels={barSeasons}
+                        tooltipCb={val => helpers.numberWithCommas(helpers.round(val))}
+                        ylim={[0, 25000]}
+                    />
+                </div>
             </div>
             <div className="col-md-4 col-sm-4">
                 <h4>Revenue</h4>

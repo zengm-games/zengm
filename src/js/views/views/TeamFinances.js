@@ -2,6 +2,7 @@ const React = require('react');
 const g = require('../../globals');
 const ui = require('../../ui');
 const finances = require('../../core/finances');
+const league = require('../../core/league');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
@@ -65,6 +66,7 @@ class FinancesForm extends React.Component {
         });
 
         ui.realtimeUpdate(["teamFinances"]);
+        league.updateLastDbChange();
     }
 
     componentWillReceiveProps(nextProps) {

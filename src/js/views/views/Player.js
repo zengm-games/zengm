@@ -142,6 +142,75 @@ const StatsTable = ({careerStats, stats}) => {
     />;
 };
 
+const ShotLocationsTable = ({careerStats, stats}) => {
+    return <DataTable
+        cols={getCols('Year', 'Team', 'Age', 'GP', 'GS', 'Min', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%')}
+        defaultSort={[0, 'asc']}
+        footer={[
+            'Career',
+            null,
+            null,
+            careerStats.gp,
+            careerStats.gs,
+            helpers.round(careerStats.min, 1),
+            helpers.round(careerStats.fgAtRim, 1),
+            helpers.round(careerStats.fgaAtRim, 1),
+            helpers.round(careerStats.fgpAtRim, 1),
+            helpers.round(careerStats.fgLowPost, 1),
+            helpers.round(careerStats.fgaLowPost, 1),
+            helpers.round(careerStats.fgpLowPost, 1),
+            helpers.round(careerStats.fgMidRange, 1),
+            helpers.round(careerStats.fgaMidRange, 1),
+            helpers.round(careerStats.fgpMidRange, 1),
+            helpers.round(careerStats.tp, 1),
+            helpers.round(careerStats.tpa, 1),
+            helpers.round(careerStats.tpp, 1),
+        ]}
+        rows={stats.map(ps => {
+            return {
+                key: ps.psid,
+                data: [
+                    ps.season,
+                    <a href={helpers.leagueUrl(['roster', ps.abbrev, ps.season])}>{ps.abbrev}</a>,
+                    ps.age,
+                    ps.gp,
+                    ps.gs,
+                    helpers.round(ps.min, 1),
+                    helpers.round(ps.fgAtRim, 1),
+                    helpers.round(ps.fgaAtRim, 1),
+                    helpers.round(ps.fgpAtRim, 1),
+                    helpers.round(ps.fgLowPost, 1),
+                    helpers.round(ps.fgaLowPost, 1),
+                    helpers.round(ps.fgpLowPost, 1),
+                    helpers.round(ps.fgMidRange, 1),
+                    helpers.round(ps.fgaMidRange, 1),
+                    helpers.round(ps.fgpMidRange, 1),
+                    helpers.round(ps.tp, 1),
+                    helpers.round(ps.tpa, 1),
+                    helpers.round(ps.tpp, 1),
+                ],
+            };
+        })}
+        superCols={[{
+            title: '',
+            colspan: 6,
+        }, {
+            title: 'At Rim',
+            colspan: 3,
+        }, {
+            title: 'Low Post',
+            colspan: 3,
+        }, {
+            title: 'Mid-Range',
+            colspan: 3,
+        }, {
+            title: '3PT',
+            desc: 'Three-Pointers',
+            colspan: 3,
+        }]}
+    />;
+};
+
 const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = {awardsGrouped: [], born: {}, careerStats: {}, careerStatsPlayoffs: {}, draft: {}, pid: 0, ratings: [{season: 0, skills: []}], salaries: [], stats: [], statsPlayoffs: [], watch: false}, retired, showContract, showTradeFor}) => {
     bbgmViewReact.title(player.name);
 
@@ -237,20 +306,10 @@ const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = 
         />
 
         <h3>Shot Locations</h3>
-        <div className="table-responsive">
-            <table className="table table-striped table-bordered table-condensed table-clickable-rows" id="player_stats">
-                <thead>
-                    <tr><th colspan="6"></th><th colspan="3" title="At Rim">At Rim</th><th colspan="3" title="Low Post">Low Post</th><th colspan="3" title="Mid-Range">Mid-Range</th><th colspan="3" title="Three-Pointers">3PT</th></tr>
-                    <tr><th>Year</th><th>Team</th><th>Age</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th></tr>
-                </thead>
-                <tbody data-bind="foreach: player.stats">
-                    <tr><td><a href="#" data-bind="text: season"></a></td><td><a data-bind="text: abbrev, attrLeagueUrl: {href: ['roster', abbrev, season]}"></a></td><td data-bind="text: age"></td><td data-bind="text: gp"></td><td data-bind="text: gs"></td><td data-bind="round: [min, 1]"></td><td data-bind="round: [fgAtRim, 1]"></td><td data-bind="round: [fgaAtRim, 1]"></td><td data-bind="round: [fgpAtRim, 1]"></td><td data-bind="round: [fgLowPost, 1]"></td><td data-bind="round: [fgaLowPost, 1]"></td><td data-bind="round: [fgpLowPost, 1]"></td><td data-bind="round: [fgMidRange, 1]"></td><td data-bind="round: [fgaMidRange, 1]"></td><td data-bind="round: [fgpMidRange, 1]"></td><td data-bind="round: [tp, 1]"></td><td data-bind="round: [tpa, 1]"></td><td data-bind="round: [tpp, 1]"></td></tr>
-                </tbody>
-                <tfoot data-bind="with: player.careerStats">
-                    <tr><th>Career</th><th></th><th></th><th data-bind="text: gp"></th><th data-bind="text: gs"></th><th data-bind="round: [min, 1]"></th><th data-bind="round: [fgAtRim, 1]"></th><th data-bind="round: [fgaAtRim, 1]"></th><th data-bind="round: [fgpAtRim, 1]"></th><th data-bind="round: [fgLowPost, 1]"></th><th data-bind="round: [fgaLowPost, 1]"></th><th data-bind="round: [fgpLowPost, 1]"></th><th data-bind="round: [fgMidRange, 1]"></th><th data-bind="round: [fgaMidRange, 1]"></th><th data-bind="round: [fgpMidRange, 1]"></th><th data-bind="round: [tp, 1]"></th><th data-bind="round: [tpa, 1]"></th><th data-bind="round: [tpp, 1]"></th></tr>
-                </tfoot>
-            </table>
-        </div>
+        <ShotLocationsTable
+            careerStats={player.careerStats}
+            stats={player.stats}
+        />
 
         <h2>Playoffs</h2>
         <h3>Stats</h3>
@@ -260,20 +319,10 @@ const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = 
         />
 
         <h3>Shot Locations</h3>
-        <div className="table-responsive">
-            <table className="table table-striped table-bordered table-condensed table-clickable-rows" id="player_stats">
-                <thead>
-                    <tr><th colspan="6"></th><th colspan="3" title="At Rim">At Rim</th><th colspan="3" title="Low Post">Low Post</th><th colspan="3" title="Mid-Range">Mid-Range</th><th colspan="3" title="Three-Pointers">3PT</th></tr>
-                    <tr><th>Year</th><th>Team</th><th>Age</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th></tr>
-                </thead>
-                <tbody data-bind="foreach: player.statsPlayoffs">
-                    <tr><td><a href="#" data-bind="text: season"></a></td><td><a data-bind="text: abbrev, attrLeagueUrl: {href: ['roster', abbrev, season]}"></a></td><td data-bind="text: age"></td><td data-bind="text: gp"></td><td data-bind="text: gs"></td><td data-bind="round: [min, 1]"></td><td data-bind="round: [fgAtRim, 1]"></td><td data-bind="round: [fgaAtRim, 1]"></td><td data-bind="round: [fgpAtRim, 1]"></td><td data-bind="round: [fgLowPost, 1]"></td><td data-bind="round: [fgaLowPost, 1]"></td><td data-bind="round: [fgpLowPost, 1]"></td><td data-bind="round: [fgMidRange, 1]"></td><td data-bind="round: [fgaMidRange, 1]"></td><td data-bind="round: [fgpMidRange, 1]"></td><td data-bind="round: [tp, 1]"></td><td data-bind="round: [tpa, 1]"></td><td data-bind="round: [tpp, 1]"></td></tr>
-                </tbody>
-                <tfoot data-bind="with: player.careerStatsPlayoffs">
-                    <tr><th>Career</th><th></th><th></th><th data-bind="text: gp"></th><th data-bind="text: gs"></th><th data-bind="round: [min, 1]"></th><th data-bind="round: [fgAtRim, 1]"></th><th data-bind="round: [fgaAtRim, 1]"></th><th data-bind="round: [fgpAtRim, 1]"></th><th data-bind="round: [fgLowPost, 1]"></th><th data-bind="round: [fgaLowPost, 1]"></th><th data-bind="round: [fgpLowPost, 1]"></th><th data-bind="round: [fgMidRange, 1]"></th><th data-bind="round: [fgaMidRange, 1]"></th><th data-bind="round: [fgpMidRange, 1]"></th><th data-bind="round: [tp, 1]"></th><th data-bind="round: [tpa, 1]"></th><th data-bind="round: [tpp, 1]"></th></tr>
-                </tfoot>
-            </table>
-        </div>
+        <ShotLocationsTable
+            careerStats={player.careerStatsPlayoffs}
+            stats={player.statsPlayoffs}
+        />
 
         <h2>Ratings</h2>
         <DataTable

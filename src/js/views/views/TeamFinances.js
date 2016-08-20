@@ -1,5 +1,7 @@
 const React = require('react');
 const g = require('../../globals');
+const ui = require('../../ui');
+const finances = require('../../core/finances');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
@@ -8,13 +10,73 @@ const {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabe
 class FinancesForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            dirty: false,
+            coaching: props.team.budget.coaching.amount,
+            facilities: props.team.budget.facilities.amount,
+            health: props.team.budget.health.amount,
+            saving: false,
+            scouting: props.team.budget.scouting.amount,
+            ticketPrice: props.team.budget.ticketPrice.amount,
+        };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleSubmit(e) {
+    handleChange(name, e) {
+        this.setState({
+            dirty: true,
+            [name]: e.target.value,
+        });
+    }
+
+    async handleSubmit(e) {
         e.preventDefault();
-        console.log(e);
+
+        this.setState({saving: true});
+
+        await g.dbl.tx(["teams", "teamSeasons"], "readwrite", async tx => {
+            const t = await tx.teams.get(g.userTid);
+
+            const vals = {
+                // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
+                coaching: helpers.round(this.state.coaching * 100) * 10,
+                facilities: helpers.round(this.state.facilities * 100) * 10,
+                health: helpers.round(this.state.health * 100) * 10,
+                scouting: helpers.round(this.state.scouting * 100) * 10,
+
+                // Already in [dollars]
+                ticketPrice: parseFloat(helpers.round(this.state.ticketPrice, 2)),
+            };
+
+            for (const key of Object.keys(vals)) {
+                // Check for NaN before updating
+                if (vals[key] === vals[key]) {
+                    t.budget[key].amount = vals[key];
+                }
+            }
+
+            await tx.teams.put(t);
+            await finances.updateRanks(tx, ["budget"]);
+        });
+
+        this.setState({
+            dirty: false,
+            saving: false,
+        });
+
+        ui.realtimeUpdate(["teamFinances"]);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (!this.state.dirty) {
+            this.setState({
+                coaching: nextProps.team.budget.coaching.amount,
+                facilities: nextProps.team.budget.facilities.amount,
+                health: nextProps.team.budget.health.amount,
+                scouting: nextProps.team.budget.scouting.amount,
+                ticketPrice: nextProps.team.budget.ticketPrice.amount,
+            });
+        }
     }
 
     render() {
@@ -35,7 +97,7 @@ class FinancesForm extends React.Component {
                 <div className="pull-left finances-settings-label">Ticket Price</div>
                 <div className="input-group input-group-sm pull-left finances-settings-field">
                     <span className="input-group-addon">$</span>
-                    <input type="text" name="budget[ticketPrice]" className="form-control" disabled={formDisabled} value={team.budget.ticketPrice.amount} />
+                    <input type="text" className="form-control" disabled={formDisabled} onChange={this.handleChange.bind(this, 'ticketPrice')} value={this.state.ticketPrice} />
                 </div>
                 <div className="pull-left finances-settings-text">Leaguewide rank: #{team.budget.ticketPrice.rank}</div>
             </div>
@@ -51,7 +113,7 @@ class FinancesForm extends React.Component {
                 <div className="pull-left finances-settings-label">Scouting</div>
                 <div className="input-group input-group-sm pull-left finances-settings-field">
                     <span className="input-group-addon">$</span>
-                    <input type="text" name="budget[scouting]" className="form-control" disabled={formDisabled} value={team.budget.scouting.amount} />
+                    <input type="text" className="form-control" disabled={formDisabled} onChange={this.handleChange.bind(this, 'scouting')} value={this.state.scouting} />
                     <span className="input-group-addon">M</span>
                 </div>
                 <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.scouting.rank}<br />Spent this season: #{team.expenses.scouting.rank}</div>
@@ -60,7 +122,7 @@ class FinancesForm extends React.Component {
                 <div className="pull-left finances-settings-label">Coaching</div>
                 <div className="input-group input-group-sm pull-left finances-settings-field">
                     <span className="input-group-addon">$</span>
-                    <input type="text" name="budget[coaching]" className="form-control" disabled={formDisabled} value={team.budget.coaching.amount} />
+                    <input type="text" className="form-control" disabled={formDisabled} onChange={this.handleChange.bind(this, 'coaching')} value={this.state.coaching} />
                     <span className="input-group-addon">M</span>
                 </div>
                 <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.coaching.rank}<br />Spent this season: #{team.expenses.coaching.rank}</div>
@@ -69,7 +131,7 @@ class FinancesForm extends React.Component {
                 <div className="pull-left finances-settings-label">Health</div>
                 <div className="input-group input-group-sm pull-left finances-settings-field">
                     <span className="input-group-addon">$</span>
-                    <input type="text" name="budget[health]" className="form-control" disabled={formDisabled} value={team.budget.health.amount} />
+                    <input type="text" className="form-control" disabled={formDisabled} onChange={this.handleChange.bind(this, 'health')} value={this.state.health} />
                     <span className="input-group-addon">M</span>
                 </div>
                 <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.health.rank}<br />Spent this season: #{team.expenses.health.rank}</div>
@@ -78,7 +140,7 @@ class FinancesForm extends React.Component {
                 <div className="pull-left finances-settings-label">Facilities</div>
                 <div className="input-group input-group-sm pull-left finances-settings-field">
                     <span className="input-group-addon">$</span>
-                    <input type="text" name="budget[facilities]" className="form-control" disabled={formDisabled} value={team.budget.facilities.amount} />
+                    <input type="text" className="form-control" disabled={formDisabled} onChange={this.handleChange.bind(this, 'facilities')} value={this.state.facilities} />
                     <span className="input-group-addon">M</span>
                 </div>
                 <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.facilities.rank}<br />Spent this season: #{team.expenses.facilities.rank}</div>
@@ -92,10 +154,10 @@ class FinancesForm extends React.Component {
                     <div className="input-group input-group-sm pull-left finances-settings-field">
                         <button
                             className="btn btn-large btn-primary"
-                            disabled={formDisabled}
+                            disabled={formDisabled || this.state.saving}
                             style={{lineHeight: '1.5em'}}
                         >
-                            Save Revenue and<br />Expense Settings
+                            {this.state.saving ? 'Saving...' : <span>Save Revenue and<br />Expense Settings</span>}
                         </button>
                     </div>
                 </div>

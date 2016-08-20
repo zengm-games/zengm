@@ -1,15 +1,5 @@
 REACT
 
-TeamFinances
-  form
-    store initial props in state
-    dirty flag when it's edited
-    on submit, reset dirty flag and send result in
-    on update, only update values if not dirty
-  disable/enable form items, like FA
-
-form onSubmit
-
 DataTable
   USE FOR OTHER TABLES TOO, not just sortable ones. will be nice for colnames, especially
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary

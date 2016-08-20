@@ -12,35 +12,6 @@ function get(req) {
     return inputs;
 }
 
-/*async function post(req) {
-    $("#finances-settings button").attr("disabled", "disabled").html("Saving...");
-
-    await g.dbl.tx(["teams", "teamSeasons"], "readwrite", async tx => {
-        const t = await tx.teams.get(g.userTid);
-
-        const budget = req.params.budget;
-        for (const key in budget) {
-            if (budget.hasOwnProperty(key)) {
-                if (key === "ticketPrice") {
-                    // Already in [dollars]
-                    budget[key] = parseFloat(helpers.round(budget[key], 2));
-                } else {
-                    // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
-                    budget[key] = helpers.round(budget[key] * 100) * 10;
-                }
-                if (budget[key] === budget[key]) { // NaN check
-                    t.budget[key].amount = budget[key];
-                }
-            }
-        }
-
-        await tx.teams.put(t);
-        await finances.updateRanks(tx, ["budget"]);
-    });
-
-    ui.realtimeUpdate(["teamFinances"]);
-}*/
-
 async function updateTeamFinances(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || inputs.tid !== state.tid || inputs.show !== state.show) {
         const vars = {

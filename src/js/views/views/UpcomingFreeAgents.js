@@ -42,7 +42,7 @@ const UpcomingFreeAgents = ({players = [], season}) => {
 
         <DataTable
             cols={cols}
-            defaultSort={[2, 'desc']}
+            defaultSort={[3, 'desc']}
             rows={rows}
             pagination={true}
         />

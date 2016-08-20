@@ -94,18 +94,6 @@ async function updateNegotiation(inputs) {
 
     p.contract.amount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
 
-    // See views.freeAgents for moods as well
-    if (p.freeAgentMood[g.userTid] < 0.25) {
-        p.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';
-    } else if (p.freeAgentMood[g.userTid] < 0.5) {
-        p.mood = '<b>Willing to sign for the right price.</b>';
-    } else if (p.freeAgentMood[g.userTid] < 0.75) {
-        p.mood = '<span class="text-warning"><b>Annoyed at you.</b></span>';
-    } else {
-        p.mood = '<span class="text-danger"><b>Insulted by your presence.</b></span>';
-    }
-    delete p.freeAgentMood;
-
     // Generate contract options
     const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
 
@@ -116,6 +104,7 @@ async function updateNegotiation(inputs) {
         player: p,
         resigning: negotiation.resigning,
         salaryCap: g.salaryCap / 1000,
+        userTid: g.userTid,
     };
 }
 

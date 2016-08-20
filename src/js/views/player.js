@@ -2,9 +2,6 @@ const g = require('../globals');
 const freeAgents = require('../core/freeAgents');
 const player = require('../core/player');
 const trade = require('../core/trade');
-const faces = require('facesjs');
-const ko = require('knockout');
-const komapping = require('knockout.mapping');
 const Promise = require('bluebird');
 const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
@@ -16,8 +13,8 @@ function get(req) {
     };
 }
 
-async function updatePlayer(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
+async function updatePlayer(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !state.retired) {
         let [p, events] = await Promise.all([
             g.dbl.players.get(inputs.pid).then(p => {
                 return player.withStats(null, [p], {
@@ -78,31 +75,6 @@ async function updatePlayer(inputs, updateEvents, vm) {
             feats,
         };
     }
-}
-
-function uiFirst(vm) {
-    ko.computed(() => {
-        // Manually clear picture, since we're not using Knockout for this
-        const pic = document.getElementById("picture");
-        if (pic) {
-            while (pic.firstChild) {
-                pic.removeChild(pic.firstChild);
-            }
-        }
-
-        // If playerImgURL is not an empty string, use it instead of the generated face
-        if (vm.player.imgURL()) {
-            const img = document.createElement("img");
-            img.src = vm.player.imgURL();
-            img.style.maxHeight = "100%";
-            img.style.maxWidth = "100%";
-            if (pic) {
-                pic.appendChild(img);
-            }
-        } else {
-            faces.display("picture", komapping.toJS(vm.player.face));
-        }
-    }).extend({throttle: 1});
 }
 
 module.exports = bbgmViewReact.init({

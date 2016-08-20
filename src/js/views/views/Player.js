@@ -1,10 +1,42 @@
+const faces = require('facesjs');
 const React = require('react');
-const g = require('../../globals');
 const {negotiate, tradeFor} = require('../../util/actions');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, NewWindowLink, SkillsBlock, WatchBlock} = require('../components/index');
+
+class Picture extends React.Component {
+    componentDidMount() {
+        if (this.wrapper) {
+            faces.display(this.wrapper, this.props.face);
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.wrapper) {
+            faces.display(this.wrapper, this.props.face);
+        }
+    }
+
+    render() {
+        if (this.props.imgURL) {
+            this.wrapper = null;
+            return <img
+                src={this.props.imgURL}
+                style={{maxHeigth: '100%', maxWidth: '100%'}}
+            />;
+        }
+
+        if (this.props.face) {
+            return <div ref={wrapper => {
+                this.wrapper = wrapper;
+            }} />;
+        }
+
+        return null;
+    }
+}
 
 const RatingsOverview = ({ratings}) => {
     const r = ratings.length - 1;
@@ -47,7 +79,7 @@ const RatingsOverview = ({ratings}) => {
     </div>;
 };
 
-const StatsTable = ({careerStats, stats}) => {
+const StatsTable = ({careerStats = [], stats = []}) => {
     return <DataTable
         cols={getCols('Year', 'Team', 'Age', 'GP', 'GS', 'Min', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'Off', 'Def', 'Tot', 'Ast', 'TO', 'Stl', 'Blk', 'BA', 'PF', 'Pts', '+/-', 'PER', 'EWA')}
         defaultSort={[0, 'asc']}
@@ -142,7 +174,7 @@ const StatsTable = ({careerStats, stats}) => {
     />;
 };
 
-const ShotLocationsTable = ({careerStats, stats}) => {
+const ShotLocationsTable = ({careerStats = [], stats = []}) => {
     return <DataTable
         cols={getCols('Year', 'Team', 'Age', 'GP', 'GS', 'Min', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%')}
         defaultSort={[0, 'asc']}
@@ -226,7 +258,7 @@ const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = 
     let contractInfo = null;
     if (showContract) {
         contractInfo = <div>
-            {freeAgent ? 'Asking for' : 'Contract'}: {helpers.formatCurrency([player.contract.amount, 'M'])}/yr thru {player.contract.exp}<br />
+            {freeAgent ? 'Asking for' : 'Contract'}: {helpers.formatCurrency(player.contract.amount, 'M')}/yr thru {player.contract.exp}<br />
         </div>;
     }
 
@@ -250,7 +282,9 @@ const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = 
         <div className="row">
             <div className="col-sm-6">
                 <h1>{player.name} <NewWindowLink /></h1>
-                <div id="picture" className="player-picture"></div>
+                <div className="player-picture">
+                    <Picture face={player.face} imgURL={player.imgURL} />
+                </div>
                 <div style={{float: 'left'}}>
                     <strong>{player.ratings[player.ratings.length - 1].pos}, {player.teamRegion} {player.teamName}</strong><br />
                     Height: {player.hgtFt}'{player.hgtIn}"<br />
@@ -396,7 +430,7 @@ const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = 
                 <DataTable
                     cols={getCols('Year', 'Amount')}
                     defaultSort={[0, 'asc']}
-                    footer={['Total', helpers.formatCurrency([player.salariesTotal, 'M'])]}
+                    footer={['Total', helpers.formatCurrency(player.salariesTotal, 'M')]}
                     rows={player.salaries.map(s => {
                         return {
                             key: s.season,

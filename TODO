@@ -1,18 +1,8 @@
 REACT
 
+Switch between two leagues directly with forward/back (react to react) and it has the two controllers problem
+
 Player
-  trade for button
-  negotiate button
-  picture
-    cartoon
-    real
-  retired players
-  className in skillsblock
-  untradeablemsg hover
-  feats
-  contracts table, including footer
-  default sort order for seasons in tables
-    Season or Year?
 
 DataTable
   USE FOR OTHER TABLES TOO, not just sortable ones. will be nice for colnames, especially

@@ -341,54 +341,6 @@ function update(data, react = false) {
     containerEl.dataset.reactFirstRun = 'false';
 }
 
-// Data tables
-// fnStateSave and fnStateLoad are based on http://www.datatables.net/blog/localStorage_for_state_saving except the id of the table is used in the key. This means that whatever you do to a table (sorting, viewing page, etc) will apply to every identical table in other leagues.
-function datatable(table, sortCol, data, extraOptions) {
-    const options = $.extend({
-        data,
-        order: [[sortCol, "desc"]],
-        destroy: true,
-        deferRender: true,
-        stateSave: true,
-        // DataTables 1.10 includes something like this, but seems glitchy and URL-dependent
-        stateSaveCallback(settings, data) {
-            localStorage.setItem(`DataTables_${table[0].id}`, JSON.stringify(data));
-        },
-        stateLoadCallback() {
-            return JSON.parse(localStorage.getItem(`DataTables_${table[0].id}`));
-        },
-        pagingType: "bootstrap",
-        language: {
-            lengthMenu: "_MENU_ per page",
-            info: "_START_ to _END_ of _TOTAL_",
-            infoEmpty: "",
-            infoFiltered: "(filtered from _MAX_)",
-        },
-    }, extraOptions);
-
-    table.dataTable(options);
-}
-
-function datatableSinglePage(table, sortCol, data, extraOptions) {
-    const options = $.extend({
-        data,
-        order: [[sortCol, "desc"]],
-        destroy: true,
-        searching: false,
-        info: false,
-        paging: false,
-        stateSave: true,
-        stateSaveCallback(settings, data) {
-            localStorage.setItem(`DataTables_${table[0].id}`, JSON.stringify(data));
-        },
-        stateLoadCallback() {
-            return JSON.parse(localStorage.getItem(`DataTables_${table[0].id}`));
-        },
-    }, extraOptions);
-
-    table.dataTable(options);
-}
-
 function tableClickableRows(tableEl) {
     tableEl.addClass("table-hover");
     tableEl.on("click", "tbody tr", event => {
@@ -634,8 +586,6 @@ function highlightPlayButton() {
 
 module.exports = {
     init,
-    datatable,
-    datatableSinglePage,
     tableClickableRows,
     dropdown,
     realtimeUpdate,

@@ -121,7 +121,7 @@ const getSortVal = (value, sortType) => {
     }
     if (sortType === 'currency') {
         if (sortVal === null) {
-            return null;
+            return -Infinity;
         }
         // Drop $ and parseFloat will just keep the numeric part at the beginning of the string
         return parseFloat(sortVal.replace('$', ''));
@@ -275,7 +275,7 @@ class DataTable extends React.Component {
     }
 
     render() {
-        const {cols, pagination, rows, superCols} = this.props;
+        const {cols, footer, pagination, rows, superCols} = this.props;
 
         const rowsFiltered = this.state.searchText === '' ? rows : rows.filter(row => {
             for (let i = 0; i < row.data.length; i++) {
@@ -347,6 +347,13 @@ class DataTable extends React.Component {
             </div>;
         }
 
+        let tfoot = null;
+        if (footer) {
+            tfoot = <tfoot>
+                <tr>{footer.map((value, i) => <th key={i}>{value}</th>)}</tr>
+            </tfoot>;
+        }
+
         return <div className="table-responsive">
             {aboveTable}
             <table className="table table-striped table-bordered table-condensed table-hover">
@@ -359,6 +366,7 @@ class DataTable extends React.Component {
                 <tbody>
                     {sortedRows.map(row => <Row key={row.key} row={row} />)}
                 </tbody>
+                {tfoot}
             </table>
             {belowTable}
         </div>;

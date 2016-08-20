@@ -1,4 +1,5 @@
 module.exports = {
+    BarGraph: require('./BarGraph'),
     DataTable: require('./DataTable'),
     DraftAbbrev: require('./DraftAbbrev'),
     Dropdown: require('./Dropdown'),

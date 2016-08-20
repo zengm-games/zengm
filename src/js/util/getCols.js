@@ -390,8 +390,6 @@ const cols = {
     },
 };
 
-
-
 for (const key in cols) {
     if (cols.hasOwnProperty(key)) {
         cols[key].title = key.replace('rating:', '');

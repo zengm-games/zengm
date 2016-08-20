@@ -1,6 +1,6 @@
 const React = require('react');
 
-const SkillsBlock = ({skills}) => {
+const SkillsBlock = ({className = null, skills}) => {
     if (skills === undefined) {
         return null;
     }
@@ -16,11 +16,12 @@ const SkillsBlock = ({skills}) => {
         R: "Rebounder",
     };
 
-    return <span>
+    return <span className={className}>
         {skills.map(skill => <span key={skill} className="skill" title={tooltips[skill]}>{skill}</span>)}
     </span>;
 };
 SkillsBlock.propTypes = {
+    className: React.PropTypes.string,
     skills: React.PropTypes.arrayOf(React.PropTypes.string),
 };
 

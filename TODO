@@ -1,5 +1,19 @@
 REACT
 
+Player
+  trade for button
+  negotiate button
+  picture
+    cartoon
+    real
+  retired players
+  className in skillsblock
+  untradeablemsg hover
+  feats
+  contracts table, including footer
+  default sort order for seasons in tables
+    Season or Year?
+
 DataTable
   USE FOR OTHER TABLES TOO, not just sortable ones. will be nice for colnames, especially
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
@@ -42,7 +56,7 @@ when all react
   get rid of brfs
   go through ui.js, reevaluate
   get rid of default params in views
-  escape HTML saved to IDB very carefully (event log)
+  escape HTML saved to IDB very carefully (event log, feat text)
   delete components.js
 
 Dropdown

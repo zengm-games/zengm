@@ -38,6 +38,10 @@ const cols = {
     'Age': {
         sortType: 'number',
     },
+    'Amount': {
+        sortSequence: ['desc', 'asc'],
+        sortType: 'currency',
+    },
     'Asking For': {
         sortSequence: ['desc', 'asc'],
         sortType: 'currency',

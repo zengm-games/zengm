@@ -1,15 +1,14 @@
 const g = require('../globals');
-const ui = require('../ui');
 const freeAgents = require('../core/freeAgents');
 const player = require('../core/player');
 const trade = require('../core/trade');
 const faces = require('facesjs');
-const $ = require('jquery');
 const ko = require('knockout');
 const komapping = require('knockout.mapping');
 const Promise = require('bluebird');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
+const Player = require('./views/Player');
 
 function get(req) {
     return {
@@ -46,6 +45,7 @@ async function updatePlayer(inputs, updateEvents, vm) {
 
         const feats = events.filter(event => event.type === "playerFeat").map(event => {
             return {
+                eid: event.eid,
                 season: event.season,
                 text: event.text,
             };
@@ -55,6 +55,7 @@ async function updatePlayer(inputs, updateEvents, vm) {
             return !(event.type === "award" || event.type === "injured" || event.type === "healed" || event.type === "hallOfFame" || event.type === "playerFeat" || event.type === "tragedy");
         }).map(event => {
             return {
+                eid: event.eid,
                 season: event.season,
                 text: event.text,
             };
@@ -81,10 +82,6 @@ async function updatePlayer(inputs, updateEvents, vm) {
 
 function uiFirst(vm) {
     ko.computed(() => {
-        ui.title(vm.player.name());
-    }).extend({throttle: 1});
-
-    ko.computed(() => {
         // Manually clear picture, since we're not using Knockout for this
         const pic = document.getElementById("picture");
         if (pic) {
@@ -106,13 +103,11 @@ function uiFirst(vm) {
             faces.display("picture", komapping.toJS(vm.player.face));
         }
     }).extend({throttle: 1});
-
-    ui.tableClickableRows($(".table-clickable-rows"));
 }
 
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "player",
     get,
     runBefore: [updatePlayer],
-    uiFirst,
+    Component: Player,
 });

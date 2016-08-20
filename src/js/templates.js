@@ -30,7 +30,6 @@ module.exports = {
     multiTeamMode: fs.readFileSync(__dirname + '/../templates/multiTeamMode.html', 'utf8'),
     negotiation: fs.readFileSync(__dirname + '/../templates/negotiation.html', 'utf8'),
     newLeague: fs.readFileSync(__dirname + '/../templates/newLeague.html', 'utf8'),
-    player: fs.readFileSync(__dirname + '/../templates/player.html', 'utf8'),
     playerRatingDists: fs.readFileSync(__dirname + '/../templates/playerRatingDists.html', 'utf8'),
     playerStatDists: fs.readFileSync(__dirname + '/../templates/playerStatDists.html', 'utf8'),
     playoffs: fs.readFileSync(__dirname + '/../templates/playoffs.html', 'utf8'),

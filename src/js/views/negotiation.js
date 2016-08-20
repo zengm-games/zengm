@@ -1,24 +1,10 @@
 const g = require('../globals');
-const ui = require('../ui');
 const contractNegotiation = require('../core/contractNegotiation');
 const freeAgents = require('../core/freeAgents');
 const player = require('../core/player');
 const team = require('../core/team');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
-
-// Show the negotiations list if there are more ongoing negotiations
-async function redirectNegotiationOrRoster(cancelled) {
-    const negotiations = await g.dbl.negotiations.getAll();
-    if (negotiations.length > 0) {
-        ui.realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
-    } else if (cancelled) {
-        ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
-    } else {
-        ui.realtimeUpdate([], helpers.leagueUrl(["roster"]));
-    }
-}
+const bbgmViewReact = require('../util/bbgmViewReact');
+const Negotiation = require('./views/Negotiation');
 
 function generateContractOptions(contract, ovr) {
     let growthFactor = 0.15;
@@ -71,23 +57,6 @@ function get(req) {
     };
 }
 
-async function post(req) {
-    const pid = parseInt(req.params.pid, 10);
-
-    if (req.params.hasOwnProperty("cancel")) {
-        await contractNegotiation.cancel(pid);
-        redirectNegotiationOrRoster(true);
-    } else if (req.params.hasOwnProperty("accept") && req.params.hasOwnProperty("amount") && req.params.hasOwnProperty("exp")) {
-        const error = await contractNegotiation.accept(pid, parseInt(req.params.amount * 1000, 10), parseInt(req.params.exp, 10));
-        if (error !== undefined && error) {
-            helpers.errorNotify(error);
-        }
-        redirectNegotiationOrRoster(false);
-    } else if (req.params.hasOwnProperty("new")) {
-        console.log('use actions.negotiate');
-    }
-}
-
 async function updateNegotiation(inputs) {
     // Call getAll so it works on null key
     const negotiations = await g.dbl.negotiations.getAll(inputs.pid);
@@ -138,27 +107,21 @@ async function updateNegotiation(inputs) {
     delete p.freeAgentMood;
 
     // Generate contract options
-    p.contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
+    const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
 
     const payroll = await team.getPayroll(null, g.userTid).get(0);
     return {
-        salaryCap: g.salaryCap / 1000,
+        contractOptions,
         payroll: payroll / 1000,
         player: p,
         resigning: negotiation.resigning,
+        salaryCap: g.salaryCap / 1000,
     };
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Contract Negotiation - ${vm.player.name()}`);
-    }).extend({throttle: 1});
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "negotiation",
     get,
-    post,
     runBefore: [updateNegotiation],
-    uiFirst,
+    Component: Negotiation,
 });

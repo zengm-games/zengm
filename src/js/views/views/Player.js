@@ -47,7 +47,7 @@ const RatingsOverview = ({ratings}) => {
     </div>;
 };
 
-const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = {awardsGrouped: [], born: {}, draft: {}, pid: 0, ratings: [{season: 0, skills: []}], salaries: [], watch: false}, retired, showContract, showTradeFor}) => {
+const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = {awardsGrouped: [], born: {}, careerStats: {}, draft: {}, pid: 0, ratings: [{season: 0, skills: []}], salaries: [], stats: [], watch: false}, retired, showContract, showTradeFor}) => {
     bbgmViewReact.title(player.name);
 
     let draftInfo = null;
@@ -136,20 +136,98 @@ const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = 
 
         <h2>Regular Season</h2>
         <h3>Stats</h3>
-        <div className="table-responsive">
-            <table className="table table-striped table-bordered table-condensed table-clickable-rows" id="player_stats">
-                <thead>
-                    <tr><th colspan="6"></th><th colspan="3" title="Field Goals">FG</th><th colspan="3" title="Three-Pointers">3PT</th><th colspan="3" title="Free Throws">FT</th><th colspan="3" title="Rebounds">Reb</th><th colspan="10"></th></tr>
-                    <tr><th>Year</th><th>Team</th><th>Age</th><th title="Games Played">GP</th><th title="Games Started">GS</th><th title="Minutes">Min</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Made">M</th><th title="Attempted">A</th><th title="Percentage">%</th><th title="Offensive">Off</th><th title="Defensive">Def</th><th title="Total">Tot</th><th title="Assists">Ast</th><th title="Turnovers">TO</th><th title="Steals">Stl</th><th title="Blocks">Blk</th><th title="Blocks Against">BA</th><th title="Personal Fouls">PF</th><th title="Points">Pts</th><th title="Plus-Minus">+/-</th><th title="Player Efficiency Rating">PER</th><th title="Estimated Wins Added">EWA</th></tr>
-                </thead>
-                <tbody data-bind="foreach: player.stats">
-                    <tr><td><a href="#" data-bind="text: season"></a></td><td><a data-bind="text: abbrev, attrLeagueUrl: {href: ['roster', abbrev, season]}"></a></td><td data-bind="text: age"></td><td data-bind="text: gp"></td><td data-bind="text: gs"></td><td data-bind="round: [min, 1]"></td><td data-bind="round: [fg, 1]"></td><td data-bind="round: [fga, 1]"></td><td data-bind="round: [fgp, 1]"></td><td data-bind="round: [tp, 1]"></td><td data-bind="round: [tpa, 1]"></td><td data-bind="round: [tpp, 1]"></td><td data-bind="round: [ft, 1]"></td><td data-bind="round: [fta, 1]"></td><td data-bind="round: [ftp, 1]"></td><td data-bind="round: [orb, 1]"></td><td data-bind="round: [drb, 1]"></td><td data-bind="round: [trb, 1]"></td><td data-bind="round: [ast, 1]"></td><td data-bind="round: [tov, 1]"></td><td data-bind="round: [stl, 1]"></td><td data-bind="round: [blk, 1]"></td><td data-bind="round: [ba, 1]"></td><td data-bind="round: [pf, 1]"></td><td data-bind="round: [pts, 1]"></td><td data-bind="plusMinus: [pm, 1]"></td><td data-bind="round: [per, 1]"></td><td data-bind="round: [ewa, 1]"></td></tr>
-                </tbody>
-                <tfoot data-bind="with: player.careerStats">
-                        <tr><th>Career</th><th></th><th></th><th data-bind="text: gp"></th><th data-bind="text: gs"></th><th data-bind="round: [min, 1]"></th><th data-bind="round: [fg, 1]"></th><th data-bind="round: [fga, 1]"></th><th data-bind="round: [fgp, 1]"></th><th data-bind="round: [tp, 1]"></th><th data-bind="round: [tpa, 1]"></th><th data-bind="round: [tpp, 1]"></th><th data-bind="round: [ft, 1]"></th><th data-bind="round: [fta, 1]"></th><th data-bind="round: [ftp, 1]"></th><th data-bind="round: [orb, 1]"></th><th data-bind="round: [drb, 1]"></th><th data-bind="round: [trb, 1]"></th><th data-bind="round: [ast, 1]"></th><th data-bind="round: [tov, 1]"></th><th data-bind="round: [stl, 1]"></th><th data-bind="round: [blk, 1]"></th><th data-bind="round: [ba, 1]"></th><th data-bind="round: [pf, 1]"></th><th data-bind="round: [pts, 1]"></th><th data-bind="plusMinus: [pm, 1]"></th><th data-bind="round: [per, 1]"></th><th data-bind="round: [ewa, 1]"></th></tr>
-                </tfoot>
-            </table>
-        </div>
+        <DataTable
+            cols={getCols('Year', 'Team', 'Age', 'GP', 'GS', 'Min', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'Off', 'Def', 'Tot', 'Ast', 'TO', 'Stl', 'Blk', 'BA', 'PF', 'Pts', '+/-', 'PER', 'EWA')}
+            defaultSort={[0, 'asc']}
+            footer={[
+                'Career',
+                null,
+                null,
+                player.careerStats.gp,
+                player.careerStats.gs,
+                helpers.round(player.careerStats.min, 1),
+                helpers.round(player.careerStats.fg, 1),
+                helpers.round(player.careerStats.fga, 1),
+                helpers.round(player.careerStats.fgp, 1),
+                helpers.round(player.careerStats.tp, 1),
+                helpers.round(player.careerStats.tpa, 1),
+                helpers.round(player.careerStats.tpp, 1),
+                helpers.round(player.careerStats.ft, 1),
+                helpers.round(player.careerStats.fta, 1),
+                helpers.round(player.careerStats.ftp, 1),
+                helpers.round(player.careerStats.orb, 1),
+                helpers.round(player.careerStats.drb, 1),
+                helpers.round(player.careerStats.trb, 1),
+                helpers.round(player.careerStats.ast, 1),
+                helpers.round(player.careerStats.tov, 1),
+                helpers.round(player.careerStats.stl, 1),
+                helpers.round(player.careerStats.blk, 1),
+                helpers.round(player.careerStats.ba, 1),
+                helpers.round(player.careerStats.pf, 1),
+                helpers.round(player.careerStats.pts, 1),
+                helpers.plusMinus(player.careerStats.pm, 1),
+                helpers.round(player.careerStats.per, 1),
+                helpers.round(player.careerStats.ewa, 1),
+            ]}
+            rows={player.stats.map(ps => {
+                return {
+                    key: ps.psid,
+                    data: [
+                        ps.season,
+                        <a href={helpers.leagueUrl(['roster', ps.abbrev, ps.season])}>{ps.abbrev}</a>,
+                        ps.age,
+                        ps.gp,
+                        ps.gs,
+                        helpers.round(ps.min, 1),
+                        helpers.round(ps.fg, 1),
+                        helpers.round(ps.fga, 1),
+                        helpers.round(ps.fgp, 1),
+                        helpers.round(ps.tp, 1),
+                        helpers.round(ps.tpa, 1),
+                        helpers.round(ps.tpp, 1),
+                        helpers.round(ps.ft, 1),
+                        helpers.round(ps.fta, 1),
+                        helpers.round(ps.ftp, 1),
+                        helpers.round(ps.orb, 1),
+                        helpers.round(ps.drb, 1),
+                        helpers.round(ps.trb, 1),
+                        helpers.round(ps.ast, 1),
+                        helpers.round(ps.tov, 1),
+                        helpers.round(ps.stl, 1),
+                        helpers.round(ps.blk, 1),
+                        helpers.round(ps.ba, 1),
+                        helpers.round(ps.pf, 1),
+                        helpers.round(ps.pts, 1),
+                        helpers.plusMinus(ps.pm, 1),
+                        helpers.round(ps.per, 1),
+                        helpers.round(ps.ewa, 1),
+                    ],
+                };
+            })}
+            superCols={[{
+                title: '',
+                colspan: 6,
+            }, {
+                title: 'FG',
+                desc: 'Field Goals',
+                colspan: 3,
+            }, {
+                title: '3PT',
+                desc: 'Three-Pointers',
+                colspan: 3,
+            }, {
+                title: 'FT',
+                desc: 'Free Throws',
+                colspan: 3,
+            }, {
+                title: 'Reb',
+                desc: 'Rebounds',
+                colspan: 3,
+            }, {
+                title: '',
+                colspan: 10,
+            }]}
+        />
 
         <h3>Shot Locations</h3>
         <div className="table-responsive">

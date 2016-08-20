@@ -1360,6 +1360,8 @@ function filter(p, options) {
                     row.ewa = s.ewa;
                 } else if (stats[j] === "yearsWithTeam") {
                     row.yearsWithTeam = s.yearsWithTeam;
+                } else if (stats[j] === "psid") {
+                    row.psid = s.psid;
                 } else {
                     if (options.totals) {
                         row[stats[j]] = s[stats[j]];

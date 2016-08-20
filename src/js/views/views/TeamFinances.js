@@ -5,12 +5,108 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
-const handleSubmit = e => {
-    e.preventDefault();
-    console.log(e);
-};
+class FinancesForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
 
-const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], luxuryTax: [], scouting: [], coaching: [], health: [], facilities: []}, revenues: {localTv: [], luxuryTaxShare: [], merch: [], nationalTv: [], sponsor: [], ticket: []}}, barSeasons, contractTotals = [], contracts = [], gamesInProgress, luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, expenses: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, name: null, region: null}, tid}) => {
+    handleSubmit(e) {
+        e.preventDefault();
+        console.log(e);
+    }
+
+    render() {
+        const {gamesInProgress, team, tid} = this.props;
+
+        const warningMessage = <p className="text-danger">
+            {gamesInProgress && tid === g.userTid ? 'Stop game simulation to edit.' : null}
+        </p>;
+
+        const formDisabled = gamesInProgress || tid !== g.userTid;
+
+        return <form onSubmit={this.handleSubmit} data-no-davis="true">
+            <h4>Revenue Settings <HelpPopover placement="bottom" title="Revenue Settings">
+                Set your ticket price too high, and attendance will decrease and some fans will resent you for it. Set it too low, and you're not maximizing your profit.
+            </HelpPopover></h4>
+            {warningMessage}
+            <div className="row">
+                <div className="pull-left finances-settings-label">Ticket Price</div>
+                <div className="input-group input-group-sm pull-left finances-settings-field">
+                    <span className="input-group-addon">$</span>
+                    <input type="text" name="budget[ticketPrice]" className="form-control" disabled={formDisabled} value={team.budget.ticketPrice.amount} />
+                </div>
+                <div className="pull-left finances-settings-text">Leaguewide rank: #{team.budget.ticketPrice.rank}</div>
+            </div>
+            <p></p>
+            <h4>Expense Settings <HelpPopover placement="bottom" title="Expense Settings">
+                <p>Scouting: Controls the accuracy of displayed player ratings.</p>
+                <p>Coaching: Better coaches mean better player development.</p>
+                <p>Health: A good team of doctors speeds recovery from injuries.</p>
+                <p>Facilities: Better training facilities make your players happier and other players envious; stadium renovations increase attendance.</p>
+            </HelpPopover></h4>
+            {warningMessage}
+            <div className="row">
+                <div className="pull-left finances-settings-label">Scouting</div>
+                <div className="input-group input-group-sm pull-left finances-settings-field">
+                    <span className="input-group-addon">$</span>
+                    <input type="text" name="budget[scouting]" className="form-control" disabled={formDisabled} value={team.budget.scouting.amount} />
+                    <span className="input-group-addon">M</span>
+                </div>
+                <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.scouting.rank}<br />Spent this season: #{team.expenses.scouting.rank}</div>
+            </div>
+            <div className="row">
+                <div className="pull-left finances-settings-label">Coaching</div>
+                <div className="input-group input-group-sm pull-left finances-settings-field">
+                    <span className="input-group-addon">$</span>
+                    <input type="text" name="budget[coaching]" className="form-control" disabled={formDisabled} value={team.budget.coaching.amount} />
+                    <span className="input-group-addon">M</span>
+                </div>
+                <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.coaching.rank}<br />Spent this season: #{team.expenses.coaching.rank}</div>
+            </div>
+            <div className="row">
+                <div className="pull-left finances-settings-label">Health</div>
+                <div className="input-group input-group-sm pull-left finances-settings-field">
+                    <span className="input-group-addon">$</span>
+                    <input type="text" name="budget[health]" className="form-control" disabled={formDisabled} value={team.budget.health.amount} />
+                    <span className="input-group-addon">M</span>
+                </div>
+                <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.health.rank}<br />Spent this season: #{team.expenses.health.rank}</div>
+            </div>
+            <div className="row">
+                <div className="pull-left finances-settings-label">Facilities</div>
+                <div className="input-group input-group-sm pull-left finances-settings-field">
+                    <span className="input-group-addon">$</span>
+                    <input type="text" name="budget[facilities]" className="form-control" disabled={formDisabled} value={team.budget.facilities.amount} />
+                    <span className="input-group-addon">M</span>
+                </div>
+                <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.facilities.rank}<br />Spent this season: #{team.expenses.facilities.rank}</div>
+            </div>
+            <br />
+            {
+                tid === g.userTid
+            ?
+                <div className="row">
+                    <div className="pull-left finances-settings-label">&nbsp;</div>
+                    <div className="input-group input-group-sm pull-left finances-settings-field">
+                        <button
+                            className="btn btn-large btn-primary"
+                            disabled={formDisabled}
+                            style={{lineHeight: '1.5em'}}
+                        >
+                            Save Revenue and<br />Expense Settings
+                        </button>
+                    </div>
+                </div>
+            :
+                null
+            }
+        </form>;
+    }
+}
+
+const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], luxuryTax: [], scouting: [], coaching: [], health: [], facilities: []}, revenues: {localTv: [], luxuryTaxShare: [], merch: [], nationalTv: [], sponsor: [], ticket: []}}, barSeasons, contractTotals = [], contracts = [], gamesInProgress, luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {amount: '', rank: null}, scouting: {amount: '', rank: null}, budget: {amount: '', rank: null}, coaching: {amount: '', rank: null}, health: {amount: '', rank: null}, facilities: {amount: '', rank: null}}, expenses: {ticketPrice: {amount: '', rank: null}, scouting: {amount: '', rank: null}, budget: {amount: '', rank: null}, coaching: {amount: '', rank: null}, health: {amount: '', rank: null}, facilities: {amount: '', rank: null}}, name: null, region: null}, tid}) => {
     bbgmViewReact.title(`${team.region} ${team.name} Finances`);
 
     const cols = getCols('Name').concat(salariesSeasons.map(season => {
@@ -49,12 +145,6 @@ const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], lux
     });
 
     const footer = ['Totals'].concat(contractTotals.map(amount => helpers.formatCurrency(amount, 'M')));
-
-    const warningMessage = <p className="text-danger">
-        {gamesInProgress && tid === g.userTid ? 'Stop game simulation to edit.' : null}
-    </p>;
-
-    const formDisabled = gamesInProgress || tid !== g.userTid;
 
     return <div>
         <Dropdown view="team_finances" fields={["teams", "shows"]} values={[abbrev, show]} />
@@ -140,84 +230,11 @@ const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], lux
                 </div>
             </div>
             <div className="col-md-5 col-sm-6">
-                <form onSubmit={handleSubmit} data-no-davis="true">
-                    <h4>Revenue Settings <HelpPopover placement="bottom" title="Revenue Settings">
-                        Set your ticket price too high, and attendance will decrease and some fans will resent you for it. Set it too low, and you're not maximizing your profit.
-                    </HelpPopover></h4>
-                    {warningMessage}
-                    <div className="row">
-                        <div className="pull-left finances-settings-label">Ticket Price</div>
-                        <div className="input-group input-group-sm pull-left finances-settings-field">
-                            <span className="input-group-addon">$</span>
-                            <input type="text" name="budget[ticketPrice]" className="form-control" disabled={formDisabled} value={team.budget.ticketPrice.amount} />
-                        </div>
-                        <div className="pull-left finances-settings-text">Leaguewide rank: #{team.budget.ticketPrice.rank}</div>
-                    </div>
-                    <p></p>
-                    <h4>Expense Settings <HelpPopover placement="bottom" title="Expense Settings">
-                        <p>Scouting: Controls the accuracy of displayed player ratings.</p>
-                        <p>Coaching: Better coaches mean better player development.</p>
-                        <p>Health: A good team of doctors speeds recovery from injuries.</p>
-                        <p>Facilities: Better training facilities make your players happier and other players envious; stadium renovations increase attendance.</p>
-                    </HelpPopover></h4>
-                    {warningMessage}
-                    <div className="row">
-                        <div className="pull-left finances-settings-label">Scouting</div>
-                        <div className="input-group input-group-sm pull-left finances-settings-field">
-                            <span className="input-group-addon">$</span>
-                            <input type="text" name="budget[scouting]" className="form-control" disabled={formDisabled} value={team.budget.scouting.amount} />
-                            <span className="input-group-addon">M</span>
-                        </div>
-                        <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.scouting.rank}<br />Spent this season: #{team.expenses.scouting.rank}</div>
-                    </div>
-                    <div className="row">
-                        <div className="pull-left finances-settings-label">Coaching</div>
-                        <div className="input-group input-group-sm pull-left finances-settings-field">
-                            <span className="input-group-addon">$</span>
-                            <input type="text" name="budget[coaching]" className="form-control" disabled={formDisabled} value={team.budget.coaching.amount} />
-                            <span className="input-group-addon">M</span>
-                        </div>
-                        <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.coaching.rank}<br />Spent this season: #{team.expenses.coaching.rank}</div>
-                    </div>
-                    <div className="row">
-                        <div className="pull-left finances-settings-label">Health</div>
-                        <div className="input-group input-group-sm pull-left finances-settings-field">
-                            <span className="input-group-addon">$</span>
-                            <input type="text" name="budget[health]" className="form-control" disabled={formDisabled} value={team.budget.health.amount} />
-                            <span className="input-group-addon">M</span>
-                        </div>
-                        <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.health.rank}<br />Spent this season: #{team.expenses.health.rank}</div>
-                    </div>
-                    <div className="row">
-                        <div className="pull-left finances-settings-label">Facilities</div>
-                        <div className="input-group input-group-sm pull-left finances-settings-field">
-                            <span className="input-group-addon">$</span>
-                            <input type="text" name="budget[facilities]" className="form-control" disabled={formDisabled} value={team.budget.facilities.amount} />
-                            <span className="input-group-addon">M</span>
-                        </div>
-                        <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.facilities.rank}<br />Spent this season: #{team.expenses.facilities.rank}</div>
-                    </div>
-                    <br />
-                    {
-                        tid === g.userTid
-                    ?
-                        <div className="row">
-                            <div className="pull-left finances-settings-label">&nbsp;</div>
-                            <div className="input-group input-group-sm pull-left finances-settings-field">
-                                <button
-                                    className="btn btn-large btn-primary"
-                                    disabled={formDisabled}
-                                    style={{lineHeight: '1.5em'}}
-                                >
-                                    Save Revenue and<br />Expense Settings
-                                </button>
-                            </div>
-                        </div>
-                    :
-                        null
-                    }
-
-                </form>
+                <FinancesForm
+                    gamesInProgress={gamesInProgress}
+                    team={team}
+                    tid={tid}
+                />
             </div>
         </div>
         <p className="clearfix"></p>

@@ -5,27 +5,6 @@ const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
 const TeamFinances = require('./views/TeamFinances');
 
-/*function disableFinanceSettings(tid) {
-    $("#finances-settings input, #finances-settings button").attr("disabled", "disabled");
-    if (tid === g.userTid) {
-        $("#finances-settings .text-danger").html("Stop game simulation to edit.");
-    } else {
-        $("#finances-settings button").hide();
-    }
-}
-
-function enableFinanceSettings(tid) {
-    $("#finances-settings button").html("Save Revenue and<br> Expense Settings");
-    if (tid === g.userTid) {
-        $("#finances-settings input, #finances-settings button").removeAttr("disabled");
-        $("#finances-settings button").show();
-    } else {
-        $("#finances-settings input, #finances-settings button").attr("disabled", "disabled");
-        $("#finances-settings button").hide();
-    }
-    $("#finances-settings .text-danger").html("");
-}*/
-
 function get(req) {
     const inputs = {};
     inputs.show = req.params.show !== undefined ? req.params.show : "10";
@@ -66,6 +45,7 @@ async function updateTeamFinances(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || inputs.tid !== state.tid || inputs.show !== state.show) {
         const vars = {
             abbrev: inputs.abbrev,
+            gamesInProgress: g.gamesInProgress,
             numGames: g.numGames,
             tid: inputs.tid,
             show: inputs.show,
@@ -177,23 +157,18 @@ async function updateTeamFinances(inputs, updateEvents, state) {
     }
 }
 
-/*function uiFirst(vm) {
-    // Form enabling/disabling
-    $("#finances-settings").on("gameSimulationStart", () => disableFinanceSettings(vm.tid()));
-    $("#finances-settings").on("gameSimulationStop", () => enableFinanceSettings(vm.tid()));
-}
 
-function uiEvery(updateEvents, vm) {
-    if (g.gamesInProgress) {
-        disableFinanceSettings(vm.tid());
-    } else {
-        enableFinanceSettings(vm.tid());
+async function updateGamesInProgress(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("g.gamesInProgress") >= 0 || inputs.tid !== state.tid || inputs.show !== state.show) {
+        return {
+            gamesInProgress: g.gamesInProgress,
+        };
     }
-}*/
+}
 
 module.exports = bbgmViewReact.init({
     id: "teamFinances",
     get,
-    runBefore: [updateTeamFinances],
+    runBefore: [updateTeamFinances, updateGamesInProgress],
     Component: TeamFinances,
 });

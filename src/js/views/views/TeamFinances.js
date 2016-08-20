@@ -1,10 +1,16 @@
 const React = require('react');
+const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
-const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], luxuryTax: [], scouting: [], coaching: [], health: [], facilities: []}, revenues: {localTv: [], luxuryTaxShare: [], merch: [], nationalTv: [], sponsor: [], ticket: []}}, barSeasons, contractTotals = [], contracts = [], luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, expenses: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, name: null, region: null}}) => {
+const handleSubmit = e => {
+    e.preventDefault();
+    console.log(e);
+};
+
+const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], luxuryTax: [], scouting: [], coaching: [], health: [], facilities: []}, revenues: {localTv: [], luxuryTaxShare: [], merch: [], nationalTv: [], sponsor: [], ticket: []}}, barSeasons, contractTotals = [], contracts = [], gamesInProgress, luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, expenses: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, name: null, region: null}, tid}) => {
     bbgmViewReact.title(`${team.region} ${team.name} Finances`);
 
     const cols = getCols('Name').concat(salariesSeasons.map(season => {
@@ -43,6 +49,12 @@ const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], lux
     });
 
     const footer = ['Totals'].concat(contractTotals.map(amount => helpers.formatCurrency(amount, 'M')));
+
+    const warningMessage = <p className="text-danger">
+        {gamesInProgress && tid === g.userTid ? 'Stop game simulation to edit.' : null}
+    </p>;
+
+    const formDisabled = gamesInProgress || tid !== g.userTid;
 
     return <div>
         <Dropdown view="team_finances" fields={["teams", "shows"]} values={[abbrev, show]} />
@@ -128,15 +140,16 @@ const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], lux
                 </div>
             </div>
             <div className="col-md-5 col-sm-6">
-                <form method="POST" id="finances-settings" data-bind="attrLeagueUrl: {action: ['team_finances']}">
+                <form onSubmit={handleSubmit} data-no-davis="true">
                     <h4>Revenue Settings <HelpPopover placement="bottom" title="Revenue Settings">
                         Set your ticket price too high, and attendance will decrease and some fans will resent you for it. Set it too low, and you're not maximizing your profit.
                     </HelpPopover></h4>
-                    <p className="text-danger"></p>
+                    {warningMessage}
                     <div className="row">
                         <div className="pull-left finances-settings-label">Ticket Price</div>
                         <div className="input-group input-group-sm pull-left finances-settings-field">
-                            <span className="input-group-addon">$</span><input type="text" name="budget[ticketPrice]" className="form-control" disabled="disabled" data-bind="textInput: team.budget.ticketPrice.amount" />
+                            <span className="input-group-addon">$</span>
+                            <input type="text" name="budget[ticketPrice]" className="form-control" disabled={formDisabled} value={team.budget.ticketPrice.amount} />
                         </div>
                         <div className="pull-left finances-settings-text">Leaguewide rank: #{team.budget.ticketPrice.rank}</div>
                     </div>
@@ -147,42 +160,63 @@ const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], lux
                         <p>Health: A good team of doctors speeds recovery from injuries.</p>
                         <p>Facilities: Better training facilities make your players happier and other players envious; stadium renovations increase attendance.</p>
                     </HelpPopover></h4>
-                    <p className="text-danger"></p>
+                    {warningMessage}
                     <div className="row">
                         <div className="pull-left finances-settings-label">Scouting</div>
                         <div className="input-group input-group-sm pull-left finances-settings-field">
-                            <span className="input-group-addon">$</span><input type="text" name="budget[scouting]" className="form-control" disabled="disabled" data-bind="textInput: team.budget.scouting.amount" /><span className="input-group-addon">M</span>
+                            <span className="input-group-addon">$</span>
+                            <input type="text" name="budget[scouting]" className="form-control" disabled={formDisabled} value={team.budget.scouting.amount} />
+                            <span className="input-group-addon">M</span>
                         </div>
                         <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.scouting.rank}<br />Spent this season: #{team.expenses.scouting.rank}</div>
                     </div>
                     <div className="row">
                         <div className="pull-left finances-settings-label">Coaching</div>
                         <div className="input-group input-group-sm pull-left finances-settings-field">
-                            <span className="input-group-addon">$</span><input type="text" name="budget[coaching]" className="form-control" disabled="disabled" data-bind="textInput: team.budget.coaching.amount" /><span className="input-group-addon">M</span>
+                            <span className="input-group-addon">$</span>
+                            <input type="text" name="budget[coaching]" className="form-control" disabled={formDisabled} value={team.budget.coaching.amount} />
+                            <span className="input-group-addon">M</span>
                         </div>
                         <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.coaching.rank}<br />Spent this season: #{team.expenses.coaching.rank}</div>
                     </div>
                     <div className="row">
                         <div className="pull-left finances-settings-label">Health</div>
                         <div className="input-group input-group-sm pull-left finances-settings-field">
-                            <span className="input-group-addon">$</span><input type="text" name="budget[health]" className="form-control" disabled="disabled" data-bind="textInput: team.budget.health.amount" /><span className="input-group-addon">M</span>
+                            <span className="input-group-addon">$</span>
+                            <input type="text" name="budget[health]" className="form-control" disabled={formDisabled} value={team.budget.health.amount} />
+                            <span className="input-group-addon">M</span>
                         </div>
                         <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.health.rank}<br />Spent this season: #{team.expenses.health.rank}</div>
                     </div>
                     <div className="row">
                         <div className="pull-left finances-settings-label">Facilities</div>
                         <div className="input-group input-group-sm pull-left finances-settings-field">
-                            <span className="input-group-addon">$</span><input type="text" name="budget[facilities]" className="form-control" disabled="disabled" data-bind="textInput: team.budget.facilities.amount" /><span className="input-group-addon">M</span>
+                            <span className="input-group-addon">$</span>
+                            <input type="text" name="budget[facilities]" className="form-control" disabled={formDisabled} value={team.budget.facilities.amount} />
+                            <span className="input-group-addon">M</span>
                         </div>
                         <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.facilities.rank}<br />Spent this season: #{team.expenses.facilities.rank}</div>
                     </div>
                     <br />
-                    <div className="row">
-                        <div className="pull-left finances-settings-label">&nbsp;</div>
-                        <div className="input-group input-group-sm pull-left finances-settings-field">
-                            <button className="btn btn-large btn-primary" style={{lineHeight: '1.5em'}} />
+                    {
+                        tid === g.userTid
+                    ?
+                        <div className="row">
+                            <div className="pull-left finances-settings-label">&nbsp;</div>
+                            <div className="input-group input-group-sm pull-left finances-settings-field">
+                                <button
+                                    className="btn btn-large btn-primary"
+                                    disabled={formDisabled}
+                                    style={{lineHeight: '1.5em'}}
+                                >
+                                    Save Revenue and<br />Expense Settings
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    :
+                        null
+                    }
+
                 </form>
             </div>
         </div>

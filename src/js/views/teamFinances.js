@@ -183,32 +183,6 @@ async function updateTeamFinances(inputs, updateEvents, state) {
     // Form enabling/disabling
     $("#finances-settings").on("gameSimulationStart", () => disableFinanceSettings(vm.tid()));
     $("#finances-settings").on("gameSimulationStop", () => enableFinanceSettings(vm.tid()));
-
-    ko.computed(() => {
-        const barData = vm.barData();
-        const barSeasons = vm.barSeasons();
-
-        $.barGraph(
-            $("#bar-graph-revenue"),
-            [barData.revenues.nationalTv, barData.revenues.localTv, barData.revenues.ticket, barData.revenues.sponsor, barData.revenues.merch, barData.revenues.luxuryTaxShare],
-            undefined,
-            [
-                barSeasons,
-                ["national TV revenue", "local TV revenue", "ticket revenue", "corporate sponsorship revenue", "merchandising revenue", "luxury tax share revenue"],
-            ],
-            val => helpers.formatCurrency(val / 1000, "M", 1)
-        );
-        $.barGraph(
-            $("#bar-graph-expenses"),
-            [barData.expenses.salary, barData.expenses.minTax, barData.expenses.luxuryTax, barData.expenses.buyOuts, barData.expenses.scouting, barData.expenses.coaching, barData.expenses.health, barData.expenses.facilities],
-            undefined,
-            [
-                barSeasons,
-                ["player salaries", "minimum payroll tax", "luxury tax", "buy outs", "scouting", "coaching", "health", "facilities"],
-            ],
-            val => helpers.formatCurrency(val / 1000, "M", 1)
-        );
-    }).extend({throttle: 1});
 }
 
 function uiEvery(updateEvents, vm) {

@@ -1,14 +1,8 @@
 REACT
 
 TeamFinances
-  bargraph
-    tooltips
-    null/undefined values in new league
-  help-icon
-  disable/enable form items, like FA
-  get rid of form tag
-  italic name for released players
   form
+  disable/enable form items, like FA
 
 form onSubmit
 
@@ -75,6 +69,8 @@ Draft
 ---
 
 hack to fix 0 population bug https://www.reddit.com/r/BasketballGM/comments/4uu0cx/nobody_in_my_league_is_making_a_profit/d5u4qkq?context=3
+
+get rid of buyOuts from expenses
 
 pressing alt+p rapidly can result in extra games being played
 

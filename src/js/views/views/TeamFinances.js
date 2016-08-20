@@ -4,7 +4,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} = require('../components/index');
 
-const TeamFinances = ({abbrev, barData = {}, barSeasons, contractTotals = [], contracts = [], luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, expenses: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, name: null, region: null}}) => {
+const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], luxuryTax: [], scouting: [], coaching: [], health: [], facilities: []}, revenues: {localTv: [], luxuryTaxShare: [], merch: [], nationalTv: [], sponsor: [], ticket: []}}, barSeasons, contractTotals = [], contracts = [], luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, expenses: {ticketPrice: {rank: null}, scouting: {rank: null}, budget: {rank: null}, coaching: {rank: null}, health: {rank: null}, facilities: {rank: null}}, name: null, region: null}}) => {
     bbgmViewReact.title(`${team.region} ${team.name} Finances`);
 
     const cols = getCols('Name').concat(salariesSeasons.map(season => {
@@ -44,8 +44,6 @@ const TeamFinances = ({abbrev, barData = {}, barSeasons, contractTotals = [], co
 
     const footer = ['Totals'].concat(contractTotals.map(amount => helpers.formatCurrency(amount, 'M')));
 
-console.log(barData, barSeasons)
-
     return <div>
         <Dropdown view="team_finances" fields={["teams", "shows"]} values={[abbrev, show]} />
         <h1>{team.region} {team.name} Finances <NewWindowLink /></h1>
@@ -53,10 +51,7 @@ console.log(barData, barSeasons)
         <p>More: <a href={helpers.leagueUrl(['roster', abbrev])}>Roster</a> | <a href={helpers.leagueUrl(['game_log', abbrev])}>Game Log</a> | <a href={helpers.leagueUrl(['team_history', abbrev])}>History</a> | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
 
 
-        <p className="clearfix">The current payroll (<b>{helpers.formatCurrency([team.payroll, 'M'])}</b>) is {payroll
- > minPayroll ? 'above' : 'below'} the minimum payroll limit (<b>{helpers.formatCurrency([minPayroll, 'M'])}</b>), {payroll
- > salaryCap ? 'above' : 'below'} the salary cap (<b>{helpers.formatCurrency([salaryCap, 'M'])}</b>), and {payroll
- > luxuryPayroll ? 'above' : 'below'} the luxury tax limit (<b>{helpers.formatCurrency([luxuryPayroll, 'M'])}</b>). <HelpPopover placement="bottom" title="Payroll Limits">
+        <p className="clearfix">The current payroll (<b>{helpers.formatCurrency([team.payroll, 'M'])}</b>) is {payroll > minPayroll ? 'above' : 'below'} the minimum payroll limit (<b>{helpers.formatCurrency([minPayroll, 'M'])}</b>), {payroll > salaryCap ? 'above' : 'below'} the salary cap (<b>{helpers.formatCurrency([salaryCap, 'M'])}</b>), and {payroll > luxuryPayroll ? 'above' : 'below'} the luxury tax limit (<b>{helpers.formatCurrency([luxuryPayroll, 'M'])}</b>). <HelpPopover placement="bottom" title="Payroll Limits">
             The salary cap is a soft cap, meaning that you can exceed it to re-sign your own players or to sign free agents to minimum contracts (${minContract}k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to {luxuryTax} times the difference at the end of the season.
         </HelpPopover></p>
 
@@ -102,10 +97,28 @@ console.log(barData, barSeasons)
             </div>
             <div className="col-md-4 col-sm-4">
                 <h4>Revenue</h4>
-                <div id="bar-graph-revenue" className="bar-graph-large"></div><br /><br />
+                <div id="bar-graph-revenue" className="bar-graph-large">
+                    <BarGraph
+                        data={[barData.revenues.nationalTv, barData.revenues.localTv, barData.revenues.ticket, barData.revenues.sponsor, barData.revenues.merch, barData.revenues.luxuryTaxShare]}
+                        labels={[
+                            barSeasons,
+                            ["national TV revenue", "local TV revenue", "ticket revenue", "corporate sponsorship revenue", "merchandising revenue", "luxury tax share revenue"],
+                        ]}
+                        tooltipCb={val => helpers.formatCurrency(val / 1000, 'M', 1)}
+                    />
+                </div><br /><br />
                 <h4>Expenses</h4>
-                <div id="bar-graph-expenses" className="bar-graph-large"></div><br /><br />
-                <h4>Cash</h4>
+                <div id="bar-graph-expenses" className="bar-graph-large">
+                    <BarGraph
+                        data={[barData.expenses.salary, barData.expenses.minTax, barData.expenses.luxuryTax, barData.expenses.scouting, barData.expenses.coaching, barData.expenses.health, barData.expenses.facilities]}
+                        labels={[
+                            barSeasons,
+                            ["player salaries", "minimum payroll tax", "luxury tax", "scouting", "coaching", "health", "facilities"],
+                        ]}
+                        tooltipCb={val => helpers.formatCurrency(val / 1000, 'M', 1)}
+                    />
+                </div><br /><br />
+                <h4>Cash (cumulative)</h4>
                 <div id="bar-graph-cash" className="bar-graph-medium">
                     <BarGraph
                         data={barData.cash}

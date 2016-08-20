@@ -101,8 +101,6 @@
     "lib/bootstrap-collapse": "./src/js/lib/bootstrap-collapse.js",
     "lib/bootstrap-dropdown": "./src/js/lib/bootstrap-dropdown.js",
     "lib/bootstrap-modal": "./src/js/lib/bootstrap-modal.js",
-    "lib/bootstrap-popover": "./src/js/lib/bootstrap-popover.js",
-    "lib/bootstrap-tooltip": "./src/js/lib/bootstrap-tooltip.js",
     "lib/bootstrap-transition": "./src/js/lib/bootstrap-transition.js"
   },
   "browserify-shim": {
@@ -130,17 +128,6 @@
     "lib/bootstrap-modal": {
       "depends": [
         "lib/bootstrap-transition",
-        "jquery:jQuery"
-      ]
-    },
-    "lib/bootstrap-popover": {
-      "depends": [
-        "lib/bootstrap-tooltip",
-        "jquery:jQuery"
-      ]
-    },
-    "lib/bootstrap-tooltip": {
-      "depends": [
         "jquery:jQuery"
       ]
     },

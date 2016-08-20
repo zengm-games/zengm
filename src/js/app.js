@@ -21,7 +21,6 @@ require('lib/bootstrap-alert');
 require('lib/bootstrap-collapse');
 require('lib/bootstrap-dropdown');
 require('lib/bootstrap-modal');
-require('lib/bootstrap-popover');
 require('./lib/davis.google_analytics');
 require('indexeddb-getall-shim');
 require('jquery-ui/sortable');

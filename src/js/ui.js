@@ -161,19 +161,6 @@ function init() {
         }
     });
 
-    // HACK: close bootstrap popovers on click outside of help box
-    $(document).on("click", ".help-icon, .popover", event => {
-        event.stopPropagation();
-    });
-    $(document).on("click", () => {
-        $(".help-icon").popover("hide");
-
-        // Only run when collapsable is open
-        if (topMenuCollapse.hasClass("in")) {
-            topMenuCollapse.collapse("hide");
-        }
-    });
-
     // When a dropdown at the top is open, use hover to move between items,
     // like in a normal menubar.
     $("#nav-primary .dropdown-toggle").on("mouseenter", event => {

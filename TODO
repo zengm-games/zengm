@@ -42,11 +42,9 @@ when all react
     playerNameLabels
     skillsBlock
   get rid of bootstrap js
-  get rid of datatables js
   revisit "trade for" buttons POST
   references to data-
   references to vm
-  delete datatables and unused CSS/images
   get rid of brfs
   go through ui.js, reevaluate
   get rid of default params in views
@@ -719,10 +717,6 @@ smoother multi-window updates
 most improved player
 assist leaders too low
 Number of years in college should depend on talent level
-DataTables - fix default sort order on column click
-  text should be asc, numeric should be desc (except draft picks)
-  http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
-  but can it be set globally, based on column type? can have ui.datatable automatically read columns and figure it out?
 Add MVP and Titles columns to HoF table
 Make good young players much less likely to become FAs
 Make rookie contracts 1 year longer
@@ -1076,7 +1070,6 @@ dashboard
     arrays need correct keys
 team finances
   smarter updating of player salaries table: contracts should only update on playerMovement
-feasible to use knockout for updating datatable? or kogrid?
 trade - not fully knockoutifieid
   mapping to update summary.teams.trade, userRoster, otherRoster
   can i do a redirect from post without refreshing everything?
@@ -1101,12 +1094,6 @@ roster
   check release, buy out, trade for
   flatten a bit
   vars.ptModifiers does not need to be observable
-dataTables/grid knockout
-  examples
-    https://github.com/CogShift/Knockout.Extensions
-      https://github.com/CogShift/Knockout.Extensions/issues/9
-    https://github.com/Knockout-Contrib/KoGrid
-    http://chadmullins.com/javascript/knockout-js-series-part-2-binding-knockout-js-to-a-datatables-grid/
 inbox
   on new message (can be a newMessage update event), just add to messages list rather than always refreshing
 player_

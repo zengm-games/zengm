@@ -50,7 +50,7 @@ const Header = ({cols, handleColClick, sortBys, superCols}) => {
 
 const Row = clickable(({clicked, row, toggleClicked}) => {
     return <tr className={classNames(row.classNames, {warning: clicked})} onClick={toggleClicked}>
-        {row.data.map((value, i) => {
+        {row.data.map((value = null, i) => {
             // Value is either the value, or an object containing the value as a property
             if (value !== null && value.hasOwnProperty('value')) {
                 return <td className={classNames(value.classNames)} key={i}>{value.value}</td>;
@@ -74,7 +74,7 @@ const getSearchVal = val => {
     return null;
 };
 
-const getSortVal = (value, sortType) => {
+const getSortVal = (value = null, sortType) => {
     let val;
     let sortVal;
 

@@ -47,7 +47,7 @@ const RatingsOverview = ({ratings}) => {
     </div>;
 };
 
-const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = {awardsGrouped: [], born: {}, draft: {}, pid: 0, ratings: [{skills: []}], salaries: [], watch: false}, retired, showContract, showTradeFor}) => {
+const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = {awardsGrouped: [], born: {}, draft: {}, pid: 0, ratings: [{season: 0, skills: []}], salaries: [], watch: false}, retired, showContract, showTradeFor}) => {
     bbgmViewReact.title(player.name);
 
     let draftInfo = null;
@@ -201,16 +201,39 @@ const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = 
         </div>
 
         <h2>Ratings</h2>
-        <div className="table-responsive">
-            <table className="table table-striped table-bordered table-condensed table-clickable-rows" id="player_ratings">
-                <thead>
-                    <tr><th>Year</th><th>Team</th><th>Age</th><th title="Position">Pos</th><th title="Overall">Ovr</th><th title="Potential">Pot</th><th title="Height">Hgt</th><th title="Strength">Str</th><th title="Speed">Spd</th><th title="Jumping">Jmp</th><th title="Endurance">End</th><th title="Inside Scoring">Ins</th><th title="Dunks/Layups">Dnk</th><th title="Free Throw Shooting">FT</th><th title="Two-Point Shooting">2Pt</th><th title="Three-Point Shooting">3Pt</th><th title="Blocks">Blk</th><th title="Steals">Stl</th><th title="Dribbling">Drb</th><th title="Passing">Pss</th><th title="Rebounding">Reb</th><th>Skills</th></tr>
-                </thead>
-                <tbody data-bind="foreach: player.ratings">
-                    <tr><td data-bind="text: season"></td><td>{/*abbrev ? <a data-bind="text: abbrev, attrLeagueUrl: {href: ['roster', abbrev, season]}"></a> : null*/}</td><td data-bind="text: age"></td><td data-bind="text: pos"></td><td data-bind="text: ovr"></td><td data-bind="text: pot"></td><td data-bind="text: hgt"></td><td data-bind="text: stre"></td><td data-bind="text: spd"></td><td data-bind="text: jmp"></td><td data-bind="text: endu"></td><td data-bind="text: ins"></td><td data-bind="text: dnk"></td><td data-bind="text: ft"></td><td data-bind="text: fg"></td><td data-bind="text: tp"></td><td data-bind="text: blk"></td><td data-bind="text: stl"></td><td data-bind="text: drb"></td><td data-bind="text: pss"></td><td data-bind="text: reb"></td><td><span className="skills-alone" data-bind="skillsBlock: skills"></span></td></tr>
-                </tbody>
-            </table>
-        </div>
+        <DataTable
+            cols={getCols('Year', 'Team', 'Age', 'Pos', 'Ovr', 'Pot', 'rating:Hgt', 'rating:Str', 'rating:Spd', 'rating:Jmp', 'rating:End', 'rating:Ins', 'rating:Dnk', 'rating:FT', 'rating:2Pt', 'rating:3Pt', 'rating:Blk', 'rating:Stl', 'rating:Drb', 'rating:Pss', 'rating:Reb', 'Skills')}
+            defaultSort={[0, 'asc']}
+            rows={player.ratings.map(r => {
+                return {
+                    key: r.season,
+                    data: [
+                        r.season,
+                        r.abbrev ? <a href={helpers.leagueUrl(['roster', r.abbrev, r.season])}>{r.abbrev}</a> : null,
+                        r.age,
+                        r.pos,
+                        r.ovr,
+                        r.pot,
+                        r.hgt,
+                        r.stre,
+                        r.spd,
+                        r.jmp,
+                        r.endu,
+                        r.ins,
+                        r.dnk,
+                        r.ft,
+                        r.fg,
+                        r.tp,
+                        r.blk,
+                        r.stl,
+                        r.drb,
+                        r.pss,
+                        r.reb,
+                        <SkillsBlock className="skills-alone" skills={r.skills} />,
+                    ],
+                };
+            })}
+        />
 
         <div className="row">
             <div className="col-sm-6">
@@ -247,7 +270,7 @@ const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = 
             <div className="col-md-2 col-md-pull-10 col-sm-3 col-sm-pull-9">
                 <h2>Salaries</h2>
                 <DataTable
-                    cols={getCols('Season', 'Amount')}
+                    cols={getCols('Year', 'Amount')}
                     defaultSort={[0, 'asc']}
                     footer={['Total', helpers.formatCurrency([player.salariesTotal, 'M'])]}
                     rows={player.salaries.map(s => {

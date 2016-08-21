@@ -220,7 +220,7 @@ class Trade extends React.Component {
                         </div>
                     </form>
                 </div>
-                <div className="col-md-3" id="trade-summary">
+                <div className="col-md-3 trade-summary">
                     <h3>Trade Summary</h3>
                     <div className="row">
                         {summary.teams.map((t, i) => <div key={i} className="col-md-12 col-xs-6">

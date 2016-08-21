@@ -325,10 +325,6 @@ table {
   thead tr:last-child th {
     border-bottom: 1px solid #888;
   }
-
-  tfoot tr:first-child th {
-    border-top: 1px solid #888;
-  }
 }
 
 .roster-handle {
@@ -346,12 +342,12 @@ table {
   color: #5bc0de;
 }
 
-#game-log-list {
-  tbody td {
+.game-log-list {
+  tbody td.game-log-cell {
     padding: 0;
   }
 
-  td a {
+  td.game-log-cell a {
     color: #3a87ad;
     display: block;
     // Expand to encompass normal td padding, which was set to 0 here above.
@@ -360,7 +356,7 @@ table {
   }
 }
 
-#game-log-list tbody tr:hover td,
+.game-log-list tbody tr:hover td.game-log-cell,
 .messages-table tbody tr:hover td {
   background-color: #d9edf7;
   border-color: #bce8f1;
@@ -441,7 +437,7 @@ table {
 //   width: 203px;
 // }
 
-#trade-summary {
+.trade-summary {
   background-color: #fff;
 
   form {

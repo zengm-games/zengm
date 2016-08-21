@@ -191,9 +191,13 @@ class Dropdown extends React.Component {
     handleChange(i, event) {
         const values = this.props.values.slice();
         values[i] = event.target.value;
-        const url = helpers.leagueUrl([this.props.view].concat(values));
-        console.log(url);
-        ui.realtimeUpdate([], url);
+
+        const parts = [this.props.view].concat(values);
+        if (this.props.extraParam !== undefined) {
+            parts.push(this.props.extraParam);
+        }
+
+        ui.realtimeUpdate([], helpers.leagueUrl(parts));
     }
 
     render() {
@@ -211,6 +215,10 @@ class Dropdown extends React.Component {
     }
 }
 Dropdown.propTypes = {
+    extraParam: React.PropTypes.oneOfType([
+        React.PropTypes.number,
+        React.PropTypes.string,
+    ]),
     fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
     values: React.PropTypes.array.isRequired,
     view: React.PropTypes.string.isRequired,

@@ -1,12 +1,10 @@
 const g = require('../globals');
-const ui = require('../ui');
 const player = require('../core/player');
 const team = require('../core/team');
 const Promise = require('bluebird');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
-const components = require('./components');
+const History = require('./views/History');
 
 function get(req) {
     let season = helpers.validateSeason(req.params.season);
@@ -30,8 +28,8 @@ function get(req) {
     };
 }
 
-async function updateHistory(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.season() !== inputs.season) {
+async function updateHistory(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || state.season !== inputs.season) {
         let [awards, retiredPlayers, teams] = await Promise.all([
             g.dbl.awards.get(inputs.season),
             g.dbl.players.index('retiredYear').getAll(inputs.season).then(players => {
@@ -99,20 +97,9 @@ async function updateHistory(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Season Summary - ${vm.season()}`);
-    }).extend({throttle: 1});
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("history-dropdown", ["seasons"], [vm.season()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "history",
     get,
     runBefore: [updateHistory],
-    uiFirst,
-    uiEvery,
+    Component: History,
 });

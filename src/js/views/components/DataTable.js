@@ -365,7 +365,15 @@ class DataTable extends React.Component {
 
             for (const item of footers) {
                 const index = footers.indexOf(item);
-                footerRows.push(<tr key={index}>{item.map((value, i) => <th key={i}>{value}</th>)}</tr>);
+                const items = item.map((value, i) => {
+                    if (value.hasOwnProperty('value')) {
+                        return <th className={classNames(value.classNames)} key={i}>{value.value}</th>;
+                    }
+
+                    return <th key={i}>{value}</th>;
+                });
+
+                footerRows.push(<tr key={index}>{items}</tr>);
             }
 
             tfoot = <tfoot>

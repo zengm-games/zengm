@@ -8,7 +8,6 @@ const player = require('./player');
 const team = require('./team');
 const backboard = require('backboard');
 const Promise = require('bluebird');
-const $ = require('jquery');
 const _ = require('underscore');
 const helpers = require('../util/helpers');
 const random = require('../util/random');
@@ -98,15 +97,6 @@ async function setGameAttributes(tx, gameAttributes) {
 
         if (key === "userTid" || key === "userTids") {
             g.vm.multiTeam[key](gameAttributes[key]);
-        }
-
-        // Trigger a signal for the team finances view. This is stupid.
-        if (key === "gamesInProgress") {
-            if (gameAttributes[key]) {
-                $("#live-games-list").trigger("gameSimulationStart");
-            } else {
-                $("#live-games-list").trigger("gameSimulationStop");
-            }
         }
     });
 }

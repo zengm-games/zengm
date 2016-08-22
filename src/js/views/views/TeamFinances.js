@@ -213,7 +213,20 @@ const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], lux
         };
     });
 
-    const footer = ['Totals'].concat(contractTotals.map(amount => helpers.formatCurrency(amount, 'M')));
+    function muteZeroAmount(amount) {
+        const formattedValue = helpers.formatCurrency(amount, 'M');
+
+        if (amount === 0) {
+            return {classNames: 'text-muted', value: formattedValue};
+        }
+
+        return formattedValue;
+    }
+
+    const footer = [
+        ['Totals'].concat(contractTotals.map(amount => muteZeroAmount(amount))),
+        ['Free cap space'].concat(contractTotals.map((amount) => muteZeroAmount(salaryCap - amount))),
+    ];
 
     return <div>
         <Dropdown view="team_finances" fields={["teams", "shows"]} values={[abbrev, show]} />

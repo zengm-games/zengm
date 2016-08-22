@@ -107,7 +107,6 @@ function getPlayerAwards(p, awardType) {
     });
     const lastYear = _.max(years.map(y => y.season)).toString();
 
-
     return {
         name: `${p.firstName} ${p.lastName}`,
         pid: p.pid,
@@ -115,8 +114,8 @@ function getPlayerAwards(p, awardType) {
         countText: awards.length.toString(),
         years,
         lastYear,
-        retired: (p.retiredYear) ? "yes" : "no",
-        hof: (p.hof) ? "yes" : "no",
+        retired: p.retiredYear,
+        hof: p.hof,
     };
 }
 

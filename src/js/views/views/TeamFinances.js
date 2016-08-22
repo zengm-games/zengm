@@ -191,14 +191,19 @@ const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], lux
                 watch={p.watch}
             >{p.firstName} {p.lastName}</PlayerNameLabels>,
         ];
+
+        // Loop through the salaries for the next five years for this player.
         for (let i = 0; i < 5; i++) {
             if (p.amounts[i]) {
-                data.push(helpers.formatCurrency(p.amounts[i], "M"));
+                const formattedAmount = helpers.formatCurrency(p.amounts[i], "M");
+
+                if (p.released) {
+                    data.push(<i>{formattedAmount}</i>);
+                } else {
+                    data.push(formattedAmount);
+                }
             } else {
                 data.push(null);
-            }
-            if (p.released) {
-                data[i + 1] = <i>{data[i + 1]}</i>;
             }
         }
 

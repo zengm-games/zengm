@@ -1,13 +1,12 @@
 const g = require('../globals');
-const ui = require('../ui');
 const player = require('../core/player');
 const backboard = require('backboard');
 const Promise = require('bluebird');
 const ko = require('knockout');
 const komapping = require('knockout.mapping');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
-const components = require('./components');
+const Leaders = require('./views/Leaders');
 
 function get(req) {
     return {
@@ -15,29 +14,9 @@ function get(req) {
     };
 }
 
-function InitViewModel() {
-    this.season = ko.observable();
-    this.categories = ko.observable([]);
-}
-
-const mapping = {
-    categories: {
-        create(options) {
-            return new function () {
-                komapping.fromJS(options.data, {
-                    data: {
-                        key: data => ko.unwrap(data.pid),
-                    },
-                }, this);
-            }();
-        },
-        key: data => ko.unwrap(data.name),
-    },
-};
-
-async function updateLeaders(inputs, updateEvents, vm) {
+async function updateLeaders(inputs, updateEvents, state) {
     // Respond to watchList in case players are listed twice in different categories
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== vm.season()) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== state.season) {
         let [teamSeasons, players] = await Promise.all([
             g.dbl.teamSeasons.index("season, tid").getAll(backboard.bound([inputs.season], [inputs.season, ''])),
             g.dbl.players.getAll().then(players => {
@@ -102,7 +81,6 @@ async function updateLeaders(inputs, updateEvents, vm) {
 
                 if (pass) {
                     const leader = helpers.deepCopy(players[j]);
-                    leader.i = categories[i].data.length + 1;
                     leader.stat = leader.stats[stats[i]];
                     leader.abbrev = leader.stats.abbrev;
                     delete leader.stats;
@@ -131,22 +109,9 @@ async function updateLeaders(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`League Leaders - ${vm.season()}`);
-    }).extend({throttle: 1});
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("leaders-dropdown", ["seasons"], [vm.season()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "leaders",
     get,
-    InitViewModel,
-    mapping,
     runBefore: [updateLeaders],
-    uiFirst,
-    uiEvery,
+    Component: Leaders,
 });

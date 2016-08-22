@@ -1,13 +1,8 @@
 const classNames = require('classnames');
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
+const {liveGame} = require('../../util/actions');
 const {NewWindowLink} = require('../components/index');
-
-const handleClick = gid => {
-    console.log('click', gid);
-    console.log('somehow redirect to live_game and play one day');
-};
 
 const Live = ({games = [], gamesInProgress}) => {
     bbgmViewReact.title('Live Game Simulation');
@@ -24,7 +19,7 @@ const Live = ({games = [], gamesInProgress}) => {
                 key={gm.gid}
                 className={classNames('btn', 'btn-default', {'btn-success': gm.highlight})}
                 disabled={gamesInProgress}
-                onClick={() => handleClick(gm.gid)}
+                onClick={() => liveGame(gm.gid)}
                 style={{float: 'left', margin: '0 1em 1em 0'}}
             >
                 {gm.awayRegion} {gm.awayName} at<br />

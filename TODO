@@ -1,9 +1,11 @@
 REACT
 
 Live
-  redirect
-  gameSimulationStart stuff
-    // HACK: if this enables too early, it's bad because two identical days will be simulated
+  affix plays
+  in startLiveGame check if mounted before calling setState
+  way too slow, to the point where slider doesn't do anything at high values
+    immutable data structures?
+    just write directly to DOM? not the complicated...
 
 Switch between two leagues directly with forward/back (react to react) and it has the two controllers problem
 
@@ -49,7 +51,7 @@ when all react
   get rid of brfs
   go through ui.js, reevaluate
   get rid of default params in views
-  escape HTML saved to IDB very carefully (event log, feat text)
+  escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame)
   delete components.js
 
 Dropdown

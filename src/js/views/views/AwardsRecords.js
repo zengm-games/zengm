@@ -17,6 +17,14 @@ const AwardsRecords = ({awardType, awardTypeVal, awardsRecords = [], playerCount
         });
     };
 
+    function checkmarkOrCross(condition) {
+        if (condition) {
+            return <span className="glyphicon glyphicon-ok text-success"></span>;
+        }
+
+        return <span className="glyphicon glyphicon-remove text-danger"></span>;
+    }
+
     const rows = awardsRecords.map(a => {
         return {
             key: a.pid,
@@ -25,8 +33,8 @@ const AwardsRecords = ({awardType, awardTypeVal, awardsRecords = [], playerCount
                 a.count,
                 formatYear(_.groupBy(a.years, 'team')),
                 a.lastYear,
-                a.retired,
-                a.hof,
+                checkmarkOrCross(a.retired),
+                checkmarkOrCross(a.hof),
             ],
         };
     });

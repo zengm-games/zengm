@@ -7,6 +7,9 @@ Live
       https://facebook.github.io/react/docs/update.html
       https://facebook.github.io/react/docs/shallow-compare.html
     just write directly to DOM? not the complicated...
+    clever shouldComponentUpdate to only update players in game
+      why is CSS never updated? because i mutate state, so last props are same as current ones
+  going to live_game URL should redirect to live if there is no game forthcoming, like it used to
 
 Switch between two leagues directly with forward/back (react to react) and it has the two controllers problem
 

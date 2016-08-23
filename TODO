@@ -2,8 +2,6 @@ REACT
 
 Live
   affix plays
-  in startLiveGame check if mounted before calling setState
-    same with any DOM manipulation going on
   way too slow, to the point where slider doesn't do anything at high values
     immutable data structures? react addon, then pure render, then break down to rows of box score
       https://facebook.github.io/react/docs/update.html

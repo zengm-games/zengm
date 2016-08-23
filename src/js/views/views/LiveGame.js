@@ -116,10 +116,22 @@ class LiveGame extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.componentIsMounted = true;
+    }
+
+    componentWillUnmount() {
+        this.componentIsMounted = false;
+    }
+
     startLiveGame(events) {
         let overtimes = 0;
 
         const processToNextPause = () => {
+            if (!this.componentIsMounted) {
+                return;
+            }
+
             const boxScore = this.state.boxScore; // This means we're mutating state, which is a little faster, but bad
 
             let stop = false;

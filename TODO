@@ -4,7 +4,9 @@ Live
   affix plays
   in startLiveGame check if mounted before calling setState
   way too slow, to the point where slider doesn't do anything at high values
-    immutable data structures?
+    immutable data structures? react addon, then pure render, then break down to rows of box score
+      https://facebook.github.io/react/docs/update.html
+      https://facebook.github.io/react/docs/shallow-compare.html
     just write directly to DOM? not the complicated...
 
 Switch between two leagues directly with forward/back (react to react) and it has the two controllers problem

@@ -6,11 +6,15 @@ const {PlayerNameLabels} = require('../components/index');
 
 class PlayerRow extends React.Component {
     shouldComponentUpdate(nextProps) {
-        return nextProps.p.updated;
+        return this.prevInGame || nextProps.p.inGame;
     }
 
     render() {
         const {i, p} = this.props;
+
+        // Needed for shouldComponentUpdate because state is mutated so we need to explicitly store the last value
+        this.prevInGame = p.inGame;
+
         const classes = classNames({
             separator: i === 4,
             warning: p.inGame,
@@ -106,7 +110,7 @@ class LiveGame extends React.Component {
         super(props);
         this.state = {
             boxScore: props.initialBoxScore ? props.initialBoxScore : {},
-            speed: 4,
+            speed: 5,
         };
         if (props.events) {
             this.startLiveGame(props.events.slice());
@@ -143,13 +147,6 @@ class LiveGame extends React.Component {
 
             const boxScore = this.state.boxScore; // This means we're mutating state, which is a little faster, but bad
 
-            // Initialize update counters
-            for (const t of this.state.boxScore.teams) {
-                for (const p of t.players) {
-                    p.updated = false;
-                }
-            }
-
             let stop = false;
             let text = null;
             while (!stop && events.length > 0) {
@@ -172,14 +169,10 @@ class LiveGame extends React.Component {
                     stop = true;
                 } else if (e.type === "sub") {
                     for (let i = 0; i < boxScore.teams[e.t].players.length; i++) {
-                        // Set "updated" to avoid DOM mutation for players on the bench
-                        // Can't use inGame directly because this is mutating state
                         if (boxScore.teams[e.t].players[i].pid === e.on) {
                             boxScore.teams[e.t].players[i].inGame = true;
-                            boxScore.teams[e.t].players[i].updated = true;
                         } else if (boxScore.teams[e.t].players[i].pid === e.off) {
                             boxScore.teams[e.t].players[i].inGame = false;
-                            boxScore.teams[e.t].players[i].updated = true;
                         }
                     }
                 } else if (e.type === "stat") {
@@ -212,24 +205,20 @@ class LiveGame extends React.Component {
                     if (e.s === "drb") {
                         boxScore.teams[e.t].players[e.p].trb += e.amt;
                         boxScore.teams[e.t].trb += e.amt;
-                        boxScore.teams[e.t].players[e.p].updated = true;
                     } else if (e.s === "orb") {
                         boxScore.teams[e.t].players[e.p].trb += e.amt;
                         boxScore.teams[e.t].trb += e.amt;
                         boxScore.teams[e.t].players[e.p][e.s] += e.amt;
                         boxScore.teams[e.t][e.s] += e.amt;
-                        boxScore.teams[e.t].players[e.p].updated = true;
                     } else if (e.s === "min" || e.s === "fg" || e.s === "fga" || e.s === "tp" || e.s === "tpa" || e.s === "ft" || e.s === "fta" || e.s === "ast" || e.s === "tov" || e.s === "stl" || e.s === "blk" || e.s === "ba" || e.s === "pf" || e.s === "pts") {
                         boxScore.teams[e.t].players[e.p][e.s] += e.amt;
                         boxScore.teams[e.t][e.s] += e.amt;
-                        boxScore.teams[e.t].players[e.p].updated = true;
 
                         if (e.s === "pts") {
                             for (let j = 0; j < 2; j++) {
                                 for (let k = 0; k < boxScore.teams[j].players.length; k++) {
                                     if (boxScore.teams[j].players[k].inGame) {
                                         boxScore.teams[j].players[k].pm += (e.t === j ? e.amt : -e.amt);
-                                        boxScore.teams[j].players[k].updated = true;
                                     }
                                 }
                             }

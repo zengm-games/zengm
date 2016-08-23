@@ -114,7 +114,7 @@ function getPlayerAwards(p, awardType) {
         countText: awards.length.toString(),
         years,
         lastYear,
-        retired: p.retiredYear,
+        retired: p.retiredYear !== null && p.retiredYear !== undefined,
         hof: p.hof,
     };
 }

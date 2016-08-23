@@ -2,7 +2,7 @@ const classNames = require('classnames');
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {PlayerNameLabels} = require('../components/index');
 
 const BoxScore = ({boxScore}) => <div>
     <center>
@@ -11,7 +11,7 @@ const BoxScore = ({boxScore}) => <div>
             <tbody>
                 {boxScore.teams.map(t => <tr key={t.abbrev}>
                     <th><a href={helpers.leagueUrl(['roster', t.abbrev, boxScore.season])}>{t.abbrev}</a></th>
-                    {t.ptsQtrs.map((pts, i) => <th key={i}>{pts}</th>)}
+                    {t.ptsQtrs.map((pts, i) => <td key={i}>{pts}</td>)}
                     <th>{t.pts}</th>
                 </tr>)}
             </tbody>
@@ -233,7 +233,7 @@ class LiveGame extends React.Component {
         bbgmViewReact.title('Live Game Simulation');
 
         return <div>
-            <h1>Live Game Simulation <NewWindowLink /></h1>
+            <h1>Live Game Simulation</h1>
 
             <p className="text-danger">If you navigate away from this page, you won't be able to see these play-by-play results again because they are not stored anywhere. The results of this game are already final, though.</p>
 
@@ -244,7 +244,7 @@ class LiveGame extends React.Component {
                     ?
                         <BoxScore boxScore={this.state.boxScore} />
                     :
-                        <p>Loading...</p>
+                        <h1>Loading...</h1>
                     }
                 </div>
                 <div className="col-md-3">

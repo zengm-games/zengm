@@ -97,7 +97,6 @@ class LiveGame extends React.Component {
         super(props);
         this.state = {
             boxScore: props.initialBoxScore ? props.initialBoxScore : {},
-            playByPlay: [],
             speed: 4,
         };
         if (props.events) {
@@ -122,7 +121,6 @@ class LiveGame extends React.Component {
 
         const processToNextPause = () => {
             const boxScore = this.state.boxScore; // This means we're mutating state, which is a little faster, but bad
-            const playByPlay = this.state.playByPlay.slice();
 
             let stop = false;
             let text = null;
@@ -205,10 +203,11 @@ class LiveGame extends React.Component {
             }
 
             if (text !== null) {
-                playByPlay.unshift({
-                    id: events.length,
-                    text,
-                });
+                const p = document.createElement('p');
+                const node = document.createTextNode(text);
+                p.appendChild(node);
+
+                this.playByPlayDiv.insertBefore(p, this.playByPlayDiv.firstChild);
             }
 
             if (events.length > 0) {
@@ -220,7 +219,6 @@ class LiveGame extends React.Component {
 
             this.setState({
                 boxScore,
-                playByPlay,
             });
         };
 
@@ -256,9 +254,9 @@ class LiveGame extends React.Component {
                             <input type="range" id="playByPlaySpeed" min="1" max="33" step="1" style={{width: '100%'}} value={this.state.speed} onChange={this.handleSpeedChange} />
                         </form>
 
-                        <div id="playByPlayList" style={{overflow: 'auto'}}>
-                            {this.state.playByPlay.map(item => <p key={item.id}>{item.text}</p>)}
-                        </div>
+                        <div ref={c => {
+                            this.playByPlayDiv = c;
+                        }} style={{overflow: 'auto'}} />
                     </div>
                 </div>
             </div>

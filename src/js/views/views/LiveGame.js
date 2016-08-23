@@ -4,6 +4,41 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
 const {PlayerNameLabels} = require('../components/index');
 
+class PlayerRow extends React.Component {
+    render() {
+        const {i, p} = this.props;
+        const classes = classNames({
+            separator: i === 4,
+            warning: p.inGame,
+        });
+        return <tr className={classes}>
+            <td>
+                <PlayerNameLabels
+                    injury={p.injury}
+                    pid={p.pid}
+                    skills={p.skills}
+                >{p.name}</PlayerNameLabels>
+            </td>
+            <td>{p.pos}</td>
+            <td>{helpers.round(p.min, 1)}</td>
+            <td>{p.fg}-{p.fga}</td>
+            <td>{p.tp}-{p.tpa}</td>
+            <td>{p.ft}-{p.fta}</td>
+            <td>{p.orb}</td>
+            <td>{p.trb}</td>
+            <td>{p.ast}</td>
+            <td>{p.tov}</td>
+            <td>{p.stl}</td>
+            <td>{p.blk}</td>
+            <td>{p.ba}</td>
+            <td>{p.pf}</td>
+            <td>{p.pts}</td>
+            <td>{helpers.plusMinus(p.pm, 0)}</td>
+            <td>{helpers.gameScore(p)}</td>
+        </tr>;
+    }
+}
+
 const BoxScore = ({boxScore}) => <div>
     <center>
         <h2><a href={helpers.leagueUrl(['roster', boxScore.teams[0].abbrev, boxScore.season])}>{boxScore.teams[0].region} {boxScore.teams[0].name}</a> {boxScore.teams[0].pts}, <a href={helpers.leagueUrl(['roster', boxScore.teams[1].abbrev, boxScore.season])}>{boxScore.teams[1].region} {boxScore.teams[1].name}</a> {boxScore.teams[1].pts}{boxScore.overtime}</h2>
@@ -32,37 +67,7 @@ const BoxScore = ({boxScore}) => <div>
                     <tr><th>Name</th><th>Pos</th><th>Min</th><th>FG</th><th>3Pt</th><th>FT</th><th>Off</th><th>Reb</th><th>Ast</th><th>TO</th><th>Stl</th><th>Blk</th><th>BA</th><th>PF</th><th>Pts</th><th>+/-</th><th title="Game Score">GmSc</th></tr>
                 </thead>
                 <tbody>
-                    {t.players.map((p, i) => {
-                        const classes = classNames({
-                            separator: i === 4 || i === t.players.length - 1,
-                            warning: p.inGame,
-                        });
-                        return <tr key={p.pid} className={classes}>
-                            <td>
-                                <PlayerNameLabels
-                                    injury={p.injury}
-                                    pid={p.pid}
-                                    skills={p.skills}
-                                >{p.name}</PlayerNameLabels>
-                            </td>
-                            <td>{p.pos}</td>
-                            <td>{helpers.round(p.min, 1)}</td>
-                            <td>{p.fg}-{p.fga}</td>
-                            <td>{p.tp}-{p.tpa}</td>
-                            <td>{p.ft}-{p.fta}</td>
-                            <td>{p.orb}</td>
-                            <td>{p.trb}</td>
-                            <td>{p.ast}</td>
-                            <td>{p.tov}</td>
-                            <td>{p.stl}</td>
-                            <td>{p.blk}</td>
-                            <td>{p.ba}</td>
-                            <td>{p.pf}</td>
-                            <td>{p.pts}</td>
-                            <td>{helpers.plusMinus(p.pm, 0)}</td>
-                            <td>{helpers.gameScore(p)}</td>
-                        </tr>;
-                    })}
+                    {t.players.map((p, i) => <PlayerRow key={p.pid} i={i} p={p} />)}
                 </tbody>
                 <tfoot>
                     <tr>

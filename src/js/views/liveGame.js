@@ -77,22 +77,6 @@ async function updatePlayByPlay(inputs) {
     }*/
 }
 
-function uiFirst() {
-    // Keep plays list always visible
-    $("#affixPlayByPlay").affix({
-        offset: {
-            top: 80,
-        },
-    });
-
-    // Keep height of plays list equal to window
-    const playByPlayList = document.getElementById("playByPlayList");
-    playByPlayList.style.height = `${window.innerHeight - 114}px`;
-    window.addEventListener("resize", () => {
-        playByPlayList.style.height = `${window.innerHeight - 114}px`;
-    });
-}
-
 module.exports = bbgmViewReact.init({
     id: "liveGame",
     get,

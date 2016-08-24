@@ -1,4 +1,5 @@
 const classNames = require('classnames');
+const $ = require('jquery');
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
@@ -117,6 +118,7 @@ class LiveGame extends React.Component {
         }
 
         this.handleSpeedChange = this.handleSpeedChange.bind(this);
+        this.setPlayByPlayDivHeight = this.setPlayByPlayDivHeight.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -131,10 +133,27 @@ class LiveGame extends React.Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
+
+        // Keep plays list always visible
+        $(this.affixDiv).affix({
+            offset: {
+                top: 80,
+            },
+        });
+
+        // Keep height of plays list equal to window
+        this.setPlayByPlayDivHeight();
+        window.addEventListener("resize", this.setPlayByPlayDivHeight);
     }
 
     componentWillUnmount() {
         this.componentIsMounted = false;
+
+        window.removeEventListener("resize", this.setPlayByPlayDivHeight);
+    }
+
+    setPlayByPlayDivHeight() {
+        this.playByPlayDiv.style.height = `${window.innerHeight - 114}px`;
     }
 
     startLiveGame(events) {
@@ -273,7 +292,9 @@ class LiveGame extends React.Component {
                     }
                 </div>
                 <div className="col-md-3">
-                    <div id="affixPlayByPlay">
+                    <div ref={c => {
+                        this.affixDiv = c;
+                    }}>
                         <form>
                             <label htmlFor="playByPlaySpeed">Play-By-Play Speed:</label>
                             <input type="range" id="playByPlaySpeed" min="1" max="33" step="1" style={{width: '100%'}} value={this.state.speed} onChange={this.handleSpeedChange} />

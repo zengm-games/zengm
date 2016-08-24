@@ -1,7 +1,6 @@
 REACT
 
 Live
-  affix plays
   going to live_game URL should redirect to live if there is no game forthcoming, like it used to
 
 Switch between two leagues directly with forward/back (react to react) and it has the two controllers problem

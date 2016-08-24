@@ -25,5 +25,4 @@ module.exports = {
     playerRatingDists: fs.readFileSync(__dirname + '/../templates/playerRatingDists.html', 'utf8'),
     playerStatDists: fs.readFileSync(__dirname + '/../templates/playerStatDists.html', 'utf8'),
     resetPassword: fs.readFileSync(__dirname + '/../templates/resetPassword.html', 'utf8'),
-    teamStatDists: fs.readFileSync(__dirname + '/../templates/teamStatDists.html', 'utf8'),
 };

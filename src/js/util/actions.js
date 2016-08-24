@@ -9,7 +9,7 @@ const helpers = require('./helpers');
 const liveGame = async gid => {
     ui.realtimeUpdate([], helpers.leagueUrl(["live_game"]), () => {
         game.play(1, true, gid);
-    });
+    }, {fromAction: true});
 };
 
 const negotiate = async pid => {

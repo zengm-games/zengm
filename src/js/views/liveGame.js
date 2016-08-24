@@ -1,30 +1,26 @@
 const g = require('../globals');
-const game = require('../core/game');
-const $ = require('jquery');
-const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const LiveGame = require('./views/LiveGame');
 
 function get(req) {
+    const obj = {
+        fromAction: !!req.raw.fromAction,
+    };
     if (req.raw.playByPlay !== undefined) {
+        obj.gidPlayByPlay = req.raw.gidPlayByPlay;
+        obj.playByPlay = req.raw.playByPlay;
+    }
+    return obj;
+}
+
+async function updatePlayByPlay(inputs, updateEvents) {
+    if (updateEvents.includes('firstRun') && !inputs.fromAction) {
         return {
-            gidPlayByPlay: req.raw.gidPlayByPlay,
-            playByPlay: req.raw.playByPlay,
+            redirectUrl: helpers.leagueUrl(["live"]),
         };
     }
-}
 
-function post(req) {
-    const gid = parseInt(req.params.gid, 10);
-
-    // Start 1 day of game simulation
-    // Prevent any redirects, somehow
-    // Get play by play for gid through raw of ui.realtimeUpdate
-    // gameSim with playByPlay in raw leads to display of play by play in updatePlayByPlay
-    game.play(1, true, gid);
-}
-
-async function updatePlayByPlay(inputs) {
     if (inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
         const boxScore = await g.dbl.games.get(inputs.gidPlayByPlay);
 

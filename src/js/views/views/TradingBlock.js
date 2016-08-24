@@ -11,7 +11,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const random = require('../../util/random');
 const clickable = require('../wrappers/clickable');
-const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components');
 
 const OfferPlayerRow = clickable(({clicked, p, toggleClicked}) => {
     return <tr className={clicked ? 'warning' : null} onClick={toggleClicked}>

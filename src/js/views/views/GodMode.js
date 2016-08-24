@@ -5,7 +5,7 @@ const league = require('../../core/league');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const eventLog = require('../../util/eventLog');
 const helpers = require('../../util/helpers');
-const {HelpPopover, NewWindowLink} = require('../components/index');
+const {HelpPopover, NewWindowLink} = require('../components');
 
 class GodMode extends React.Component {
     constructor(props) {

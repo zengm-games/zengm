@@ -3,7 +3,7 @@ const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} = require('../components');
 
 const PlayerRatings = ({abbrev, players = [], season}) => {
     bbgmViewReact.title(`Player Ratings - ${season}`);

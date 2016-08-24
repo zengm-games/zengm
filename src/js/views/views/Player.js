@@ -4,7 +4,7 @@ const {negotiate, tradeFor} = require('../../util/actions');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink, SkillsBlock, WatchBlock} = require('../components/index');
+const {DataTable, NewWindowLink, SkillsBlock, WatchBlock} = require('../components');
 
 class Picture extends React.Component {
     componentDidMount() {

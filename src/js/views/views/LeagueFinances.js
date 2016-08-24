@@ -3,7 +3,7 @@ const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components/index');
+const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components');
 
 const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season, teams = []}) => {
     bbgmViewReact.title(`League Finances - ${season}`);

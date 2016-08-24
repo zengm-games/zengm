@@ -4,7 +4,7 @@ const ui = require('../../ui');
 const league = require('../../core/league');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {NewWindowLink} = require('../components/index');
+const {NewWindowLink} = require('../components');
 
 class NewTeam extends React.Component {
     constructor(props) {

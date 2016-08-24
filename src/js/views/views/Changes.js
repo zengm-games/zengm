@@ -1,6 +1,6 @@
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
-const {NewWindowLink} = require('../components/index');
+const {NewWindowLink} = require('../components');
 
 const Changes = ({changes = []}) => {
     bbgmViewReact.title('Changes');

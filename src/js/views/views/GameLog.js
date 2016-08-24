@@ -3,7 +3,7 @@ const React = require('react');
 const ui = require('../../ui');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {Dropdown, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {Dropdown, NewWindowLink, PlayerNameLabels} = require('../components');
 const clickable = require('../wrappers/clickable');
 
 const StatsRow = clickable(({clicked, i, numPlayers, p, toggleClicked}) => {

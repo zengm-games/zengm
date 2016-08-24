@@ -2,7 +2,7 @@ const classNames = require('classnames');
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {NewWindowLink} = require('../components/index');
+const {NewWindowLink} = require('../components');
 
 const Inbox = ({anyUnread = false, messages = []}) => {
     bbgmViewReact.title('Inbox');

@@ -3,7 +3,7 @@ const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components/index');
+const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components');
 const _ = require('underscore');
 
 const TeamStats = ({season, stats, teams = []}) => {

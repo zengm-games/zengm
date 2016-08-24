@@ -1,6 +1,6 @@
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
-const {Dropdown, JumpTo, NewWindowLink, PlayoffMatchup} = require('../components/index');
+const {Dropdown, JumpTo, NewWindowLink, PlayoffMatchup} = require('../components');
 
 const Playoffs = ({confNames = [], finalMatchups, matchups = [], numPlayoffRounds, season, series}) => {
     bbgmViewReact.title(`Playoffs - ${season}`);

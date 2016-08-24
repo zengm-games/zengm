@@ -3,7 +3,7 @@ const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink} = require('../components/index');
+const {DataTable, NewWindowLink} = require('../components');
 
 const PowerRankings = ({teams = []}) => {
     bbgmViewReact.title('Power Rankings');

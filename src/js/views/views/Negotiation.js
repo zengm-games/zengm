@@ -5,7 +5,7 @@ const ui = require('../../ui');
 const contractNegotiation = require('../../core/contractNegotiation');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {NewWindowLink} = require('../components/index');
+const {NewWindowLink} = require('../components');
 
 // Show the negotiations list if there are more ongoing negotiations
 async function redirectNegotiationOrRoster(cancelled) {

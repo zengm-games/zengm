@@ -2,7 +2,7 @@ const classNames = require('classnames');
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {Dropdown, JumpTo, NewWindowLink} = require('../components/index');
+const {Dropdown, JumpTo, NewWindowLink} = require('../components');
 const clickable = require('../wrappers/clickable');
 
 const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {

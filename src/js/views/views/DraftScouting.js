@@ -9,7 +9,7 @@ const player = require('../../core/player');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components');
 
 class DraftScouting extends React.Component {
     constructor(props) {

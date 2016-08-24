@@ -10,7 +10,7 @@ const team = require('../../core/team');
 const {tradeFor} = require('../../util/actions');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} = require('../components/index');
+const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} = require('../components');
 const clickable = require('../wrappers/clickable');
 
 const ptStyles = {

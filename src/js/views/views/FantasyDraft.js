@@ -2,7 +2,7 @@ const React = require('react');
 const g = require('../../globals');
 const phase = require('../../core/phase');
 const bbgmViewReact = require('../../util/bbgmViewReact');
-const {NewWindowLink} = require('../components/index');
+const {NewWindowLink} = require('../components');
 
 class FantasyDraft extends React.Component {
     constructor(props) {

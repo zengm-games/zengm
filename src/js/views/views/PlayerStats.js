@@ -3,7 +3,7 @@ const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} = require('../components');
 
 const PlayerStats = ({abbrev, season, statType, players = [], playoffs}) => {
     const label = season !== undefined && season !== null ? season : 'Career Totals';

@@ -5,7 +5,7 @@ const {negotiate} = require('../../util/actions');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, HelpPopover, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, HelpPopover, NewWindowLink, PlayerNameLabels} = require('../components');
 
 const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, players = []}) => {
     bbgmViewReact.title('Free Agents');

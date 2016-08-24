@@ -6,7 +6,7 @@ const trade = require('../../core/trade');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components');
 const classNames = require('classnames');
 
 const genRows = (players, handleChangeAsset) => {

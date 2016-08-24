@@ -4,7 +4,7 @@ const helpers = require('../../util/helpers');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const _ = require('underscore');
 
-const {DataTable, Dropdown, NewWindowLink} = require('../components/index');
+const {DataTable, Dropdown, NewWindowLink} = require('../components');
 
 const AwardsRecords = ({awardType, awardTypeVal, awardsRecords = [], playerCount}) => {
     bbgmViewReact.title('Awards Records');

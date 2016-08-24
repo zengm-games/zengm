@@ -3,7 +3,7 @@ const g = require('../../globals');
 const ui = require('../../ui');
 const league = require('../../core/league');
 const bbgmViewReact = require('../../util/bbgmViewReact');
-const {NewWindowLink} = require('../components/index');
+const {NewWindowLink} = require('../components');
 
 const handleChange = async (userTids, e) => {
     const newUserTids = [...e.target.options]

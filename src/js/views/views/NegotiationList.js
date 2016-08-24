@@ -5,7 +5,7 @@ const {negotiate} = require('../../util/actions');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components');
 
 const NegotiationList = ({players = []}) => {
     bbgmViewReact.title('Re-sign Players');

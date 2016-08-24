@@ -2,7 +2,7 @@ const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} = require('../components');
 
 const UpcomingFreeAgents = ({players = [], season}) => {
     bbgmViewReact.title('Upcoming Free Agents');

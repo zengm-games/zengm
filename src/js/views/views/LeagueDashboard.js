@@ -3,7 +3,7 @@ const React = require('react');
 const g = require('../../globals');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {NewWindowLink, PlayerNameLabels, PlayoffMatchup, RatingWithChange} = require('../components/index');
+const {NewWindowLink, PlayerNameLabels, PlayoffMatchup, RatingWithChange} = require('../components');
 
 const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed = [], confTeams = [], leagueLeaders = {ast: {}, pts: {}, trb: {}}, lost, messages = [], name, oppPts, oppPtsRank, payroll, playoffRoundsWon, playoffsByConference, profit, pts, ptsRank, rank, region, revenue, salaryCap, season, series, seriesTitle, showPlayoffSeries, starters = [], teamLeaders = {ast: {}, pts: {}, trb: {}}, trb, trbRank, upcoming = [], won}) => {
     bbgmViewReact.title('Dashboard');

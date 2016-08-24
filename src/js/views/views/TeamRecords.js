@@ -1,7 +1,7 @@
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
-const {DataTable, Dropdown, NewWindowLink} = require('../components/index');
+const {DataTable, Dropdown, NewWindowLink} = require('../components');
 
 const TeamRecords = ({byType, displayName = 'Team', seasonCount, teamRecords = []}) => {
     bbgmViewReact.title('Team Records');

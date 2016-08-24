@@ -1,6 +1,6 @@
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
-const {Dropdown, NewWindowLink} = require('../components/index');
+const {Dropdown, NewWindowLink} = require('../components');
 
 const EventLog = ({abbrev, events = [], season}) => {
     bbgmViewReact.title(`Event Log - ${season}`);

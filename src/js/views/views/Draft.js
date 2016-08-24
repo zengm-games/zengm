@@ -8,7 +8,7 @@ const league = require('../../core/league');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} = require('../components/index');
+const {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} = require('../components');
 
 const viewDrafted = () => {
     $("body, html").animate({scrollLeft: $(document).outerWidth() - $(window).width()}, 250);

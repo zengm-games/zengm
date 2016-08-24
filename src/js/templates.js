@@ -16,8 +16,6 @@ module.exports = {
     exportStats: fs.readFileSync(__dirname + '/../templates/exportStats.html', 'utf8'),
     editTeamInfo: fs.readFileSync(__dirname + '/../templates/editTeamInfo.html', 'utf8'),
     leagueLayout: fs.readFileSync(__dirname + '/../templates/leagueLayout.html', 'utf8'),
-    live: fs.readFileSync(__dirname + '/../templates/live.html', 'utf8'),
-    liveGame: fs.readFileSync(__dirname + '/../templates/liveGame.html', 'utf8'),
     loginOrRegister: fs.readFileSync(__dirname + '/../templates/loginOrRegister.html', 'utf8'),
     lostPassword: fs.readFileSync(__dirname + '/../templates/lostPassword.html', 'utf8'),
     manual: fs.readFileSync(__dirname + '/../templates/manual.html', 'utf8'),

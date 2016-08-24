@@ -44,8 +44,10 @@ when all react
   get rid of brfs
   go through ui.js, reevaluate
   get rid of default params in views
-  escape HTML saved to IDB very carefully (event log, feat text)
+  escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame)
   delete components.js
+
+ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/help_me_with_a_little_beta_testing/d6tmkyf?context=3
 
 Dropdown
   updateEvents need to be passed to dropdown to handle season change?

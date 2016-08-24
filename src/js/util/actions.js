@@ -1,9 +1,16 @@
 const g = require('../globals');
 const ui = require('../ui');
 const contractNegotiation = require('../core/contractNegotiation');
+const game = require('../core/game');
 const league = require('../core/league');
 const trade = require('../core/trade');
 const helpers = require('./helpers');
+
+const liveGame = async gid => {
+    ui.realtimeUpdate([], helpers.leagueUrl(["live_game"]), () => {
+        game.play(1, true, gid);
+    }, {fromAction: true});
+};
 
 const negotiate = async pid => {
     // If there is no active negotiation with this pid, create it
@@ -57,6 +64,7 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}) 
 
 
 module.exports = {
+    liveGame,
     negotiate,
     tradeFor,
 };

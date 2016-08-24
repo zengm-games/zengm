@@ -88,7 +88,7 @@ class BoxScore extends React.Component {
                                 <tbody>
                                     {boxScore.teams.map(t => <tr key={t.abbrev}>
                                         <th><a href={helpers.leagueUrl(['roster', t.abbrev, boxScore.season])}>{t.abbrev}</a></th>
-                                        {t.ptsQtrs.map((pts, i) => <th key={i}>{pts}</th>)}
+                                        {t.ptsQtrs.map((pts, i) => <td key={i}>{pts}</td>)}
                                         <th>{t.pts}</th>
                                     </tr>)}
                                 </tbody>

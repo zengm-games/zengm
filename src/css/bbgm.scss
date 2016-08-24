@@ -737,14 +737,6 @@ tr.warning > td {
   }
 }
 
-@media (min-width: 1200px) {
-  // Widen the fixed sidebar again
-  .affix-bottom,
-  .affix {
-    width: 360px;
-  }
-}
-
 // Large screen sidebar, adapted from Bootstrap docs
 .bs-sidenav {
   margin-top: 24px;

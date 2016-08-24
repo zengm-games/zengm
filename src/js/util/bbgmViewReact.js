@@ -76,8 +76,7 @@ function controllerFactory(Component) {
 //                return helpers.error(vars.errorMessage, cb);
                 }
                 if (vars.redirectUrl !== undefined) {
-                    throw new Error('Handle redirect!');
-//                return ui.realtimeUpdate([], vars.redirectUrl, cb);
+                    return ui.realtimeUpdate([], vars.redirectUrl, cb);
                 }
 
                 this.setState(vars);

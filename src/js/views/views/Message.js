@@ -23,5 +23,3 @@ Message.propTypes = {
 };
 
 module.exports = Message;
-
-

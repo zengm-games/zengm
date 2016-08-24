@@ -79,7 +79,6 @@ const BoxPlot = ({color = '#000000', data, labels = true, quartiles, scale}) => 
         max: scaleValue(val.max, scale),
     };
 
-
     const midLineDiv = <div style={boxPlotElementStyle(color, {
         height: '10px',
         width: '100%',
@@ -119,48 +118,48 @@ const BoxPlot = ({color = '#000000', data, labels = true, quartiles, scale}) => 
     // Labels
     let labelDivs = null;
     if (labels) {
-        const minScaleLabel = <div style={{
+        const minScaleLabel = <div key="minScaleLabel" style={{
             position: 'absolute',
             left: 0,
             top: '43px',
         }}>{scale[0]}</div>;
 
-        const lowerLabel = <div style={{
+        const lowerLabel = <div key="lowerLabel" style={{
             position: 'absolute',
             right: `${x.min}%`,
             top: '3px',
             marginRight: '-0.6em',
         }}>{round(val.min)}</div>;
 
-        const q1Label = <div style={{
+        const q1Label = <div key="q1Label" style={{
             position: 'absolute',
             right: `${x.q1}%`,
             top: '43px',
             marginRight: '-0.6em',
         }}>{round(val.q1)}</div>;
 
-        const medianLabel = <div style={{
+        const medianLabel = <div key="medianLabel" style={{
             position: 'absolute',
             right: `${x.median}%`,
             top: '3px',
             marginRight: '-0.6em',
         }}>{round(val.median)}</div>;
 
-        const q3Label = <div style={{
+        const q3Label = <div key="q3Label" style={{
             position: 'absolute',
             right: `${x.q3}%`,
             top: '43px',
             marginRight: '-0.6em',
         }}>{round(val.q3)}</div>;
 
-        const upperLabel = <div style={{
+        const upperLabel = <div key="upperLabel" style={{
             position: 'absolute',
             right: `${x.max}%`,
             top: '3px',
             marginRight: '-0.6em',
         }}>{round(val.max)}</div>;
 
-        const maxScaleLabel = <div style={{
+        const maxScaleLabel = <div key="maxScaleLabel" style={{
             position: 'absolute',
             right: 0,
             top: '43px',

@@ -1,11 +1,9 @@
 const g = require('../globals');
-const ui = require('../ui');
 const season = require('../core/season');
 const team = require('../core/team');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
-const components = require('./components');
+const Playoffs = require('./views/Playoffs');
 
 function get(req) {
     return {
@@ -13,8 +11,8 @@ function get(req) {
     };
 }
 
-async function updatePlayoffs(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0)) {
+async function updatePlayoffs(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== state.season || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0)) {
         let finalMatchups, series;
 
         // If in the current season and before playoffs started, display projected matchups
@@ -78,20 +76,9 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Playoffs - ${vm.season()}`);
-    }).extend({throttle: 1});
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("playoffs-dropdown", ["seasons"], [vm.season()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "playoffs",
     get,
     runBefore: [updatePlayoffs],
-    uiFirst,
-    uiEvery,
+    Component: Playoffs,
 });

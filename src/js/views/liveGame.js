@@ -64,13 +64,6 @@ async function updatePlayByPlay(inputs, updateEvents) {
             events: inputs.playByPlay,
         };
     }
-
-/*    // If no game is loaded by this point (either by this GET or a prior one), leave
-    if (vm.boxScore.gid() < 0) {
-        return {
-            redirectUrl: helpers.leagueUrl(["live"]),
-        };
-    }*/
 }
 
 module.exports = bbgmViewReact.init({

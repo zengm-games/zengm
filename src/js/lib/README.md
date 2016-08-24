@@ -11,8 +11,6 @@ make it work in IE10. Also, lines 267-270 are similarly added for IE10:
         return false;
       }
 
-jquery.tabSlideOut.js is currently not used.
-
 html2canvas.js has a change on lines 2818-2819 to fix background color always
 being set to transparent.
 

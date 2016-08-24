@@ -17,7 +17,6 @@ window.Promise = require('bluebird');
 window.Promise.config({warnings: false});
 
 require('lib/bootstrap-affix');
-require('lib/bootstrap-alert');
 require('lib/bootstrap-collapse');
 require('lib/bootstrap-dropdown');
 require('lib/bootstrap-modal');

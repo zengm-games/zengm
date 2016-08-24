@@ -20,4 +20,3 @@ require('./core/team');
 require('./core/trade');
 require('./util/account');
 require('./util/helpers');
-require('./views/gameLog');

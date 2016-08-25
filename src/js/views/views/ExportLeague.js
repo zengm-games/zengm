@@ -2,6 +2,7 @@ const React = require('react');
 const g = require('../../globals');
 const league = require('../../core/league');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const {DownloadJsonLink} = require('../components');
 
 const categories = [{
     objectStores: "players,releasedPlayers,awards",
@@ -74,32 +75,20 @@ class ExportLeague extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            errorMsg: null,
-            expired: false,
+            data: null,
             filename: null,
-            generating: false,
-            url: null,
+            status: null,
         };
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    componentDidMount() {
-        this.componentIsMounted = true;
-    }
-
-    componentWillUnmount() {
-        this.componentIsMounted = false;
     }
 
     async handleSubmit(e) {
         e.preventDefault();
 
         this.setState({
-            expired: false,
-            errorMsg: null,
+            data: null,
             filename: null,
-            generating: true,
-            url: null,
+            status: 'Generating...',
         });
 
         // Get array of object stores to export
@@ -112,43 +101,21 @@ class ExportLeague extends React.Component {
         // Can't export player stats without players
         if (objectStores.includes("playerStats") && !objectStores.includes("players")) {
             this.setState({
-                errorMsg: "You can't export player stats without exporting players!",
-                expired: false,
+                data: null,
                 filename: null,
-                generating: false,
-                url: null,
+                status: <span className="text-danger">You can't export player stats without exporting players!</span>,
             });
             return;
         }
 
         const data = await league.exportLeague(objectStores);
-
-        const json = JSON.stringify(data, undefined, 2);
-        const blob = new Blob([json], {type: "application/json"});
-        const url = window.URL.createObjectURL(blob);
         const filename = genFilename(data);
 
         this.setState({
-            expired: false,
-            errorMsg: null,
+            data,
             filename,
-            generating: false,
-            url,
+            status: null,
         });
-
-        // Delete object, eventually
-        window.setTimeout(() => {
-            window.URL.revokeObjectURL(url);
-            if (this.componentIsMounted) {
-                this.setState({
-                    expired: true,
-                    errorMsg: null,
-                    filename: null,
-                    generating: false,
-                    url: null,
-                });
-            }
-        }, 60 * 1000);
     }
 
     render() {
@@ -170,16 +137,12 @@ class ExportLeague extends React.Component {
             </form>
 
             <p style={{marginTop: '1em'}}>
-                {this.state.errorMsg ? <span className="text-danger">{this.state.errorMsg}</span> : null}
-                {this.state.generating ? 'Generating...' : null}
-                {this.state.expired ? 'Download link expired' : null}
-                {
-                    this.state.filename && this.state.url && !this.state.generating && !this.state.errorMsg && !this.state.expired
-                ?
-                    <a href={this.state.url} download={this.state.filename} data-no-davis="true">Download Exported League File</a>
-                :
-                    null
-                }
+                <DownloadJsonLink
+                    data={this.state.data}
+                    downloadText="Download Exported League File"
+                    filename={this.state.filename}
+                    status={this.state.status}
+                />
             </p>
         </div>;
     }

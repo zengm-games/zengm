@@ -2,7 +2,7 @@ module.exports = {
     BarGraph: require('./BarGraph'),
     BoxPlot: require('./BoxPlot'),
     DataTable: require('./DataTable'),
-    DownloadJsonLink: require('./DownloadJsonLink'),
+    DownloadDataLink: require('./DownloadDataLink'),
     DraftAbbrev: require('./DraftAbbrev'),
     Dropdown: require('./Dropdown'),
     HelpPopover: require('./HelpPopover'),

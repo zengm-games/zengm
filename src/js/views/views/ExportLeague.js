@@ -2,7 +2,7 @@ const React = require('react');
 const g = require('../../globals');
 const league = require('../../core/league');
 const bbgmViewReact = require('../../util/bbgmViewReact');
-const {DownloadJsonLink} = require('../components');
+const {DownloadDataLink} = require('../components');
 
 const categories = [{
     objectStores: "players,releasedPlayers,awards",
@@ -109,10 +109,12 @@ class ExportLeague extends React.Component {
         }
 
         const data = await league.exportLeague(objectStores);
+        const json = JSON.stringify(data, undefined, 2);
+
         const filename = genFilename(data);
 
         this.setState({
-            data,
+            data: json,
             filename,
             status: null,
         });
@@ -137,9 +139,10 @@ class ExportLeague extends React.Component {
             </form>
 
             <p style={{marginTop: '1em'}}>
-                <DownloadJsonLink
+                <DownloadDataLink
                     data={this.state.data}
                     downloadText="Download Exported League File"
+                    mimeType="application/json"
                     filename={this.state.filename}
                     status={this.state.status}
                 />

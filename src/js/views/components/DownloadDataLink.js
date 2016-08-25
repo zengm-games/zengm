@@ -1,10 +1,9 @@
 const React = require('react');
 
-class DownloadJsonLink extends React.Component {
+class DownloadDataLink extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            expired: false,
             url: null,
         };
     }
@@ -12,9 +11,6 @@ class DownloadJsonLink extends React.Component {
     componentWillUnmount() {
         if (this.state.url) {
             window.URL.revokeObjectURL(this.state.url);
-        }
-        if (this.state.timeoutId) {
-            window.clearTimeout(this.state.timeoutId);
         }
     }
 
@@ -24,35 +20,18 @@ class DownloadJsonLink extends React.Component {
             if (this.state.url) {
                 window.URL.revokeObjectURL(this.state.url);
             }
-            if (this.state.timeoutId) {
-                window.clearTimeout(this.state.timeoutId);
-            }
 
             if (nextProps.data) {
-                const json = JSON.stringify(nextProps.data, undefined, 2);
-                const blob = new Blob([json], {type: "application/json"});
+                // Magic number from http://stackoverflow.com/a/18925211/786644 to force UTF-8 encoding
+                const blob = new Blob(["\ufeff", nextProps.data], {type: nextProps.mimeType});
                 const url = window.URL.createObjectURL(blob);
 
-                // Delete object, eventually
-                const timeoutId = window.setTimeout(() => {
-                    window.URL.revokeObjectURL(url);
-                    this.setState({
-                        expired: true,
-                        url: null,
-                        timeoutId: null,
-                    });
-                }, 60 * 1000);
-
                 this.setState({
-                    expired: false,
                     url,
-                    timeoutId,
                 });
             } else {
                 this.setState({
-                    expired: false,
                     url: null,
-                    timeoutId: null,
                 });
             }
         }
@@ -64,10 +43,8 @@ class DownloadJsonLink extends React.Component {
         if (status) {
             return <span>{status}</span>;
         }
-        if (this.state.expired) {
-            return <span>Download link expired</span>;
-        }
         if (this.state.url) {
+            // Would be better to auto-download, like some of the answers at http://stackoverflow.com/q/3665115/786644
             return <a href={this.state.url} download={filename} data-no-davis="true">
                 {downloadText}
             </a>;
@@ -76,14 +53,15 @@ class DownloadJsonLink extends React.Component {
         return null;
     }
 }
-DownloadJsonLink.propTypes = {
-    data: React.PropTypes.object,
+DownloadDataLink.propTypes = {
+    data: React.PropTypes.string,
     downloadText: React.PropTypes.string.isRequired,
     filename: React.PropTypes.string,
+    mimeType: React.PropTypes.string.isRequired,
     status: React.PropTypes.oneOfType([
         React.PropTypes.element,
         React.PropTypes.string,
     ]),
 };
 
-module.exports = DownloadJsonLink;
+module.exports = DownloadDataLink;

@@ -5,7 +5,6 @@ const league = require('../../core/league');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
 
-
 class EditTeamInfo extends React.Component {
     constructor(props) {
         super(props);
@@ -14,6 +13,7 @@ class EditTeamInfo extends React.Component {
             saving: false,
             teams: this.props.teams,
         };
+        this.handleFile = this.handleFile.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -23,6 +23,99 @@ class EditTeamInfo extends React.Component {
                 teams: nextProps.teams,
             });
         }
+    }
+
+    handleFile(e) {
+        const file = e.target.files[0];
+
+        const reader = new window.FileReader();
+        reader.readAsText(file);
+        reader.onload = async event => {
+            const rosters = JSON.parse(event.target.result);
+            const newTeams = rosters.teams;
+
+            // Validate teams
+            if (newTeams.length < g.numTeams) {
+                console.log("ROSTER ERROR: Wrong number of teams");
+                return;
+            }
+            for (let i = 0; i < newTeams.length; i++) {
+                if (i !== newTeams[i].tid) {
+                    console.log(`ROSTER ERROR: Wrong tid, team ${i}`);
+                    return;
+                }
+                if (newTeams[i].cid < 0 || newTeams[i].cid > 1) {
+                    console.log(`ROSTER ERROR: Invalid cid, team ${i}`);
+                    return;
+                }
+                if (newTeams[i].did < 0 || newTeams[i].did > 5) {
+                    console.log(`ROSTER ERROR: Invalid did, team ${i}`);
+                    return;
+                }
+                if (typeof newTeams[i].region !== "string") {
+                    console.log(`ROSTER ERROR: Invalid region, team ${i}`);
+                    return;
+                }
+                if (typeof newTeams[i].name !== "string") {
+                    console.log(`ROSTER ERROR: Invalid name, team ${i}`);
+                    return;
+                }
+                if (typeof newTeams[i].abbrev !== "string") {
+                    console.log(`ROSTER ERROR: Invalid abbrev, team ${i}`);
+                    return;
+                }
+
+                // Check for pop in either the root or the most recent season
+                if (!newTeams[i].hasOwnProperty("pop") && newTeams[i].hasOwnProperty("seasons")) {
+                    newTeams[i].pop = newTeams[i].seasons[newTeams[i].seasons.length - 1].pop;
+                }
+
+                if (typeof newTeams[i].pop !== "number") {
+                    console.log(`ROSTER ERROR: Invalid pop, team ${i}`);
+                    return;
+                }
+            }
+
+            let userName, userRegion;
+            await g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
+                return tx.teams.iterate(async t => {
+                    t.cid = newTeams[t.tid].cid;
+                    t.did = newTeams[t.tid].did;
+                    t.region = newTeams[t.tid].region;
+                    t.name = newTeams[t.tid].name;
+                    t.abbrev = newTeams[t.tid].abbrev;
+                    if (newTeams[t.tid].imgURL) {
+                        t.imgURL = newTeams[t.tid].imgURL;
+                    }
+
+                    if (t.tid === g.userTid) {
+                        userName = t.name;
+                        userRegion = t.region;
+                    }
+
+                    const teamSeason = await tx.teamSeasons.index('season, tid').get([g.season, t.tid]);
+                    teamSeason.pop = newTeams[t.tid].pop;
+                    await tx.teamSeasons.put(teamSeason);
+
+                    return t;
+                });
+            });
+
+            await league.updateMetaNameRegion(userName, userRegion);
+
+            await league.setGameAttributesComplete({
+                teamAbbrevsCache: newTeams.map(t => t.abbrev),
+                teamRegionsCache: newTeams.map(t => t.region),
+                teamNamesCache: newTeams.map(t => t.name),
+            });
+
+            this.setState({
+                dirty: false,
+            });
+
+            league.updateLastDbChange();
+            ui.realtimeUpdate(["dbChange"]);
+        };
     }
 
     handleInputChange(i, name, e) {
@@ -96,7 +189,7 @@ class EditTeamInfo extends React.Component {
 
             <p className="text-danger">Warning: selecting a valid team file will instantly apply the new team info to your league.</p>
 
-            <p><input type="file" /></p>
+            <p><input type="file" onChange={e => this.handleFile(e)} /></p>
 
             <h2>Manual Editing</h2>
 

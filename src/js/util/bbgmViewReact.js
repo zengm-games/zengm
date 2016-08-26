@@ -62,18 +62,12 @@ function controllerFactory(Component) {
 
             const results = await Promise.all(promisesBefore);
 
-            let vars;
-            if (results.length > 1) {
-                vars = Object.assign({}, ...results);
-            } else {
-                vars = results[0];
-            }
+            const vars = Object.assign({}, ...results);
 
             if (vars !== undefined) {
                 // Check for errors/redirects
                 if (vars.errorMessage !== undefined) {
                     throw new Error('Handle errorMessage!');
-//                return helpers.error(vars.errorMessage, cb);
                 }
                 if (vars.redirectUrl !== undefined) {
                     return ui.realtimeUpdate([], vars.redirectUrl, cb);

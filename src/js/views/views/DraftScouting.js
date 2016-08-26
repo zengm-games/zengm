@@ -166,7 +166,7 @@ class DraftScouting extends React.Component {
                         ?
                             <div>
                                 <p>To replace this draft class with players from a <a href="https://basketball-gm.com/manual/customization/draft-class/" target="_blank">custom draft class file</a>, select the file below.</p>
-                                <p><input type="file" className="custom-draft-class" onChange={event => this.handleDraftClass(i, event)} /></p>
+                                <p><input type="file" className="custom-draft-class" onChange={e => this.handleDraftClass(i, e)} /></p>
                             </div>
                         :
                             <p><button className="btn btn-default btn-xs" onClick={() => this.handleCustomize(i)}>Customize</button></p>

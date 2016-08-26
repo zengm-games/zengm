@@ -9,6 +9,7 @@ module.exports = {
     JumpTo: require('./JumpTo'),
     NewWindowLink: require('./NewWindowLink'),
     PlayerNameLabels: require('./PlayerNameLabels'),
+    PlayerPicture: require('./PlayerPicture'),
     PlayoffMatchup: require('./PlayoffMatchup'),
     RatingWithChange: require('./RatingWithChange'),
     RecordAndPlayoffs: require('./RecordAndPlayoffs'),

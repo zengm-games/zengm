@@ -1393,6 +1393,8 @@ function filter(p, options) {
                 } else if (stats[j] === "yearsWithTeam" && !_.isEmpty(s)) {
                     // Everyone but players acquired in the offseason should be here
                     row.yearsWithTeam = s.yearsWithTeam;
+                } else if (stats[j] === "psid") {
+                    row.psid = s.psid;
                 } else {
                     row[stats[j]] = 0;
                 }

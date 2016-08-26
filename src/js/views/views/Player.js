@@ -1,42 +1,9 @@
-const faces = require('facesjs');
 const React = require('react');
 const {negotiate, tradeFor} = require('../../util/actions');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink, SkillsBlock, WatchBlock} = require('../components');
-
-class Picture extends React.Component {
-    componentDidMount() {
-        if (this.wrapper) {
-            faces.display(this.wrapper, this.props.face);
-        }
-    }
-
-    componentDidUpdate() {
-        if (this.wrapper) {
-            faces.display(this.wrapper, this.props.face);
-        }
-    }
-
-    render() {
-        if (this.props.imgURL) {
-            this.wrapper = null;
-            return <img
-                src={this.props.imgURL}
-                style={{maxHeigth: '100%', maxWidth: '100%'}}
-            />;
-        }
-
-        if (this.props.face) {
-            return <div ref={wrapper => {
-                this.wrapper = wrapper;
-            }} />;
-        }
-
-        return null;
-    }
-}
+const {DataTable, NewWindowLink, PlayerPicture, SkillsBlock, WatchBlock} = require('../components');
 
 const RatingsOverview = ({ratings}) => {
     const r = ratings.length - 1;
@@ -283,7 +250,7 @@ const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = 
             <div className="col-sm-6">
                 <h1>{player.name} <NewWindowLink /></h1>
                 <div className="player-picture">
-                    <Picture face={player.face} imgURL={player.imgURL} />
+                    <PlayerPicture face={player.face} imgURL={player.imgURL} />
                 </div>
                 <div style={{float: 'left'}}>
                     <strong>{player.ratings[player.ratings.length - 1].pos}, {player.teamRegion} {player.teamName}</strong><br />

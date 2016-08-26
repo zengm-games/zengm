@@ -2,8 +2,9 @@ const g = require('../globals');
 const ui = require('../ui');
 const league = require('../core/league');
 const team = require('../core/team');
-const bbgmView = require('../util/bbgmView');
+const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
+const EditTeamInfo = require('./views/EditTeamInfo');
 
 function get() {
     if (!g.godMode) {
@@ -11,44 +12,6 @@ function get() {
             errorMessage: `You can't edit teams unless you enable <a href="${helpers.leagueUrl(["god_mode"])}">God Mode</a>.`,
         };
     }
-}
-
-async function post(req) {
-    const button = document.getElementById("edit-team-info");
-    button.disabled = true;
-
-    let userName, userRegion;
-    await g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
-        return tx.teams.iterate(async t => {
-            t.abbrev = req.params.abbrev[t.tid];
-            t.region = req.params.region[t.tid];
-            t.name = req.params.name[t.tid];
-            t.imgURL = req.params.imgURL[t.tid];
-
-            if (t.tid === g.userTid) {
-                userName = t.name;
-                userRegion = t.region;
-            }
-
-            const teamSeason = await tx.teamSeasons.index('season, tid').get([g.season, t.tid]);
-            teamSeason.pop = parseFloat(req.params.pop[t.tid]);
-            await tx.teamSeasons.put(teamSeason);
-
-            return t;
-        });
-    });
-
-    await league.updateMetaNameRegion(userName, userRegion);
-
-    await league.setGameAttributesComplete({
-        teamAbbrevsCache: req.params.abbrev,
-        teamRegionsCache: req.params.region,
-        teamNamesCache: req.params.name,
-    });
-
-    league.updateLastDbChange();
-    button.disabled = false;
-    ui.realtimeUpdate([], helpers.leagueUrl(["edit_team_info"]));
 }
 
 async function updateTeamInfo() {
@@ -68,8 +31,6 @@ async function updateTeamInfo() {
 }
 
 function uiFirst() {
-    ui.title("Edit Team Names");
-
     const fileEl = document.getElementById("custom-teams");
     fileEl.addEventListener("change", () => {
         const file = fileEl.files[0];
@@ -161,10 +122,9 @@ function uiFirst() {
     });
 }
 
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "editTeamInfo",
     get,
-    post,
     runBefore: [updateTeamInfo],
-    uiFirst,
+    Component: EditTeamInfo,
 });

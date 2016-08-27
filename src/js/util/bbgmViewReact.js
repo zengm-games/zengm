@@ -63,7 +63,10 @@ function controllerFactory(Component) {
             const results = await Promise.all(promisesBefore);
 
             const vars = Object.assign({
-                pageId: args.id,
+                args: {
+                    pageId: args.id,
+                    inLeague: args.inLeague,
+                },
             }, ...results);
 
             if (vars !== undefined) {
@@ -95,7 +98,15 @@ function controllerFactory(Component) {
         }
 
         render() {
-            return <LeagueWrapper pageId={this.state.pageId}>
+            if (!this.state.args) {
+                return <div />;
+            }
+
+            if (!this.state.args.inLeague) {
+                return <Component {...this.state} />;
+            }
+
+            return <LeagueWrapper pageId={this.state.args.pageId}>
                 <Component {...this.state} />
             </LeagueWrapper>;
         }
@@ -104,7 +115,7 @@ function controllerFactory(Component) {
 
 function get(fnUpdate, args) {
     return async req => {
-        const [updateEvents, cb, abort] = await args.beforeReq(req);
+        const [updateEvents, cb, abort] = await (args.inLeague ? viewHelpers.beforeLeague(req) : viewHelpers.beforeNonLeague(req));
 
         if (abort === 'abort') {
             return;
@@ -142,12 +153,13 @@ function get(fnUpdate, args) {
 }
 
 function init(args) {
-    args.beforeReq = args.beforeReq !== undefined ? args.beforeReq : viewHelpers.beforeLeague;
+    args.inLeague = args.inLeague !== undefined ? args.inLeague : true;
     args.get = args.get !== undefined ? args.get : () => { return {}; };
     args.runBefore = args.runBefore !== undefined ? args.runBefore : [];
     args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
 
     if (args.InitViewModel) { throw new Error('Invalid arg InitViewModel'); }
+    if (args.beforeReq) { throw new Error('Invalid arg beforeReq'); }
     if (args.uiFirst) { throw new Error('Invalid arg uiFirst'); }
     if (args.uiEvery) { throw new Error('Invalid arg uiEvery'); }
     if (args.runAfter) { throw new Error('Invalid arg runAfter'); }

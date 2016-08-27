@@ -37,6 +37,7 @@ when all react
       pass component as prop, fake resetState somehow (or just don't do it), set state to prevent rerender while loading data initially
     dribble basketball while loading
   reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
+  reevaluate bbgmView API
   make sure no data-bind
   delete templateHelpers
   delete knockout dependency
@@ -1047,8 +1048,6 @@ bbgmView
     in practice, this doesn't seem to matter much
   shouldn't have newPhase updateEvent doing much. instead, have an array of what changed in that phase
     (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
-  use req.redirect from POST to manage history optimally
-  make it less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
 views.teamFinances should merge db call with team.filter to get seasonAttrs, but that will require rewriting seasonAttrs handling in team.filter to handle multiple seasons.
 git log -- js/core/gameSimNew.js
 live play-by-play simulation

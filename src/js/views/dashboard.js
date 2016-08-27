@@ -1,7 +1,7 @@
 const g = require('../globals');
 const ui = require('../ui');
-const bbgmView = require('../util/bbgmView');
-const viewHelpers = require('../util/viewHelpers');
+const bbgmViewReact = require('../util/bbgmViewReact');
+const Dashboard = require('./views/Dashboard');
 
 async function updateDashboard() {
     const leagues = await g.dbm.leagues.getAll();
@@ -33,13 +33,9 @@ async function updateDashboard() {
     };
 }
 
-function uiFirst() {
-    ui.title("Dashboard");
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "dashboard",
-    beforeReq: viewHelpers.beforeNonLeague,
+    inLeague: false,
     runBefore: [updateDashboard],
-    uiFirst,
+    Component: Dashboard,
 });

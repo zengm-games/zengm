@@ -317,13 +317,6 @@ function update(data, react = false) {
         containerEl.innerHTML = rendered;
     }
 
-    if (data.container === "league_content") {
-        const contentEl = document.getElementById("content");
-        if (contentEl) {
-            contentEl.dataset.idLoaded = "league";
-            contentEl.dataset.idLoading = "";
-        }
-    }
     containerEl.dataset.idLoaded = data.template;
     containerEl.dataset.reactFirstRun = 'false';
 }

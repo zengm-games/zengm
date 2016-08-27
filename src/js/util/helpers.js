@@ -272,11 +272,6 @@ function globalError(req) {
 
     viewHelpers.beforeNonLeague();
 
-    const leagueContentEl = document.getElementById("league_content");
-    if (leagueContentEl) {
-        ReactDOM.unmountComponentAtNode(leagueContentEl);
-    }
-
     ui.update({
         container: "content",
         template: "error",
@@ -301,21 +296,7 @@ async function leagueError(req) {
 
     await viewHelpers.beforeLeague(req);
 
-    const leagueContentEl = document.getElementById("league_content");
-    if (leagueContentEl) {
-        ReactDOM.unmountComponentAtNode(leagueContentEl);
-    }
-
-    ui.update({
-        container: "league_content",
-        template: "error",
-    });
-
-    const contentEl = document.getElementById("league_content");
-    ko.cleanNode(contentEl);
-    ko.applyBindings({error: req.params.error}, contentEl);
-    ui.title("Error");
-    req.raw.cb();
+    throw new Error('Fix leagueError somehow');
 }
 
 /**

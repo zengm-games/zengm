@@ -7,6 +7,7 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 const helpers = require('./helpers');
 const viewHelpers = require('./viewHelpers');
+const LeagueWrapper = require('../views/components/LeagueWrapper');
 
 const emitter = new EventEmitter();
 
@@ -27,8 +28,7 @@ function controllerFactory(Component) {
         }
 
         async update(args, inputs, updateEvents, cb) {
-            const container = g.lid !== null ? "league_content" : "content";
-            const containerEl = document.getElementById(container);
+            const containerEl = document.getElementById('content');
 
             // Reset league content and view model only if it's:
             // (1) if it's not loaded and not loading yet
@@ -62,7 +62,9 @@ function controllerFactory(Component) {
 
             const results = await Promise.all(promisesBefore);
 
-            const vars = Object.assign({}, ...results);
+            const vars = Object.assign({
+                pageId: args.id,
+            }, ...results);
 
             if (vars !== undefined) {
                 // Check for errors/redirects
@@ -93,7 +95,9 @@ function controllerFactory(Component) {
         }
 
         render() {
-            return <Component {...this.state} />;
+            return <LeagueWrapper pageId={this.state.pageId}>
+                <Component {...this.state} />
+            </LeagueWrapper>;
         }
     };
 }
@@ -119,12 +123,11 @@ function get(fnUpdate, args) {
             return ui.realtimeUpdate([], inputs.redirectUrl, cb);
         }
 
-        const container = g.lid !== null ? "league_content" : "content";
-        const containerEl = document.getElementById(container);
+        const containerEl = document.getElementById('content');
 
         if (containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading !== args.id) {
             ui.update({
-                container,
+                container: 'content',
                 template: args.id,
             }, true);
             ko.cleanNode(containerEl);

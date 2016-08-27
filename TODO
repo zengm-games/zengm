@@ -23,6 +23,9 @@ better eslint
 
 check for errorMessage with HTML in it - what to do then?
 
+helpers.error
+  eliminate if possible, just put error conditions in render()
+
 when all react
   https://github.com/reactjs/react-router/issues/2101 to handle transitions smoothly.
     in the meantime,
@@ -47,8 +50,10 @@ when all react
   references to vm
   get rid of brfs
   go through ui.js, reevaluate
+  confirm ads work
   get rid of default params in views
   escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame, edit team info)
+  screenshot
 
 ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/help_me_with_a_little_beta_testing/d6tmkyf?context=3
 

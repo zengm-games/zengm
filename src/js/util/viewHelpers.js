@@ -55,12 +55,6 @@ async function beforeLeague(req) {
         await db.connectLeague(g.lid);
         await league.loadGameAttributes(null);
 
-        ui.update({
-            container: "content",
-            template: "leagueLayout",
-        });
-        ko.applyBindings(g.vm.topMenu, document.getElementById("left-menu"));
-
         // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
         if (popup) {
             $("#top-menu").hide();

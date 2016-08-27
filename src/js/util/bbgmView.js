@@ -12,12 +12,11 @@ const viewHelpers = require('./viewHelpers');
 let vm;
 
 function display(args, updateEvents) {
-    const container = g.lid !== null ? "league_content" : "content";
-    const containerEl = document.getElementById(container);
+    const containerEl = document.getElementById('content');
 
     if (containerEl.dataset.idLoaded !== args.id && containerEl.dataset.idLoading === args.id) {
         ui.update({
-            container,
+            container: 'content',
             template: args.id,
         });
         ko.applyBindings(vm, containerEl);
@@ -32,8 +31,7 @@ function display(args, updateEvents) {
 
 function update(args) {
     return async (inputs, updateEvents, cb) => {
-        const container = g.lid !== null ? "league_content" : "content";
-        const containerEl = document.getElementById(container);
+        const containerEl = document.getElementById('content');
 
         // Reset league content and view model only if it's:
         // (1) if it's not loaded and not loading yet
@@ -127,9 +125,7 @@ function get(fnBeforeReq, fnGet, fnUpdate) {
         }
 
         const containerEl = document.getElementById('content');
-        const otherContainerEl = document.getElementById('league_content');
         if (containerEl) { ReactDOM.unmountComponentAtNode(containerEl); }
-        if (otherContainerEl) { ReactDOM.unmountComponentAtNode(otherContainerEl); }
 
         // Check for errors/redirects
         if (inputs.errorMessage !== undefined) {

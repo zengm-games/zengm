@@ -10,7 +10,6 @@ module.exports = {
     deleteLeague: fs.readFileSync(__dirname + '/../templates/deleteLeague.html', 'utf8'),
     deleteOldData: fs.readFileSync(__dirname + '/../templates/deleteOldData.html', 'utf8'),
     error: fs.readFileSync(__dirname + '/../templates/error.html', 'utf8'),
-    leagueLayout: fs.readFileSync(__dirname + '/../templates/leagueLayout.html', 'utf8'),
     loginOrRegister: fs.readFileSync(__dirname + '/../templates/loginOrRegister.html', 'utf8'),
     lostPassword: fs.readFileSync(__dirname + '/../templates/lostPassword.html', 'utf8'),
     manual: fs.readFileSync(__dirname + '/../templates/manual.html', 'utf8'),

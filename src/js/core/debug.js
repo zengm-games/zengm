@@ -209,7 +209,7 @@ async function exportPlayerInfo() {
     }
     output += "</pre>";
 
-    document.getElementById("league_content").innerHTML = output;
+    document.getElementById("content").innerHTML = output;
 }
 
 function exportPlayerStats() {

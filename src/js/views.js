@@ -1,21 +1,19 @@
-const ui = require('./ui');
-const bbgmView = require('./util/bbgmView');
-const viewHelpers = require('./util/viewHelpers');
+const React = require('react');
+const bbgmViewReact = require('./util/bbgmViewReact');
 
-const staticPage = (name, title) => {
-    return bbgmView.init({
+const staticPage = (name, title, content) => {
+    return bbgmViewReact.init({
         id: name,
-        beforeReq: viewHelpers.beforeNonLeague,
-        runBefore: [() => {}],
-        uiFirst() {
-            ui.title(title);
+        inLeague: false,
+        Component: () => {
+            bbgmViewReact.title(title);
+
+            return content;
         },
     });
 };
 
 module.exports = {
-    staticPage,
-
     account: require('./views/account'),
     accountUpdateCard: require('./views/accountUpdateCard'),
     awardsRecords: require('./views/awardsRecords'),
@@ -46,7 +44,10 @@ module.exports = {
     liveGame: require('./views/liveGame'),
     loginOrRegister: require('./views/loginOrRegister'),
     lostPassword: require('./views/lostPassword'),
-    manual: require('./views/manual'),
+    manual: staticPage('manual', 'Manual', <div>
+        <h1>Manual</h1>
+        <p><a href="https://basketball-gm.com/manual/" target="_blank">Click here for an overview of Basketball GM.</a></p>
+    </div>),
     message: require('./views/message'),
     multiTeamMode: require('./views/multiTeamMode'),
     negotiation: require('./views/negotiation'),
@@ -78,4 +79,3 @@ module.exports = {
     upcomingFreeAgents: require('./views/upcomingFreeAgents'),
     watchList: require('./views/watchList'),
 };
-

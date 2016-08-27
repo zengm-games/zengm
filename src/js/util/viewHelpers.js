@@ -3,7 +3,6 @@ const g = require('../globals');
 const ui = require('../ui');
 const league = require('../core/league');
 const $ = require('jquery');
-const ko = require('knockout');
 const helpers = require('./helpers');
 
 async function beforeLeague(req) {

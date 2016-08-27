@@ -1,5 +1,4 @@
 const ko = require('knockout');
-const ReactDOM = require('react-dom');
 const g = require('../globals');
 const eventLog = require('./eventLog');
 
@@ -290,12 +289,7 @@ function globalError(req) {
  * @memberOf util.helpers
  * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
  */
-async function leagueError(req) {
-    const ui = require('../ui');
-    const viewHelpers = require('./viewHelpers');
-
-    await viewHelpers.beforeLeague(req);
-
+async function leagueError() {
     throw new Error('Fix leagueError somehow');
 }
 

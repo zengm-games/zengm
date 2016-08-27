@@ -1,5 +1,4 @@
 const g = require('../globals');
-const ui = require('../ui');
 const bbgmViewReact = require('../util/bbgmViewReact');
 const Dashboard = require('./views/Dashboard');
 

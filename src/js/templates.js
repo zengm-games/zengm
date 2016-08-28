@@ -7,6 +7,5 @@ module.exports = {
     account: fs.readFileSync(__dirname + '/../templates/account.html', 'utf8'),
     accountUpdateCard: fs.readFileSync(__dirname + '/../templates/accountUpdateCard.html', 'utf8'),
     error: fs.readFileSync(__dirname + '/../templates/error.html', 'utf8'),
-    lostPassword: fs.readFileSync(__dirname + '/../templates/lostPassword.html', 'utf8'),
     resetPassword: fs.readFileSync(__dirname + '/../templates/resetPassword.html', 'utf8'),
 };

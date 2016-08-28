@@ -1,11 +1,5 @@
 REACT
 
-New League
-  upload file once, then use immediately for teams and later for new league
-  upload then switch back to random - reset initial teams
-  shuffle
-  invalid league file error
-
 Switch between two leagues directly with forward/back (react to react) and it has the two controllers problem
 
 DataTable

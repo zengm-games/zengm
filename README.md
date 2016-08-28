@@ -41,7 +41,7 @@ License Agreement from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 ### Step 1 - Installing
 
-First, make sure you're using [Node.js](https://nodejs.org/) v6 or higher. older
+First, make sure you're using [Node.js](https://nodejs.org/) v6 or higher, older
 versions probably won't work. Then, all of the tooling used in development can
 be set up by simply installing [npm](https://www.npmjs.com/) and running
 
@@ -61,8 +61,8 @@ However during development, you probably would rather do
     npm run start-watch
 
 which will start the server and watch JS and CSS files for changes and
-recompile. This simple runs both `npm start` and `npm run watch` together, which
-can be run separately if you wish.
+recompile. This simply runs both `npm start` and `npm run watch` together, which
+alternatively can be run separately if you wish.
 
 Open `package.json` to see all available scripts.
 

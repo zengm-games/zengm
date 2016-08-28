@@ -1,4 +1,3 @@
-const Promise = require('bluebird');
 const React = require('react');
 const ui = require('../../ui');
 const league = require('../../core/league');
@@ -30,29 +29,32 @@ const PopText = ({teams, tid}) => {
     return <span className="help-block">{msg}</span>;
 };
 
+const defaultTeams = helpers.getTeamsDefault();
+defaultTeams.unshift({
+    tid: -1,
+    region: "Random",
+    name: "Team",
+});
+
 class NewLeague extends React.Component {
     constructor(props) {
         super(props);
-
-        const teams = helpers.getTeamsDefault();
-        teams.unshift({
-            tid: -1,
-            region: "Random",
-            name: "Team",
-        });
 
         this.state = {
             creating: false,
             dirty: false,
             customize: 'random',
             invalidLeagueFile: false,
+            leagueFile: null,
             name: props.name,
+            parsing: false,
             randomizeRosters: false,
-            teams,
+            teams: defaultTeams,
             tid: props.lastSelectedTid,
         };
 
         this.handleCustomizeChange = this.handleCustomizeChange.bind(this);
+        this.handleFile = this.handleFile.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -72,7 +74,6 @@ class NewLeague extends React.Component {
         } else if (name === 'randomizeRosters') {
             val = e.target.checked;
         }
-console.log('handleChange', name, val);
         this.setState({
             dirty: true,
             [name]: val,
@@ -80,42 +81,99 @@ console.log('handleChange', name, val);
     }
 
     handleCustomizeChange(e) {
-        this.setState({
+        const updatedState = {
             customize: e.target.value,
+        };
+        if (updatedState.customize === 'random') {
+            updatedState.teams = defaultTeams;
+        }
+
+        this.setState(updatedState);
+    }
+
+    handleFile(e) {
+        this.setState({
+            invalidLeagueFile: false,
+            leagueFile: null,
+            parsing: true,
         });
+        const file = e.target.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        const reader = new window.FileReader();
+        reader.readAsText(file);
+        reader.onload = event => {
+            let leagueFile;
+            try {
+                leagueFile = JSON.parse(event.target.result);
+            } catch (err) {
+                console.log(err);
+                this.setState({
+                    invalidLeagueFile: true,
+                    parsing: false,
+                });
+                return;
+            }
+
+            const updatedState = {
+                invalidLeagueFile: false,
+                leagueFile,
+                parsing: false,
+            };
+
+            let newTeams = helpers.deepCopy(leagueFile.teams);
+            if (newTeams) {
+                for (const t of newTeams) {
+                    // Is pop hidden in season, like in editTeamInfo import?
+                    if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
+                        t.pop = t.seasons[t.seasons.length - 1].pop;
+                    }
+
+                    t.pop = helpers.round(t.pop, 2);
+                }
+
+                newTeams = helpers.addPopRank(newTeams);
+
+                // Add random team
+                newTeams.unshift({
+                    tid: -1,
+                    region: "Random",
+                    name: "Team",
+                });
+
+                updatedState.teams = newTeams;
+            }
+
+            // Is a userTid specified?
+            if (leagueFile.hasOwnProperty("gameAttributes")) {
+                leagueFile.gameAttributes.some(attribute => {
+                    if (attribute.key === "userTid") {
+                        // Set it to select the userTid entry
+                        updatedState.tid = attribute.value;
+                    }
+                });
+            }
+
+            this.setState(updatedState);
+        };
     }
 
     async handleSubmit(e) {
         e.preventDefault();
-//        this.setState({creating: true});
+        this.setState({creating: true});
 
         let startingSeason = 2016;
         localStorage.lastSelectedTid = this.state.tid;
 
-console.log(this.state.name, this.state.tid, 'leagueFile', startingSeason, this.state.randomizeRosters);
         let leagueFile;
-/*        if (req.params.rosters === "custom-rosters") {
-            const file = document.getElementById("custom-rosters-file").files[0];
-            if (file !== undefined) {
-                await new Promise((resolve, reject) => {
-                    const reader = new window.FileReader();
-                    reader.readAsText(file);
-                    reader.onload = event => {
-                        leagueFile = JSON.parse(event.target.result);
-                        startingSeason = leagueFile.startingSeason !== undefined ? leagueFile.startingSeason : startingSeason;
-
-                        resolve();
-                    };
-                    reader.onerror = event => {
-                        console.log('error', event);
-                        reject();
-                    };
-                    reader.onabort = event => {
-                        console.log('abort', event);
-                        reject();
-                    };
-                });
-            }
+        let randomizeRosters = false;
+        if (this.state.customize === 'custom-rosters') {
+            leagueFile = this.state.leagueFile;
+            randomizeRosters = this.state.randomizeRosters;
+            startingSeason = leagueFile.startingSeason !== undefined ? leagueFile.startingSeason : startingSeason;
         }
 
         const lid = await league.create(this.state.name, this.state.tid, leagueFile, startingSeason, randomizeRosters);
@@ -124,11 +182,11 @@ console.log(this.state.name, this.state.tid, 'leagueFile', startingSeason, this.
             if (lid === 1) {
                 ui.highlightPlayButton();
             }
-        });*/
+        });
     }
 
     render() {
-        const {creating, customize, invalidLeagueFile, name, randomizeRosters, teams, tid} = this.state;
+        const {creating, customize, invalidLeagueFile, leagueFile, name, parsing, randomizeRosters, teams, tid} = this.state;
 
         bbgmViewReact.title('Create New League');
 
@@ -176,8 +234,9 @@ console.log(this.state.name, this.state.tid, 'leagueFile', startingSeason, this.
                         ?
                             <div>
                                 <div>
-                                    <input type="file" name="custom-rosters" />
+                                    <input type="file" onChange={this.handleFile} />
                                     {invalidLeagueFile ? <p className="text-danger" style={{marginTop: '1em'}}>Error: Invalid League File</p> : null}
+                                    {parsing ? <p className="text-info" style={{marginTop: '1em'}}>Parsing league file...</p> : null}
                                 </div>
                                 <div className="checkbox">
                                     <label>
@@ -195,7 +254,7 @@ console.log(this.state.name, this.state.tid, 'leagueFile', startingSeason, this.
 
                     <div className="col-md-12 col-sm-5 text-center">
                         <div className="visible-sm invisible-xs"><br /><br /></div>
-                        <button type="submit" className="btn btn-lg btn-primary" disabled={creating}>
+                        <button type="submit" className="btn btn-lg btn-primary" disabled={creating || parsing || (customize === 'custom-rosters' && (invalidLeagueFile || leagueFile === null))}>
                             Create New League
                         </button>
                     </div>

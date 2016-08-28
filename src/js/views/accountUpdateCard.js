@@ -1,17 +1,9 @@
 const g = require('../globals');
-const ui = require('../ui');
 const Promise = require('bluebird');
 const $ = require('jquery');
-const ko = require('knockout');
 const account = require('../util/account');
-const bbgmView = require('../util/bbgmView');
-const viewHelpers = require('../util/viewHelpers');
-
-const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
-
-function InitViewModel() {
-    this.formError = ko.observable();
-}
+const bbgmViewReact = require('../util/bbgmViewReact');
+const AccountUpdateCard = require('./views/AccountUpdateCard');
 
 async function updateAccountUpdateCard(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("account") >= 0) {
@@ -57,58 +49,9 @@ async function updateAccountUpdateCard(inputs, updateEvents) {
     }
 }
 
-async function stripeResponseHandler(vm, status, response) {
-    const $form = $('#payment-form');
-
-    if (response.error) {
-        vm.formError(response.error.message);
-        $form.find('button').prop('disabled', false);
-    } else {
-        const token = response.id;
-
-        try {
-            const data = await Promise.resolve($.ajax({
-                type: "POST",
-                url: `//account.basketball-gm.${g.tld}/gold_card_update.php`,
-                data: {
-                    sport: "basketball",
-                    token,
-                },
-                dataType: "json",
-                xhrFields: {
-                    withCredentials: true,
-                },
-            }));
-            ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
-        } catch (err) {
-            console.log(err);
-            vm.formError(ajaxErrorMsg);
-            $form.find('button').prop('disabled', false);
-        }
-    }
-}
-
-function uiFirst(vm) {
-    ui.title("Update Card");
-
-    $.getScript('https://js.stripe.com/v2/', () => {
-        window.Stripe.setPublishableKey(g.stripePublishableKey);
-
-        $('#payment-form').submit(function () {
-            const $form = $(this);
-            $form.find('button').prop('disabled', true);
-
-            window.Stripe.card.createToken($form, stripeResponseHandler.bind(null, vm));
-
-            return false;
-        });
-    });
-}
-
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "accountUpdateCard",
-    InitViewModel,
-    beforeReq: viewHelpers.beforeNonLeague,
+    inLeague: false,
     runBefore: [updateAccountUpdateCard],
-    uiFirst,
+    Component: AccountUpdateCard,
 });

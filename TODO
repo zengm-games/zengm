@@ -119,7 +119,6 @@ international names
 
 babel
   how can i gracefully show an error message in browsers without generators?
-  after live, test that account emails (lost pw, and register) work
   required babel transforms
     transform-es2015-block-scoping
       needed for firefox https://bugzilla.mozilla.org/show_bug.cgi?id=449811

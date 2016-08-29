@@ -87,7 +87,7 @@ async function setGameAttributes(tx, gameAttributes) {
         }
     }
 
-    let multiTeamMenuUpdate = false;
+    let updateMultiTeam = false;
     await Promise.map(toUpdate, async key => {
         await tx.gameAttributes.put({
             key,
@@ -97,12 +97,12 @@ async function setGameAttributes(tx, gameAttributes) {
         g[key] = gameAttributes[key];
 
         if (key === "userTid" || key === "userTids") {
-            multiTeamMenuUpdate = true;
+            updateMultiTeam = true;
         }
     });
 
-    if (multiTeamMenuUpdate) {
-        g.emitter.emit('multiTeamMenuUpdate');
+    if (updateMultiTeam) {
+        g.emitter.emit('updateMultiTeam');
     }
 }
 
@@ -626,7 +626,7 @@ async function loadGameAttribute(ot, key) {
         g.vm.topMenu.godMode(g.godMode);
     }
     if (key === "userTid" || key === "userTids") {
-        g.emitter.emit('multiTeamMenuUpdate');
+        g.emitter.emit('updateMultiTeam');
     }
 }
 
@@ -657,7 +657,7 @@ async function loadGameAttributes(ot) {
 
     // UI stuff - see also loadGameAttribute
     g.vm.topMenu.godMode(g.godMode);
-    g.emitter.emit('multiTeamMenuUpdate');
+    g.emitter.emit('updateMultiTeam');
 }
 
 // Depending on phase, initiate action that will lead to the next phase

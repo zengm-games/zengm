@@ -15,16 +15,25 @@ function controllerFactory(Component) {
     return class Controller extends React.Component {
         constructor(props) {
             super(props);
-            this.state = {};
+            this.state = {
+                args: undefined,
+                multiTeam: {
+                    userTid: g.userTid,
+                    userTids: g.userTids,
+                },
+            };
             this.update = this.update.bind(this);
+            this.updateMultiTeam = this.updateMultiTeam.bind(this);
         }
 
         componentDidMount() {
             emitter.on('update', this.update);
+            g.emitter.on('updateMultiTeam', this.updateMultiTeam);
         }
 
         componentWillUnmount() {
             emitter.removeListener('update', this.update);
+            g.emitter.removeListener('updateMultiTeam', this.updateMultiTeam);
         }
 
         async update(args, inputs, updateEvents, cb) {
@@ -97,7 +106,18 @@ function controllerFactory(Component) {
             cb();
         }
 
+        updateMultiTeam() {
+            this.setState({
+                multiTeam: {
+                    userTid: g.userTid,
+                    userTids: g.userTids,
+                },
+            });
+        }
+
         render() {
+            const {args, multiTeam, ...other} = this.state;
+
             if (!this.state.args) {
                 return <div />;
             }
@@ -106,10 +126,12 @@ function controllerFactory(Component) {
                 return <Component {...this.state} />;
             }
 
-            return <LeagueWrapper pageId={this.state.args.pageId}>
-                <Component {...this.state} />
-                <MultiTeamMenu />
-            </LeagueWrapper>;
+            return <div>
+                <LeagueWrapper pageId={args.pageId}>
+                    <Component {...other} />
+                </LeagueWrapper>
+                <MultiTeamMenu {...multiTeam} />
+            </div>;
         }
     };
 }

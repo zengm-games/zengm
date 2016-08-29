@@ -1,6 +1,7 @@
 REACT
 
 get rid of knockout everywhere
+  have topMenu (or whatever) in this.state of the bbgmViewReact component
 
 Switch between two leagues directly with forward/back (react to react) and it has the two controllers problem
 
@@ -36,6 +37,7 @@ when all react
       pass component as prop, fake resetState somehow (or just don't do it), set state to prevent rerender while loading data initially
     dribble basketball while loading
     league menu flicker
+    unify emitter and g.emitter
   reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
   reevaluate bbgmView API
   make sure no data-bind

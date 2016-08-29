@@ -6,20 +6,11 @@ const league = require('../../core/league');
 class MultiTeamMenu extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            userTid: g.userTid,
-            userTids: g.userTids,
-        };
         this.handleChange = this.handleChange.bind(this);
-        this.update = this.update.bind(this);
     }
 
-    componentDidMount() {
-        g.emitter.on('multiTeamMenuUpdate', this.update);
-    }
-
-    componentWillUnmount() {
-        g.emitter.removeListener('multiTeamMenuUpdate', this.update);
+    shouldComponentUpdate(nextProps) {
+        return this.props.userTid !== nextProps.userTid || JSON.stringify(this.props.userTids) !== JSON.stringify(nextProps.userTids);
     }
 
     async handleChange(e) {
@@ -30,23 +21,15 @@ class MultiTeamMenu extends React.Component {
         await league.setGameAttributesComplete({
             userTid,
         });
-
-        this.update();
+        g.emitter.emit('updateMultiTeam');
 
         // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
         ui.realtimeUpdate(["dbChange"]);
         league.updateLastDbChange();
     }
 
-    update() {
-        this.setState({
-            userTid: g.userTid,
-            userTids: g.userTids,
-        });
-    }
-
     render() {
-        const {userTid, userTids} = this.state;
+        const {userTid, userTids} = this.props;
 
         // Hide if not multi team or not loaded yet
         if (userTids.length <= 1) {

@@ -2,7 +2,6 @@ const g = require('../globals');
 const ui = require('../ui');
 const Promise = require('bluebird');
 const EventEmitter = require('events');
-const ko = require('knockout');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const helpers = require('./helpers');
@@ -141,7 +140,6 @@ function get(fnUpdate, args) {
                 container: 'content',
                 template: args.id,
             }, true);
-            ko.cleanNode(containerEl);
             ReactDOM.unmountComponentAtNode(containerEl);
 
             const WrappedComponent = controllerFactory(args.Component);

@@ -60,6 +60,8 @@ when all react
     cancel
     goldMessage stuff
     update card
+    reset password
+      only after passing props correctly on first render
   make sure account emails work in prod (reset pw, new account)
 
 ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/help_me_with_a_little_beta_testing/d6tmkyf?context=3

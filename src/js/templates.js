@@ -5,5 +5,4 @@ const fs = require('fs');
 
 module.exports = {
     error: fs.readFileSync(__dirname + '/../templates/error.html', 'utf8'),
-    resetPassword: fs.readFileSync(__dirname + '/../templates/resetPassword.html', 'utf8'),
 };

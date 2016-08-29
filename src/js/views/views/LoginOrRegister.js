@@ -190,7 +190,7 @@ class LoginOrRegister extends React.Component {
                             <span className="help-block">{this.state.registerPassword2Error}</span>
                         </div>
                         <button type="submit" className="btn btn-default btn-primary">Create New Account</button>
-                        <p className="text-danger" id="register-error" style={{marginTop: '1em'}}>{this.state.registerError}</p>
+                        <p className="text-danger" style={{marginTop: '1em'}}>{this.state.registerError}</p>
                     </form>
                 </div>
             </div>

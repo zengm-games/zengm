@@ -1,3 +1,4 @@
+const EventEmitter = require('events');
 const ko = require('knockout');
 
 // The way this works is... any "global" variables that need to be widely available are stored in g. Some of these are constants, like the ones defined below. Some others are dynamic, like the year of the current season, and are stored in the gameAttributes object store. The dynamic components of g are retrieved/updated/synced elsewhere. Yes, it's kind of confusing and arbitrary.
@@ -49,6 +50,7 @@ if (typeof document !== "undefined") {
     }
 }*/
 
+g.emitter = new EventEmitter();
 g.vm = {
     topMenu: {
         lid: ko.observable(),
@@ -61,10 +63,6 @@ g.vm = {
         email: ko.observable(null),
         goldUntil: ko.observable(0),
         goldCancelled: ko.observable(0),
-    },
-    multiTeam: {
-        userTid: ko.observable(null),
-        userTids: ko.observable([]),
     },
 };
 
@@ -160,6 +158,6 @@ g.compositeWeights = {
 g.stripePublishableKey = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
 // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-g.notInDb = ["dbm", "dbl", "lid", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "vm", "enableLogging", "tld", "sport", "compositeWeights", "stripePublishableKey", "notInDb"];
+g.notInDb = ["dbm", "dbl", "lid", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "vm", "enableLogging", "tld", "sport", "compositeWeights", "stripePublishableKey", "notInDb", "emitter"];
 
 module.exports = g;

@@ -1,5 +1,4 @@
 const g = require('./globals');
-const templates = require('./templates');
 const Promise = require('bluebird');
 const Davis = require('./lib/davis');
 const html2canvas = require('./lib/html2canvas');
@@ -46,12 +45,6 @@ function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
 // Things to do on initial page load
 function init() {
     ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
-    ko.applyBindings(g.vm.multiTeam, document.getElementById("multi-team-menu"));
-
-    // This is messy, but it interacts with the binding in templateHelpers
-    $('#multi-team-menu').on('change', '#multi-team-select', function () {
-        helpers.updateMultiTeam(parseInt(this.options[this.selectedIndex].value, 10));
-    });
 
     // Handle clicks from play menu
     const api = require("./api");
@@ -310,12 +303,8 @@ function title(text) {
  * @memberOf ui
  * @param  {Object} data An object with several properties: "template" the name of the HTML template file in the templates folder; "container" is the id of the container div (probably content or league_content).
  */
-function update(data, react = false) {
-    const rendered = templates[data.template];
+function update(data) {
     const containerEl = document.getElementById(data.container);
-    if (!react) {
-        containerEl.innerHTML = rendered;
-    }
 
     containerEl.dataset.idLoaded = data.template;
     containerEl.dataset.reactFirstRun = 'false';

@@ -87,6 +87,7 @@ async function setGameAttributes(tx, gameAttributes) {
         }
     }
 
+    let multiTeamMenuUpdate = false;
     await Promise.map(toUpdate, async key => {
         await tx.gameAttributes.put({
             key,
@@ -96,9 +97,13 @@ async function setGameAttributes(tx, gameAttributes) {
         g[key] = gameAttributes[key];
 
         if (key === "userTid" || key === "userTids") {
-            g.vm.multiTeam[key](gameAttributes[key]);
+            multiTeamMenuUpdate = true;
         }
     });
+
+    if (multiTeamMenuUpdate) {
+        g.emitter.emit('multiTeamMenuUpdate');
+    }
 }
 
 // Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
@@ -611,17 +616,17 @@ async function loadGameAttribute(ot, key) {
 
     g[key] = gameAttribute.value;
 
+    // Set defaults to avoid IndexedDB upgrade
+    if (g[key] === undefined && defaultGameAttributes.hasOwnProperty(key)) {
+        g[key] = defaultGameAttributes[key];
+    }
+
     // UI stuff - see also loadGameAttributes
     if (key === "godMode") {
         g.vm.topMenu.godMode(g.godMode);
     }
     if (key === "userTid" || key === "userTids") {
-        g.vm.multiTeam[key](gameAttribute.value);
-    }
-
-    // Set defaults to avoid IndexedDB upgrade
-    if (g[key] === undefined && defaultGameAttributes.hasOwnProperty(key)) {
-        g[key] = defaultGameAttributes[key];
+        g.emitter.emit('multiTeamMenuUpdate');
     }
 }
 
@@ -652,8 +657,7 @@ async function loadGameAttributes(ot) {
 
     // UI stuff - see also loadGameAttribute
     g.vm.topMenu.godMode(g.godMode);
-    g.vm.multiTeam.userTid(g.userTid);
-    g.vm.multiTeam.userTids(g.userTids);
+    g.emitter.emit('multiTeamMenuUpdate');
 }
 
 // Depending on phase, initiate action that will lead to the next phase

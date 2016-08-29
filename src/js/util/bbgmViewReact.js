@@ -7,6 +7,7 @@ const ReactDOM = require('react-dom');
 const helpers = require('./helpers');
 const viewHelpers = require('./viewHelpers');
 const LeagueWrapper = require('../views/components/LeagueWrapper');
+const MultiTeamMenu = require('../views/components/MultiTeamMenu');
 
 const emitter = new EventEmitter();
 
@@ -15,15 +16,15 @@ function controllerFactory(Component) {
         constructor(props) {
             super(props);
             this.state = {};
+            this.update = this.update.bind(this);
         }
 
         componentDidMount() {
-            this.updateListener = this.update.bind(this);
-            emitter.on('update', this.updateListener);
+            emitter.on('update', this.update);
         }
 
         componentWillUnmount() {
-            emitter.removeListener('update', this.updateListener);
+            emitter.removeListener('update', this.update);
         }
 
         async update(args, inputs, updateEvents, cb) {
@@ -107,6 +108,7 @@ function controllerFactory(Component) {
 
             return <LeagueWrapper pageId={this.state.args.pageId}>
                 <Component {...this.state} />
+                <MultiTeamMenu />
             </LeagueWrapper>;
         }
     };

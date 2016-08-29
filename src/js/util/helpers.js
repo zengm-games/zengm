@@ -809,16 +809,6 @@ function gameScore(arg) {
     return round(arg.pts + 0.4 * arg.fg - 0.7 * arg.fga - 0.4 * (arg.fta - arg.ft) + 0.7 * arg.orb + 0.3 * (arg.trb - arg.orb) + arg.stl + 0.7 * arg.ast + 0.7 * arg.blk - 0.4 * arg.pf - arg.tov, 1);
 }
 
-async function updateMultiTeam(tid) {
-    await require('../core/league').setGameAttributesComplete({
-        userTid: tid,
-    });
-
-    // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
-    require('../ui').realtimeUpdate(["dbChange"]);
-    require('../core/league').updateLastDbChange();
-}
-
 function plusMinus(arg, d) {
     if (arg !== arg) { return ""; }
     return (arg > 0 ? "+" : "") + round(arg, d);
@@ -966,7 +956,6 @@ module.exports = {
     gb,
     checkNaNs,
     gameScore,
-    updateMultiTeam,
     plusMinus,
     correctLinkLid,
     overtimeCounter,

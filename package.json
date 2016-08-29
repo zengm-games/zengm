@@ -68,7 +68,6 @@
     "babel-plugin-transform-es2015-template-literals": "6.8.0",
     "babel-preset-react": "6.11.1",
     "babelify": "7.3.0",
-    "brfs": "1.4.3",
     "browserify": "13.1.0",
     "browserify-shim": "3.8.12",
     "cheerio": "0.20.0",
@@ -132,8 +131,7 @@
   "browserify": {
     "transform": [
       "babelify",
-      "browserify-shim",
-      "brfs"
+      "browserify-shim"
     ]
   },
   "babel": {

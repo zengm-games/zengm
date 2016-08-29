@@ -1,10 +1,10 @@
 const React = require('react');
 const bbgmViewReact = require('./util/bbgmViewReact');
 
-const staticPage = (name, title, content) => {
+const staticPage = (name, title, inLeague, content) => {
     return bbgmViewReact.init({
         id: name,
-        inLeague: false,
+        inLeague,
         Component: () => {
             bbgmViewReact.title(title);
 
@@ -14,6 +14,8 @@ const staticPage = (name, title, content) => {
 };
 
 module.exports = {
+    staticPage,
+
     account: require('./views/account'),
     accountUpdateCard: require('./views/accountUpdateCard'),
     awardsRecords: require('./views/awardsRecords'),
@@ -44,7 +46,7 @@ module.exports = {
     liveGame: require('./views/liveGame'),
     loginOrRegister: require('./views/loginOrRegister'),
     lostPassword: require('./views/lostPassword'),
-    manual: staticPage('manual', 'Manual', <div>
+    manual: staticPage('manual', 'Manual', false, <div>
         <h1>Manual</h1>
         <p><a href="https://basketball-gm.com/manual/" target="_blank">Click here for an overview of Basketball GM.</a></p>
     </div>),

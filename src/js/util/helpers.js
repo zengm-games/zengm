@@ -1,4 +1,5 @@
 const ko = require('knockout');
+const React = require('react');
 const g = require('../globals');
 const eventLog = require('./eventLog');
 
@@ -266,20 +267,15 @@ function deepCopy(obj) {
  * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error".
  */
 function globalError(req) {
-    const ui = require('../ui');
-    const viewHelpers = require('./viewHelpers');
+    const views = require('../views');
 
-    viewHelpers.beforeNonLeague();
+    const view = views.staticPage('error', 'Error', false, <div>
+        <h1>Error</h1>
 
-    ui.update({
-        container: "content",
-        template: "error",
-    });
+        <div dangerouslySetInnerHTML={{__html: req.params.error}} />
+    </div>);
 
-    const contentEl = document.getElementById("content");
-    ko.cleanNode(contentEl);
-    ko.applyBindings({error: req.params.error}, contentEl);
-    ui.title("Error");
+    view.get(req);
     req.raw.cb();
 }
 
@@ -289,8 +285,17 @@ function globalError(req) {
  * @memberOf util.helpers
  * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
  */
-async function leagueError() {
-    throw new Error('Fix leagueError somehow');
+async function leagueError(req) {
+    const views = require('../views');
+
+    const view = views.staticPage('error', 'Error', true, <div>
+        <h1>Error</h1>
+
+        <div dangerouslySetInnerHTML={{__html: req.params.error}} />
+    </div>);
+
+    view.get(req);
+    req.raw.cb();
 }
 
 /**

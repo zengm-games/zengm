@@ -23,9 +23,6 @@ better eslint
 
 check for errorMessage with HTML in it - what to do then?
 
-helpers.error
-  eliminate if possible, just put error conditions in render()
-
 when all react
   https://github.com/reactjs/react-router/issues/2101 to handle transitions smoothly.
     in the meantime,
@@ -36,6 +33,7 @@ when all react
       pass initialState as prop
       pass component as prop, fake resetState somehow (or just don't do it), set state to prevent rerender while loading data initially
     dribble basketball while loading
+    league menu flicker
   reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
   reevaluate bbgmView API
   make sure no data-bind
@@ -49,7 +47,6 @@ when all react
   get rid of bootstrap js
   references to data-
   references to vm
-  get rid of brfs
   go through ui.js, reevaluate
   confirm ads work
   get rid of default params in views

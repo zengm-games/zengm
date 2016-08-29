@@ -285,17 +285,6 @@ function init() {
 }
 
 /**
- * Updates the title.
- * @param {string} text New title.
- */
-function title(text) {
-    if (g.lid !== null) {
-        text += ` - ${g.leagueName}`;
-    }
-    document.title = `${text} - Basketball GM`;
-}
-
-/**
  * Replaces the displayed HTML content.
  *
  * After this is called, ko.applyBindings probably needs to be called to hook up Knockout.
@@ -308,67 +297,6 @@ function update(data) {
 
     containerEl.dataset.idLoaded = data.template;
     containerEl.dataset.reactFirstRun = 'false';
-}
-
-function tableClickableRows(tableEl) {
-    tableEl.addClass("table-hover");
-    tableEl.on("click", "tbody tr", event => {
-        // Toggle highlight
-        if (event.currentTarget.classList.contains("warning")) {
-            event.currentTarget.classList.remove("warning");
-        } else {
-            event.currentTarget.classList.add("warning");
-        }
-    });
-}
-
-// For dropdown menus to change team/season/whatever
-// This should be cleaned up, but it works for now.
-function dropdown(select1, select2, select3, select4) {
-    const handleDropdown = select => {
-        select.off("change");
-        select.change(() => {
-            // UGLY HACK: Stop event handling if it looks like this is a season dropdown and a new season is starting. Otherwise you get double refreshes, often pointing to the previous year, since updating the season dropdown is interpreted as a "change"
-            const seasonsDropdown = document.querySelector(".bbgm-dropdown .seasons");
-            if (seasonsDropdown && parseInt(seasonsDropdown.lastChild.value, 10) < g.season) {
-                return;
-            }
-
-            const extraParam = select.parent()[0].dataset.extraParam;
-
-            // Name of the page (like "standings"), with # and ? stuff removed
-            const leaguePage = document.URL.split("/", 6)[5].split("#")[0].split("?")[0];
-
-            const args = [leaguePage, select1.val()];
-            if (select2 !== undefined) {
-                args.push(select2.val());
-            }
-            if (select3 !== undefined) {
-                args.push(select3.val());
-            }
-            if (select4 !== undefined) {
-                args.push(select4.val());
-            }
-            let url = helpers.leagueUrl(args);
-
-            if (extraParam !== undefined && extraParam !== null && extraParam !== "") {
-                url += `/${extraParam}`;
-            }
-
-            realtimeUpdate([], url);
-        });
-    };
-
-    handleDropdown(select1);
-    if (select2 !== undefined) {
-        handleDropdown(select2);
-    }
-    if (select3 !== undefined) {
-        handleDropdown(select3);
-    }
-    if (select4 !== undefined) {
-        handleDropdown(select4);
-    }
 }
 
 /**
@@ -555,10 +483,7 @@ function highlightPlayButton() {
 
 module.exports = {
     init,
-    tableClickableRows,
-    dropdown,
     realtimeUpdate,
-    title,
     update,
     updatePhase,
     updatePlayMenu,

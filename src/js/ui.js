@@ -7,7 +7,6 @@ const html2canvas = require('./lib/html2canvas');
 const $ = require('jquery');
 const helpers = require('./util/helpers');
 const lock = require('./util/lock');
-const {Controller} = require('./views/components');
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.
@@ -46,6 +45,7 @@ function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
 
 // Things to do on initial page load
 function init() {
+    const {Controller} = require('./views/components');
     ReactDOM.render(<Controller />, document.getElementById('content'));
 
     // Handle clicks from play menu

@@ -1,6 +1,7 @@
-const g = require('../../globals');
-const helpers = require('../../util/helpers');
 const React = require('react');
+const g = require('../../globals');
+const ui = require('../../ui');
+const helpers = require('../../util/helpers');
 
 const Select = ({field, handleChange, value}) => {
     let options;
@@ -196,7 +197,6 @@ class Dropdown extends React.Component {
             parts.push(this.props.extraParam);
         }
 
-        const ui = require('../../ui');
         ui.realtimeUpdate([], helpers.leagueUrl(parts));
     }
 

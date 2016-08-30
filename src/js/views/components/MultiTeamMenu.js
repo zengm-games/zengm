@@ -1,5 +1,6 @@
 const React = require('react');
 const g = require('../../globals');
+const ui = require('../../ui');
 const league = require('../../core/league');
 
 class MultiTeamMenu extends React.Component {
@@ -23,7 +24,6 @@ class MultiTeamMenu extends React.Component {
         g.emitter.emit('updateMultiTeam');
 
         // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
-        const ui = require('../../ui');
         ui.realtimeUpdate(["dbChange"]);
         league.updateLastDbChange();
     }

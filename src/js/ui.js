@@ -220,29 +220,29 @@ function init() {
 * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, and negotiations; if null is passed, then a new transaction will be used.
 * @return {Promise}
 */
-function updatePlayMenu(ot) {
-    const allOptions = [
-        {id: "stop", url: "", label: "Stop"},
-        {id: "day", url: "", label: "One day"},
-        {id: "week", url: "", label: "One week"},
-        {id: "month", url: "", label: "One month"},
-        {id: "untilPlayoffs", url: "", label: "Until playoffs"},
-        {id: "throughPlayoffs", url: "", label: "Through playoffs"},
-        {id: "dayLive", url: helpers.leagueUrl(["live"]), label: "One day (live)"},
-        {id: "untilDraft", url: "", label: "Until draft"},
-        {id: "viewDraft", url: helpers.leagueUrl(["draft"]), label: "View draft"},
-        {id: "untilResignPlayers", url: "", label: "Re-sign players with expiring contracts"},
-        {id: "untilFreeAgency", url: "", label: "Until free agency"},
-        {id: "untilPreseason", url: "", label: "Until preseason"},
-        {id: "untilRegularSeason", url: "", label: "Until regular season"},
-        {id: "contractNegotiation", url: helpers.leagueUrl(["negotiation"]), label: "Continue contract negotiation"},
-        {id: "contractNegotiationList", url: helpers.leagueUrl(["negotiation"]), label: "Continue re-signing players"},
-        {id: "message", url: helpers.leagueUrl(["message"]), label: "Read new message"},
-        {id: "newLeague", url: "/new_league", label: "Try again in a new league"},
-        {id: "newTeam", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
-        {id: "abortPhaseChange", url: "", label: "Abort"},
-        {id: "stopAuto", url: "", label: `Stop auto play (${g.autoPlaySeasons} seasons left)`},
-    ];
+async function updatePlayMenu(ot) {
+    const allOptions = {
+        stop: {label: "Stop"},
+        day: {label: "One day"},
+        week: {label: "One week"},
+        month: {label: "One month"},
+        untilPlayoffs: {label: "Until playoffs"},
+        throughPlayoffs: {label: "Through playoffs"},
+        dayLive: {url: helpers.leagueUrl(["live"]), label: "One day (live)"},
+        untilDraft: {label: "Until draft"},
+        viewDraft: {url: helpers.leagueUrl(["draft"]), label: "View draft"},
+        untilResignPlayers: {label: "Re-sign players with expiring contracts"},
+        untilFreeAgency: {label: "Until free agency"},
+        untilPreseason: {label: "Until preseason"},
+        untilRegularSeason: {label: "Until regular season"},
+        contractNegotiation: {url: helpers.leagueUrl(["negotiation"]), label: "Continue contract negotiation"},
+        contractNegotiationList: {url: helpers.leagueUrl(["negotiation"]), label: "Continue re-signing players"},
+        message: {url: helpers.leagueUrl(["message"]), label: "Read new message"},
+        newLeague: {url: "/new_league", label: "Try again in a new league"},
+        newTeam: {url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
+        abortPhaseChange: {label: "Abort"},
+        stopAuto: {label: `Stop auto play (${g.autoPlaySeasons} seasons left)`},
+    };
 
     let keys;
     if (g.phase === g.PHASE.PRESEASON) {
@@ -274,52 +274,40 @@ function updatePlayMenu(ot) {
         keys = ["day", "week", "untilPreseason"];
     }
 
-    return Promise.all([
+    const [unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress] = await Promise.all([
         lock.unreadMessage(ot),
         lock.gamesInProgress(ot),
         lock.negotiationInProgress(ot),
         lock.phaseChangeInProgress(ot),
-    ]).spread((unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress) => {
-        if (unreadMessage) {
-            keys = ["message"];
-        }
-        if (gamesInProgress) {
-            keys = ["stop"];
-        }
-        if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
-            keys = ["contractNegotiation"];
-        }
-        if (phaseChangeInProgress) {
-            keys = ["abortPhaseChange"];
-        }
+    ]);
 
-        // If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.
-        if (g.gameOver && !unreadMessage) {
-            keys = ["newTeam", "newLeague"];
-        }
+    if (unreadMessage) {
+        keys = ["message"];
+    }
+    if (gamesInProgress) {
+        keys = ["stop"];
+    }
+    if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
+        keys = ["contractNegotiation"];
+    }
+    if (phaseChangeInProgress) {
+        keys = ["abortPhaseChange"];
+    }
 
-        if (g.autoPlaySeasons > 0) {
-            keys = ["stopAuto"];
-        }
+    // If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.
+    if (g.gameOver && !unreadMessage) {
+        keys = ["newTeam", "newLeague"];
+    }
 
-        // This code is very ugly. Basically I just want to filter all_options into
-        // some_options based on if the ID matches one of the keys.
-        const ids = [];
-        for (let i = 0; i < allOptions.length; i++) {
-            ids.push(allOptions[i].id);
-        }
-        const someOptions = [];
-        for (let i = 0; i < keys.length; i++) {
-            for (let j = 0; j < ids.length; j++) {
-                if (ids[j] === keys[i]) {
-                    someOptions.push(allOptions[j]);
-                    break;
-                }
-            }
-        }
+    if (g.autoPlaySeasons > 0) {
+        keys = ["stopAuto"];
+    }
 
-        g.emitter.emit('updateTopMenu', {options: someOptions});
+    const someOptions = keys.map(id => {
+        return {id, ...allOptions[id]};
     });
+
+    g.emitter.emit('updateTopMenu', {options: someOptions});
 }
 
 /*Save status to database and push to client.

@@ -146,6 +146,13 @@ class PlayMenu extends React.Component {
         }
     }
 
+    handleClick(option, e) {
+        if (!option.url) {
+            e.preventDefault();
+            actions.playMenu[option.id]();
+        }
+    }
+
     render() {
         const {lid, options} = this.props;
 
@@ -158,9 +165,13 @@ class PlayMenu extends React.Component {
                 <a href="#" className="dropdown-toggle" data-toggle="dropdown" id="play-button">
                     <span className="hidden-xs">Play</span> <b className="caret"></b>
                 </a>
-                <ul className="dropdown-menu">
+                <ul className="dropdown-menu play-menu">
                     {options.map((option, i) => <li key={i}>
-                        <a href={option.url} onClick={!options.url ? actions.playMenu[option.id] : null}>
+                        <a
+                            href={option.url}
+                            onClick={e => this.handleClick(option, e)}
+                            data-no-davis={option.url ? null : 'true'}
+                        >
                             {option.label}
                             {i === 0 ? <span className="text-muted kbd">Alt+P</span> : null}
                         </a>

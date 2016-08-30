@@ -66,6 +66,7 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}) 
 };
 
 const playAmount = async amount => {
+console.log('play', amount);
     if (['day', 'week', 'month', 'untilPreseason'].includes(amount)) {
         let numDays;
         if (amount === "day") {
@@ -89,19 +90,23 @@ const playAmount = async amount => {
             freeAgents.play(numDays);
         }
     } else {
-        throw new Error(`Invalid amount: ${amount}`)
+        throw new Error(`Invalid amount: ${amount}`);
     }
-}
+};
+
+const playStop = async () => {
+    await league.setGameAttributesComplete({stopGames: true});
+    if (g.phase !== g.PHASE.FREE_AGENCY) {
+        // This is needed because we can't be sure if core.game.play will be called again
+        ui.updateStatus("Idle");
+    }
+    await league.setGameAttributesComplete({gamesInProgress: false});
+    ui.updatePlayMenu(null);
+};
 
 const playMenu = {
     stop: async () => {
-        await league.setGameAttributesComplete({stopGames: true});
-        if (g.phase !== g.PHASE.FREE_AGENCY) {
-            // This is needed because we can't be sure if core.game.play will be called again
-            ui.updateStatus("Idle");
-        }
-        await league.setGameAttributesComplete({gamesInProgress: false});
-        ui.updatePlayMenu(null);
+        await playStop();
     },
 
     day: async () => {
@@ -182,7 +187,7 @@ const playMenu = {
     stopAuto: async () => {
         await league.setGameAttributesComplete({autoPlaySeasons: 0});
         ui.updatePlayMenu(null);
-        play("stop");
+        await playStop();
 
         // Extra toggle to counteract play("stop");
 //        $("#play-menu .dropdown-toggle").dropdown("toggle");

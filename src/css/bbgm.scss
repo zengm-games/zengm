@@ -206,6 +206,11 @@ footer {
     border-top-color: #fff;
   }
 }
+.play-menu {
+  a {
+    cursor: pointer;
+  }
+}
 
 // This is for keyboard shortcuts in dropdowns
 .dropdown-menu > li > a {

@@ -5,7 +5,7 @@ const league = require('../core/league');
 const $ = require('jquery');
 const helpers = require('./helpers');
 
-async function beforeLeague(req) {
+async function beforeLeague(req, loadedLid) {
     g.lid = parseInt(req.params.lid, 10);
 
     const popup = req.params.w === "popup";
@@ -40,7 +40,7 @@ async function beforeLeague(req) {
     const reqCb = req.raw.cb !== undefined ? req.raw.cb : () => {};
 
     // Make sure league template FOR THE CURRENT LEAGUE is showing
-    if (true || g.vm.topMenu.lid() !== g.lid) {
+    if (loadedLid !== g.lid) {
         // Clear old game attributes from g, to make sure the new ones are saved to the db in league.setGameAttributes
         helpers.resetG();
 
@@ -69,7 +69,6 @@ async function beforeLeague(req) {
         ui.updateStatus();
         ui.updatePhase();
         await ui.updatePlayMenu(null);
-console.log('HERE, emitting updateTopMenu lid', g.lid)
         g.emitter.emit('updateTopMenu', {lid: g.lid});
         checkDbChange(g.lid);
         return [updateEvents, reqCb];

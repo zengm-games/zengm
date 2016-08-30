@@ -1,6 +1,8 @@
 const Promise = require('bluebird');
 const React = require('react');
 const g = require('../../globals');
+const ui = require('../../ui');
+const helpers = require('../../util/helpers');
 const Footer = require('./Footer');
 const Header = require('./Header');
 const LeagueWrapper = require('./LeagueWrapper');
@@ -33,21 +35,48 @@ class Controller extends React.Component {
                 username: null,
             },
         };
+        this.get = this.get.bind(this);
         this.updatePage = this.updatePage.bind(this);
         this.updateMultiTeam = this.updateMultiTeam.bind(this);
         this.updateTopMenu = this.updateTopMenu.bind(this);
     }
 
     componentDidMount() {
+        g.emitter.on('get', this.get);
         g.emitter.on('updatePage', this.updatePage);
         g.emitter.on('updateMultiTeam', this.updateMultiTeam);
         g.emitter.on('updateTopMenu', this.updateTopMenu);
     }
 
     componentWillUnmount() {
+        g.emitter.on('get', this.get);
         g.emitter.removeListener('updatePage', this.updatePage);
         g.emitter.removeListener('updateMultiTeam', this.updateMultiTeam);
         g.emitter.removeListener('updateTopMenu', this.updateTopMenu);
+    }
+
+    async get(fnUpdate, args, req) {
+        const viewHelpers = require('../../util/viewHelpers');
+        const [updateEvents, cb, abort] = await (args.inLeague ? viewHelpers.beforeLeague(req, this.state.topMenu.lid) : viewHelpers.beforeNonLeague(req));
+
+        if (abort === 'abort') {
+            return;
+        }
+
+        let inputs = args.get(req);
+        if (inputs === undefined) {
+            inputs = {};
+        }
+
+        // Check for errors/redirects
+        if (inputs.errorMessage !== undefined) {
+            return helpers.error(inputs.errorMessage, cb);
+        }
+        if (inputs.redirectUrl !== undefined) {
+            return ui.realtimeUpdate([], inputs.redirectUrl, cb);
+        }
+
+        fnUpdate(inputs, updateEvents, cb);
     }
 
     async updatePage(args, inputs, updateEvents, cb) {

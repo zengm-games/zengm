@@ -1,33 +1,4 @@
 const g = require('../globals');
-const ui = require('../ui');
-const Promise = require('bluebird');
-const helpers = require('./helpers');
-const viewHelpers = require('./viewHelpers');
-
-function get(fnUpdate, args) {
-    return async req => {
-        const [updateEvents, cb, abort] = await (args.inLeague ? viewHelpers.beforeLeague(req) : viewHelpers.beforeNonLeague(req));
-
-        if (abort === 'abort') {
-            return;
-        }
-
-        let inputs = args.get(req);
-        if (inputs === undefined) {
-            inputs = {};
-        }
-
-        // Check for errors/redirects
-        if (inputs.errorMessage !== undefined) {
-            return helpers.error(inputs.errorMessage, cb);
-        }
-        if (inputs.redirectUrl !== undefined) {
-            return ui.realtimeUpdate([], inputs.redirectUrl, cb);
-        }
-
-        fnUpdate(inputs, updateEvents, cb);
-    };
-}
 
 function init(args) {
     args.inLeague = args.inLeague !== undefined ? args.inLeague : true;
@@ -46,7 +17,7 @@ function init(args) {
 
     const output = {};
     output.update = (inputs, updateEvents, cb) => g.emitter.emit('updatePage', args, inputs, updateEvents, cb);
-    output.get = get(output.update, args);
+    output.get = req => g.emitter.emit('get', output.update, args, req);
 
     return output;
 }

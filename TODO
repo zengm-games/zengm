@@ -1,13 +1,9 @@
 REACT
 
 get rid of knockout everywhere
-  have topMenu (or whatever) in this.state of the bbgmViewReact component
   ui.init stuff
   index.html stuff
   topMenu.template - delete
-  how to pass lid to beforeLeague? g.vm.topMenu.lid() currently
-    maybe make beforeLeague part of controller, does that make sense?
-  controller shouldn't use data- for idLoading and idLoaded
 
 Switch between two leagues directly with forward/back (react to react) and it has the two controllers problem
 

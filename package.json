@@ -38,8 +38,6 @@
     "indexeddb-getall-shim": "1.2.3",
     "jquery": "2.*",
     "jquery-ui": "1.10.x",
-    "knockout": "3.2.0",
-    "knockout.mapping": "2.4.3",
     "lodash.orderby": "4.6.0",
     "postscribe": "2.0.6",
     "react": "15.3.1",

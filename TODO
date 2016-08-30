@@ -25,6 +25,8 @@ DataTable
     filtering
     persist sort
 
+exorcist not working?
+
 is UI updating okay without waiting for this.setState to finish?
 
 abstract games list in schedule and dashboard
@@ -51,8 +53,6 @@ when all react
   reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
   reevaluate bbgmView API
   make sure no data-bind
-  delete templateHelpers
-  delete knockout dependency
   helper functions that return HTML strings should instead be React components, for safety. migrate/delete any remaining
     recordAndPlayoffs
     watchBlock

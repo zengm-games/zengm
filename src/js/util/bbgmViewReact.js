@@ -118,19 +118,41 @@ function controllerFactory(Component) {
         render() {
             const {args, multiTeam, ...other} = this.state;
 
-            if (!this.state.args) {
-                return <div />;
+            let contents;
+            if (!args) {
+                contents = <div />;
+            } else if (!args.inLeague) {
+                contents = <Component {...other} />;
+            } else {
+                contents = <div>
+                    <LeagueWrapper pageId={args.pageId}>
+                        <Component {...other} />
+                    </LeagueWrapper>
+                    <MultiTeamMenu {...multiTeam} />
+                </div>;
             }
 
-            if (!this.state.args.inLeague) {
-                return <Component {...this.state} />;
-            }
+            return <div className="container">
+                <div id="banner-ad-top-wrapper" />
 
-            return <div>
-                <LeagueWrapper pageId={args.pageId}>
-                    <Component {...other} />
-                </LeagueWrapper>
-                <MultiTeamMenu {...multiTeam} />
+                {contents}
+
+                <p className="clearfix"></p>
+
+                <div id="banner-ad-bottom-wrapper" />
+
+                <hr />
+
+                <footer>
+                    <p>
+                        <a href="http://basketball-gm.com/about/" target="_blank">About</a> ·
+                        <a href="http://basketball-gm.com/advertise/" target="_blank">Advertise</a> ·
+                        <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> ·
+                        <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> ·
+                        <a href="http://basketball-gm.com/share/" target="_blank">Share</a><br />
+                    </p>
+                    <p className="rev">v3.6 · {window.bbgmVersion}</p>
+                </footer>
             </div>;
         }
     };

@@ -13,6 +13,7 @@
     <script type="text/javascript">
       window.inCordova = document.URL.indexOf('file://') === 0;
       window.bbgmPrefix = window.inCordova ? "" : "/"; // Relative URLs for Cordova
+      window.bbgmVersion = "REV_GOES_HERE";
 
       function loadCSS(filename){
         var el = document.createElement("link");
@@ -47,7 +48,7 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
         if (window.Bugsnag) {
           window.Bugsnag.apiKey = "c10b95290070cb8888a7a79cc5408555";
-          window.Bugsnag.appVersion = "REV_GOES_HERE";
+          window.Bugsnag.appVersion = window.bbgmVersion;
           if (location.host.indexOf("localhost") === 0) {
             window.Bugsnag.releaseStage = "development";
           } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
@@ -236,32 +237,25 @@
       </div>
     </nav>
 
-    <div class="container">
-
-      <div id="banner-ad-top-wrapper"></div>
-
-      <div id="content" data-id-loading="" data-id-loaded="">
+    <div id="content" data-id-loading="" data-id-loaded="">
+      <div class="container">
         <h1>Loading...</h1>
         <p>This should only take a couple seconds on a fast connection.</p>
         <p>If this gets stuck for a while, try <a href="https://basketball-gm.com/manual/debugging/">the debugging instructions</a> and try to find an error message and report a bug.</p>
+
+        <hr>
+
+        <footer>
+          <p>
+            <a href="https://basketball-gm.com/about/" target="_blank">About</a> ·
+            <a href="https://basketball-gm.com/advertise/" target="_blank">Advertise</a> ·
+            <a href="https://basketball-gm.com/blog/" target="_blank">Blog</a> ·
+            <a href="https://basketball-gm.com/contact/" target="_blank">Contact</a> ·
+            <a href="https://basketball-gm.com/share/" target="_blank">Share</a><br>
+            <p class="rev">v3.6 · REV_GOES_HERE</p>
+          </p>
+        </footer>
       </div>
-
-      <p class="clearfix"></p>
-
-      <div id="banner-ad-bottom-wrapper"></div>
-
-      <hr>
-
-      <footer>
-        <p>
-          <a href="http://basketball-gm.com/about/" target="_blank">About</a> ·
-          <a href="http://basketball-gm.com/advertise/" target="_blank">Advertise</a> ·
-          <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> ·
-          <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> ·
-          <a href="http://basketball-gm.com/share/" target="_blank">Share</a><br>
-          <p class="rev">v3.6 · REV_GOES_HERE</p>
-        </p>
-      </footer>
     </div>
 
     <div class="modal fade" id="modal-ads">

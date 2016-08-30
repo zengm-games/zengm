@@ -133,14 +133,17 @@ async function check() {
         }));
 
         // Save username for display
-        g.vm.topMenu.username(data.username);
-        g.vm.topMenu.email(data.email);
-        g.vm.topMenu.goldUntil(data.gold_until);
-        g.vm.topMenu.goldCancelled(data.gold_cancelled);
+
+        g.emitter.emit('updateTopMenu', {
+            email: data.email,
+            goldCancelled: data.gold_cancelled,
+            goldUntil: data.gold_until,
+            username: data.username,
+        });
 
         // No ads for Gold members
         const currentTimestamp = Math.floor(Date.now() / 1000);
-        if (g.vm.topMenu.goldCancelled() || currentTimestamp > g.vm.topMenu.goldUntil()) {
+        if (data.gold_cancelled || currentTimestamp > data.gold_until) {
             document.getElementById('banner-ad-top-wrapper').innerHTML = '<div id="banner-ad-top" style="text-align: center; min-height: 95px; margin-top: 1em"></div>';
             document.getElementById('banner-ad-bottom-wrapper').innerHTML = '<div id="banner-ad-bottom" style="text-align: center; min-height: 95px"></div>';
             ads.showBanner();

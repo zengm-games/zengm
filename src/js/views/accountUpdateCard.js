@@ -5,10 +5,10 @@ const account = require('../util/account');
 const bbgmViewReact = require('../util/bbgmViewReact');
 const AccountUpdateCard = require('./views/AccountUpdateCard');
 
-async function updateAccountUpdateCard(inputs, updateEvents) {
+async function updateAccountUpdateCard(inputs, updateEvents, state) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("account") >= 0) {
         await account.check();
-        const username = g.vm.topMenu.username();
+        const username = state.topMenu.username;
 
         if (username === null || username === "") {
             return {
@@ -16,7 +16,7 @@ async function updateAccountUpdateCard(inputs, updateEvents) {
             };
         }
 
-        if (g.vm.topMenu.goldCancelled()) {
+        if (state.topMenu.goldCancelled) {
             return {
                 errorMessage: "Cannot update card because your Basketball GM Gold account is cancelled.",
             };

@@ -623,7 +623,7 @@ async function loadGameAttribute(ot, key) {
 
     // UI stuff - see also loadGameAttributes
     if (key === "godMode") {
-        g.vm.topMenu.godMode(g.godMode);
+        g.emitter.emit('updateTopMenu', {godMode: g.godMode});
     }
     if (key === "userTid" || key === "userTids") {
         g.emitter.emit('updateMultiTeam');
@@ -656,7 +656,7 @@ async function loadGameAttributes(ot) {
     });
 
     // UI stuff - see also loadGameAttribute
-    g.vm.topMenu.godMode(g.godMode);
+    g.emitter.emit('updateTopMenu', {godMode: g.godMode});
     g.emitter.emit('updateMultiTeam');
 }
 

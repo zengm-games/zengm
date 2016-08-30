@@ -51,20 +51,6 @@ if (typeof document !== "undefined") {
 }*/
 
 g.emitter = new EventEmitter();
-g.vm = {
-    topMenu: {
-        lid: ko.observable(),
-        godMode: ko.observable(),
-        options: ko.observable([]),
-        phaseText: ko.observable(),
-        statusText: ko.observable(),
-        template: ko.observable(), // Used for left menu on large screens for highlighting active page, so g.vm.topMenu should really be g.vm.menu, since it's used by both
-        username: ko.observable(null),
-        email: ko.observable(null),
-        goldUntil: ko.observable(0),
-        goldCancelled: ko.observable(0),
-    },
-};
 
 g.enableLogging = window.enableLogging;
 
@@ -158,6 +144,6 @@ g.compositeWeights = {
 g.stripePublishableKey = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
 // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-g.notInDb = ["dbm", "dbl", "lid", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "vm", "enableLogging", "tld", "sport", "compositeWeights", "stripePublishableKey", "notInDb", "emitter"];
+g.notInDb = ["dbm", "dbl", "lid", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "enableLogging", "tld", "sport", "compositeWeights", "stripePublishableKey", "notInDb", "emitter"];
 
 module.exports = g;

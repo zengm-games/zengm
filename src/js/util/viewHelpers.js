@@ -40,7 +40,7 @@ async function beforeLeague(req) {
     const reqCb = req.raw.cb !== undefined ? req.raw.cb : () => {};
 
     // Make sure league template FOR THE CURRENT LEAGUE is showing
-    if (g.vm.topMenu.lid() !== g.lid) {
+    if (true || g.vm.topMenu.lid() !== g.lid) {
         // Clear old game attributes from g, to make sure the new ones are saved to the db in league.setGameAttributes
         helpers.resetG();
 
@@ -69,7 +69,8 @@ async function beforeLeague(req) {
         ui.updateStatus();
         ui.updatePhase();
         await ui.updatePlayMenu(null);
-        g.vm.topMenu.lid(g.lid);
+console.log('HERE, emitting updateTopMenu lid', g.lid)
+        g.emitter.emit('updateTopMenu', {lid: g.lid});
         checkDbChange(g.lid);
         return [updateEvents, reqCb];
     }
@@ -80,7 +81,7 @@ async function beforeLeague(req) {
 // Async just because it needs to resolve to a promise
 async function beforeNonLeague(req) {
     g.lid = null;
-    g.vm.topMenu.lid(undefined);
+    g.emitter.emit('updateTopMenu', {lid: undefined});
 
     const updateEvents = (req !== undefined && req.raw.updateEvents !== undefined) ? req.raw.updateEvents : [];
     const reqCb = (req !== undefined && req.raw.cb !== undefined) ? req.raw.cb : () => {};

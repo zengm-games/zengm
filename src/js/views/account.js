@@ -1,4 +1,3 @@
-const g = require('../globals');
 const account = require('../util/account');
 const bbgmViewReact = require('../util/bbgmViewReact');
 const Account = require('./views/Account');
@@ -10,20 +9,21 @@ function get(req) {
     };
 }
 
-async function updateAccount(inputs, updateEvents) {
+async function updateAccount(inputs, updateEvents, state) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("account") >= 0) {
         await account.check();
 
-        const goldUntilDate = new Date(g.vm.topMenu.goldUntil() * 1000);
+        const goldUntilDate = new Date(state.topMenu.goldUntil * 1000);
         const goldUntilDateString = goldUntilDate.toDateString();
 
         const currentTimestamp = Math.floor(Date.now() / 1000);
-        const showGoldActive = !g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil();
-        const showGoldCancelled = g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil();
+        const showGoldActive = !state.topMenu.goldCancelled && currentTimestamp <= state.topMenu.goldUntil;
+        const showGoldCancelled = state.topMenu.goldCancelled && currentTimestamp <= state.topMenu.goldUntil;
         const showGoldPitch = !showGoldActive;
 
         return {
-            username: g.vm.topMenu.username(),
+            email: state.topMenu.username,
+            username: state.topMenu.username,
             goldUntilDateString,
             showGoldActive,
             showGoldCancelled,

@@ -56,13 +56,11 @@ class StripeButton extends React.Component {
 
     handleClick() {
         if (this.state.handler) {
-            const email = g.vm.topMenu.email();
-
             this.state.handler.open({
                 name: 'Basketball GM Gold',
                 description: '',
                 amount: 500,
-                email,
+                email: this.props.email,
                 allowRememberMe: false,
                 panelLabel: "Subscribe for $5/month",
             });
@@ -130,7 +128,7 @@ class UserInfo extends React.Component {
                 withCredentials: true,
             },
             success: () => {
-                g.vm.topMenu.username("");
+                g.emitter.emit('updateTopMenu', {username: ''});
                 ui.realtimeUpdate(["account"], "/");
             },
             error: () => {

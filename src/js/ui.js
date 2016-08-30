@@ -1,11 +1,13 @@
 const g = require('./globals');
 const Promise = require('bluebird');
+const React = require('react');
+const ReactDOM = require('react-dom');
 const Davis = require('./lib/davis');
 const html2canvas = require('./lib/html2canvas');
 const $ = require('jquery');
-const ko = require('knockout');
 const helpers = require('./util/helpers');
 const lock = require('./util/lock');
+const {Controller} = require('./views/components');
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.
@@ -44,7 +46,7 @@ function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
 
 // Things to do on initial page load
 function init() {
-    ko.applyBindings(g.vm.topMenu, document.getElementById("top-menu"));
+    ReactDOM.render(<Controller />, document.getElementById('content'));
 
     // Handle clicks from play menu
     const api = require("./api");
@@ -285,21 +287,6 @@ function init() {
 }
 
 /**
- * Replaces the displayed HTML content.
- *
- * After this is called, ko.applyBindings probably needs to be called to hook up Knockout.
- *
- * @memberOf ui
- * @param  {Object} data An object with several properties: "template" the name of the HTML template file in the templates folder; "container" is the id of the container div (probably content or league_content).
- */
-function update(data) {
-    const containerEl = document.getElementById(data.container);
-
-    containerEl.dataset.idLoaded = data.template;
-    containerEl.dataset.reactFirstRun = 'false';
-}
-
-/**
 * Update play menu options based on game state.
 *
 * @memberOf ui
@@ -408,7 +395,7 @@ function updatePlayMenu(ot) {
             someOptions[0].label += ' <span class="text-muted kbd">Alt+P</span>';
         }
 
-        g.vm.topMenu.options(someOptions);
+        g.emitter.emit('updateTopMenu', {options: someOptions});
     });
 }
 
@@ -424,10 +411,10 @@ Args:
 async function updateStatus(statusText) {
     const oldStatus = g.statusText;
     if (statusText === undefined) {
-        g.vm.topMenu.statusText(oldStatus);
+        g.emitter.emit('updateTopMenu', {statusText: oldStatus});
     } else if (statusText !== oldStatus) {
         await require('./core/league').setGameAttributesComplete({statusText});
-        g.vm.topMenu.statusText(statusText);
+        g.emitter.emit('updateTopMenu', {statusText});
     }
 }
 
@@ -443,10 +430,10 @@ Args:
 async function updatePhase(phaseText) {
     const oldPhaseText = g.phaseText;
     if (phaseText === undefined) {
-        g.vm.topMenu.phaseText(oldPhaseText);
+        g.emitter.emit('updateTopMenu', {phaseText: oldPhaseText});
     } else if (phaseText !== oldPhaseText) {
         await require('./core/league').setGameAttributesComplete({phaseText});
-        g.vm.topMenu.phaseText(phaseText);
+        g.emitter.emit('updateTopMenu', {phaseText});
 
         // Update phase in meta database. No need to have this block updating the UI or anything.
         const l = await g.dbm.leagues.get(g.lid);
@@ -484,7 +471,6 @@ function highlightPlayButton() {
 module.exports = {
     init,
     realtimeUpdate,
-    update,
     updatePhase,
     updatePlayMenu,
     updateStatus,

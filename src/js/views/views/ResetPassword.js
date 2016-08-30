@@ -72,7 +72,7 @@ class ResetPassword extends React.Component {
             },
             success: data => {
                 if (data.success) {
-                    g.vm.topMenu.username(data.username);
+                    g.emitter.emit('updateTopMenu', {username: data.username});
 
                     ui.realtimeUpdate([], "/account");
                 } else {

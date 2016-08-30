@@ -40,10 +40,12 @@ class LoginOrRegister extends React.Component {
             },
             success: async data => {
                 if (data.success) {
-                    g.vm.topMenu.username(data.username);
-                    g.vm.topMenu.email(data.email);
-                    g.vm.topMenu.goldUntil(data.gold_until);
-                    g.vm.topMenu.goldCancelled(data.gold_cancelled);
+                    g.emitter.emit('updateTopMenu', {
+                        email: data.email,
+                        goldCancelled: data.gold_cancelled,
+                        goldUntil: data.gold_until,
+                        username: data.username,
+                    });
 
                     // Check for participation achievement, if this is the first time logging in to this sport
                     const achievements = await account.getAchievements();
@@ -84,7 +86,7 @@ class LoginOrRegister extends React.Component {
             },
             success: async data => {
                 if (data.success) {
-                    g.vm.topMenu.username(data.username);
+                    g.emitter.emit('updateTopMenu', {username: data.username});
 
                     await account.addAchievements(["participation"]);
                     ui.realtimeUpdate([], "/account");

@@ -44,6 +44,8 @@ function show() {
 
     // No ads for Gold members
     const currentTimestamp = Math.floor(Date.now() / 1000);
+// FIX THIS
+return;
     if (!g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil()) {
         return;
     }

@@ -15,7 +15,6 @@ Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /
 
-RewriteRule ^export_3.3$ export_3.3.html
 RewriteRule ^manifest_hack$ manifest_hack.html
 RewriteRule ^test$ test.html
 RewriteRule ^test_case$ test_case.html
@@ -23,7 +22,6 @@ RewriteRule ^test_case$ test_case.html
 RewriteCond %{REQUEST_URI} !^/bbgm.appcache
 RewriteCond %{REQUEST_URI} !^/robots.txt
 RewriteCond %{REQUEST_URI} !^/css
-RewriteCond %{REQUEST_URI} !^/export_3.3
 RewriteCond %{REQUEST_URI} !^/fonts
 RewriteCond %{REQUEST_URI} !^/gen
 RewriteCond %{REQUEST_URI} !^/ico

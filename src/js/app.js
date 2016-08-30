@@ -79,10 +79,7 @@ require('./api');
         // Feature detection! http://stackoverflow.com/a/26779525/786644
         IDBKeyRange.only([1]);
     } catch (e) {
-//        errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
-//
-//        return helpers.error(errorMsg);
-        return window.location.replace("/export_3.3");
+        return helpers.error('<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>');
     }
 
     // NaN detection

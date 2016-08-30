@@ -9,6 +9,19 @@ const LeagueWrapper = require('./LeagueWrapper');
 const MultiTeamMenu = require('./MultiTeamMenu');
 const NavBar = require('./NavBar');
 
+class LeagueContent extends React.Component {
+    shouldComponentUpdate(nextProps) {
+        // Until this is true, it's still loading or updating
+        return nextProps.args.pageId === nextProps.controller.idLoaded && !nextProps.controller.updating;
+    }
+
+    render() {
+        const {Component, data, topMenu} = this.props;
+
+        return <Component {...data} topMenu={topMenu} />;
+    }
+}
+
 class Controller extends React.Component {
     constructor(props) {
         super(props);
@@ -18,6 +31,7 @@ class Controller extends React.Component {
                 idLoaded: undefined,
                 idLoading: undefined,
             },
+            data: {},
             multiTeam: {
                 userTid: g.userTid,
                 userTids: g.userTids,
@@ -80,6 +94,8 @@ class Controller extends React.Component {
     }
 
     async updatePage(args, inputs, updateEvents, cb) {
+        let prevData;
+
         // Reset league content and view model only if it's:
         // (1) if it's not loaded and not loading yet
         // (2) loaded, but loading something else
@@ -91,11 +107,12 @@ class Controller extends React.Component {
                 controller: {
                     idLoaded: this.state.controller.idLoaded,
                     idLoading: args.id,
-                    updating: true,
                 },
             });
 
             updateEvents.push("firstRun");
+
+            prevData = {};
         } else if (this.state.controller.idLoading === args.id) {
             // If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
             cb();
@@ -105,9 +122,9 @@ class Controller extends React.Component {
                 controller: {
                     idLoaded: this.state.controller.idLoaded,
                     idLoading: this.state.controller.idLoading,
-                    updating: true,
                 },
             });
+            prevData = this.state.data;
         }
 
         // Resolve all the promises before updating the UI to minimize flicker
@@ -118,19 +135,22 @@ class Controller extends React.Component {
         const promisesWhenever = args.runWhenever.map(async fn => {
             const vars = await Promise.resolve(fn(inputs, updateEvents, this.state, this.setState.bind(this)));
             if (vars !== undefined) {
-                this.setState(vars);
+                this.setState({
+                    data: Object.assign(this.state.data, ...vars),
+                });
             }
         });
 
         const results = await Promise.all(promisesBefore);
 
-        const vars = Object.assign({
+        const vars = {
             args: {
                 Component: args.Component,
                 pageId: args.id,
                 inLeague: args.inLeague,
             },
-        }, ...results);
+            data: Object.assign(prevData, ...results),
+        };
 
         if (vars !== undefined) {
             // Check for errors/redirects
@@ -150,8 +170,7 @@ class Controller extends React.Component {
             this.setState({
                 controller: {
                     idLoaded: args.id,
-                    idLoading: null,
-                    updating: false,
+                    idLoading: undefined,
                 },
             });
 
@@ -159,14 +178,6 @@ class Controller extends React.Component {
             if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
                 window.scrollTo(window.pageXOffset, 0);
             }
-        } else {
-            this.setState({
-                controller: {
-                    idLoaded: this.state.controller.idLoaded,
-                    idLoading: this.state.controller.idLoading,
-                    updating: false,
-                },
-            });
         }
 
         cb();
@@ -191,24 +202,24 @@ class Controller extends React.Component {
     }
 
     render() {
-        const {args, controller, multiTeam, topMenu, ...other} = this.state;
+        const {args, data, controller, multiTeam, topMenu} = this.state;
 
         let contents;
         if (!args) {
             contents = null;
         } else if (!args.inLeague) {
-            contents = <args.Component {...other} topMenu={topMenu} />;
+            contents = <args.Component {...data} topMenu={topMenu} />;
         } else {
             contents = <div>
                 <LeagueWrapper pageId={args.pageId}>
-                    <args.Component {...other} topMenu={topMenu} />
+                    <LeagueContent args={args} controller={controller} data={data} topMenu={topMenu} Component={args.Component} />
                 </LeagueWrapper>
                 <MultiTeamMenu {...multiTeam} />
             </div>;
         }
 
         return <div className="container">
-            <NavBar {...topMenu} updating={controller.updating} />
+            <NavBar {...topMenu} updating={controller.idLoading !== undefined} />
             <Header />
             {contents}
             <Footer />

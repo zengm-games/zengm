@@ -391,10 +391,6 @@ function updatePlayMenu(ot) {
             }
         }
 
-        if (someOptions.length > 0) {
-            someOptions[0].label += ' <span class="text-muted kbd">Alt+P</span>';
-        }
-
         g.emitter.emit('updateTopMenu', {options: someOptions});
     });
 }

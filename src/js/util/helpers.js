@@ -1,4 +1,3 @@
-const ko = require('knockout');
 const React = require('react');
 const g = require('../globals');
 const eventLog = require('./eventLog');
@@ -409,14 +408,10 @@ function skillsBlock(skills) {
  * @return {string} URL
  */
 function leagueUrl(components, options = {}, lid = g.lid) {
-    if (lid !== g.lid) {
-        lid = ko.unwrap(lid);
-    }
-
     let url = `/l/${lid}`;
     for (let i = 0; i < components.length; i++) {
         if (components[i] !== undefined) {
-            url += `/${ko.unwrap(components[i])}`;
+            url += `/${components[i]}`;
         }
     }
     if (!options.noQueryString) {

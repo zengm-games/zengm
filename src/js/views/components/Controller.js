@@ -76,7 +76,7 @@ class Controller extends React.Component {
             return ui.realtimeUpdate([], inputs.redirectUrl, cb);
         }
 
-        fnUpdate(inputs, updateEvents, cb);
+        this.updatePage(args, inputs, updateEvents, cb);
     }
 
     async updatePage(args, inputs, updateEvents, cb) {
@@ -91,6 +91,7 @@ class Controller extends React.Component {
                 controller: {
                     idLoaded: this.state.controller.idLoaded,
                     idLoading: args.id,
+                    updating: true,
                 },
             });
 
@@ -99,6 +100,14 @@ class Controller extends React.Component {
             // If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
             cb();
             return;
+        } else {
+            this.setState({
+                controller: {
+                    idLoaded: this.state.controller.idLoaded,
+                    idLoading: this.state.controller.idLoading,
+                    updating: true,
+                },
+            });
         }
 
         // Resolve all the promises before updating the UI to minimize flicker
@@ -123,7 +132,7 @@ class Controller extends React.Component {
             },
         }, ...results);
 
-        if (this.state.controller.idLoading === args.id && vars !== undefined) {
+        if (vars !== undefined) {
             // Check for errors/redirects
             if (vars.errorMessage !== undefined) {
                 throw new Error('Handle errorMessage!');
@@ -135,17 +144,14 @@ class Controller extends React.Component {
             this.setState(vars);
         }
 
-        // Actually should only render here, but worry about that later
-
-        if (this.state.controller.idLoading === args.id) {
-            await Promise.all(promisesWhenever);
-        }
+        await Promise.all(promisesWhenever);
 
         if (this.state.controller.idLoading === args.id) {
             this.setState({
                 controller: {
                     idLoaded: args.id,
                     idLoading: null,
+                    updating: false,
                 },
             });
 
@@ -153,6 +159,14 @@ class Controller extends React.Component {
             if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
                 window.scrollTo(window.pageXOffset, 0);
             }
+        } else {
+            this.setState({
+                controller: {
+                    idLoaded: this.state.controller.idLoaded,
+                    idLoading: this.state.controller.idLoading,
+                    updating: false,
+                },
+            });
         }
 
         cb();
@@ -177,7 +191,7 @@ class Controller extends React.Component {
     }
 
     render() {
-        const {args, multiTeam, topMenu, ...other} = this.state;
+        const {args, controller, multiTeam, topMenu, ...other} = this.state;
 
         let contents;
         if (!args) {
@@ -194,7 +208,7 @@ class Controller extends React.Component {
         }
 
         return <div className="container">
-            <NavBar {...topMenu} />
+            <NavBar {...topMenu} updating={controller.updating} />
             <Header />
             {contents}
             <Footer />

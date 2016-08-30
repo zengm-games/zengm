@@ -1,4 +1,6 @@
 const React = require('react');
+const ui = require('../../ui');
+const actions = require('../../util/actions');
 const helpers = require('../../util/helpers');
 
 const toggleDebugMode = () => {
@@ -113,7 +115,63 @@ class DropdownLinks extends React.Component {
     }
 }
 
-const NavBar = ({lid, options, phaseText, statusText, template, updating, username}) => {
+class PlayMenu extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleAltP = this.handleAltP.bind(this);
+    }
+
+    componentDidMount() {
+        document.addEventListener('keyup', this.handleAltP);
+    }
+
+    componentWillUnmount() {
+        document.removeListener('keyup', this.handleAltP);
+    }
+
+    handleAltP(e) {
+        // alt + p
+        if (e.altKey && e.keyCode === 80) {
+            const option = this.props.options[0];
+
+            if (!option) {
+                return;
+            }
+
+            if (option.url) {
+                ui.realtimeUpdate([], option.url);
+            } else {
+                actions.playMenu[option.id]();
+            }
+        }
+    }
+
+    render() {
+        const {lid, options} = this.props;
+
+        if (lid === undefined) {
+            return <div />;
+        }
+
+        return <ul className="nav navbar-nav-no-collapse" data-no-collapse="true">
+            <li className="dropdown">
+                <a href="#" className="dropdown-toggle" data-toggle="dropdown" id="play-button">
+                    <span className="hidden-xs">Play</span> <b className="caret"></b>
+                </a>
+                <ul className="dropdown-menu">
+                    {options.map((option, i) => <li key={i}>
+                        <a href={option.url} onClick={!options.url ? actions.playMenu[option.id] : null}>
+                            {option.label}
+                            {i === 0 ? <span className="text-muted kbd">Alt+P</span> : null}
+                        </a>
+                    </li>)}
+                </ul>
+            </li>
+        </ul>;
+    }
+}
+
+const NavBar = ({lid, options, phaseText, statusText, updating, username}) => {
     return <nav className="navbar navbar-default navbar-fixed-top" role="navigation" id="top-menu">
         <div className="container">
             <div className="pull-right">
@@ -147,19 +205,7 @@ const NavBar = ({lid, options, phaseText, statusText, template, updating, userna
                     <span className="hidden-md hidden-sm hidden-xs">Basketball GM</span>
                     {lid === undefined ? <span className="visible-md visible-sm visible-xs">Basketball GM</span> : null}
                 </a>
-                <ul className="nav navbar-nav-no-collapse" id="play-menu" data-no-collapse="true" data-bind="visible: lid() !== undefined">
-                    <li className="dropdown">
-                        <a href="#" className="dropdown-toggle" data-toggle="dropdown" id="play-button-link" className="play-button"><span className="hidden-xs">Play</span> <b className="caret"></b></a>
-                        <ul className="dropdown-menu" id="play-menu-options">
-                            {options.map((option, i) => <li key={i}>
-                                <a href={option.url} id={option.id}>
-                                    {option.label}
-                                    {i === 0 ? <span className="text-muted kbd">Alt+P</span> : null}
-                                </a>
-                            </li>)}
-                        </ul>
-                    </li>
-                </ul>
+                <PlayMenu lid={lid} options={options} />
                 {lid !== undefined ? <p className="navbar-text-two-line-no-collapse" data-no-collapse="true">
                     {phaseText}<br />
                     {statusText}

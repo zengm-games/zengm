@@ -45,7 +45,6 @@ class Controller extends React.Component {
                 options: [],
                 phaseText: undefined,
                 statusText: undefined,
-                template: undefined,
                 username: null,
             },
         };
@@ -63,7 +62,7 @@ class Controller extends React.Component {
     }
 
     componentWillUnmount() {
-        g.emitter.on('get', this.get);
+        g.emitter.removeListener('get', this.get);
         g.emitter.removeListener('updatePage', this.updatePage);
         g.emitter.removeListener('updateMultiTeam', this.updateMultiTeam);
         g.emitter.removeListener('updateTopMenu', this.updateTopMenu);

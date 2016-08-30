@@ -48,63 +48,6 @@ function init() {
     const {Controller} = require('./views/components');
     ReactDOM.render(<Controller />, document.getElementById('content'));
 
-    // Handle clicks from play menu
-    const api = require("./api");
-    const playMenu = $("#play-menu");
-    playMenu.on("click", "#play-menu-stop", () => {
-        api.play("stop");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-day", () => {
-        api.play("day");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-week", () => {
-        api.play("week");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-month", () => {
-        api.play("month");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-until-playoffs", () => {
-        api.play("untilPlayoffs");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-through-playoffs", () => {
-        api.play("throughPlayoffs");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-until-draft", () => {
-        api.play("untilDraft");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-until-resign-players", () => {
-        api.play("untilResignPlayers");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-until-free-agency", () => {
-        api.play("untilFreeAgency");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-until-preseason", () => {
-        api.play("untilPreseason");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-until-regular-season", () => {
-        api.play("untilRegularSeason");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-abort-phase-change", () => {
-        require('./core/phase').abort();
-        $("#play-menu .dropdown-toggle").dropdown("toggle");
-        return false;
-    });
-    playMenu.on("click", "#play-menu-stop-auto", () => {
-        api.play("stopAutoPlay");
-        return false;
-    });
-
     // Handle clicks from Tools menu
     const toolsMenu = $("#tools-menu");
     toolsMenu.on("click", "#tools-menu-auto-play-seasons", () => {
@@ -182,22 +125,6 @@ function init() {
 
             // If a dropdown is open and another one is hovered over, open the hovered one and close the other
             $(liHover.children[0]).dropdown("toggle");
-        }
-    });
-
-    // Keyboard shortcut
-    const $playMenuDropdown = $("#play-menu a.dropdown-toggle");
-    const playMenuOptions = document.getElementById("play-menu-options");
-    document.addEventListener("keyup", e => {
-        // alt + p
-        if (e.altKey && e.keyCode === 80) {
-            // ul -> first li -> a -> click
-            playMenuOptions.firstElementChild.firstElementChild.click();
-
-            // If play menu is open, close it
-            if (playMenuOptions.parentElement.classList.contains("open")) {
-                $playMenuDropdown.dropdown("toggle");
-            }
         }
     });
 
@@ -295,56 +222,56 @@ function init() {
 */
 function updatePlayMenu(ot) {
     const allOptions = [
-        {id: "play-menu-stop", url: "", label: "Stop"},
-        {id: "play-menu-day", url: "", label: "One day"},
-        {id: "play-menu-week", url: "", label: "One week"},
-        {id: "play-menu-month", url: "", label: "One month"},
-        {id: "play-menu-until-playoffs", url: "", label: "Until playoffs"},
-        {id: "play-menu-through-playoffs", url: "", label: "Through playoffs"},
-        {id: "play-menu-day-live", url: helpers.leagueUrl(["live"]), label: "One day (live)"},
-        {id: "play-menu-until-draft", url: "", label: "Until draft"},
-        {id: "play-menu-view-draft", url: helpers.leagueUrl(["draft"]), label: "View draft"},
-        {id: "play-menu-until-resign-players", url: "", label: "Re-sign players with expiring contracts"},
-        {id: "play-menu-until-free-agency", url: "", label: "Until free agency"},
-        {id: "play-menu-until-preseason", url: "", label: "Until preseason"},
-        {id: "play-menu-until-regular-season", url: "", label: "Until regular season"},
-        {id: "play-menu-contract-negotiation", url: helpers.leagueUrl(["negotiation"]), label: "Continue contract negotiation"},
-        {id: "play-menu-contract-negotiation-list", url: helpers.leagueUrl(["negotiation"]), label: "Continue re-signing players"},
-        {id: "play-menu-message", url: helpers.leagueUrl(["message"]), label: "Read new message"},
-        {id: "play-menu-new-league", url: "/new_league", label: "Try again in a new league"},
-        {id: "play-menu-new-team", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
-        {id: "play-menu-abort-phase-change", url: "", label: "Abort"},
-        {id: "play-menu-stop-auto", url: "", label: `Stop auto play (${g.autoPlaySeasons} seasons left)`},
+        {id: "stop", url: "", label: "Stop"},
+        {id: "day", url: "", label: "One day"},
+        {id: "week", url: "", label: "One week"},
+        {id: "month", url: "", label: "One month"},
+        {id: "untilPlayoffs", url: "", label: "Until playoffs"},
+        {id: "throughPlayoffs", url: "", label: "Through playoffs"},
+        {id: "dayLive", url: helpers.leagueUrl(["live"]), label: "One day (live)"},
+        {id: "untilDraft", url: "", label: "Until draft"},
+        {id: "viewDraft", url: helpers.leagueUrl(["draft"]), label: "View draft"},
+        {id: "untilResignPlayers", url: "", label: "Re-sign players with expiring contracts"},
+        {id: "untilFreeAgency", url: "", label: "Until free agency"},
+        {id: "untilPreseason", url: "", label: "Until preseason"},
+        {id: "untilRegularSeason", url: "", label: "Until regular season"},
+        {id: "contractNegotiation", url: helpers.leagueUrl(["negotiation"]), label: "Continue contract negotiation"},
+        {id: "contractNegotiationList", url: helpers.leagueUrl(["negotiation"]), label: "Continue re-signing players"},
+        {id: "message", url: helpers.leagueUrl(["message"]), label: "Read new message"},
+        {id: "newLeague", url: "/new_league", label: "Try again in a new league"},
+        {id: "newTeam", url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
+        {id: "abortPhaseChange", url: "", label: "Abort"},
+        {id: "stopAuto", url: "", label: `Stop auto play (${g.autoPlaySeasons} seasons left)`},
     ];
 
     let keys;
     if (g.phase === g.PHASE.PRESEASON) {
         // Preseason
-        keys = ["play-menu-until-regular-season"];
+        keys = ["untilRegularSeason"];
     } else if (g.phase === g.PHASE.REGULAR_SEASON) {
         // Regular season - pre trading deadline
-        keys = ["play-menu-day", "play-menu-day-live", "play-menu-week", "play-menu-month", "play-menu-until-playoffs"];
+        keys = ["day", "dayLive", "week", "month", "untilPlayoffs"];
     } else if (g.phase === g.PHASE.AFTER_TRADE_DEADLINE) {
         // Regular season - post trading deadline
-        keys = ["play-menu-day", "play-menu-day-live", "play-menu-week", "play-menu-month", "play-menu-until-playoffs"];
+        keys = ["day", "dayLive", "week", "month", "untilPlayoffs"];
     } else if (g.phase === g.PHASE.PLAYOFFS) {
         // Playoffs
-        keys = ["play-menu-day", "play-menu-day-live", "play-menu-week", "play-menu-month", "play-menu-through-playoffs"];
+        keys = ["day", "dayLive", "week", "month", "throughPlayoffs"];
     } else if (g.phase === g.PHASE.BEFORE_DRAFT) {
         // Offseason - pre draft
-        keys = ["play-menu-until-draft"];
+        keys = ["untilDraft"];
     } else if (g.phase === g.PHASE.DRAFT || g.phase === g.PHASE.FANTASY_DRAFT) {
         // Draft
-        keys = ["play-menu-view-draft"];
+        keys = ["viewDraft"];
     } else if (g.phase === g.PHASE.AFTER_DRAFT) {
         // Offseason - post draft
-        keys = ["play-menu-until-resign-players"];
+        keys = ["untilResignPlayers"];
     } else if (g.phase === g.PHASE.RESIGN_PLAYERS) {
         // Offseason - re-sign players
-        keys = ["play-menu-contract-negotiation-list", "play-menu-until-free-agency"];
+        keys = ["contractNegotiationList", "untilFreeAgency"];
     } else if (g.phase === g.PHASE.FREE_AGENCY) {
         // Offseason - free agency
-        keys = ["play-menu-day", "play-menu-week", "play-menu-until-preseason"];
+        keys = ["day", "week", "untilPreseason"];
     }
 
     return Promise.all([
@@ -354,25 +281,25 @@ function updatePlayMenu(ot) {
         lock.phaseChangeInProgress(ot),
     ]).spread((unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress) => {
         if (unreadMessage) {
-            keys = ["play-menu-message"];
+            keys = ["message"];
         }
         if (gamesInProgress) {
-            keys = ["play-menu-stop"];
+            keys = ["stop"];
         }
         if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
-            keys = ["play-menu-contract-negotiation"];
+            keys = ["contractNegotiation"];
         }
         if (phaseChangeInProgress) {
-            keys = ["play-menu-abort-phase-change"];
+            keys = ["abortPhaseChange"];
         }
 
         // If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.
         if (g.gameOver && !unreadMessage) {
-            keys = ["play-menu-new-team", "play-menu-new-league"];
+            keys = ["newTeam", "newLeague"];
         }
 
         if (g.autoPlaySeasons > 0) {
-            keys = ["play-menu-stop-auto"];
+            keys = ["stopAuto"];
         }
 
         // This code is very ugly. Basically I just want to filter all_options into

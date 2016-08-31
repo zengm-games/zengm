@@ -48,7 +48,7 @@ async function updateEventLog(inputs, updateEvents, state) {
                     }
                 } else {
                     shortCircuit();
-                    // Oldest first (cursor is in "prev" direction and we're adding to the front of vm.events)
+                    // Oldest first (cursor is in "prev" direction and we're adding to the front of events)
                     for (let i = newEvents.length - 1; i >= 0; i--) {
                         events.unshift(newEvents[i]);
                     }

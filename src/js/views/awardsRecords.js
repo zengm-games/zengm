@@ -119,8 +119,8 @@ function getPlayerAwards(p, awardType) {
     };
 }
 
-async function updateAwardsRecords(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.awardType !== vm.awardType) {
+async function updateAwardsRecords(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.awardType !== state.awardType) {
         let players = await g.dbl.players.getAll();
         players = await player.withStats(null, players, {
             statsSeasons: 'all',

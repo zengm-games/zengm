@@ -36,7 +36,6 @@ when all react
     playerNameLabels
     skillsBlock
   get rid of bootstrap js
-  references to vm
   go through ui.js, reevaluate
   confirm ads work
     need to make them react components, to get topMenu

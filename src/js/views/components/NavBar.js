@@ -32,7 +32,7 @@ class DropdownLinks extends React.Component {
 
         // When a dropdown at the top is open, use hover to move between items,
         // like in a normal menubar.
-        $("#nav-primary .dropdown-toggle").on("mouseenter", event => {
+        $("#nav-primary").on("mouseenter", ".dropdown-toggle", event => {
             if (!topMenuCollapse.hasClass("in")) {
                 const liHover = event.target.parentNode;
 

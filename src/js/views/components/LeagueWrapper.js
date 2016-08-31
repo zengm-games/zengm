@@ -28,7 +28,7 @@ class SideMenu extends React.Component {
                 <li className={pageId === 'freeAgents' ? 'active' : null}><a href={helpers.leagueUrl(['free_agents'])}>Free Agents</a></li>
                 <li className={pageId === 'trade' ? 'active' : null}><a href={helpers.leagueUrl(['trade'])}>Trade</a></li>
                 <li className={pageId === 'tradingBlock' ? 'active' : null}><a href={helpers.leagueUrl(['trading_block'])}>Trading Block</a></li>
-                <li data-bind="css: {active: template() && template().indexOf('draft') >= 0}"><a href={helpers.leagueUrl(['draft'])}>Draft</a></li>
+                <li className={pageId.includes('draft') ? 'active' : null}><a href={helpers.leagueUrl(['draft'])}>Draft</a></li>
                 <li className={pageId === 'watchList' ? 'active' : null}><a href={helpers.leagueUrl(['watch_list'])}>Watch List</a></li>
                 <li className={pageId === 'hallOfFame' ? 'active' : null}><a href={helpers.leagueUrl(['hall_of_fame'])}>Hall of Fame</a></li>
                 <li className="bs-navheader">Stats</li>

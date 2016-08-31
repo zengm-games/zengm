@@ -1,6 +1,7 @@
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
+const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, NewWindowLink} = require('../components');
 
 const TeamRecords = ({byType, displayName = 'Team', seasonCount, teamRecords = []}) => {
@@ -38,7 +39,7 @@ const TeamRecords = ({byType, displayName = 'Team', seasonCount, teamRecords = [
         <Dropdown view="team_records" fields={["teamRecordType"]} values={[byType]} />
         <h1>Team Records <NewWindowLink /></h1>
 
-        <p>More: <a data-bind="attrLeagueUrl: {href: ['history_all']}">League History</a> | <a data-bind="attrLeagueUrl: {href: ['awards_records']}">Awards Records</a></p>
+        <p>More: <a href={helpers.leagueUrl(['history_all'])}>League History</a> | <a href={helpers.leagueUrl(['awards_records'])}>Awards Records</a></p>
 
         <p>Totals over {seasonCount} seasons played.</p>
 

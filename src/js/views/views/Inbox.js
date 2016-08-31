@@ -13,7 +13,7 @@ const Inbox = ({anyUnread = false, messages = []}) => {
         {anyUnread ? <p className="text-danger">You have a new message. Read it before continuing.</p> : null}
 
         <table className="table table-striped table-bordered table-condensed" id="messages">
-            <tbody data-bind="foreach: messages">
+            <tbody>
                 {messages.map(({from, mid, read, text, year}) => {
                     return <tr key={mid} className={classNames({unread: !read})}>
                         <td className="year"><a href={helpers.leagueUrl(['message', mid])}>{year}</a></td>

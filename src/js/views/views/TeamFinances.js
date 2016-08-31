@@ -191,14 +191,19 @@ const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], lux
                 watch={p.watch}
             >{p.firstName} {p.lastName}</PlayerNameLabels>,
         ];
+
+        // Loop through the salaries for the next five years for this player.
         for (let i = 0; i < 5; i++) {
             if (p.amounts[i]) {
-                data.push(helpers.formatCurrency(p.amounts[i], "M"));
+                const formattedAmount = helpers.formatCurrency(p.amounts[i], "M");
+
+                if (p.released) {
+                    data.push(<i>{formattedAmount}</i>);
+                } else {
+                    data.push(formattedAmount);
+                }
             } else {
                 data.push(null);
-            }
-            if (p.released) {
-                data[i + 1] = <i>{data[i + 1]}</i>;
             }
         }
 
@@ -208,7 +213,20 @@ const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], lux
         };
     });
 
-    const footer = ['Totals'].concat(contractTotals.map(amount => helpers.formatCurrency(amount, 'M')));
+    function muteZeroAmount(amount) {
+        const formattedValue = helpers.formatCurrency(amount, 'M');
+
+        if (amount === 0) {
+            return {classNames: 'text-muted', value: formattedValue};
+        }
+
+        return formattedValue;
+    }
+
+    const footer = [
+        ['Totals'].concat(contractTotals.map(amount => muteZeroAmount(amount))),
+        ['Free cap space'].concat(contractTotals.map((amount) => muteZeroAmount(salaryCap - amount))),
+    ];
 
     return <div>
         <Dropdown view="team_finances" fields={["teams", "shows"]} values={[abbrev, show]} />

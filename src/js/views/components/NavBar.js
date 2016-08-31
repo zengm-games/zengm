@@ -1,3 +1,4 @@
+const $ = require('jquery');
 const React = require('react');
 const ui = require('../../ui');
 const actions = require('../../util/actions');
@@ -15,6 +16,48 @@ const toggleDebugMode = () => {
 class DropdownLinks extends React.Component {
     shouldComponentUpdate(nextProps) {
         return this.props.lid !== nextProps.lid || this.props.godMode !== nextProps.godMode;
+    }
+
+    componentDidMount() {
+        // Bootstrap's collapsable nav doesn't play nice with single page apps
+        // unless you manually close it when a link is clicked. However, I need
+        // this to run only on real links, not "dropdown" links (#).
+        const topMenuCollapse = $("#top-menu-collapse");
+        topMenuCollapse.on("click", "a:not([href='#'])", () => {
+            // Only run when collapsable is open
+            if (topMenuCollapse.hasClass("in")) {
+                topMenuCollapse.collapse("hide");
+            }
+        });
+
+        // When a dropdown at the top is open, use hover to move between items,
+        // like in a normal menubar.
+        $("#nav-primary .dropdown-toggle").on("mouseenter", event => {
+            if (!topMenuCollapse.hasClass("in")) {
+                const liHover = event.target.parentNode;
+
+                // Is any dropdown open?
+                let foundOpen = false;
+                const lis = document.getElementById("nav-primary").children;
+                for (let i = 0; i < lis.length; i++) {
+                    if (lis[i].classList.contains("open")) {
+                        foundOpen = true;
+                        if (lis[i] === liHover) {
+                            // The hovered menu is already open
+                            return;
+                        }
+                    }
+                }
+
+                // If no dropdown is open, do nothing
+                if (!foundOpen) {
+                    return;
+                }
+
+                // If a dropdown is open and another one is hovered over, open the hovered one and close the other
+                $(liHover.children[0]).dropdown("toggle");
+            }
+        });
     }
 
     handleToolsClick(id, e) {

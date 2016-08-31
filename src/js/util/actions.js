@@ -183,16 +183,12 @@ const playMenu = {
 
     abortPhaseChange: () => {
         phase.abort();
-//        $("#play-menu .dropdown-toggle").dropdown("toggle");
     },
 
     stopAuto: async () => {
         await league.setGameAttributesComplete({autoPlaySeasons: 0});
         ui.updatePlayMenu(null);
         await playStop();
-
-        // Extra toggle to counteract play("stop");
-//        $("#play-menu .dropdown-toggle").dropdown("toggle");
     },
 };
 

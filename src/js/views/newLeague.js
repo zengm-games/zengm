@@ -15,9 +15,14 @@ async function updateNewLeague() {
         newLid = 1;
     }
 
+    let lastSelectedTid = parseInt(localStorage.lastSelectedTid, 10);
+    if (isNaN(lastSelectedTid)) {
+        lastSelectedTid = -1;
+    }
+
     return {
         name: `League ${newLid}`,
-        lastSelectedTid: parseInt(localStorage.lastSelectedTid, 10),
+        lastSelectedTid,
     };
 }
 

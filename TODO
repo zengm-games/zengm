@@ -943,7 +943,6 @@ if fouling out drops team below 5 active players, play fouled out players but ad
 show old contracts on old roster view
 reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
   what is the difference between util.viewHelpers, views.components, and ui?
-can i get rid of js/api.js?
 core.trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore

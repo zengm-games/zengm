@@ -23,7 +23,6 @@ require('lib/bootstrap-modal');
 require('./lib/davis.google_analytics');
 require('indexeddb-getall-shim');
 require('jquery-ui/sortable');
-require('./api');
 
 ((async () => {
     window.bbgm = {

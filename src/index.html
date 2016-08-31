@@ -13,7 +13,7 @@
     <script type="text/javascript">
       window.inCordova = document.URL.indexOf('file://') === 0;
       window.bbgmPrefix = window.inCordova ? "" : "/"; // Relative URLs for Cordova
-      window.bbgmVersion = "REV_GOES_HERE";
+      window.bbgmVersion = "2016.08.30.5";
 
       function loadCSS(filename){
         var el = document.createElement("link");
@@ -110,21 +110,32 @@
     </script>
 
     <div id="content">
-      <div class="container">
-        <h1>Loading...</h1>
-        <p>This should only take a couple seconds on a fast connection.</p>
+      <div style="max-width: 360px; margin: 0 auto;">
+        <h1>Loading<span id="loading-periods"></span></h1>
+
+        <p style="clear: both; margin-bottom: 8em"></p>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/ATL.png)"></div>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/BAL.png)"></div>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/BOS.png)"></div>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/CHI.png)"></div>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/CIN.png); clear: both"></div>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/CLE.png)"></div>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/DAL.png)"></div>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/DEN.png)"></div>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/DET.png); clear: both"></div>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/HOU.png)"></div>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/LA.png)"></div>
+        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/LV.png)"></div>
+
+        <p style="clear: both; margin-bottom: 8em"></p>
+        <p>This should only take a few seconds on a fast connection.</p>
         <p>If this gets stuck for a while, try <a href="https://basketball-gm.com/manual/debugging/">the debugging instructions</a> and try to find an error message and report a bug.</p>
 
-        <hr>
+        <hr style="margin-bottom: 2em">
 
         <footer>
           <p>
-            <a href="https://basketball-gm.com/about/" target="_blank">About</a> ·
-            <a href="https://basketball-gm.com/advertise/" target="_blank">Advertise</a> ·
-            <a href="https://basketball-gm.com/blog/" target="_blank">Blog</a> ·
-            <a href="https://basketball-gm.com/contact/" target="_blank">Contact</a> ·
-            <a href="https://basketball-gm.com/share/" target="_blank">Share</a><br>
-            <p class="rev">v3.6 · REV_GOES_HERE</p>
+            <p class="rev">v3.6 · 2016.08.30.5</p>
           </p>
         </footer>
       </div>
@@ -161,6 +172,20 @@
     <iframe style="display: none;" src="/manifest_hack"></iframe>
 
     <script>
+      var loadingPeriods = document.getElementById('loading-periods');
+      var animatePeriods = function () {
+        if (loadingPeriods) {
+          var content = loadingPeriods.innerHTML;
+          if (content === '' || content === '.' || content === '..') {
+            loadingPeriods.innerHTML += '.';
+          } else {
+            loadingPeriods.innerHTML = '';
+          }
+          setTimeout(animatePeriods, 400);
+        }
+      };
+      animatePeriods();
+
       var body = document.getElementsByTagName('body').item(0);
       var script = document.createElement('script');
       script.type = 'text/javascript';

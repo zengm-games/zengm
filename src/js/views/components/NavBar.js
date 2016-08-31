@@ -17,6 +17,11 @@ class DropdownLinks extends React.Component {
         return this.props.lid !== nextProps.lid || this.props.godMode !== nextProps.godMode;
     }
 
+    handleToolsClick(id, e) {
+        e.preventDefault();
+        actions.toolsMenu[id]();
+    }
+
     render() {
         const {godMode, lid} = this.props;
 
@@ -70,12 +75,12 @@ class DropdownLinks extends React.Component {
                         <li><a href={helpers.leagueUrl(['player_feats'])}>Statistical Feats</a></li>
                     </ul>
                 </li> : null}
-                <li className="dropdown" id="tools-menu">
+                <li className="dropdown">
                     <a href="#" className="dropdown-toggle" data-toggle="dropdown"><span className="hidden-sm">Tools <b className="caret"></b></span><span className="visible-sm">X <b className="caret"></b></span></a>
                     <ul className="dropdown-menu">
                         <li className="dropdown-header visible-sm">Tools</li>
                         <li><a href="/account">Achievements</a></li>
-                        {lid !== undefined ? <li><a href="" id="tools-menu-auto-play-seasons">Auto Play Seasons</a></li> : null}
+                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('autoPlaySeasons', e)} data-no-davis="true">Auto Play Seasons</a></li> : null}
                         {lid !== undefined && godMode ? <li><a href={helpers.leagueUrl(['customize_player'])} className="god-mode">Create A Player</a></li> : null}
                         {lid !== undefined && godMode ? <li><a href={helpers.leagueUrl(['edit_team_info'])} className="god-mode">Edit Team Info</a></li> : null}
                         {lid !== undefined ? <li><a href={helpers.leagueUrl(['event_log'])}>Event Log</a></li> : null}
@@ -89,15 +94,15 @@ class DropdownLinks extends React.Component {
                         <li><a href="" id="screenshot" data-no-davis="true"><span className="glyphicon glyphicon-camera"></span> Screenshot</a></li>
                         {lid !== undefined ? <li className="divider"></li> : null}
                         <li role="presentation" className="dropdown-header">Use at your own risk!</li>
-                        {lid !== undefined ? <li><a href="" id="tools-menu-skip-to-playoffs">Skip To Playoffs</a></li> : null}
-                        {lid !== undefined ? <li><a href="" id="tools-menu-skip-to-before-draft">Skip To Before Draft</a></li> : null}
-                        {lid !== undefined ? <li><a href="" id="tools-menu-skip-to-after-draft">Skip To After Draft</a></li> : null}
-                        {lid !== undefined ? <li><a href="" id="tools-menu-skip-to-preseason">Skip To Preseason</a></li> : null}
-                        {lid !== undefined ? <li><a href="" id="tools-menu-force-resume-draft">Force Resume Draft</a></li> : null}
+                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('skipToPlayoffs', e)} data-no-davis="true">Skip To Playoffs</a></li> : null}
+                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('skipToBeforeDraft', e)} data-no-davis="true">Skip To Before Draft</a></li> : null}
+                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('skipToAfterDraft', e)} data-no-davis="true">Skip To After Draft</a></li> : null}
+                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('skipToPreseason', e)} data-no-davis="true">Skip To Preseason</a></li> : null}
+                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('forceResumeDraft', e)} data-no-davis="true">Force Resume Draft</a></li> : null}
                         <li><a href="" onClick={toggleDebugMode} id="toggle-debug-mode">
                             {localStorage.debug === "debug" ? 'Disable Debug Mode' : 'Enable Debug Mode'}
                         </a></li>
-                        <li><a href="" id="tools-menu-reset-db">Reset DB</a></li>
+                        <li><a onClick={e => this.handleToolsClick('resetDb', e)} data-no-davis="true">Reset DB</a></li>
                     </ul>
                 </li>
                 <li className="dropdown">
@@ -165,7 +170,7 @@ class PlayMenu extends React.Component {
                 <a href="#" className="dropdown-toggle" data-toggle="dropdown" id="play-button">
                     <span className="hidden-xs">Play</span> <b className="caret"></b>
                 </a>
-                <ul className="dropdown-menu play-menu">
+                <ul className="dropdown-menu">
                     {options.map((option, i) => <li key={i}>
                         <a
                             href={option.url}

@@ -1,6 +1,8 @@
+const db = require('../db');
 const g = require('../globals');
 const ui = require('../ui');
 const contractNegotiation = require('../core/contractNegotiation');
+const draft = require('../core/draft');
 const freeAgents = require('../core/freeAgents');
 const game = require('../core/game');
 const league = require('../core/league');
@@ -146,15 +148,15 @@ const playMenu = {
         }
     },
 
-    untilDraft: () => {
+    untilDraft: async () => {
         if (g.phase === g.PHASE.BEFORE_DRAFT) {
-            phase.newPhase(g.PHASE.DRAFT);
+            await phase.newPhase(g.PHASE.DRAFT);
         }
     },
 
-    untilResignPlayers: () => {
+    untilResignPlayers: async () => {
         if (g.phase === g.PHASE.AFTER_DRAFT) {
-            phase.newPhase(g.PHASE.RESIGN_PLAYERS);
+            await phase.newPhase(g.PHASE.RESIGN_PLAYERS);
         }
     },
 
@@ -173,9 +175,9 @@ const playMenu = {
         await playAmount('untilPreseason');
     },
 
-    untilRegularSeason: () => {
+    untilRegularSeason: async () => {
         if (g.phase === g.PHASE.PRESEASON) {
-            phase.newPhase(g.PHASE.REGULAR_SEASON);
+            await phase.newPhase(g.PHASE.REGULAR_SEASON);
         }
     },
 
@@ -194,9 +196,42 @@ const playMenu = {
     },
 };
 
+const toolsMenu = {
+    autoPlaySeasons: () => {
+        league.initAutoPlay();
+    },
+
+    skipToPlayoffs: async () => {
+        await phase.newPhase(g.PHASE.PLAYOFFS);
+    },
+
+    skipToBeforeDraft: async () => {
+        await phase.newPhase(g.PHASE.BEFORE_DRAFT);
+    },
+
+    skipToAfterDraft: async () => {
+        await phase.newPhase(g.PHASE.AFTER_DRAFT);
+    },
+
+    skipToPreseason: async () => {
+        await phase.newPhase(g.PHASE.PRESEASON);
+    },
+
+    forceResumeDraft: async () => {
+        await draft.untilUserOrEnd();
+    },
+
+    resetDb: () => {
+        if (window.confirm("Are you sure you want to reset the database? This will delete all your current saved games.")) {
+            db.reset();
+        }
+    },
+};
+
 module.exports = {
     liveGame,
     negotiate,
     playMenu,
+    toolsMenu,
     tradeFor,
 };

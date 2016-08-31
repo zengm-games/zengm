@@ -48,46 +48,6 @@ function init() {
     const {Controller} = require('./views/components');
     ReactDOM.render(<Controller />, document.getElementById('content'));
 
-    // Handle clicks from Tools menu
-    const toolsMenu = $("#tools-menu");
-    toolsMenu.on("click", "#tools-menu-auto-play-seasons", () => {
-        require('./core/league').initAutoPlay();
-        $("#tools-menu .dropdown-toggle").dropdown("toggle");
-        return false;
-    });
-    toolsMenu.on("click", "#tools-menu-skip-to-playoffs", () => {
-        require('./core/phase').newPhase(g.PHASE.PLAYOFFS);
-        $("#tools-menu .dropdown-toggle").dropdown("toggle");
-        return false;
-    });
-    toolsMenu.on("click", "#tools-menu-skip-to-before-draft", () => {
-        require('./core/phase').newPhase(g.PHASE.BEFORE_DRAFT);
-        $("#tools-menu .dropdown-toggle").dropdown("toggle");
-        return false;
-    });
-    toolsMenu.on("click", "#tools-menu-skip-to-after-draft", () => {
-        require('./core/phase').newPhase(g.PHASE.AFTER_DRAFT);
-        $("#tools-menu .dropdown-toggle").dropdown("toggle");
-        return false;
-    });
-    toolsMenu.on("click", "#tools-menu-skip-to-preseason", () => {
-        require('./core/phase').newPhase(g.PHASE.PRESEASON);
-        $("#tools-menu .dropdown-toggle").dropdown("toggle");
-        return false;
-    });
-    toolsMenu.on("click", "#tools-menu-force-resume-draft", () => {
-        require('./core/draft').untilUserOrEnd();
-        $("#tools-menu .dropdown-toggle").dropdown("toggle");
-        return false;
-    });
-    toolsMenu.on("click", "#tools-menu-reset-db", () => {
-        if (window.confirm("Are you sure you want to reset the database? This will delete all your current saved games.")) {
-            require('./db').reset();
-        }
-        $("#tools-menu .dropdown-toggle").dropdown("toggle");
-        return false;
-    });
-
     // Bootstrap's collapsable nav doesn't play nice with single page apps
     // unless you manually close it when a link is clicked. However, I need
     // this to run only on real links, not "dropdown" links (#).

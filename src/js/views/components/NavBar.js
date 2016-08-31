@@ -32,31 +32,33 @@ class DropdownLinks extends React.Component {
 
         // When a dropdown at the top is open, use hover to move between items,
         // like in a normal menubar.
-        $("#nav-primary").on("mouseenter", ".dropdown-toggle", event => {
-            if (!topMenuCollapse.hasClass("in")) {
-                const liHover = event.target.parentNode;
+        document.getElementById('nav-primary').addEventListener('mouseover', event => {
+            if (!event.target.matches('.dropdown-toggle')) {
+                return;
+            }
 
-                // Is any dropdown open?
-                let foundOpen = false;
-                const lis = document.getElementById("nav-primary").children;
-                for (let i = 0; i < lis.length; i++) {
-                    if (lis[i].classList.contains("open")) {
-                        foundOpen = true;
-                        if (lis[i] === liHover) {
-                            // The hovered menu is already open
-                            return;
-                        }
+            const liHover = event.target.parentNode;
+
+            // Is any dropdown open?
+            let foundOpen = false;
+            const lis = document.getElementById("nav-primary").children;
+            for (let i = 0; i < lis.length; i++) {
+                if (lis[i].classList.contains("open")) {
+                    foundOpen = true;
+                    if (lis[i] === liHover) {
+                        // The hovered menu is already open
+                        return;
                     }
                 }
-
-                // If no dropdown is open, do nothing
-                if (!foundOpen) {
-                    return;
-                }
-
-                // If a dropdown is open and another one is hovered over, open the hovered one and close the other
-                $(liHover.children[0]).dropdown("toggle");
             }
+
+            // If no dropdown is open, do nothing
+            if (!foundOpen) {
+                return;
+            }
+
+            // If a dropdown is open and another one is hovered over, open the hovered one and close the other
+            $(liHover.children[0]).dropdown("toggle");
         });
     }
 

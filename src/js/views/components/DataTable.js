@@ -347,10 +347,29 @@ class DataTable extends React.Component {
             </div>;
         }
 
+        // Table footer
         let tfoot = null;
         if (footer) {
+            let footers;
+
+            if (Array.isArray(footer[0])) {
+                // There are multiple footers
+                footers = footer;
+            } else {
+                // There's only one footer
+                footers = [footer];
+            }
+
             tfoot = <tfoot>
-                <tr>{footer.map((value, i) => <th key={i}>{value}</th>)}</tr>
+                {footers.map((row, i) => <tr key={i}>
+                    {row.map((value, j) => {
+                        if (value !== null && value.hasOwnProperty('value')) {
+                            return <th className={classNames(value.classNames)} key={j}>{value.value}</th>;
+                        }
+
+                        return <th key={j}>{value}</th>;
+                    })}
+                </tr>)}
             </tfoot>;
         }
 

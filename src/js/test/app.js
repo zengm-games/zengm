@@ -3,7 +3,6 @@ window.Promise = require('bluebird');
 window.Promise.config({warnings: false});
 
 require('indexeddb-getall-shim');
-require('../util/templateHelpers');
 
 mocha.setup({
     ui: 'bdd',

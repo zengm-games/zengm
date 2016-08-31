@@ -68,7 +68,6 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}) 
 };
 
 const playAmount = async amount => {
-console.log('play', amount);
     if (['day', 'week', 'month', 'untilPreseason'].includes(amount)) {
         let numDays;
         if (amount === "day") {

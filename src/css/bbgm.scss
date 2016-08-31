@@ -486,6 +486,15 @@ table {
   float: left;
 }
 
+.team-picture-splash {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 90px;
+  height: 90px;
+  float: left;
+}
+
 .skill {
   cursor: default;
   font-size: 10px;

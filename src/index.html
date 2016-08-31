@@ -13,7 +13,7 @@
     <script type="text/javascript">
       window.inCordova = document.URL.indexOf('file://') === 0;
       window.bbgmPrefix = window.inCordova ? "" : "/"; // Relative URLs for Cordova
-      window.bbgmVersion = "2016.08.30.5";
+      window.bbgmVersion = "REV_GOES_HERE";
 
       function loadCSS(filename){
         var el = document.createElement("link");
@@ -111,32 +111,37 @@
 
     <div id="content">
       <div style="max-width: 360px; margin: 0 auto;">
-        <h1>Loading<span id="loading-periods"></span></h1>
+        <h1>Loading...</h1>
 
         <p style="clear: both; margin-bottom: 8em"></p>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/ATL.png)"></div>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/BAL.png)"></div>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/BOS.png)"></div>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/CHI.png)"></div>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/CIN.png); clear: both"></div>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/CLE.png)"></div>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/DAL.png)"></div>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/DEN.png)"></div>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/DET.png); clear: both"></div>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/HOU.png)"></div>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/LA.png)"></div>
-        <div class="team-picture" style="display: inline; margin: 0; width: 90px; height: 90px; background-image: url(/img/logos/LV.png)"></div>
+        <div class="team-picture-splash" id="team-picture-0"></div>
+        <div class="team-picture-splash" id="team-picture-1"></div>
+        <div class="team-picture-splash" id="team-picture-2"></div>
+        <div class="team-picture-splash" id="team-picture-3"></div>
+        <div class="team-picture-splash" id="team-picture-4"></div>
+        <div class="team-picture-splash" id="team-picture-5"></div>
+        <div class="team-picture-splash" id="team-picture-6"></div>
+        <div class="team-picture-splash" id="team-picture-7"></div>
+        <div class="team-picture-splash" id="team-picture-8"></div>
+        <div class="team-picture-splash" id="team-picture-9"></div>
+        <div class="team-picture-splash" id="team-picture-10"></div>
+        <div class="team-picture-splash" id="team-picture-11"></div>
 
         <p style="clear: both; margin-bottom: 8em"></p>
         <p>This should only take a few seconds on a fast connection.</p>
         <p>If this gets stuck for a while, try <a href="https://basketball-gm.com/manual/debugging/">the debugging instructions</a> and try to find an error message and report a bug.</p>
 
-        <hr style="margin-bottom: 2em">
+        <hr style="margin-bottom: 1.5em">
 
         <footer>
           <p>
-            <p class="rev">v3.6 · 2016.08.30.5</p>
+              <a href="https://basketball-gm.com/about/" target="_blank">About</a> ·
+              <a href="https://basketball-gm.com/advertise/" target="_blank">Advertise</a> ·
+              <a href="https://basketball-gm.com/blog/" target="_blank">Blog</a> ·
+              <a href="https://basketball-gm.com/contact/" target="_blank">Contact</a> ·
+              <a href="https://basketball-gm.com/share/" target="_blank">Share</a><br />
           </p>
+          <p class="rev">v3.6 · REV_GOES_HERE</p>
         </footer>
       </div>
     </div>
@@ -172,19 +177,22 @@
     <iframe style="display: none;" src="/manifest_hack"></iframe>
 
     <script>
-      var loadingPeriods = document.getElementById('loading-periods');
-      var animatePeriods = function () {
-        if (loadingPeriods) {
-          var content = loadingPeriods.innerHTML;
-          if (content === '' || content === '.' || content === '..') {
-            loadingPeriods.innerHTML += '.';
-          } else {
-            loadingPeriods.innerHTML = '';
-          }
-          setTimeout(animatePeriods, 400);
+      function shuffle(array) {
+        let counter = array.length;
+        while (counter > 0) {
+          let index = Math.floor(Math.random() * counter);
+          counter--;
+          let temp = array[counter];
+          array[counter] = array[index];
+          array[index] = temp;
         }
-      };
-      animatePeriods();
+        return array;
+      }
+
+      var abbrevs = shuffle(['ATL', 'BAL', 'BOS', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN', 'DET', 'HOU', 'LV', 'LA', 'MXC', 'MIA', 'MIN', 'MON', 'NYC', 'PHI', 'PHO', 'PIT', 'POR', 'SAC', 'SD', 'SF', 'SEA', 'STL', 'TPA', 'TOR', 'VAN', 'WAS']);
+      for (var i = 0; i < 12; i++) {
+        document.getElementById('team-picture-' + i).style.backgroundImage = 'url(/img/logos/' + abbrevs[i] + '.png)';
+      }
 
       var body = document.getElementsByTagName('body').item(0);
       var script = document.createElement('script');

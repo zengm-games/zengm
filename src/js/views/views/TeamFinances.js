@@ -213,19 +213,22 @@ const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], lux
         };
     });
 
-    function muteZeroAmount(amount) {
+    function highlightZeroNegative(amount) {
         const formattedValue = helpers.formatCurrency(amount, 'M');
 
         if (amount === 0) {
             return {classNames: 'text-muted', value: formattedValue};
+        }
+        if (amount < 0) {
+            return {classNames: 'text-danger', value: formattedValue};
         }
 
         return formattedValue;
     }
 
     const footer = [
-        ['Totals'].concat(contractTotals.map(amount => muteZeroAmount(amount))),
-        ['Free cap space'].concat(contractTotals.map((amount) => muteZeroAmount(salaryCap - amount))),
+        ['Totals'].concat(contractTotals.map(amount => highlightZeroNegative(amount))),
+        ['Free Cap Space'].concat(contractTotals.map((amount) => highlightZeroNegative(salaryCap - amount))),
     ];
 
     return <div>

@@ -230,7 +230,7 @@ class PlayMenu extends React.Component {
     }
 }
 
-const NavBar = ({lid, options, phaseText, statusText, updating, username}) => {
+const NavBar = ({lid, godMode, options, phaseText, statusText, updating, username}) => {
     return <nav className="navbar navbar-default navbar-fixed-top" role="navigation" id="top-menu">
         <div className="container">
             <div className="pull-right">
@@ -271,7 +271,7 @@ const NavBar = ({lid, options, phaseText, statusText, updating, username}) => {
                 </p> : null}
             </div>
 
-            <DropdownLinks lid={lid} />
+            <DropdownLinks godMode={godMode} lid={lid} />
         </div>
     </nav>;
 };

@@ -26,7 +26,6 @@ better eslint
 check for errorMessage with HTML in it - what to do then?
 
 when all react
-  MultiTeamMenu shouldComponentUpdate - ok to just check ref of props, or need deep compare?
   reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
   reevaluate bbgmView API
   make sure no data-bind

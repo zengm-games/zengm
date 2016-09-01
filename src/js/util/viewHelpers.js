@@ -2,13 +2,10 @@ const db = require('../db');
 const g = require('../globals');
 const ui = require('../ui');
 const league = require('../core/league');
-const $ = require('jquery');
 const helpers = require('./helpers');
 
 async function beforeLeague(req, loadedLid) {
     g.lid = parseInt(req.params.lid, 10);
-
-    const popup = req.params.w === "popup";
 
     // Check for some other window making changes to the database
     const checkDbChange = async lid => {
@@ -53,17 +50,6 @@ async function beforeLeague(req, loadedLid) {
 
         await db.connectLeague(g.lid);
         await league.loadGameAttributes(null);
-
-        // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
-        if (popup) {
-            $("#top-menu").hide();
-            $("body").css("padding-top", "0");
-
-            const css = document.createElement("style");
-            css.type = "text/css";
-            css.innerHTML = ".new_window { display: none }";
-            document.body.appendChild(css);
-        }
 
         // Update play menu
         ui.updateStatus();

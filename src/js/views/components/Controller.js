@@ -44,6 +44,7 @@ class Controller extends React.Component {
                 lid: undefined,
                 options: [],
                 phaseText: undefined,
+                popup: window.location.search === '?w=popup',
                 statusText: undefined,
                 username: null,
             },
@@ -59,6 +60,15 @@ class Controller extends React.Component {
         g.emitter.on('updatePage', this.updatePage);
         g.emitter.on('updateMultiTeam', this.updateMultiTeam);
         g.emitter.on('updateTopMenu', this.updateTopMenu);
+
+        if (this.state.topMenu.popup) {
+            document.body.style.paddingTop = 0;
+
+            const css = document.createElement("style");
+            css.type = "text/css";
+            css.innerHTML = ".new_window { display: none }";
+            document.body.appendChild(css);
+        }
     }
 
     componentWillUnmount() {

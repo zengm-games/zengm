@@ -1,5 +1,7 @@
 REACT
 
+basketball spin on update (not initial load)?
+
 Switch between two leagues directly with forward/back (react to react) and it has the two controllers problem
 
 Game Log broken
@@ -19,6 +21,8 @@ abstract games list in schedule and dashboard
 better eslint
 
 check for errorMessage with HTML in it - what to do then?
+
+make dropdown respond instantly, like watch block
 
 when all react
   reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js

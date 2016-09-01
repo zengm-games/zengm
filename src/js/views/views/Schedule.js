@@ -4,7 +4,7 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
 const {Dropdown, NewWindowLink} = require('../components');
 
-module.exports = ({abbrev, completed, season, teamInfo, upcoming = []}) => {
+module.exports = ({abbrev, completed, season, teamInfo, upcoming}) => {
     bbgmViewReact.title('Schedule');
 
     return <div>

@@ -53,6 +53,7 @@ class Controller extends React.Component {
         this.updatePage = this.updatePage.bind(this);
         this.updateMultiTeam = this.updateMultiTeam.bind(this);
         this.updateTopMenu = this.updateTopMenu.bind(this);
+        this.setStateData = this.setStateData.bind(this);
     }
 
     componentDidMount() {
@@ -102,6 +103,12 @@ class Controller extends React.Component {
         this.updatePage(args, inputs, updateEvents, cb);
     }
 
+    setStateData(data) {
+        this.setState({
+            data: Object.assign(this.state.data, data),
+        });
+    }
+
     async updatePage(args, inputs, updateEvents, cb) {
         let prevData;
 
@@ -131,16 +138,14 @@ class Controller extends React.Component {
         }
 
         // Resolve all the promises before updating the UI to minimize flicker
-        const promisesBefore = args.runBefore.map(fn => fn(inputs, updateEvents, this.state));
+        const promisesBefore = args.runBefore.map(fn => fn(inputs, updateEvents, this.state.data, this.setStateData));
 
         // Run promises in parallel, update when each one is ready
         // This runs no matter what
         const promisesWhenever = args.runWhenever.map(async fn => {
-            const vars = await Promise.resolve(fn(inputs, updateEvents, this.state));
+            const vars = await Promise.resolve(fn(inputs, updateEvents, this.state.data, this.setStateData));
             if (vars !== undefined) {
-                this.setState({
-                    data: Object.assign(this.state.data, ...vars),
-                });
+                this.setStateData(vars);
             }
         });
 

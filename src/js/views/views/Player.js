@@ -232,7 +232,7 @@ const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = 
     let statusInfo = null;
     if (!retired) {
         statusInfo = <div>
-            {injured ? <span className="label label-danger label-injury" style={{marginLeft: 0}} data-bind="attr: {title: player.injury.type() + ' (out ' + player.injury.gamesRemaining() + ' more games)'}">{player.injury.gamesRemaining}</span> : null}
+            {injured ? <span className="label label-danger label-injury" style={{marginLeft: 0}} title={`${player.injury.type} (out ${player.injury.gamesRemaining} more games)`}>{player.injury.gamesRemaining}</span> : null}
             <SkillsBlock
                 className={injured ? null : 'skills-alone'}
                 skills={player.ratings[player.ratings.length - 1].skills}

@@ -526,13 +526,13 @@ table {
   vertical-align: 2%;
 }
 
-.watch {
+.watch, .watch:hover {
   color: #aaa;
   cursor: pointer;
   margin-left: 5px;
+  text-decoration: none;
 }
-
-.watch-active {
+.watch-active, .watch-active:hover {
   color: #d9534f;
 }
 

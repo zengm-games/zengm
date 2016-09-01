@@ -16,6 +16,7 @@ class WatchBlock extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        // This assumes that the view is listening for playerMovement or watchList, otherwise it'll send the same old (wrong) prop
         if (nextProps.watch !== this.state.watch) {
             this.setState({
                 watch: nextProps.watch,
@@ -42,7 +43,7 @@ class WatchBlock extends React.Component {
         });
 
         league.updateLastDbChange();
-        ui.realtimeUpdate(["watchList"]);
+        ui.realtimeUpdate(["playerMovement", "watchList"]);
     }
 
     render() {

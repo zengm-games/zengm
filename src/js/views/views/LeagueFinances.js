@@ -5,7 +5,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components');
 
-const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season, teams = []}) => {
+const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season, teams}) => {
     bbgmViewReact.title(`League Finances - ${season}`);
 
     const cols = getCols('Team', 'Avg Attendance', 'Revenue (YTD)', 'Profit (YTD)', 'Cash', 'Payroll');

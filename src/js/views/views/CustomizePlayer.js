@@ -21,7 +21,6 @@ class CustomizePlayer extends React.Component {
         super(props);
         this.state = {
             appearanceOption: props.appearanceOption,
-            dirty: false,
             saving: false,
             p: props.p,
         };
@@ -30,19 +29,9 @@ class CustomizePlayer extends React.Component {
         this.randomizeFace = this.randomizeFace.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (!this.state.dirty) {
-            this.setState({
-                appearanceOption: nextProps.appearanceOption,
-                p: nextProps.p,
-            });
-        }
-    }
-
     async handleSubmit(e) {
         e.preventDefault();
         this.setState({
-            dirty: false,
             saving: true,
         });
 
@@ -114,10 +103,6 @@ class CustomizePlayer extends React.Component {
                 // Add back to database
                 await tx.players.put(p);
             }
-        });
-
-        this.setState({
-            dirty: false,
         });
 
         league.updateLastDbChange();
@@ -228,7 +213,6 @@ class CustomizePlayer extends React.Component {
 
 
         this.setState({
-            dirty: true,
             p,
         });
     }
@@ -236,7 +220,6 @@ class CustomizePlayer extends React.Component {
     handleChangeAppearanceOption(e) {
         this.setState({
             appearanceOption: e.target.value,
-            dirty: true,
         });
     }
 
@@ -252,7 +235,6 @@ class CustomizePlayer extends React.Component {
 
         this.state.p.face = face;
         this.setState({
-            dirty: true,
             p: this.state.p,
         });
     }
@@ -260,9 +242,6 @@ class CustomizePlayer extends React.Component {
     render() {
         const {originalTid, season, teams} = this.props;
         const {appearanceOption, p, saving} = this.state;
-        if (!p) {
-            return <div />;
-        }
 
         const age = season - p.born.year;
 

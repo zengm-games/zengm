@@ -131,7 +131,7 @@ class ExportStats extends React.Component {
     render() {
         bbgmViewReact.title('Export Stats');
 
-        const {seasons = []} = this.props;
+        const {seasons} = this.props;
 
         return <div>
             <h1>Export Stats</h1>

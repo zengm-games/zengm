@@ -4,7 +4,7 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 const {liveGame} = require('../../util/actions');
 const {NewWindowLink} = require('../components');
 
-const Live = ({games = [], gamesInProgress}) => {
+const Live = ({games, gamesInProgress}) => {
     bbgmViewReact.title('Live Game Simulation');
 
     return <div>

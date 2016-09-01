@@ -186,7 +186,7 @@ function findPrevNextGids(games = [], currentGid) {
     return {prevGid, nextGid};
 }
 
-const GameLog = ({abbrev, boxScore = {}, gamesList = {games: []}, season}) => {
+const GameLog = ({abbrev, boxScore, gamesList = {games: []}, season}) => {
     bbgmViewReact.title(`Game Log - ${season}`);
 
     const {nextGid, prevGid} = findPrevNextGids(gamesList.games, boxScore.gid);

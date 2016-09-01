@@ -4,7 +4,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, NewWindowLink} = require('../components');
 
-const TeamRecords = ({byType, displayName = 'Team', seasonCount, teamRecords = []}) => {
+const TeamRecords = ({byType, displayName, seasonCount, teamRecords}) => {
     bbgmViewReact.title('Team Records');
 
     const cols = getCols(displayName, 'W', 'L', '%', 'Playoffs', 'Last Playoffs', 'Finals', 'Championships', 'Last Title', 'MVP', 'DPOY', 'SMOY', 'ROY', 'BR', 'BRC', 'ART', 'ALT', 'ADT');

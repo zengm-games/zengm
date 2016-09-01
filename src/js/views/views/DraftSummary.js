@@ -5,7 +5,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, DraftAbbrev, Dropdown, JumpTo, NewWindowLink, SkillsBlock} = require('../components');
 
-const DraftSummary = ({players = [], season}) => {
+const DraftSummary = ({players, season}) => {
     bbgmViewReact.title(`${season} Draft Summary`);
 
     const superCols = [{

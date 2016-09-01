@@ -9,20 +9,11 @@ class EditTeamInfo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dirty: false,
             saving: false,
             teams: this.props.teams,
         };
         this.handleFile = this.handleFile.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (!this.state.dirty) {
-            this.setState({
-                teams: nextProps.teams,
-            });
-        }
     }
 
     handleFile(e) {
@@ -109,10 +100,6 @@ class EditTeamInfo extends React.Component {
                 teamNamesCache: newTeams.map(t => t.name),
             });
 
-            this.setState({
-                dirty: false,
-            });
-
             league.updateLastDbChange();
             ui.realtimeUpdate(["dbChange"]);
         };
@@ -123,7 +110,6 @@ class EditTeamInfo extends React.Component {
         this.state.teams[i][name] = e.target.value;
 
         this.setState({
-            dirty: true,
             teams: this.state.teams,
         });
     }
@@ -131,7 +117,6 @@ class EditTeamInfo extends React.Component {
     async handleSubmit(e) {
         e.preventDefault();
         this.setState({
-            dirty: false,
             saving: true,
         });
 
@@ -168,7 +153,6 @@ class EditTeamInfo extends React.Component {
         ui.realtimeUpdate([], helpers.leagueUrl(["edit_team_info"]));
 
         this.setState({
-            dirty: false,
             saving: false,
         });
     }
@@ -176,7 +160,7 @@ class EditTeamInfo extends React.Component {
     render() {
         bbgmViewReact.title('Edit Team Info');
 
-        const {saving, teams = []} = this.state;
+        const {saving, teams} = this.state;
 
         return <div>
             <h1>Edit Team Info</h1>

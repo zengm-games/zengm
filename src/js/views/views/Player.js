@@ -210,7 +210,7 @@ const ShotLocationsTable = ({careerStats = [], stats = []}) => {
     />;
 };
 
-const Player = ({events = [], feats = [], freeAgent, godMode, injured, player = {awardsGrouped: [], born: {}, careerStats: {}, careerStatsPlayoffs: {}, draft: {}, pid: 0, ratings: [{season: 0, skills: []}], salaries: [], stats: [], statsPlayoffs: [], watch: false}, retired, showContract, showTradeFor}) => {
+const Player = ({events, feats, freeAgent, godMode, injured, player, retired, showContract, showTradeFor}) => {
     bbgmViewReact.title(player.name);
 
     let draftInfo = null;

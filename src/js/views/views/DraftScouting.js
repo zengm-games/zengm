@@ -125,7 +125,7 @@ class DraftScouting extends React.Component {
     }
 
     render() {
-        const {seasons = []} = this.props;
+        const {seasons} = this.props;
 
         bbgmViewReact.title('Draft Scouting');
 

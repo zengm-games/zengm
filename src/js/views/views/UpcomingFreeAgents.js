@@ -4,7 +4,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} = require('../components');
 
-const UpcomingFreeAgents = ({players = [], season}) => {
+const UpcomingFreeAgents = ({players, season}) => {
     bbgmViewReact.title('Upcoming Free Agents');
 
     const cols = getCols('Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Min', 'Pts', 'Reb', 'Ast', 'PER', 'Current Contract', 'Desired Contract');

@@ -65,7 +65,7 @@ const ConfStandings = ({playoffsByConference, season, teams}) => {
     </table>;
 };
 
-module.exports = ({confs = [], playoffsByConference = true, season}) => {
+module.exports = ({confs, playoffsByConference, season}) => {
     if (season === undefined) {
         bbgmViewReact.title('Standings');
     } else {

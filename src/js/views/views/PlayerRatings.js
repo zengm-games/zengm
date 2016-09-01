@@ -5,7 +5,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} = require('../components');
 
-const PlayerRatings = ({abbrev, players = [], season}) => {
+const PlayerRatings = ({abbrev, players, season}) => {
     bbgmViewReact.title(`Player Ratings - ${season}`);
 
     const cols = getCols('Name', 'Pos', 'Team', 'Age', 'Country', 'Ovr', 'Pot', 'rating:Hgt', 'rating:Str', 'rating:Spd', 'rating:Jmp', 'rating:End', 'rating:Ins', 'rating:Dnk', 'rating:FT', 'rating:2Pt', 'rating:3Pt', 'rating:Blk', 'rating:Stl', 'rating:Drb', 'rating:Pss', 'rating:Reb');

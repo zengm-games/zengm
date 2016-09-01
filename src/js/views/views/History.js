@@ -3,7 +3,7 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
 const {Dropdown, JumpTo, NewWindowLink} = require('../components');
 
-const History = ({awards = {allDefensive: [], allLeague: [], allRookie: [], bestRecordConfs: [], dpoy: {}, finalsMvp: {}, mvp: {}, roy: {}, smoy: {}}, champ = {}, confs, retiredPlayers = [], season, userTid}) => {
+const History = ({awards, champ, confs, retiredPlayers, season, userTid}) => {
     bbgmViewReact.title(`Season Summary - ${season}`);
 
     return <div>

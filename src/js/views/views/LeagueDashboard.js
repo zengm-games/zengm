@@ -5,7 +5,7 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
 const {NewWindowLink, PlayerNameLabels, PlayoffMatchup, RatingWithChange} = require('../components');
 
-const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed = [], confTeams = [], leagueLeaders = {ast: {}, pts: {}, trb: {}}, lost, messages = [], name, oppPts, oppPtsRank, payroll, playoffRoundsWon, playoffsByConference, profit, pts, ptsRank, rank, region, revenue, salaryCap, season, series, seriesTitle, showPlayoffSeries, starters = [], teamLeaders = {ast: {}, pts: {}, trb: {}}, trb, trbRank, upcoming = [], won}) => {
+const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams, leagueLeaders, lost, messages, name, oppPts, oppPtsRank, payroll, playoffRoundsWon, playoffsByConference, profit, pts, ptsRank, rank, region, revenue, salaryCap, season, series, seriesTitle, showPlayoffSeries, starters, teamLeaders, trb, trbRank, upcoming, won}) => {
     bbgmViewReact.title('Dashboard');
 
     // Show the remaining number of games, only for the regular season.

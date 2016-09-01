@@ -5,7 +5,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, NewWindowLink} = require('../components');
 
-const PowerRankings = ({teams = []}) => {
+const PowerRankings = ({teams}) => {
     bbgmViewReact.title('Power Rankings');
 
     const cols = getCols('O', 'P', 'T', 'Team', 'W', 'L', 'L10', 'Diff');

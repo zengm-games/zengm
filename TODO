@@ -32,12 +32,9 @@ when all react
   go through ui.js, reevaluate
   confirm ads work
     need to make them react components, to get topMenu
-  get rid of default params in views
-    will need to make sure it works on initial load
   escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame, edit team info)
   screenshot
   highlightPlayButton
-  simplify views with "dirty" - initial state can be set in constructor reliably (hopefully)
   confirm gold stuff works
     cancel
     goldMessage stuff

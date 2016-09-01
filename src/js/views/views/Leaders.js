@@ -3,7 +3,7 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
 const {Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} = require('../components');
 
-const Leaders = ({categories = [], season}) => {
+const Leaders = ({categories, season}) => {
     bbgmViewReact.title(`League Leaders - ${season}`);
 
     return <div>

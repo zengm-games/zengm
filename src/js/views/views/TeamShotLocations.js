@@ -5,7 +5,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, NewWindowLink} = require('../components');
 
-const TeamShotLocations = ({season, teams = []}) => {
+const TeamShotLocations = ({season, teams}) => {
     bbgmViewReact.title(`Team Shot Locations - ${season}`);
 
     const superCols = [{

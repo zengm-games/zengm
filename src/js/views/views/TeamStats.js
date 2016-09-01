@@ -6,7 +6,7 @@ const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components');
 const _ = require('underscore');
 
-const TeamStats = ({season, stats, teams = []}) => {
+const TeamStats = ({season, stats, teams}) => {
     bbgmViewReact.title(`Team Stats - ${season}`);
 
     const superCols = [{

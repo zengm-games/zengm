@@ -33,7 +33,7 @@ const handleChange = async (userTids, e) => {
     }
 };
 
-const MultiTeamMode = ({userTids = [], teams = []}) => {
+const MultiTeamMode = ({userTids, teams}) => {
     bbgmViewReact.title('Multi Team Mode');
 
     let statusText;

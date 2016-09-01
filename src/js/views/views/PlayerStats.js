@@ -5,7 +5,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} = require('../components');
 
-const PlayerStats = ({abbrev, season, statType, players = [], playoffs}) => {
+const PlayerStats = ({abbrev, season, statType, players, playoffs}) => {
     const label = season !== undefined && season !== null ? season : 'Career Totals';
     bbgmViewReact.title(`Player Stats - ${label}`);
 

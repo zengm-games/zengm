@@ -52,7 +52,7 @@ class NewTeam extends React.Component {
     }
 
     render() {
-        const {godMode, teams = []} = this.props;
+        const {godMode, teams} = this.props;
 
         bbgmViewReact.title('New Team');
 

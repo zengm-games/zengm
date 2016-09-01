@@ -151,7 +151,7 @@ class Trade extends React.Component {
     }
 
     render() {
-        const {godMode, lost, otherDpids = [], otherPicks = [], otherRoster = [], otherTid, salaryCap, summary = {enablePropose: false, teams: []}, showResigningMsg, strategy, teams = [], userDpids = [], userPicks = [], userRoster = [], userTeamName, won} = this.props;
+        const {godMode, lost, otherDpids, otherPicks, otherRoster, otherTid, salaryCap, summary, showResigningMsg, strategy, teams, userDpids, userPicks, userRoster, userTeamName, won} = this.props;
 
         bbgmViewReact.title('Trade');
 

@@ -5,7 +5,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, NewWindowLink} = require('../components');
 
-const HallOfFame = ({players = []}) => {
+const HallOfFame = ({players}) => {
     bbgmViewReact.title('Hall of Fame');
 
     const superCols = [{

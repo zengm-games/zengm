@@ -39,7 +39,7 @@ class WatchList extends React.Component {
     }
 
     render() {
-        const {players = [], playoffs, statType} = this.props;
+        const {players, playoffs, statType} = this.props;
 
         bbgmViewReact.title('Watch List');
 

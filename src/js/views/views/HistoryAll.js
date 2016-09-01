@@ -37,7 +37,7 @@ const teamName = (t, season) => {
     return 'N/A';
 };
 
-const HistoryAll = ({seasons = []}) => {
+const HistoryAll = ({seasons}) => {
     bbgmViewReact.title('League History');
 
     const cols = getCols('', 'League Champion', 'Runner Up', 'Finals MVP', 'MVP', 'DPOY', 'ROY');

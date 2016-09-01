@@ -78,7 +78,7 @@ class Draft extends React.Component {
     }
 
     render() {
-        const {drafted = [], fantasyDraft, started = false, undrafted = [], userTids} = this.props;
+        const {drafted, fantasyDraft, started, undrafted, userTids} = this.props;
 
         bbgmViewReact.title('Draft');
 

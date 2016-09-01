@@ -32,7 +32,7 @@ const sign = async (pid, amount, exp) => {
     redirectNegotiationOrRoster(false);
 };
 
-const Negotiation = ({contractOptions = [], payroll, player = {freeAgentMood: [], ratings: {}}, resigning, salaryCap, userTid}) => {
+const Negotiation = ({contractOptions, payroll, player, resigning, salaryCap, userTid}) => {
     bbgmViewReact.title(`Contract Negotiation - ${player.name}`);
 
 

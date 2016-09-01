@@ -7,7 +7,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components');
 
-const NegotiationList = ({players = []}) => {
+const NegotiationList = ({players}) => {
     bbgmViewReact.title('Re-sign Players');
 
     const cols = getCols('Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Min', 'Pts', 'Reb', 'Ast', 'PER', 'Asking For', 'Mood', 'Negotiate');

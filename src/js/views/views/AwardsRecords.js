@@ -6,7 +6,7 @@ const _ = require('underscore');
 
 const {DataTable, Dropdown, NewWindowLink} = require('../components');
 
-const AwardsRecords = ({awardType, awardTypeVal, awardsRecords = [], playerCount}) => {
+const AwardsRecords = ({awardType, awardTypeVal, awardsRecords, playerCount}) => {
     bbgmViewReact.title('Awards Records');
     const cols = getCols('Name', 'Count', 'Year', 'Last', 'Retired', 'HOF');
 

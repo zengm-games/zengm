@@ -1,7 +1,7 @@
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 
-const Dashboard = ({leagues = [], otherUrl}) => {
+const Dashboard = ({leagues, otherUrl}) => {
     bbgmViewReact.title('Dashboard');
 
     let otherUrlLink = null;

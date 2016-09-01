@@ -157,7 +157,7 @@ class UserInfo extends React.Component {
     }
 }
 
-const Account = ({achievements = [], goldMessage, goldSuccess, goldUntilDateString, showGoldActive, showGoldCancelled, showGoldPitch, username}) => {
+const Account = ({achievements, goldMessage, goldSuccess, goldUntilDateString, showGoldActive, showGoldCancelled, showGoldPitch, username}) => {
     bbgmViewReact.title('Account');
 
     let goldPitchDiv = null;

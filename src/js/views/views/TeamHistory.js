@@ -5,7 +5,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} = require('../components');
 
-const TeamHistory = ({abbrev, bestRecord = {}, championships, history = [], players = [], playoffAppearances, team = {}, totalLost, totalWon, worstRecord = {}}) => {
+const TeamHistory = ({abbrev, bestRecord, championships, history, players, playoffAppearances, team, totalLost, totalWon, worstRecord}) => {
     bbgmViewReact.title('Team History');
 
     const historySeasons = history.map((h) => {

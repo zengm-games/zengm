@@ -42,7 +42,6 @@ class NewLeague extends React.Component {
 
         this.state = {
             creating: false,
-            dirty: false,
             customize: 'random',
             invalidLeagueFile: false,
             leagueFile: null,
@@ -58,15 +57,6 @@ class NewLeague extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (!this.state.dirty) {
-            this.setState({
-                name: nextProps.name,
-                tid: nextProps.lastSelectedTid,
-            });
-        }
-    }
-
     handleChange(name, e) {
         let val = e.target.value;
         if (name === 'tid') {
@@ -75,7 +65,6 @@ class NewLeague extends React.Component {
             val = e.target.checked;
         }
         this.setState({
-            dirty: true,
             [name]: val,
         });
     }

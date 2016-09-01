@@ -170,7 +170,7 @@ class FinancesForm extends React.Component {
     }
 }
 
-const TeamFinances = ({abbrev, barData = {expenses: {salary: [], minTax: [], luxuryTax: [], scouting: [], coaching: [], health: [], facilities: []}, revenues: {localTv: [], luxuryTaxShare: [], merch: [], nationalTv: [], sponsor: [], ticket: []}}, barSeasons, contractTotals = [], contracts = [], gamesInProgress, luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons = [], salaryCap, show, team = {budget: {ticketPrice: {amount: '', rank: null}, scouting: {amount: '', rank: null}, budget: {amount: '', rank: null}, coaching: {amount: '', rank: null}, health: {amount: '', rank: null}, facilities: {amount: '', rank: null}}, expenses: {ticketPrice: {amount: '', rank: null}, scouting: {amount: '', rank: null}, budget: {amount: '', rank: null}, coaching: {amount: '', rank: null}, health: {amount: '', rank: null}, facilities: {amount: '', rank: null}}, name: null, region: null}, tid}) => {
+const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, gamesInProgress, luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons, salaryCap, show, team, tid}) => {
     bbgmViewReact.title(`${team.region} ${team.name} Finances`);
 
     const cols = getCols('Name').concat(salariesSeasons.map(season => {

@@ -4,7 +4,7 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
 const {NewWindowLink} = require('../components');
 
-const Inbox = ({anyUnread = false, messages = []}) => {
+const Inbox = ({anyUnread, messages}) => {
     bbgmViewReact.title('Inbox');
 
     return <div>

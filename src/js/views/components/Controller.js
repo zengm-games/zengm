@@ -100,7 +100,7 @@ class Controller extends React.Component {
         // (2) loaded, but loading something else
         if (
             (this.state.controller.idLoaded !== args.id && this.state.controller.idLoading !== args.id) ||
-            (this.state.controller.idLoaded === args.id && this.state.controller.idLoading !== args.id && this.state.controller.idLoading !== null)
+            (this.state.controller.idLoaded === args.id && this.state.controller.idLoading !== args.id && this.state.controller.idLoading !== undefined)
         ) {
             this.setState({
                 controller: {
@@ -117,12 +117,6 @@ class Controller extends React.Component {
             cb();
             return;
         } else {
-            this.setState({
-                controller: {
-                    idLoaded: this.state.controller.idLoaded,
-                    idLoading: this.state.controller.idLoading,
-                },
-            });
             prevData = this.state.data;
         }
 
@@ -132,7 +126,7 @@ class Controller extends React.Component {
         // Run promises in parallel, update when each one is ready
         // This runs no matter what
         const promisesWhenever = args.runWhenever.map(async fn => {
-            const vars = await Promise.resolve(fn(inputs, updateEvents, this.state, this.setState.bind(this)));
+            const vars = await Promise.resolve(fn(inputs, updateEvents, this.state));
             if (vars !== undefined) {
                 this.setState({
                     data: Object.assign(this.state.data, ...vars),

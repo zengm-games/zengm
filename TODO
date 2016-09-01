@@ -2,6 +2,8 @@ REACT
 
 Switch between two leagues directly with forward/back (react to react) and it has the two controllers problem
 
+Game Log broken
+
 DataTable
   USE FOR OTHER TABLES TOO, not just sortable ones. will be nice for colnames, especially
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
@@ -17,9 +19,6 @@ exorcist not working?
 is UI updating okay without waiting for this.setState to finish?
 
 abstract games list in schedule and dashboard
-
-add to watch list
-  other ui.js crap
 
 better eslint
 

@@ -48,29 +48,6 @@ function init() {
     const {Controller} = require('./views/components');
     ReactDOM.render(<Controller />, document.getElementById('content'));
 
-    // Watch list toggle
-    $(document).on("click", ".watch", async event => {
-        const watchEl = event.target;
-        const pid = parseInt(watchEl.dataset.pid, 10);
-
-        await g.dbl.tx("players", "readwrite", async tx => {
-            const p = await tx.players.get(pid);
-            if (watchEl.classList.contains("watch-active")) {
-                p.watch = false;
-                watchEl.classList.remove("watch-active");
-                watchEl.title = "Add to Watch List";
-            } else {
-                p.watch = true;
-                watchEl.classList.add("watch-active");
-                watchEl.title = "Remove from Watch List";
-            }
-            await tx.players.put(p);
-        });
-
-        require('./core/league').updateLastDbChange();
-        realtimeUpdate(["watchList"]);
-    });
-
     const screenshotEl = document.getElementById("screenshot");
     if (screenshotEl) { // Some errors were showing up otherwise for people with stale index.html maybe
         screenshotEl.addEventListener("click", event => {

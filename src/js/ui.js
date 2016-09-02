@@ -1,7 +1,5 @@
 const g = require('./globals');
 const Promise = require('bluebird');
-const React = require('react');
-const ReactDOM = require('react-dom');
 const Davis = require('./lib/davis');
 const $ = require('jquery');
 const helpers = require('./util/helpers');
@@ -40,12 +38,6 @@ function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
     } else if (cb !== undefined) {
         cb();
     }
-}
-
-// Things to do on initial page load
-function init() {
-    const {Controller} = require('./views/components');
-    ReactDOM.render(<Controller />, document.getElementById('content'));
 }
 
 /**
@@ -215,7 +207,6 @@ function highlightPlayButton() {
 }
 
 module.exports = {
-    init,
     realtimeUpdate,
     updatePhase,
     updatePlayMenu,

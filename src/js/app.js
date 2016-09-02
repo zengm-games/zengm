@@ -4,13 +4,15 @@ if (localStorage.debug === 'debug') {
     require('source-map-support').install();
 }
 
+const React = require('react');
+const ReactDOM = require('react-dom');
 const db = require('./db');
 const views = require('./views');
-const ui = require('./ui');
 const changes = require('./data/changes');
 const Davis = require('./lib/davis');
 const account = require('./util/account');
 const helpers = require('./util/helpers');
+const {Controller} = require('./views/components');
 
 // Overwrite Promise object globally so Babel uses it when transpiling async/await (not totally sure if necessary)
 window.Promise = require('bluebird');
@@ -44,7 +46,7 @@ require('jquery-ui/sortable');
         trade: require('./core/trade'),
     };
 
-    ui.init();
+    ReactDOM.render(<Controller />, document.getElementById('content'));
 
     // Browser compatibility checks!
 

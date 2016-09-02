@@ -188,9 +188,29 @@ const Select = ({field, handleChange, value}) => {
 };
 
 class Dropdown extends React.Component {
+    constructor(props) {
+        super(props);
+
+        // Keep in state so it can update instantly on click, rather than waiting for round trip
+        this.state = {
+            values: props.values,
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.values !== this.state.values) {
+            this.setState({
+                values: nextProps.values,
+            });
+        }
+    }
+
     handleChange(i, event) {
         const values = this.props.values.slice();
         values[i] = event.target.value;
+        this.setState({
+            values,
+        });
 
         const parts = [this.props.view].concat(values);
         if (this.props.extraParam !== undefined) {
@@ -201,12 +221,12 @@ class Dropdown extends React.Component {
     }
 
     render() {
-        return <form className="form-inline pull-right bbgm-dropdown">
+        return <form className="form-inline pull-right">
             {this.props.fields.map((field, i) => {
                 return <div key={field} className="form-group" style={{marginLeft: '4px', marginBottom: '4px'}}>
                     <Select
                         field={field}
-                        value={this.props.values[i]}
+                        value={this.state.values[i]}
                         handleChange={event => this.handleChange(i, event)}
                     />
                 </div>;

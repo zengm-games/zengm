@@ -47,8 +47,6 @@ when all react
 ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/help_me_with_a_little_beta_testing/d6tmkyf?context=3
 
 Dropdown
-  updateEvents need to be passed to dropdown to handle season change?
-    could pass season as a prop. anything else require update?
   "view" parameter is really first URL component, can't that be automatically retrieved?
 
 get rid of debug mode, loadCSS

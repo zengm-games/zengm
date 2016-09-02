@@ -230,7 +230,9 @@ class Controller extends React.Component {
         return <div className="container">
             <NavBar {...topMenu} updating={controller.idLoading !== undefined} />
             <Header />
-            {contents}
+            <div id="screenshot-nonleague">
+                {contents}
+            </div>
             <Footer />
         </div>;
     }

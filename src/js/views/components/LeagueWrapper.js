@@ -48,7 +48,7 @@ const LeagueWrapper = ({children, pageId}) => {
         <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
             <SideMenu pageId={pageId} />
         </div>
-        <div className="col-lg-10 col-xs-12 p402_premium">
+        <div className="col-lg-10 col-xs-12 p402_premium" id="screenshot-league">
             {children}
         </div>
     </div>;

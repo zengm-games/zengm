@@ -3,7 +3,6 @@ const Promise = require('bluebird');
 const React = require('react');
 const ReactDOM = require('react-dom');
 const Davis = require('./lib/davis');
-const html2canvas = require('./lib/html2canvas');
 const $ = require('jquery');
 const helpers = require('./util/helpers');
 const lock = require('./util/lock');
@@ -47,67 +46,6 @@ function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
 function init() {
     const {Controller} = require('./views/components');
     ReactDOM.render(<Controller />, document.getElementById('content'));
-
-    const screenshotEl = document.getElementById("screenshot");
-    if (screenshotEl) { // Some errors were showing up otherwise for people with stale index.html maybe
-        screenshotEl.addEventListener("click", event => {
-            event.preventDefault();
-
-            let contentEl = document.getElementById("league_content");
-            if (!contentEl) { contentEl = document.getElementById("content"); }
-
-            // Add watermark
-            const watermark = document.createElement("div");
-            watermark.innerHTML = `<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">${document.getElementsByClassName("navbar-brand")[0].parentNode.innerHTML}</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>`;
-            contentEl.insertBefore(watermark, contentEl.firstChild);
-            contentEl.style.padding = "8px";
-
-            // Add notifications
-            const notifications = document.getElementsByClassName('notification-container')[0].cloneNode(true);
-            notifications.classList.remove('notification-container');
-            for (let i = 0; i < notifications.childNodes.length; i++) {
-                // Otherwise screeenshot is taken before fade in is complete
-                notifications.childNodes[0].classList.remove('notification-fadein');
-            }
-            contentEl.appendChild(notifications);
-
-            html2canvas(contentEl, {
-                background: "#fff",
-                async onrendered(canvas) {
-                    // Remove watermark
-                    contentEl.removeChild(watermark);
-                    contentEl.style.padding = "";
-
-                    // Remove notifications
-                    contentEl.removeChild(notifications);
-
-                    try {
-                        const data = await Promise.resolve($.ajax({
-                            url: "https://imgur-apiv3.p.mashape.com/3/image",
-                            type: "post",
-                            headers: {
-                                Authorization: "Client-ID c2593243d3ea679",
-                                "X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
-                            },
-                            data: {
-                                image: canvas.toDataURL().split(',')[1],
-                            },
-                            dataType: "json",
-                        }));
-                        document.getElementById("screenshot-link").href = `http://imgur.com/${data.data.id}`;
-                        $("#modal-screenshot").modal("show");
-                    } catch (err) {
-                        console.log(err);
-                        if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {
-                            helpers.errorNotify(`Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`);
-                        } else {
-                            helpers.errorNotify("Error saving screenshot.");
-                        }
-                    }
-                },
-            });
-        });
-    }
 }
 
 /**

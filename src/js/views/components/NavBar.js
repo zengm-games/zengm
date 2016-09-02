@@ -1,6 +1,8 @@
+const Promise = require('bluebird');
 const $ = require('jquery');
 const React = require('react');
 const ui = require('../../ui');
+const html2canvas = require('../../lib/html2canvas');
 const actions = require('../../util/actions');
 const helpers = require('../../util/helpers');
 
@@ -14,6 +16,11 @@ const toggleDebugMode = () => {
 };
 
 class DropdownLinks extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleScreenshotClick = this.handleScreenshotClick.bind(this);
+    }
+
     shouldComponentUpdate(nextProps) {
         return this.props.lid !== nextProps.lid || this.props.godMode !== nextProps.godMode;
     }
@@ -59,6 +66,64 @@ class DropdownLinks extends React.Component {
 
             // If a dropdown is open and another one is hovered over, open the hovered one and close the other
             $(liHover.children[0]).dropdown("toggle");
+        });
+    }
+
+    handleScreenshotClick(e) {
+        e.preventDefault();
+
+        let contentEl = document.getElementById("screenshot-league");
+        if (!contentEl) { contentEl = document.getElementById("screenshot-nonleague"); }
+
+        // Add watermark
+        const watermark = document.createElement("div");
+        watermark.innerHTML = `<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">${document.getElementsByClassName("navbar-brand")[0].parentNode.innerHTML}</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>`;
+        contentEl.insertBefore(watermark, contentEl.firstChild);
+        contentEl.style.padding = "8px";
+
+        // Add notifications
+        const notifications = document.getElementsByClassName('notification-container')[0].cloneNode(true);
+        notifications.classList.remove('notification-container');
+        for (let i = 0; i < notifications.childNodes.length; i++) {
+            // Otherwise screeenshot is taken before fade in is complete
+            notifications.childNodes[0].classList.remove('notification-fadein');
+        }
+        contentEl.appendChild(notifications);
+
+        html2canvas(contentEl, {
+            background: "#fff",
+            async onrendered(canvas) {
+                // Remove watermark
+                contentEl.removeChild(watermark);
+                contentEl.style.padding = "";
+
+                // Remove notifications
+                contentEl.removeChild(notifications);
+
+                try {
+                    const data = await Promise.resolve($.ajax({
+                        url: "https://imgur-apiv3.p.mashape.com/3/image",
+                        type: "post",
+                        headers: {
+                            Authorization: "Client-ID c2593243d3ea679",
+                            "X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
+                        },
+                        data: {
+                            image: canvas.toDataURL().split(',')[1],
+                        },
+                        dataType: "json",
+                    }));
+                    document.getElementById("screenshot-link").href = `http://imgur.com/${data.data.id}`;
+                    $("#modal-screenshot").modal("show");
+                } catch (err) {
+                    console.log(err);
+                    if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {
+                        helpers.errorNotify(`Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`);
+                    } else {
+                        helpers.errorNotify("Error saving screenshot.");
+                    }
+                }
+            },
         });
     }
 
@@ -136,7 +201,7 @@ class DropdownLinks extends React.Component {
                         {lid !== undefined ? <li><a href={helpers.leagueUrl(['delete_old_data'])}>Improve Performance</a></li> : null}
                         {lid !== undefined && godMode ? <li><a href={helpers.leagueUrl(['multi_team_mode'])} className="god-mode">Multi Team Mode</a></li> : null}
                         {lid !== undefined && godMode ? <li><a href={helpers.leagueUrl(['new_team'])} className="god-mode">Switch Team</a></li> : null}
-                        <li><a href="" id="screenshot" data-no-davis="true"><span className="glyphicon glyphicon-camera"></span> Screenshot</a></li>
+                        <li><a onClick={this.handleScreenshotClick} data-no-davis="true"><span className="glyphicon glyphicon-camera"></span> Screenshot</a></li>
                         {lid !== undefined ? <li className="divider"></li> : null}
                         <li role="presentation" className="dropdown-header">Use at your own risk!</li>
                         {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('skipToPlayoffs', e)} data-no-davis="true">Skip To Playoffs</a></li> : null}

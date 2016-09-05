@@ -21,6 +21,7 @@ class TopMenuToggle extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.handleClick = this.handleClick.bind(this);
+        this.handleMouseEnter = this.handleMouseEnter.bind(this);
     }
 
     handleClick(e) {
@@ -28,17 +29,33 @@ class TopMenuToggle extends React.Component {
         this.props.onClick(e);
     }
 
+    handleMouseEnter(e) {
+        if (this.props.openId !== undefined && this.props.openId !== this.props.long) {
+            this.props.onClick(e);
+        }
+    }
+
     render() {
-        return <a className="dropdown-toggle" onClick={this.handleClick} data-no-davis="true">
+        return <a
+            className="dropdown-toggle"
+            onClick={this.handleClick}
+            onMouseEnter={this.handleMouseEnter}
+            data-no-davis="true"
+        >
             <span className="hidden-sm">{this.props.long} <b className="caret"></b></span>
             <span className="visible-sm">{this.props.short} <b className="caret"></b></span>
         </a>;
     }
 }
 
-const TopMenuDropdown = ({children, long, short}) => {
-    return <Dropdown componentClass="li" id={`top-menu-${long.toLowerCase()}`}>
-        <TopMenuToggle bsRole="toggle" long={long} short={short} />
+const TopMenuDropdown = ({children, long, short, openId, onToggle}) => {
+    return <Dropdown
+        componentClass="li"
+        id={`top-menu-${long.toLowerCase()}`}
+        open={openId === long}
+        onToggle={() => onToggle(long)}
+    >
+        <TopMenuToggle bsRole="toggle" long={long} short={short} openId={openId} />
         <Dropdown.Menu>
             <MenuItem className="visible-sm" header>{long}</MenuItem>
             {children}
@@ -49,11 +66,15 @@ const TopMenuDropdown = ({children, long, short}) => {
 class DropdownLinks extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            openId: undefined,
+        };
         this.handleScreenshotClick = this.handleScreenshotClick.bind(this);
+        this.handleTopMenuToggle = this.handleTopMenuToggle.bind(this);
     }
 
-    shouldComponentUpdate(nextProps) {
-        return this.props.lid !== nextProps.lid || this.props.godMode !== nextProps.godMode;
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.state.openId !== nextState.openId || this.props.lid !== nextProps.lid || this.props.godMode !== nextProps.godMode;
     }
 
     handleScreenshotClick(e) {
@@ -119,13 +140,19 @@ class DropdownLinks extends React.Component {
         actions.toolsMenu[id]();
     }
 
+    handleTopMenuToggle(id) {
+        this.setState({
+            openId: id === this.state.openId ? undefined : id,
+        });
+    }
+
     render() {
         const {godMode, lid} = this.props;
 
         return <div className="collapse navbar-collapse navbar-right" id="top-menu-collapse">
             <ul className="nav navbar-nav" id="nav-primary">
                 {lid !== undefined ? <li><a href={helpers.leagueUrl([])}><span className="glyphicon glyphicon-home"></span></a></li> : null}
-                {lid !== undefined ? <TopMenuDropdown long="League" short="L">
+                {lid !== undefined ? <TopMenuDropdown long="League" short="L" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
                     <MenuItem href={helpers.leagueUrl(['standings'])}>Standings</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['playoffs'])}>Playoffs</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['league_finances'])}>Finances</MenuItem>
@@ -133,14 +160,14 @@ class DropdownLinks extends React.Component {
                     <MenuItem href={helpers.leagueUrl(['power_rankings'])}>Power Rankings</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['transactions', 'all'])}>Transactions</MenuItem>
                 </TopMenuDropdown> : null}
-                {lid !== undefined ? <TopMenuDropdown long="Team" short="T">
+                {lid !== undefined ? <TopMenuDropdown long="Team" short="T" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
                     <MenuItem href={helpers.leagueUrl(['roster'])}>Roster</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['schedule'])}>Schedule</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['team_finances'])}>Finances</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['team_history'])}>History</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['transactions'])}>Transactions</MenuItem>
                 </TopMenuDropdown> : null}
-                {lid !== undefined ? <TopMenuDropdown long="Players" short="P">
+                {lid !== undefined ? <TopMenuDropdown long="Players" short="P" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
                     <MenuItem href={helpers.leagueUrl(['free_agents'])}>Free Agents</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['trade'])}>Trade</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['trading_block'])}>Trading Block</MenuItem>
@@ -148,7 +175,7 @@ class DropdownLinks extends React.Component {
                     <MenuItem href={helpers.leagueUrl(['watch_list'])}>Watch List</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['hall_of_fame'])}>Hall of Fame</MenuItem>
                 </TopMenuDropdown> : null}
-                {lid !== undefined ? <TopMenuDropdown long="Stats" short="S">
+                {lid !== undefined ? <TopMenuDropdown long="Stats" short="S" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
                     <MenuItem href={helpers.leagueUrl(['game_log'])}>Game Log</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['leaders'])}>League Leaders</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['player_ratings'])}>Player Ratings</MenuItem>
@@ -156,7 +183,7 @@ class DropdownLinks extends React.Component {
                     <MenuItem href={helpers.leagueUrl(['team_stats'])}>Team Stats</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['player_feats'])}>Statistical Feats</MenuItem>
                 </TopMenuDropdown> : null}
-                <TopMenuDropdown long="Tools" short="X">
+                <TopMenuDropdown long="Tools" short="X" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
                     <MenuItem href="/account">Achievements</MenuItem>
                     {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('autoPlaySeasons', e)} data-no-davis="true">Auto Play Seasons</MenuItem> : null}
                     {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['customize_player'])} className="god-mode">Create A Player</MenuItem> : null}
@@ -182,7 +209,7 @@ class DropdownLinks extends React.Component {
                     </MenuItem>
                     <MenuItem onClick={e => this.handleToolsClick('resetDb', e)} data-no-davis="true">Reset DB</MenuItem>
                 </TopMenuDropdown>
-                <TopMenuDropdown long="Help" short="?">
+                <TopMenuDropdown long="Help" short="?" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
                     <MenuItem href="https://basketball-gm.com/manual/" target="_blank">Overview</MenuItem>
                     <MenuItem href="/changes">Changes</MenuItem>
                     <MenuItem href="https://basketball-gm.com/manual/customization/" target="_blank">Custom Rosters</MenuItem>

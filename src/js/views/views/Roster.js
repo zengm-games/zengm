@@ -2,6 +2,8 @@ const Promise = require('bluebird');
 const classNames = require('classnames');
 const $ = require('jquery');
 const React = require('react');
+const DropdownButton = require('react-bootstrap/lib/DropdownButton');
+const MenuItem = require('react-bootstrap/lib/MenuItem');
 const g = require('../../globals');
 const ui = require('../../ui');
 const league = require('../../core/league');
@@ -315,14 +317,11 @@ class Roster extends React.Component {
 
         return <div>
             <Dropdown view="roster" fields={["teams", "seasons"]} values={[abbrev, season]} />
-            <div className="btn-group pull-right">
-                <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    More Info <span className="caret"></span>
-                </button>
-                <ul className="dropdown-menu">
-                    <li><a href={helpers.leagueUrl(['player_stats', abbrev, season])}>Player Stats</a></li>
-                    <li><a href={helpers.leagueUrl(['player_ratings', abbrev, season])}>Player Ratings</a></li>
-                </ul>
+            <div className="pull-right">
+                <DropdownButton id="dropdown-more-info" title="More Info">
+                    <MenuItem href={helpers.leagueUrl(['player_stats', abbrev, season])}>Player Stats</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['player_ratings', abbrev, season])}>Player Ratings</MenuItem>
+                </DropdownButton>
             </div>
 
             <h1>{team.region} {team.name} Roster <NewWindowLink /></h1>

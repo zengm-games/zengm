@@ -1,4 +1,6 @@
 const React = require('react');
+const DropdownButton = require('react-bootstrap/lib/DropdownButton');
+const MenuItem = require('react-bootstrap/lib/MenuItem');
 const g = require('../../globals');
 const ui = require('../../ui');
 const league = require('../../core/league');
@@ -98,14 +100,11 @@ class WatchList extends React.Component {
 
         return <div>
             <Dropdown view="watch_list" fields={['statTypes', 'playoffs']} values={[statType, playoffs]} />
-            <div className="btn-group pull-right">
-                <button type="button" className="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Other Reports <span className="caret"></span>
-                </button>
-                <ul className="dropdown-menu">
-                    <li><a href={helpers.leagueUrl(['player_stats', 'watch'])}>Player Stats</a></li>
-                    <li><a href={helpers.leagueUrl(['player_ratings', 'watch'])}>Player Ratings</a></li>
-                </ul>
+            <div className="pull-right">
+                <DropdownButton id="dropdown-other-reports" title="Other Reports">
+                    <MenuItem href={helpers.leagueUrl(['player_stats', 'watch'])}>Player Stats</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['player_ratings', 'watch'])}>Player Ratings</MenuItem>
+                </DropdownButton>
             </div>
             <h1>Watch List <NewWindowLink /></h1>
 

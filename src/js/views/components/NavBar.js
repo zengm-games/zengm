@@ -284,7 +284,7 @@ class PlayMenu extends React.Component {
             return <div />;
         }
 
-        return <ul className="nav navbar-nav-no-collapse" data-no-collapse="true">
+        return <ul className="nav navbar-nav-no-collapse">
             <Dropdown componentClass="li" id="play-menu">
                 <Dropdown.Toggle className="play-button" useAnchor={true} data-no-davis="true">
                     <span className="hidden-xs">Play</span>
@@ -339,7 +339,7 @@ const NavBar = ({lid, godMode, options, phaseText, popup, statusText, updating, 
                 </button>
                 <LogoAndText lid={lid} updating={updating} />
                 <PlayMenu lid={lid} options={options} />
-                {lid !== undefined ? <p className="navbar-text-two-line-no-collapse" data-no-collapse="true">
+                {lid !== undefined ? <p className="navbar-text-two-line-no-collapse">
                     {phaseText}<br />
                     {statusText}
                 </p> : null}

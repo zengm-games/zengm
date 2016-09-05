@@ -11,12 +11,12 @@ const NavBar = require('./NavBar');
 
 class LeagueContent extends React.Component {
     shouldComponentUpdate(nextProps) {
-        // Until this is true, it's still loading or updating
-        return nextProps.args.pageId === nextProps.controller.idLoaded && !nextProps.controller.updating;
+        return !nextProps.updating;
     }
 
     render() {
         const {Component, data, topMenu} = this.props;
+console.log('render LeagueContent', data);
 
         return <Component {...data} topMenu={topMenu} />;
     }
@@ -26,11 +26,11 @@ class Controller extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            args: undefined,
-            controller: {
-                idLoaded: undefined,
-                idLoading: undefined,
-            },
+            Component: undefined,
+            idLoaded: undefined,
+            idLoading: undefined,
+            inLeague: false,
+            pageId: undefined,
             data: {},
             multiTeam: {
                 userTid: g.userTid,
@@ -116,26 +116,23 @@ class Controller extends React.Component {
         // (1) if it's not loaded and not loading yet
         // (2) loaded, but loading something else
         if (
-            (this.state.controller.idLoaded !== args.id && this.state.controller.idLoading !== args.id) ||
-            (this.state.controller.idLoaded === args.id && this.state.controller.idLoading !== args.id && this.state.controller.idLoading !== undefined)
+            (this.state.idLoaded !== args.id && this.state.idLoading !== args.id) ||
+            (this.state.idLoaded === args.id && this.state.idLoading !== args.id && this.state.idLoading !== undefined)
         ) {
-            this.setState({
-                controller: {
-                    idLoaded: this.state.controller.idLoaded,
-                    idLoading: args.id,
-                },
-            });
-
             updateEvents.push("firstRun");
 
             prevData = {};
-        } else if (this.state.controller.idLoading === args.id) {
+        } else if (this.state.idLoading === args.id) {
             // If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
             cb();
             return;
         } else {
             prevData = this.state.data;
         }
+
+        this.setState({
+            idLoading: args.id,
+        });
 
         // Resolve all the promises before updating the UI to minimize flicker
         const promisesBefore = args.runBefore.map(fn => fn(inputs, updateEvents, prevData, this.setStateData));
@@ -153,11 +150,9 @@ class Controller extends React.Component {
         const results = await Promise.all(promisesBefore);
 
         const vars = {
-            args: {
-                Component: args.Component,
-                pageId: args.id,
-                inLeague: args.inLeague,
-            },
+            Component: args.Component,
+            pageId: args.id,
+            inLeague: args.inLeague,
             data: Object.assign(prevData, ...results),
         };
 
@@ -175,12 +170,10 @@ class Controller extends React.Component {
 
         await Promise.all(promisesWhenever);
 
-        if (this.state.controller.idLoading === args.id) {
+        if (this.state.idLoading === args.id) {
             this.setState({
-                controller: {
-                    idLoaded: args.id,
-                    idLoading: undefined,
-                },
+                idLoaded: args.id,
+                idLoading: undefined,
             });
 
             // Scroll to top
@@ -211,24 +204,31 @@ class Controller extends React.Component {
     }
 
     render() {
-        const {args, data, controller, multiTeam, topMenu} = this.state;
+        const {Component, data, idLoaded, idLoading, inLeague, multiTeam, pageId, topMenu} = this.state;
+
+        const updating = idLoading !== undefined;
 
         let contents;
-        if (!args) {
+        if (!Component) {
             contents = null;
-        } else if (!args.inLeague) {
-            contents = <args.Component {...data} topMenu={topMenu} />;
+        } else if (!inLeague) {
+            contents = <Component {...data} topMenu={topMenu} />;
         } else {
             contents = <div>
-                <LeagueWrapper pageId={args.pageId}>
-                    <LeagueContent args={args} controller={controller} data={data} topMenu={topMenu} Component={args.Component} />
+                <LeagueWrapper pageId={pageId}>
+                    <LeagueContent
+                        Component={Component}
+                        data={data}
+                        topMenu={topMenu}
+                        updating={updating}
+                    />
                 </LeagueWrapper>
                 <MultiTeamMenu {...multiTeam} />
             </div>;
         }
 
         return <div className="container">
-            <NavBar {...topMenu} updating={controller.idLoading !== undefined} />
+            <NavBar {...topMenu} updating={updating} />
             <Header />
             <div id="screenshot-nonleague">
                 {contents}

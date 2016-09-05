@@ -1,5 +1,7 @@
 REACT
 
+idLoaded and pageId redundant?
+
 basketball spin on update (not initial load)?
 
 browser errors in index.html
@@ -49,7 +51,7 @@ ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/
 Dropdown
   "view" parameter is really first URL component, can't that be automatically retrieved?
 
-get rid of debug mode, loadCSS
+get rid of debug mode
 
 remove survata unless they can optimize
 

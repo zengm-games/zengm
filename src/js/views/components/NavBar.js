@@ -36,6 +36,16 @@ class TopMenuToggle extends React.Component {
     }
 }
 
+const TopMenuDropdown = ({children, long, short}) => {
+    return <Dropdown componentClass="li" id={`top-menu-${long.toLowerCase()}`}>
+        <TopMenuToggle bsRole="toggle" long={long} short={short} />
+        <Dropdown.Menu>
+            <MenuItem className="visible-sm" header>{long}</MenuItem>
+            {children}
+        </Dropdown.Menu>
+    </Dropdown>;
+};
+
 class DropdownLinks extends React.Component {
     constructor(props) {
         super(props);
@@ -44,50 +54,6 @@ class DropdownLinks extends React.Component {
 
     shouldComponentUpdate(nextProps) {
         return this.props.lid !== nextProps.lid || this.props.godMode !== nextProps.godMode;
-    }
-
-    componentDidMount() {
-        // Bootstrap's collapsable nav doesn't play nice with single page apps
-        // unless you manually close it when a link is clicked. However, I need
-        // this to run only on real links, not "dropdown" links (#).
-        const topMenuCollapse = $("#top-menu-collapse");
-        topMenuCollapse.on("click", "a:not([href='#'])", () => {
-            // Only run when collapsable is open
-            if (topMenuCollapse.hasClass("in")) {
-                topMenuCollapse.collapse("hide");
-            }
-        });
-
-        // When a dropdown at the top is open, use hover to move between items,
-        // like in a normal menubar.
-        document.getElementById('nav-primary').addEventListener('mouseover', event => {
-            if (!event.target.matches('.dropdown-toggle')) {
-                return;
-            }
-
-            const liHover = event.target.parentNode;
-
-            // Is any dropdown open?
-            let foundOpen = false;
-            const lis = document.getElementById("nav-primary").children;
-            for (let i = 0; i < lis.length; i++) {
-                if (lis[i].classList.contains("open")) {
-                    foundOpen = true;
-                    if (lis[i] === liHover) {
-                        // The hovered menu is already open
-                        return;
-                    }
-                }
-            }
-
-            // If no dropdown is open, do nothing
-            if (!foundOpen) {
-                return;
-            }
-
-            // If a dropdown is open and another one is hovered over, open the hovered one and close the other
-            $(liHover.children[0]).dropdown("toggle");
-        });
     }
 
     handleScreenshotClick(e) {
@@ -159,93 +125,69 @@ class DropdownLinks extends React.Component {
         return <div className="collapse navbar-collapse navbar-right" id="top-menu-collapse">
             <ul className="nav navbar-nav" id="nav-primary">
                 {lid !== undefined ? <li><a href={helpers.leagueUrl([])}><span className="glyphicon glyphicon-home"></span></a></li> : null}
-                {lid !== undefined ? <Dropdown componentClass="li" id="dropdown-league">
-                    <TopMenuToggle bsRole="toggle" long="League" short="L" />
-                    <Dropdown.Menu>
-                        <MenuItem className="visible-sm" header>League</MenuItem>
-                        <MenuItem href={helpers.leagueUrl(['standings'])}>Standings</MenuItem>
-                        <MenuItem href={helpers.leagueUrl(['playoffs'])}>Playoffs</MenuItem>
-                        <MenuItem href={helpers.leagueUrl(['league_finances'])}>Finances</MenuItem>
-                        <MenuItem href={helpers.leagueUrl(['history_all'])}>History</MenuItem>
-                        <MenuItem href={helpers.leagueUrl(['power_rankings'])}>Power Rankings</MenuItem>
-                        <MenuItem href={helpers.leagueUrl(['transactions', 'all'])}>Transactions</MenuItem>
-                    </Dropdown.Menu>
-                </Dropdown> : null}
-                {lid !== undefined ? <li className="dropdown">
-                    <a href="#" className="dropdown-toggle" data-toggle="dropdown"><span className="hidden-sm">Team <b className="caret"></b></span><span className="visible-sm">T <b className="caret"></b></span></a>
-                    <ul className="dropdown-menu">
-                        <li className="dropdown-header visible-sm">Team</li>
-                        <li><a href={helpers.leagueUrl(['roster'])}>Roster</a></li>
-                        <li><a href={helpers.leagueUrl(['schedule'])}>Schedule</a></li>
-                        <li><a href={helpers.leagueUrl(['team_finances'])}>Finances</a></li>
-                        <li><a href={helpers.leagueUrl(['team_history'])}>History</a></li>
-                        <li><a href={helpers.leagueUrl(['transactions'])}>Transactions</a></li>
-                    </ul>
-                </li> : null}
-                {lid !== undefined ? <li className="dropdown">
-                    <a href="#" className="dropdown-toggle" data-toggle="dropdown"><span className="hidden-sm">Players <b className="caret"></b></span><span className="visible-sm">P <b className="caret"></b></span></a>
-                    <ul className="dropdown-menu">
-                        <li className="dropdown-header visible-sm">Players</li>
-                        <li><a href={helpers.leagueUrl(['free_agents'])}>Free Agents</a></li>
-                        <li><a href={helpers.leagueUrl(['trade'])}>Trade</a></li>
-                        <li><a href={helpers.leagueUrl(['trading_block'])}>Trading Block</a></li>
-                        <li><a href={helpers.leagueUrl(['draft'])}>Draft</a></li>
-                        <li><a href={helpers.leagueUrl(['watch_list'])}>Watch List</a></li>
-                        <li><a href={helpers.leagueUrl(['hall_of_fame'])}>Hall of Fame</a></li>
-                    </ul>
-                </li> : null}
-                {lid !== undefined ? <li className="dropdown">
-                    <a href="#" className="dropdown-toggle" data-toggle="dropdown"><span className="hidden-sm">Stats <b className="caret"></b></span><span className="visible-sm">S <b className="caret"></b></span></a>
-                    <ul className="dropdown-menu">
-                        <li className="dropdown-header visible-sm">Stats</li>
-                        <li><a href={helpers.leagueUrl(['game_log'])}>Game Log</a></li>
-                        <li><a href={helpers.leagueUrl(['leaders'])}>League Leaders</a></li>
-                        <li><a href={helpers.leagueUrl(['player_ratings'])}>Player Ratings</a></li>
-                        <li><a href={helpers.leagueUrl(['player_stats'])}>Player Stats</a></li>
-                        <li><a href={helpers.leagueUrl(['team_stats'])}>Team Stats</a></li>
-                        <li><a href={helpers.leagueUrl(['player_feats'])}>Statistical Feats</a></li>
-                    </ul>
-                </li> : null}
-                <li className="dropdown">
-                    <a href="#" className="dropdown-toggle" data-toggle="dropdown"><span className="hidden-sm">Tools <b className="caret"></b></span><span className="visible-sm">X <b className="caret"></b></span></a>
-                    <ul className="dropdown-menu">
-                        <li className="dropdown-header visible-sm">Tools</li>
-                        <li><a href="/account">Achievements</a></li>
-                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('autoPlaySeasons', e)} data-no-davis="true">Auto Play Seasons</a></li> : null}
-                        {lid !== undefined && godMode ? <li><a href={helpers.leagueUrl(['customize_player'])} className="god-mode">Create A Player</a></li> : null}
-                        {lid !== undefined && godMode ? <li><a href={helpers.leagueUrl(['edit_team_info'])} className="god-mode">Edit Team Info</a></li> : null}
-                        {lid !== undefined ? <li><a href={helpers.leagueUrl(['event_log'])}>Event Log</a></li> : null}
-                        {lid !== undefined ? <li><a href={helpers.leagueUrl(['export_league'])}>Export League</a></li> : null}
-                        {lid !== undefined ? <li><a href={helpers.leagueUrl(['export_stats'])}>Export Stats</a></li> : null}
-                        {lid !== undefined ? <li><a href={helpers.leagueUrl(['fantasy_draft'])}>Fantasy Draft</a></li> : null}
-                        {lid !== undefined ? <li><a href={helpers.leagueUrl(['god_mode'])}>God Mode</a></li> : null}
-                        {lid !== undefined ? <li><a href={helpers.leagueUrl(['delete_old_data'])}>Improve Performance</a></li> : null}
-                        {lid !== undefined && godMode ? <li><a href={helpers.leagueUrl(['multi_team_mode'])} className="god-mode">Multi Team Mode</a></li> : null}
-                        {lid !== undefined && godMode ? <li><a href={helpers.leagueUrl(['new_team'])} className="god-mode">Switch Team</a></li> : null}
-                        <li><a onClick={this.handleScreenshotClick} data-no-davis="true"><span className="glyphicon glyphicon-camera"></span> Screenshot</a></li>
-                        {lid !== undefined ? <li className="divider"></li> : null}
-                        <li role="presentation" className="dropdown-header">Use at your own risk!</li>
-                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('skipToPlayoffs', e)} data-no-davis="true">Skip To Playoffs</a></li> : null}
-                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('skipToBeforeDraft', e)} data-no-davis="true">Skip To Before Draft</a></li> : null}
-                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('skipToAfterDraft', e)} data-no-davis="true">Skip To After Draft</a></li> : null}
-                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('skipToPreseason', e)} data-no-davis="true">Skip To Preseason</a></li> : null}
-                        {lid !== undefined ? <li><a onClick={e => this.handleToolsClick('forceResumeDraft', e)} data-no-davis="true">Force Resume Draft</a></li> : null}
-                        <li><a href="" onClick={toggleDebugMode} id="toggle-debug-mode">
-                            {localStorage.debug === "debug" ? 'Disable Debug Mode' : 'Enable Debug Mode'}
-                        </a></li>
-                        <li><a onClick={e => this.handleToolsClick('resetDb', e)} data-no-davis="true">Reset DB</a></li>
-                    </ul>
-                </li>
-                <li className="dropdown">
-                    <a href="#" className="dropdown-toggle" data-toggle="dropdown"><span className="hidden-sm">Help <b className="caret"></b></span><span className="visible-sm">? <b className="caret"></b></span></a>
-                    <ul className="dropdown-menu">
-                        <li className="dropdown-header visible-sm">Help</li>
-                        <li><a href="https://basketball-gm.com/manual/" target="_blank">Overview</a></li>
-                        <li><a href="/changes">Changes</a></li>
-                        <li><a href="https://basketball-gm.com/manual/customization/" target="_blank">Custom Rosters</a></li>
-                        <li><a href="https://basketball-gm.com/manual/debugging/" target="_blank">Debugging</a></li>
-                    </ul>
-                </li>
+                {lid !== undefined ? <TopMenuDropdown long="League" short="L">
+                    <MenuItem href={helpers.leagueUrl(['standings'])}>Standings</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['playoffs'])}>Playoffs</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['league_finances'])}>Finances</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['history_all'])}>History</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['power_rankings'])}>Power Rankings</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['transactions', 'all'])}>Transactions</MenuItem>
+                </TopMenuDropdown> : null}
+                {lid !== undefined ? <TopMenuDropdown long="Team" short="T">
+                    <MenuItem href={helpers.leagueUrl(['roster'])}>Roster</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['schedule'])}>Schedule</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['team_finances'])}>Finances</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['team_history'])}>History</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['transactions'])}>Transactions</MenuItem>
+                </TopMenuDropdown> : null}
+                {lid !== undefined ? <TopMenuDropdown long="Players" short="P">
+                    <MenuItem href={helpers.leagueUrl(['free_agents'])}>Free Agents</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['trade'])}>Trade</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['trading_block'])}>Trading Block</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['draft'])}>Draft</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['watch_list'])}>Watch List</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['hall_of_fame'])}>Hall of Fame</MenuItem>
+                </TopMenuDropdown> : null}
+                {lid !== undefined ? <TopMenuDropdown long="Stats" short="S">
+                    <MenuItem href={helpers.leagueUrl(['game_log'])}>Game Log</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['leaders'])}>League Leaders</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['player_ratings'])}>Player Ratings</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['player_stats'])}>Player Stats</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['team_stats'])}>Team Stats</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['player_feats'])}>Statistical Feats</MenuItem>
+                </TopMenuDropdown> : null}
+                <TopMenuDropdown long="Tools" short="X">
+                    <MenuItem href="/account">Achievements</MenuItem>
+                    {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('autoPlaySeasons', e)} data-no-davis="true">Auto Play Seasons</MenuItem> : null}
+                    {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['customize_player'])} className="god-mode">Create A Player</MenuItem> : null}
+                    {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['edit_team_info'])} className="god-mode">Edit Team Info</MenuItem> : null}
+                    {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['event_log'])}>Event Log</MenuItem> : null}
+                    {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['export_league'])}>Export League</MenuItem> : null}
+                    {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['export_stats'])}>Export Stats</MenuItem> : null}
+                    {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['fantasy_draft'])}>Fantasy Draft</MenuItem> : null}
+                    {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['god_mode'])}>God Mode</MenuItem> : null}
+                    {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['delete_old_data'])}>Improve Performance</MenuItem> : null}
+                    {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['multi_team_mode'])} className="god-mode">Multi Team Mode</MenuItem> : null}
+                    {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['new_team'])} className="god-mode">Switch Team</MenuItem> : null}
+                    <MenuItem onClick={this.handleScreenshotClick} data-no-davis="true"><span className="glyphicon glyphicon-camera"></span> Screenshot</MenuItem>
+                    {lid !== undefined ? <li className="divider"></li> : null}
+                    <li role="presentation" className="dropdown-header">Use at your own risk!</li>
+                    {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('skipToPlayoffs', e)} data-no-davis="true">Skip To Playoffs</MenuItem> : null}
+                    {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('skipToBeforeDraft', e)} data-no-davis="true">Skip To Before Draft</MenuItem> : null}
+                    {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('skipToAfterDraft', e)} data-no-davis="true">Skip To After Draft</MenuItem> : null}
+                    {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('skipToPreseason', e)} data-no-davis="true">Skip To Preseason</MenuItem> : null}
+                    {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('forceResumeDraft', e)} data-no-davis="true">Force Resume Draft</MenuItem> : null}
+                    <MenuItem href="" onClick={toggleDebugMode} id="toggle-debug-mode">
+                        {localStorage.debug === "debug" ? 'Disable Debug Mode' : 'Enable Debug Mode'}
+                    </MenuItem>
+                    <MenuItem onClick={e => this.handleToolsClick('resetDb', e)} data-no-davis="true">Reset DB</MenuItem>
+                </TopMenuDropdown>
+                <TopMenuDropdown long="Help" short="?">
+                    <MenuItem href="https://basketball-gm.com/manual/" target="_blank">Overview</MenuItem>
+                    <MenuItem href="/changes">Changes</MenuItem>
+                    <MenuItem href="https://basketball-gm.com/manual/customization/" target="_blank">Custom Rosters</MenuItem>
+                    <MenuItem href="https://basketball-gm.com/manual/debugging/" target="_blank">Debugging</MenuItem>
+                </TopMenuDropdown>
             </ul>
         </div>;
     }

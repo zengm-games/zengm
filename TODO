@@ -3,9 +3,11 @@ REACT
 get rid of bootstrap dropdown jquery
   main navbar dropdowns
     need to control toggle state, maybe through "open" and "onToggle"
+    godmode css
   play menu
 
 get rid of bootstrap collapse jquery
+  close on click
 
 browser errors in index.html
 

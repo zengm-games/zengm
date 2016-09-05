@@ -151,7 +151,10 @@ class DropdownLinks extends React.Component {
 
         return <div className="collapse navbar-collapse navbar-right" id="top-menu-collapse">
             <ul className="nav navbar-nav" id="nav-primary">
-                {lid !== undefined ? <li><a href={helpers.leagueUrl([])}><span className="glyphicon glyphicon-home"></span></a></li> : null}
+                {lid !== undefined ? <li><a href={helpers.leagueUrl([])}>
+                    <span className="hidden-xs"><span className="glyphicon glyphicon-home" /></span>
+                    <span className="visible-xs"><span className="glyphicon glyphicon-home" style={{marginRight: '5px'}} />League Dashboard</span>
+                </a></li> : null}
                 {lid !== undefined ? <TopMenuDropdown long="League" short="L" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
                     <MenuItem href={helpers.leagueUrl(['standings'])}>Standings</MenuItem>
                     <MenuItem href={helpers.leagueUrl(['playoffs'])}>Playoffs</MenuItem>
@@ -320,12 +323,12 @@ const NavBar = ({lid, godMode, options, phaseText, popup, statusText, updating, 
                     ?
                         <a className="navbar-link user-menu" href="/account">
                             <span className="glyphicon glyphicon-user"></span>
-                            <span className="visible-lg">{username}</span>
+                            <span className="visible-lg"> {username}</span>
                         </a>
                     :
                         <a className="navbar-link user-menu" href="/account/login_or_register">
                             <span className="glyphicon glyphicon-user"></span>
-                            <span className="visible-lg">Login/Register</span>
+                            <span className="visible-lg"> Login/Register</span>
                         </a>
                     }
             </div>

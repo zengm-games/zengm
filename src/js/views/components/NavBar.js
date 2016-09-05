@@ -317,7 +317,7 @@ const NavBar = ({lid, godMode, options, phaseText, popup, statusText, updating, 
     }
 
     return <Navbar fixedTop>
-        <div className="pull-right">
+        <div className="pull-right" style={{marginLeft: '15px'}}>
                 {
                     username
                 ?

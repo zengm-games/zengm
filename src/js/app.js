@@ -19,7 +19,6 @@ window.Promise = require('bluebird');
 window.Promise.config({warnings: false});
 
 require('lib/bootstrap-affix');
-require('lib/bootstrap-collapse');
 require('lib/bootstrap-modal');
 require('./lib/davis.google_analytics');
 require('indexeddb-getall-shim');

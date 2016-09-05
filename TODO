@@ -1,5 +1,14 @@
 REACT
 
+get rid of bootstrap dropdown jquery
+  main navbar dropdowns
+    need to avoid router trigger on menu open
+    need to control toggle state, maybe through "open" and "onToggle"
+    xs screen menu
+  play menu
+
+get rid of bootstrap collapse jquery
+
 browser errors in index.html
 
 DataTable

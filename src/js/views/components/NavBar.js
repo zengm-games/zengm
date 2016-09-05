@@ -1,6 +1,8 @@
 const Promise = require('bluebird');
 const $ = require('jquery');
 const React = require('react');
+const MenuItem = require('react-bootstrap/lib/MenuItem');
+const NavDropdown = require('react-bootstrap/lib/NavDropdown');
 const ui = require('../../ui');
 const html2canvas = require('../../lib/html2canvas');
 const actions = require('../../util/actions');
@@ -138,18 +140,20 @@ class DropdownLinks extends React.Component {
         return <div className="collapse navbar-collapse navbar-right" id="top-menu-collapse">
             <ul className="nav navbar-nav" id="nav-primary">
                 {lid !== undefined ? <li><a href={helpers.leagueUrl([])}><span className="glyphicon glyphicon-home"></span></a></li> : null}
-                {lid !== undefined ? <li className="dropdown">
-                    <a href="#" className="dropdown-toggle" data-toggle="dropdown"><span className="hidden-sm">League <b className="caret"></b></span><span className="visible-sm">L <b className="caret"></b></span></a>
-                    <ul className="dropdown-menu">
-                        <li className="dropdown-header visible-sm">League</li>
-                        <li><a href={helpers.leagueUrl(['standings'])}>Standings</a></li>
-                        <li><a href={helpers.leagueUrl(['playoffs'])}>Playoffs</a></li>
-                        <li><a href={helpers.leagueUrl(['league_finances'])}>Finances</a></li>
-                        <li><a href={helpers.leagueUrl(['history_all'])}>History</a></li>
-                        <li><a href={helpers.leagueUrl(['power_rankings'])}>Power Rankings</a></li>
-                        <li><a href={helpers.leagueUrl(['transactions', 'all'])}>Transactions</a></li>
-                    </ul>
-                </li> : null}
+                {lid !== undefined ? <NavDropdown id="dropdown-league" title={
+                    <span style={{float: 'left', marginRight: '3px'}}>
+                        <span className="hidden-sm">League</span>
+                        <span className="visible-sm">L</span>
+                    </span>
+                }>
+                    <MenuItem className="visible-sm" header>League</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['standings'])}>Standings</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['playoffs'])}>Playoffs</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['league_finances'])}>Finances</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['history_all'])}>History</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['power_rankings'])}>Power Rankings</MenuItem>
+                    <MenuItem href={helpers.leagueUrl(['transactions', 'all'])}>Transactions</MenuItem>
+                </NavDropdown> : null}
                 {lid !== undefined ? <li className="dropdown">
                     <a href="#" className="dropdown-toggle" data-toggle="dropdown"><span className="hidden-sm">Team <b className="caret"></b></span><span className="visible-sm">T <b className="caret"></b></span></a>
                     <ul className="dropdown-menu">

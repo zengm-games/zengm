@@ -1,7 +1,6 @@
 const g = require('./globals');
 const Promise = require('bluebird');
 const Davis = require('./lib/davis');
-const $ = require('jquery');
 const helpers = require('./util/helpers');
 const lock = require('./util/lock');
 

@@ -167,7 +167,8 @@ footer {
   }
 }
 
-.god-mode, .god-mode-menu a {
+.god-mode,
+.god-mode-menu a {
   background-color: #563d7c !important;
   color: #fff !important;
 
@@ -526,13 +527,16 @@ table {
   vertical-align: 2%;
 }
 
-.watch, .watch:hover {
+.watch,
+.watch:hover {
   color: #aaa;
   cursor: pointer;
   margin-left: 5px;
   text-decoration: none;
 }
-.watch-active, .watch-active:hover {
+
+.watch-active,
+.watch-active:hover {
   color: #d9534f;
 }
 

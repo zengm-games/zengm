@@ -210,17 +210,17 @@ footer {
 }
 
 // These colors are copied from the default "success" button.
-#play-button {
-  color: #fff;
-  background-color: #5cb85c;
+.play-button {
+  color: #fff !important;
+  background-color: #5cb85c !important;
 
-  &:hover,
-  &:focus {
-    background-color: #47a447;
+  &:hover {
+    background-color: #47a447 !important;
   }
 
-  b.caret {
-    border-top-color: #fff;
+  .caret {
+    color: #fff !important;
+    border-top-color: #fff !important;
   }
 }
 

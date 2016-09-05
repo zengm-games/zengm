@@ -304,26 +304,6 @@ class PlayMenu extends React.Component {
                 </Dropdown.Menu>
             </Dropdown>
         </ul>;
-
-        return <ul className="nav navbar-nav-no-collapse" data-no-collapse="true">
-            <li className="dropdown">
-                <a href="#" className="dropdown-toggle" data-toggle="dropdown" id="play-button">
-                    <span className="hidden-xs">Play</span> <b className="caret"></b>
-                </a>
-                <ul className="dropdown-menu">
-                    {options.map((option, i) => <li key={i}>
-                        <a
-                            href={option.url}
-                            onClick={e => this.handleClick(option, e)}
-                            data-no-davis={option.url ? null : 'true'}
-                        >
-                            {option.label}
-                            {i === 0 ? <span className="text-muted kbd">Alt+P</span> : null}
-                        </a>
-                    </li>)}
-                </ul>
-            </li>
-        </ul>;
     }
 }
 

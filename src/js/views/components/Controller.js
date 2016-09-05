@@ -16,7 +16,6 @@ class LeagueContent extends React.Component {
 
     render() {
         const {Component, data, topMenu} = this.props;
-console.log('render LeagueContent', data);
 
         return <Component {...data} topMenu={topMenu} />;
     }
@@ -30,7 +29,6 @@ class Controller extends React.Component {
             idLoaded: undefined,
             idLoading: undefined,
             inLeague: false,
-            pageId: undefined,
             data: {},
             multiTeam: {
                 userTid: g.userTid,
@@ -151,7 +149,6 @@ class Controller extends React.Component {
 
         const vars = {
             Component: args.Component,
-            pageId: args.id,
             inLeague: args.inLeague,
             data: Object.assign(prevData, ...results),
         };
@@ -204,7 +201,7 @@ class Controller extends React.Component {
     }
 
     render() {
-        const {Component, data, idLoaded, idLoading, inLeague, multiTeam, pageId, topMenu} = this.state;
+        const {Component, data, idLoaded, idLoading, inLeague, multiTeam, topMenu} = this.state;
 
         const updating = idLoading !== undefined;
 
@@ -214,6 +211,8 @@ class Controller extends React.Component {
         } else if (!inLeague) {
             contents = <Component {...data} topMenu={topMenu} />;
         } else {
+            const pageId = idLoading !== undefined ? idLoading : idLoaded;
+
             contents = <div>
                 <LeagueWrapper pageId={pageId}>
                     <LeagueContent

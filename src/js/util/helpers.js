@@ -370,35 +370,6 @@ function bbgmPing(type) {
 }
 
 /**
- * Generate a block of HTML with a player's skill labels.
- *
- * @memberOf util.helpers
- * @param {Array.<string>} skills Array of skill labels, like "R" for "Rebounder", etc. See: core.player.skills.
- * @return {string} String of HTML-formatted skill labels, ready for output.
- */
-function skillsBlock(skills) {
-    const tooltips = {
-        "3": "Three Point Shooter",
-        A: "Athlete",
-        B: "Ball Handler",
-        Di: "Interior Defender",
-        Dp: "Perimeter Defender",
-        Po: "Post Scorer",
-        Ps: "Passer",
-        R: "Rebounder",
-    };
-
-    let skillsHtml = '';
-    if (skills !== undefined) {
-        for (let i = 0; i < skills.length; i++) {
-            skillsHtml += `<span class="skill" title="${tooltips[skills[i]]}">${skills[i]}</span>`;
-        }
-    }
-
-    return skillsHtml;
-}
-
-/**
  * Create a URL for a page within a league.
  *
  * This will also maintain any query string on the end of the URL, for instance for popup windows, unless options.noQueryString is set. Ignoring the query string can be important for forms in Davis.js until this is fixed: https://github.com/olivernn/davis.js/issues/75
@@ -419,49 +390,6 @@ function leagueUrl(components, options = {}, lid = g.lid) {
     }
 
     return url;
-}
-
-function watchBlock(pid, watch) {
-    if (watch) {
-        return `<span class="glyphicon glyphicon-flag watch watch-active" title="Remove from Watch List" data-pid="${pid}"></span>`;
-    }
-
-    return `<span class="glyphicon glyphicon-flag watch" title="Add to Watch List" data-pid="${pid}"></span>`;
-}
-
-/**
- * Generate a block of HTML with a player's name, skill labels.
- *
- * @memberOf util.helpers
- * @param {number} pid Player ID number.
- * @param {string} firstName Player's first name
- * @param {string} lastName Player's last name
- * @param {object=} object Injury object (properties: type and gamesRemaining).
- * @param {Array.<string>=} skills Array of skill labels, like "R" for "Rebounder", etc. See: core.player.skills.
- * @param {Array.<string>=} skills True: player is on watch list. False: player is not on watch list. Undefined: not sure, so don't show watch icon.
- * @return {string} String of HTML-formatted skill labels, ready for output.
- */
-function playerNameLabels(pid, name, injury, skills, watch) {
-    let html = `<a href="${leagueUrl(["player", pid])}">${name}</a>`;
-
-    if (injury !== undefined) {
-        if (injury.gamesRemaining > 0) {
-            html += `<span class="label label-danger label-injury" title="${injury.type} (out ${injury.gamesRemaining} more games)">${injury.gamesRemaining}</span>`;
-        } else if (injury.gamesRemaining === -1) {
-            // This is used in box scores, where it would be confusing to display "out X more games" in old box scores
-            html += `<span class="label label-danger label-injury" title="${injury.type}">&nbsp;</span>`;
-        }
-    }
-
-    if (skills !== undefined) {
-        html += skillsBlock(skills);
-    }
-
-    if (watch !== undefined) {
-        html += watchBlock(pid, watch);
-    }
-
-    return html;
 }
 
 /**
@@ -548,27 +476,6 @@ function bound(x, min, max) {
         return max;
     }
     return x;
-}
-
-
-/**
- * Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
- *
- * @memberOf util.helpers
- * @param {string} abbrev Drafting team ID.
- * @param {string} originalTid Original owner of the pick team ID.
- * @param {season=} season Optional season for the roster links.
- * @return {string} HTML link(s).
- */
-function draftAbbrev(tid, originalTid, season) {
-    const abbrev = g.teamAbbrevsCache[tid];
-    const originalAbbrev = g.teamAbbrevsCache[originalTid];
-
-    if (abbrev === originalAbbrev) {
-        return `<a href="${leagueUrl(["roster", abbrev, season])}">${abbrev}</a>`;
-    }
-
-    return `<a href="${leagueUrl(["roster", abbrev, season])}">${abbrev}</a> (from <a href="${leagueUrl(["roster", originalAbbrev, season])}">${originalAbbrev}</a>)`;
 }
 
 function pickDesc(pick) {
@@ -902,24 +809,6 @@ function roundWinp(arg) {
     return output;
 }
 
-function recordAndPlayoffs(abbrev, season, won, lost, playoffRoundsWon, option) {
-    let extraText = "";
-    if (playoffRoundsWon >= 0) {
-        extraText = roundsWonText(playoffRoundsWon).toLowerCase();
-    }
-
-    let output = '';
-    if (option !== "noSeason") {
-        output += `<a href="${leagueUrl(["roster", abbrev, season])}">${season}</a>: `;
-    }
-    output += `<a href="${leagueUrl(["standings", season])}">${won}-${lost}</a>`;
-    if (extraText) {
-        output += `, <a href="${leagueUrl(["playoffs", season])}">${extraText}</a>`;
-    }
-
-    return output;
-}
-
 module.exports = {
     validateAbbrev,
     getAbbrev,
@@ -934,16 +823,12 @@ module.exports = {
     errorNotify,
     resetG,
     bbgmPing,
-    skillsBlock,
-    watchBlock,
-    playerNameLabels,
     round,
     nullPad,
     formatCurrency,
     numberWithCommas,
     bound,
     leagueUrl,
-    draftAbbrev,
     pickDesc,
     ordinal,
     gameLogList,
@@ -958,5 +843,4 @@ module.exports = {
     maybeReuseTx,
     roundsWonText,
     roundWinp,
-    recordAndPlayoffs,
 };

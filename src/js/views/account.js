@@ -9,21 +9,21 @@ function get(req) {
     };
 }
 
-async function updateAccount(inputs, updateEvents, state) {
+async function updateAccount(inputs, updateEvents, state, setState, topMenu) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("account") >= 0) {
         await account.check();
 
-        const goldUntilDate = new Date(state.topMenu.goldUntil * 1000);
+        const goldUntilDate = new Date(topMenu.goldUntil * 1000);
         const goldUntilDateString = goldUntilDate.toDateString();
 
         const currentTimestamp = Math.floor(Date.now() / 1000);
-        const showGoldActive = !state.topMenu.goldCancelled && currentTimestamp <= state.topMenu.goldUntil;
-        const showGoldCancelled = state.topMenu.goldCancelled && currentTimestamp <= state.topMenu.goldUntil;
+        const showGoldActive = !topMenu.goldCancelled && currentTimestamp <= topMenu.goldUntil;
+        const showGoldCancelled = topMenu.goldCancelled && currentTimestamp <= topMenu.goldUntil;
         const showGoldPitch = !showGoldActive;
 
         return {
-            email: state.topMenu.username,
-            username: state.topMenu.username,
+            email: topMenu.username,
+            username: topMenu.username,
             goldUntilDateString,
             showGoldActive,
             showGoldCancelled,

@@ -133,13 +133,13 @@ class Controller extends React.Component {
         });
 
         // Resolve all the promises before updating the UI to minimize flicker
-        const promisesBefore = args.runBefore.map(fn => fn(inputs, updateEvents, prevData, this.setStateData));
+        const promisesBefore = args.runBefore.map(fn => fn(inputs, updateEvents, prevData, this.setStateData, this.state.topMenu));
 
         // Run promises in parallel, update when each one is ready
         // This runs no matter what
         const promisesWhenever = args.runWhenever.map(async fn => {
             // This is a race condition - it assumes this.state.data has been updated by promisesBefore, which will only happen when promisesWhenever are much slower than promisesBefore
-            const vars = await Promise.resolve(fn(inputs, updateEvents, this.state.data, this.setStateData));
+            const vars = await Promise.resolve(fn(inputs, updateEvents, this.state.data, this.setStateData, this.state.topMenu));
             if (vars !== undefined) {
                 this.setStateData(vars);
             }

@@ -6,6 +6,8 @@ const MenuItem = require('react-bootstrap/lib/MenuItem');
 const Nav = require('react-bootstrap/lib/Nav');
 const NavItem = require('react-bootstrap/lib/NavItem');
 const Navbar = require('react-bootstrap/lib/Navbar');
+const Overlay = require('react-bootstrap/lib/Overlay');
+const Popover = require('react-bootstrap/lib/Popover');
 const ReactDOM = require('react-dom');
 const ui = require('../../ui');
 const html2canvas = require('../../lib/html2canvas');
@@ -313,6 +315,13 @@ class PlayMenu extends React.Component {
 }
 
 class NavBar extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            hasViewedALeague: props.hasViewedALeague,
+        };
+    }
+
     // Workaround for https://github.com/react-bootstrap/react-bootstrap/issues/1301 based on https://github.com/react-bootstrap/react-router-bootstrap/issues/112#issuecomment-142599003
     componentDidMount() {
         const navBar = ReactDOM.findDOMNode(this);
@@ -356,7 +365,23 @@ class NavBar extends React.Component {
             </div>
             <Navbar.Header>
                 <LogoAndText lid={lid} updating={updating} />
-                <PlayMenu lid={lid} options={options} />
+                <PlayMenu lid={lid} options={options} ref={c => {
+                    this.playMenu = c;
+                }} />
+                <Overlay
+                    onHide={() => {
+                        this.setState({hasViewedALeague: true});
+                        localStorage.hasViewedALeague = 'true';
+                    }}
+                    placement="bottom"
+                    rootClose={true}
+                    show={!this.state.hasViewedALeague && lid === 1}
+                    target={() => ReactDOM.findDOMNode(this.playMenu)}
+                >
+                    <Popover id="popover-welcome" title="Welcome to Basketball GM!">
+                        To advance through the game, use the Play button at the top. The options shown will change depending on the current state of the game.
+                    </Popover>
+                </Overlay>
                 {lid !== undefined ? <p className="navbar-text-two-line-no-collapse">
                     {phaseText}<br />
                     {statusText}

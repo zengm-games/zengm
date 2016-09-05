@@ -166,12 +166,7 @@ class NewLeague extends React.Component {
         }
 
         const lid = await league.create(this.state.name, this.state.tid, leagueFile, startingSeason, randomizeRosters);
-        ui.realtimeUpdate([], `/l/${lid}`, () => {
-            // Show helpful information if this is the first league
-            if (lid === 1) {
-                ui.highlightPlayButton();
-            }
-        });
+        ui.realtimeUpdate([], `/l/${lid}`);
     }
 
     render() {

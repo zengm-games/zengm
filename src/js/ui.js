@@ -180,36 +180,9 @@ async function updatePhase(phaseText) {
     }
 }
 
-function highlightPlayButton() {
-    const playButtonLink = $("#play-button-link");
-
-    playButtonLink.popover({
-        trigger: "manual",
-        placement: "bottom",
-        title: "Welcome to Basketball GM!",
-        content: "To advance through the game, use the Play button at the top. The options shown will change depending on the current state of the game.",
-        template: '<div class="popover popover-play"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
-    });
-
-    // If the user finds the play button first, don't show the popover
-    playButtonLink.on("click", () => {
-        playButtonLink.popover("hide");
-    });
-
-    setTimeout(() => {
-        playButtonLink.popover("show");
-
-        // Only do this after showing button, so a quick click doesn't close it early
-        $(document).on("click", () => {
-            playButtonLink.popover("hide");
-        });
-    }, 1000);
-}
-
 module.exports = {
     realtimeUpdate,
     updatePhase,
     updatePlayMenu,
     updateStatus,
-    highlightPlayButton,
 };

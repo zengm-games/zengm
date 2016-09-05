@@ -26,7 +26,6 @@ when all react
   confirm ads work
     need to make them react components, to get topMenu
   escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame, edit team info)
-  highlightPlayButton
   confirm gold stuff works
     cancel
     goldMessage stuff

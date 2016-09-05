@@ -39,6 +39,7 @@ class Controller extends React.Component {
                 godMode: g.godMode,
                 goldUntil: 0,
                 goldCancelled: 0,
+                hasViewedALeague: !!localStorage.hasViewedALeague,
                 lid: undefined,
                 options: [],
                 phaseText: undefined,

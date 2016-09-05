@@ -4,7 +4,7 @@ const Popover = require('react-bootstrap/lib/Popover');
 
 const HelpPopover = ({children, placement, title}) => {
     const popoverLeft = (
-      <Popover id="popover-positioned-top" title={title}>
+      <Popover id={title} title={title}>
           {children}
       </Popover>
     );

@@ -6,6 +6,7 @@ const MenuItem = require('react-bootstrap/lib/MenuItem');
 const Nav = require('react-bootstrap/lib/Nav');
 const NavItem = require('react-bootstrap/lib/NavItem');
 const Navbar = require('react-bootstrap/lib/Navbar');
+const ReactDOM = require('react-dom');
 const ui = require('../../ui');
 const html2canvas = require('../../lib/html2canvas');
 const actions = require('../../util/actions');
@@ -311,40 +312,62 @@ class PlayMenu extends React.Component {
     }
 }
 
-const NavBar = ({lid, godMode, options, phaseText, popup, statusText, updating, username}) => {
-    if (popup) {
-        return null;
+class NavBar extends React.Component {
+    // Workaround for https://github.com/react-bootstrap/react-bootstrap/issues/1301 based on https://github.com/react-bootstrap/react-router-bootstrap/issues/112#issuecomment-142599003
+    componentDidMount() {
+        const navBar = ReactDOM.findDOMNode(this);
+        if (!navBar) { return; }
+        const collapsibleNav = navBar.querySelector('div.navbar-collapse');
+        if (!collapsibleNav) { return; }
+        const btnToggle = navBar.querySelector('button.navbar-toggle');
+        if (!btnToggle) { return; }
+
+        navBar.addEventListener('click', (evt) => {
+            if (evt.target.tagName !== 'A' || evt.target.classList.contains('dropdown-toggle') || !collapsibleNav.classList.contains('in')) {
+                return;
+            }
+
+            btnToggle.click();
+        }, false);
     }
 
-    return <Navbar fixedTop>
-        <div className="pull-right" style={{marginLeft: '15px'}}>
-                {
-                    username
-                ?
-                    <a className="navbar-link user-menu" href="/account">
-                        <span className="glyphicon glyphicon-user"></span>{' '}
-                        <span className="visible-lg">{username}</span>
-                    </a>
-                :
-                    <a className="navbar-link user-menu" href="/account/login_or_register">
-                        <span className="glyphicon glyphicon-user"></span>{' '}
-                        <span className="visible-lg">Login/Register</span>
-                    </a>
-                }
-        </div>
-        <Navbar.Header>
-            <LogoAndText lid={lid} updating={updating} />
-            <PlayMenu lid={lid} options={options} />
-            {lid !== undefined ? <p className="navbar-text-two-line-no-collapse">
-                {phaseText}<br />
-                {statusText}
-            </p> : null}
-            <Navbar.Toggle />
-        </Navbar.Header>
-        <Navbar.Collapse>
-            <DropdownLinks godMode={godMode} lid={lid} />
-        </Navbar.Collapse>
-    </Navbar>;
-};
+
+    render() {
+        const {lid, godMode, options, phaseText, popup, statusText, updating, username} = this.props;
+        if (popup) {
+            return <div />;
+        }
+
+        return <Navbar fixedTop>
+            <div className="pull-right" style={{marginLeft: '15px'}}>
+                    {
+                        username
+                    ?
+                        <a className="navbar-link user-menu" href="/account">
+                            <span className="glyphicon glyphicon-user"></span>{' '}
+                            <span className="visible-lg">{username}</span>
+                        </a>
+                    :
+                        <a className="navbar-link user-menu" href="/account/login_or_register">
+                            <span className="glyphicon glyphicon-user"></span>{' '}
+                            <span className="visible-lg">Login/Register</span>
+                        </a>
+                    }
+            </div>
+            <Navbar.Header>
+                <LogoAndText lid={lid} updating={updating} />
+                <PlayMenu lid={lid} options={options} />
+                {lid !== undefined ? <p className="navbar-text-two-line-no-collapse">
+                    {phaseText}<br />
+                    {statusText}
+                </p> : null}
+                <Navbar.Toggle />
+            </Navbar.Header>
+            <Navbar.Collapse>
+                <DropdownLinks godMode={godMode} lid={lid} />
+            </Navbar.Collapse>
+        </Navbar>;
+    }
+}
 
 module.exports = NavBar;

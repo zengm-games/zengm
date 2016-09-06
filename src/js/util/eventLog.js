@@ -2,6 +2,7 @@ const g = require('../globals');
 const bbgmNotifications = require('../lib/bbgm-notifications');
 
 function add(ot, {
+    extraClass,
     persistent = false,
     pids,
     text,
@@ -29,9 +30,16 @@ function add(ot, {
             title = "Changes since your last visit";
         }
 
+        if (persistent && extraClass === undefined) {
+            extraClass = 'notification-danger';
+        }
+
         // Don't show non-critical notification if we're viewing a live game now
         if (location.pathname.indexOf("/live") === -1 || persistent) {
-            bbgmNotifications.notify(text, title, persistent);
+            bbgmNotifications.notify(text, title, {
+                extraClass,
+                persistent,
+            });
 
             // Persistent notifications are very rare and should stop game sim when displayed
             if (persistent && g.autoPlaySeasons <= 0) {

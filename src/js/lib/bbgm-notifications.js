@@ -5,7 +5,7 @@ container.id = "notification-container";
 container.classList.add("notification-container");
 document.body.appendChild(container);
 
-const notify = (message, title, persistent = false, timeOut) => {
+const notify = (message, title, {extraClass, persistent = false, timeOut}) => {
     let timeoutRemaining = timeOut || 5000;
 
     let notificationElement = document.createElement("div");
@@ -49,12 +49,15 @@ const notify = (message, title, persistent = false, timeOut) => {
         const closeLink = document.createElement("button");
         closeLink.classList.add("notification-close");
         closeLink.innerHTML = "&times;";
-        notificationElement.classList.add("notification-persistent");
         closeLink.addEventListener("click", () => {
             notificationElement.classList.add("notification-delete");
         });
 
         notificationElement.appendChild(closeLink);
+    }
+
+    if (extraClass !== undefined) {
+        notificationElement.classList.add(extraClass);
     }
 
     /*// Hide notification on click, except if it's a link

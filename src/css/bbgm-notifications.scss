@@ -45,10 +45,6 @@
   animation: fadeIn .75s;
 }
 
-.notification-persistent {
-  background-color: darkred;
-}
-
 .notification-close {
   font-size: 20px;
   background: transparent;
@@ -107,5 +103,25 @@
 
   to {
     opacity: 0;
+  }
+}
+
+// Colors are arbitrary, just whatever looks good
+
+.notification-danger {
+  color: #fff;
+  background-color: darkred;
+}
+
+.notification-primary {
+  color: #fff;
+  background-color: #0055a0;
+
+  a {
+    color: #fff;
+
+    &:hover {
+      color: #fff;
+    }
   }
 }

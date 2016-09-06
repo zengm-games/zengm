@@ -12,6 +12,7 @@ const ReactDOM = require('react-dom');
 const ui = require('../../ui');
 const html2canvas = require('../../lib/html2canvas');
 const actions = require('../../util/actions');
+const eventLog = require('../../util/eventLog');
 const helpers = require('../../util/helpers');
 
 const toggleDebugMode = () => {
@@ -127,8 +128,14 @@ class DropdownLinks extends React.Component {
                         },
                         dataType: "json",
                     }));
-                    document.getElementById("screenshot-link").href = `http://imgur.com/${data.data.id}`;
-                    $("#modal-screenshot").modal("show");
+                    eventLog.add(null, {
+                        type: 'screenshot',
+                        text: `<a href="http://imgur.com/${data.data.id}" target="_blank">Click here to view your screenshot.</a>`,
+                        saveToDb: false,
+                        showNotification: true,
+                        persistent: true,
+                        extraClass: 'notification-primary',
+                    });
                 } catch (err) {
                     console.log(err);
                     if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {

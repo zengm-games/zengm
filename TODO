@@ -1,9 +1,5 @@
 REACT
 
-screenshot modal
-  replace with notification
-  persistent should not be just for errors, add another param for danger/success/etc
-
 browser errors in index.html
 
 DataTable

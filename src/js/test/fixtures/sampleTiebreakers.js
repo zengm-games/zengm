@@ -144,10 +144,6 @@ module.exports = {
                             amount: 0,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 14900.000000000013,
                             rank: 11,
@@ -301,10 +297,6 @@ module.exports = {
                         },
                         minTax: {
                             amount: 12700,
-                            rank: 1,
-                        },
-                        buyOuts: {
-                            amount: 0,
                             rank: 1,
                         },
                         scouting: {
@@ -491,10 +483,6 @@ module.exports = {
                             amount: 0,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 15520.000000000022,
                             rank: 9,
@@ -648,10 +636,6 @@ module.exports = {
                         },
                         minTax: {
                             amount: 7350,
-                            rank: 1,
-                        },
-                        buyOuts: {
-                            amount: 0,
                             rank: 1,
                         },
                         scouting: {
@@ -835,10 +819,6 @@ module.exports = {
                             rank: 1,
                         },
                         minTax: {
-                            amount: 0,
-                            rank: 1,
-                        },
-                        buyOuts: {
                             amount: 0,
                             rank: 1,
                         },
@@ -1026,10 +1006,6 @@ module.exports = {
                             amount: 0,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 10550.000000000013,
                             rank: 25,
@@ -1182,10 +1158,6 @@ module.exports = {
                             rank: 1,
                         },
                         minTax: {
-                            amount: 0,
-                            rank: 1,
-                        },
-                        buyOuts: {
                             amount: 0,
                             rank: 1,
                         },
@@ -1373,10 +1345,6 @@ module.exports = {
                             amount: 0,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 11789.999999999989,
                             rank: 21,
@@ -1532,10 +1500,6 @@ module.exports = {
                             amount: 650,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 13970.000000000013,
                             rank: 14,
@@ -1688,10 +1652,6 @@ module.exports = {
                             rank: 1,
                         },
                         minTax: {
-                            amount: 0,
-                            rank: 1,
-                        },
-                        buyOuts: {
                             amount: 0,
                             rank: 1,
                         },
@@ -1879,10 +1839,6 @@ module.exports = {
                             amount: 0,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 9620,
                             rank: 28,
@@ -2036,10 +1992,6 @@ module.exports = {
                         },
                         minTax: {
                             amount: 9850,
-                            rank: 1,
-                        },
-                        buyOuts: {
-                            amount: 0,
                             rank: 1,
                         },
                         scouting: {
@@ -2223,10 +2175,6 @@ module.exports = {
                             rank: 1,
                         },
                         minTax: {
-                            amount: 0,
-                            rank: 1,
-                        },
-                        buyOuts: {
                             amount: 0,
                             rank: 1,
                         },
@@ -2414,10 +2362,6 @@ module.exports = {
                             amount: 0,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 16139.999999999975,
                             rank: 7,
@@ -2602,10 +2546,6 @@ module.exports = {
                             amount: 0,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 12409.999999999985,
                             rank: 19,
@@ -2758,10 +2698,6 @@ module.exports = {
                             rank: 1,
                         },
                         minTax: {
-                            amount: 0,
-                            rank: 1,
-                        },
-                        buyOuts: {
                             amount: 0,
                             rank: 1,
                         },
@@ -2920,10 +2856,6 @@ module.exports = {
                             amount: 6000,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 17689.999999999985,
                             rank: 2,
@@ -3076,10 +3008,6 @@ module.exports = {
                             rank: 1,
                         },
                         minTax: {
-                            amount: 0,
-                            rank: 1,
-                        },
-                        buyOuts: {
                             amount: 0,
                             rank: 1,
                         },
@@ -3267,10 +3195,6 @@ module.exports = {
                             amount: 7850,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 13339.999999999985,
                             rank: 16,
@@ -3423,10 +3347,6 @@ module.exports = {
                             rank: 1,
                         },
                         minTax: {
-                            amount: 0,
-                            rank: 1,
-                        },
-                        buyOuts: {
                             amount: 0,
                             rank: 1,
                         },
@@ -3585,10 +3505,6 @@ module.exports = {
                             amount: 0,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 9929.999999999995,
                             rank: 27,
@@ -3741,10 +3657,6 @@ module.exports = {
                             rank: 1,
                         },
                         minTax: {
-                            amount: 0,
-                            rank: 1,
-                        },
-                        buyOuts: {
                             amount: 0,
                             rank: 1,
                         },
@@ -3932,10 +3844,6 @@ module.exports = {
                             amount: 0,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 12720.000000000018,
                             rank: 18,
@@ -4117,10 +4025,6 @@ module.exports = {
                             rank: 1,
                         },
                         minTax: {
-                            amount: 0,
-                            rank: 1,
-                        },
-                        buyOuts: {
                             amount: 0,
                             rank: 1,
                         },
@@ -4308,10 +4212,6 @@ module.exports = {
                             amount: 0,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 13030.000000000005,
                             rank: 17,
@@ -4465,10 +4365,6 @@ module.exports = {
                         },
                         minTax: {
                             amount: 5100,
-                            rank: 1,
-                        },
-                        buyOuts: {
-                            amount: 0,
                             rank: 1,
                         },
                         scouting: {
@@ -4652,10 +4548,6 @@ module.exports = {
                             rank: 1,
                         },
                         minTax: {
-                            amount: 0,
-                            rank: 1,
-                        },
-                        buyOuts: {
                             amount: 0,
                             rank: 1,
                         },
@@ -4843,10 +4735,6 @@ module.exports = {
                             amount: 0,
                             rank: 1,
                         },
-                        buyOuts: {
-                            amount: 0,
-                            rank: 1,
-                        },
                         scouting: {
                             amount: 16759.99999999998,
                             rank: 5,
@@ -5000,10 +4888,6 @@ module.exports = {
                         },
                         minTax: {
                             amount: 12100,
-                            rank: 1,
-                        },
-                        buyOuts: {
-                            amount: 0,
                             rank: 1,
                         },
                         scouting: {
@@ -5187,10 +5071,6 @@ module.exports = {
                             rank: 1,
                         },
                         minTax: {
-                            amount: 0,
-                            rank: 1,
-                        },
-                        buyOuts: {
                             amount: 0,
                             rank: 1,
                         },

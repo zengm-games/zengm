@@ -25,6 +25,7 @@ when all react
   go through ui.js, reevaluate
   confirm ads work
     need to make them react components, to get topMenu
+    control overlays and banners from react
   escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame, edit team info)
   confirm gold stuff works
     cancel
@@ -37,10 +38,6 @@ when all react
   test auto play
 
 ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/help_me_with_a_little_beta_testing/d6tmkyf?context=3
-
-get rid of debug mode
-
-remove survata unless they can optimize
 
 Trade
   could be cleaned up a lot

@@ -1,36 +1,40 @@
 const g = require('../globals');
 const bbgmNotifications = require('../lib/bbgm-notifications');
 
-function add(ot, options) {
-    options.saveToDb = options.saveToDb !== undefined ? options.saveToDb : true;
-    options.showNotification = options.showNotification !== undefined ? options.showNotification : true;
-    options.persistent = options.persistent !== undefined ? options.persistent : false;
-
-    if (options.saveToDb && g.lid) { // Only save to league event log if within a league
+function add(ot, {
+    persistent = false,
+    pids,
+    text,
+    tids,
+    saveToDb = false,
+    showNotification = true,
+    type,
+}) {
+    if (saveToDb && g.lid) { // Only save to league event log if within a league
         const dbOrTx = ot !== null ? ot : g.dbl;
         dbOrTx.events.add({
             season: g.season,
-            type: options.type,
-            text: options.text,
-            pids: options.pids,
-            tids: options.tids,
+            type,
+            text,
+            pids,
+            tids,
         });
     }
 
-    if (options.showNotification) {
+    if (showNotification) {
         let title = null;
-        if (options.type === "error") {
+        if (type === "error") {
             title = "Error!";
-        } else if (options.type === "changes") {
+        } else if (type === "changes") {
             title = "Changes since your last visit";
         }
 
         // Don't show non-critical notification if we're viewing a live game now
-        if (location.pathname.indexOf("/live") === -1 || options.persistent) {
-            bbgmNotifications.notify(options.text, title, options.persistent);
+        if (location.pathname.indexOf("/live") === -1 || persistent) {
+            bbgmNotifications.notify(text, title, persistent);
 
             // Persistent notifications are very rare and should stop game sim when displayed
-            if (options.persistent && g.autoPlaySeasons <= 0) {
+            if (persistent && g.autoPlaySeasons <= 0) {
                 require('../core/league').setGameAttributesComplete({stopGames: true});
             }
         }

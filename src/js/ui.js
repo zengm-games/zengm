@@ -130,7 +130,8 @@ async function updatePlayMenu(ot) {
     }
 
     const someOptions = keys.map(id => {
-        return {id, ...allOptions[id]};
+        allOptions[id].id = id;
+        return allOptions[id];
     });
 
     g.emitter.emit('updateTopMenu', {options: someOptions});

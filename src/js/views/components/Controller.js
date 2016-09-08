@@ -194,10 +194,7 @@ class Controller extends React.Component {
 
     updateTopMenu(obj) {
         this.setState({
-            topMenu: {
-                ...this.state.topMenu,
-                ...obj,
-            },
+            topMenu: Object.assign(this.state.topMenu, obj),
         });
     }
 

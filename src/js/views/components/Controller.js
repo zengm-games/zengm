@@ -6,6 +6,7 @@ const Footer = require('./Footer');
 const Header = require('./Header');
 const LeagueWrapper = require('./LeagueWrapper');
 const MultiTeamMenu = require('./MultiTeamMenu');
+const NagModal = require('./NagModal');
 const NavBar = require('./NavBar');
 
 class LeagueContent extends React.Component {
@@ -33,6 +34,7 @@ class Controller extends React.Component {
                 userTid: g.userTid,
                 userTids: g.userTids,
             },
+            showNagModal: true,
             topMenu: {
                 email: null,
                 godMode: g.godMode,
@@ -222,6 +224,11 @@ class Controller extends React.Component {
                 {contents}
             </div>
             <Footer />
+            <NagModal close={() => {
+                this.setState({
+                    showNagModal: false,
+                });
+            }} show={this.state.showNagModal} />
         </div>;
     }
 }

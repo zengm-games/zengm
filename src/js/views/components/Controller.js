@@ -2,12 +2,7 @@ const Promise = require('bluebird');
 const React = require('react');
 const g = require('../../globals');
 const ui = require('../../ui');
-const Footer = require('./Footer');
-const Header = require('./Header');
-const LeagueWrapper = require('./LeagueWrapper');
-const MultiTeamMenu = require('./MultiTeamMenu');
-const NagModal = require('./NagModal');
-const NavBar = require('./NavBar');
+const {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} = require('./index');
 
 class LeagueContent extends React.Component {
     shouldComponentUpdate(nextProps) {

@@ -1,7 +1,6 @@
 module.exports = {
     BarGraph: require('./BarGraph'),
     BoxPlot: require('./BoxPlot'),
-    Controller: require('./Controller'),
     DataTable: require('./DataTable'),
     DownloadDataLink: require('./DownloadDataLink'),
     DraftAbbrev: require('./DraftAbbrev'),
@@ -12,6 +11,7 @@ module.exports = {
     JumpTo: require('./JumpTo'),
     LeagueWrapper: require('./LeagueWrapper'),
     MultiTeamMenu: require('./MultiTeamMenu'),
+    NagModal: require('./NagModal'),
     NavBar: require('./NavBar'),
     NewWindowLink: require('./NewWindowLink'),
     PlayerNameLabels: require('./PlayerNameLabels'),

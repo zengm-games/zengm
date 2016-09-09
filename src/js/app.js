@@ -12,7 +12,7 @@ const changes = require('./data/changes');
 const Davis = require('./lib/davis');
 const account = require('./util/account');
 const helpers = require('./util/helpers');
-const {Controller} = require('./views/components');
+const Controller = require('./views/components/Controller');
 
 // Overwrite Promise object globally so Babel uses it when transpiling async/await (not totally sure if necessary)
 window.Promise = require('bluebird');

@@ -111,25 +111,27 @@
 
     <div id="content">
       <div style="max-width: 360px; margin: 0 auto;">
-        <h1>Loading...</h1>
+        <div id="loading-msg">
+          <h1>Loading...</h1>
 
-        <p style="clear: both; margin-bottom: 8em"></p>
-        <div class="team-picture-splash" id="team-picture-0"></div>
-        <div class="team-picture-splash" id="team-picture-1"></div>
-        <div class="team-picture-splash" id="team-picture-2"></div>
-        <div class="team-picture-splash" id="team-picture-3"></div>
-        <div class="team-picture-splash" id="team-picture-4"></div>
-        <div class="team-picture-splash" id="team-picture-5"></div>
-        <div class="team-picture-splash" id="team-picture-6"></div>
-        <div class="team-picture-splash" id="team-picture-7"></div>
-        <div class="team-picture-splash" id="team-picture-8"></div>
-        <div class="team-picture-splash" id="team-picture-9"></div>
-        <div class="team-picture-splash" id="team-picture-10"></div>
-        <div class="team-picture-splash" id="team-picture-11"></div>
+          <p style="clear: both; margin-bottom: 8em"></p>
+          <div class="team-picture-splash" id="team-picture-0"></div>
+          <div class="team-picture-splash" id="team-picture-1"></div>
+          <div class="team-picture-splash" id="team-picture-2"></div>
+          <div class="team-picture-splash" id="team-picture-3"></div>
+          <div class="team-picture-splash" id="team-picture-4"></div>
+          <div class="team-picture-splash" id="team-picture-5"></div>
+          <div class="team-picture-splash" id="team-picture-6"></div>
+          <div class="team-picture-splash" id="team-picture-7"></div>
+          <div class="team-picture-splash" id="team-picture-8"></div>
+          <div class="team-picture-splash" id="team-picture-9"></div>
+          <div class="team-picture-splash" id="team-picture-10"></div>
+          <div class="team-picture-splash" id="team-picture-11"></div>
 
-        <p style="clear: both; margin-bottom: 8em"></p>
-        <p>This should only take a few seconds on a fast connection.</p>
-        <p>If this gets stuck for a while, try <a href="https://basketball-gm.com/manual/debugging/">the debugging instructions</a> and try to find an error message and report a bug.</p>
+          <p style="clear: both; margin-bottom: 8em"></p>
+          <p>This should only take a few seconds on a fast connection.</p>
+          <p>If this gets stuck for a while, try <a href="https://basketball-gm.com/manual/debugging/">the debugging instructions</a> and try to find an error message and report a bug.</p>
+        </div>
 
         <hr style="margin-bottom: 1.5em">
 
@@ -184,11 +186,72 @@
         document.getElementById('team-picture-' + i).style.backgroundImage = 'url(/img/logos/' + abbrevs[i] + '.png)';
       }
 
-      var body = document.getElementsByTagName('body').item(0);
-      var script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = bbgmPrefix + "gen/app.js";
-      body.appendChild(script);
+      // Browser compatibility checks! https://gist.github.com/jensarps/15f270874889e1717b3d
+      var goodIDB = function (cb) {
+        if (typeof window.indexedDB === "undefined") {
+          cb(false);
+          return;
+        }
+
+        var idb = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+        var keyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.mozIDBKeyRange;
+
+        try {
+          keyRange.only([1]);
+        } catch (e) {
+          cb(false);
+          return;
+        }
+
+        var openRequest = idb.open('__detectIDB_test', 1);
+
+        openRequest.onupgradeneeded = function (evt) {
+          var db = evt.target.result;
+          db.createObjectStore('one', {
+            keyPath: 'key'
+          });
+          db.createObjectStore('two', {
+            keyPath: 'key'
+          });
+        };
+
+        openRequest.onsuccess = function (evt) {
+          var db = evt.target.result;
+          var transaction;
+          try {
+            transaction = db.transaction(['one', 'two'], 'readwrite');
+          } catch (e) {
+            cb(false);
+            return;
+          }
+
+          transaction.oncomplete = function () {
+            db.close();
+            cb(true);
+          };
+        };
+      };
+
+      goodIDB(function (result) {
+        if (!result) {
+          var errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. <a href="https://www.firefox.com/">Mozilla Firefox</a> and <a href="https://www.google.com/chrome/">Google Chrome</a> work best.</p>';
+
+          // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
+          if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {
+            errorMsg += '<p>If you\'re on an iPhone/iPad/iPod, there is currently no way to run Basketball GM. Please come back on a desktop/laptop or a non-Apple mobile device! And complain to Apple to fix IndexedDB if you want to play Basketball GM on your iDevice.</p>';
+          }
+
+          var loadingMsg = document.getElementById('loading-msg');
+          loadingMsg.className = 'alert alert-danger';
+          loadingMsg.innerHTML = errorMsg;
+        } else {
+          var body = document.getElementsByTagName('body').item(0);
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = bbgmPrefix + "gen/app.js";
+          body.appendChild(script);
+        }
+      });
     </script>
   </body>
 </html>

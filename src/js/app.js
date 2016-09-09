@@ -46,41 +46,6 @@ require('jquery-ui/sortable');
 
     ReactDOM.render(<Controller />, document.getElementById('content'));
 
-    // Browser compatibility checks!
-
-    // Check if this is an old browser without IndexedDB support
-    if (typeof indexedDB === "undefined") { // Some browsers don't like just plain "indexedDB === undefined"
-        let errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
-
-        // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
-        if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {
-            errorMsg += '<p>If you\'re on an iPhone/iPad/iPod, there is currently no way to run Basketball GM. Please come back on a desktop/laptop or a non-Apple mobile device!</p>';
-        }
-
-        return helpers.error(errorMsg);
-    }
-
-    // Check for Safari (would like to feature detect, but it's so fucking buggy I don't know where to begin, and I don't even have a Mac)
-    // https://developer.mozilla.org/en-US/docs/Browser_detection_using_the_user_agent
-    if (navigator.userAgent.indexOf("Safari") >= 0 && navigator.userAgent.indexOf("Chrome") < 0) {
-        let errorMsg = '<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>';
-
-        // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
-        if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {
-            errorMsg += '<p>If you\'re on an iPhone/iPad/iPod, there is currently no way to run Basketball GM. Please come back on a desktop/laptop or a non-Apple mobile device! And complain to Apple to fix IndexedDB if you want to play Basketball GM on your iDevice.</p>';
-        }
-
-        return helpers.error(errorMsg);
-    }
-
-    // IE10 and IE11 don't work because they lack support for compound indexes
-    try {
-        // Feature detection! http://stackoverflow.com/a/26779525/786644
-        IDBKeyRange.only([1]);
-    } catch (e) {
-        return helpers.error('<p>Your browser is not modern enough to run Basketball GM. <a href="http://www.firefox.com/">Mozilla Firefox</a> and <a href="http://www.google.com/chrome/">Google Chrome</a> work best.</p>');
-    }
-
     // NaN detection
     helpers.checkNaNs();
 

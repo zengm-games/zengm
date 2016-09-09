@@ -1,22 +1,8 @@
 REACT
 
-browser errors in index.html
-
-DataTable
-  USE FOR OTHER TABLES TOO, not just sortable ones. will be nice for colnames, especially
-  https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
-    for now, pass sort key as child and it works
-  Fancy features
-    CSV export
-    show/hide columns
-    filtering
-    persist sort
-
 abstract games list in schedule and dashboard
 
 better eslint
-
-check for errorMessage with HTML in it - what to do then?
 
 when all react
   reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
@@ -38,6 +24,16 @@ when all react
   test auto play
 
 ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/help_me_with_a_little_beta_testing/d6tmkyf?context=3
+
+DataTable
+  USE FOR OTHER TABLES TOO, not just sortable ones. will be nice for colnames, especially
+  https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
+    for now, pass sort key as child and it works
+  Fancy features
+    CSV export
+    show/hide columns
+    filtering
+    persist sort
 
 Trade
   could be cleaned up a lot
